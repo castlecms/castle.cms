@@ -316,6 +316,11 @@ class IAPISettings(Interface):
         title=u'Cloudflare Zone ID',
         required=False)
 
+    rocket_chat_front_page = schema.TextLine(
+        title=u'Rocket.Chat User URL',
+        description=u'URL of the Rocket.Chat server to connect to',
+        required=False
+    )
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(

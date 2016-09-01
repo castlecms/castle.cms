@@ -259,6 +259,190 @@ define([
     }
   });
 
+  var ChatDropdown = cutils.Class([Dropdown], {
+    getInitialState: function() {
+
+      this.checkMissedMessages();
+
+      var session_id = document.cookie.split(';').find(function(item) {
+        if( item.trim().indexOf('castle_session_id') >= 0 ) {
+          return item;
+        }
+
+        return false;
+      });
+
+      session_id = session_id.split('"')[1];
+
+      return {
+        token: this.props.chat_token + session_id,
+        open: false,
+        missed: false
+      };
+    },
+    checkMissedMessages: function() {
+
+      var frontpage = this.props.chat_frontpage;
+      if( frontpage === undefined || frontpage === null ) {
+        return;
+      }
+
+      if( frontpage.lastIndexOf('/') !== frontpage.length - 1 ) {
+        frontpage += '/';
+      }
+
+      $.ajax({
+        url: frontpage + 'api/messageWaiting/' + this.props.user
+      }).done(function(res) {
+        this.setState({
+          missed: res
+        });
+      }.bind(this));
+    },
+    renderChannels: function() {
+
+      var that = this;
+      var missed = this.state.missed;
+      var rooms = Object.keys(this.state.missed);
+
+      var output = [];
+
+      for( var room in rooms ) {
+        room = rooms[room];
+        var messageClass = '';
+
+        output.push(D.li({
+          className: 'castle-chat-missed-channel'
+        }, [
+          D.div({className: 'castle-chat-channel-header' }, [
+            room,
+            D.span({className: 'castle-chat-missed'}, missed[room].length.toString()),
+          ]),
+          D.ul({}, that.renderMessages(missed[room]))
+        ]));
+      }
+
+      return output;
+    },
+    renderMessages: function(messages) {
+      var output = [];
+      var count = 0;
+      var previousAuthor = '';
+
+      for( var message in messages ) {
+        count += 1;
+
+        //Put a cap on the # of missed messages
+        if( count == 10 ) {
+          output.push(
+          D.div({className: 'castle-chat-divider-link'},
+            D.a({
+              className: 'castle-chat-missed-message',
+              href: this.props.chat_frontpage + 'plone/' + this.state.token,
+              target: '_blank'
+            }, 'View more'))
+          );
+          return output;
+        }
+
+        message = messages[message];
+        var author = [];
+
+        //Don't keep repeating the username if they're
+        //sending multiple messages.
+        if( previousAuthor !== message.u.username ) {
+          author = D.div({className: 'castle-chat-username'}, message.u.username + ': ');
+        }
+
+        previousAuthor = message.u.username;
+
+        output.push(
+          D.li(
+            {
+              className: 'castle-chat-missed-message'
+            }, [
+              author,
+              message.msg])
+        );
+      }
+
+      return output;
+    },
+    render: function() {
+
+      if( window.location.href.indexOf('/chat') >= 0 ) {
+        return null;
+      }
+
+      if( this.props.chat_frontpage === null || this.props.chat_url === null ) {
+        return null;
+      }
+
+      var classList = 'plone-btn plone-btn-default chat-link';
+      var rooms = '';
+
+      if( this.state.missed ) {
+        classList += ' chat-alert';
+      }
+
+      var content = [
+        D.button({
+          className: classList,
+          onClick: function() {
+            this.setState({open: !this.state.open});
+          }.bind(this)
+        }, 'Chat')
+      ];
+
+      if( this.state.open ) {
+        var dropdownContent = [];
+        var message = 'No new messages';
+        var broken = false;
+
+        if( this.props.user_email === "" ) {
+          broken = true;
+          message = 'A valid email must be associated with your profile before using chat';
+        }
+
+        if( this.state.missed ) {
+          var roomNames = Object.keys(this.state.missed);
+          var missed = this.state.missed;
+
+          var roomMessages = this.renderChannels();
+
+          dropdownContent.push(
+            D.ul({className: 'castle-chat-preview'}, roomMessages)
+          );
+        }else{
+          dropdownContent.push(D.div({className: 'castle-chat-empty'}, message));
+        }
+
+        var href = this.props.chat_frontpage + 'plone/' + this.state.token;
+        href += '/' + this.props.user + '/' + this.props.user_email;
+
+        if( !broken ) {
+          dropdownContent.push(
+            D.div({className: 'castle-chat-goto-link'},
+              D.a({
+                href: href,
+                disabled: broken,
+                target: '_blank',
+                className: 'castle-chat-bottom-link'
+              }, 'Open chat')
+            )
+          );
+        }
+
+        content.push(D.div({className: 'castle-chat-dropdown'}, dropdownContent));
+      }
+
+      return D.div({
+        className: 'castle-btn-dropdown',
+        id: 'castle-chat-menu-item'
+      }, content);
+    }
+  });
+
   var MessagesDropdown = cutils.Class([Dropdown], {
     // use local storage to track read messages
     // a read message is one that is shown
@@ -476,6 +660,16 @@ define([
         D.div({ className: 'castle-toolbar-buttons', onClick: function(e){
             e.stopPropagation();
           }}, [
+          R.createElement(ChatDropdown, {
+            chat_token: this.props.chat_token,
+            chat_url: this.props.chat_url,
+            user: this.props.user_id,
+            chat_frontpage: this.props.chat_frontpage,
+            user_email: this.props.user_email,
+            portal_url: this.props.portal_url,
+            ref: 'chat',
+            name: 'chat'
+          }),
           R.createElement(MessagesDropdown, { items: this.props.messages,
                                               user_id: this.props.user_id,
                                               ref: 'messages', onClick: this.btnClicked, name: 'messages'}),
@@ -589,8 +783,13 @@ define([
     },
     calculateHidden: function() {
       var sideMenu = this.refs.side;
+      var buttons = {};
 
-      var buttons = $(sideMenu.getDOMNode()).find('li');
+      try {
+        buttons = $(sideMenu.getDOMNode()).find('li');
+      } catch(e){
+        return;
+      }
 
       var toolbarHeight = 0;
 

@@ -61,6 +61,14 @@
   />
 
   <browser:page
+    for="*"
+    name="verify-cookie"
+    class=".chat.ChatLogin"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
     name="plone_layout"
     for="*"
     permission="zope2.View"

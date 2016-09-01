@@ -210,6 +210,7 @@
 
         }
       }
+
       > ul {
         position: absolute;
         top: @top-toolbar-height;
@@ -231,6 +232,20 @@
         border: 0px;
         color: @toolbar-btn-text-color;
         background: @toolbar-btn-bg-color;
+
+      }
+      .chat-alert {
+        color: @alert-danger-text;
+      }
+
+      .chat-link {
+        padding: 0px 15px;
+        line-height: @top-toolbar-height;
+        text-shadow: 0 1px rgba(0,0,0,0.25);
+
+        &:hover {
+          color:#1F4E82;
+        }
       }
 
       button:hover,
