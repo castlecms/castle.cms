@@ -2,7 +2,7 @@
     :height: 50
     :width: 382
     :alt: Original work by wildcardcorp.com
-
+    :scale: 50 %
 |
 
 For access to CastleCloud the hosted implementation, customizations, and demonstrations, please contact us at https://castlecms.io or https://wildcardcorp.com
