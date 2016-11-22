@@ -1,22 +1,19 @@
-
-Credit
-------
-For access to CastleCloud the hosted implementation, customizations, and demonstrations,
-please contact us at https://castlecms.io or https://wildcardcorp.com
-
-info@wildcardcorp.com
-715.869.3440
-
-Overview
-========
-
 .. image:: https://www.wildcardcorp.com/logo.png
     :height: 50
     :width: 382
     :alt: Original work by wildcardcorp.com
-    :align: right
 
+|
+
+For access to CastleCloud the hosted implementation, customizations, and demonstrations, please contact us at https://castlecms.io or https://wildcardcorp.com
+
+info@wildcardcorp.com
+
+715.869.3440
+
+=======================================
 Welcome to the main Castle CMS package!
+=======================================
 
 This package does a lot of customizations to default Plone and without an installer,
 this package won't be very useful.
@@ -36,7 +33,8 @@ Until there is an installer, here are some of the things you'll need:
 
 
 Feature List
-------------
+============
+
 In addition to Plone standard features...
 
 - Login/Lockout support
@@ -89,23 +87,31 @@ In addition to Plone standard features...
 
 
 Running tests
--------------
+=============
 
-Assuming you have buildout properly installed to run the tests...
+Assuming you have buildout properly installed to run the tests:
 
-Xvfb :99 &
-Xvfb :99 -fp /usr/share/X11/fonts/misc -screen 0 1900x1900x24 &
-export DISPLAY=:99
+.. code-block:: shell
+
+    Xvfb :99 &
+    Xvfb :99 -fp /usr/share/X11/fonts/misc -screen 0 1900x1900x24 &
+    export DISPLAY=:99
 
 To access the running selenium test server on port 55001:
 
-ZSERVER_HOST=0.0.0.0 ./bin/test -s castle.cms
+.. code-block:: shell
 
-To specify custom firefox binary to match versions...
+    ZSERVER_HOST=0.0.0.0 ./bin/test -s castle.cms
 
-FIREFOX_BINARY=/opt/firefox/firefox ./bin/test  -s castle.cms
+To specify custom firefox binary to match versions:
+
+.. code-block:: shell
+
+    FIREFOX_BINARY=/opt/firefox/firefox ./bin/test  -s castle.cms
 
 Non selenium tests:
+
+.. code-block:: shell
 
   ./bin/test -s castle.cms -t \!selenium
 
@@ -119,31 +125,30 @@ Google Analytics Key File
   - p12
 - enable Analytics API api for credentials
 - fill out email with email provided and p12 file in castle api settings
-- use email for email you want to access and add it as an authorized user for the account
-  in google analytics
+- use email for email you want to access and add it as an authorized user for the account in google analytics
 
 
 Cron jobs
----------
+=========
 
 Castle utilizes quite a few cron jobs that should be setup.
 
 Daily
-~~~~~~
+-----
 
- - bin/clean-plone-users: cleans disabled users
- - bin/social-counts: goes through all content and updates social media counts. Can be done monthly
- - bin/content-popularity: if GA setup, will get content statistics for popularity
+- ``bin/clean-plone-users``: cleans disabled users
+- ``bin/social-counts``: goes through all content and updates social media counts. Can be done monthly
+- ``bin/content-popularity``: if GA setup, will get content statistics for popularity
 
 Weekly
-~~~~~~
+------
 
-  - bin/archive-content: Archive content and send out content warnings about content that will be archived
-  - bin/empty-trash: Delete items that have been in trash for 30 days
-  - bin/send-forced-publish-alert: Send update to admins about content that was forced published
+- ``bin/archive-content``: Archive content and send out content warnings about content that will be archived
+- ``bin/empty-trash``: Delete items that have been in trash for 30 days
+- ``bin/send-forced-publish-alert``: Send update to admins about content that was forced published
 
 
 Processes
-~~~~~~~~~
+---------
 
-  - bin/twitter-monitor: Monitor twitter for mentions of site
+- ``bin/twitter-monitor``: Monitor twitter for mentions of site
