@@ -61,10 +61,6 @@ class QueryListingTile(BaseTile):
         # XXX we're forcing location queries to be depth of 1
         if 'path' in parsed and 'depth' not in parsed['path']:
             parsed['path']['depth'] = 1
-        form = self.get_form()
-        for attr in self.query_attrs:
-            if form.get(attr):
-                parsed[attr] = form.get(attr)
         if 'sort_on' not in parsed:
             parsed['sort_on'] = 'effective'  # defaults to this
 
@@ -97,7 +93,28 @@ class QueryListingTile(BaseTile):
     @memoize
     def results(self):
         catalog = getToolByName(self.context, 'portal_catalog')
-        result = catalog(**self.get_query())
+
+        # there is a special case with Subject queries...
+        # subject queries are OR, so if they are in the original query
+        # and have a further filter with a different Subject, we need to
+        # do some manual filtering. This can be potentially slow....
+        # it's an edge case, so hopefully it's okay...
+        query = self.get_query()
+        form = self.get_form()
+        subject_filter = None
+        for attr in self.query_attrs:
+            if form.get(attr):
+                val = form.get(attr)
+                if attr in query and val not in query[attr]:
+                    subject_filter = val
+                else:
+                    query[attr] = val
+
+        result = catalog(**query)
+        if subject_filter is not None:
+            # special case where we have to further filter...
+            result = [item for item in result
+                      if item.Subject and subject_filter in item.Subject]
         try:
             form = self.get_form()
             page = int(form.get('page', 1)) - 1
@@ -154,7 +171,8 @@ class QueryListingTile(BaseTile):
         for attr in self.query_attrs:
             if form.get(attr):
                 config['query'][attr] = form.get(attr)
-        if 'Subject' in config['query'] and isinstance(config['query']['Subject'], basestring):
+        if ('Subject' in config['query'] and
+                isinstance(config['query']['Subject'], basestring)):
             config['query']['Subject'] = [config['query']['Subject']]
         config['ajaxResults'] = {
             'url': self.this_url,

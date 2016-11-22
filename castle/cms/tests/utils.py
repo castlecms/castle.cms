@@ -171,11 +171,16 @@ def add_tag(selenium, tagtoadd):
     click_it(selenium, By.CSS_SELECTOR, '.mosaic-button-save')
 
 
-def render_tile(request, context, name, data):
+def get_tile(request, context, name, data):
     tile = getMultiAdapter((context, request), name=name)
 
     for key in data.iterkeys():
         tile.data[key] = data[key]
 
+    return tile
+
+
+def render_tile(request, context, name, data):
+    tile = get_tile(request, context, name, data)
     page = tile.render()
     return page

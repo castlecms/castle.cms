@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import unittest
 from plone import api
-from castle.cms.tests.utils import render_tile
+from castle.cms.tests.utils import render_tile, get_tile
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
-from zope.component import getMultiAdapter
+from castle.cms.tiles.querylisting import QueryListingTile
 
 
 class TestTiles(unittest.TestCase):
@@ -120,15 +120,15 @@ class TestTiles(unittest.TestCase):
 
         # create an event for today to make sure the calendar reflects
         # current events
-        event = api.content.create(type='Event', id='event1', container=self.portal)
+        api.content.create(type='Event', id='event1', container=self.portal)
 
         page = render_tile(self.request, self.portal, name, data)
         self.assertTrue('data-pat-fullcalendar=' in page)
-        #make sure there's a link to the event in the calendar
+        # make sure there's a link to the event in the calendar
         self.assertTrue('event1' in page)
 
     def test_embed_render(self):
-        embedCode = '<iframe width="560" height="315" src="https://www.youtube.com/embed/JbpgM-JTang" frameborder="0" allowfullscreen></iframe>'
+        embedCode = '<iframe width="560" height="315" src="https://www.youtube.com/embed/JbpgM-JTang" frameborder="0" allowfullscreen></iframe>'  # noqa
 
         name = self.prefix + 'embedtile'
         data = {
@@ -137,5 +137,31 @@ class TestTiles(unittest.TestCase):
 
         page = render_tile(self.request, self.portal, name, data)
 
-        #Embed tile just spits the embed code back out onto the page.
+        # Embed tile just spits the embed code back out onto the page.
         self.assertTrue(embedCode in page)
+
+    def test_querylisting_results(self):
+        api.content.create(type='Document', id='page1', container=self.portal,
+                           subject=('foobar',))
+        api.content.create(type='Document', id='page2', container=self.portal,
+                           subject=('foobar',))
+        api.content.create(type='Document', id='page3', container=self.portal,
+                           subject=('foobar', 'foobar2'))
+        api.content.create(type='Document', id='page4', container=self.portal,
+                           subject=('foobar', 'foobar2'))
+        data = {
+            'query': [{
+                'i': 'Subject',
+                'o': 'plone.app.querystring.operation.list.contains',
+                'v': 'foobar2'
+            }],
+            'available_tags': ('foobar2',)
+        }
+        tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', data)
+        self.assertEqual(tile.results()['total'], 2)
+
+        self.request.form.update({
+            'Subject': 'foobar'
+        })
+        tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', data)
+        self.assertEqual(tile.results()['total'], 2)

@@ -1,4 +1,3 @@
-from plone.app.linkintegrity.utils import getOutgoingLinks
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
@@ -14,6 +13,8 @@ from OFS.ObjectManager import checkValidId
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
+from plone.app.content.browser import i18n
+from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
@@ -34,7 +35,6 @@ from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
-from plone.app.content.browser import i18n
 
 import json
 import logging
