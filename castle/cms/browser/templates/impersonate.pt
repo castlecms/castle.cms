@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+<head>
+    <metal:block fill-slot="top_slot"
+                 tal:define="dummy python:request.set('disable_border',1);
+                             disable_column_one python:request.set('disable_plone.leftcolumn',1);
+                             disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+</head>
+
+<body>
+  <metal:body fill-slot="body">
+    <article id="content">
+      <h1 class="documentFirstHeading">View site as...</h1>
+      <div id="content-core">
+        <h5>View the site as an anonymous user</h5><br>
+        <form method="POST" action="${portal_url}/@@impersonator">
+          <input name="form.buttons.save" class="castle-btn-asanonymous submit-widget button-field context" value="View as anonymous" type="submit" />
+          <input type="hidden" name="username" value="ANONYMOUS" />
+        </form>
+
+        <div class="visualClear"> </div>
+        <hr />
+
+        <h5>Or, select a user to view the site as</h5>
+        <form method="POST" action="${portal_url}/@@impersonator">
+          <div class="field">
+            <label for="impersonate-user" class="horizontal">
+              User
+              <span class="formHelp">Find the user you'd like to view the site as.</span>
+            </label>
+            <input class="pat-select2" type="text" id="impersonate-user"
+                   name="username"
+                   placeholder="type to search..."
+                   data-pat-select2='{"separator": ";", "vocabularyUrl": "${portal_url}/@@getVocabulary?name=plone.app.vocabularies.Users", "orderable": false, "maximumSelectionSize": 1}'>
+          </div>
+
+          <input name="form.buttons.save" class="castle-btn-asuser submit-widget button-field context plone-btn plone-btn-primary" value="View as selected user" type="submit" />
+        </form>
+      </div>
+      <div class="visualClear"> </div>
+      <div class="formControls">
+        <input class="context plone-btn plone-btn-default"
+          type="submit"
+          value="Done"
+          name="form.button.cancel"
+          />
+      </div>
+    </article>
+  </metal:body>
+</body>
+</html>

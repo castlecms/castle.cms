@@ -1,0 +1,3 @@
+<div class="map-container" aria-hidden="true">
+  <div class="pat-map" tal:attributes="data-pat-map view/json_data" />
+</div>

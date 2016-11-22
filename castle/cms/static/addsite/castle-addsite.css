@@ -1,0 +1,64 @@
+.fieldset {
+  padding: 5px;
+}
+
+.field input[type=checkbox] {
+  width: 3%;
+  height: auto;
+  margin: 0;
+  display: inline-block;
+  box-shadow: none;
+}
+
+.field input[type=file] {
+  height: auto;
+}
+
+.field img {
+  max-height: 100px;
+}
+
+.fieldset label {
+  width: 97%;
+  display: inline-block;
+}
+
+.nav {
+  margin-bottom: 20px;
+}
+
+#reactForm .error {
+  color: #a94442;
+}
+
+#reactForm .sit-right {
+  float: right;
+  margin-right: 5px;
+}
+
+#reactForm span.glyph-right {
+  margin-left: 5px;
+}
+
+#reactForm span.glyph-left {
+  margin-right: 5px;
+}
+
+#reactForm .panel-body button {
+  margin-top: 15px;
+}
+
+#reactForm .buttonBox {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  height: 30px;
+}
+
+#reactForm .alert-success a {
+  float: right;
+  color: #3c763d;
+  text-decoration: underline;
+  opacity: .6;
+  cursor: pointer;
+}

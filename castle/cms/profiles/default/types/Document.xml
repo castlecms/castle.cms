@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<object name="Document" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="default_view">layout_view</property>
+ <property name="view_methods">
+  <element value="layout_view"/>
+ </property>
+  <property name="behaviors">
+    <element value="plone.app.content.interfaces.INameFromTitle" />
+    <element value="plone.app.relationfield.behavior.IRelatedItems" />
+    <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage" />
+    <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation" />
+    <element value="plone.app.lockingbehavior.behaviors.ILocking" />
+    <element value="plone.app.dexterity.behaviors.metadata.IDublinCore" />
+    <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
+    <element value="plone.app.drafts.interfaces.IDraftable" />
+    <element value="plone.app.contenttypes.behaviors.richtext.IRichText" />
+    <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+    <element value="castle.cms.behaviors.location.ILocation"/>
+    <element value="castle.cms.behaviors.search.ISearch"/>
+    <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+ </property>
+</object>

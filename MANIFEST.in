@@ -1,0 +1,2 @@
+graft castle.cms
+include *.cfg *.rst *.in LICENSE

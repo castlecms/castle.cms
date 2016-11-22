@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 19.93">
+	<style type="text/css"> 
+		<![CDATA[
+		    .icon-save-hover{fill:#1f4e82;} 
+	    ]]>
+	</style>
+	<path class="icon-save-hover" d="M25.53,5L13.39,17.18,11.1,19.46a1.62,1.62,0,0,1-2.28,0L6.54,17.18,0.47,11.1a1.62,1.62,0,0,1,0-2.28L2.75,6.54A1.62,1.62,0,0,1,5,6.54L10,11.49l11-11a1.62,1.62,0,0,1,2.28,0l2.28,2.28A1.62,1.62,0,0,1,25.53,5Z"/>
+</svg>

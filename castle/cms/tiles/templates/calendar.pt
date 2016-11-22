@@ -1,0 +1,1 @@
+<div class='pat-fullcalendar' tal:attributes="data-pat-fullcalendar python: view.json_config()"></div>

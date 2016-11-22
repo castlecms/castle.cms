@@ -1,0 +1,37 @@
+<tal:defs
+  tal:define="folder nocall: data_context|context;
+                      nextprev python: utils.get_next_prev(folder, context);
+                      next nextprev/next;
+                      prev nextprev/prev;">
+
+  <div class="castle-nextprev" tal:condition="python: (next or prev) and folder != context">
+
+    <div class="castle-nextprev-prev castle-nextprev-${prev/portal_type}"
+         tal:condition="prev">
+         <a href="${prev/url}"
+            tal:define="has_image python: utils.has_image(prev['obj'])">
+           <div class="arrow-nav-icon"><span class="visible-xs">Previous</span></div>
+           <div class="prev-content">
+              <p class="castle-nextprev-title">${prev/title}</p>
+              <p class="castle-nextprev-summary">${prev/description}</p>
+              <div tal:condition="has_image"
+                   tal:replace="structure python: utils.focal_image_tag(prev['obj'], 'thumb')" />
+           </div>
+         </a>
+    </div>
+    <div class="castle-nextprev-next castle-nextprev-${next/portal_type}"
+         tal:condition="next">
+      <a href="${next/url}"
+         tal:define="has_image python: utils.has_image(next['obj'])">
+        <div class="arrow-nav-icon"><span class="visible-xs">Next</span></div>
+        <div class="next-content">
+          <p class="castle-nextprev-title">${next/title}</p>
+          <p class="castle-nextprev-summary">${next/description}</p>
+          <div tal:condition="has_image"
+               tal:replace="structure python: utils.focal_image_tag(next['obj'], 'thumb')" />
+        </div>
+      </a>
+    </div>
+  </div>
+
+</tal:defs>

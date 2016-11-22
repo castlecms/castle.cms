@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+    <metal:block fill-slot="top_slot"
+                 tal:define="dummy python:request.set('disable_border',1)" />
+
+    <body>
+
+        <metal:main fill-slot="main"
+            tal:define="folder_warning context_state/is_structural_folder;
+                        number_of_objects_to_delete python:folder_warning and view.items_to_delete">
+
+        <h1 class="documentFirstHeading">Delete item</h1>
+
+        <div id="content-core">
+            <tal:block replace="structure view/more_info">
+            </tal:block>
+
+            <div class="portalMessage error" tal:condition="view/is_locked">
+              <strong>Error</strong>
+              This item is locked which means someone could be in the middle of editing
+              the content. If you delete, you could interrupt their work.
+            </div>
+
+          <div class="portalMessage warning" tal:condition="folder_warning">
+              <strong>Warning</strong>
+                <span i18n:translate="alert_really_delete_folder">
+                    This content is a folder. Deleting this folder will delete all the content inside as well.
+                </span>
+                <span i18n:translate="alert_deleting_x_number_of_items" tal:condition="python:number_of_objects_to_delete>1">
+                    (This will delete a total of <span i18n:name="number_of_items_to_delete" tal:content="python:number_of_objects_to_delete">22</span> items.)
+                </span>
+            </div>
+
+            <div class="portalMessage info">
+              <strong>Info</strong>
+              Are you sure you want to delete the item
+                <b tal:content="context/@@plone_context_state/object_title" />?
+            </div>
+
+            <form metal:use-macro="context/@@ploneform-macros/titlelessform" />
+        </div>
+
+        </metal:main>
+    </body>
+</html>

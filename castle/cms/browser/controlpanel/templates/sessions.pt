@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:main metal:fill-slot="prefs_configlet_main">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/plone_control_panel"
+       i18n:translate="">
+        Site Setup
+    </a>
+
+
+    <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+    <div id="content-core">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Last activity</th>
+            <th>IP</th>
+            <th>User Agent</th>
+            <th>End</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tal:sess tal:repeat="session view/sessions">
+            <tr tal:condition="session/id|nothing">
+              <td>${session/user/getUserName|session/userid}</td>
+              <td class="pat-moment"
+                     data-pat-moment="format:relative"
+                     data-date="${session/updated}Z">${session/updated}</td>
+              <td>${session/ip}</td>
+              <td>${python: view.parse_ua(session)}</td>
+              <td>
+                <form method="POST" tal:condition="not: session/expired|nothing">
+                  <input type="hidden" name="id" value="${session/id}" />
+                  <input type="hidden" name="userid" value="${session/userid}" />
+                  <button type="submit" class="plone-btn plone-btn-danger">End Session</button>
+                </form>
+                <span method="POST" tal:condition="session/expired|nothing">
+                  Already ended
+                </span>
+              </td>
+            </tr>
+          </tal:sess>
+        </tbody>
+      </table>
+    </div>
+
+</metal:main>
+</body>
+</html>

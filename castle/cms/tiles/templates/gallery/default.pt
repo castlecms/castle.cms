@@ -1,0 +1,9 @@
+<div class="gallery-container" aria-hidden="true">
+  <div class="camera_wrap pat-gallery" >
+    <tal:images tal:repeat="image python: view.tile.images">
+      <div data-src="${image/large}"
+           data-thumb="${image/thumb}"></div>
+    </tal:images>
+  </div>
+  <div class="clearfix" />
+</div>

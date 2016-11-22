@@ -1,0 +1,3 @@
+<input type="hidden" name="${view/name}.action" value="nochange" class="imagewidget-action" />
+<div class="pat-imagewidget" data-pat-imagewidget="${python: view.pattern_options}">
+</div>

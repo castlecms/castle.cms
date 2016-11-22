@@ -1,0 +1,12 @@
+<tal:wrapper
+  tal:define="show python: utils.get_registry_value('castle.show_announcement', False);">
+  <!-- Breaking News -->
+  <div id="site-announcement" tal:condition="show">
+    <div class="row">
+      <div class="col-md-12 announcement-wrapper"
+           tal:content="structure python: utils.get_registry_value('castle.site_announcement', '')">
+        <p><strong>Breaking News:</strong> <a href="#" style="color: white;">Follow Updates from...</a></p>
+      </div>
+    </div>
+  </div>
+</tal:wrapper>

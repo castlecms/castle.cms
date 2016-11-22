@@ -1,0 +1,53 @@
+<div tal:define="video python: view.get_video();
+                 tile_youtube_url python: view.data.get('youtube_url');
+                 df view/display_fields;
+                 dt python: view.data.get('display_type', 'landscape') or 'landscape';
+                 youtube_url python: view.utils.get_youtube_url(video);"
+     class="widget-panel">
+  <div class="video-container ${dt}">
+  <tal:defs tal:define="desc video/overview/output|video/Description|string:;
+                        effective video/effective|nothing;
+                        url video/absolute_url|nothing;">
+
+    <h3 tal:condition="python: 'title' in df and video"><a href="${url}">${video/Title}</a></h3>
+    <p class="video-inner" tal:condition="python: not tile_youtube_url and video">
+      <div class="video-inner-container ${python: youtube_url and 'youtube' or ''}"
+        tal:define="content_type video/file/contentType|nothing;
+                    download_url string:${video/absolute_url}/@@download/file/${video/file/filename|nothing};
+                    has_image python: view.utils.has_image(video);">
+        <video preload="none" class="pat-video"
+               tal:condition="not: youtube_url" style="width:100%;height:100%;"
+               width="100%" height="100%"
+               tal:attributes="poster python: has_image and view.utils.get_scale_url(video, 'large');
+                               controls python: view.show_controls and 'true' or None;
+                               loop python: view.loop and 'true' or None;
+                               autoplay python: view.autoplay and 'true' or None;"
+               tal:define="subtitles nocall: video/subtitle_file|nothing;">
+          <source tal:attributes="src download_url; type content_type"></source>
+          <track kind="subtitles" src="${video/absolute_url}/@@view/++widget++form.widgets.subtitle_file/@@download"
+                 srclang="en" tal:condition="subtitles" />
+        </video>
+        <iframe tal:condition="youtube_url" style="width:100%;height:100%;"
+                width="100%" height="100%"
+                src="${python: view.tweak_youtube_url(youtube_url)}" frameborder="0" allowfullscreen=""></iframe>
+      </div>
+    </p>
+    <div class="video-inner-container youtube" tal:condition="python: tile_youtube_url and not video">
+      <iframe src="${python: view.tweak_youtube_url(tile_youtube_url)}" width="100%" height="100%"
+              frameborder="0" allowfullscreen="" style="width:100%;height:100%;" ></iframe>
+    </div>
+    <p class="date"
+        tal:content="python: view.utils.format_date(effective, 'notime')"
+        tal:condition="python: 'date' in df and view.utils.valid_date(effective)"></p>
+
+    <tal:desc tal:condition="python: 'description' in df and video">
+       <div tal:content="structure desc" class="description">
+       </div>
+    </tal:desc>
+    <p class="transcript"
+        tal:condition="python: 'transcript' in df and video">
+      <a href="${video/absolute_url}/view">Read transcript</a>
+    </p>
+  </tal:defs>
+  </div>
+</div>

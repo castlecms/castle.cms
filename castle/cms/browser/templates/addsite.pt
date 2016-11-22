@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      i18n:domain="plone">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title i18n:translate="">Create a Castle site</title>
+    <link rel="stylesheet" type="text/css"
+          tal:attributes="href string:${context/absolute_url}/++resource++plone-admin-ui.css"
+          href="/++resource++plone-admin-ui.css" />
+    <link rel="stylesheet" type="text/css"
+          tal:attributes="href string:${context/absolute_url}/++plone++castle/libs/bootstrap/dist/css/bootstrap.min.css"
+          href="/++resource++plone-admin-ui.css" />
+
+    <link rel="stylesheet" type="text/css"
+          tal:attributes="href string:${context/absolute_url}/++plone++castle/addsite/castle-addsite.css"
+        href="/++plone++castle/addsite/castle-addsite.css" />
+
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++resource++jstz-1.0.4.min.js"></script>
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/requirejs/require.js"></script>
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++castle/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script>
+      requirejs.config({
+        baseUrl: '${context/absolute_url}',
+        paths: {
+          "castle-url": "++plone++castle",
+          "mockup-url": "++resource++mockupjs",
+          "mockup-utils": "++resource++mockupjs/utils"
+        }
+      });
+      define( 'jquery', [], function () {
+        'use strict';
+        return window.jQuery;
+      });
+      define('mockup-patterns-modal', [], function(){
+        // stub this because we don't want it for our stuff
+        return;
+      });
+      define('mockup-utils', [], function(){
+        // stub this because we don't want it for our stuff
+        return;
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="box">
+        <header><h1><img src="/++plone++castle/images/castle-logo.png"
+             tal:attributes="src string:${context/absolute_url}/++plone++castle/images/castle-logo.png"
+             alt="Castle" i18n:attributes="alt"/> Castle CMS</h1>
+        </header>
+        <article>
+          <h1 i18n:translate="">Create a Castle site</h1>
+          <div id="form_data" style="display: none;" tal:content="view/form_data" />
+          <div id="reactForm">
+
+          </div>
+        </article>
+    </div>
+  <footer>
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++castle/addsite/castle-addsite.js"></script>
+  </footer>
+  </body>
+</html>

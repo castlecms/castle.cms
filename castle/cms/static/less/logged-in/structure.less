@@ -1,0 +1,387 @@
+/*
+Styles here related to when you click "Manage Content" or /folder_contents
+*/
+
+.template-folder_contents {
+  #main-content-container{
+    margin-top:25px;
+  }
+  img.pull-right {
+    max-height: 20px;
+  }
+}
+
+.pat-structure {
+  position: relative;
+
+  font-family: Arial, sans-serif;
+
+  a {
+    text-decoration: none;
+  }
+
+  .navbar {
+    margin-bottom:25px;
+
+    a.btn-default{
+      background-color: #f7f7f7;
+
+      &:hover{
+        background-color:darken(#f7f7f7, 10%);
+      }
+    }
+
+    a.btn-default.disabled {
+      background-color: #f7f7f7;
+    }
+
+    .btn{
+      padding:7px;
+    }
+  }
+
+  #btngroup-mainbuttons {
+    margin-left: 15px;
+  }
+
+  /* override rounded borders */
+  #btn-attribute-columns,
+  #btn-cut {
+    /* we don't want rounded */
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+
+  #btn-rearrange,
+  #btn-properties {
+    border-right: 1px solid #cccccc;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+
+  #btn-selected-items{
+    .label-success, .label-default{
+      background-color: #cbcbcb;
+      color:#fff;
+      border-radius: 1em;
+      padding: 2px 6px;
+      margin-left:3px;
+    }
+  }
+
+  #btn-recycle{
+    background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;
+
+    &:hover{
+      background-color: #ec971f;
+      border-color: #d58512;
+    }
+  }
+
+  //CONTENT POPOVERS
+  .popover{
+    border-radius:0;
+
+    &.bottom > .arrow::after{
+      border-bottom-color:#f7f7f7;
+    }
+
+    .popover-title{
+      padding:6px 12px;
+    }
+
+    .glyphicon-remove-circle{
+      color:@castle-primary;
+    }
+
+    &.attribute-columns ul li:last-child{
+      border-bottom:1px solid #ddd;
+    }
+
+    .btn{
+      border-radius:0;
+      margin-top:10px;
+
+      &.btn-primary{
+        background-color:@castle-primary;
+
+        &:hover, &:focus{
+          background-color: darken(@castle-primary, 10%);
+        }
+      }
+    }
+
+    .columns {
+      ul {
+        li {
+          padding: 0 5px;
+
+          input::after {
+            padding-right: 6px;
+            content: " ";
+          }
+        }
+      }
+    }
+
+    select.form-control{
+      margin-left:6px;
+    }
+  }
+
+  #filter {
+    width:270px;
+
+    .search-query {
+      height: 32px;
+      font-size: 15px;
+      padding-left:4px;
+
+      &:focus{
+        outline:2px solid lighten(@castle-primary, 40%);
+        box-shadow:none;
+      }
+    }
+    .input-group-btn {
+      #btn-query {
+        font-size: 15px;
+        height: 20px;
+        margin-left: 0;
+        padding:5px;
+        border-radius:0;
+      }
+    }
+  }
+
+  .itemRow {
+    .Subject {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  //PAGINATION STYLES
+  aside {
+    text-align: center;
+
+    ul.pagination{
+      margin:10px 0 20px;
+
+      li a{
+        font-size:14px;
+        color:@castle-primary;
+
+        &:hover, &:focus{
+          background-color:@castle-primary;
+          color:#fff;
+        }
+      }
+
+      .active a{
+        background-color:@castle-primary;
+        border-color:@castle-primary;
+
+        &:hover, &:focus{
+          background-color:darken(@castle-primary, 10%);
+        }
+      }
+
+      > .disabled a{
+        color:#999;
+        background-color:#f7f7f7;
+        opacity:0.65;
+
+        &:hover, &:focus{
+          background-color:#f7f7f7;
+          opacity:0.65;
+        }
+      }
+
+      &:nth-child(1) {
+        /* page list */
+        > li a {
+          border-radius: 0px;
+          margin-right: 5px;
+        }
+      }
+
+      &:nth-child(2) {
+        /* per page selector */
+        display: block;
+        position: absolute;
+        right: -5px;
+        bottom: 4px;
+
+        .disabled:not(.serverhowmany) a {
+          border-radius: 0px;
+          background-color: transparent;
+          border: 0px;
+        }
+        .serverhowmany a {
+          margin-right: 5px;
+          border-radius: 0px;
+        }
+      }
+
+      &:nth-child(3) {
+        /* selected page status */
+        display: none;
+      }
+    }
+  }
+
+  /* TABLE STYLES*/
+  table .fc-breadcrumbs-container{
+
+    .context-buttons.input-group {
+      display: none !important; // really, really hide it
+    }
+
+    .fc-breadcrumbs{
+      a{
+        color:@castle-primary;
+
+        &:hover{
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+table.table.table-striped, table.structure-dragging {
+  border-spacing: 0px;
+
+  .glyphicon.glyphicon-home::before {
+    width: 14px;
+    height: 14px;
+  }
+
+  .glyphicon.glyphicon-new-window{
+    vertical-align: top;
+    margin-top:5px;
+  }
+
+  th.actions, .actionmenu-container{
+    text-align: center;
+  }
+
+  .actionmenu-container .btn-group.actionmenu{
+    .btn, .btn-default{
+      border:none;
+      background:transparent;
+      padding:0;
+      margin:0;
+      font-size:18px;
+      line-height: 1em;
+
+      &:focus, &:hover, &:active{
+        background:transparent;
+      }
+    }
+  }
+  .btn-group.open .dropdown-toggle{
+    box-shadow: none;
+  }
+
+  .dropdown-menu{
+    border-radius: 0;
+  }
+
+  thead {
+    tr {
+      border-spacing: 0px;
+
+      th, td {
+        font-size: 15px;
+        vertical-align: middle;
+        text-align: left;
+        border-width: 0px;
+        padding: 7px 5px;
+      }
+      td {
+        border-bottom-width: 1px;
+      }
+      th {
+        color: @castle-primary;
+        padding: 10px 5px;
+        border-bottom: 2px solid #b5b5b5;
+      }
+    }
+  }
+
+  tbody {
+
+    tr {
+      border-spacing: 0px;
+
+      td {
+        font-size: 15px;
+        vertical-align: middle;
+        padding: 8px 5px 8px 8px;
+        border-width: 0px;
+
+        a[class*="contenttype-"]::before {
+          width: 14px;
+          height: 14px;
+          margin-top: -8px;
+          margin-right: 0.4375em;
+          display: inline-block;
+        }
+      }
+    }
+  }
+}
+
+body table.structure-dragging {
+  background-color: white;
+  z-index: 107;
+}
+
+
+/* folder contents overrides! */
+
+.template-folder_contents {
+  /* hide header, we don't want it */
+  h1.documentFirstHeading,
+  /* hide setting default page, we don't use that in castle */
+  .pat-structure .dropdown-menu > li > a.set-default-page,
+  /* hide upload btn here, use castle upload btn */
+  .pat-structure #btn-upload {
+    display: none;
+  }
+
+  /* toolbar fixes */
+  #main-content {
+    z-index: 5;
+    margin-top: 0px;
+    padding: 25px;
+  }
+  // Once the query button is clicked.. lets take away the z-index and positioning. it works without it
+  &.popover-structure-query-active #main-content,
+  &.popover-structure-columns-active #main-content,
+  &.popover-structure-rearrange-active #main-content,
+  &.popover-structure-well-active #main-content {
+    z-index: none;
+    position: inherit;
+  }
+
+  // Since we took away the z-index above we have to make a couple changes to the bottom pagination so it doesn't come up
+  &.popover-structure-query-active .pat-structure aside ul.pagination:nth-child(2),
+  &.popover-structure-columns-active .pat-structure aside ul.pagination:nth-child(2),
+  &.popover-structure-rearrange-active .pat-structure aside ul.pagination:nth-child(2),
+  &.popover-structure-well-active .pat-structure aside ul.pagination:nth-child(2) {
+    position: inherit;
+    display: inline-block;
+    float: right;
+  }
+
+  // Seems like the content sways to the left and the right due to .row negative side margins for folder contents view. Taking them out
+  #main-content-container{
+    margin: 25px 0px 0px;
+  }
+}

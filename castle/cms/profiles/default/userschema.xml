@@ -1,0 +1,37 @@
+<model xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:lingua="http://namespaces.plone.org/supermodel/lingua" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:users="http://namespaces.plone.org/supermodel/users" xmlns="http://namespaces.plone.org/supermodel/schema" i18n:domain="plone">
+  <schema name="member-fields">
+    <field name="phone_number" type="zope.schema.TextLine" users:forms="In User Profile">
+      <description/>
+      <required>False</required>
+      <title>Phone number</title>
+    </field>
+    <field name="home_page" type="zope.schema.URI" users:forms="In User Profile">
+      <description i18n:translate="help_homepage">
+          The URL for your external home page, if you have one.
+      </description>
+      <required>False</required>
+      <title i18n:translate="label_homepage">Home page</title>
+    </field>
+    <field name="description" type="zope.schema.Text" users:forms="In User Profile">
+      <description i18n:translate="help_biography">
+          A short overview of who you are and what you do. Will be displayed on your author page, linked from the items you create.
+      </description>
+      <required>False</required>
+      <title i18n:translate="label_biography">Biography</title>
+    </field>
+    <field name="location" type="zope.schema.TextLine" users:forms="In User Profile">
+      <description i18n:translate="help_location">
+          Your location - either city and country - or in a company setting, where your office is located.
+      </description>
+      <required>False</required>
+      <title i18n:translate="label_location">Location</title>
+    </field>
+    <field name="portrait" type="plone.namedfile.field.NamedBlobImage" users:forms="In User Profile">
+      <description i18n:translate="help_portrait">
+          To add or change the portrait: click the "Browse" button; select a picture of yourself. Recommended image size is 75 pixels wide by 100 pixels tall.
+      </description>
+      <required>False</required>
+      <title i18n:translate="label_portrait">Portrait</title>
+    </field>
+  </schema>
+</model>

@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+    <metal:block fill-slot="top_slot"
+               tal:define="dummy python:request.set('disable_border',1)" />
+
+    <body>
+
+        <metal:main fill-slot="main">
+
+            <div id="content-core">
+
+                <h1 class="documentFirstHeading"
+                    tal:content="view/label">Rename item</h1>
+
+                <div id="content-core">
+                    <form metal:use-macro="context/@@ploneform-macros/titlelessform" />
+                </div>
+
+            </div>
+        </metal:main>
+
+    </body>
+</html>

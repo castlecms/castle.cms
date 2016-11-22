@@ -1,0 +1,142 @@
+<div tal:define="dutils context/@@dashboard-utils;
+                 under_review dutils/get_in_review;
+                 has_unders_review under_review/total;
+                 dummy python: utils.add_resource_on_request('castle-dashboard-statistics');"
+     class="castle-dashboard-statistics">
+
+<div class="row castle-statistics-container" style="clear: both">
+  <div class="col-md-4 load-container-modified"
+       tal:attributes="class python: has_unders_review and 'col-md-4 load-container-modified' or 'col-md-6 load-container-modified'"
+       tal:define="results dutils/get_recently_modified">
+    <h3>Changes</h3>
+    <div class="recent-activity">
+      <table>
+        <thead>
+          <tr class="dots">
+            <th scope="col">Title</th>
+            <th scope="col">Last modified by</th>
+            <th scope="col">Modified</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tal:item tal:repeat="item results/results">
+            <tr class="dots"
+                tal:attributes="class string:dots state-${item/review_state}">
+              <tal:def tal:define="creator python: dutils.get_modifier(item);
+                                   conttype item/portal_type;
+                                   conttypeLower python:conttype.lower();">
+                <td scope="row">
+                  <a href="${python: dutils.util.get_object_url(item)}"
+                     class="title"
+                     tal:attributes="class string:title type contenttype-${conttypeLower}">${item/Title}</a>
+                </td>
+                <td><div class="creator icon-user">${creator/name_or_id}</div></td>
+                <td>
+                  <div class="date pat-moment icon-events"
+                       data-pat-moment="format:relative"
+                       data-date="${python: item.modified.ISO8601()}">
+                  </div>
+                </td>
+              </tal:def>
+            </tr>
+          </tal:item>
+        </tbody>
+      </table>
+    </div>
+    <button class="plone-btn plone-btn-default load-more"
+            data-name="${results/name}"
+            data-start="${results/start}"
+            data-end="${results/end}"
+            data-total="${results/total}"
+            tal:condition="python: results['total'] > results['end']">Load more</button>
+  </div>
+  <div class="col-md-4 load-container-created"
+       tal:attributes="class python: has_unders_review and 'col-md-4 load-container-created' or 'col-md-6 load-container-created'"
+       tal:define="results dutils/get_recently_created">
+    <h3>Additions</h3>
+    <div class="recent-additions">
+      <table>
+        <thead>
+          <tr class="dots">
+            <th scope="col">Title</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tal:item tal:repeat="item results/results">
+            <tr class="dots"
+                tal:attributes="class string:dots state-${item/review_state}">
+              <tal:def tal:define="creator python: dutils.get_creator(item);
+                                   conttype item/portal_type;
+                                   conttypeLower python:conttype.lower();">
+                <td scope="row">
+                  <a href="${python: dutils.util.get_object_url(item)}"
+                     class="title"
+                     tal:attributes="class string:title type contenttype-${conttypeLower}">${item/Title}</a>
+                </td>
+                <td><div class="creator icon-user">${creator/name_or_id}</div></td>
+                <td>
+                  <div class="date pat-moment icon-events"
+                       data-pat-moment="format:relative"
+                       data-date="${python: item.created.ISO8601()}">
+                  </div>
+                </td>
+              </tal:def>
+            </tr>
+          </tal:item>
+        </tbody>
+      </table>
+    </div>
+    <button class="plone-btn plone-btn-default load-more"
+            data-name="${results/name}"
+            data-start="${results/start}"
+            data-end="${results/end}"
+            data-total="${results/total}"
+            tal:condition="python: results['total'] > results['end']">Load more</button>
+  </div>
+  <div class="col-md-4 load-container-review" tal:condition="has_unders_review">
+    <h3>Under Review</h3>
+    <div class="under-review">
+      <table>
+        <thead>
+          <tr class="dots">
+            <th scope="col">Title</th>
+            <th scope="col">Last modified by</th>
+            <th scope="col">Modified</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tal:item tal:repeat="item under_review/results">
+            <tr class="dots"
+                tal:attributes="class string:dots state-${item/review_state}">
+              <tal:def tal:define="creator python: dutils.get_modifier(item);
+                                   conttype item/portal_type;
+                                   conttypeLower python:conttype.lower();">
+                <td scope="row">
+                  <a href="${python: dutils.util.get_object_url(item)}"
+                     class="title"
+                     tal:attributes="class string:title type contenttype-${conttypeLower}">${item/Title}</a>
+                </td>
+                <td><div class="creator icon-user">${creator/name_or_id}</div></td>
+                <td>
+                  <div class="date pat-moment icon-events"
+                       data-pat-moment="format:relative"
+                       data-date="${python: item.modified.ISO8601()}">
+                  </div>
+                </td>
+              </tal:def>
+            </tr>
+          </tal:item>
+        </tbody>
+      </table>
+    </div>
+    <button class="plone-btn plone-btn-default load-more"
+            data-name="${under_review/name}"
+            data-start="${under_review/start}"
+            data-end="${under_review/end}"
+            data-total="${under_review/total}"
+            tal:condition="python: under_review['total'] > under_review['end']">Load more</button>
+  </div>
+</div>
+</div>

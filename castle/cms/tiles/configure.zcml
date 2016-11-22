@@ -1,0 +1,386 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="castle.cms.layouts">
+
+  <adapter factory=".globalTileDataContext" />
+  <adapter factory=".metaTileDataContext" />
+  <adapter factory=".versionTileDataContext" />
+
+  <include package="plone.app.tiles" />
+
+  <plone:tile
+    name="castle.cms.embedtile"
+    title="HTML Embed"
+    class=".embed.EmbedTile"
+    schema=".embed.IEmbedTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.imagetile"
+    title="Image"
+    class=".image.ImageTile"
+    schema=".image.IImageTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/image.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.videotile"
+    title="Video"
+    class=".video.VideoTile"
+    schema=".video.IVideoTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/video.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.audiotile"
+    title="Audio"
+    class=".audio.AudioTile"
+    schema=".audio.IAudioTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/audio.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.slidertile"
+    title="Slider"
+    class=".slider.SliderTile"
+    schema=".slider.ISliderTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/slider.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.gallerytile"
+    title="Gallery"
+    class=".gallery.GalleryTile"
+    schema=".gallery.IGalleryTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.maptile"
+    title="Map"
+    description="With a map tiles you can select site content to show on the map or add custom markers."
+    class=".map.MapTile"
+    schema=".map.IMapTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/map.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.pin"
+    title="Pinterest Pin"
+    class=".pinterest.PinTile"
+    schema=".pinterest.IPinTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/pin.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.facebookPage"
+    title="Facebook Page"
+    class=".facebook.FacebookPageTile"
+    schema=".facebook.IFacebookPageTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/facebookpage.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.twitterTimeline"
+    title="Twitter Timeline"
+    class=".twittertimeline.TwitterTimelineTile"
+    schema=".twittertimeline.ITwitterTimelineTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+	  template="templates/timeline.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.tweet"
+    title="Tweet"
+    class=".tweet.TweetTile"
+    schema=".tweet.ITweetTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+	  template="templates/tweet.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.sharing"
+    title="Sharing Buttons"
+    class=".sharing.SharingTile"
+    schema=".sharing.ISharingTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/sharing.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.navigation"
+    title="Navigation"
+    class=".navigation.NavigationTile"
+    schema=".navigation.INavigationTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.fragment"
+    title="Fragment"
+    class=".fragment.FragmentTile"
+    schema=".fragment.IFragmentTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.querylisting"
+    title="Query listing"
+    class=".querylisting.QueryListingTile"
+    schema=".querylisting.IQueryListingTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/querylisting.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.meta"
+    title="Meta tile"
+    class=".meta.MetaTile"
+    schema=".meta.IMetaTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.calendar"
+    title="Calendar"
+    class=".calendar.CalendarTile"
+    schema=".calendar.ICalendarTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/calendar.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.subscription"
+    title="Subscribe"
+    class=".subscription.SubscriptionTile"
+    schema=".subscription.ISubscriptionTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.AddPortalContent"
+    permission="zope2.View"
+    template="templates/subscribe.pt"
+    />
+
+  <plone:tile
+    name="castle.cms.documentviewer"
+    title="Document Viewer tile"
+    class=".documentviewer.DocumentViewerTile"
+    schema=".documentviewer.IDocumentViewerTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.AddPortalContent"
+    permission="zope2.View"
+    />
+
+  <!-- overrides -->
+  <plone:tile
+    name="plone.app.standardtiles.discussion"
+    class=".discussion.DiscussionTile"
+    for="*"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <plone:tile
+    name="plone.app.standardtiles.lockinfo"
+    class=".common.LockInfoTile"
+    for="*"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <plone:tile
+    name="plone.app.standardtiles.global_statusmessage"
+    class=".common.GlobalStatusMessageTile"
+    for="*"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+
+  <!-- metadata -->
+  <plone:tile
+    name="castle.cms.metadata"
+    title="Metadata tile"
+    class=".metadata.MetaDataTile"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.search"
+    title="Search"
+    class=".search.SearchTile"
+    schema=".search.ISearchTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    template="templates/search.pt"
+    permission="zope2.View"
+    />
+
+  <plone:tile
+    name="castle.cms.existing"
+    title="Existing content"
+    class=".existing.ExistingTile"
+    schema=".existing.IExistingTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    template="templates/existing.pt"
+    permission="zope2.View"
+    />
+
+  <!-- plone.app.standardtiles content listing views -->
+  <browser:page
+    name="file_tabular_view"
+    for="*"
+    layer="plone.app.standardtiles.contentlisting.IContentListingTileLayer"
+    permission="zope2.View"
+    template="templates/contentlisting_file_tabular_view.pt"
+    />
+
+  <!-- fields -->
+  <plone:tile
+    name="plone.app.standardtiles.field"
+    class=".fields.DexterityFieldTile"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    permission="zope2.View"
+    />
+  <utility
+    provides="castle.cms.interfaces.IFieldTileRenderer"
+    component=".fields.LocationsFieldRenderer"
+    name="ILocation.locations-renderer"
+    />
+
+
+  <!-- query listings -->
+  <adapter
+    name="querylisting.default"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.DefaultView"
+    />
+  <adapter
+    name="querylisting.default-natural"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.DefaultNaturalView"
+    />
+  <adapter
+    name="querylisting.compact"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.CompactView"
+    />
+  <adapter
+    name="querylisting.grid"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.GridView"
+    />
+  <adapter
+    name="querylisting.tiled"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.TiledView"
+    />
+  <adapter
+    name="querylisting.tagged"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.TaggedView"
+    />
+  <adapter
+    name="querylisting.blog"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.BlogView"
+    />
+
+  <!-- gallery views -->
+  <adapter
+    name="gallery.default"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".gallery.DefaultView"
+    />
+
+  <!-- navigation views -->
+  <adapter
+    name="navigation.horizontal"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".navigation.HorizontalView"
+    />
+  <adapter
+    name="navigation.vertical"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".navigation.VerticalView"
+    />
+
+</configure>

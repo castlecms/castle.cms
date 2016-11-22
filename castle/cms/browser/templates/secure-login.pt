@@ -1,0 +1,56 @@
+<html tal:define="portal_url context/portal_url|context/absolute_url">
+  <head>
+    <link href="${portal_url|nothing}/++plone++castle/libs/bootstrap/dist/css/bootstrap.css"
+          rel="stylesheet" type="text/css">
+    <link href="${portal_url|nothing}/++plone++castle/less/misc/secure-login.css?v=4"
+          rel="stylesheet" type="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  </head>
+  <body tal:define="utils context/@@castle-utils;
+                    logo utils/get_logo|nothing" class="secure-login-template">
+
+    <div id="visual-wrapper">
+      <div class="castle-login-header">
+        <div class="row" tal:condition="logo">
+          <div class="col-md-12">
+            <img src="${logo}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h1 tal:on-error="string:Castle CMS">${python: utils.get_registry_value('plone.site_title')}</h1>
+          </div>
+        </div>
+      </div>
+
+      <div id="secure-login" data-options="${view/options}" />
+
+
+
+    </div>
+
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/requirejs/require.js"></script>
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++castle/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script>
+      requirejs.config({
+        baseUrl: '${context/absolute_url}',
+        paths: {
+          "castle-url": "++plone++castle",
+          "mockup-url": "++resource++mockupjs",
+          "mockup-utils": "++resource++mockupjs/utils"
+        }
+      });
+      define( 'jquery', [], function () {
+        'use strict';
+        return window.jQuery;
+      });
+      define('mockup-patterns-modal', [], function(){
+        // stub this because we don't want it for our stuff
+        return;
+      });
+    </script>
+    <script src="${portal_url|nothing}/++plone++castle/components/secure-login.js?v=4">
+    </script>
+  </body>
+</html>

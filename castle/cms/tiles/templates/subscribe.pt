@@ -1,0 +1,4 @@
+<div class="pat-subscribe mosaic-subscription-tile">
+  <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
+  <metal:block use-macro="view/@@ploneform-macros/titlelessform" />
+</div>

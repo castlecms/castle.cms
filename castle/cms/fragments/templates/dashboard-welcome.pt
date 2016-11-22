@@ -1,0 +1,149 @@
+<div tal:define="dutils context/@@dashboard-utils;
+                 totals dutils/get_totals|nothing;
+                 interests dutils/find_areas_of_interest|nothing;
+                 memberinfo context/portal_membership/getMemberInfo;
+                 member context/@@plone_portal_state/member;
+                 userId python: member.getId() or member.getId();
+                 name python:memberinfo['fullname'] or userId;
+                 pm context/portal_membership;
+                 member context/plone_portal_state/member;
+                 portrait python:pm.getPersonalPortrait(member.getId());
+                 user_url portrait/absolute_url;
+                 dummy python: utils.add_resource_on_request('castle-dashboard-welcome');"
+     class="castle-dashboard-welcome">
+
+ <span tal:replace="structure context/@@authenticator/authenticator"/>
+
+ <h1 class="documentFirstHeading" i18n:translate="heading_dashboard">
+   Welcome ${name}
+ </h1>
+ <div class="user-picture" tal:condition="python: 'defaultUser' not in user_url">
+   <img src="${user_url}" />
+ </div>
+  <p class="welcome-message">
+    What do you need to do today?<br/>
+    (<a href="${dutils/site/absolute_url}/dashboards/${userId}/edit">Edit dashboard</a>)
+  </p>
+
+  <ul class="castle-grid-block-sm-6 dashboard-add-content-buttons"
+      tal:condition="python: not interests and dutils.has_add_permission">
+    <!-- This should be dynamically generated -->
+    <li class="castle-grid-block-item">
+      <a href="${context/absolute_url}"
+         class="add-content-btn contenttype-document"
+         data-type="Document"
+         data-path="/">Add page</a></li>
+    <li class="castle-grid-block-item">
+      <a href="${context/absolute_url}"
+         class="add-content-btn contenttype-news-item"
+         data-type="News%20Item"
+         data-path="/">Add news item</a></li>
+    <li class="castle-grid-block-item">
+      <a href="${context/absolute_url}"
+         class="add-content-btn contenttype-link"
+         data-type="Link"
+         data-path="/">Add link</a></li>
+    <li class="castle-grid-block-item">
+      <a href="${context/absolute_url}"
+         class="add-content-btn contenttype-folder"
+         data-type="Folder"
+         data-path="/">Add folder</a></li>
+    <li class="castle-grid-block-item">
+      <a href="${context/absolute_url}"
+         class="upload-content-btn glyphicon glyphicon-upload"
+         data-type="upload">Add files</a></li>
+    <li class="castle-grid-block-item">
+      <a href="${portal_url}/folder_contents" class="icon-manage-site">Manage content</a></li>
+  </ul>
+  <ul class="castle-grid-block-sm-6 dashboard-add-content-buttons" tal:condition="interests">
+    <tal:int tal:repeat="interest interests">
+      <tal:defs tal:define="root python: dutils.is_root(interest['loc']);
+                            type interest/type">
+      <li class="castle-grid-block-item"
+          tal:condition="python: type not in ('UPLOAD', 'MANAGE')">
+        <a href="${context/absolute_url}"
+           class="add-content-btn
+                  contenttype-${python: type.lower().replace(' ', '-')}"
+           tal:condition="root"
+           data-type="${python: interest['type'].replace(' ', '%20')}"
+           data-path="/">Add ${python: interest['pt'].title.lower()}</a>
+        <a href="${python: interest['loc']}"
+           class="add-content-btn
+                  contenttype-${python: type.lower().replace(' ', '-')}"
+            tal:condition="not: root"
+            data-type="${type}"
+            data-path="${python: dutils.get_path(interest['loc'])}">
+          Add ${python: interest['pt'].title.lower()}
+          <span class="path">to ${python: dutils.get_path(interest['loc'])}</span>
+        </a>
+      </li>
+      <li class="castle-grid-block-item"
+          tal:condition="python: type == 'UPLOAD'">
+        <a href="#" class="upload-content-btn glyphicon glyphicon-upload"
+           data-type="upload">Add files</a>
+      </li>
+      <li class="castle-grid-block-item"
+          tal:condition="python: type == 'MANAGE'"
+          tal:define="root python: dutils.is_root(interest['loc'])">
+        <a href="${portal_url}/folder_contents" tal:condition="root"
+           class="icon-manage-site manage-content-btn">Manage site content</a>
+        <a href="${interest/loc/absolute_url}/folder_contents" tal:condition="not: root"
+           class="icon-manage-site manage-content-btn">
+          Manage
+          <span class="path">${python: dutils.get_path(interest['loc'])}</span>
+        </a>
+      </li>
+    </tal:defs>
+    </tal:int>
+  </ul>
+
+  <div class="content-totals" tal:condition="totals" style="display: none">
+    <!-- ignore for now... -->
+    <span class="content-totals-label">Content Totals</span>
+    <tal:total tal:repeat="total totals">
+      <span class="total-group">
+        <span tal:attributes="class string:type contenttype-${python: total['key'].lower()}">${total/key}:</span><span class="count">${total/doc_count}</span>
+      </span>
+    </tal:total>
+  </div>
+
+
+  <div class="open-sessions" tal:condition="python: dutils.sessions">
+    <p class="discreet">You have open sessions</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Last activity</th>
+          <th>IP</th>
+          <th>User Agent</th>
+          <th>End</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tal:sess tal:repeat="session python: dutils.sessions">
+          <tr tal:condition="session/id|nothing">
+            <td class="pat-moment"
+                   data-pat-moment="format:relative"
+                   data-date="${session/updated}Z">${session/updated}</td>
+            <td>
+              ${python: dutils.whois(session['ip'])}
+              (${session/ip})
+            </td>
+            <td>${python: dutils.parse_ua(session)}</td>
+            <td>
+              <form method="POST" tal:condition="not: session/expired|nothing">
+                <input type="hidden" name="removesession" value="yes" />
+                <input type="hidden" name="id" value="${session/id}" />
+                <button type="submit" class="plone-btn plone-btn-danger">End Session</button>
+              </form>
+              <span method="POST" tal:condition="session/expired|nothing">
+                Already ended
+              </span>
+            </td>
+          </tr>
+        </tal:sess>
+      </tbody>
+    </table>
+  </div>
+
+</div>

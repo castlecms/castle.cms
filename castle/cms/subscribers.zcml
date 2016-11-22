@@ -1,0 +1,77 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="castle.cms">
+
+  <subscriber handler=".security.onUserLogsIn" />
+  <subscriber handler=".security.onUserLogsOut" />
+  <subscriber handler=".security.afterTraversal" />
+  <subscriber handler=".security.beforeCommit" />
+
+  <subscriber handler=".transformer.requestStart" />
+  <subscriber handler=".transformer.requestEnd" />
+
+  <adapter
+    for="* .interfaces.ICastleLayer"
+    name="castle.cms.transformer"
+    factory=".transformer.TransformInpersonatorOutput"
+    />
+
+
+  <!-- file events -->
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.onFileEdit" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".subscribers.onFileEdit" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+    handler=".subscribers.onFileEdit" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".subscribers.onFileStateChanged" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+    handler=".subscribers.onFileDelete" />
+
+  <!-- all dexterity content handling -->
+  <subscriber
+    for="plone.dexterity.interfaces.IDexterityContent
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".subscribers.onContentCreated" />
+  <subscriber
+    for="plone.dexterity.interfaces.IDexterityContent
+         zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+    handler=".subscribers.onContentModified" />
+  <subscriber
+    for="plone.dexterity.interfaces.IDexterityContent
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.onContentModified" />
+
+
+  <!-- basic object events for auditing purposes -->
+  <subscriber
+    for="plone.dexterity.interfaces.IDexterityContent
+         zope.component.interfaces.IObjectEvent"
+    handler=".subscribers.onObjectEvent" />
+  <subscriber
+      for="Products.PluggableAuthService.interfaces.events.IPASEvent"
+      handler=".subscribers.onPASEvent"
+      />
+
+  <!-- trash related events -->
+  <subscriber
+    for=".interfaces.ITrashed
+         Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
+    handler=".subscribers.onTrashTransitioned" />
+
+</configure>

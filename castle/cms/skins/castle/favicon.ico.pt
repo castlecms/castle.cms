@@ -1,0 +1,3 @@
+<div tal:define="portal context/plone_portal_state/portal">
+  <div tal:define="dummy python: request.response.redirect(portal.absolute_url() + '/@@favicon.ico')" />
+</div>

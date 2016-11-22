@@ -1,0 +1,245 @@
+// "out": "search.css", "sourcemap": true, "compress": true
+
+@search_btn_width: 100px;
+@border_color: #d9d9d9;
+@blue_color: #4285f4;
+@screen-sm: 768px;
+
+
+#content-core .search-form,
+.search-form {
+  .search-input-group {
+    width: 80%;
+    position: relative;
+    border: 1px solid @border_color;
+    margin-left: 15px;
+    height: 36px;
+  }
+  .search-input {
+    top: 0px;
+    border: 1px solid transparent;
+    padding: 0px;
+    margin: 0px;
+    padding-left: 8px;
+    width: ~"calc(100% - " @search_btn_width ~")";
+    position: absolute;
+    z-index: 6;
+    left: 0px;
+    outline: none;
+    background: url("data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw%3D%3D") transparent;
+    font: 24px arial,sans-serif;
+    line-height: 34px !important;
+    height: 34px !important;
+  }
+  .search-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: @search_btn_width;
+    background-color: @blue_color;
+    color: white;
+    border: none;
+    border-left: 1px solid @border_color;
+    height: 34px;
+  }
+}
+
+.search-options {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  margin-left: -10px;
+  margin-right: -10px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid @border_color;
+  border-bottom: 1px solid @border_color;
+
+  > ul {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    margin-left: 30px;
+    display: inline-block;
+  }
+
+  > ul > li {
+    display: inline-block;
+    height: 35px;
+    margin-right: 20px;
+    padding: 0 7px;
+
+    > a {
+      display: block;
+      color: #777777;
+    }
+    > a:hover {
+      color: #403f3f;
+      text-decoration: none;
+    }
+
+    &.active {
+      border-bottom: 3px solid @blue_color;
+      > a,
+      > a:hover {
+        font-weight: bold;
+        color: @blue_color;
+      }
+    }
+  }
+}
+
+.search-menu-dropdown-container {
+  position: relative;
+  a.more-btn {
+    position: relative;
+    &::after {
+      content: " ";
+      border-color: #909090 transparent;
+      border-style: solid;
+      border-width: 4px 4px 0 4px;
+      width: 0;
+      height: 0;
+      margin-left: 5px;
+      top: 50%;
+      margin-top: -1px;
+      position: absolute;
+    }
+  }
+
+  .search-menu-dropdown {
+    position: absolute;
+    top: 25px;
+    right: 0px;
+    z-index: 5;
+    background-color: white;
+    border: 1px solid @border_color;
+    box-shadow: 0 0 5px 0 #ccc;
+    -webkit-box-shadow: 0 0 5px 0 #ccc;
+    margin: 0px;
+    padding: 5px 0px;
+    min-width: 150px;
+
+    li {
+      list-style: none;
+
+      a {
+        display: block;
+        padding: 2px 20px;
+        color: #777777;
+      }
+      a:hover{
+        background-color: #e8e8e8;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.search-additional-sites {
+  float: right;
+
+  @media (max-width: @screen-sm) {
+      position: relative;
+  }
+}
+
+.search-suggestions {
+  ul {
+    list-style: none;
+    margin:0;
+
+    li {
+      display: inline-block;
+    }
+  }
+
+  .label {
+    padding-right: 5px;
+    color: #8e8e8e;
+  }
+  .suggestion {
+    padding-right: 3px;
+  }
+
+  .suggestion::after {
+    content: ", ";
+  }
+  .suggestion:last-child::after {
+    content: "";
+  }
+}
+
+#search-results-wrapper {
+  margin-left: 15px;
+}
+#search-results-bar{
+  color: #716f6f;
+  font-size: 90%;
+}
+#search-results {
+  margin-top: 10px;
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    list-style: none;
+    margin: 15px 0;
+
+    .result-title {
+      display: block;
+      a {
+        font-size: 22px;
+      }
+    }
+    .result-url {
+      font-size: 80%;
+      color: green;
+      display: block;
+    }
+    .result-modified {
+      color: #7b7b7b;
+      &::after {
+        content: " - ";
+      }
+    }
+    .result-contentType {
+      font-size: 11px;
+      color: #888888;
+      font-weight: 200;
+      display: inline-block;
+      padding-right: 3px;
+      float: left;
+      margin-top: 5px;
+    }
+    .result-description {
+
+    }
+    .result-download {
+      display: block;
+    }
+  }
+  .bottom-total {
+    margin-top: 30px;
+    a {
+      font-size: 20px;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: none;
+    }
+    .prev {
+      margin-right: 29px;
+    }
+    .next::after {
+      content: ">";
+      padding-left: 5px;
+    }
+    .prev::before {
+      content: "<";
+      padding-right: 5px;
+    }
+  }
+}

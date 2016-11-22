@@ -1,0 +1,17 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  i18n_domain="plone">
+
+
+  <permission
+    id="castle.cms.addAudio"
+    title="castle.cms: Add Audio"
+    />
+
+  <permission
+    id="castle.cms.addVideo"
+    title="castle.cms: Add Video"
+    />
+
+</configure>

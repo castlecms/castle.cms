@@ -1,0 +1,41 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    i18n_domain="castle.cms">
+
+  <include package="collective.elasticsearch" />
+
+  <!-- search overrides -->
+  <adapter
+    for=".interfaces.ICastleLayer
+         collective.elasticsearch.interfaces.IElasticSearchCatalog"
+    factory=".search.QueryAssembler"
+    provides="collective.elasticsearch.interfaces.IQueryAssembler" />
+  <adapter
+    for=".interfaces.ICastleLayer
+         collective.elasticsearch.interfaces.IElasticSearchCatalog"
+    factory=".search.MappingAdapter"
+    provides="collective.elasticsearch.interfaces.IMappingProvider" />
+  <adapter
+    for="plone.dexterity.interfaces.IDexterityContent"
+    factory=".search.AdditionalIndexDataProvider"
+    provides="collective.elasticsearch.interfaces.IAdditionalIndexDataProvider" />
+
+
+  <adapter name="getRawRelatedItems" factory=".indexers.getRawRelatedItems" />
+  <adapter name="location" factory=".indexers.getLocation" />
+  <adapter name="hasImage" factory=".indexers.hasImage" />
+  <adapter name="contentType" factory=".indexers.getContentTypeFile" />
+  <adapter name="contentType" factory=".indexers.getContentTypeImage" />
+  <adapter name="contentType" factory=".indexers.getContentTypeContent" />
+  <adapter name="trashed" factory=".indexers.trashed" />
+  <adapter name="last_modified_by" factory=".indexers.last_modified_by" />
+  <adapter name="image_info" factory=".indexers.image_info" />
+
+</configure>

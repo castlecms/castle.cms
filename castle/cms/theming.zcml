@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    i18n_domain="castle.cms">
+
+
+  <monkey:patch
+    description="Patch theming engine"
+    class="plone.app.theming.transform.ThemeTransform"
+    original="transformIterable"
+    replacement=".theming.transformIterable"
+    preserveOriginal="True"
+    />
+
+  <adapter
+    factory=".theming.Policy"
+    for=".interfaces.ICastleLayer"
+    />
+
+</configure>

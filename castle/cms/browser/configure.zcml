@@ -1,0 +1,661 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <!-- for permissions -->
+  <include package="Products.CMFEditions" />
+
+  <include package=".controlpanel" />
+
+  <class class="OFS.Application.Application">
+    <implements interface="..interfaces.ICastleApplication" />
+  </class>
+
+  <browser:page
+    for="..interfaces.ICastleApplication"
+    name="plone-addsite"
+    class=".addsite.AddCastleSite"
+    permission="zope2.ViewManagementScreens"
+    template="templates/addsite.pt"
+  />
+
+  <browser:page
+    for="..interfaces.ICastleApplication"
+    name="plone-overview"
+    class=".addsite.Overview"
+    permission="zope.Public"
+    template="templates/overview.pt"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="set-config"
+    class=".siteconfig.SiteConfiguration"
+    permission="cmf.ManagePortal"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="content-creator"
+    class=".content.Creator"
+    permission="zope2.View"
+  />
+  <browser:page
+    for="plone.dexterity.interfaces.IDexterityContent"
+    name="page-layout-selector"
+    class=".content.PageLayoutSelector"
+    permission="cmf.ModifyPortalContent"
+  />
+  <browser:page
+    for="plone.dexterity.interfaces.IDexterityContent"
+    name="publish-content"
+    class=".content.PublishContent"
+    permission="cmf.ModifyPortalContent"
+  />
+  <browser:page
+    for="*"
+    name="content-workflow"
+    class=".content.Workflow"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    name="plone_layout"
+    for="*"
+    permission="zope2.View"
+    class=".layout.LayoutPolicy"
+    layer="..interfaces.ICastleLayer"
+    allowed_interface="plone.app.layout.globals.interfaces.ILayoutPolicy"
+    />
+  <browser:page
+    name="layout_view"
+    for="castle.cms.interfaces.IDashboard"
+    class=".layout.LayoutView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    class=".fc.FolderContentsView"
+    name="folder_contents"
+    template="templates/folder_contents.pt"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="locked-out"
+    class=".lockout.LockedOutView"
+    permission="zope2.View"
+    template="templates/locked-out.pt"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="session-removed"
+    permission="zope2.View"
+    template="templates/session-removed.pt" />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="disabled-user"
+    class=".lockout.DisabledUserView"
+    permission="zope2.View"
+    template="templates/disabled-user.pt"
+  />
+
+  <browser:page
+    name="download"
+    for="*"
+    class=".files.NamedFileDownload"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="download"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".files.Download"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="download-as-png"
+    for="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
+    class=".files.DownloadAsPNG"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    name="convert-to-png"
+    for="*"
+    class=".files.ConvertToPNG"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    for="plone.namedfile.interfaces.IImageScaleTraversable"
+    name="images"
+    class=".files.CastleImageScaling"
+    allowed_attributes="scale"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <!-- icon views -->
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="site-icon.png"
+    class=".icon.IconView"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="manifest.json"
+    class=".icon.ManifestView"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="browserconfig.xml"
+    class=".icon.BrowserConfigView"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="favicon.ico"
+    class=".icon.FaviconView"
+    permission="zope2.View"
+    />
+
+
+  <browser:page
+    name="quality-check"
+    for="*"
+    class=".content.QualityCheckContent"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="display-file"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".files.Download"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="castle-utils"
+    for="*"
+    permission="zope2.View"
+    class=".utils.Utils"
+    allowed_interface="..interfaces.IUtils"
+    />
+
+  <browser:page
+    for="*"
+    name="main_template"
+    class=".main_template.MainTemplate"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="manage-aliases"
+    for="*"
+    class=".redirects.RedirectsView"
+    permission="cmf.ManagePortal"
+    allowed_attributes="redirects view_url errors"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="aliases-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".redirects.RedirectsControlPanel"
+    permission="cmf.ManagePortal"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="OFS.interfaces.IApplication"
+    name="resolveuid"
+    class=".redirects.ResolveUIDView"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    name="dashboard"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".dashboard.Dashboard"
+    permission="cmf.SetOwnPassword"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    name="dashboard-utils"
+    for="*"
+    class=".dashboard.DashboardUtils"
+    permission="cmf.SetOwnPassword"
+    allowed_interface="..interfaces.IDashboardUtils"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="trash"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".trash.TrashView"
+    permission="cmf.SetOwnPassword"
+    template="templates/trash.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-paste"
+    class=".fc.PasteActionView"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-cut"
+    class=".fc.CutActionView"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-copy"
+    class=".fc.CopyActionView"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-delete"
+    class=".fc.DeleteActionView"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-rename"
+    class=".fc.RenameActionView"
+    permission="cmf.ListFolderContents"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-trash"
+    class=".fc.TrashActionView"
+    permission="cmf.ListFolderContents"
+    />
+  <utility component=".fc.TrashAction"
+           provides="plone.app.content.interfaces.IStructureAction"
+           name="trash" />
+
+  <browser:viewletManager
+    name="plone.toolbar"
+    provides="plone.app.layout.viewlets.interfaces.IToolbar"
+    permission="zope2.View"
+    class=".toolbar.ToolbarViewletManager"
+    layer="..interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    for="*"
+    name="object_paste"
+    class=".actions.ObjectPasteView"
+    permission="cmf.AddPortalContent"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="delete_confirmation"
+    class=".actions.DeleteConfirmationForm"
+    permission="zope2.DeleteObjects"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="folder_rename"
+    class=".actions.RenameForm"
+    permission="cmf.ModifyPortalContent"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="object_rename"
+    class=".actions.RenameForm"
+    permission="cmf.ModifyPortalContent"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="object_cut"
+    class=".actions.ObjectCutView"
+    permission="zope2.DeleteObjects"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="*"
+    name="meta-tile-manager"
+    class=".tiles.MetaTileManager"
+    permission="castle.cms.ManageSlots"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="render-slots-site-layout"
+    class=".tiles.RenderLayout"
+    permission="castle.cms.ManageSlots"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="zope.publisher.interfaces.INotFound"
+    class=".fourohfour.NotFoundView"
+    name="index.html"
+    permission="zope2.View"
+    template="templates/fourohfour.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+
+
+  <!-- registration overrides -->
+  <browser:page
+    name="register"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".registration.RegistrationForm"
+    permission="cmf.AddPortalMember"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="register-confirm-email"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".registration.EmailConfirmation"
+    permission="cmf.AddPortalMember"
+    layer="..interfaces.ICastleLayer"
+    template="templates/confirm-email.pt"
+    />
+
+  <browser:page
+    name="under-review"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/under-review.pt"
+    class=".registration.UnderReview"
+    />
+
+  <browser:page
+    name="review-registration-requests"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".registration.ReviewRequests"
+    permission="cmf.ManagePortal"
+    layer="..interfaces.ICastleLayer"
+    template="templates/approve.pt"
+    />
+
+
+  <!-- contact form override -->
+  <browser:page
+    for="*"
+    name="contact-info"
+    class=".contact.ContactForm"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <!-- syndication settings customization -->
+  <browser:page
+    for="Products.CMFPlone.interfaces.syndication.ISyndicatable"
+    name="synPropertiesForm"
+    class=".syndication.SettingsFormView"
+    permission="cmf.ModifyPortalContent"
+    layer="..interfaces.ICastleLayer"
+    />
+  <adapter factory=".syndication.FeedSettings"
+           provides=".syndication.IFeedSettings"/>
+  <adapter factory=".syndication.FolderFeed"
+           for="plone.dexterity.interfaces.IDexterityContainer" />
+  <adapter factory=".syndication.FolderFeed"
+           for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot" />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.syndication.ISyndicatable"
+    class=".syndication.KMLFeedView"
+    name="feed.kml"
+    permission="zope2.View"
+    template="templates/feed.kml.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.syndication.ISyndicatable"
+    class="Products.CMFPlone.browser.syndication.views.FeedView"
+    name="atom.xml"
+    permission="zope2.View"
+    template="templates/atom.xml.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.syndication.ISyndicatable"
+    class="Products.CMFPlone.browser.syndication.views.FeedView"
+    name="itunes.xml"
+    permission="zope2.View"
+    template="templates/itunes.xml.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="sitemap.xml.gz"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".sitemap.SiteMapView"
+    permission="zope2.Public"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <!-- subscription -->
+  <browser:page
+    name="subscribe"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".subscribe.SubscribeForm"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/subscribe.pt"
+    />
+  <browser:page
+    name="unsubscribe"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".subscribe.Unsubscribe"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/unsubscribe.pt"
+    />
+  <browser:page
+    name="changesubscription"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".subscribe.ChangeSubscription"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/changesubscription.pt"
+    />
+  <browser:page
+    name="subscribe-phone"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".subscribe.ConfirmPhoneForm"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/subscribe-phone.pt"
+    />
+
+  <browser:page
+    name="pad_view"
+    for="*"
+    class=".pad.PadView"
+    permission="zope2.View"
+    template="templates/pad-view.pt"
+    />
+
+  <browser:page
+    name="impersonator"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".impersonator.ImpersonatorView"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="finished-tour"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".tour.FinishView"
+    permission="zope2.View"
+    />
+  <browser:page
+    name="retour"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".tour.TourAgainView"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    for="*"
+    name="content-analytics"
+    class=".analytics.AnalyticsView"
+    permission="cmf.ModifyPortalContent"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="*"
+    name="breadcrumbs_view"
+    class=".navigation.PhysicalNavigationBreadcrumbs"
+    permission="zope2.View"
+    allowed_attributes="breadcrumbs"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="file_view"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".file.FileView"
+    template="templates/file.pt"
+    layer="..interfaces.ICastleLayer"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    for="*"
+    name="historyview"
+    class=".history.HistoryView"
+    permission="CMFEditions.AccessPreviousVersions"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:view
+    for="*"
+    name="contenthistory"
+    class=".history.ContentHistoryView"
+    permission="CMFEditions.AccessPreviousVersions"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:view
+    for="*"
+    name="history"
+    class=".history.HistoryVersionView"
+    permission="CMFEditions.AccessPreviousVersions"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    name="activity-report"
+    class=".audit.AuditView"
+    permission="cmf.SetOwnPassword"
+    layer="..interfaces.ICastleLayer"
+    template="templates/audit-log.pt"
+    />
+
+  <browser:page
+    name="search"
+    class=".search.Search"
+    permission="zope2.View"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    template="templates/search.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+  <browser:page
+    name="searchajax"
+    class=".search.SearchAjax"
+    permission="zope2.View"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="docviewertile"
+    for="*"
+    permission="zope2.View"
+    class="collective.documentviewer.browser.views.DocumentViewerView"
+    template="./templates/documentviewertile.pt"
+    layer="..interfaces.ICastleLayer" />
+
+  <browser:page
+    name="content-feed-view"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    permission="zope2.View"
+    class=".syndication.ContentFeedView"
+    template="./templates/feed.pt"
+    layer="..interfaces.ICastleLayer" />
+
+  <browser:view
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="plonejsi18n"
+    class=".content.i18njs"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="secure-login"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    permission="zope2.View"
+    class=".login.SecureLoginView"
+    template="./templates/secure-login.pt"
+    allowed_attributes="options"
+    layer="..interfaces.ICastleLayer" />
+  <browser:page
+    name="secure-login"
+    for="..interfaces.ICastleApplication"
+    permission="zope.Public"
+    class=".login.SecureLoginView"
+    template="./templates/secure-login.pt"
+    allowed_attributes="options" />
+  <browser:page
+    name="authorize-country-login"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    permission="zope2.View"
+    class=".login.LoginExceptionApprovalView"
+    template="./templates/login-exception.pt"
+    layer="..interfaces.ICastleLayer" />
+
+  <!-- user overrides -->
+  <browser:page
+    name="member-search"
+    for="*"
+    class=".users.MemberSearchForm"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    allowed_attributes="options"
+    />
+
+</configure>

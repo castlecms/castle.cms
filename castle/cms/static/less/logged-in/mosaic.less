@@ -1,0 +1,488 @@
+div.mosaic-toolbar {
+  z-index:101 !important;
+}
+
+/* block some tiles by default,
+   we could do this at the app layer but this is
+   a bit easier. Just pay attention here! */
+.mosaic-option-ILeadImage-image-caption,
+.mosaic-option-plone-app-standardtiles-image,
+.mosaic-option-plone-app-standardtiles-embed,
+.mosaic-option-plone-app-standardtiles-attachment,
+.mosaic-option-plone-app-standardtiles-navigation,
+.mosaic-option-plone-app-standardtiles-tableofcontents,
+.mosaic-option-ISearch-searchterm-pins,
+.mosaic-option-heading,
+.mosaic-option-subheading,
+.mosaic-option-table,
+.mosaic-option-bullets,
+.mosaic-option-numbers,
+.mosaic-option-plone-app-standardtiles-existingcontent,
+.mosaic-option-plone-app-standardtiles-rss,
+.mosaic-option-group-properties,
+// .mosaic-option-plone-app-standardtiles-rawhtml,
+.mosaic-option.mosaic-option-text,
+.mosaic-option-ILeadImage-image,
+.mosaic-option-ILocation-coordinates,
+.mosaic-option-tile-align-right,
+.mosaic-option-tile-align-left,
+.mosaic-option-tile-padding-bottom,
+.mosaic-option-tile-padding-right,
+.mosaic-option-tile-align-center {
+  display: none;
+}
+
+/* so we don't get the loading jog of content.. */
+.template-edit.selected-layout-layout_view form#form {
+    display: none;
+}
+.template-edit.selected-layout-layout_view form#form:after {
+    content: 'Loading content';
+}
+.mosaic-enabled.template-edit.selected-layout-layout_view {
+  form#form:after {
+    content: '';
+  }
+  form#form {
+    display: block;
+  }
+}
+.template-edit.selected-layout-layout_view h1.documentFirstHeading {
+  display: none;
+}
+
+.template-edit.selected-layout-layout_view.mosaic-enabled h1.documentFirstHeading {
+  display: block;
+}
+
+.mosaic-enabled {
+  .mosaic-position-leftmost,
+  .mosaic-grid .mosaic-position-leftmost {
+    margin-left: -100%;
+  }
+  .mosaic-panel .mosaic-tile {
+    min-height: 10px;
+  }
+  .mosaic-panel.columns .mosaic-tile {
+    padding-left: 0.9375rem;
+    padding-right: 0.9375rem;
+  }
+  .mosaic-rich-text-toolbar {
+    margin-left: -17px;
+  }
+  .mosaic-tile-buttons button{
+    border-radius:0;
+    background-color:#f0f0f0;
+    color:#333;
+    font-size:0.875em;
+    border:1px solid rgba(0,0,0,0.2);
+
+    &:hover{
+      background-color:#ccc;
+      color:#4d4d4d;
+    }
+
+    &::before{
+      vertical-align:-0.05em;
+    }
+  }
+}
+
+/* XXX these are necessary fixes for tinymce menus
+   that are floating */
+.mce-floatpanel.mce-fixed {
+  position: absolute;
+}
+.mce-sticky .mce-floatpanel.mce-fixed {
+  position: fixed;
+}
+.mosaic-enabled .mce-floatpanel.mce-menu {
+  // bah!!! need this because tiny menu *sometimes* not showing? This is crazy and annoying...
+  position: fixed;
+}
+
+.mosaic-panel .castle-rawhtml-tile.mosaic-tile-dark .mosaic-rich-text-toolbar {
+  margin-top: -60px;
+}
+
+.mosaic-tile-label {
+  left: 23px;
+  top: -24px;
+  z-index: 50;
+}
+
+.mosaic-panel .mosaic-selected-tile .mosaic-tile-outer-border {
+  border: 1px solid #292929;
+}
+
+.mosaic-IRichText-text-tile,
+.castle-rawhtml-tile,
+.mosaic-text-tile{
+  &.mosaic-selected-tile {
+    .mosaic-tile-label {
+      top: -40px;
+    }
+  }
+}
+
+.mosaic-tile-label-content {
+  -webkit-border-top-left-radius: 7px;
+  -webkit-border-top-right-radius: 7px;
+  -moz-border-radius-topleft: 7px;
+  -moz-border-radius-topright: 7px;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  width: 71px;
+  top: -24px;
+  float: none;
+  text-align: center;
+  width: inherit;
+}
+
+.mosaic-tile-label-left {
+  display: none;
+}
+
+.mosaic-grid-row {
+  .mosaic-tile-label {
+    top: 0px;
+  }
+}
+
+/* top mosiac toolbar */
+.mosaic-toolbar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+
+  .mosaic-toolbar-content {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    background: @toolbar-color;
+    height: @top-toolbar-height;
+    z-index:1030;
+    border-top: 0px;
+    border-bottom: @toolbar-border-color;
+    box-shadow: 0px 2px 4px @toolbar-box-shadow-color;
+
+    button,
+    .mosaic-menu {
+      font-family:@font-family-base;
+      font-size:14px;
+      color: @toolbar-btn-text-color;
+      background: @toolbar-btn-bg-color;
+      height: 100%;
+      border-top: 0px;
+      border-bottom: 0px;
+      border-right: 1px solid @toolbar-border-color;
+      border-radius: 0px;
+      margin: 0;
+      padding:6px 15px;
+      text-transform: uppercase;
+
+      &:hover, &:active{
+        background:@castle-primary;
+        color:#fff;
+        border-radius: 0;
+        border-right:1px solid #fff;
+      }
+
+      &:focus{
+        box-shadow:none;
+        outline-width: 1px;
+      }
+    }
+
+    .mosaic-menu {
+      margin: 0px;
+      padding: 0px;
+
+      > a.select2-choice {
+        font-size:14px;
+        padding: 6px 15px;
+        display: block;
+        background:#fff;
+        margin: 0px;
+        height: 100%;
+        border-radius: 0;
+
+        &:hover, &:active{
+          background:@castle-primary;
+          color:#fff;
+        }
+
+         &:focus{
+          box-shadow:none;
+          outline-width: 1px;
+        }
+
+        .select2-chosen{
+          line-height: 44px;
+        }
+
+        .select2-arrow {
+          padding-top: 16px;
+          right:15px;
+        }
+      }
+
+      &.select2-container.select2-dropdown-open a.select2-choice{
+        color:#fff;
+        background-color:@castle-primary;
+        border-color:#fff;
+        border-radius:0;
+      }
+    }
+
+    button + button,
+    button + button:hover,
+    button + .mosaic-button-group button,
+    button + .mosaic-button-group button:hover,
+    button + .mosaic-menu,
+    button + .mosaic-menu:hover,
+    .mosaic-menu + button,
+    .mosaic-menu + button:hover,
+    .mosaic-menu + .mosaic-menu,
+    .mosaic-menu + .mosaic-menu:hover {
+      border-left: 0px;
+    }
+
+    /* move save and cancel buttons to the right */
+    .mosaic-button-save,
+    .mosaic-button-cancel {
+      position: absolute;
+      top: 0;
+      border-radius: 0;
+      border-left: 1px solid @toolbar-border-color;
+      border-right:none;
+
+      &::before{
+        width: .9em;
+        height: .9em;
+        display: inline-block;
+        margin-right:7px;
+        text-align: center;
+        vertical-align:top;
+      }
+    }
+
+    .mosaic-button-save {
+      color: #fff;
+      background: @castle-primary;
+      border-left:1px solid transparent;
+      right: 0px;
+
+      &:hover, &:active {
+        color:@castle-primary;
+        background:#fff;
+        border-right:none;
+        border-left:1px solid @toolbar-border-color;
+
+        &::before{
+           content: url("../../svg/icon-save-hover.svg");
+        }
+      }
+
+      &::before{
+        content: url("../../svg/icon-save.svg");
+      }
+    }
+
+    .mosaic-button-cancel {
+      right: 83px;
+
+      &:hover, &:active {
+        background-color:#f8f8f8;
+        color:@toolbar-btn-text-color;
+        border-right:none;
+        border-left:1px solid @toolbar-border-color;
+      }
+
+      &::before{
+        content: url("../../svg/icon-cancel.svg");
+        margin-top:2px;
+      }
+    }
+
+    .mosaic-button-group {
+      height: @top-toolbar-height;
+
+      &.active > button{
+        background-color:@castle-primary;
+        color:#fff;
+        border-right:1px solid #fff;
+      }
+
+      .btn-container {
+        top: @top-toolbar-height;
+        border-top:3px solid @castle-primary;
+        box-shadow:0 2px 2px 0px @toolbar-box-shadow-color;
+
+        .mosaic-button{
+          padding:8px 15px;
+          text-transform:none;
+          border-right:none;
+
+          &:last-child{
+            padding-bottom:10px;
+          }
+
+          &:hover{
+            background-color: @castle-primary;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .mosaic-toolbar-primary-functions,
+    .mosaic-toolbar-secondary-functions {
+      display: inline-block;
+      margin: 0px;
+      padding: 0px;
+      height:@top-toolbar-height;
+    }
+    .mosaic-toolbar-primary-functions {
+      float: none !important; // this important is required since mosaic uses an important! ouch
+    }
+    .mosaic-toolbar-secondary-functions {
+      float: left !important; // this important is required since mosaic uses an important! ouch
+    }
+  }
+}
+
+.mosaic-dropdown {
+  /* so nasty, mosaic uses !important to position so we need to also */
+  right: auto !important;
+  left: 0 !important;
+  top: (@top-toolbar-height + 1) !important;
+
+  > ul{float:none;}
+
+  &.select2-drop-active{
+    color:@toolbar-text-color;
+    border:none;
+    border-radius:0;
+    border-top:3px solid @castle-primary;
+  }
+
+  .select2-results{
+    padding:0;
+    margin:12px 4px;
+    overflow:hidden;
+
+    //top level headings
+    .select2-result-label{
+      font-family: "Open Sans 600", Arial, sans-serif;
+      font-weight:600;
+      padding:5px 7px 6px 0;
+
+      &:hover{
+        color:@castle-primary;
+        background:transparent;
+      }
+    }
+
+    > li{
+      margin-right:10px;
+      //column divider fix
+      padding-bottom:100%;
+      margin-bottom:-100%;
+      width:140px;
+
+      &:nth-child(n+3){
+        border-left:1px solid #a9a9a9;
+        padding-left:15px;
+      }
+
+      >.select2-result-label{
+        font-family: "Open Sans 700", Arial, sans-serif;
+        font-weight:700;
+        font-size: 15px;
+        color:@castle-primary;
+        text-transform: uppercase;
+        margin-bottom:6px;
+
+        &:hover{
+          color:@castle-primary;
+          background:transparent;
+        }
+      }
+      .select2-disabled .select2-result-label:hover{
+        color:#888;
+        cursor: default;
+      }
+    }
+
+    .select2-highlighted{
+      background:transparent;
+      color:#292929;
+    }
+
+    .select2-result-sub{
+      > li{
+        font-size:14px;
+        line-height:1.4em;
+      }
+    }
+
+    &::after{
+      clear:both;
+    }
+  }
+}
+
+/* global tile edit styles */
+.pat-edittile {
+  position: relative;
+  min-height: 10px;
+
+  .edit-tile {
+    display: none;
+
+  }
+  &:hover .edit-tile {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: url("++resource++plone.app.mosaic.images/window.png") -12px -56px;
+    cursor: pointer;
+    text-indent: -999999px;
+    display: block;
+    width: 16px;
+    height: 16px;
+
+    &:hover {
+      background-position: -28px -56px;
+    }
+  }
+}
+
+
+
+/* better default tile text */
+.mosaic-panel {
+  .mosaic-tile.mosaic-IDublinCore-description-tile .mosaic-tile-content-empty > *:first-child:before{
+    content: "Empty description. Click to edit\2026";
+  }
+  .mosaic-tile.mosaic-IRichText-text-tile .mosaic-tile-content-empty > *:first-child:before{
+    content: "Text empty. Click to edit\2026";
+  }
+}
+
+
+.mosaic-selected-tile .mosaic-tile-control {
+  // move below tile so it doesn't get in the way of viewing the tile
+  bottom: -35px;
+}
+
+.mosaic-enabled {
+  .mosaic-tile img {
+    pointer-events: none;
+  }
+  .mosaic-tile .mce-edit-focus img {
+    pointer-events: all;
+  }
+}

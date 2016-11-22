@@ -1,0 +1,71 @@
+
+// from https://raw.githubusercontent.com/plone/plonetheme.barceloneta/master/plonetheme/barceloneta/theme/less/formtabbing.plone.less
+
+//*// FORM TABBING //*//
+.pat-autotoc.autotabs, .autotabs {
+	background: @plone-portlet-content-bg;
+	padding: @plone-padding-base-vertical @plone-padding-base-horizontal;
+	border: @plone-portlet-border;
+	margin-bottom: 20px;
+	border-radius: @plone-border-radius-base;
+	box-shadow:  0 1px 3px rgba(0,0,0,.05);
+	.autotoc-nav {
+		background: @plone-portlet-header-bg;
+		border-bottom: @plone-portlet-border;
+		margin: -@plone-padding-base-vertical -@plone-padding-base-horizontal @plone-padding-base-vertical;
+		a {
+			display: inline-block;
+			padding: @plone-padding-base-horizontal;
+			margin: @plone-padding-base-vertical 0 0 @plone-padding-base-vertical;
+			border: @plone-portlet-border;
+			margin-bottom:-1px;
+			border-radius: @plone-border-radius-base @plone-border-radius-base 0 0;
+			background: @plone-portlet-footer-bg;
+			font-weight: @plone-font-weight-regular;
+			&:last-child{margin-right: @plone-padding-base-vertical;}
+			&:hover {
+				text-decoration: none;
+				background: @plone-portlet-content-bg;
+			}
+			&.active, &.active:hover {
+				color: @plone-gray;
+				cursor: default;
+				background: @plone-portlet-content-bg;
+				border-bottom-color: @plone-portlet-content-bg;
+			}
+		}
+		.autotab-heading {
+			display: inline-block;
+			margin: @plone-padding-base-vertical 0 0 @plone-padding-base-vertical;
+		}
+	}
+	.formControls {
+		margin: 0 -@plone-padding-base-horizontal -@plone-padding-base-vertical ;
+		border-radius: 0 0 @plone-border-radius-base @plone-border-radius-base;
+	}
+}
+
+//hide tabs with horizontal scrolling for small devices to avoid line break (remove media if you want to apply everywhere)
+@media (max-width: @plone-screen-xs-max) {
+  .autotabs .autotoc-nav {
+    overflow-x: scroll;
+	overflow-y: hidden;
+	max-height: 52px;
+	width: auto;
+	white-space: nowrap;
+	border-bottom: 0;
+	box-shadow: inset 0 -1px @plone-portlet-contrast-bg;
+	a:not(.active) {box-shadow: inset 0 -1px @plone-portlet-contrast-bg;}
+  }
+}
+
+// be able to provide form tabs with ul li structure
+.autotabs ul{
+	list-style: none;
+	padding-left: 0;
+	margin-bottom:0;
+	li{
+		list-style: none;
+	  display: inline-block;
+	}
+}

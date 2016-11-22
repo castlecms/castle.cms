@@ -1,0 +1,28 @@
+<tal:audio tal:repeat="audio view/audios"
+           tal:define="df view/display_fields;">
+  <div class="audio-container"
+       tal:define="desc audio/overview/output|audio/Description|string:;
+                   effective audio/effective|nothing;
+                   url audio/absolute_url|nothing;">
+    <h3 tal:condition="python: 'title' in df"><a href="${url}">${audio/Title}</a></h3>
+    <audio class="pat-audio" controls preload="none"
+           style="width: ${python: view.data.get('width', '100%')}">
+      <source src="${python: view.get_url(audio)}" type="${python: view.get_content_type(audio)}" />
+    </audio>
+    <p class="date"
+        tal:content="python: view.utils.format_date(effective, 'notime')"
+        tal:condition="python: 'date' in df and view.utils.valid_date(effective)"></p>
+
+    <tal:desc tal:condition="python: 'description' in df">
+       <div tal:content="structure desc" class="description">
+       </div>
+    </tal:desc>
+    <p class="transcript"
+        tal:condition="python: 'transcript' in df">
+      <a href="${audio/absolute_url}/view">Read transcript</a>
+    </p>
+  </div>
+</tal:audio>
+<p tal:condition="python: not view.data.get('audio_files')">
+  No audio selected
+</p>

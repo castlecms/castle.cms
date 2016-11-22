@@ -1,0 +1,23 @@
+<tal:container tal:define="image python: view.get_image();
+                           dt python: view.data.get('display_type') or 'natural';
+                           scale python: view.data.get('scale') or 'large';
+                           fp python: view.get_focal_point();
+                           link python: view.get_link()">
+  <div class="image-tile-container ${dt}"
+       tal:define="caption view/data/caption|nothing"
+       tal:condition="nocall: image">
+    <a href="${link/absolute_url|nothing}" tal:omit-tag="not: link"
+       tal:condition="python: dt in ('natural', 'fullwidth')">
+      <img src="${image/absolute_url}/@@images/image/${scale}"
+           alt="${image/Description}" />
+    </a>
+    <a href="${link/absolute_url|nothing}" tal:omit-tag="not: link"
+       tal:condition="python: dt not in ('natural', 'fullwidth')">
+      <div tal:replace="structure python: view.utils.focal_image_tag(image, scale, focal=fp)" />
+    </a>
+    <p class="description" tal:condition="caption">${caption}</p>
+  </div>
+  <p tal:condition="python: not image and not view.utils.is_anonymous()">
+    No image specified
+  </p>
+</tal:container>

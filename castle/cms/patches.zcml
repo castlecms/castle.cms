@@ -1,0 +1,90 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    i18n_domain="castle.cms">
+
+  <monkey:patch
+    description=""
+    class="plone.app.mosaic.widget.HideSiteLayoutFields"
+    original="update"
+    replacement=".patches.HideSiteLayoutFields_update"
+    />
+  <monkey:patch
+    description=""
+    class="plone.app.mosaic.registry.MosaicRegistry"
+    original="parseRegistry"
+    preserveOriginal="True"
+    replacement=".patches.MosaicRegistry_parseRegistry"
+    />
+
+  <monkey:patch
+    description="Patch pluggable auth to check for impersonator"
+    class="Products.PluggableAuthService.PluggableAuthService.PluggableAuthService"
+    original="validate"
+    preserveOriginal="True"
+    replacement=".impersonator.PAS_validate"
+    />
+
+  <monkey:patch
+    description="Do not auto add creator for every edit, we are doing this on contributors"
+    class="plone.dexterity.content.DexterityContent"
+    original="addCreator"
+    replacement=".patches.Content_addCreator"
+    />
+
+  <monkey:patch
+    description="Override paste to handle redis stored copy cache data"
+    class="OFS.CopySupport.CopyContainer"
+    original="manage_pasteObjects"
+    replacement=".patches.manage_pasteObjects"
+    preserveOriginal="True"
+    />
+
+  <monkey:patch
+    description="Fix POSKeyErrors for missing blob errors on syndication feeds"
+    class="Products.CMFPlone.browser.syndication.adapters.DexterityItem"
+    original="__init__"
+    replacement=".patches.DexterityItem__init__"
+    preserveOriginal="True"
+    />
+
+  <monkey:patch
+    description="Better VHM support OOTB"
+    class="Products.SiteAccess.VirtualHostMonster.VirtualHostMonster"
+    original="__call__"
+    replacement=".vhm.traversal"
+    />
+
+  <!-- patch zope app initializer so we can setup PAS right away
+    This is so we can completely get rid of basic auth
+  -->
+  <monkey:patch
+    description="Zope root initialization"
+    class="OFS.Application.AppInitializer"
+    original="initialize"
+    replacement=".patches.AppInitializer_initialize"
+    preserveOriginal="True"
+    />
+  <monkey:patch
+    description="validate tkt ticket"
+    class="plone.session.plugins.session.SessionPlugin"
+    original="_validateTicket"
+    replacement=".patches.SessionPlugin_validateTicket"
+    />
+
+  <!-- disable additional mosaic pattern settings config since we already do this -->
+  <adapter
+      for="* .interfaces.ICastleLayer"
+      name="plone.app.mosaic.patternsettings"
+      factory=".patches.NoopTransform"
+      />
+  <adapter
+      for="* .interfaces.ICastleLayer"
+      name="plone.app.mosaic.bodyclass"
+      factory=".patches.NoopTransform"
+      />
+
+</configure>

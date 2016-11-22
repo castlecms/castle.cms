@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <!-- resources -->
+  <records prefix="plone.resources/castle"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="url">++plone++castle</value>
+  </records>
+  <records prefix="plone.resources/async"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/libs/requirejs-plugins/src/async.js</value>
+  </records>
+
+  <!-- Plone overrides -->
+  <records prefix="plone.resources/plone-logged-in"
+          interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">++plone++castle/plone-logged-in.js</value>
+    <value key="css">
+      <element>++plone++static/plone-logged-in.less</element>
+      <element>++plone++castle/less/logged-in.less</element>
+    </value>
+  </records>
+  <records prefix="plone.resources/plone"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/plone.js</value>
+      <value key="css">
+        <element>++plone++castle/less/plone.less</element>
+        <element>++plone++castle/less/public.less</element>
+      </value>
+  </records>
+  <records prefix="plone.bundles/plone"
+            interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <value key="merge_with">default</value>
+    <value key="resources">
+      <element>plone</element>
+    </value>
+    <value key="enabled">True</value>
+    <value key="jscompilation">++plone++castle/plone-compiled.min.js</value>
+    <value key="csscompilation">++plone++castle/plone-compiled.css</value>
+    <value key="last_compilation">2015-05-02 00:00:00</value>
+    <value key="stub_js_modules">
+      <element>jquery</element>
+    </value>
+  </records>
+  <records prefix="plone.bundles/plone-logged-in"
+           interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <value key="merge_with">logged-in</value>
+    <value key="resources">
+      <element>plone-logged-in</element>
+    </value>
+    <value key="enabled">True</value>
+    <value key="expression">python: member is not None</value>
+    <value key="jscompilation">++plone++castle/plone-logged-in-compiled.min.js</value>
+    <value key="csscompilation">++plone++castle/plone-logged-in-compiled.css</value>
+    <value key="last_compilation">2015-05-07 00:00:00</value>
+    <value key="depends">mosaic</value>
+    <value key="stub_js_modules">
+      <element>backbone</element>
+      <element>bootstrap-dropdown</element>
+      <element>bootstrap-tooltip</element>
+      <element>jquery.event.drag</element>
+      <element>jquery.event.drop</element>
+      <element>jquery.form</element>
+      <element>jquery</element>
+      <element>mockup-i18n</element>
+      <element>mockup-patterns-autotoc</element>
+      <element>mockup-patterns-backdrop</element>
+      <element>mockup-patterns-base</element>
+      <element>mockup-patterns-modal</element>
+      <element>mockup-patterns-pickadate</element>
+      <element>mockup-patterns-select2</element>
+      <element>mockup-router</element>
+      <element>mockup-utils</element>
+      <element>pat-base</element>
+      <element>pat-compat</element>
+      <element>pat-logger</element>
+      <element>pat-mockup-parser</element>
+      <element>pat-registry</element>
+      <element>pat-utils</element>
+      <element>select2</element>
+      <element>translate</element>
+      <element>underscore</element>
+    </value>
+  </records>
+
+  <records prefix="plone.bundles/mosaic"
+           interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <value key="depends">plone</value>
+    <value key="merge_with">logged-in</value>
+  </records>
+
+  <records prefix="plone.resources/castle-logged-in" remove="True"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'/>
+  <records prefix="plone.resources/castle-public" remove="True"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'/>
+  <records prefix="plone.bundles/castle-logged-in" remove="True"
+           interface='Products.CMFPlone.interfaces.IBundleRegistry'/>
+  <records prefix="plone.bundles/castle-public" remove="True"
+           interface='Products.CMFPlone.interfaces.IBundleRegistry'/>
+
+  <!-- OVERRIDES -->
+  <records prefix="plone.resources/mockup-patterns-relateditems"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/relateditems.js</value>
+      <value key="css">
+        <element>++resource++mockup/relateditems/pattern.relateditems.less</element>
+      </value>
+  </records>
+
+  <records prefix="plone.resources/mockup-patterns-querystring"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/querystring.js</value>
+      <value key="css">
+        <element>++resource++mockup/querystring/pattern.querystring.less</element>
+      </value>
+  </records>
+
+  <!-- need to override tinymce pattern... -->
+  <records prefix="plone.resources/mockup-patterns-tinymce"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/tinymce/pattern.js</value>
+      <value key="url">++plone++castle/patterns/tinymce</value>
+      <value key="css">
+        <element>++plone++castle/patterns/tinymce/less/pattern.tinymce.less</element>
+      </value>
+  </records>
+  <records prefix="plone.resources/mockup-patterns-tinymce-original"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++resource++mockup/tinymce/pattern.js</value>
+  </records>
+
+  <records prefix="plone.resources/castle-dashboard-welcome"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/dashboard-welcome.js</value>
+  </records>
+  <records prefix="plone.resources/castle-dashboard-statistics"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/dashboard-statistics.js</value>
+  </records>
+
+  <record name="plone.patternoptions">
+    <value purge="False">
+      <element key="plone-modal">{
+        "actionOptions": {"displayInModal": false},
+        "backdropOptions": {"closeOnClick": false, "closeOnEsc": false},
+        "prependContent": "#main-content .portalMessage",
+        "zIndexSelector": ".plone-modal-wrapper,.plone-modal-backdrop,.modal-open .castle-modal-wrapper .modal,.mce-floatpanel:visible"
+      }</element>
+      <element key="backdrop">{"closeOnEsc": false,
+      "closeOnClick": false}</element>
+      <element key="relateditems">{
+        "width": ""
+      }</element>
+      <element key="structure">{
+  "typeToViewAction": {
+                    "File": "/view",
+                    "Image": "/view",
+                    "Video": "/view",
+                    "Audio": "/view"
+                }
+      }</element>
+    </value>
+  </record>
+</registry>

@@ -1,0 +1,106 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+xml:lang="en-US" lang="en-US"
+xmlns:tal="http://xml.zope.org/namespaces/tal"
+xmlns:metal="http://xml.zope.org/namespaces/metal"
+xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+metal:use-macro="here/main_template/macros/master"
+i18n:domain="RedirectionTool">
+
+<body>
+  <div metal:fill-slot="main"
+  tal:define="context_state context/@@plone_context_state">
+  <h1 class="documentFirstHeading" i18n:translate="heading_add_aliases">Manage aliases</h1>
+
+  <dl class="portalMessage info" tal:condition="context_state/is_default_page">
+    <dt i18n:translate="">
+      Info
+    </dt>
+    <dd i18n:translate="help_sharing_page_default_page">
+      You are managing the aliases of a default view in a container.
+      To manage them for the entire container,
+      <a i18n:name="go_here"
+      i18n:translate="help_aliases_go_here"
+      tal:define="folder context_state/folder"
+      tal:attributes="href string:${folder/absolute_url}/@@manage-aliases">go here</a>.
+    </dd>
+  </dl>
+
+  <p i18n:translate="description_adding_aliases">
+    Using this form, you can manage aliases for an item. This
+    is an easy way to make an item available under two different URLs.
+  </p>
+
+  <form tal:attributes="action view/view_url" method="post">
+    <fieldset>
+      <legend i18n:translate="legend_existing_aliases">Existing aliases for this item</legend>
+
+      <div class="field"
+      tal:define="error options/errors/redirection|nothing;
+      redirection request/title | nothing;"
+      tal:attributes="class python:error and 'field error' or 'field'">
+      <label for="title" i18n:translate="label_alias">Alias
+
+        <span class="required horizontal" title="Required"
+        i18n:attributes="title"
+        i18n:translate="label_required">&nbsp;</span>
+
+        <span class="formHelp" i18n:translate="help_alias">
+          Enter the alternative Short Name or an absolute path where an alias should exist.
+        </span>
+      </label>
+
+      <div tal:content="error">Validation error output</div>
+
+      <input type="text"
+      name="redirection"
+      value="#"
+      size="40"
+      tal:attributes="value request/redirection | nothing;"
+      />
+    </div>
+    <div class="formControls">
+      <input class="context plone-btn plone-btn-default"
+        type="submit"
+        value="Cancel"
+        name="form.button.cancel"
+        />
+      <input class="context plone-btn plone-btn-primary"
+        type="submit"
+        value="Add"
+        name="form.button.Add"
+        i18n:attributes="value"
+        />
+    </div>
+
+  </fieldset>
+</form>
+
+<form tal:attributes="action view/view_url" method="post">
+  <fieldset>
+    <legend i18n:translate="legend_existing_aliases">Existing aliases for this item</legend>
+
+    <tal:redirects repeat="redirect view/redirects">
+    <div>
+      <input type="checkbox"
+      class="noborder"
+      name="redirects:tuple"
+      tal:attributes="value redirect/redirect" />
+
+      <span tal:replace="redirect/path" />
+    </div>
+  </tal:redirects>
+
+  <div class="formControls">
+    <input class="context plone-btn plone-btn-primary"
+    type="submit"
+    value="Remove"
+    name="form.button.Remove"
+    i18n:attributes="value"
+    />
+  </div>
+
+</fieldset>
+</form>
+</div>
+</body>
+</html>

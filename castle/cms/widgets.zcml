@@ -1,0 +1,42 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    i18n_domain="castle.cms">
+
+  <adapter for="* .interfaces.ICastleLayer *"
+           factory=".patterns.CastleSettingsAdapter"
+           provides="Products.CMFPlone.interfaces.IPatternsSettings"
+           name="plone_settings" />
+
+  <!-- widgets -->
+  <class class=".widgets.ReCaptchaWidget">
+    <require
+        interface=".interfaces.IReCaptchaWidget"
+        permission="zope2.View"
+    />
+  </class>
+
+  <z3c:widgetTemplate
+    layer=".interfaces.ICastleLayer"
+    mode="input"
+    template="widget_templates/recaptcha.pt"
+    widget=".interfaces.IReCaptchaWidget"
+  />
+
+  <adapter factory=".widgets.LeadImageFocalNamedImageFieldWidget" />
+  <adapter factory=".widgets.RequiredLeadImageFocalNamedImageFieldWidget" />
+  <z3c:widgetTemplate
+    mode="input"
+    widget=".widgets.IFocalNamedImageWidget"
+    layer=".interfaces.ICastleLayer"
+    template="widget_templates/image_input.pt"
+    />
+  <adapter factory=".widgets.FocalNamedImageDataConverter" />
+
+</configure>

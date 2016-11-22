@@ -1,0 +1,138 @@
+<tal:doctype tal:replace="structure string:&lt;!DOCTYPE html&gt;" />
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      tal:define="portal_state context/@@plone_portal_state;
+          plone_view context/@@plone;
+          plone_layout context/@@plone_layout;
+          lang portal_state/language;
+          view nocall:view | nocall: plone_view;
+          portal_url portal_state/portal_url;
+          ajax_load python:False;
+          toolbar_class python:request.cookies.get('plone-toolbar', 'plone-toolbar-left pat-toolbar')"
+      i18n:domain="plone"
+      tal:attributes="lang lang;">
+
+    <metal:cache tal:replace="structure provider:plone.httpheaders" />
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- provide this so menu still shows and is styled -->
+    <link rel="stylesheet"
+          tal:attributes="href string:${portal_url}/++plone++castle/plone-compiled.css" />
+    <link rel="stylesheet"
+          tal:attributes="href string:${portal_url}/++plone++castle/plone-logged-in-compiled.css" />
+
+    <link rel="stylesheet/less" type="text/css"
+          tal:condition="view/development"
+          tal:attributes="href string:${portal_url}/++resource++plone.app.theming/thememapper.less" />
+    <link rel="stylesheet"
+          tal:condition="not: view/development"
+          tal:attributes="href string:${portal_url}/++resource++plone.app.theming/thememapper-compiled.css" />
+
+    <style>
+      #btn-showinspectors,
+      #btn-buildrule,
+      #btn-helpbutton{
+        display: none;
+      }
+      .container {
+        width: 100%;
+      }
+      body.toolbar-initialized {
+        padding-left: 0;
+        padding-top: 0;
+      }
+    </style>
+
+    <tal:comment replace="nothing">
+        Various slots where you can insert elements in the header from a template.
+    </tal:comment>
+
+    <div tal:replace="structure provider:plone.scripts" />
+
+    <meta name="generator" content="Plone - http://plone.org" />
+
+  </head>
+
+  <body tal:define="isRTL portal_state/is_rtl;
+                    sl python:plone_layout.have_portlets('plone.leftcolumn', view);
+                    sr python:plone_layout.have_portlets('plone.rightcolumn', view);
+                    body_class python:plone_layout.bodyClass(template, view);"
+        tal:attributes="class body_class;
+                        dir python:isRTL and 'rtl' or 'ltr';
+                        python:plone_view.patterns_settings()"
+        id="visual-portal-wrapper">
+
+    <section id="edit-bar" role="toolbar">
+      <div id="edit-zone" role="toolbar" tal:attributes="class toolbar_class">
+        <div class="plone-toolbar-container">
+          <a class="plone-toolbar-logo">
+            <img alt="Plone Toolbar" tal:attributes="src string:${portal_url}/++plone++static/plone-toolbarlogo.svg" />
+          </a>
+          <a class="plone-toolbar-switcher"><span>Left-Top switcher</span></a>
+          <nav role="navigation">
+            <ul>
+              <div tal:replace="structure provider:plone.toolbar">
+              </div>
+            </ul>
+        </div>
+      </div>
+    </section>
+
+    <aside id="global_statusmessage">
+      <tal:message tal:content="structure provider:plone.globalstatusmessage"/>
+      <div class="portalMessage warning"
+        tal:condition="python:view.active and view.editable">
+        <strong i18n:translate="">Warning</strong>
+        <span tal:omit-tag="" i18n:translate="theming_mapper_warning_live">
+            This theme is currently active. Any changes made will be immediately
+            reflected on the live site.
+        </span>
+      </div>
+      <div class="portalMessage warning"
+        tal:condition="not: view/editable">
+        <strong i18n:translate="">Warning</strong>
+        <span tal:omit-tag="" i18n:translate="theming_mapper_warning_cannot_edit">
+            This is a built-in theme, and cannot be edited.
+        </span>
+      </div>
+    </aside>
+
+
+    <article id="portal-column-content">
+
+      <div metal:define-macro="content">
+
+        <article id="content">
+
+          <header>
+            <div id="viewlet-above-content-title" tal:content="structure provider:plone.abovecontenttitle" />
+            <a href=""
+                class="link-parent"
+                tal:attributes="href string:${context/portal_url}/theming-controlpanel"
+                i18n:translate="label_up_to_theming_controlpanel">
+                    Back to the control panel
+            </a>
+          </header>
+
+          <section id="content-core">
+            <input tal:replace="structure context/@@authenticator/authenticator" />
+            <div class="pat-thememapper" data-pat-thememapper='themeUrl: ${view/resourceUrl};
+                      editable: ${view/editable};
+                      lessUrl: ${view/lessUrl};
+                      lessVariables: ${view/lessVariables};
+                      filemanagerConfig:{"actionUrl":"${view/themeBaseUrl}/@@plone.resourceeditor.filemanager-actions"};
+                      mockupUrl:${view/themeBaseUrl}/@@theming-controlpanel-mapper-getframe?path=/${view/themeBasePathEncoded}/${view/defaultThemeFile}&amp;theme=off;
+                      unthemedUrl:${view/themeBaseUrl}/@@theming-controlpanel-mapper-getframe?path=/&amp;diazo.off=1;
+                      previewUrl:${view/portalUrl}/++theme++${view/name}/@@theming-controlpanel-mapper-getframe?path=/&amp;theme=apply&amp;forms=disable&amp;links=replace&amp;title=Preview:+${view/title};
+                      helpUrl:http://docs.diazo.org/en/latest'></div>
+          </section>
+        </article>
+      </div>
+    </article>
+  </body>
+</html>

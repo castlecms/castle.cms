@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
+
+<metal:javascript fill-slot="javascript_head_slot">
+  <script src="${portal_url}/++plone++castle/components/audit.js"></script>
+</metal:javascript>
+
+<body tal:define="connected view/el_connected;
+                  site_path python: '/'.join(context.getPhysicalPath())">
+
+<metal:content-title fill-slot="content-title">
+<metal:block define-macro="content-title">
+  <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+</metal:block>
+</metal:content-title>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core">
+
+  <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+    Portal status message
+  </div>
+
+  <div tal:replace="structure view/render_inner" />
+
+</metal:block>
+</metal:content-core>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      i18n:domain="plone">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Castle</title>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'/>
+  <link rel="stylesheet" type="text/css"
+        href="/++resource++plone-admin-ui.css"
+        tal:attributes="href string:${context/absolute_url}/++resource++plone-admin-ui.css" />
+  <link rel="stylesheet" type="text/css"
+        tal:attributes="href string:${context/absolute_url}/++plone++castle/libs/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+
+<body tal:define="sites view/sites">
+<div id="box">
+    <header><h1><img src="/++resource++plone-logo.png"
+         tal:attributes="src string:${context/absolute_url}/++plone++castle/images/castle-logo.png"
+         alt="Castle"/> Castle CMS</h1>
+    </header>
+    <article>
+    <div id="text">
+        <h1 i18n:translate="">
+            Castle is up and running.
+        </h1>
+        <ul>
+            <tal:block tal:condition="sites">
+                <tal:one tal:condition="python:len(sites) == 1">
+                    <tal tal:repeat="site sites">
+                        <span class="prominent">
+                            <!--<img tal:attributes="src string:${site/absolute_url}/logoIcon.png"
+                                 height="16" width="16"/>-->
+                            <a href="#" class="plone-btn"
+                               tal:attributes="href site/absolute_url"
+                               title="Go to your instance"
+                               i18n:attributes="title;"
+                               i18n:translate="">View your Castle site</a>
+                        </span>
+                        <div class="upgrade-warning"
+                             tal:condition="python:view.outdated(site)">
+                            <span i18n:translate="">
+                            This site configuration is outdated and needs to be
+                            upgraded:</span>
+                            <form action=""
+                                  style="display: inline;"
+                                  method="get"
+                                  tal:attributes="action python:view.upgrade_url(site)">
+                            <input tal:condition="not:view/can_manage"
+                                   type="hidden" name="came_from"
+                                   tal:attributes="value python:view.upgrade_url(site, can_manage=True)"/>
+                            <input type="submit"
+                                   class="plone-btn-secondary"
+                                   value="Upgrade&hellip;"
+                                   i18n:attributes="value label_upgrade_hellip" />
+                            </form>
+                            </div>
+                    </tal>
+                </tal:one>
+                <tal:many tal:condition="python:len(sites) &gt; 1">
+                    <h2 id="multiple-sites" i18n:translate=""> You have multiple Castle sites:</h2>
+                    <ul class="sites">
+                        <li tal:repeat="site sites">
+                            <span class="prominent">
+
+                                <a href="#"
+                                   tal:attributes="href site/absolute_url;
+                                                   title site/Title;"
+                                   tal:content="site/Title">
+                                    Site title
+                                </a>
+                                <span class="discreet"
+                                      tal:content="string:– ${site/getId}"/>
+                                <img tal:attributes="src string:${site/absolute_url}/logoIcon.png"
+                                     height="16" width="16"/>
+                            </span>
+                            <div class="upgrade-warning"
+                                 tal:condition="python:view.outdated(site)">
+                                <span i18n:translate="">
+                                    This site configuration is outdated and
+                                    needs to be upgraded:
+                                </span>
+                                 <form action=""
+                                       style="display: inline;"
+                                       method="get"
+                                       tal:attributes="action python:view.upgrade_url(site)">
+                                 <input tal:condition="not:view/can_manage"
+                                        type="hidden" name="came_from"
+                                        tal:attributes="value python:view.upgrade_url(site, can_manage=True)"/>
+                                 <input type="submit"
+                                        class="plone-btn-secondary"
+                                        value="Upgrade&hellip;"
+                                        i18n:attributes="value label_upgrade_hellip" />
+                                 </form>
+
+                            </div>
+                        </li>
+                    </ul>
+                </tal:many>
+            </tal:block>
+            <li>
+                <span i18n:translate="" tal:condition="not:sites">
+                    Your site has not been added yet:
+                </span>
+                <span i18n:translate="" tal:condition="sites">
+                    You can add another Castle site:
+                </span>
+                <form id="add-plone-site"
+                      method="get"
+                      action="#"
+                      tal:define="site_number python: '' if not sites else len(sites) + 1"
+                      tal:attributes="action string:${context/absolute_url}/@@plone-addsite">
+                    <input type="hidden" name="site_id" value="Castle${site_number}" />
+                    <input type="submit"
+                           i18n:attributes="value;"
+                           value="Create a new Castle site" />
+                </form>
+            </li>
+
+        </ul>
+    </div>
+  </article>
+  <footer>
+    <p>
+      <a href="#"
+        tal:attributes="href string:${context/absolute_url}/manage_main"
+        title="Go to the ZMI"
+        i18n:attributes="title;"
+        i18n:translate="label_zmi_link">Management Interface</a>
+      <span i18n:translate="label_zmi_link_description"> &#151; low-level technical configuration.</span>
+    </p>
+    <p>
+      <span i18n:translate="label_plone_com_description"> For an introduction to Plone, success stories, demos, providers, visit</span>
+      <a href="http://plone.com"
+        title="Plone.com"
+        target="_blank"
+        i18n:attributes="title label_plone_com_title;">plone.com</a>.
+    </p>
+    <p>
+      <span i18n:translate="label_plone_org_description"> For documentation, add-ons, support, community, visit</span>
+      <a href="http://plone.org"
+        title="Plone Community Home"
+        target="_new"
+        i18n:attributes="title label_plone_org_title;">plone.org</a>.
+    </p>
+  </footer>
+</div>
+</body>
+</html>

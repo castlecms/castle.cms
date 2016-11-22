@@ -1,0 +1,20 @@
+{
+  "name": "castle.cms",
+  "version": "1.0",
+  "private": true,
+  "description": "",
+  "dependencies": {
+    "FlexSlider": "2.6.0",
+    "leaflet-dist": "0.7.0",
+    "requirejs-plugins": "1.0.2",
+    "mediaelement": "2.23.0",
+    "bootstrap": "3.3.4",
+    "react": "0.13.3",
+    "moxie": "v1.4.1",
+    "cropper": "0.11.1",
+    "fullcalendar": "2.5.0",
+    "intro.js": "1.1.1",
+    "es6-promise": "3.2.1",
+    "eventEmitter": "4.3.0"
+  }
+}

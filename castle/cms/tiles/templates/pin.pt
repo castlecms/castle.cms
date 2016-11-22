@@ -1,0 +1,8 @@
+<div class="row pin-panel" tal:condition="view/data/url" tal:define="pin view/data">
+  <p class="pin">
+    <a data-pin-width="large" data-pin-do="embedPin" href="${pin/url}"></a>
+  </p>
+  <script tal:condition="view/renderJS"
+          src="https://assets.pinterest.com/js/pinit.js">
+  </script>
+</div>

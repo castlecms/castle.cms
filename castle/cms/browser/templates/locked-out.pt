@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<div metal:fill-slot="content-core">
+  <tal:main-macro metal:define-macro="content-core">
+    <div id="locked-out-error" class="portalMessage error">
+      <strong>Locked out</strong>
+      <span>
+        You have attempted to login too many times without success and have violated
+        the security policy of this site. Try again later or contact your system
+        administrator for help.</span>
+    </div>
+  </tal:main-macro>
+</div>
+
+</body>
+
+</html>

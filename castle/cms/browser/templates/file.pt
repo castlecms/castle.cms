@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core"
+    tal:define="content_type view/content_type|nothing;
+                download_url string:${context/absolute_url}/@@download/file/${view/filename};
+                subtitles nocall: context/subtitle_file|nothing;">
+  <p>
+    <a tal:attributes="href download_url">
+      <img tal:attributes="src view/get_mimetype_icon;
+                           alt content_type;" border="0" />
+      <tal:name tal:content="view/filename" >Filename</tal:name>
+    </a>
+    <span class="discreet"
+        tal:define="size view/size;
+                    kb python:size/1024">
+      &mdash; <span tal:replace="kb" /> KB</span>
+  </p>
+
+  <video tal:condition="view/is_videotype" controls="controls">
+    <source tal:attributes="src download_url; type content_type"></source>
+    <track kind="subtitles" src="subtitles.srt" srclang="en"
+           tal:condition="subtitles"
+           tal:attributes="src ${context/absolute_url}/@@view/++widget++form.widgets.subtitle_file/@@download" />
+  </video>
+
+  <audio tal:condition="view/is_audiotype" controls="controls">
+    <source tal:attributes="src download_url; type content_type"></source>
+  </audio>
+
+  <div tal:condition="python: content_type.startswith('text') and not view.moved">
+    <h2 i18n:translate="heading_file_contents">File contents</h2>
+    <pre tal:content="context/file/data|nothing" />
+  </div>
+
+</metal:block>
+</metal:content-core>
+
+</body>
+</html>

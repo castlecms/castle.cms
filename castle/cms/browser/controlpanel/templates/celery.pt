@@ -1,0 +1,95 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+
+<metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/@@overview-controlpanel"
+       i18n:translate="">
+       Site Setup
+    </a>
+    <h1 class="documentFirstHeading"
+        i18n:translate="">Celery Tasks</h1>
+
+    <div class="documentDescription">
+      Inspect currently active celery tasks
+    </div>
+<br />
+  <div id="content-core"
+       tal:define="info view/info;
+                   workers info/workers;
+                   active info/active;
+                   reserved info/reserved;
+                   stats info/stats;">
+    <h2>Registered Workers</h2>
+    <ul tal:condition="python: workers and len(workers)">
+      <tal:worker tal:repeat="worker python: workers.keys()">
+        <li tal:define="status python: workers[worker]['ok']">
+          ${worker} - ${python: status == 'pong' and 'ok' or 'bad'}
+          <ul tal:on-error="nothing"
+              tal:define="wstats python: stats.get(worker, {}).get('total', [])">
+            <li tal:repeat="task_id python: wstats.keys()">
+              ${python: view.get_task_name(task_id)} - ${python: wstats[task_id]}
+            </li>
+          </ul>
+        </li>
+      </tal:worker>
+    </ul>
+    <h2>Scheduled Tasks</h2>
+    <table class="listing">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>User</th>
+          <th>Object</th>
+          <th>Worker</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tal:active-worker tal:repeat="worker python: active and active.keys() or []">
+          <tal:active-task tal:repeat="task python: active[worker]">
+            <tal:task tal:define="task_info python: view.task_info(task)">
+              <tr tal:condition="task_info/on_site" tal:on-error="nothing">
+                <th style="color: orange">${task/name}</th>
+                <th>${task_info/kwargs/authorized_userid|nothing}</th>
+                <th tal:condition="python: task_info['obj'] is not None">
+                  <a href="${task_info/obj/absolute_url}/view">${task_info/obj/Title}</a>
+                </th>
+                <th tal:condition="python: task_info['obj'] is None"></th>
+                <th>${worker}</th>
+              </tr>
+            </tal:task>
+          </tal:active-task>
+        </tal:active-worker>
+        <tal:reserved-worker tal:repeat="worker python: reserved and reserved.keys() or []">
+          <tal:reserved-task tal:repeat="task python: reserved[worker]">
+            <tal:task tal:define="task_info python: view.task_info(task)">
+              <tr tal:condition="task_info/on_site" tal:on-error="nothing">
+                <th>${task/name}</th>
+                <th>${task_info/kwargs/authorized_userid|nothing}</th>
+                <th tal:condition="python: task_info['obj'] is not None">
+                  <a href="${task_info/obj/absolute_url}/view">${task_info/obj/Title}</a>
+                </th>
+                <th tal:condition="python: task_info['obj'] is None"></th>
+                <th>${worker}</th>
+              </tr>
+            </tal:task>
+          </tal:reserved-task>
+        </tal:reserved-worker>
+      </tbody>
+    </table>
+
+  </div>
+</metal:main>
+
+</body>
+</html>

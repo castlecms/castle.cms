@@ -1,0 +1,64 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+<head>
+    <metal:block fill-slot="top_slot"
+                 tal:define="dummy python:request.set('disable_border',1);
+                             disable_column_one python:request.set('disable_plone.leftcolumn',1);
+                             disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+</head>
+
+<body>
+  <metal:body fill-slot="body">
+    <article id="content">
+      <h1 class="documentFirstHeading">Review Registration Requests</h1>
+      <div id="content-core">
+        <div tal:condition="not:view/enabled">
+          <strong i18n:translate="msg_review_requests_disabled">
+            Warning: new requests are currently not added to the review queue.
+          </strong>
+          <form method="POST">
+            <span tal:replace="structure context/@@authenticator/authenticator"/>
+            <input type="submit" name="enable" i18n:attributes="value" value="Enable" />
+          </form>
+        </div>
+        <div tal:condition="view/enabled">
+          <span i18n:translate="msg_review_requests_enabled">
+            New requests are currently added to the review queue.
+          </span>
+          <form method="POST">
+            <span tal:replace="structure context/@@authenticator/authenticator"/>
+            <input type="submit" name="disable" i18n:attributes="value" value="Disable" />
+          </form>
+        </div>
+        <table class="listing">
+          <thead>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Action</th>
+          </thead>
+          <tbody>
+            <tal:user tal:repeat="email python: view.data.keys()">
+              <tr tal:define="user python: view.data.get(email)">
+                <td tal:content="email" />
+                <td tal:content="python: user.get('username')" />
+                <td>
+                  <form method="POST">
+                    <span tal:replace="structure context/@@authenticator/authenticator"/>
+                    <input tal:attributes="value email" name="email" type="hidden" />
+                    <input type="submit" name="approve" i18n:attributes="value" value="Approve" />
+                    <input type="submit" name="deny" i18n:attributes="value" value="Deny" />
+                  </form>
+                </td>
+              </tr>
+            </tal:user>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </metal:body>
+</body>
+</html>

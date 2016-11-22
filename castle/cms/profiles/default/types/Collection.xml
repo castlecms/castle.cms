@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<object name="Collection" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title" i18n:translate="">Feed</property>
+ <property name="global_allow">False</property>
+
+ <property name="default_view">content-feed-view</property>
+ <property name="view_methods">
+  <element value="content-feed-view"/>
+ </property>
+
+ <property name="behaviors" purge="false">
+  <element value="plone.app.content.interfaces.INameFromTitle"/>
+  <element value="plone.app.contenttypes.behaviors.collection.ICollection"/>
+  <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+  <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
+  <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
+  <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>
+  <element value="plone.app.relationfield.behavior.IRelatedItems"/>
+  <element value="plone.app.lockingbehavior.behaviors.ILocking" />
+  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+</property>
+</object>

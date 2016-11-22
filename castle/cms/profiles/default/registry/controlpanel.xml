@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <records interface="castle.cms.interfaces.ICastleSettings"
+           prefix="castle" />
+  <records interface="castle.cms.interfaces.ISocialMediaSchema"
+           prefix="plone" />
+  <records interface="castle.cms.interfaces.ISiteSchema"
+           prefix="plone" />
+  <records interface="castle.cms.interfaces.ISecuritySchema"
+           prefix="plone" />
+  <records interface="castle.cms.interfaces.IBusinessData"
+           prefix="castle" />
+  <records interface="castle.cms.interfaces.ICrawlerConfiguration"
+           prefix="castle" />
+
+  <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
+          interface="plone.app.discussion.interfaces.IDiscussionSettings"
+          field="globally_enabled">
+    <value>True</value>
+  </record>
+
+  <record name="plone.custom_plugins"
+          interface="Products.CMFPlone.interfaces.controlpanel.ITinyMCESchema" field="custom_plugins">
+    <value purge="False">
+      <element>mce-table-buttons|++plone++castle/tinymce-table.js</element>
+    </value>
+  </record>
+
+  <record name="Products.CMFPlone.interfaces.syndication.ISiteSyndicationSettings.allowed_feed_types"
+          interface="Products.CMFPlone.interfaces.syndication.ISiteSyndicationSettings"
+          field="allowed_feed_types">
+    <value>
+      <element>RSS|RSS 1.0</element>
+      <element>rss.xml|RSS 2.0</element>
+      <element>atom.xml|Atom</element>
+      <element>itunes.xml|iTunes</element>
+      <element>feed.kml|KML</element>
+    </value>
+  </record>
+
+  <record name="plone.content_css"
+          interface="Products.CMFPlone.interfaces.controlpanel.ITinyMCESchema"
+          field="content_css">
+    <value>
+      <element> </element>
+    </value>
+  </record>
+</registry>

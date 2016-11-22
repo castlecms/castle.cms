@@ -1,0 +1,35 @@
+<div>
+  <div tal:define="size python:here.getObjSize(here);
+                  content_type here/get_content_type|here/Format;"
+       i18n:domain="collective.documentviewer">
+    <tal:notshow tal:condition="not: view/enabled">
+      <dl id="errorMsg" tal:condition="python: view.can_modify and view.settings.successfully_converted is False">
+        <dt>
+          <a href="#">Show Document Viewer Conversion Error</a>
+        </dt>
+        <dd>
+          <pre tal:content="python: view.settings.exception_msg" />
+          <pre tal:content="python: view.settings.exception_traceback" />
+        </dd>
+      </dl>
+    </tal:notshow>
+    <div id="DV-wrapper">
+      <div aria-hidden="true" class="pat-documentviewer DV-container"
+           data-pat-documentviewer="${view/pattern_options}">
+        <div class="DV-loadingDocument"><span i18n:translate="">Loading</span></div>
+        <noscript>
+          <div id="DV-noJS" style="height:500px" i18n:translate="">The Document Viewer requires that you enable Javascript.</div>
+        </noscript>
+      </div>
+    </div>
+    <p>
+      <a tal:attributes="href context/absolute_url">
+        Download <tal:name tal:content="context/file/filename|nothing" >Filename</tal:name>
+      </a>
+      <span class="discreet"
+          tal:define="size context/file/getSize|python:0;
+                      kb python:size/1024">
+        &mdash; <span tal:replace="kb" /> KB</span>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<ul class="inline-list">
+  <li tal:repeat="daction python: utils.get_actions('site_actions')"
+                      tal:attributes="id python:'document-action-' + daction['id']">
+                      <a href=""
+                         tal:attributes="href daction/url;
+                                         target daction/link_target|nothing;
+                                         title daction/description"
+                         tal:content="daction/title">
+                      </a>
+                  </li>
+</ul>

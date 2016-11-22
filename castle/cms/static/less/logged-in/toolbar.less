@@ -1,0 +1,361 @@
+
+/* some reset css */
+.castle-toolbar-container{
+  font-family: @font-family-base;
+
+  *{
+    &:focus, &:active{
+      outline:none;
+      text-decoration: none;
+    }
+  }
+
+  ul,
+  div,
+  li,
+  ol,
+  p {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  ol, ul, dl, li{
+    font-family: @font-family-base;
+    font-size: 1rem;
+    line-height: 1.6;
+    list-style-position: outside;
+  }
+
+  a {
+    word-wrap: break-word;
+    text-decoration: none;
+    line-height: inherit;
+  }
+
+  [class^="icon-"]::before{
+    margin: 0 0.6em;
+    vertical-align: middle;
+  }
+}
+
+.castle-toolbar-container .castle-toolbar-container-side {
+  position: fixed;
+  padding-top: @top-toolbar-height;
+  top: 0px;
+  left: 0px;
+  background-color: @toolbar-sidebar-color;
+  height: 100%;
+  width: @left-toolbar-width;
+  border-right: 1px solid @toolbar-separator-color;
+
+  ul li.spacer {
+    border-bottom: 1px solid @toolbar-separator-color;
+
+    + li.spacer { display: none; }
+  }
+  .castle-toolbar-btn-container {
+    display: inline-block;
+    position: absolute;
+    left: @left-toolbar-width;
+    width: @left-toolbar-width;
+    background-color: @toolbar-sidebar-color;
+    list-style-type: none;
+    border: 1px solid @toolbar-separator-color;
+    border-left: none;
+    bottom: 0px;
+  }
+}
+
+.castle-toolbar-container-side ul,
+.castle-btn-dropdown ul {
+  margin: 0px;
+
+  li {
+    list-style: none;
+    font-size: 14px;
+    font-family:@font-family-base !important;
+
+    &.castle-toolbar-item {
+
+      &.castle-toolbar-view-page a{
+        padding-top:9px;
+      }
+
+      a {
+        display:block;
+        color: @toolbar-text-color;
+        border-left: 5px solid transparent;
+        padding: 7px 0 7px 5px;
+
+        &:hover {
+          text-decoration: none;
+          color: @toolbar-link-hover-color;
+          background:darken(#f5f5f5, 3%);
+        }
+      }
+      &.active {
+        border-left: 5px solid @toolbar-link-hover-color;
+        a {
+          color: @toolbar-link-hover-color;
+        }
+        background-color: #ffffff;
+        border-bottom: 1px solid #ededed;
+        border-top: 1px solid #ededed;
+      }
+    }
+  }
+  li.spacer + li.castle-toolbar-item.active {
+    border-top: 0px;
+  }
+}
+
+.castle-toolbar-container-top {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 106;
+  background-color: @toolbar-color;
+  width: 100%;
+  height: @top-toolbar-height;
+  box-shadow: 0px 2px 4px @toolbar-box-shadow-color;
+  display: flex;
+
+  .castle-toolbar-logo {
+    margin-left: 1em;
+    display: inline-block;
+    white-space: nowrap;
+
+    img{
+      height:50px;
+      margin-top:2px;
+    }
+  }
+
+  .castle-toolbar-breadcrumbs {
+    padding-right: 10px;
+    flex: 1;
+    display: inline-block;
+    line-height: 40px;
+    margin-left: @left-toolbar-width;
+    margin-top: 0.4em;
+    &, & > * {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    li {
+      list-style: none;
+      display: inline;
+      font-size: 14px;
+      margin-right: 0.5em;
+
+      &:after {
+        content: ' \003e ';
+        margin-left:0.4em;
+        vertical-align: middle;
+        padding-bottom: 5px;
+      }
+      &:last-child {
+        margin-right: 0px;
+        font-weight:700;
+        &:after {
+          content: '';
+        }
+      }
+
+      &:first-child a::before{
+        content: url("../../svg/glyphicon/glyphicon-home.svg");
+        height:1em;
+        width: 1em;
+        display:inline-block;
+        margin-right:0.25em;
+      }
+
+      a {
+        color: @toolbar-text-color;
+        text-transform: capitalize;
+
+        &:hover {
+          color: @toolbar-link-hover-color;
+          text-decoration: none;
+        }
+      }
+
+      &.crumb-state-private {
+        a {
+          color: #B70000;
+        }
+      }
+    }
+  }
+
+  .castle-toolbar-buttons {
+    height: @top-toolbar-height;
+    float: right;
+    background-color: #ffffff;
+    white-space: nowrap;
+
+    .castle-btn-dropdown {
+      display: inline-block;
+      position: relative;
+      border-left: 1px solid @toolbar-separator-color;
+      height: @top-toolbar-height;
+
+      > button {
+        height: @top-toolbar-height;
+        font-family:@font-family-base;
+
+        &:hover, &:active{
+          color:#1F4E82;
+
+        }
+      }
+      > ul {
+        position: absolute;
+        top: @top-toolbar-height;
+        right: 0px;
+        background-color: #ffffff;
+        box-shadow:0 2px 2px 0px rgba(0,0,0,0.16);
+        width: 160px;
+      }
+
+      .plone-btn{
+        font-size:16px;
+        padding:6px 15px;
+
+      }
+      .plone-btn-default {
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+        border: 0px;
+        color: @toolbar-btn-text-color;
+        background: @toolbar-btn-bg-color;
+      }
+
+      button:hover,
+      button:focus {
+        box-shadow: none;
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+.castle-btn-dropdown-messagesopened {
+  ul {
+    max-height: 900px;
+    overflow-y: auto;
+
+    .castle-status-message-item {
+      border-top: 1px solid #ccc;
+      padding: 5px 15px;
+      white-space: normal;
+
+      svg {
+        width: 30px;
+        transition: margin-top 250ms ease-in;
+        -webkit-transition: margin-top 250ms ease-in;
+        -moz-transition: margin-top 250ms ease-in;
+        -ms-transition: margin-top 250ms ease-in; /* IE10 is actually unprefixed */
+        -o-transition: margin-top 250ms ease-in;
+      }
+
+      .date,
+      .location {
+        height: 0;
+        overflow: hidden;
+        font-size: 12px;
+        margin: 7px 0px;
+        transition: height 250ms ease-in;
+        -webkit-transition: height 250ms ease-in;
+        -moz-transition: height 250ms ease-in;
+        -ms-transition: height 250ms ease-in; /* IE10 is actually unprefixed */
+        -o-transition: height 250ms ease-in;
+      }
+      .date {
+        font-style: italic;
+      }
+
+      .text {
+        font-size: 16px;
+        line-height: 16px;
+      }
+    }
+    .castle-status-message-item:hover,
+    .castle-status-message-item:first-child {
+      .date,
+      .location {
+        height: 20px;
+        transition: height 250ms ease-in;
+        -webkit-transition: height 250ms ease-in;
+        -moz-transition: height 250ms ease-in;
+        -ms-transition: height 250ms ease-in; /* IE10 is actually unprefixed */
+        -o-transition: height 250ms ease-in;
+      }
+      svg {
+        margin-top: 25px;
+        transition: margin-top 250ms ease-in;
+        -webkit-transition: margin-top 250ms ease-in;
+        -moz-transition: margin-top 250ms ease-in;
+        -ms-transition: margin-top 250ms ease-in; /* IE10 is actually unprefixed */
+        -o-transition: margin-top 250ms ease-in;
+      }
+    }
+  }
+}
+.castle-toolbar-unread-message-count {
+  width: 25px;
+  height: 25px;
+  background-color: #d34800;
+  border-radius: 13px;
+  display: inline-block;
+  margin-right: 8px;
+  color: white;
+  border: 1px solid #8f3100;
+}
+
+.castle-toolbar-container-top .castle-toolbar-buttons .castle-btn-dropdown-messagesopened > ul{
+  width: 450px;
+}
+
+// // TEST
+// .castle-toolbar-container-top {
+//   display: flex;
+//   .castle-toolbar-breadcrumbs {
+//     padding-right: 10px;
+//     flex: 1;
+//     li {
+//       display: inline;
+//     }
+//     &, & > * {
+//       white-space: nowrap;
+//       overflow: hidden;
+//       text-overflow: ellipsis;
+//     }
+//   }
+//   .castle-toolbar-buttons, .castle-toolbar-logo {
+//     white-space: nowrap;
+//   }
+// }
+
+// End TEST
+
+body.castle-toolbar-active #visual-wrapper,
+body.template-folder_contents.castle-toolbar-active #main-content-container,
+body.template-theming-controlpanel.castle-toolbar-active {
+  padding-left: @left-toolbar-width;
+  padding-top: @top-toolbar-height;
+}
+body.castle-toolbar-active.no-roles{
+  #visual-wrapper{
+    padding-left: 0;
+  }
+  .castle-toolbar-container-side {
+    display: none;
+  }
+}
+
+.castle-toolbar-container {
+  z-index: 99;
+}

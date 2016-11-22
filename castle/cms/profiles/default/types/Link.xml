@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<object name="Link" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title" i18n:translate="">Link</property>
+ <property name="description" i18n:translate=""></property>
+ <property name="icon_expr"></property>
+ <property name="factory">Link</property>
+ <property name="add_view_expr">string:${folder_url}/++add++Link</property>
+ <property name="link_target"></property>
+ <property name="immediate_view">view</property>
+ <property name="global_allow">True</property>
+ <property name="filter_content_types">True</property>
+ <property name="allowed_content_types"/>
+ <property name="allow_discussion">False</property>
+ <property name="default_view">link_redirect_view</property>
+ <property name="view_methods">
+  <element value="link_redirect_view"/>
+ </property>
+ <property name="default_view_fallback">False</property>
+ <property name="add_permission">plone.app.contenttypes.addLink</property>
+ <property name="klass">plone.app.contenttypes.content.Link</property>
+ <property name="schema"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes.schema:link.xml</property>
+ <property name="behaviors" purge="false">
+  <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+  <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
+  <element value="plone.app.content.interfaces.INameFromTitle"/>
+  <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
+  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage" />
+  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="plone.app.relationfield.behavior.IRelatedItems" />
+  <element value="plone.app.lockingbehavior.behaviors.ILocking" />
+ </property>
+ <alias from="(Default)" to="(dynamic view)"/>
+ <alias from="edit" to="@@edit"/>
+ <alias from="sharing" to="@@sharing"/>
+ <alias from="view" to="(selected layout)"/>
+ <action title="View" action_id="view" category="object" condition_expr=""
+    icon_expr="" link_target="" url_expr="string:${object_url}"
+    visible="True" i18n:attributes="title">
+  <permission value="View"/>
+ </action>
+ <action title="Edit" action_id="edit" category="object" condition_expr=""
+    icon_expr="" link_target="" url_expr="string:${object_url}/edit"
+    visible="True" i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+</object>

@@ -1,0 +1,84 @@
+
+.portalMessage-variant(@background; @border; @text-color) {
+	background-color: @background;
+	border: @border;
+	color: @text-color;
+	> strong, > dt { color: fade(@text-color, 67%);}
+}
+
+.alert.status,
+.portalMessage {
+  display:block;
+	padding: @plone-alert-padding;
+	padding-left: @plone-alert-padding*3;
+	margin-bottom: @plone-line-height-computed;
+	border: 0;
+	border-radius: @plone-alert-border-radius;
+	box-shadow: 0 1px 2px rgba(0,0,0,.17);
+	font-size: @plone-font-size-base;
+	font-weight: @plone-font-weight-regular;
+	text-shadow: 0 1px rgba(255,255,255,.1);
+	> strong, > dt {
+		font-weight: @plone-font-weight-bold;
+		padding-right: @plone-alert-padding/3;
+		color: darken(@plone-alert-info-text, 10%)
+	}
+	a {
+		font-weight: @plone-alert-link-font-weight;
+		color: darken(@plone-link-color, 12%);
+	}
+	> strong:before, > dt:before {
+		font-size:@plone-font-size-base;
+		font-weight: @plone-font-weight-regular;
+		margin-left: -30px;
+		margin-right: 10px;
+		display: inline-block;
+		border-radius: @plone-alert-icon-size;
+		text-align:center;
+		color:rgba(255, 255, 255, 0.9);
+		width:@plone-alert-icon-size;
+		height:@plone-alert-icon-size;
+		line-height: @plone-alert-icon-size; //IE fix
+		text-shadow: 0 -1px rgba(0,0,0,.5);
+		top: -1px;
+		position: relative;
+	}
+	> dt, > dd { display: inline;}
+	> dd {margin: 0;}
+
+  &.alert-none {
+      box-shadow: none;
+      display:none;
+  }
+  &.alert-success,
+  &.info {
+    .portalMessage-variant(@plone-alert-info-bg; @plone-alert-info-border; @plone-alert-info-text);
+      & > strong:before, & > dt:before {background-color: @plone-alert-info-bullet; content:"i";}
+  }
+  &.alert-warning,
+  &.warning {
+    .portalMessage-variant(@plone-alert-warning-bg; @plone-alert-warning-border; @plone-alert-warning-text);
+      & > strong:before, & > dt:before {background-color: @plone-alert-warning-bullet; content:"!";}
+  }
+  &.alert-error,
+  &.error {
+    .portalMessage-variant(@plone-alert-error-bg; @plone-alert-error-border; @plone-alert-error-text);
+      & > strong:before, & > dt:before {background-color: @plone-alert-error-bullet; content:"×";}
+  }
+
+  button.close {
+    position: relative;
+    top: -4px;
+    right: 0px;
+    color: inherit;
+  }
+
+  button.close:hover {
+    background-color: transparent;
+  }
+}
+.portlet .portletContent > .portalMessage {
+	padding: @plone-alert-padding;
+	padding-left: @plone-alert-padding*3;
+	margin:15px;
+}

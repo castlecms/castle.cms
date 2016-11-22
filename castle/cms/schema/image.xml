@@ -1,0 +1,25 @@
+<model xmlns="http://namespaces.plone.org/supermodel/schema"
+       xmlns:marshal="http://namespaces.plone.org/supermodel/marshal"
+       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+       xmlns:form="http://namespaces.plone.org/supermodel/form"
+       i18n:domain="plone">
+  <schema>
+    <field name="title" type="zope.schema.TextLine">
+      <description />
+      <required>False</required>
+      <title>Title</title>
+    </field>
+    <field name="description" type="zope.schema.Text">
+      <description />
+      <required>False</required>
+      <title>Summary</title>
+    </field>
+    <field name="image"
+           type="plone.namedfile.field.NamedBlobImage"
+           marshal:primary="true"
+           form:widget="castle.cms.widgets.FocalNamedImageFieldWidget">
+      <description />
+      <title i18n:translate="label_image">Image</title>
+    </field>
+  </schema>
+</model>

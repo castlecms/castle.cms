@@ -1,0 +1,105 @@
+@import (reference) 'plone-variables';
+@import '@{bowerPath}/bootstrap/less/variables';
+@import "variables.less";
+
+@import '@{bowerPath}/bootstrap/less/mixins';
+@import (less) '../libs/camera/css/camera.css';
+@import (less) '../libs/leaflet-dist/leaflet.css';
+@import (less) '../libs/fullcalendar/dist/fullcalendar.min.css';
+@import (less) '../libs/mediaelement/build/mediaelementplayer.css';
+// comment out the lines above for font icons to work while in dev mode
+
+@font-path: "libs/FlexSlider/fonts";
+@import "../libs/FlexSlider/flexslider.less";
+
+
+@import "public/fonts.less";
+@import "public/forms.less";
+@import "public/base-modal-styles.less";
+@import "public/buttons.less";
+@import "public/images.less";
+@import "public/media.less";
+@import "public/tiles.less";
+@import "public/existing-tile.less";
+@import "public/misc.less";
+@import "public/widgets.less";
+@import "public/loader.less";
+@import "public/tables.less";
+@import "public/commenting.less";
+@import "public/alerts.less";
+@import "public/search.less";
+@import "public/pagination.less";
+@import "public/fixes.less";
+@import "public/next-prev-nav.less";
+@import "public/impersonator.less";
+
+
+.visually-hidden {
+  position: absolute;
+  left: -999em;
+}
+.featured-content  div.large-7.columns {
+  padding-left: 1em;
+}
+#main-search, #mobile-search {
+  width: 80%;
+  border-radius: 0px;
+  -webkit-border-top-left-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  float: left;
+  height: 32px;
+}
+.search .secondary.button {
+  width: 20%;
+  -webkit-border-top-right-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  -moz-border-radius-bottomright: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 5px 10px;
+  margin-bottom: 0px;
+  height: 32px;
+}
+
+.discreet {
+  // Color needs slightly changed for contrast ratio
+  color: #767676;
+}
+
+.pull-right {
+  float: right !important;
+}
+.pull-left {
+  float: left !important;
+}
+
+.portal-type-audio  {
+  .col-md-3 {
+    width: 16.66666667%;
+  }
+
+  .col-md-9 {
+    width: 83.33333333%;
+    padding-top: 3em;
+  }
+
+  .col-md-9 p {
+    margin-bottom: 5px;
+    width: 80%;
+  }
+  .col-md-9 p.read-more {
+    width: 10%;
+    float: right;
+  }
+}
+
+@media (max-width: 976px) {
+ .portal-type-audio .col-md-3 {
+    width: 16.66666667%;
+  }
+}

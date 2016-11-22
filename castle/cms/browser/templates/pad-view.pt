@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:b fill-slot="main">
+  <tal:b metal:define-macro="main">
+    <div tal:condition="view/valid">
+      <iframe src="${view/contribute_url}" width="100%" height="900" tal:condition="view/contribute_url">
+      </iframe>
+      <div class="etherpad-contents" tal:content="structure view/text" tal:condition="view/text">
+      </div>
+    </div>
+    <div tal:condition="not: view/valid">
+      Etherpad is not setup
+    </div>
+  </tal:b>
+</metal:b>
+
+</body>
+</html>

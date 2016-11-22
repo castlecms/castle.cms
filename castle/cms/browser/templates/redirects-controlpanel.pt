@@ -1,0 +1,89 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en-US" lang="en-US"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="RedirectionTool">
+
+<metal:block metal:fill-slot="top_slot"
+             tal:define="dummy python:request.set('disable_border', 1)" />
+
+  <body>
+    <div metal:fill-slot="prefs_configlet_main">
+      <dl tal:condition="view/errors" class="portalMessage error">
+        <dt>Error</dt>
+        <dd>
+          <p i18n:translate="error_bulk_upload">
+            No aliases were added. Please correct these errors in your CSV file and try again:
+          </p>
+          <table style="text-align: left; vertical-align: top" border="0" cellpadding="2" cellspacing="0">
+            <tr tal:repeat="error view/errors" style="vertical-align: top">
+              <td nowrap="nowrap"><tal:block i18n:translate="label_bulk_upload_line">Line</tal:block> <span tal:replace="error/line_number" /><tal:block i18n:translate="label_bulk_upload_line_suffix">:</tal:block></td>
+              <td>
+                <code tal:content="error/line" />
+              </td>
+              <td tal:content="error/message" />
+            </tr>
+          </table>
+        </dd>
+      </dl>
+
+      <h1 i18n:translate="heading_add_aliases">Manage aliases</h1>
+
+      <form tal:attributes="action view/view_url" method="post">
+        <fieldset>
+          <legend i18n:translate="legend_all_existing_aliases">All existing aliases for this site</legend>
+
+          <tal:redirects repeat="redirect view/redirects">
+            <div>
+              <input type="checkbox"
+                     class="noborder"
+                     name="redirects:tuple"
+                     tal:attributes="value redirect/redirect" />
+
+              <span tal:replace="redirect/path" /> &rarr; <span tal:replace="redirect/redirect-to" />
+            </div>
+          </tal:redirects>
+
+          <div class="formControls">
+            <input class="context"
+                   type="submit"
+                   value="Remove"
+                   name="form.button.Remove"
+                   i18n:attributes="value"
+                   />
+          </div>
+
+        </fieldset>
+      </form>
+
+      <form tal:attributes="action view/view_url" method="post" enctype="multipart/form-data">
+        <fieldset>
+          <legend i18n:translate="legend_bulk_upload">Bulk-upload aliases</legend>
+
+          <p i18n:translate="description_bulk_upload">
+            Add many aliases at once by uploading a CSV file. The first column should be the path to redirect from; the second, the path to redirect to. Both paths must be Castle-site-relative, starting with a slash (/).
+          </p>
+          <p>
+            <tal:block i18n:translate="example_caption_bulk_upload">Example:</tal:block><br />
+            <code i18n:translate="example_bulk_upload">/old-home-page.asp,/front-page<br />
+            /people/JoeT,/Users/joe-thurston</code>
+          </p>
+
+          <input type="file" name="file" />
+
+          <div class="formControls">
+            <input class="context"
+                   type="submit"
+                   value="Upload"
+                   name="form.button.Upload"
+                   i18n:attributes="value"
+                   />
+          </div>
+
+        </fieldset>
+      </form>
+    </div>
+  </body>
+</html>

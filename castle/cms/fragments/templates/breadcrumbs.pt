@@ -1,0 +1,3 @@
+<div class="breadcrumbs-container"
+     tal:content="structure utils/render_breadcrumbs">
+</div>

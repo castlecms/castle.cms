@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<div metal:fill-slot="prefs_configlet_main">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/plone_control_panel"
+       i18n:translate="">
+        Site Setup
+    </a>
+
+
+    <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+
+
+    <div id="content-core">
+        <div class="portalMessage info"
+             tal:condition="python: view.hasTwitterApp() and view.hasTwitterUserAuth()">
+            <strong>Twitter</strong>
+            You have a twitter user authorized. You can can
+            <a href="${portal_url}/@@twitter-auth">re-authorize</a>
+            the same or a different user if you need to.
+        </div>
+        <div class="portalMessage warning"
+             tal:condition="python: view.hasTwitterApp() and not view.hasTwitterUserAuth()">
+            <strong>Twitter</strong>
+            You have a twitter application setup,
+            would you like to
+            <a href="${portal_url}/@@twitter-auth">authorize your twitter account</a> for this site now?
+        </div>
+
+        <div id="layout-contents">
+            <span tal:replace="structure view/contents" />
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

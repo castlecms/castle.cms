@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="castle.cms">
+
+  <subscriber handler=".queuePurge" />
+  <subscriber handler=".purge" />
+  <adapter factory=".LeadImagePurgePaths" name="castle.purge.leadimages" />
+  <adapter factory=".DocViewerPurgePaths" name="castle.purge.docviewer" />
+
+  <browser:page
+      name="castle-purge"
+      for="*"
+      class=".Purge"
+      permission="cmf.ModifyPortalContent"
+      template="purge.pt"
+  />
+
+</configure>

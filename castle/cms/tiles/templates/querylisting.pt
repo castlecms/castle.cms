@@ -1,0 +1,30 @@
+<div class="col-lg-12"
+     tal:define="results view/results;">
+  <div class="pat-queryfilter" data-pat-queryfilter="${view/filter_pattern_config}" />
+
+  <h2 tal:condition="view/data/title|nothing">${view/data/title|nothing}</h2>
+
+  <div class="query-results pat-pager"
+       tal:attributes="id python: 'query-results-%s' % view.id or ''">
+    <div class="row top-total">
+      <div class="col-lg-12 large-12 hide-for-small">
+        <p class="right">Results: ${results/total} Items</p>
+      </div>
+    </div>
+
+    <div tal:replace="structure view/render_display" />
+
+    <p class="read-more text-center bottom-total visualClear"
+       tal:condition="python: results['items']"
+       tal:define="page python: results['page'];
+                   limit view/limit;
+                   total python: results['total'];
+                   showing python: min(page * limit, total);">
+      1 - ${showing} of ${python: results['total']} Results
+      <button href="${python: view.next_url(page)}" class="load-more"
+         tal:condition="python: (page * limit) < total"
+         data-page="${python: page + 1}">Show ${python: view.limit} More Articles</button>
+    </p>
+  </div>
+</div>
+<div class="clearfix" />

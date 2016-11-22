@@ -1,0 +1,614 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record name="plone.app.mosaic.default_omitted_fields">
+    <value purge="False">
+      <element>plone.app.contenttypes.behaviors.tableofcontents.ITableOfContents.table_of_contents</element>
+      <element>plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation.exclude_from_nav</element>
+      <element>plone.app.dexterity.behaviors.discussion.IAllowDiscussion.allow_discussion</element>
+      <element>plone.app.dexterity.behaviors.id.IShortName.id</element>
+      <element>plone.app.dexterity.behaviors.metadata.ICategorization.language</element>
+      <element>plone.app.dexterity.behaviors.metadata.ICategorization.subjects</element>
+      <element>plone.app.dexterity.behaviors.metadata.IDublinCore.contributors</element>
+      <element>plone.app.dexterity.behaviors.metadata.IDublinCore.creators</element>
+      <element>plone.app.dexterity.behaviors.metadata.IDublinCore.expires</element>
+      <element>plone.app.dexterity.behaviors.metadata.IDublinCore.language</element>
+      <element>plone.app.dexterity.behaviors.metadata.IDublinCore.rights</element>
+      <element>plone.app.dexterity.behaviors.metadata.IDublinCore.subjects</element>
+      <element>plone.app.dexterity.behaviors.metadata.IOwnership.contributors</element>
+      <element>plone.app.dexterity.behaviors.metadata.IOwnership.creators</element>
+      <element>plone.app.dexterity.behaviors.metadata.IOwnership.rights</element>
+      <element>plone.app.dexterity.behaviors.metadata.IPublication.expires</element>
+      <element>plone.app.dexterity.behaviors.nextprevious.INextPreviousToggle.nextPreviousEnabled</element>
+      <element>plone.app.relationfield.behavior.IRelatedItems.relatedItems</element>
+      <element>plone.app.versioningbehavior.behaviors.IVersionable.changeNote</element>
+      <element>plone.app.blocks.layoutbehavior.ILayoutAware.contentLayout</element>
+      <element>castle.cms.behaviors.search.ISearch.searchterm_pins</element>
+      <element>castle.cms.behaviors.location.ILocation.locations</element>
+      <element>castle.cms.behaviors.location.ILocation.coordinates</element>
+    </value>
+  </record>
+
+
+
+  <record name="plone.app.mosaic.hidden_content_layouts">
+    <value purge="False">
+      <element>default/news_item.html::News Item</element>
+      <element>default/basic.html::News Item</element>
+      <element>default/basic.html::Folder</element>
+      <element>default/basic.html::Dashboard</element>
+      <element>custom/basic.html</element>
+    </value>
+  </record>
+  <record name="plone.app.blocks.default_layout.Folder">
+    <field type="plone.registry.field.TextLine" />
+    <value>++contentlayout++castle/folder.html</value>
+  </record>
+  <record name="plone.app.blocks.default_layout.News-Item">
+    <field type="plone.registry.field.TextLine" />
+    <value>++contentlayout++default/news_item.html</value>
+  </record>
+  <record name="plone.app.blocks.default_layout.Dashboard">
+    <field type="plone.registry.field.TextLine" />
+    <value>++contentlayout++castle/default-dashboard.html</value>
+  </record>
+
+  <record name="plone.app.standardtiles.listing_views">
+    <value purge="false">
+      <element key="file_tabular_view">Tabular file view</element>
+    </value>
+  </record>
+
+  <record name="plone.app.tiles">
+    <value purge="false">
+      <element>plone.app.standardtiles.rawhtml</element>
+      <element>castle.cms.calendar</element>
+      <element>castle.cms.subscription</element>
+      <element>castle.cms.embedtile</element>
+      <element>castle.cms.videotile</element>
+      <element>castle.cms.imagetile</element>
+      <element>castle.cms.audiotile</element>
+      <element>castle.cms.slidertile</element>
+      <element>castle.cms.gallerytile</element>
+      <element>castle.cms.twitterTimeline</element>
+      <element>castle.cms.tweet</element>
+      <element>castle.cms.facebookPage</element>
+      <element>castle.cms.pin</element>
+      <element>castle.cms.sharing</element>
+      <element>castle.cms.maptile</element>
+      <element>castle.cms.fragment</element>
+      <element>castle.cms.querylisting</element>
+      <element>plone.app.standardtiles.keywords</element>
+      <element>castle.cms.search</element>
+      <element>castle.cms.documentviewer</element>
+      <element>castle.cms.existing</element>
+    </value>
+  </record>
+
+  <record name="plone.app.mosaic.default_available_actions">
+    <value>
+      <element>save</element>
+      <element>cancel</element>
+      <element>properties</element>
+      <element>customizelayout</element>
+      <element>changelayout</element>
+      <element>format</element>
+      <element>insert</element>
+      <element>remove</element>
+      <element>tile-background</element>
+      <element>tile-background-rounded</element>
+      <element>tile-padding-bottom</element>
+      <element>tile-padding-top</element>
+      <element>tile-padding-left</element>
+      <element>tile-padding-right</element>
+      <element>tile-remove-format</element>
+      <element>grid-row-dark</element>
+      <element>grid-row-remove-format</element>
+    </value>
+  </record>
+
+  <records interface="plone.app.mosaic.interfaces.IWeightedDict"
+           prefix="plone.app.mosaic.tiles_categories.social">
+    <value key="name">social</value>
+    <value key="label">Social</value>
+    <value key="weight">30</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_documentviewer"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.documentviewer</value>
+    <value key="label">Document Viewer</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">120</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_calendar"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.calendar</value>
+    <value key="label">Calendar</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">30</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_search"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.search</value>
+    <value key="label">Search</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">20</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_existing"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.existing</value>
+    <value key="label">Existing Content</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">20</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_subscription"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.subscription</value>
+    <value key="label">Subscribe</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">20</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_querylisting"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.querylisting</value>
+    <value key="label">Query Listing</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">100</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_fragment"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.fragment</value>
+    <value key="label">Fragment</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">30</value>
+  </records>
+
+  <!-- override default embed tile -->
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_embed"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.embedtile</value>
+    <value key="label">Embed</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">20</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_video"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.videotile</value>
+    <value key="label">Video</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">50</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_image"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.imagetile</value>
+    <value key="label">Image</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">50</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_audio"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.audiotile</value>
+    <value key="label">Audio</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">60</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_slider"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.slidertile</value>
+    <value key="label">Slider</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">70</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_gallery"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.gallerytile</value>
+    <value key="label">Gallery</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">80</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_map"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.maptile</value>
+    <value key="label">Map</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">80</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_pin"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.pin</value>
+    <value key="label">Pinterest Pin</value>
+    <value key="category">social</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">90</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_facebookPage"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.facebookPage</value>
+    <value key="label">Facebook Page</value>
+    <value key="category">social</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">90</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_twitterTimeline"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.twitterTimeline</value>
+    <value key="label">Twitter Timeline</value>
+    <value key="category">social</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">90</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_tweet"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.tweet</value>
+    <value key="label">Tweet</value>
+    <value key="category">social</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">90</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_sharing"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.sharing</value>
+    <value key="label">Sharing Buttons</value>
+    <value key="category">social</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">100</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.structure_tiles.horizontal_rule"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="default_value">&lt;hr /&gt;</value>
+    <value key="category">structure</value>
+    <value key="read_only">False</value>
+    <value key="name">hr</value>
+    <value key="settings">False</value>
+    <value key="favorite">False</value>
+    <value key="label">Horizontal rule</value>
+    <value key="tile_type">text</value>
+    <value key="rich_text">False</value>
+    <value key="weight">50</value>
+  </records>
+
+
+  <!-- update it to enable it -->
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_rawhtml"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="category">structure</value>
+    <value key="tile_type">textapp</value>
+    <value key="default_value">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed posuere interdum sem. Quisque ligula eros ullamcorper quis, lacinia quis facilisis sed sapien. Mauris varius diam vitae arcu. Sed arcu lectus auctor vitae, consectetuer et venenatis eget velit. Sed augue orci, lacinia eu tincidunt et eleifend nec lacus.</value>
+  </records>
+
+  <!-- formats -->
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.formats.tile_background">
+    <value key="name">tile-background</value>
+    <value key="category">tile</value>
+    <value key="label">Background</value>
+    <value key="action">tile-toggle-class</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">1</value>
+  </records>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.formats.tile_background_rounded">
+    <value key="name">tile-background-rounded</value>
+    <value key="category">tile</value>
+    <value key="label">Background with rounded corners</value>
+    <value key="action">tile-toggle-class</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">2</value>
+  </records>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.formats.tile_padding_left">
+    <value key="name">tile-padding-left</value>
+    <value key="category">tile</value>
+    <value key="label">Padding Left</value>
+    <value key="action">tile-toggle-class</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">101</value>
+  </records>
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.formats.tile_padding_top">
+    <value key="name">tile-padding-top</value>
+    <value key="category">tile</value>
+    <value key="label">Padding Top</value>
+    <value key="action">tile-toggle-class</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">102</value>
+  </records>
+
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.richtext_toolbar.indent">
+    <value key="name">toolbar-indent</value>
+    <value key="category">justify</value>
+    <value key="label">Indent</value>
+    <value key="action">indent</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">445</value>
+  </records>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.richtext_toolbar.outdent">
+    <value key="name">toolbar-outdent</value>
+    <value key="category">justify</value>
+    <value key="label">Outdent</value>
+    <value key="action">outdent</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">446</value>
+  </records>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.richtext_toolbar.table">
+    <value key="name">toolbar-table</value>
+    <value key="category">lists</value>
+    <value key="label">Insert Table</value>
+    <value key="action">table</value>
+    <value key="icon">false</value>
+    <value key="favorite">false</value>
+    <value key="weight">525</value>
+  </records>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.richtext_toolbar.code">
+    <value key="name">toolbar-code</value>
+    <value key="category">styles</value>
+    <value key="label">Edit Code</value>
+    <value key="action">code</value>
+    <value key="icon">false</value>
+    <value key="favorite">false</value>
+    <value key="weight">1000</value>
+  </records>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_z3cform_wysiwyg_widget_WysiwygWidget.actions">
+    <value purge="False">
+      <element>toolbar-removeformat</element>
+      <element>toolbar-table</element>
+      <element>toolbar-code</element>
+      <element>toolbar-indent</element>
+      <element>toolbar-outdent</element>
+    </value>
+  </record>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_z3cform_wysiwyg_widget_WysiwygFieldWidget.actions">
+    <value purge="False">
+      <element>toolbar-removeformat</element>
+      <element>toolbar-table</element>
+      <element>toolbar-code</element>
+      <element>toolbar-indent</element>
+      <element>toolbar-outdent</element>
+    </value>
+  </record>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_widgets_dx_RichTextWidget.actions">
+    <value purge="False">
+      <element>toolbar-removeformat</element>
+      <element>toolbar-table</element>
+      <element>toolbar-code</element>
+      <element>toolbar-indent</element>
+      <element>toolbar-outdent</element>
+    </value>
+  </record>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_z3cform_widget_RichTextFieldWidget.actions">
+    <value purge="False">
+      <element>toolbar-removeformat</element>
+      <element>toolbar-table</element>
+      <element>toolbar-code</element>
+      <element>toolbar-indent</element>
+      <element>toolbar-outdent</element>
+    </value>
+  </record>
+
+  <record name="plone.app.mosaic.structure_tiles.text.available_actions">
+    <value purge="False">
+      <element>toolbar-removeformat</element>
+      <element>toolbar-table</element>
+      <element>toolbar-code</element>
+      <element>toolbar-indent</element>
+      <element>toolbar-outdent</element>
+    </value>
+  </record>
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_rawhtml.available_actions">
+    <value purge="False">
+      <element>toolbar-removeformat</element>
+      <element>toolbar-table</element>
+      <element>toolbar-code</element>
+      <element>toolbar-indent</element>
+      <element>toolbar-outdent</element>
+    </value>
+  </record>
+
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_keywords"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="category">structure</value>
+  </records>
+
+  <!-- remove toolbar stuff -->
+  <records interface="plone.app.mosaic.interfaces.IWeightedDict"
+           prefix="plone.app.mosaic.tinymce_categories.table" remove="True" />
+  <records prefix="plone.app.mosaic.structure_tiles.table"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.structure_tiles.table.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.structure_tiles.bullets"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.structure_tiles.bullets.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.structure_tiles.numbers"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.structure_tiles.numbers.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_tableofcontents"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_tableofcontents.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_navigation"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_navigation.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_image"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_image.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_attachment"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_attachment.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_discussion"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_discussion.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.app_tiles.plone_app_standardtiles_existingcontent"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_existingcontent.available_actions" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_rss" remove="True" />
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_rss.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.structure_tiles.heading"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.structure_tiles.heading.available_actions" remove="True" />
+  <records prefix="plone.app.mosaic.structure_tiles.subheading"
+           interface="plone.app.mosaic.interfaces.ITile" remove="True" />
+  <record name="plone.app.mosaic.structure_tiles.subheading.available_actions" remove="True" />
+
+
+  <!-- remove formats -->
+  <records interface="plone.app.mosaic.interfaces.IFormat" prefix="plone.app.mosaic.formats.tile_align_left" remove="True">
+  </records>
+  <records interface="plone.app.mosaic.interfaces.IFormat" prefix="plone.app.mosaic.formats.tile_align_right" remove="True">
+  </records>
+  <records interface="plone.app.mosaic.interfaces.IFormat" prefix="plone.app.mosaic.formats.tile_align_center" remove="True">
+  </records>
+
+
+</registry>

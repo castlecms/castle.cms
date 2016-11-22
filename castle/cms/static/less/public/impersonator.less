@@ -1,0 +1,24 @@
+/* impersonator styles */
+#impersonator {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  background-color: black;
+  width: 100%;
+  color: #a6a6a6;
+  padding: 10px 10px 10px 80px;
+  margin: 0px;
+  z-index: 4;
+
+  a.stop {
+    margin-right: 5px;
+
+    &:hover .glyphicon::before {
+      color: white;
+    }
+  }
+}
+
+.toolbar-initialized #impersonator {
+  left: 190px;
+}

@@ -1,0 +1,31 @@
+/* state table styles */
+
+.pat-structure table,
+.castle-content-browser table.contents {
+  // content browser and manage content share these styles
+
+  tbody {
+    tr td:first-child {
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+    }
+    tr.state-private td:first-child {
+      border-left: 4px solid @private-color;
+    }
+    tr.state-published td:first-child {
+      border-left: 4px solid @published-color;
+    }
+    tr.state-pending td:first-child {
+      border-left: 4px solid @pending-color;
+    }
+    tr.state-draft td:first-child {
+      border-left: 4px solid @draft-color;
+    }
+    tr.state-internal td:first-child {
+      border-left: 4px solid @internal-color;
+    }
+    tr.state-internally-published td:first-child {
+      border-left: 4px solid @internally-published-color;
+    }
+  }
+}

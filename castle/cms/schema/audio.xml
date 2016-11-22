@@ -1,0 +1,23 @@
+<model xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:indexer="http://namespaces.plone.org/supermodel/indexer" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns:users="http://namespaces.plone.org/supermodel/users" xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:lingua="http://namespaces.plone.org/supermodel/lingua" xmlns="http://namespaces.plone.org/supermodel/schema" i18n:domain="plone">
+  <schema>
+    <field name="title" type="zope.schema.TextLine">
+      <description/>
+      <required>False</required>
+      <title>Title</title>
+    </field>
+    <field name="description" type="zope.schema.Text">
+      <description/>
+      <required>False</required>
+      <title>Summary</title>
+    </field>
+    <field name="file" type="plone.namedfile.field.NamedBlobFile" marshal:primary="true">
+      <description/>
+      <title i18n:translate="label_file">File</title>
+    </field>
+    <field name="transcript" type="plone.app.textfield.RichText">
+      <description/>
+      <required>False</required>
+      <title>Transcript</title>
+    </field>
+  </schema>
+</model>

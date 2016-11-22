@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<rolemap>
+  <permissions>
+    <permission name="Castle: Manage Slots"
+                acquire="True">
+      <role name="Manager"/>
+      <role name="Site Administrator"/>
+    </permission>
+    <permission name="castle.cms: Add Audio" acquire="True">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+    <permission name="castle.cms: Add Video" acquire="True">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+    <permission name="castle.cms: Add Pad" acquire="True">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+    <permission name="castle.cms: Add Dashboard" acquire="True">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+  </permissions>
+</rolemap>

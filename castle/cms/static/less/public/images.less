@@ -1,0 +1,142 @@
+@base_height: 1050px;
+@portrait_ratio: 5/4;
+@landscape_ratio: 9/16;
+@short_ratio: 5/16;
+@quarter: 1/4;
+@third: 1/3;
+@half: 1/2;
+@twothirds: 2/3;
+@threequarters: 3/4;
+
+// @landscape_height: 800px;
+// @square_height: 1000px;
+// @portrait_height: @screen-lg-min;
+
+
+.focuspoint {
+	position: relative; /*Any position but static should work*/
+	overflow: hidden;
+  width: 100%;
+
+  img {
+  	position: absolute;
+  	left: 0;
+  	top: 0;
+  	margin: 0;
+  	display: block;
+  	/* fill and maintain aspect ratio */
+  	width: auto; height: auto;
+  	min-width: 100%; min-height: 100%;
+  	max-height: none; max-width: none;
+  }
+}
+
+.mosaic-tile {
+  .focuspoint {
+    img {
+      max-width: none !important;
+    }
+  }
+}
+
+.image-tile-container.fullwidth {
+  img {
+    width: 100%;
+  }
+}
+
+.generate-image-size(@modifier){
+  .image-tile-container.landscape .focuspoint {
+    height: max(((@base_height * @modifier) * @landscape_ratio), 150px);
+  }
+  .image-tile-container.portrait .focuspoint {
+    height: max(((@base_height * @modifier) * @portrait_ratio), 150px);
+  }
+  .image-tile-container.square .focuspoint {
+    height: max((@base_height * @modifier), 150px);
+  }
+	.image-tile-container.short .focuspoint {
+    height: max((@base_height * @modifier) * @short_ratio, 150px);
+  }
+}
+
+
+.mosaic-grid-cell,
+.mosaic-helper-tile {
+  /* default size is 0.25, this will be default for mobile sizes as well,
+     then we work up, work between full width and this size */
+  .generate-image-size(0.25);
+}
+
+
+.mosaic-width-full {
+  @media (min-width: @screen-lg-min) {
+    .generate-image-size(1);
+  }
+  @media (max-width: @screen-md-max) and (min-width: @screen-md-min) {
+    .generate-image-size(0.75);
+  }
+  @media (max-width: @screen-sm-max) and (min-width: @screen-sm-min) {
+    .generate-image-size(0.5);
+  }
+}
+
+.mosaic-width-half {
+  @media (min-width: @screen-lg-min) {
+    .generate-image-size(0.5);
+  }
+  @media (max-width: @screen-md-max) and (min-width: @screen-md-min) {
+    .generate-image-size(0.35);
+  }
+  // @media (max-width: @screen-sm-max) and (min-width: @screen-sm-min) {
+  //   .generate-image-size(0.20);
+  // }
+}
+
+// .mosaic-width-quarter {
+//   @media (min-width: @screen-lg-min) {
+//     .generate-image-size(0.25);
+//   }
+//   @media (max-width: @screen-md-max) and (min-width: @screen-md-min) {
+//     .generate-image-size(0.25);
+//   }
+//   @media (max-width: @screen-sm-max) and (min-width: @screen-sm-min) {
+//     .generate-image-size(0.25);
+//   }
+// }
+
+.mosaic-width-third {
+  @media (min-width: @screen-lg-min) {
+    .generate-image-size(0.3333);
+  }
+  @media (max-width: @screen-md-max) and (min-width: @screen-md-min) {
+    .generate-image-size(0.25);
+  }
+  @media (max-width: @screen-sm-max) and (min-width: @screen-sm-min) {
+    .generate-image-size(0.3);
+  }
+}
+
+.mosaic-width-two-thirds {
+  @media (min-width: @screen-lg-min) {
+    .generate-image-size(0.6666);
+  }
+  @media (max-width: @screen-md-max) and (min-width: @screen-md-min) {
+    .generate-image-size(0.5);
+  }
+  @media (max-width: @screen-sm-max) and (min-width: @screen-sm-min) {
+    .generate-image-size(0.35);
+  }
+}
+
+.mosaic-width-three-quarters {
+  @media (min-width: @screen-lg-min) {
+    .generate-image-size(0.75);
+  }
+  @media (max-width: @screen-md-max) and (min-width: @screen-md-min) {
+    .generate-image-size(0.5);
+  }
+  @media (max-width: @screen-sm-max) and (min-width: @screen-sm-min) {
+    .generate-image-size(0.35);
+  }
+}

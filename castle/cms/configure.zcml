@@ -1,0 +1,177 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    i18n_domain="castle.cms">
+
+  <i18n:registerTranslations directory="locales" />
+
+  <include package="z3c.jbot" />
+  <include package="plone.app.mosaic" />
+  <include package="plone.app.contenttypes" />
+  <include package="plone.app.blocks" />
+  <include package="plone.app.tiles" />
+  <include package="plone.app.standardtiles" />
+  <include package="collective.documentviewer" />
+  <include package="castle.theme" />
+  <include package="collective.elasticsearch" />
+
+  <!-- uncomment to do profile code
+    <include package="collective.profiler" />
+    <include file="profile.zcml" />
+  -->
+
+  <five:registerPackage package="." initialize=".initialize" />
+
+  <permission
+    id="castle.cms.ManageSlots"
+    title="Castle: Manage Slots"
+  />
+  <permission
+    id="castle.cms.addAudio"
+    title="castle.cms: Add Audio"
+    />
+  <permission
+    id="castle.cms.addPad"
+    title="castle.cms: Add Pad"
+    />
+  <permission
+    id="castle.cms.addDashboard"
+    title="castle.cms: Add Dashboard"
+    />
+  <permission
+    id="castle.cms.addVideo"
+    title="castle.cms: Add Video"
+    />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="Castle CMS"
+      directory="profiles/default"
+      description="Installs the castle.cms package"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <utility
+      factory=".install.HiddenProducts"
+      name="castle.cms"
+      provides="Products.CMFPlone.interfaces.INonInstallable"
+      />
+
+  <include package=".tiles" />
+  <include package=".pdf" />
+  <include package=".browser" />
+  <include package=".content" />
+  <include package=".exportimport" />
+  <include package=".fragments" />
+  <include package=".behaviors" />
+  <include package=".caching" />
+  <include package=".ordering" />
+
+  <include file="subscribers.zcml" />
+  <include file="patches.zcml" />
+  <include file="unconfigure.zcml" />
+  <include file="widgets.zcml" />
+  <include file="indexing.zcml" />
+  <include file="static.zcml" />
+  <include file="theming.zcml" />
+
+
+  <include package="z3c.unconfigure" file="meta.zcml" />
+  <unconfigure>
+    <utility component="plone.memoize.ram.choose_cache" provides="plone.memoize.interfaces.ICacheChooser" />
+  </unconfigure>
+
+  <utility component=".cache.get_client" provides="plone.memoize.interfaces.ICacheChooser" />
+
+  <utility
+    component=".vocabularies.LocationsVocabulary"
+    name="castle.cms.vocabularies.Locations"
+    />
+
+  <utility
+    component=".vocabularies.EmailCategoryVocabulary"
+    name="castle.cms.vocabularies.EmailCategories"
+    />
+  <utility
+    component=".vocabularies.MimeTypeVocabulary"
+    name="castle.cms.vocabularies.MimeTypes"
+    />
+  <utility
+    component=".vocabularies.ReallyUserFriendlyTypesVocabularyFactory"
+    name="castle.cms.vocabularies.ReallyUserFriendlyTypes"
+    />
+  <utility
+    component=".vocabularies.CountriesVocabularyFactory"
+    name="castle.cms.vocabularies.Countries"
+    />
+
+  <adapter factory=".syndication.LayoutAwareItem"
+    for="plone.app.blocks.layoutbehavior.ILayoutAware
+         Products.CMFPlone.interfaces.syndication.IFeed"
+    provides="Products.CMFPlone.interfaces.syndication.IFeedItem" />
+
+
+  <!-- json-ld adapters -->
+  <adapter factory=".ld.LDData"
+           provides=".interfaces.ILDData" />
+  <adapter factory=".ld.LDAudioData"
+           provides=".interfaces.ILDData" />
+  <adapter factory=".ld.LDVideoData"
+           provides=".interfaces.ILDData" />
+  <adapter factory=".ld.LDSiteData"
+           provides=".interfaces.ILDData" />
+
+ <browser:page
+   name="castle-toolbar"
+   for="*"
+   permission="zope2.View"
+   class=".toolbar.Toolbar"
+   layer=".interfaces.ICastleLayer"
+   />
+
+  <browser:page
+    name="castle-toolbar-utils"
+    for="*"
+    permission="zope2.View"
+    class=".toolbar.Utils"
+    layer=".interfaces.ICastleLayer"
+    />
+
+  <browser:jbot
+    directory="jbot_overrides"
+    layer=".interfaces.ICastleLayer"
+    />
+
+ <adapter
+   for=".interfaces.ICastleLayer"
+   provides="z3c.jbot.interfaces.ITemplateManager"
+   factory=".jbot.TemplateManager"
+   name="theme_manager"
+   />
+
+ <adapter
+    for=".interfaces.ICastleLayer"
+    provides="Products.statusmessages.interfaces.IStatusMessage"
+    factory=".statusmessages.CastleStatusMessage"
+    />
+
+ <!-- skins overrides -->
+ <cmf:registerDirectory name="castle"/>
+ <cmf:registerDirectory name="skins" directory="skins" recursive="True" />
+
+ <!-- locking overrides to deal with issues where you can not override a lock-->
+ <include package="z3c.unconfigure" file="meta.zcml" />
+ <unconfigure>
+   <adapter factory="plone.locking.lockable.TTWLockable" />
+ </unconfigure>
+ <adapter factory=".locking.TTWLockable" />
+
+ <adapter factory=".authentication.Authenticator" />
+
+</configure>

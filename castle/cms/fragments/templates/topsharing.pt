@@ -1,0 +1,6 @@
+<ul class="inline-list social-media-icons">
+  <li class="facebook-icon"><a href="https://twitter.com/"> </a></li>
+  <li class="email-icon"><a href="${public_url}/email"> </a></li>
+  <li class="twitter-icon"><a href="https://www.facebook.com/"> </a></li>
+  <li class="youtube-icon"><a href="https://www.youtube.com/user"> </a></li>
+</ul>

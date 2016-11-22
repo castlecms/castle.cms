@@ -1,0 +1,33 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="castle.cms">
+
+  <!-- Tile -->
+  <plone:tile
+      name="fragment"
+      title="Fragment tile"
+      description=""
+      for="*"
+      schema=".tiles.IFragmentTile"
+      class=".tiles.FragmentTile"
+      permission="zope2.View"
+      add_permission="cmf.ModifyPortalContent"
+      />
+
+  <utility
+    factory=".ThemeFragmentsDirectory"
+    provides=".interfaces.IFragmentsDirectory"
+    name="castle.cms.defaultfragements"
+    />
+  <utility
+    factory=".FragmentsDirectory"
+    provides=".interfaces.IFragmentsDirectory"
+    name="castle.cms.activethemefragments"
+    />
+
+</configure>

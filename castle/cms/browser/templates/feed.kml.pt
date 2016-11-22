@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+     xmlns:tal="http://xml.zope.org/namespaces/tal"
+     tal:define="feed view/feed;">
+  <tal:item tal:repeat="item feed/items">
+    <tal:coord tal:repeat="coord python: view.get_coordinates(item)">
+      <Placemark>
+        <name>${item/title}</name>
+        <description>${item/description}</description>
+        <Point tal:condition="coord">
+          <coordinates tal:on-error="nothing">${coord/lng},${coord/lat},0</coordinates>
+        </Point>
+      </Placemark>
+    </tal:coord>
+  </tal:item>
+</kml>

@@ -1,0 +1,80 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<div metal:fill-slot="prefs_configlet_main">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/plone_control_panel"
+       i18n:translate="">
+        Site Setup
+    </a>
+
+
+    <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+
+
+    <div id="content-core" tal:define="summary view/get_index_summary;
+                                       cdata view/get_crawl_data">
+      <div id="layout-contents">
+          <span tal:replace="structure view/contents" />
+      </div>
+      <div class="crawl-info-container" tal:condition="summary">
+        <h2>Crawl Stats</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Website</th>
+              <th>Pages</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tal:res tal:repeat="res summary">
+              <tr>
+                <td>${res/key}</td>
+                <td>${res/doc_count}</td>
+              </tr>
+            </tal:res>
+          </tbody>
+        </table>
+        <hr />
+      </div>
+      <div class="crawl-info-container" tal:condition="cdata/tracking">
+        <h2>Crawl Times</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Sitemap</th>
+              <th>Last crawled</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tal:res tal:repeat="sitemap python: cdata['tracking'].keys()">
+              <tr>
+                <td>${sitemap}</td>
+                <td class="pat-moment"
+                       data-pat-moment="format:relative"
+                       data-date="${python: cdata['tracking'][sitemap]}">${python: cdata['tracking'][sitemap]}</td>
+              </tr>
+            </tal:res>
+          </tbody>
+        </table>
+        <hr />
+      </div>
+    </div>
+
+</div>
+</body>
+</html>

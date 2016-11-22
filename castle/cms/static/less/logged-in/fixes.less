@@ -1,0 +1,147 @@
+/* fix 278 */
+.mosaic-selected-tile .mce-tinymce.mce-tinymce-inline {
+  display: block !important;
+  z-index: 100000;
+  position: relative;
+}
+
+#main-content {
+  z-index: 1;
+  position: relative;
+}
+
+/* end fix 278 */
+#btn-selected-items .label.label-default, #btn-selected-items .label.label-success {
+  display: inline !important;
+  font-size: 0.875em;
+}
+/*
+
+XXX poor man's hiding of plone features:
+- do not allow plone upload widget
+- disable editing language of content
+- hide site layouts editor
+- hide wysiwyg option
+*/
+#formfield-form-widgets-toolbar_position,
+#formfield-form-widgets-display_publication_date_in_byline,
+#formfield-form-widgets-icon_visibility,
+#formfield-form-widgets-thumb_visibility,
+#formfield-form-widgets-toolbar_logo,
+#formfield-form-widgets-IDublinCore-language,
+body.template-layouts-editor #autotoc-item-autotoc-1,
+#formfield-form-widgets-wysiwyg_editor
+{
+    display:none;
+}
+
+/* hide types discussion settings as it is useless */
+body.template-content-controlpanel{
+  #allow_discussion,[for="allow_discussion"]{
+    display:none;
+  }
+}
+#formfield-form-widgets-anonymous_comments,
+#formfield-form-widgets-anonymous_email_enabled{
+  display:none;
+}
+
+.template-overview-controlpanel {
+  .row.configlets {
+    padding-bottom: 4em;
+  }
+  nav.portletContent ul li ul {
+    margin-left: 0px;
+  }
+  .row .row {
+    margin: 0px !important;
+  }
+}
+
+.searchField.portlet-search-gadget, #sharing-user-group-search, #select-rules {
+  width: calc(~"100% - 82px") !important;
+  margin-right: 5px;
+}
+.searchField.portlet-search-gadget + .searchButton, #sharing-user-group-search + #sharing-search-button, #select-rules + input {
+  width: 77px;
+  margin-top: 0px !important;
+}
+
+.documentDescription {
+  margin-bottom: 1em;
+}
+
+.section-dexterity-types {
+  .crud-form {
+    .option .label:empty {
+      background: transparent;
+    }
+    td.field img[src=''] {
+      display: none;
+    }
+  }
+  .action {
+    float: left;
+    margin-right: 5px;
+  }
+
+}
+
+@media screen and (max-width: 998px) {
+  .template-configuration_registry {
+    #main-content.medium-9, #portal-column-two.medium-3 {
+      width: 100%;
+    }
+  }
+}
+
+.manage[class*="contenttype-"]::before {
+  // width: 10px;
+  vertical-align: middle;
+}
+
+.icon-group-right .glyphicon {
+  top: auto;
+  vertical-align: middle;
+}
+
+
+// fix layouts editor padding
+
+.pat-filemanager {
+  .navbar.navbar-default{
+    padding: 0 !important;
+  }
+}
+
+
+// we hide doc viewer manage annotations because it doesn't quite work right now
+#dv-manage-features {
+  display: none;
+}
+
+// fixing mosiac layout editor control panel css bug
+.template-layouts-editor .pat-filemanager > .container {width: 100%;}
+
+
+// until we get this under control, do not allow them to do recursive...
+#popover-workflow .checkbox {
+  display: none !important;
+}
+
+
+/* hide feed fields that don't make sense. */
+.portaltype-collection {
+  #formfield-form-widgets-ICollection-limit,
+  #formfield-form-widgets-ICollection-customViewFields,
+  #formfield-form-widgets-IRichText-text,
+  #formfield-form-widgets-ICollection-item_count {
+    display: none;
+  }
+}
+
+
+/* do not show lock info on delete confirmation page */
+.plone-modal-wrapper dl.portalMessage {
+  display: none;
+}

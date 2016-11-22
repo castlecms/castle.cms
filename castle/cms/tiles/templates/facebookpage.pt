@@ -1,0 +1,12 @@
+<div class="fb-page pat-facebookpage"
+    data-href="https://www.facebook.com/${view/pageID}"
+    data-small-header="${view/parameters/small_header}"
+    data-tabs="${view/parameters/timeline}"
+    data-hide-cover="${view/parameters/hide_cover}"
+    data-show-facepile="${view/parameters/show_facepile}">
+    <div class="fb-xfbml-parse-ignore">
+        <blockquote cite="https://www.facebook.com/facebook">
+            <a href="https://www.facebook.com/facebook">Facebook</a>
+        </blockquote>
+    </div>
+</div>

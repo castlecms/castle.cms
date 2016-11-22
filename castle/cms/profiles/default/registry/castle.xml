@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record name="castle.required_file_upload_fields">
+    <field type="plone.registry.field.List">
+      <title>Required file upload fields</title>
+      <required>False</required>
+      <value_type type="plone.registry.field.TextLine">
+      </value_type>
+    </field>
+    <value>
+      <element>title</element>
+    </value>
+  </record>
+
+  <record name="castle.slot_tiles">
+    <field type="plone.registry.field.Dict">
+      <key_type type="plone.registry.field.TextLine">
+        <title>Tile Id</title>
+      </key_type>
+      <title>Slot tiles</title>
+      <value_type type="plone.registry.field.List">
+        <title>Group</title>
+        <value_type type="plone.registry.field.TextLine" />
+      </value_type>
+    </field>
+    <value>
+      <element key="Structure">
+        <element>plone.app.standardtiles.rawhtml</element>
+      </element>
+
+      <element key="Media">
+        <element>castle.cms.audiotile</element>
+        <element>castle.cms.embedtile</element>
+        <element>castle.cms.maptile</element>
+        <element>castle.cms.gallerytile</element>
+        <element>castle.cms.slidertile</element>
+        <element>castle.cms.videotile</element>
+        <element>castle.cms.imagetile</element>
+      </element>
+      <element key="Social">
+        <element>castle.cms.facebookPage</element>
+        <element>castle.cms.pin</element>
+        <element>castle.cms.twitterTimeline</element>
+        <element>castle.cms.tweet</element>
+        <element>castle.cms.sharing</element>
+      </element>
+      <element key="Advanced">
+        <element>castle.cms.fragment</element>
+        <element>castle.cms.calendar</element>
+        <element>castle.cms.querylisting</element>
+        <element>plone.app.standardtiles.contentlisting</element>
+        <element>castle.cms.navigation</element>
+        <element>castle.cms.search</element>
+      </element>
+    </value>
+  </record>
+
+</registry>

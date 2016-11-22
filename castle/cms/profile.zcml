@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:profiler="http://namespaces.plone.org/profiler"
+    i18n_domain="castle.cms">
+
+  <profiler:profile
+     class="castle.cms.theming._Transform"
+     method="__call__"
+     dirs="True"
+       />
+
+</configure>

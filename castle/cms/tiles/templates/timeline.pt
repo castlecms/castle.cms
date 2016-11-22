@@ -1,0 +1,3 @@
+<div style="padding:5px;">
+    <a class='pat-timeline' data-dnt='true' data-pat-timeline='${view/patternOptions}' href='#' />
+</div>

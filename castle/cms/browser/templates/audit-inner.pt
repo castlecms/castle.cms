@@ -1,0 +1,114 @@
+<div class="audit-log-content-container"
+      tal:define="connected view/el_connected;
+                  site_path python: '/'.join(context.getPhysicalPath());
+                  portal_url context/@@plone_portal_state/portal_url">
+
+<div class="portalMessage warning" tal:condition="not: connected">
+  <strong>Warning</strong>
+  You have no <a href="${portal_url}/@@elastic-controlpanel">configured Elastic Search</a>.
+  Audit Logging does not work unless Elastic search is configured.
+</div>
+
+<div tal:condition="connected">
+  <form class="filter-form">
+    <legend>Filter</legend>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="searchType">Type</label>
+          <select type="text" class="pat-select2 form-control" id="searchType" name="type" style="width: 100%">
+            <option value="">All</option>
+            <option value="working copy support"
+                    tal:attributes="selected python: request.form.get('type') == 'working copy support' and 'true'">Working copy support</option>
+            <option value="content"
+                    tal:attributes="selected python: request.form.get('type') == 'content' and 'true'">Content</option>
+            <option value="user"
+                    tal:attributes="selected python: request.form.get('type') == 'user' and 'true'">User</option>
+            <option value="workflow"
+                    tal:attributes="selected python: request.form.get('type') == 'workflow' and 'true'">Workflow</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6" tal:condition="not: view/user">
+        <div class="form-group">
+          <label for="searchUser">User</label>
+          <input class="pat-select2" type="text" id="impersonate-user"
+                 name="user" style="width: 100%"
+                 value="${request/form/user|nothing}"
+                 data-pat-select2='{"separator": ";", "vocabularyUrl": "${portal_url}/@@getVocabulary?name=plone.app.vocabularies.Users", "orderable": false, "maximumSelectionSize": 1}'>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="searchAfter">After</label>
+          <input class="pat-pickadate" id="searchAfter" name="after" value="${request/form/after|nothing}"
+                 data-pat-pickadate="time:false"/>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="searchBefore">Before</label>
+          <input class="pat-pickadate" id="searchBefore" name="before" value="${request/form/before|nothing}"
+                 data-pat-pickadate="time:false"/>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="form-group">
+      <label for="searchContent">Select content to filter results on</label>
+      <input class="pat-relateditems" id="searchContent"
+             type="text" name="content"
+             value="${request/form/content|nothing}"
+             data-pat-relateditems='{
+                 "folderTypes": ["Folder"],
+                 "vocabularyUrl": "${portal_url}/@@getVocabulary?name=plone.app.vocabularies.Catalog", "separator": ";"}'>
+    </div>
+    <hr />
+    <input type="submit" name="export" value="Export results(3,000 item limit)" class="plone-btn plone-btn-primary"/>
+    <p class="pull-right result-total">
+      Total results: <strong>${python: "{:,}".format(view.total)}</strong>
+    <p>
+  </form>
+  <table class="audit-results table listing">
+    <thead>
+      <tr class="dots">
+        <th scope="col">Action</th>
+        <th scope="col">Object</th>
+        <th scope="col">User</th>
+        <th scope="col">Summary</th>
+        <th scope="col">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tal:res tal:repeat="result view/results">
+        <tr tal:define="data result/_source;
+                        obj python: view.get_obj(data.get('object'));
+                        has_obj python: obj is not None">
+          <td>${data/name}</td>
+          <td>
+            <a tal:condition="has_obj" href="${obj/absolute_url}">${obj/Title}</a>
+            <span tal:condition="not: has_obj">${python: view.get_path(data)}</span>
+          </td>
+          <td>${data/user}</td>
+          <td>${data/summary}</td>
+          <td class="pat-moment"
+                 data-pat-moment="format:relative"
+                 data-date="${data/date}Z">${data/date}</td>
+        </tr>
+      </tal:res>
+    </tbody>
+  </table>
+</div>
+
+<form class="btn-container load-more-results">
+  <input type="hidden" name="type" value="${request/form/type|nothing}" />
+  <input type="hidden" name="user" value="${request/form/user|nothing}" />
+  <input type="hidden" name="before" value="${request/form/before|nothing}" />
+  <input type="hidden" name="after" value="${request/form/after|nothing}" />
+  <input type="hidden" name="content" value="${request/form/content|nothing}" />
+  <button class="plone-btn plone-btn-default" type="submit">Load more</button>
+</form>
+
+</div>

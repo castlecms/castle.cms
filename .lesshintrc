@@ -1,0 +1,11 @@
+{
+  "qualifyingElement": {
+    "allowWithClass": true,
+    "allowWithAttribute": true
+  },
+  "idSelector": false,
+  "importPath": false,
+  "stringQuotes": false,
+  "propertyOrdering": false,
+  "duplicateProperty": false
+}

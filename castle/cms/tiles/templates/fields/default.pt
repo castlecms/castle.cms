@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="plone">
+  <body>
+
+    <tal:tag tal:switch="view/data/tag">
+      <h1 tal:case="string:h1" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <h2 tal:case="string:h2" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <h3 tal:case="string:h3" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <h4 tal:case="string:h4" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <p tal:case="string:p" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <div tal:case="string:div" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <span tal:case="string:span" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <b tal:case="string:b" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+      <blockquote tal:case="string:blockquote" tal:content="structure view/field_value" class="${view/data/className|nothing}" />
+    </tal:tag>
+  </body>
+</html>

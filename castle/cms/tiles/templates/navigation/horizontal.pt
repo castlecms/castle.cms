@@ -1,0 +1,16 @@
+<tal:defs tal:define="items view/tile/items;
+                      uids python: view.tile.get_parent_uids();">
+  <div class="row show-for-large-up section-links mosaic-grid-row horizontal"
+       tal:condition="items">
+    <div class="col-md-12">
+      <ul class="inline-list section-menu">
+        <tal:items tal:repeat="item items">
+          <li tal:attributes="class python: item.UID in uids and 'active' or ''">
+            <a href="${item/getURL}"
+              title="${item/Title}"
+              tal:attributes="class python: item.UID in uids and 'active' or ''">${python: view.tile.get_label(item)}</a>
+        </tal:items>
+      </ul>
+    </div>
+  </div>
+</tal:defs>

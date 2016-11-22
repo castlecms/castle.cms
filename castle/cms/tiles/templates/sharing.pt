@@ -1,0 +1,32 @@
+<div class="share-buttons-tile"
+     tal:define="buttons view/buttons;
+                 title context/@@plone_context_state/object_title;
+                 counts view/get_counts;">
+  <tal:btn tal:condition="python: 'twitter' in buttons"
+           tal:define="url string:https://twitter.com/intent/tweet?text=${title}&url=${request/URL}">
+    <a class="webicon twitter small" href="${url}" target="_blank">Share on Twitter</a>
+    <a class="twitter link" href="${url}" target="_blank">Twitter
+      <span tal:condition="counts/twitter|nothing" class="count">(${counts/twitter})</span>
+    </a>
+  </tal:btn>
+  <tal:btn tal:condition="python: 'facebook' in buttons"
+           tal:define="url string:https://www.facebook.com/sharer/sharer.php?u=${request/URL}&t=${title}">
+    <a class="webicon facebook small" href="${url}" target="_blank">Share on Facebook</a>
+    <a class="facebook link" href="${url}" target="_blank">Facebook
+      <span tal:condition="counts/facebook|nothing" class="count">(${counts/facebook})</span>
+    </a>
+  </tal:btn>
+  <tal:btn tal:condition="python: 'email' in buttons"
+           tal:define='url string:mailto:?Subject="${title}"&body=${request/URL}'>
+    <a class="webicon mail small" href="${url}" target="_blank">Email</a>
+    <a class="mail link" href="${url}" target="_blank">Email</a> 
+  </tal:btn> 
+  <tal:btn tal:condition="python: 'print' in buttons">
+    <a class="webicon print small" href="javascript: window.print(); void(1);" target="_blank" onclick="window.print(); return false">Print</a>
+    <a class="print link" href="javascript: window.print(); void(1);" target="_blank" onclick="window.print(); return false">Print</a> 
+  </tal:btn>
+  <tal:btn tal:condition="python: 'share' in buttons">
+    <a class="webicon share small" href="http://www.addthis.com/bookmark.php" target="_blank">Share</a>
+    <a class="share link" href="http://www.addthis.com/bookmark.php" target="_blank">Share</a>
+  </tal:btn>
+</div>

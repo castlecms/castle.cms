@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<object name="portal_catalog" meta_type="Plone Catalog Tool">
+
+ <!--
+   These are added programmatically so they don't trigger re-indexing
+   look in exportimport/install.py
+
+ <index name="contentType" meta_type="KeywordIndex">
+  <indexed_attr value="contentType"/>
+ </index>
+ <index name="location" meta_type="KeywordIndex">
+  <indexed_attr value="location"/>
+ </index>
+ <index name="hasImage" meta_type="BooleanIndex">
+  <indexed_attr value="hasImage"/>
+ </index>
+ <index name="trashed" meta_type="BooleanIndex">
+  <indexed_attr value="trashed"/>
+ </index>
+
+ <index name="in_reply_to" meta_type="BooleanIndex" remove="True" />
+ <index name="sync_uid" meta_type="BooleanIndex" remove="True" />
+ <index name="total_comments" meta_type="BooleanIndex" remove="True" />
+ <index name="cmf_uid" meta_type="BooleanIndex" remove="True" />
+ <index name="commentators" meta_type="BooleanIndex" remove="True" />
+ <index name="is_default_page" meta_type="BooleanIndex" remove="True" />
+
+ <column value="hasImage"/>
+ <column value="contentType"/>
+ <column value="last_modified_by"/>
+ <column value="image_info"/>
+
+ <column value="cmf_uid" remove="True" />
+ <column value="commentators" remove="True" />
+ <column value="in_response_to" remove="True" />
+ <column value="last_comment_date" remove="True" />
+ <column value="sync_uid" remove="True" />
+ <column value="total_comments" remove="True" />
+ <column value="listCreators" remove="True" />
+
+ -->
+</object>

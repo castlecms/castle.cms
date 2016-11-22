@@ -1,0 +1,106 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Plone\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"PO-Revision-Date: 2016-06-01 23:00+0000\n"
+"Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
+"Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8\n"
+"Domain: castle.cms\n"
+
+#: CMFPlone/controlpanel/browser/resourceregistry.pt:23
+msgid "Configure, enable, disable, debug and build Plone JavaScript/LESS/CSS resources. Plone utilizes RequireJS and LESS CSS to build its resources. Re-building a Plone bundle TTW requires a modern web browser."
+msgstr "Configure, enable, disable, debug and build Castle JavaScript/LESS/CSS resources. Castle utilizes RequireJS and LESS CSS to build its resources. Re-building a Castle bundle TTW requires a modern web browser."
+
+#: CMFPlone/interfaces/controlpanel.py:1389
+msgid "Determines if your Plone is optimized for small or large sites. In environments with a lot of groups it can be very slow or impossible to build a list all groups. This option tunes the user interface and behaviour of Plone for this case by allowing you to search for groups instead of listing all of them."
+msgstr "Determines if your Castle is optimized for small or large sites. In environments with a lot of groups it can be very slow or impossible to build a list all groups. This option tunes the user interface and behaviour of Castle for this case by allowing you to search for groups instead of listing all of them."
+
+#: CMFPlone/interfaces/controlpanel.py:1402
+msgid "Determines if your Plone is optimized for small or large sites. In environments with a lot of users it can be very slow or impossible to build a list all users. This option tunes the user interface and behaviour of Plone for this case by allowing you to search for users instead of listing all of them."
+msgstr "Determines if your Castle is optimized for small or large sites. In environments with a lot of users it can be very slow or impossible to build a list all users. This option tunes the user interface and behaviour of Castle for this case by allowing you to search for users instead of listing all of them."
+
+#: CMFPlone/interfaces/controlpanel.py:119
+msgid "Disabling locking here will only affect users editing content through the Plone web UI.  Content edited via WebDAV clients will still be subject to locking."
+msgstr "Disabling locking here will only affect users editing content through the Castle web UI.  Content edited via WebDAV clients will still be subject to locking"
+
+#: CMFPlone/interfaces/controlpanel.py:929
+msgid "Path to be used as navigation root, relative to Plone site root.Starts with '/'"
+msgstr "Path to be used as navigation root, relative to Castle site root.Starts with '/'"
+
+#: CMFPlone/interfaces/controlpanel.py:1335
+msgid "Plone generates e-mail using this address as the e-mail return address. It is also used as the destination address for the site-wide contact form and the 'Send test e-mail' feature."
+msgstr "Castle generates e-mail using this address as the e-mail return address. It is also used as the destination address for the site-wide contact form and the 'Send test e-mail' feature"
+
+#: CMFPlone/interfaces/controlpanel.py:1326
+msgid "Plone generates e-mail using this name as the e-mail sender."
+msgstr "Castle generates e-mail using this name as the e-mail sender."
+
+#: CMFPlone/browser/templates/plone-overview.pt:32
+msgid "Plone is up and running."
+msgstr "Castle is up and running."
+
+#: CMFPlone/browser/templates/plone-overview.pt:42
+msgid "View your Plone site"
+msgstr "View your Castle site"
+
+#: CMFPlone/browser/templates/plone-overview.pt:113
+msgid "You can add another Plone site:"
+msgstr "You can add another Castle site:"
+
+#: CMFPlone/browser/templates/plone-overview.pt:69
+msgid "You have multiple Plone sites:"
+msgstr "You have multiple Castle sites:"
+
+#: CMFPlone/browser/templates/plone-overview.pt:110
+msgid "Your Plone site has not been added yet:"
+msgstr "Your Castle site has not been added yet:"
+
+#. Default: "Configuration area for Plone and add-on Products."
+#: CMFPlone/controlpanel/browser/overview.pt:20
+msgid "description_control_panel"
+msgstr "Configuration area for Castle and add-on Products."
+
+#. Default: "You are running in \"production mode\". This is the preferred mode of operation for a live Plone site, but means that some configuration changes will not take effect until your server is restarted or a product refreshed. If this is a development instance, and you want to enable debug mode, stop the server, set 'debug-mode=on' in your buildout.cfg, re-run bin/buildout and then restart the server process."
+#: CMFPlone/controlpanel/browser/overview.pt:139
+msgid "description_production_mode"
+msgstr "You are running in \"production mode\". This is the preferred mode of operation for a live Castle site, but means that some configuration changes will not take effect until your server is restarted or a product refreshed. If this is a development instance, and you want to enable debug mode, stop the server, set 'debug-mode=on' in your buildout.cfg, re-run bin/buildout and then restart the server process."
+
+#. Default: "e.g.: www.plone.de"
+#: CMFPlone/interfaces/controlpanel.py:283
+msgid "description_top_level_domain"
+msgstr "e.g.: www.castle.de"
+
+#. Default: "e.g.: de.plone.org"
+#: CMFPlone/interfaces/controlpanel.py:274
+msgid "description_use_subdomain"
+msgstr "e.g.: de.castle.org"
+
+#. Default: "If your theme uses relative paths for images, stylesheets or other resources, you can enter a prefix here to make sure these resources will work regardless of which page Plone is rendering."
+#: plone/app/theming/browser/controlpanel.pt:395
+msgid "help_absolute_prefix"
+msgstr "If your theme uses relative paths for images, stylesheets or other resources, you can enter a prefix here to make sure these resources will work regardless of which page Castle is rendering."
+
+#. Default: "If there are hostnames that you do not want to be themed, you can list them here, one per line. This is useful during theme development, so that you can compare the themed and unthemed sites. In some cases, you may also want to provided an unthemed host alias for content administrators to be able to use 'plain' Plone."
+#: plone/app/theming/browser/controlpanel.pt:461
+msgid "help_hostname_blacklist"
+msgstr "If there are hostnames that you do not want to be themed, you can list them here, one per line. This is useful during theme development, so that you can compare the themed and unthemed sites. In some cases, you may also want to provided an unthemed host alias for content administrators to be able to use 'plain' Castle."
+
+#. Default: "You may search for and choose a folder to act as the root of the navigation tree. Leave blank to use the Plone site root."
+#: plone.app.portlets/plone/app/portlets/portlets/navigation.py:46
+msgid "help_navigation_root"
+msgstr "You may search for and choose a folder to act as the root of the navigation tree. Leave blank to use the Castle site root."
+
+#. Default: "This item was locked by ${author} ${time} ago."
+#: plone.locking/plone/locking/browser/info.pt:17
+msgid "description_webdav_locked_by_author_on_time"
+msgstr "Another user (${author}) started editing this item ${time} ago and the edits you make may conflict with theirs."
+
+msgid "description_webdav_locked_steal"
+msgstr "If you are certain this user is finished with the item, you may ${unlock_button} the item and continue editing."

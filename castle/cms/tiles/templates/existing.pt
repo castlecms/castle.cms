@@ -1,0 +1,66 @@
+<tal:defs
+  tal:define="existing nocall: view/content|nothing;
+              utils view/utils;
+              df view/display_fields;
+              idt view/data/image_display_type|string:landscape">
+<tal:check tal:condition="nocall: existing">
+  <tal:container
+       tal:define="base_url existing/absolute_url;
+                   url python: view.utils.get_object_url(existing);
+                   desc python: view.utils.get_summary_text(existing);
+                   has_image python: 'image' in df and view.utils.has_image(existing);
+                   effective existing/effective;
+                   data view/data;
+                   more_text python: data.get('more_text');
+                   content_title existing/Title;
+                   title python: data.get('title', '');
+                   display_type python: data.get('display_type', 'basic');
+                   effective existing/effective|nothing;
+                   truncate_count python: data.get('truncate_count', 18);
+                   desc python: truncate_count and utils.truncate_text(desc, truncate_count, clean=True) or desc;
+                   fp python: view.get_focal_point()">
+    <!-- condition for EVERY type -->
+
+    <div tal:condition="python: display_type == 'basic'"
+         class="existing-content existing-content-basic
+                portal-type-${python: utils.normalize(existing.portal_type)}">
+     <h3 class="header" tal:condition="title">${title}</h3>
+
+     <div class="image-tile-container ${idt}" tal:condition="has_image">
+       <div tal:replace="structure python: view.utils.focal_image_tag(existing, 'thumb', focal=fp)" />
+     </div>
+
+     <h3 tal:condition="python: 'title' in df"><a href="${url}">${content_title}</a></h3>
+
+     <p class="date"
+        tal:content="python: utils.format_date(effective, 'notime')"
+        tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+     <tal:desc tal:condition="python: 'description' in df">
+       <div tal:content="structure desc" class="description">
+       </div>
+     </tal:desc>
+     <p class="read-more" tal:condition="more_text">
+       <a href="${url}" tal:content="more_text">More →</a>
+     </p>
+    </div>
+
+    <div tal:condition="python: display_type == 'backgroundimage'"
+         class="existing-content existing-content-backgroundimage
+                portal-type-${python: utils.normalize(existing.portal_type)} ${idt}">
+      <a href="${url}" tal:condition="has_image">
+        <div tal:replace="structure python: view.utils.focal_image_tag(existing, 'tile', focal=fp)" />
+        <div class="info-text">
+          <h2 tal:condition="title">${title}</h2>
+          <h3 tal:condition="content_title">${content_title}</h3>
+          <p class="date"
+             tal:content="python: utils.format_date(effective, 'notime')"
+             tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+          <p tal:replace="structure desc"
+              tal:condition="python: 'description' in df"></p>
+        </div>
+      </a>
+      <p class="missing-image" tal:condition="not: has_image">No image found</p>
+    </div>
+  </tal:container>
+</tal:check>
+</tal:defs>

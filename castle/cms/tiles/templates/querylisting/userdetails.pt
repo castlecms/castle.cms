@@ -1,0 +1,27 @@
+<ul class="dt-compact" tal:define="results view/tile/results;
+                                   utils view/tile/utils">
+  <tal:item tal:repeat="item python: results['items']">
+  <li tal:define="obj python: item.getObject();
+                  url python: utils.get_object_url(obj);
+                  effective obj/modified|nothing;
+                  desc obj/Description;"
+      tal:attributes="class string:portal-type-${item/portal_type}">
+    <div class="row odd press-release-item"
+         tal:attributes="class python: repeat['item'].odd and 'row press-release-item' or 'row odd press-release-item'">
+      <div class="col-lg-2 col-md-2">
+        <p class="date"
+           tal:content="python: utils.format_date(effective)"
+           tal:condition="python: utils.valid_date(effective)"></p>
+      </div>
+      <div class="col-lg-10 col-md-10">
+        <p class="title">
+          <a href="${url}">
+            ${obj/Title}
+          </a><span tal:condition="desc"> - ${desc}</span>
+          <tal:e tal:on-error="nothing">- creator: ${python: obj.creators[0]}</tal:e>
+        </p>
+      </div>
+    </div>
+  </li>
+  </tal:item>
+</ul>

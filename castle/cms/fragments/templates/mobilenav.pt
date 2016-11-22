@@ -1,0 +1,32 @@
+<!-- Tablet/Mobile - Top Bar - Left Off Canvas Toggle -->
+<!-- <a class="left-off-canvas-toggle hide-for-large-up" href="#"> -->
+  <div class="clearfix mobile-top-bar"
+       tal:define="site_title python: utils.get_registry_value('plone.site_title', 'Castle CMS');
+                   mobile_title python: utils.get_registry_value('plone.short_site_title', site_title)">
+
+    <a class="left-off-canvas-toggle hide-for-large-up menu-icon" href="#">
+      <img src="${portal_url}/++theme++castle.theme/img/menu.png" class="toggle-menu" alt="Menu"/>
+    </a>
+    <p class="show-for-medium-only tablet-site-name left">
+      <a href="${portal_url}" tal:content="site_title">Castle CMS</a>
+    </p>
+    <p class="show-for-small-only mobile-site-name left">
+      <a href="${portal_url}" tal:content="mobile_title">Castle CMS</a>
+    </p>
+    <a class="left-off-canvas-toggle hide-for-large-up search-icon" href="#">
+      <img src="${portal_url}/++theme++castle.theme/img/search.png" class="search" alt="Search" />
+    </a>
+  </div>
+<!-- </a> -->
+<!-- Off Canvas Menu -->
+<aside class="left-off-canvas-menu">
+  <form class="search" action="${portal_url}/@@search">
+    <label for="mobile-search" class="visually-hidden">Search</label>
+    <input id="mobile-search" name="SearchableText" type="text" placeholder="Search..." />
+    <button class="secondary button" type="submit"><img src="++plone++castle/svg/icon-search.svg" alt="Submit Search"></button></form>
+
+  <!-- Tablet/Mobile Side Navigation (Tablet/Mobile View Only) -->
+  <ul class="menu side-nav">
+    <!-- links here are dynamically inserted with js -->
+  </ul>
+</aside>

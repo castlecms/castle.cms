@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<object name="portal_properties" meta_type="Plone Properties Tool">
+  <property name="typesUseViewActionInListings" type="lines">
+   <element value="Image"/>
+   <element value="File"/>
+   <element value="Audio"/>
+   <element value="Video"/>
+  </property>
+</object>

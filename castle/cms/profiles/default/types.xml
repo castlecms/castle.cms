@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<object meta_type="Plone Types Tool" name="portal_types">
+ <property name="title">Controls the available content types in your portal</property>
+
+ <object meta_type="Dexterity FTI" name="Audio" />
+ <object meta_type="Dexterity FTI" name="Video" />
+ <object meta_type="Dexterity FTI" name="File" />
+ <object meta_type="Dexterity FTI" name="Image" />
+ <object meta_type="Dexterity FTI" name="News Item" />
+ <object meta_type="Dexterity FTI" name="Collection" />
+ <object meta_type="Dexterity FTI" name="Document" />
+ <object meta_type="Dexterity FTI" name="Folder" />
+ <object meta_type="Dexterity FTI" name="Pad" />
+ <object meta_type="Dexterity FTI" name="Dashboard" />
+
+ <object name="Plone Site"
+     meta_type="Factory-based Type Information with dynamic views" />
+</object>

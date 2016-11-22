@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" data-layout="./@@page-site-layout">
+<body>
+<div data-panel="content">
+  <div class="mosaic-grid-row">
+    <div class="mosaic-grid-cell mosaic-width-full mosaic-position-leftmost">
+      <div class="movable removable mosaic-tile mosaic-IDublinCore-title-tile">
+        <div class="mosaic-tile-content">
+          <div data-tile="./@@plone.app.standardtiles.field?field=IDublinCore-title"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mosaic-grid-row">
+    <div class="mosaic-grid-cell mosaic-width-full mosaic-position-leftmost">
+      <div class="movable removable mosaic-tile mosaic-IDublinCore-description-tile">
+        <div class="mosaic-tile-content">
+          <div data-tile="./@@plone.app.standardtiles.field?field=IDublinCore-description"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mosaic-grid-row" data-grid='{"type": "row"}'>
+    <div class="mosaic-grid-cell mosaic-width-half mosaic-position-leftmost"
+         data-grid='{"type": "cell", "info": {"pos": {"width": 6}}}'>
+      <div class="movable removable mosaic-tile mosaic-IRichText-text-tile">
+        <div class="mosaic-tile-content">
+          <div data-tile="./@@plone.app.standardtiles.field?field=IRichText-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mosaic-grid-cell mosaic-width-half mosaic-position-half"
+         data-grid='{"type": "cell", "info": {"pos": {"width": 6}}}'>
+      <div class="mosaic-tile castle-rawhtml-tile movable removable
+                  mosaic-plone.app.standardtiles.rawhtml-tile">
+        <div class="mosaic-tile-content">
+          <div data-tile="./@@plone.app.standardtiles.rawhtml/rawhtml-1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="castle-settings"
+    class=".settings.CastleSettingsControlPanel"
+    permission="cmf.ManagePortal"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="inspect-tasks"
+    class=".ccelery.CeleryControlPanel"
+    permission="cmf.ManagePortal"
+    template="templates/celery.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="archival-review"
+    class=".archival.Review"
+    permission="cmf.ManagePortal"
+    template="templates/archives-review.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="archival-manage"
+    class=".archival.Manage"
+    permission="cmf.ManagePortal"
+    template="templates/archives-manage.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".social.AuthorizeTwitter"
+    name="twitter-auth"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="social-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".social.SocialControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="site-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".site.SiteControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="security-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".security.SecurityControlPanel"
+    permission="plone.app.controlpanel.Security"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="business-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".business.BusinessControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="announcements-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".announcements.AnnouncementsControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="audit-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".audit.AuditView"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/audit.pt"
+    />
+
+  <browser:page
+    name="sessions-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".sessions.SessionsView"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/sessions.pt"
+    />
+
+  <browser:page
+    name="tags-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".tags.TagsView"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/tags.pt"
+    />
+
+  <browser:page
+    name="crawler-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".crawler.CrawlerControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <!-- overridding so we can customize styles, remove buttons -->
+  <browser:page
+    name="theming-controlpanel-mapper"
+    for="plone.resource.interfaces.IResourceDirectory"
+    class="plone.app.theming.browser.mapper.ThemeMapper"
+    template="templates/mapper.pt"
+    permission="plone.app.controlpanel.Themes"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <!-- override for widgets -->
+  <browser:page
+    name="dateandtime-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".dateandtime.DateAndTimeControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <!-- work with castle theming -->
+  <browser:page
+    name="theming-controlpanel-mapper-getframe"
+    for="plone.resource.interfaces.IResourceDirectory"
+    class=".mapper.ThemeMapper"
+    attribute="getFrame"
+    permission="plone.app.controlpanel.Themes"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <!-- user/groups overrides -->
+  <browser:page
+    name="usergroup-userprefs"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".usergroups.UsersOverviewControlPanel"
+    permission="plone.app.controlpanel.UsersAndGroups"
+    template="templates/usergroups_usersoverview.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="usergroup-groupmembership"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class="Products.CMFPlone.controlpanel.browser.usergroups_groupmembership.GroupMembershipControlPanel"
+    permission="plone.app.controlpanel.UsersAndGroups"
+    template="templates/usergroups_groupmembership.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+</configure>

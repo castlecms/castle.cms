@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<object name="portal_controlpanel" meta_type="Plone Control Panel Tool"
+  i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <configlet title="Castle" action_id="CastleSettingsControlPanel"
+                            appId="CastleSettingsControlPanel"
+    category="plone-general" condition_expr=""
+    url_expr="string:${portal_url}/@@castle-settings"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Business" action_id="BusinessSettingsControlPanel"
+                            appId="BusinessSettingsControlPanel"
+    category="plone-general" condition_expr=""
+    url_expr="string:${portal_url}/@@business-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Redirects" action_id="RedirectsControlPanel"
+                            appId="RedirectsControlPanel"
+    category="plone-content" condition_expr=""
+    url_expr="string:${portal_url}/@@aliases-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Announcements" action_id="AnnouncementsControlPanel"
+                            appId="AnnouncementsControlPanel"
+    category="plone-general" condition_expr=""
+    url_expr="string:${portal_url}/@@announcements-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Feeds" action_id="FeedsControlPanel"
+                            appId="FeedsControlPanel"
+    category="plone-content" condition_expr=""
+    url_expr="string:${portal_url}/feeds"
+    visible="True" i18n:attributes="title">
+  <permission>Add portal content</permission>
+ </configlet>
+ <configlet title="Tasks" action_id="TasksControlPanel"
+                            appId="TasksControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@inspect-tasks"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Audit Log" action_id="AuditLogControlPanel"
+                            appId="AuditLogControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@audit-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Sessions" action_id="SessionsControlPanel"
+                            appId="SessionsControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@sessions-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Tags" action_id="TagsControlPanel"
+                         appId="TagsControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@tags-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+ <configlet title="Crawler" action_id="CrawlerControlPanel"
+                         appId="CrawlerControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@crawler-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
+
+ <!-- hidden -->
+ <configlet title="Document Viewer Async Tasks"
+    action_id="documentviewer-jobs" appId="collective.documentviewer"
+    category="Products"
+    condition_expr="portal/@@documentviewer-utils/async_enabled"
+    icon_expr="string:${portal_url}/++resource++dv.resources/images/application-pdf.png"
+    url_expr="string:${portal_url}/@@dvasync-monitor" visible="False"/>
+<configlet title="Search" action_id="SearchSettings" appId="Plone"
+    category="plone-general" condition_expr=""
+    icon_expr="string:$portal_url/search_icon.png"
+    url_expr="string:${portal_url}/@@search-controlpanel" visible="False"
+    i18n:attributes="title">
+  <permission>Plone Site Setup: Search</permission>
+ </configlet>
+ <configlet title="Management Interface" action_id="ZMI" appId="ZMI"
+    category="plone-advanced" condition_expr=""
+    icon_expr="string:$portal_url/zope_icon.png"
+    url_expr="string:${portal_url}/manage_main" visible="False">
+ </configlet>
+ <configlet title="Maintenance" action_id="Maintenance" appId="Plone"
+    category="plone-advanced" condition_expr=""
+    icon_expr="string:$portal_url/maintenance_icon.png"
+    url_expr="string:${portal_url}/@@maintenance-controlpanel" visible="False">
+ </configlet>
+
+ <configlet title="Users and Groups" action_id="UsersGroups"
+    appId="UsersGroups" category="plone-users" condition_expr=""
+    icon_expr="string:$portal_url/group.png"
+    url_expr="string:${portal_url}/@@usergroup-userprefs?_authenticator=${portal/@@authenticator/token}" visible="True"
+    i18n:attributes="title">
+  <permission>Plone Site Setup: Users and Groups</permission>
+ </configlet>
+
+</object>

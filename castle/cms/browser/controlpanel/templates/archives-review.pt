@@ -1,0 +1,109 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+  <metal:javascript fill-slot="javascript_head_slot">
+    <script>
+  //<![CDATA[
+    var initial_data = ${view/json_dump};
+
+    require([
+      'jquery',
+      'underscore',
+      'mockup-utils'
+    ], function($, _, utils){
+
+      var template = _.template(
+  '<% _.each(items, function(item){ %>' +
+    '<tr>' +
+      '<td><a href="<%- item.url %>/view"><%- item.title %></a></td>' +
+      '<td><%- item.modified %></td>' +
+      '<td><a href="#" class="remove-item" data-uid="<%- item.uid %>">Extend</a></td>' +
+    '</tr>' +
+  '<% }); %>');
+
+      var load = function(json_dump){
+        var html = template({items: json_dump});
+        $('#review-items').html(html);
+        $('.remove-item').click(function(e){
+          utils.loading.show();
+          e.preventDefault();
+          var uid = $(this).attr('data-uid');
+          $.ajax({
+            url: window.location.origin + window.location.pathname,
+            data: {
+              extend: uid,
+              _authenticator: utils.getAuthenticator()
+            },
+            dataType: 'json',
+            method: 'POST'
+          }).done(function(data){
+            load(data);
+            utils.loading.hide();
+          });
+        });
+      }
+      load(initial_data);
+    });
+  //]]>
+    </script>
+
+  </metal:javascript>
+
+<metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/@@overview-controlpanel"
+       i18n:translate="">
+       Site Setup
+    </a>
+    <h1 class="documentFirstHeading"
+        i18n:translate="">Archive Management</h1>
+
+    <div id="content-core" tal:define="enabled view/enabled">
+      <div class="archives-container pat-autotoc autotabs"
+           tal:condition="enabled">
+        <nav class="autotoc-nav">
+          <a id="autotoc-item-autotoc-0" href="#" class="active">Review Future</a>
+          <a id="autotoc-item-autotoc-0" href="${portal_url}/@@archival-manage"
+             class="">Manage Existing</a>
+        </nav>
+        <div class="autotoc-section active">
+          <p class="discreet">
+            These are items that will be archived in the next month.
+            Don't forget to
+            <a href="${portal_url}/@@castle-settings">review your API and archive settings</a>.
+          </p>
+          <table class="listing">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Last modified</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="review-items">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="portalMessage warning" tal:condition="not: enabled">
+          <strong>Disabled</strong>
+          For archives to work properly, you need to enable them and
+          <a href="${portal_url}/@@castle-settings">configure AWS S3 storage</a>
+           as well as provide a <i>public site url</i> in
+          <a href="${portal_url}/@@site-controlpanel">site settings</a>.
+      </div>
+    </div>
+
+  </metal:main>
+
+</body>
+</html>

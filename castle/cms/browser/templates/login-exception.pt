@@ -1,0 +1,40 @@
+<html tal:define="portal_url context/portal_url|context/absolute_url">
+  <head>
+    <link href="${portal_url|nothing}/++plone++castle/libs/bootstrap/dist/css/bootstrap.css"
+          rel="stylesheet" type="text/css">
+    <link href="${portal_url|nothing}/++plone++castle/less/misc/secure-login.css?v=2"
+          rel="stylesheet" type="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  </head>
+  <body tal:define="utils context/@@castle-utils;
+                    logo utils/get_logo|nothing" class="secure-login-template">
+
+    <div id="visual-wrapper">
+      <div class="castle-login-header">
+        <div class="row" tal:condition="logo">
+          <div class="col-md-12">
+            <img src="${logo}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h1 tal:on-error="string:Castle CMS">${python: utils.get_registry_value('plone.site_title')}</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-exception-container">
+        <h1>Login exception request</h1>
+        <div class="alert alert-info" role="alert" tal:condition="view/success">
+          <strong>Login exception granted</strong>
+          ${view/message}
+        </div>
+
+        <div class="alert alert-danger" role="alert" tal:condition="not: view/success">
+          <strong>Login exception error</strong>
+          ${view/message}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

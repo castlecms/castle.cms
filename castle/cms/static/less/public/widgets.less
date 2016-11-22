@@ -1,0 +1,162 @@
+@import (reference) '@{bowerPath}/bootstrap/less/list-group';
+
+
+#content-browser-react-container{
+  .modal-body{
+    padding:0;
+  }
+  .modal-dialog{
+    width: 85%;
+  }
+}
+.toc-creator-container{
+  ul{
+    list-style:none;
+    margin:0;
+    li{
+      border: 1px solid #DDD;
+      border-bottom: none;
+      padding: 10px;
+
+      &.level-2{
+        margin-left: 25px;
+      }
+      &.level-3{
+        margin-left: 50px;
+      }
+
+      .buttons{
+        margin-left: 20px;
+        a{
+          margin-right: 5px;
+          border-right: 1px solid #DDD;
+          padding-right: 5px;
+
+          &:last-child{
+            border-right: none;
+          }
+        }
+      }
+      .help-block{
+        padding: 0;
+        margin: 0;
+        font-size: 11px;
+      }
+
+      .nocontent{
+        .form-group.title{
+          width: 50%;
+          float: left;
+        }
+        .form-group.level{
+          width: 50%;
+          float: left;
+        }
+      }
+      .form-group.text{
+        clear: both;
+      }
+      label{
+        font-weight: bold;
+      }
+
+      &:last-child{
+        border-bottom: 1px solid #DDD;
+      }
+    }
+  }
+}
+
+// Block grids
+[class*="castle-grid-block-"] {
+  display: block;
+  margin: -(@grid-gutter-width/2);
+  padding: 0;
+  .clearfix();
+}
+
+.castle-grid-block-item {
+  display: inline;
+  margin: 0;
+  padding: (@grid-gutter-width/2);
+  height: auto;
+  float: left;
+  width: 100%;
+  list-style: none;  // for those who like to use `li` elements as block-grid-items
+}
+
+.castle-grid-block (@per-row) {
+  & > .castle-grid-block-item {
+    width: (100%/@per-row);
+
+    @nth-equation: ~"@{per-row}n+1";
+    &:nth-of-type(n) { clear: none; }
+    &:nth-of-type(@{nth-equation}) { clear: both; }
+  }
+}
+
+// Recursive loop that produces rules for block grids of @per-row many items
+// per row down to 1 many items per row.
+.castle-grid-blocks(@size, @per-row: @grid-columns) when (@per-row > 0) {
+  .castle-grid-block-@{size}-@{per-row} { .castle-grid-block(@per-row); }
+  .castle-grid-blocks(@size, (@per-row - 1));
+}
+
+.castle-grid-blocks(xs);
+@media (min-width: @screen-sm-min) { .castle-grid-blocks(sm) }
+@media (min-width: @screen-md-min) { .castle-grid-blocks(md) }
+@media (min-width: @screen-lg-min) { .castle-grid-blocks(lg) }
+
+.castle-list-group {
+  .list-group();
+}
+
+.castle-list-group-item {
+  .list-group-item();
+}
+
+.form-group.radio-group{
+  margin-top: 10px;
+}
+
+.castle-tag {
+  margin-top: 3px;
+	margin-bottom: 15px;
+}
+[class*="castle-tag-"]{
+  color:white;
+	padding:10px 10px 7px 10px;
+  background-color: #999999;
+}
+a[class*="castle-tag-"]:hover{
+  color: white;
+	text-decoration: underline;
+}
+
+.castle-tag-speech {
+  background-color: #E2C767;
+}
+.castle-tag-testimony {
+  background-color: #4B7978;
+}
+.castle-tag-story {
+  background-color: #36619B;
+}
+.castle-tag-pressrelease {
+  background-color: #AD3955;
+}
+.castle-tag-video {
+  background-color: #FF9900;
+}
+.castle-tag-image {
+  background-color: #363333;
+}
+.castle-tag-flyer {
+  background-color: #AD3955;
+}
+.castle-tag-handbook {
+  background-color: #36619B;
+}
+.castle-tag-form {
+  background-color: #FF9900;
+}

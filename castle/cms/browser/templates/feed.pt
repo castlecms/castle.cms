@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core"
+             tal:define="url context/absolute_url">
+
+  <p class="discreet">Available syndication formats for this feed</p>
+  <ul>
+    <tal:type tal:repeat="type python: view.feed_types">
+      <li><a href="${url}/${type/value}">${type/title}</a></li>
+    </tal:type>
+  </ul>
+</metal:block>
+</metal:content-core>
+
+</body>
+</html>

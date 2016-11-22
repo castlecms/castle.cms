@@ -1,0 +1,6 @@
+<div i18n:domain="plone">
+  <% try{ %>
+    <%= data.html || '' %>
+  <% }catch(e){} %>
+  <label i18n:translate="confirm_delete_items">Are you certain you want to move selected items to recycling bin?</label>
+</div>

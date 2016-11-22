@@ -1,0 +1,76 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:b fill-slot="content-title">
+  <h1 class="documentFirstHeading">
+	  Recyle Bin
+  </h1>
+</metal:b>
+
+<metal:b fill-slot="content-core">
+  <tal:b metal:define-macro="content-core">
+
+    <p class="discreet">
+      Items in the recycle bin will be automatically removed one month
+      after they were moved to the recycle bin.
+    </p>
+
+    <div class="portalMessage info"
+         tal:condition="not: view/items">
+        <strong>Info</strong>
+        There are no items in your recycle bin.
+    </div>
+
+    <table class="listing" style="width:100%" tal:condition="view/items">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Url</th>
+          <th>Date Recycled</th>
+          <th>Restore</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tal:items tal:repeat="item view/items">
+          <tr>
+            <td>${python: view.get_label(item)}</td>
+            <td><a href="${item/getURL|item/absolute_url}/view">${python: view.get_path(item)}</a></td>
+            <td class="pat-moment" tal:content="python: item.modified.fCommon()"
+                   data-pat-moment="format:MMMM Do, YYYY h:mm a;"
+                   data-date="${python: item.modified.ISO8601()}" />
+            <td>
+              <form method="POST">
+                <input type="hidden" name="uid" value="${item/UID}" />
+                <input type="hidden" name="action" value="restore" />
+                <button type="submit" class="plone-btn plone-btn-default plone-btn-xs">Restore</button>
+              </form>
+            </td>
+            <td>
+              <form method="POST">
+                <input type="hidden" name="uid" value="${item/UID}" />
+                <input type="hidden" name="action" value="delete" />
+                <button type="submit" class="plone-btn plone-btn-danger plone-btn-xs">Delete</button>
+              </form>
+            </td>
+          </tr>
+        </tal:items>
+      </tbody>
+    </table>
+
+    <form method="POST" tal:condition="view/items">
+      <input type="hidden" name="action" value="empty" />
+      <button type="submit" class="plone-btn plone-btn-danger">Empty All Recycled Items</button>
+    </form>
+  </tal:b>
+</metal:b>
+
+</body>
+</html>

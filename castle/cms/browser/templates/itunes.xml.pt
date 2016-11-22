@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:itunesu="http://www.itunesu.com/feed"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     version="2.0"
+     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+     xmlns:tal="http://xml.zope.org/namespaces/tal"
+     tal:define="feed view/feed;
+                 settings nocall:feed/settings|nothing;
+                 categories settings/categories">
+    <channel>
+        <atom:link href="${request/ACTUAL_URL|nothing}" rel="self" type="application/rss+xml" />
+        <tal:cat tal:repeat="category categories" tal:condition="categories">
+          <itunes:category text="${category}"/>
+        </tal:cat>
+
+        <title tal:content="feed/title" />
+        <link tal:content="feed/link" />
+        <language tal:content="feed/language" />
+        <copyright tal:content="feed/rights" />
+        <itunes:subtitle tal:content="feed/description" />
+        <itunes:author tal:condition="feed/show_about" tal:content="feed/author_name" />
+        <itunes:owner tal:condition="feed/show_about">
+            <itunes:name tal:content="feed/author_name" />
+            <itunes:email tal:content="feed/author_email" />
+        </itunes:owner>
+        <itunes:summary tal:content="feed/description" />
+        <description tal:content="feed/description" />
+        <image>
+    			<url>${feed/logo}</url>
+          <title>${feed/title} Logo</title>
+          <link>${context/portal_url}</link>
+    		</image>
+        <itunes:image href="${feed/logo}" />
+        <itunes:explicit>no</itunes:explicit>
+        <item tal:repeat="item feed/items">
+            <title tal:content="item/title" />
+            <itunes:author tal:condition="feed/show_about"
+                           tal:content="item/author_name|nothing"></itunes:author>
+            <itunes:summary tal:content="item/description" />
+            <tal:con tal:condition="item/has_enclosure">
+                <enclosure tal:attributes="url item/file_url;
+                                           length item/file_length;
+                                           type item/file_type;" />
+            </tal:con>
+            <guid tal:content="item/guid" />
+            <pubDate tal:content="item/published/rfc822|item/modified/rfc822|nothing" />
+            <itunes:keywords tal:content="python: ', '.join(item.categories)" />
+        </item>
+    </channel>
+</rss>

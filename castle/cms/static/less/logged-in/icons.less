@@ -1,0 +1,964 @@
+// Below has css selectors that are shared with the controlpanel, glpyhicons, tinymce. Mostly to get rid of the base calls to font icon
+[class^="icon-"]::before,
+[class*="glyphicon-"]::before,
+[class*="mce-i-"]::before   {
+  width: 1.2em;
+  height: 1.2em;
+  /* to prevent icons from loading we need important */
+  font-family: inherit !important;
+  display: inline-block;
+  margin: 0em 0.4em 0 0.2em;
+  text-align: center;
+}
+
+// SVGs for toolbar
+
+// Put in a default icon incase one is missing
+[class^="icon-"]::before {
+  content: url("../../svg/cog.svg");
+}
+
+a:hover [class^="icon-"]::before {
+  content: url("../../svg/cog-hover.svg");
+}
+.pat-structure [class^="icon-"]::before {
+  content: '';
+}
+
+.castle-btn-dropdown.opened ul [class^="icon-"]::before {
+  content: '';
+}
+
+.icon-move-up::before{ content: url("../../svg/icon-up.svg"); }
+.icon-move-down::before{ content: url("../../svg/icon-down.svg"); }
+
+.icon-up::before {
+  content: url("../../svg/up.svg");
+  margin: 0px;
+}
+
+.scroll-btn.up:hover .icon-up::before {
+  content: url("../../svg/up-hover.svg");
+  margin: 0px;
+}
+
+.icon-down::before {
+  content: url("../../svg/down.svg");
+}
+
+.scroll-btn.down:hover .icon-down::before {
+  content: url("../../svg/down-hover.svg");
+}
+
+.icon-plone-contentmenu-actions::before {
+  content: url("../../svg/contentmenu-actions.svg");
+}
+
+a:hover .icon-plone-contentmenu-actions::before {
+  content: url("../../svg/contentmenu-actions-hover.svg");
+}
+
+.icon-plone-contentmenu-factories::before {
+  content: url("../../svg/contentmenu-factories.svg");
+}
+
+a:hover .icon-plone-contentmenu-factories::before, .active .icon-plone-contentmenu-factories::before {
+  content: url("../../svg/contentmenu-factories-hover.svg");
+}
+
+.icon-folderContents::before {
+   content: url("../../svg/icon-folderContents.svg");
+}
+
+a:hover .icon-folderContents::before, .active .icon-folderContents::before {
+  content: url("../../svg/icon-folderContents-hover.svg");
+}
+
+.icon-edit::before {
+  content: url("../../svg/icon-edit.svg");
+}
+
+a:hover .icon-edit::before, .active .icon-edit::before {
+  content: url("../../svg/icon-edit-hover.svg");
+}
+
+.icon-design::before {
+  content: url("../../svg/icon-design.svg");
+}
+
+a:hover .icon-design::before, .active .icon-design::before {
+  content: url("../../svg/icon-design-hover.svg");
+}
+
+.icon-view::before {
+  content: url("../../svg/icon-view.svg");
+}
+
+a:hover .icon-view::before, .active .icon-view::before {
+  content: url("../../svg/icon-view-hover.svg");
+}
+
+.icon-history::before {
+  content: url("../../svg/icon-history.svg");
+}
+
+a:hover .icon-history::before, .active .icon-history::before {
+  content: url("../../svg/icon-history-hover.svg");
+}
+
+.icon-local_roles::before {
+  content: url("../../svg/icon-local_roles.svg");
+}
+
+a:hover .icon-local_roles::before, a:active.icon-local_roles::before, .active .icon-local_roles::before  {
+  content: url("../../svg/icon-local_roles-hover.svg");
+}
+
+.icon-user::before {
+  content: url("../../svg/icon-user.svg");
+}
+
+a:hover .icon-user::before, .icon-user:hover::before, .active .icon-user::before {
+  content: url("../../svg/icon-user-hover.svg");
+}
+
+.icon-plone-contentmenu-portletmanager::before {
+  content: url("../../svg/icon-portletmanager.svg");
+}
+
+a:hover .icon-plone-contentmenu-portletmanager::before, .active .icon-plone-contentmenu-portletmanager::before  {
+  content: url("../../svg/icon-portletmanager-hover.svg");
+}
+
+.icon-plone-contentmenu-workflow::before { content: none; }
+
+.state-published .icon-plone-contentmenu-workflow::before, .state-external .icon-plone-contentmenu-workflow::before,  .state-published a:hover .icon-plone-contentmenu-workflow::before, .state-external a:hover .icon-plone-contentmenu-workflow::before  {
+  content: url("../../svg/icon-plone-contentmenu-workflow-state-published.svg");
+}
+
+.state-private .icon-plone-contentmenu-workflow::before, .state-private a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("../../svg/icon-plone-contentmenu-workflow-state-private.svg");
+}
+
+.state-pending .icon-plone-contentmenu-workflow::before, .state-pending a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("../../svg/icon-plone-contentmenu-workflow-state-pending.svg");
+}
+
+.state-internally_published .icon-plone-contentmenu-workflow::before, .state-internally_published a:hover .icon-plone-contentmenu-workflow::before  {
+  content: url("../../svg/icon-plone-contentmenu-workflow-state-internally_published.svg");
+}
+
+.state-draft .icon-plone-contentmenu-workflow::before, .state-internal .icon-plone-contentmenu-workflow::before, .state-draft a:hover .icon-plone-contentmenu-workflow::before, .state-internal a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("../../svg/icon-plone-contentmenu-workflow-state-draft.svg");
+}
+
+.icon-syndication::before {
+  content: url("../../svg/icon-syndication.svg");
+}
+
+a:hover .icon-syndication::before, .active .icon-syndication::before {
+  content: url("../../svg/icon-syndication-hover.svg");
+}
+
+.icon-logout::before, a:hover .icon-logout::before, .castle-btn-dropdown.opened ul .icon-logout::before {
+  content: url("../../svg/icon-logout.svg");
+}
+
+.icon-aliases::before {
+  content: url("../../svg/icon-aliases.svg");
+}
+
+a:hover .icon-aliases::before, .active .icon-aliases::before  {
+  content: url("../../svg/icon-aliases-hover.svg");
+}
+
+.icon-cut::before {
+  content: url("../../svg/icon-cut.svg");
+}
+
+a:hover .icon-cut::before, .active .icon-cut::before  {
+  content: url("../../svg/icon-cut-hover.svg");
+}
+
+.icon-copy::before {
+  content: url("../../svg/icon-copy.svg");
+}
+
+a:hover .icon-copy::before, .active .icon-copy::before  {
+  content: url("../../svg/icon-copy-hover.svg");
+}
+
+.icon-cog::before {
+  content: url("../../svg/cog.svg");
+}
+
+.icon-cog:hover:before, .active .icon-cog::before  {
+  content: url("../../svg/cog-hover.svg");
+}
+
+.icon-trash::before, .icon-delete::before {
+  content: url("../../svg/icon-trash.svg");
+}
+
+a:hover .icon-trash::before, a:hover .icon-delete::before, .active .icon-delete::before {
+  content: url("../../svg/icon-trash-hover.svg");
+}
+
+.icon-preview::before {
+  content: url("../../svg/icon-preview.svg");
+}
+
+a:hover .icon-preview::before, .active .icon-preview::before {
+  content: url("../../svg/icon-preview-hover.svg");
+}
+
+.icon-analytics::before {
+  content: url("../../svg/icon-analytics.svg");
+}
+
+a:hover .icon-analytics::before, .active .icon-analytics::before {
+  content: url("../../svg/icon-analytics-hover.svg");
+}
+
+.icon-quality::before {
+  content: url("../../svg/icon-quality.svg");
+}
+
+a:hover .icon-quality::before, .active .icon-quality::before {
+  content: url("../../svg/icon-quality-hover.svg");
+}
+
+.icon-rename::before {
+  content: url("../../svg/icon-rename.svg");
+}
+
+a:hover .icon-rename::before, .active .icon-rename::before {
+  content: url("../../svg/icon-rename-hover.svg");
+}
+
+.icon-remove::before{
+  content: url("../../svg/icon-remove.svg");
+}
+.icon-remove:hover::before{
+  content: url("../../svg/icon-remove-hover.svg");
+}
+
+.icon-ok::before{
+  content: url("../../svg/icon-ok.svg");
+}
+.icon-ok:hover::before{
+  content: url("../../svg/icon-ok-hover.svg");
+}
+
+
+/* control panel icons */
+[class^="icon-controlpanel-"]::before {
+  width: 1em;
+  margin: 0;
+  margin-bottom: 5px;
+  content: url("../../svg/icon-controlpanel-default.svg");
+}
+
+a:hover [class^="icon-controlpanel-"]::before {
+  content: url("../../svg/icon-controlpanel-default.svg");
+}
+
+.icon-controlpanel-CastleSettingsControlPanel::before, a:hover .icon-controlpanel-CastleSettingsControlPanel::before  {
+  content: url("../../svg/icon-controlpanel-castle.svg");
+  width: 0.95em !important;
+}
+
+.icon-controlpanel-DateAndTime::before, a:hover .icon-controlpanel-DateAndTime::before {
+  content: url("../../svg/icon-controlpanel-dateandtime.svg");
+}
+
+.icon-controlpanel-LanguageSettings::before, a:hover .icon-controlpanel-LanguageSettings::before {
+  content: url("../../svg/icon-controlpanel-languagesettings.svg");
+}
+
+.icon-controlpanel-MailHost::before, a:hover .icon-controlpanel-MailHost::before {
+  content: url("../../svg/icon-controlpanel-mailhost.svg");
+}
+
+.icon-controlpanel-NavigationSettings::before, a:hover .icon-controlpanel-NavigationSettings::before {
+  content: url("../../svg/icon-controlpanel-navigationsettings.svg");
+}
+
+.icon-controlpanel-PloneReconfig::before, a:hover .icon-controlpanel-PloneReconfig::before {
+  content: url("../../svg/icon-controlpanel-plonereconfig.svg");
+}
+
+.icon-controlpanel-QuickInstaller::before, a:hover .icon-controlpanel-QuickInstaller::before {
+  content: url("../../svg/icon-controlpanel-quickinstaller.svg");
+}
+
+.icon-controlpanel-SearchSettings::before, a:hover .icon-controlpanel-SearchSettings::before {
+  content: url("../../svg/icon-controlpanel-searchsettings.svg");
+}
+
+.icon-controlpanel-discussion::before, a:hover .icon-controlpanel-discussion::before {
+  content: url("../../svg/icon-controlpanel-discussion.svg");
+}
+
+.icon-controlpanel-plone_app_theming::before, a:hover .icon-controlpanel-plone_app_theming::before {
+  content: url("../../svg/icon-controlpanel-plone-app-theming.svg");
+}
+
+.icon-controlpanel-socialmedia::before, a:hover .icon-controlpanel-socialmedia::before {
+  content: url("../../svg/icon-controlpanel-socialmedia.svg");
+}
+
+.icon-controlpanel-syndication::before, a:hover .icon-controlpanel-syndication::before {
+  content: url("../../svg/icon-controlpanel-syndication.svg");
+}
+
+.icon-controlpanel-tinymce::before, a:hover .icon-controlpanel-tinymce::before {
+  content: url("../../svg/icon-controlpanel-tinymce.svg");
+}
+
+.icon-controlpanel-ContentRules::before, a:hover .icon-controlpanel-ContentRules::before {
+  content: url("../../svg/icon-controlpanel-contentrules.svg");
+}
+
+.icon-controlpanel-EditingSettings::before, a:hover .icon-controlpanel-EditingSettings::before {
+  content: url("../../svg/icon-controlpanel-editingsettings.svg");
+}
+
+.icon-controlpanel-FeedsControlPanel::before, a:hover .icon-controlpanel-FeedsControlPanel::before {
+  content: url("../../svg/icon-controlpanel-feedscontrolpanel.svg");
+}
+
+.icon-controlpanel-ImagingSettings::before, a:hover .icon-controlpanel-ImagingSettings::before {
+  content: url("../../svg/icon-controlpanel-imagesettings.svg");
+}
+
+.icon-controlpanel-MarkupSettings::before, a:hover .icon-controlpanel-MarkupSettings::before {
+  content: url("../../svg/icon-controlpanel-markupsettings.svg");
+}
+
+.icon-controlpanel-RedirectsControlPanel::before, a:hover .icon-controlpanel-RedirectsControlPanel::before {
+  content: url("../../svg/icon-controlpanel-redirectscontrolpanel.svg");
+}
+
+.icon-controlpanel-TypesSettings::before, a:hover .icon-controlpanel-TypesSettings::before {
+  content: url("../../svg/icon-controlpanel-typessettings.svg");
+}
+
+.icon-controlpanel-dexterity-types::before, a:hover .icon-controlpanel-dexterity-types::before {
+  content: url("../../svg/icon-controlpanel-dexterity-types.svg");
+}
+
+.icon-controlpanel-UsersGroups::before, a:hover .icon-controlpanel-UsersGroups::before {
+  content: url("../../svg/icon-controlpanel-usersgroups.svg");
+}
+
+.icon-controlpanel-FilterSettings::before, a:hover .icon-controlpanel-FilterSettings::before {
+  content: url("../../svg/icon-controlpanel-filtersettings.svg");
+}
+
+.icon-controlpanel-SecuritySettings::before, a:hover .icon-controlpanel-SecuritySettings::before {
+  content: url("../../svg/icon-controlpanel-securitysettings.svg");
+}
+
+.icon-controlpanel-errorLog::before, a:hover .icon-controlpanel-errorLog::before  {
+  content: url("../../svg/icon-controlpanel-errorlog.svg");
+}
+
+.icon-controlpanel-TasksControlPanel::before, a:hover .icon-controlpanel-TasksControlPanel::before  {
+  content: url("../../svg/icon-controlpanel-taskscontrolpanel.svg");
+}
+
+.icon-controlpanel-plone_app_caching::before, a:hover .icon-controlpanel-plone_app_caching::before {
+  content: url("../../svg/icon-controlpanel-plone-app-caching.svg");
+}
+
+
+/* glyphicon overrides */
+[class*="glyphicon-"]::before {
+  width: 1em;
+  height: 1em;
+  margin: 0;
+}
+
+.glyphicon.glyphicon-th::before {
+  content: url("../../svg/glyphicon/glyphicon-th.svg");
+}
+
+.glyphicon.glyphicon-th-large::before {
+  content: url("../../svg/glyphicon/glyphicon-th-large.svg");
+}
+
+.glyphicon.glyphicon-list::before {
+  content: url("../../svg/glyphicon/glyphicon-list.svg");
+}
+
+.glyphicon.glyphicon-sort-by-attributes::before {
+   content: url("../../svg/glyphicon/glyphicon-sort-by-attributes.svg");
+}
+
+.glyphicon.glyphicon-scissors::before {
+  content: url("../../svg/glyphicon/glyphicon-scissors.svg");
+  vertical-align: middle;
+}
+
+.glyphicon.glyphicon-copy::before {
+  content: url("../../svg/glyphicon/glyphicon-copy.svg");
+}
+
+.glyphicon.glyphicon-paste::before {
+  content: url("../../svg/glyphicon/glyphicon-paste.svg");
+}
+
+.glyphicon.glyphicon-trash::before {
+  content: url("../../svg/glyphicon/glyphicon-trash.svg");
+}
+
+.glyphicon.glyphicon-trash-blue::before {
+  content: url("../../svg/glyphicon/glyphicon-trash-blue.svg");
+}
+
+.glyphicon.glyphicon-random::before {
+  content: url("../../svg/glyphicon/glyphicon-random.svg");
+}
+
+.glyphicon.glyphicon-tags::before {
+  content: url("../../svg/glyphicon/glyphicon-tags.svg");
+}
+
+.glyphicon.glyphicon-lock::before {
+  content: url("../../svg/glyphicon/glyphicon-lock.svg");
+}
+
+.glyphicon.glyphicon-edit::before {
+  content: url("../../svg/glyphicon/glyphicon-edit.svg");
+}
+
+.glyphicon.glyphicon-edit-blue::before {
+  content: url("../../svg/glyphicon/glyphicon-edit-blue.svg");
+}
+
+.glyphicon.glyphicon-search::before {
+  content: url("../../svg/glyphicon/glyphicon-search.svg");
+}
+
+.glyphicon.glyphicon-home::before {
+  content: url("../../svg/glyphicon/glyphicon-home.svg");
+}
+.glyphicon.glyphicon-new-window::before {
+  content: url("../../svg/glyphicon/glyphicon-new-window.svg");
+}
+.glyphicon.glyphicon-cog::before {
+  content: url("../../svg/glyphicon/glyphicon-cog.svg");
+}
+
+.glyphicon.glyphicon-indent-left::before {
+  content: url("../../svg/glyphicon/glyphicon-indent-left.svg");
+}
+
+.glyphicon.glyphicon-ok:before {
+  content: url("../../svg/glyphicon/glyphicon-ok.svg");
+}
+
+.glyphicon.glyphicon-remove:before {
+  content: url("../../svg/glyphicon/glyphicon-remove.svg");
+}
+
+// Glyphicon Test
+// .glyphicon::before {
+//   color: #6699f6 !important;
+// }
+
+// TINYMCE SVGs
+[class*="mce-i-"]::before  {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.mce-i-undo::before {
+  content: url("../../svg/tinymce/mce-i-undo.svg");
+}
+
+.mce-i-redo::before {
+  content: url("../../svg/tinymce/mce-i-redo.svg");
+}
+
+.mce-i-table::before {
+  content: url("../../svg/tinymce/mce-i-table.svg");
+}
+
+.mce-i-code::before {
+  content: url("../../svg/tinymce/mce-i-code.svg");
+}
+
+.mce-i-removeformat::before {
+  content: url("../../svg/tinymce/mce-i-removeformat.svg");
+}
+
+.mce-i-bold::before {
+  content: url("../../svg/tinymce/mce-i-bold.svg");
+}
+
+.mce-i-italic::before {
+  content: url("../../svg/tinymce/mce-i-italic.svg");
+}
+
+.mce-i-alignleft::before, .mce-i-alignnone::before  {
+  content: url("../../svg/tinymce/mce-i-alignleft.svg");
+}
+
+.mce-i-aligncenter::before {
+  content: url("../../svg/tinymce/mce-i-aligncenter.svg");
+}
+
+.mce-i-alignright::before {
+  content: url("../../svg/tinymce/mce-i-alignright.svg");
+}
+
+.mce-i-alignjustify::before {
+  content: url("../../svg/tinymce/mce-i-alignjustify.svg");
+}
+
+.mce-i-bullist::before {
+  content: url("../../svg/tinymce/mce-i-bullist.svg");
+}
+
+.mce-i-numlist::before {
+  content: url("../../svg/tinymce/mce-i-numlist.svg");
+}
+
+.mce-i-image::before {
+  content: url("../../svg/tinymce/mce-i-image.svg");
+}
+
+.mce-i-unlink::before {
+  content: url("../../svg/tinymce/mce-i-unlink.svg");
+}
+
+.mce-i-link::before {
+  content: url("../../svg/tinymce/mce-i-link.svg");
+}
+
+.mce-i-underline::before {
+  content: url("../../svg/tinymce/mce-i-underline.svg");
+}
+
+.mce-i-strikethrough::before {
+  content: url("../../svg/tinymce/mce-i-strikethrough.svg");
+}
+.mce-i-superscript::before {
+  content: url("../../svg/tinymce/mce-i-superscript.svg");
+}
+.mce-i-subscript::before {
+  content: url("../../svg/tinymce/mce-i-subscript.svg");
+}
+.mce--i-save::before {
+  content: url("../../svg/tinymce/mce-i-save.svg");
+}
+.mce-i-newdocument::before {
+  content: url("../../svg/tinymce/mce-i-newdocument.svg");
+}
+.mce-i-fullpage::before {
+  content: url("../../svg/tinymce/mce-i-fullpage.svg");
+}
+.mce-i-cut::before {
+  content: url("../../svg/tinymce/mce-i-cut.svg");
+}
+.mce-i-paste::before {
+  content: url("../../svg/tinymce/mce-i-paste.svg");
+}
+.mce-i-searchreplace::before {
+  content: url("../../svg/tinymce/mce-i-searchreplace.svg");
+}
+.mce-i-indent::before {
+  content: url("../../svg/tinymce/mce-i-indent.svg");
+}
+.mce-i-outdent::before {
+  content: url("../../svg/tinymce/mce-i-outdent.svg");
+}
+.mce-i-blockquote::before {
+  content: url("../../svg/tinymce/mce-i-blockquote.svg");
+}
+.mce-i-anchor::before {
+  content: url("../../svg/tinymce/mce-i-anchor.svg");
+}
+.mce-i-media::before {
+  content: url("../../svg/tinymce/mce-i-media.svg");
+}
+.mce-i-help:before {
+  content: url("../../svg/tinymce/mce-i-media.svg");
+}
+.mce-i-insertdatetime:before {
+  content: url("../../svg/tinymce/mce-i-insertdatetime.svg");
+}
+
+.mce-i-preview::before {
+  content: url("../../svg/tinymce/mce-i-preview.svg");
+}
+.mce-i-hr::before {
+  content: url("../../svg/tinymce/mce-i-hr.svg");
+}
+.mce-i-charmap::before {
+  content: url("../../svg/tinymce/mce-i-charmap.svg");
+}
+.mce-i-emoticons::before {
+  content: url("../../svg/tinymce/mce-i-emoticons.svg");
+}
+.mce-i-print::before {
+  content: url("../../svg/tinymce/mce-i-print.svg");
+}
+
+.mce-i-fullscreen::before {
+  content: url("../../svg/tinymce/mce-i-fullscreen.svg");
+}
+
+.mce-i-spellchecker::before  {
+  content: url("../../svg/tinymce/mce-i-spellchecker.svg");
+}
+
+.mce-i-nonbreaking::before {
+  content: url("../../svg/tinymce/mce-i-nonbreaking.svg");
+}
+
+.mce-i-template::before {
+  content: url("../../svg/tinymce/mce-i-template.svg");
+}
+
+.mce-i-pagebreak::before {
+  content: url("../../svg/tinymce/mce-i-pagebreak.svg");
+}
+
+.mce-i-restoredraft::before {
+  content: url("../../svg/tinymce/mce-i-restoredraft.svg");
+}
+
+.mce-i-visualchars::before, .mce-i-visualblocks::before  {
+  content: url("../../svg/tinymce/mce-i-visualchars.svg");
+}
+
+.mce-i-ltr::before {
+  content: url("../../svg/tinymce/mce-i-ltr.svg");
+}
+
+.mce-i-rtl::before {
+  content: url("../../svg/tinymce/mce-i-rtl.svg");
+}
+
+.mce-i-copy::before {
+  content: url("../../svg/tinymce/mce-i-copy.svg");
+}
+
+.mce-i-resize::before {
+  content: url("../../svg/tinymce/mce-i-resize.svg");
+}
+
+.mce-i-browse::before {
+  content: url("../../svg/tinymce/mce-i-browse.svg");
+}
+
+.mce-i-pastetext::before {
+  content: url("../../svg/tinymce/mce-i-pastetext.svg");
+}
+
+.mce-i-rotateleft::before {
+  content: url("../../svg/tinymce/mce-i-rotateleft.svg");
+}
+
+.mce-i-rotateright::before {
+  content: url("../../svg/tinymce/mce-i-rotateright.svg");
+}
+
+.mce-i-crop::before {
+  content: url("../../svg/tinymce/mce-i-crop.svg");
+}
+
+.mce-i-editimage::before {
+  content: url("../../svg/tinymce/mce-i-editimage.svg");
+}
+
+.mce-i-options::before {
+  content: url("../../svg/tinymce/mce-i-options.svg");
+}
+
+.mce-i-flipv::before {
+  content: url("../../svg/tinymce/mce-i-flipv.svg");
+}
+
+.mce-i-fliph::before {
+  content: url("../../svg/tinymce/mce-i-fliph.svg");
+}
+
+.mce-i-zoomin::before {
+  content: url("../../svg/tinymce/mce-i-zoomin.svg");
+}
+
+.mce-i-zoomout::before {
+  content: url("../../svg/tinymce/mce-i-zoomout.svg");
+}
+
+.mce-i-sun::before {
+  content: url("../../svg/tinymce/mce-i-sun.svg");
+}
+
+.mce-i-moon::before {
+  content: url("../../svg/tinymce/mce-i-moon.svg");
+}
+
+.mce-i-arrowleft::before {
+  content: url("../../svg/tinymce/mce-i-arrowleft.svg");
+}
+
+.mce-i-arrowright::before {
+  content: url("../../svg/tinymce/mce-i-arrowright.svg");
+}
+
+.mce-i-drop::before {
+   content: url("../../svg/tinymce/mce-i-drop.svg");
+}
+
+.mce-i-contrast::before {
+  content: url("../../svg/tinymce/mce-i-contrast.svg");
+}
+
+.mce-i-sharpen::before {
+  content: url("../../svg/tinymce/mce-i-sharpen.svg");
+}
+
+.mce-i-resize2::before {
+  content: url("../../svg/tinymce/mce-i-resize2.svg");
+}
+
+.mce-i-orientation::before {
+  content: url("../../svg/tinymce/mce-i-orientation.svg");
+}
+
+.mce-i-invert::before {
+  content: url("../../svg/tinymce/mce-i-invert.svg");
+}
+
+.mce-i-gamma::before {
+  content: url("../../svg/tinymce/mce-i-gamma.svg");
+}
+
+.mce-i-remove::before {
+  content: url("../../svg/tinymce/mce-i-remove.svg");
+}
+
+.mce-i-tablerowprops::before {
+  content: url("../../svg/tinymce/mce-i-tablerowprops.svg");
+}
+
+.mce-i-tablecellprops::before {
+  content: url("../../svg/tinymce/mce-i-tablecellprops.svg");
+}
+
+.mce-i-table2::before {
+  content: url("../../svg/tinymce/mce-i-table2.svg");
+}
+
+.mce-i-tablemergecells::before {
+  content: url("../../svg/tinymce/mce-i-tablemergecells.svg");
+}
+
+.mce-i-tableinsertcolbefore::before {
+  content: url("../../svg/tinymce/mce-i-tableinsertcolbefore.svg");
+}
+
+.mce-i-tableinsertcolafter::before {
+  content: url("../../svg/tinymce/mce-i-tableinsertcolafter.svg");
+}
+
+.mce-i-tableinsertrowbefore::before {
+  content: url("../../svg/tinymce/mce-i-tableinsertrowbefore.svg");
+}
+
+.mce-i-tableinsertrowafter::before {
+  content: url("../../svg/tinymce/mce-i-tableinsertrowafter.svg");
+}
+
+.mce-i-tablesplitcells::before {
+  content: url("../../svg/tinymce/mce-i-tablesplitcells.svg");
+}
+
+.mce-i-tabledelete::before {
+  content: url("../../svg/tinymce/mce-i-tabledelete.svg");
+}
+
+.mce-i-tableleftheader::before {
+  content: url("../../svg/tinymce/mce-i-tableleftheader.svg");
+}
+
+.mce-i-tabletopheader::before {
+  content: url("../../svg/tinymce/mce-i-tabletopheader.svg");
+}
+.mce-i-tabledeleterow::before {
+  content: url("../../svg/tinymce/mce-i-tabledeleterow.svg");
+}
+
+.mce-i-tabledeletecol::before {
+  content: url("../../svg/tinymce/mce-i-tabledeletecol.svg");
+}
+
+.mce-i-codesample::before {
+  content: url("../../svg/tinymce/mce-i-codesample.svg");
+}
+
+.mce-i-checkbox::before, .mce-i-selected::before {
+  content: url("../../svg/tinymce/mce-i-checkbox.svg");
+}
+
+
+
+[class*="contenttype-"]::before,
+.contenttype-news.item::before,
+.glyphicon.glyphicon-upload::before,
+.glyphicon.glyphicon-eye-open::before,
+.glyphicon.glyphicon-pencil::before {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: 0.9375em;
+  vertical-align: top;
+  content: '';
+}
+
+/* document used as default for some so present it first */
+.contenttype-document::before {
+  content: url("../../svg/contenttypes/contenttype-document.svg");
+}
+.contenttype-document:hover::before {
+  content: url("../../svg/contenttypes/contenttype-document-hover.svg");
+}
+
+
+/* content type icons */
+.contenttype-feed::before,
+.contenttype-image::before,
+.contenttype-folder::before {
+  width: 16px;
+  height: 16px;
+  font-family: inherit !important;
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+  margin-right: 0.9375em;
+}
+
+.contenttype-feed::before {
+  content: url("../../svg/contenttypes/contenttype-feed.svg");
+}
+
+.contenttype-image::before {
+  content: url("../../svg/contenttypes/contenttype-image.svg");
+}
+
+.contenttype-image:hover::before {
+  content: url("../../svg/contenttypes/contenttype-image-hover.svg");
+}
+
+.contenttype-folder::before {
+  content: url("../../svg/contenttypes/contenttype-folder.svg");
+}
+
+// for the add new modal.. for "adding folders"
+li.contenttype-folder-container .contenttype-folder::before {
+  content: url("../../svg/contenttypes/contenttype-add-folder.svg");
+  width: 16px;
+  line-height: 1em;
+  vertical-align: middle;
+}
+
+li.contenttype-folder-container .contenttype-folder:hover::before {
+  content: url("../../svg/contenttypes/contenttype-add-folder-hover.svg");
+}
+
+.contenttype-news-item::before, .contenttype-news.item::before {
+  content: url("../../svg/contenttypes/contenttype-news-item.svg");
+}
+
+.contenttype-news-item:hover::before, .contenttype-news.item:hover::before {
+  content: url("../../svg/contenttypes/contenttype-news-item-hover.svg");
+}
+
+.contenttype-event::before {
+  content: url("../../svg/contenttypes/contenttype-event.svg");
+}
+
+.contenttype-person::before,
+.contenttype-presscontact::before,
+.contenttype-vicap::before,
+.contenttype-vicap::before,
+.contenttype-bankrobber::before,
+.contenttype-bankrobber::before {
+  content: url("../../svg/contenttypes/contenttype-person.svg");
+}
+
+.contenttype-person:hover::before,
+.contenttype-presscontact:hover::before,
+.contenttype-vicap:hover::before,
+.contenttype-vicap:hover::before,
+.contenttype-bankrobber:hover::before,
+.contenttype-bankrobber:hover::before {
+  content: url("../../svg/contenttypes/contenttype-person-hover.svg");
+}
+
+.contenttype-speech::before {
+  content: url("../../svg/contenttypes/contenttype-speech.svg");
+  padding-right: 0.2em;
+}
+
+.contenttype-speech:hover::before {
+  content: url("../../svg/contenttypes/contenttype-speech-hover.svg");
+}
+
+.contenttype-testimony::before {
+  content: url("../../svg/contenttypes/contenttype-testimony.svg") !important;
+}
+
+.contenttype-testimony:hover::before {
+  content: url("../../svg/contenttypes/contenttype-testimony-hover.svg") !important;
+}
+
+.contenttype-link::before {
+  content: url("../../svg/contenttypes/contenttype-link.svg");
+}
+
+.contenttype-link:hover::before {
+  content: url("../../svg/contenttypes/contenttype-link-hover.svg");
+}
+
+.contenttype-pressrelease::before {
+   content: url("../../svg/contenttypes/contenttype-pressrelease.svg");
+}
+
+.contenttype-pressrelease:hover::before {
+  content: url("../../svg/contenttypes/contenttype-pressrelease-hover.svg");
+}
+.contenttype-story::before {
+  content: url("../../svg/contenttypes/contenttype-story.svg");
+}
+
+.contenttype-story:hover::before {
+  content: url("../../svg/contenttypes/contenttype-story-hover.svg");
+}
+
+.glyphicon.glyphicon-upload::before {
+  content: url("../../svg/contenttypes/glyphicon-upload.svg") !important;
+}
+
+.select-upload-container:hover .glyphicon.glyphicon-upload::before {
+   content: url("../../svg/contenttypes/glyphicon-upload-hover.svg") !important;
+}
+
+.glyphicon.glyphicon-eye-open::before {
+  content: url("../../svg/glyphicon/glyphicon-eye-open.svg");
+}
+
+.glyphicon.glyphicon-pencil::before {
+  content: url("../../svg/glyphicon/glyphicon-pencil.svg");
+}
+
+/* do not use font icons for required dot */
+label .required:after {
+  content: "•";
+}

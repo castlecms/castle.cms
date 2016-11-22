@@ -1,0 +1,119 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+<metal:javascript fill-slot="javascript_head_slot">
+  <script>
+
+var HasHistory = !!window.history;
+
+require([
+'jquery',
+'mockup-utils',
+'pat-registry'
+], function($, utils, Registry){
+
+var load = function(url){
+utils.loading.show();
+$.ajax({
+  url: url
+}).done(function(data){
+  var body = utils.parseBodyTag(data);
+  var $dom = $(body);
+  var $newContent = $('.history-content-wrapping', $dom);
+  $('.history-content-wrapping').replaceWith($newContent);
+  $('.history-info-container').replaceWith($('.history-info-container', $dom));
+
+  Registry.scan($newContent);
+  Registry.scan($('.history-info-container'));
+  bind();
+  if(HasHistory){
+    history.pushState({}, "", url);
+  }
+}).fail(function(){
+  alert('error getting version');
+}).always(function(){
+  utils.loading.hide();
+});
+}
+
+var bind = function(){
+$('.version-selector').on('change', function(e){
+  e.preventDefault();
+  var versionId = $(this).val();
+  var url = window.location.origin + window.location.pathname + '?version=' + versionId;
+  load(url);
+});
+}
+
+$(document).ready(function(){
+  bind();
+})
+
+if(HasHistory){
+window.onpopstate = function(e){
+  load(window.location.href);
+};
+}
+});
+</script>
+</metal:javascript>
+
+<body>
+
+    <metal:main fill-slot="main"
+                tal:define="obj python: view.getVersion(request.form.get('version', 'current'));
+                            modified obj/ModificationDate;
+                            version_id python: request.form.get('version', '1');
+                            utils context/@@castle-utils">
+      <h1 class="documentFirstHeading">History View</h1>
+
+      <div class="history-info-container">
+        <form>
+          <div class="form-group">
+            <label>Select version</label>
+            <select name="version" class="form-control version-selector">
+              <tal:version tal:repeat="version view/versions">
+                <option value="${version/version_id}"
+                        tal:attributes="selected python: str(version_id) == str(version['version_id']) and 'true'">
+                  <span tal:replace="python: here.toLocalizedTime(version['dt'],long_format=True)" />
+                  <span tal:condition="version/comments" tal:omit-tag="">- ${version/comments}</span>
+                </option>
+              </tal:version>
+            </select>
+          </div>
+        </form>
+
+
+        <h4>Showing edit from
+          <span tal:content="modified"
+                class="pat-moment" data-pat-moment="format:relative;"/></h4>
+        <p tal:condition="view/version_info/comments|nothing">
+          <strong>Comments</strong>: ${view/version_info/comments|nothing}</p>
+
+        <form method="post" action="${context/absolute_url}/revertversion">
+          <input type="hidden" name="version_id" value=""
+                 tal:attributes="value version_id" />
+          <input type="submit" class="plone-btn plone-btn-danger"
+                 value="Revert to this version" />
+        </form>
+
+      </div>
+      <hr />
+      <div class="history-content-wrapping">
+        <div tal:replace="structure python: view.getContent(obj)" />
+
+        <hr />
+        <p class="discreet" tal:condition="python: utils.has_image(obj)">
+          This version has a lead image assigned to it.
+        </p>
+      </div>
+
+    </metal:main>
+
+</body>
+</html>

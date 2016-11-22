@@ -1,0 +1,6 @@
+<layers>
+  <layer
+    name="castle.cms"
+    interface="castle.cms.interfaces.ICastleLayer"
+    />
+</layers>

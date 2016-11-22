@@ -1,0 +1,17 @@
+<form class="search-tile-container row"
+      action="${python: view.site.absolute_url()}/@@search">
+  <tal:pt tal:repeat="pt view/portal_types">
+    <input type="hidden" name="portal_type:list" value="${pt}" />
+  </tal:pt>
+  <input name="advanced_search" value="True" type="hidden" />
+
+  <div class="col-md-10 castle-col-search-input">
+    <label for="tile-for-search" class="visually-hidden">Search</label>
+    <input id="tile-for-search" type="text" placeholder="${python: view.data.get('placeholder') or 'Search...'}"
+           name="SearchableText" class="castle-input-search">
+  </div>
+
+  <div class="col-md-2 castle-col-search-btn">
+    <button class="castle-btn-search" type="submit">${python: view.data.get('search_btn_text') or 'Search'}</button>
+  </div>
+</form>

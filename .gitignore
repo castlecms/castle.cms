@@ -1,0 +1,15 @@
+.DS_Store
+*.swp
+*.egg-info/
+*.pyc
+/bin/
+/local/
+/lib/
+/dist/
+/include/
+/build/
+._*
+castle/cms/static/plone-compiled.js
+castle/cms/static/plone-logged-in-compiled.js
+castle/cms/locales/en/LC_MESSAGES/plone.mo
+*.pyc

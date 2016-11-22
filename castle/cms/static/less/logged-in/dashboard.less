@@ -1,0 +1,245 @@
+
+// Dashboard
+.portaltype-dashboard.template-layout  {
+
+  .meta-container-meta-top {
+    display: none;
+  }
+
+  /* override icons on dashboard */
+  .icon-user::before {
+    content: url("../../svg/template-dashboard-icon-user.svg");
+  }
+  .icon-events::before {
+    content: url("../../svg/icon-events.svg") !important;
+  }
+
+  #main-content-container .icon-user::before,
+  #main-content-container .icon-events::before,
+  #main-content-container[class*="contenttype-"]::before  {
+    width: 1.2em;
+    height: 1.2em;
+    font-family: inherit !important;
+    display: inline-block;
+    margin: 0.3em 0.2em 0;
+    text-align: center;
+  }
+  .recent-activity {
+    [class*="contenttype-"]::before {
+      color: @castle_lighter_dark_grey_color !important;
+    }
+  }
+  h1 {
+    margin-top: 0px;
+    padding-top: 0px;
+    font-size: 3em;
+    text-align: center;
+    color: @castle_lighter_dark_grey_color;
+    font-family: 'Open Sans Condensed', Arial;
+    font-weight: 700;
+  }
+  #main-content-container {
+    p {
+      font-size: 1.125em;
+      &.welcome-message {
+        text-align: center;
+        font-family: 'Open Sans 600', Arial;
+        font-weight: 600;
+        color: @castle_lighter_dark_grey_color;
+      }
+    }
+  }
+
+  .content-totals{
+    clear: both;
+    color: #7B7B7B;
+    text-align: right;
+
+    .content-totals-label{
+      font-weight: 500;
+      margin-right: 8px;
+    }
+    .total-group{
+      margin-right: 5px;
+
+      .count:after{
+        content: ',';
+      }
+    }
+    .total-group:last-child{
+      .count:after{
+        content: '';
+      }
+    }
+  }
+
+  ul.dashboard-add-content-buttons {
+    border-top: 1px solid @castle_edit_zone_text;
+    margin-top: 1em;
+    padding-top: 1em;
+
+    li a span.path{
+      font-weight: normal;
+      font-size: 12px;
+      display: block;
+      text-transform: none;
+      font-family: 'Open Sans 600', Arial;
+      font-weight: 600;
+    }
+
+    li {
+      text-align: center;
+    }
+
+    li a {
+      display: block;
+      font-family: 'Open Sans 700', Arial;
+      font-weight: 700;
+      color: @castle_lighter_dark_grey_color;
+      text-align: center;
+      text-transform: uppercase;
+
+      &::before {
+        font-size: 71px;
+        width: 109px;
+        height: 109px;
+        text-align: center;
+        color: white;
+        background-color: @castle_new_gray;
+        -webkit-border-radius: 109px;
+        -moz-border-radius: 109px;
+        border-radius: 109px;
+        line-height: 100px;
+        margin: 0 auto 15px;
+        overflow: hidden;
+        display: block;
+        padding-top: 6px;
+      }
+      &:hover::before {
+        background-color: @castle_red_color;
+        color: white !important;
+        text-decoration: none !important;
+        }
+      &:hover {
+        color: @castle_red_color;
+      }
+      &[class*="contenttype-"]::before, &.glyphicon-upload::before, &.icon-manage-site::before {
+        content: '' !important;
+        font-family: sans-serif;
+      }
+      &.contenttype-folder::before {
+          background: url("../../images/folder-grey.png") no-repeat;
+      }
+      &.contenttype-folder:hover::before {
+        background: url("../../images/folder-red.png") no-repeat;
+      }
+      &.contenttype-document::before {
+        background: url("../../images/page-grey.png") no-repeat;
+      }
+      &.contenttype-document:hover::before {
+        background: url("../../images/page-red.png") no-repeat;
+      }
+      &.contenttype-news-item::before {
+        background: url("../../images/news-grey.png") no-repeat;
+      }
+      &.contenttype-news-item:hover::before {
+        background: url("../../images/news-red.png") no-repeat;
+      }
+      &.contenttype-link::before {
+        background: url("../../images/link-grey.png") no-repeat;
+      }
+      &.contenttype-link:hover::before {
+        background: url("../../images/link-red.png") no-repeat;
+      }
+      &.contenttype-person::before {
+        background: url("../../images/person-grey.png") no-repeat;
+      }
+      &.contenttype-person:hover::before {
+        background: url("../../images/person-red.png") no-repeat;
+      }
+      &.contenttype-pressrelease::before {
+        background: url("../../images/press-release-grey.png") no-repeat;
+      }
+      &.contenttype-pressrelease:hover::before {
+        background: url("../../images/press-release-red.png") no-repeat;
+      }
+      &.contenttype-speech::before {
+        background: url("../../images/speech-grey.png") no-repeat;
+      }
+      &.contenttype-speech:hover::before {
+        background: url("../../images/speech-red.png") no-repeat;
+      }
+      &.contenttype-story::before {
+        background: url("../../images/story-grey.png") no-repeat;
+      }
+      &.contenttype-story:hover::before {
+        background: url("../../images/story-red.png") no-repeat;
+      }
+      &.contenttype-testimony::before {
+        background: url("../../images/testimony-grey.png") no-repeat;
+      }
+      &.contenttype-testimony:hover::before {
+        background: url("../../images/testimony-red.png") no-repeat;
+      }
+      &.glyphicon-upload::before {
+        background: url("../../images/upload-grey.png") no-repeat;
+      }
+      &.glyphicon-upload:hover::before {
+        background: url("../../images/upload-red.png") no-repeat;
+      }
+      &.icon-manage-site::before {
+        background: url("../../images/manage-grey.png") no-repeat;
+      }
+      &.icon-manage-site:hover::before {
+        background: url("../../images/manage-red.png") no-repeat;
+      }
+    }
+  }
+  // Text shadow was going beyond the border-radius in the button.. readjusted some things for IE. My first IE only hack
+  @media all and (-ms-high-contrast:none) {
+     ul.small-block-grid-3 li a.button.expand::before {
+      font-size: 53px;
+      text-shadow: 1px 1px rgb(150, 150, 150), 2px 2px rgb(150, 150, 150), 3px 3px rgb(150, 150, 150), 4px 4px rgb(150, 150, 150), 5px 5px rgb(150, 150, 150), 6px 6px rgb(150, 150, 150), 7px 7px rgb(150, 150, 150), 8px 8px rgb(150, 150, 150), 9px 9px rgb(150, 150, 150), 10px 10px rgb(150, 150, 150), 11px 11px rgb(150, 150, 150), 12px 12px rgb(150, 150, 150), 13px 13px rgb(150, 150, 150);
+     } /* IE11 */
+     ul.small-block-grid-3 li a.button.expand:hover::before {
+      text-shadow: 1px 1px rgb(158, 28, 28), 2px 2px rgb(158, 28, 28), 3px 3px rgb(158, 28, 28), 4px 4px rgb(158, 28, 28), 5px 5px rgb(158, 28, 28), 6px 6px rgb(158, 28, 28), 7px 7px rgb(158, 28, 28), 8px 8px rgb(158, 28, 28), 9px 9px rgb(158, 28, 28), 10px 10px rgb(158, 28, 28), 11px 11px rgb(158, 28, 28), 12px 12px rgb(158, 28, 28), 13px 13px rgb(158, 28, 28);     } /* IE11 */
+     }
+
+  [type="submit"] {
+    background-color: @castle_bluish_grey;
+    color: white;
+    &:hover {
+      background-color: @castle_red_color;
+      color: white;
+      box-shadow: 0px 2px 5px 5px #BBB;
+    }
+  }
+  table, table > thead > tr > th, table > tbody > tr > th, table > tfoot > tr > th, table > thead > tr > td, table > tbody > tr > td, table > tfoot > tr > td {
+    border: none;
+  }
+  table {
+    .title {
+      font-size: inherit;
+      margin: 0px;
+      line-height: inherit;
+    }
+    .date {
+      font-weight: normal;
+      margin: 0px;
+    }
+
+    .dots td, .dots th {
+      border-bottom: 1px dotted @castle_light_grey_color;
+    }
+  }
+
+  .user-picture {
+    text-align: center;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    img {
+      max-height: 100px;
+    }
+  }
+}

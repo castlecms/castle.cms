@@ -1,0 +1,41 @@
+.castle-relateditems-container {
+  .row{
+    max-width:100%;
+    margin-top:15px;
+    margin-left:0;
+
+    .castle-re-select {
+      padding-left:0;
+    }
+  }
+
+  .select2-input {
+    border: 1px solid #999;
+  }
+
+  .select2-container.select2-container-multi{
+    .select2-choices {
+      padding: 4px 10px;
+    }
+  }
+
+  @media( max-width:1200px ){
+    .select2-container.select2-container-multi{
+      width:100% !important;
+    }
+  }
+
+  .icon-trash, .icon-move-up, .icon-move-down {
+    padding:6px;
+
+    &::before{
+      width:0.9em;
+      height:0.9em;
+      vertical-align: -0.1em;
+    }
+  }
+
+  .select2-container.select2-container-multi.pat-relateditems {
+    width: 100% !important;
+  }
+}

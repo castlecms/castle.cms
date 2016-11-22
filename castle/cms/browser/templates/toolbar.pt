@@ -1,0 +1,11 @@
+<tal:show tal:condition="python: view.show">
+  <section id="edit-bar" role="toolbar"
+           class="pat-castletoolbar"
+           data-pat-castletoolbar="${context/@@castle-toolbar}"
+           i18n:domain="plone">
+  </section>
+</tal:show>
+<tal:logged-in-but-not-show tal:condition="python: not view.show and not view.portal_state.anonymous()">
+  <div style="display: none" class="castletoolbar-settings"
+       data-pat-castletoolbar="${context/@@castle-toolbar}"></div>
+</tal:logged-in-but-not-show>

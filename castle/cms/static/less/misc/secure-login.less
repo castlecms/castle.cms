@@ -1,0 +1,127 @@
+// "out": "secure-login.css", "sourcemap": true, "compress": true
+
+@login-width: 600px;
+
+body.secure-login-template {
+	background:#fafafa;
+}
+
+.castle-login-header {
+  text-align: center;
+  margin:25px 0;
+
+	img {
+		max-width: 400px;
+		max-height: 400px;
+	}
+}
+
+#secure-login {
+	margin-top: 20px;
+}
+
+.auth-description {
+	font-size: 14px;
+	color: #767676;
+  font-weight: 300;
+}
+
+.castle-secure-login-container,
+.login-exception-container {
+  background:#fff;
+  border: 1px solid #dedede;
+  padding: 10px 20px 30px;
+  border-radius: 4px;
+  box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.15);
+	max-width: @login-width;
+	margin: 0 auto;
+	overflow: hidden;
+
+	.form-control{
+		background-color:#fcfcfc;
+		margin-bottom:20px;
+		border-radius:2px;
+
+		&:focus{
+			box-shadow:none;
+		}
+	}
+
+  .auth-title{
+  		text-align: center;
+  		margin:10px 0 30px;
+  		font-size:24px;
+  		font-weight:400;
+  }
+
+  .radio{
+  	margin-bottom:15px;
+  }
+
+	.alert {
+		clear: both;
+	}
+}
+
+.castle-secure-login-buttons{
+	margin:30px 0;
+
+	.btn{
+		margin-right:10px;
+		border-radius: 2px;
+		color: #333;
+		font-size: 14px;
+	}
+
+	.btn-primary {
+		color: #fff;
+		background-color: #337ab7;
+		border-color: #2e6da4;
+
+		&:hover {
+			color: #fff;
+			background-color: #286090;
+			border-color: #204d74;
+		}
+	}
+}
+
+
+// regular login page
+#login-forgotten-password {
+	max-width: @login-width;
+	margin: 20px auto;
+	text-align: center;
+}
+
+
+// to get nice form transition events, we'll slide in and out forms...
+.castle-secure-login-forms-container {
+	width: 9000px;
+	margin-left: 0;
+	transition: margin-left .25s ease-in-out;
+	-moz-transition: margin-left .25s ease-in-out;
+	-webkit-transition: margin-left .25s ease-in-out;
+
+	> div {
+		width: @login-width - 40px;
+		padding: 10px 20px 0;
+		float: left;
+	}
+
+	&.auth-code-sent {
+		margin-left: -(@login-width - 40px);
+	}
+	&.code-authorized{
+		margin-left: -((@login-width - 40px) * 2);
+	}
+	&.change-password{
+		margin-left: -((@login-width - 40px) * 3);
+	}
+	&.country-blocked{
+		margin-left: -((@login-width - 40px) * 4);
+	}
+	&.country-block-requested{
+		margin-left: -((@login-width - 40px) * 5);
+	}
+}

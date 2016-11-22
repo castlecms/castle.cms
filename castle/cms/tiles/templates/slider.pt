@@ -1,0 +1,13 @@
+<tal:slider tal:define="images view/images;">
+<div class="pat-slider flexslider" tal:condition="images"
+     data-pat-flexslider="${view/pattern_options}">
+  <ul class="slides">
+    <tal:slide tal:repeat="image images">
+      <li>
+        <img src="${image/large}" alt="${image/description}" />
+        <p class="flex-caption" tal:condition="image/description">${image/description}</p>
+      </li>
+    </tal:slide>
+  </ul>
+</div>
+</tal:slider>

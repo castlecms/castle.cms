@@ -1,0 +1,30 @@
+<ul class="dt-compact" tal:define="results view/tile/results;
+                                   utils view/tile/utils;
+                                   df view/tile/display_fields">
+  <tal:item tal:repeat="item python: results['items']">
+  <li tal:define="obj python: item.getObject();
+                  url python: utils.get_object_url(obj);
+                  effective obj/effective|nothing;
+                  desc obj/Description;
+                  has_date python: 'date' in df and utils.valid_date(effective);"
+      class="portal-type-${python: utils.normalize(item.portal_type)}">
+    <div class="row">
+      <div class="col-lg-1 col-md-2 col-md-3" tal:condition="has_date">
+        <p class="date"
+           tal:content="python: utils.format_date(effective, 'usdot')"></p>
+      </div>
+      <div class="col-lg-10 col-md-10"
+           tal:attributes="class python: has_date and 'col-lg-10 col-md-10' or 'col-lg-12 col-md-12'">
+        <p class="title">
+          <a href="${url}">
+            ${obj/Title}
+          </a>
+        </p>
+        <p class="description" tal:condition="python: 'description' in df">
+          ${desc}
+        </p>
+      </div>
+    </div>
+  </li>
+  </tal:item>
+</ul>

@@ -1,0 +1,112 @@
+
+// Comments
+#commenting legend, .discussion legend {
+    font-weight: normal;
+    padding: 0.5em 0.5em 0.5em 0;
+}
+#commenting {
+  padding: 0px 15px;
+  width: 100%;
+  position: relative;
+  &:before, &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.discussion {
+  padding: 0px 15px;
+  width: 100%;
+  position: relative;
+  &:before, &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+  .comment {
+    margin-bottom: 12px;
+    padding-left: 40px;
+  }
+  .commentImage {
+    border-radius: 50px;
+    float: left !important;
+    margin-left: -40px;
+    margin-top: 3px;
+    overflow: hidden;
+    position: absolute;
+    img {
+      max-height: 33px;
+    }
+  }
+  .documentByLine {
+    font-weight: normal;
+  }
+  .commentDate {
+    color: #76797c;
+    display: inline;
+    float: right !important;
+    font-size: 12px;
+  }
+  .commentBody {
+    border: 1px solid #ccc;
+    margin: 1em 0;
+    overflow: auto;
+    padding: 1em;
+    p {
+      float: left;
+      margin-bottom: 0;
+    }
+  }
+  .commentactionsform {
+    display: inline;
+    margin-left: 6px;
+  }
+  .commentActions {
+    float: right;
+    text-align: right;
+  }
+  .reply {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .cancelreplytocomment {
+    display: none;
+  }
+  .replyTreeLevel0 {
+    margin-left: 0;
+  }
+  .replyTreeLevel1 {
+    margin-left: 24px;
+  }
+  .replyTreeLevel2 {
+    margin-left: 48px;
+  }
+  .replyTreeLevel3 {
+    margin-left: 72px;
+  }
+  .replyTreeLevel4 {
+    margin-left: 96px;
+  }
+  .replyTreeLevel5 {
+    margin-left: 120px;
+  }
+  .replyTreeLevel6 {
+    margin-left: 144px;
+  }
+  .replyTreeLevel7 {
+    margin-left: 168px;
+  }
+  .replyTreeLevel8 {
+    margin-left: 192px;
+  }
+  .replyTreeLevel9 {
+    margin-left: 216px;
+  }
+  .replyTreeLevel10 {
+    margin-left: 240px;
+  }
+}

@@ -1,0 +1,597 @@
+/*  Site Setup Styles */
+
+.configlets{
+  list-style: none;
+}
+
+section.portlet, section.portlet.portletSiteSetup{
+	border-radius:0;
+
+	> :first-child, >:last-child{
+		border-radius:0;
+	}
+
+	.portletHeader{
+		background:#e5e5e5;
+
+		> a{
+			color: #696969;
+		}
+	}
+
+	.portletContent{
+		font-size:100%;
+		background: none;
+
+		> ul{
+			> li{
+				height:120px;
+
+				a:before{
+					content:"";
+				}
+			}
+		}
+
+		ul{
+			background:#f8f8f8;
+			padding-bottom:2em;
+
+			li{
+				border-radius:0;
+				vertical-align: top;
+
+				strong{
+					background:#fff;
+				}
+
+				a{
+					word-break:normal;
+					border:none;
+					padding:0;
+					color:#4d4d4d;
+
+					span{
+						font-size:2.688em; //43px
+						display:block;
+						text-align: center;
+						color:#4d4d4d;
+					}
+				}
+
+				&:hover, &:active{
+					background:none;
+					text-decoration:none;
+				}
+			}
+			ul{
+				margin-left:0;
+			}
+		}
+	}
+
+	.inner-configlet{
+		padding:6px 4px;
+		margin:10px 0;
+
+		&:hover{
+			background:none;
+			box-shadow:none;
+		}
+
+		a{
+			font-size:0.9em;
+			text-align: center;
+		}
+	}
+
+	//make icons smaller
+	[class^="icon-controlpanel-"]::before{
+		width:0.8em;
+	}
+}
+
+//sidebar styles
+#portlet-prefs ul{
+	li{
+		height:100% !important;
+	}
+
+	ul li{
+		padding:10px 0 5px;
+
+		a{
+			padding-left:40px;
+
+			&:before{
+				content: "•";
+			   position: absolute;
+			   font-size: 25px;
+         margin-top: 0px !important;
+         line-height: 1;
+			   left: 15px;
+			   color: #a7daf2;
+			}
+		}
+	}
+}
+
+//tabs
+.autotabs,
+.pat-autotoc.autotabs {
+	border-radius:0 !important;
+	padding:0 !important;
+	box-shadow: none !important;
+	margin:0;
+
+
+	div.autotoc-nav, nav.autotoc-nav, ul.autotoc-nav {
+		margin: 0px;
+		padding:0px;
+		min-height: 0;
+		background:#f8f8f8;
+		border-bottom: 1px solid @modal-border;
+
+		li:first-child a{
+			border-left:0;
+		}
+
+		a {
+			font-family:"Open Sans", Arial, sans-serif;
+			font-size:0.95em;
+			color: lighten(@font-color-primary, 60%);
+			border-radius: 0;
+			border:none;
+			margin: 0;
+			padding: 8px 15px;
+			background:transparent;
+
+			&:hover{
+				cursor: pointer;
+				color:@castle-primary;
+				background:none;
+			}
+
+			&.active, &:active {
+				color:@font-color-primary;
+				background-color: #fff;
+				border-right: 1px solid @modal-border;
+				border-left: 1px solid @modal-border;
+				border-top:4px solid @castle-primary;
+				position: relative;
+				top:1px;
+			}
+
+			&:focus{
+				text-decoration: none;
+				outline:none;
+			}
+
+		}
+	}
+
+	> div,
+  > p{
+		padding:5px;
+	}
+
+  p {
+    margin-bottom: 10px;
+  }
+
+	fieldset{
+		padding:15px;
+		border:none;
+		margin-top:0;
+	}
+
+
+	//admin/preferences
+	.rowlike{
+		padding:0 15px;
+	}
+
+	.formControls{
+		padding:12px 15px !important;
+	}
+}
+
+//users & groups
+.template-usergroup-groupprefs,
+.template-usergroup-userprefs{
+	form{
+		padding:0 15px;
+
+		input[type="text"]{
+			margin:5px 0 8px;
+		}
+	}
+
+	table.usergroups-listing{
+		margin-top: 30px;
+    margin-bottom: 10px;
+    width: 100%;
+
+    td,
+    th {
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+    tr.disabled {
+      background-color: #f2f2f2;
+    }
+	}
+
+  .roles-value {
+    .pat-select2 {
+      width: 300px;
+    }
+  }
+}
+
+
+//Resource Registry tabs are all messed up
+.pat-resourceregistry > div{
+	border:1px solid #e5e5e5;
+
+	.autotabs{
+		border:none;
+
+		.autotoc-nav{
+			margin:0;
+		}
+	}
+
+	.tab-content{
+		padding:0 15px;
+
+		.btn-group{
+			min-height: 50px;
+			margin-bottom:15px;
+		}
+	}
+}
+
+body[class*="-controlpanel"] {
+  #content-core, #content {
+
+  	label {
+  		font-family: 'Open Sans 700', Arial, sans-serif;
+  		font-weight:700;
+  		margin-bottom:4px;
+  		font-size: 14px;
+  		color: #4d4d4d;
+  		cursor: pointer;
+  	}
+
+  	select, input, textarea{
+  		box-sizing: border-box;
+  		font-family: @font-family-base;
+  	}
+
+  	.form-control, input[type="text"], input[type="password"], textarea, select,
+  	.select2-container .select2-choice, .select2-container-multi .select2-choices {
+  		height:auto;
+  		background-color: #fff;
+  		font-family: @font-family-base;
+  		font-size:0.9em;
+  		border:1px solid #dedede;
+  		border-radius:0;
+  		box-shadow: none;
+  		padding:7px 12px;
+  		transition:border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+
+  		&:hover{
+  			border:1px solid #999;
+  		}
+
+  		&:focus{
+  			outline:2px solid lighten(@castle-primary, 40%);
+  			background-color:#f8f8f8;
+  			box-shadow:none;
+  		}
+  	}
+
+  	select{
+  		-webkit-appearance:none !important;
+  		-moz-appearance: none;
+  		appearance: none;
+  		background: url(../../images/icon-caret-down.png) no-repeat 96% 49% !important;
+
+  		&:hover{
+  			background-color:#fff;
+  		}
+  	}
+
+  	legend{
+  		border:none;
+  		margin:0;
+  		padding:0 0.25em;
+  		font-size:21px;
+  		width:auto;
+  	}
+
+  	//autocomplete widgets
+  	.select2-container{
+  		width:100%;
+
+  		.select2-choices{
+  			padding:0;
+  			border:1px solid #dedede;
+  			background:none;
+
+  			.select2-input.select2-input {
+  				background:#fff;
+
+  				&:hover{
+  					border:1px solid #999;
+  				}
+  			}
+  		}
+  	}
+
+  	//selection widget
+  	.ordered-selection-field, .list-field{
+  		background:none !important;
+
+  		td{
+  			vertical-align: top;
+  			padding:0 0.625rem;
+  		}
+
+  		button{
+  			width:46px;
+  			float:left;
+  			color:#fff;
+  			background-color:#767676;
+  			border:1px solid #fff;
+  			padding:16px;
+
+  			&:hover, &:active{
+  				color:#fff;
+  				background-color:darken(#767676, 10%)
+  			}
+
+  			&:focus{
+  				color:#fff;
+  			}
+  		}
+  	}
+
+  	//buttons
+  	.formControls, .plone-btn-group{
+  		background:none;
+  		box-shadow: none;
+  		min-height: 75px;
+  		border-top:none;
+  		padding:12px 0;
+  	}
+
+
+  	input[type="submit"], button[type="submit"]{
+  		font-family:'Open Sans 700', Arial, sans-serif;
+  		font-weight:700;
+  		border:none;
+  		border-radius: 0;
+  		padding:8px 14px;
+  		font-size:0.95em;
+  		float:right;
+  		transition: background-color 300ms ease-out 0s;
+  		margin-left:6px;
+  		text-shadow:none;
+
+  		.disabled{
+  			opacity:0.65;
+  		}
+  	}
+
+  	.context,
+    .plone-btn-success,
+    #form-buttons-apply,
+    #form-buttons-save,
+    #form-buttons-test,
+    #form-buttons-send,
+    #form-buttons-send2 {
+  		background-color: @modal-button;
+  		color:#fff;
+
+  		&:hover, &:focus {
+  			background-color: @modal-button-hover;
+  		}
+  	}
+
+  	.destructive, .plone-btn-default, #form-buttons-cancel{
+  		background-color: #dedede;
+  		color:#777;
+  		margin:0 0 0 6px;
+
+  		&:hover, &:focus {
+  			background-color: darken(#dedede, 10%);
+  		}
+  	}
+  }
+}
+
+//logo preview
+#form-widgets-site_logo img{
+	max-width:150px;
+}
+
+#setup-link {
+  border: 1px solid #ccc;
+  padding: 4px;
+  margin: 10px 3px;
+  display: inline-block;
+  border-radius: 3px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+  &::before {
+    content: ' ◀ ';
+    font-size: 11px;
+  }
+}
+
+
+// Unifying the buttons for the themeing control panel
+.template-theming-controlpanel {
+  #themesList .plone-btn.plone-btn-default {
+    background-color: @castle_bluish_grey !important;
+    color: white !important;
+    font-size: 0.95rem;
+    transition: background-color 0.5s ease;
+    float: left;
+    font-weight: normal !important;
+    padding: 8px 2% !important;
+    margin: 3px 1% !important;
+    width: 29%;
+    font-weight: normal !important;
+    font-family: Roboto,sans-serif !important;
+    border: 0;
+    border-radius: 0px;
+    line-height: 2.15 !important;
+    height: 50px;
+    &:hover {
+      background-color: #153559 !important;
+    }
+  }
+  #themesList a.plone-btn.plone-btn-default {
+    height: 34px;
+    vertical-align: middle;
+  }
+  .themeEntry {
+    text-align: left;
+    padding: 0.5em;
+    height: inherit;
+    form {
+      margin: 0px;
+      padding: 0px;
+    }
+  }
+  .themeDescription, .themeEntryTitle {
+    text-align: center;
+    display: block;
+  }
+}
+
+
+// Portal Registration
+#recordsContainer {
+  h2 {
+    margin-bottom: 0.5em;
+  }
+  #clear-filter button {
+    margin-bottom: 1em;
+    background-color: @castle-primary;
+    color: white;
+    border-color: @castle-primary;
+    &:hover {
+      background-color: @castle-primary-dark;
+      border-color: @castle-primary-dark;
+    }
+  }
+}
+
+.template-configuration_registry {
+  #registry-filter {
+    margin-bottom: 1.5em;
+    .col-sm-10, .col-sm-2 {
+      float: left;
+      width: auto !important;
+    }
+    .col-sm-10 input {
+      padding: 3px 12px;
+    }
+    .col-sm-2 {
+      padding: 0px;
+    }
+    .col-sm-10 {
+      padding-right: 0px;
+    }
+    .col-sm-6 {
+      span {
+        margin-bottom: 0.7em;
+        display: block;
+      }
+    }
+    div  {
+      margin-top: 0.3em;
+      input {
+        height: 38px;
+      }
+    }
+  }
+}
+
+
+@media screen and (max-width: 1148px) {
+  table#recordsTable {
+    thead tr:nth-child(2) {
+      position: absolute;
+      left: -999em;
+    }
+    tbody tr {
+      border: 1px solid #ccc;
+      padding-bottom: 1em;
+      width: 100%;
+      &:nth-child(odd) {
+        background-color: #F8F8F8;
+      }
+      td {
+        float: left;
+        width: 100%;
+        padding: 5px 5px 5px 1em;
+        &::before {
+          font-weight: bold !important;
+          display: block;
+          content: attr(data-label)":";
+        }
+      }
+    }
+  }
+
+}
+
+.link-parent::before {
+  top: 0px !important;
+}
+
+.section-dexterity-types {
+  #skel-contents button, .submit-widget.button-field {
+    background-color: @castle-primary;
+    color: white;
+    border-color: @castle-primary;
+    &:hover {
+      background-color: @castle-primary-dark;
+      border-color: @castle-primary-dark;
+    }
+  }
+  .header-select {
+    text-transform: capitalize;
+  }
+  .listing {
+    table-layout: fixed;
+    th {
+      width: 25%;
+      &:first-child {
+        width: 8%;
+      }
+      &:nth-child(3) {
+        width: 55%;
+      }
+      &:last-child {
+        width: 12%;
+      }
+    }
+    tbody tr td {
+      vertical-align: top;
+    }
+    // input[type="checkbox"] {
+    //   margin-top: 0px;
+    // }
+
+  }
+
+}
