@@ -18,6 +18,12 @@ info@wildcardcorp.com
 Overview
 ========
 
+.. image:: https://www.wildcardcorp.com/logo.png
+    :height: 50
+    :width: 382
+    :alt: Original work by wildcardcorp.com
+    :align: right
+
 Welcome to the main Castle CMS package!
 
 This package does a lot of customizations to default Plone and without an installer,
