@@ -262,7 +262,8 @@ class Creator(BrowserView):
         filename = info['name']
         name = filename.decode("utf8")
         chooser = INameChooser(folder)
-        newid = chooser.chooseName(name, folder.aq_parent)
+        chooser_name = name.lower().replace('aq_', '')
+        newid = chooser.chooseName(chooser_name, folder.aq_parent)
 
         # strip metadata from file
         if type_ in ('Image', 'File') and exiftool is not None:
