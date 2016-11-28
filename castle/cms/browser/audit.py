@@ -19,6 +19,7 @@ class AuditView(BrowserView):
     inner_template = ViewPageTemplateFile('templates/audit-inner.pt')
 
     def __call__(self):
+        self._user_cache = {}
         self.site_path = '/'.join(self.context.getPhysicalPath())
         results = self.do_query()
         self.results = results['hits']['hits']
@@ -30,6 +31,14 @@ class AuditView(BrowserView):
 
     def render_inner(self):
         return self.inner_template()
+
+    def get_user(self, userid):
+        if userid in self._user_cache:
+            return self._user_cache[userid]
+        user = api.user.get(userid)
+        if user is not None:
+            self._user_cache[userid] = user
+        return user
 
     @property
     def el_connected(self):

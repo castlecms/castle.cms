@@ -85,13 +85,14 @@
       <tal:res tal:repeat="result view/results">
         <tr tal:define="data result/_source;
                         obj python: view.get_obj(data.get('object'));
-                        has_obj python: obj is not None">
+                        has_obj python: obj is not None;
+                        user python: view.get_user(data['user'])">
           <td>${data/name}</td>
           <td>
             <a tal:condition="has_obj" href="${obj/absolute_url}">${obj/Title}</a>
             <span tal:condition="not: has_obj">${python: view.get_path(data)}</span>
           </td>
-          <td>${data/user}</td>
+          <td>${user/getUserName|user/getId|data/user}</td>
           <td>${data/summary}</td>
           <td class="pat-moment"
                  data-pat-moment="format:relative"

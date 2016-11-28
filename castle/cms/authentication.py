@@ -12,6 +12,7 @@ from plone.keyring.interfaces import IKeyManager
 from plone.keyring.keymanager import KeyManager
 from plone.registry.interfaces import IRegistry
 from plone.session.plugins.session import manage_addSessionPlugin
+from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.setuphandlers import activatePluginInterfaces
 from Products.PlonePAS.setuphandlers import migrate_root_uf
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
@@ -19,6 +20,7 @@ from zope.component import adapter
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
+from zope.event import notify
 from zope.interface import implementer
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
@@ -161,6 +163,7 @@ class Authenticator(object):
                     raise AuthenticationPasswordResetWindowExpired()
 
         acl_users.session._setupSession(user.getId(), self.request.response)
+        notify(UserLoggedInEvent(user))
 
         return True, user
 
