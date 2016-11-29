@@ -33,6 +33,8 @@ class AuditView(BrowserView):
         return self.inner_template()
 
     def get_user(self, userid):
+        if not userid:
+            return
         if userid in self._user_cache:
             return self._user_cache[userid]
         user = api.user.get(userid)
