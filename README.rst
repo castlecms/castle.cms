@@ -5,7 +5,7 @@
     :scale: 50 %
 |
 
-For access to CastleCloud the hosted implementation, customizations, and demonstrations, please contact us at https://castlecms.io or https://wildcardcorp.com
+For access to CastleCloud, our hosted CastleCMS service, or to request customizations and demons, please contact us at https://castlecms.io or https://wildcardcorp.com
 
 info@wildcardcorp.com
 
@@ -20,16 +20,16 @@ this package won't be very useful.
 
 Until there is an installer, here are some of the things you'll need:
 
-- use this version of plone.app.blocks: https://github.com/castlecms/plone.app.blocks
-- Redis installed
-- avconv installed (needs to be updated for ffmpeg again)
-- ElasticSearch 2.3 installed
-- https://github.com/castlecms/elasticsearch-castle-scoring installed
+- this version of plone.app.blocks: https://github.com/castlecms/plone.app.blocks
+- Redis
+- avconv (needs to be updated for ffmpeg again)
+- ElasticSearch 2.3
+- https://github.com/castlecms/elasticsearch-castle-scoring
 - https://github.com/castlecms/castlehps installed for faster search integration
-- S3 credentials
+- Amazon S3 credentials
 - Google Analytics API integration
 - Plivo API
-- recaptcha key
+- reCAPTCHA key
 
 
 Feature List
@@ -96,19 +96,19 @@ Assuming you have buildout properly installed to run the tests:
     Xvfb :99 -fp /usr/share/X11/fonts/misc -screen 0 1900x1900x24 &
     export DISPLAY=:99
 
-To access the running selenium test server on port 55001:
+To access the running Selenium test server on port 55001:
 
 .. code-block:: shell
 
     ZSERVER_HOST=0.0.0.0 ./bin/test -s castle.cms
 
-To specify custom firefox binary to match versions:
+To specify custom Firefox binary to match versions:
 
 .. code-block:: shell
 
     FIREFOX_BINARY=/opt/firefox/firefox ./bin/test  -s castle.cms
 
-Non selenium tests:
+Non-Selenium tests:
 
 .. code-block:: shell
 
@@ -118,13 +118,13 @@ Non selenium tests:
 Google Analytics Key File
 -------------------------
 
-- Go to google api console
+- go to the Google API console
 - create new credentials
   - service account
   - p12
 - enable Analytics API api for credentials
-- fill out email with email provided and p12 file in castle api settings
-- use email for email you want to access and add it as an authorized user for the account in google analytics
+- fill out email with email provided and p12 file in Castle API settings
+- use email for email you want to access and add it as an authorized user for the account in Google Analytics
 
 
 Cron jobs
@@ -135,7 +135,7 @@ Castle uses many cron jobs that need to be setup.
 Daily
 -----
 
-- ``bin/clean-plone-users``: cleans disabled users
+- ``bin/clean-plone-users``: removes disabled users
 - ``bin/social-counts``: goes through all content and updates social media counts. Can be done monthly
 - ``bin/content-popularity``: if GA setup, will get content statistics for popularity
 
@@ -150,4 +150,4 @@ Weekly
 Processes
 ---------
 
-- ``bin/twitter-monitor``: Monitor twitter for mentions of site
+- ``bin/twitter-monitor``: Monitor Twitter for mentions of your site
