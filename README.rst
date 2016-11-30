@@ -65,7 +65,7 @@ In addition to Plone standard features...
 - Search weighting based on popularity using Google Analytics API
 - Content alias management
 - Disqus integration
-- recaptcha integration
+- reCAPTCHA integration
 - fullcalendar integration
 - Business metadata
 - Emergency notification system with SMS support
