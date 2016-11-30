@@ -9,26 +9,26 @@ For access to CastleCloud the hosted implementation, customizations, and demonst
 
 info@wildcardcorp.com
 
-715.869.3440
++1 (715) 869-3440
 
 =======================================
 Welcome to the main Castle CMS package!
 =======================================
 
-This package does a lot of customizations to default Plone and without an installer,
+This package includes a lot of customizations to default Plone and, without an installer,
 this package won't be very useful.
 
 Until there is an installer, here are some of the things you'll need:
 
 - use this version of plone.app.blocks: https://github.com/castlecms/plone.app.blocks
 - Redis installed
-- avconv installed(needs to be updated for ffmpeg again)
+- avconv installed (needs to be updated for ffmpeg again)
 - ElasticSearch 2.3 installed
 - https://github.com/castlecms/elasticsearch-castle-scoring installed
 - https://github.com/castlecms/castlehps installed for faster search integration
 - S3 credentials
 - Google Analytics API integration
-- Plivio API
+- Plivo API
 - recaptcha key
 
 
@@ -37,33 +37,32 @@ Feature List
 
 In addition to Plone standard features...
 
-- Login/Lockout support
-- Content Archival to S3 Storage
-- Large files automatically moved to s3 storage
+- Login/lockout support
+- Content archival to Amazon S3 Storage
+- Large files automatically moved to S3 storage
 - Redis cache support
 - Advanced content layout editor
 - Improved management toolbar
 - Intuitive content creation and organization
 - Elasticsearch integration
-- Search results are influenced by social media impact
+- Search results are tuned by social media impact
 - Search result pinning
-- Celery task queue integration(asynchrous actions)
+- Celery task queue integration (asynchronous actions)
     - PDF generation
-    - Video conversation
-    - S3 interaction
-    - copy pasting large batches of items
-    - deleting large batches of items
-- Trash can
+    - Video conversion
+    - Amazon S3 interaction
+    - copying and pasting of large batches of items
+    - deletion of large batches of items
 - Advanced content tiles:
     - maps
     - videos
     - audio
     - sliders
     - galleries
-    - Table of contents
-- Audio and Video content
+    - table of contents
+- Audio and video content
 - Automatic conversion of videos to web compatible format
-- Search weighting based on popularity using google analytics API
+- Search weighting based on popularity using Google Analytics API
 - Content alias management
 - Disqus integration
 - recaptcha integration
@@ -71,19 +70,19 @@ In addition to Plone standard features...
 - Business metadata
 - Emergency notification system with SMS support
 - Preview content
-- map content
+- Map content
 - KML feeds
 - Social media integration with
-    - twitter, facebook, pinterest
-- etherpad collaborative spaces support
-- strip metadata from files
-- be able to view site as another user
-- audit log, user activity reports
-- session management and inspector
-- analytics dashboard
-- de-duplication of uploaded images
-- recycle bin
-- 2-factor auth
+    - Twitter, Facebook, Pinterest
+- Etherpad collaborative spaces support
+- Stripping metadata from files
+- Ability to view the site as another user
+- Audit log, user activity reports
+- Session management and inspection
+- Analytics dashboard
+- De-duplication of uploaded images
+- Trash can / recycle bin
+- 2-factor authentication
 
 
 Running tests
@@ -131,7 +130,7 @@ Google Analytics Key File
 Cron jobs
 =========
 
-Castle utilizes quite a few cron jobs that should be setup.
+Castle uses many cron jobs that need to be setup.
 
 Daily
 -----
