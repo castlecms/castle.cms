@@ -5,7 +5,7 @@
     :scale: 50 %
 |
 
-For access to CastleCloud, our hosted CastleCMS service, or to request customizations and demons, please contact us at https://castlecms.io or https://wildcardcorp.com
+For access to CastleCloud, our hosted CastleCMS service, or to request customizations and demos, please contact us at https://castlecms.io or https://wildcardcorp.com
 
 info@wildcardcorp.com
 
