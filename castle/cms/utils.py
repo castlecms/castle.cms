@@ -1,4 +1,3 @@
-from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -44,7 +43,9 @@ from ZODB.POSException import ConflictError
 from ZODB.POSException import POSKeyError
 from zope.component import getUtilitiesFor
 from zope.component import getUtility
+from zope.component import queryUtility
 from zope.globalrequest import getRequest
+from zope.security.interfaces import IPermission
 
 import hashlib
 import json
@@ -753,3 +754,10 @@ def has_image(obj):
             return getattr(aq_base(obj), 'image', None)
         except POSKeyError:
             return False
+
+
+def get_permission_title(permission):
+    add_perm_ob = queryUtility(IPermission, name=permission)
+    if add_perm_ob:
+        permission = add_perm_ob.title
+    return permission

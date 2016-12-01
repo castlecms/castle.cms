@@ -398,11 +398,12 @@ content in this location."""
             portal_types = getToolByName(self.context, 'portal_types')
             type_id = self.get_type_id()
             pt = portal_types[type_id]
+            add_perm = utils.get_permission_title(pt.add_permission)
 
             if valid and not self.can_add(folder, type_id):
                 valid = False
                 self.status = 'You are not allowed to add this content type here'
-            elif valid and not self.sm.checkPermission(pt.add_permission, folder):
+            elif valid and not self.sm.checkPermission(add_perm, folder):
                 valid = False
                 self.status = 'You do not have permission to add content here.'
             elif valid and self.request.form['id'] in folder.objectIds():

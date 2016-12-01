@@ -24,6 +24,19 @@ from zope.schema.vocabulary import SimpleVocabulary
 import json
 
 
+def _list(val):
+    if type(val) not in (list, set, tuple):
+        val = [val]
+    return val
+
+
+def _query_val(val):
+    if isinstance(val, dict):
+        if 'query' in val:
+            val = val['query']
+    return _list(val)
+
+
 class QueryListingTile(BaseTile):
     implements(IPersistentTile)
 
@@ -104,9 +117,9 @@ class QueryListingTile(BaseTile):
         subject_filter = None
         for attr in self.query_attrs:
             if form.get(attr):
-                val = form.get(attr)
-                if attr in query and val not in query[attr]:
-                    subject_filter = val
+                val = _list(form.get(attr))
+                if attr in query and len(set(val) & set(_query_val(query[attr]))) > 0:
+                    subject_filter = val[0]
                 else:
                     query[attr] = val
 
