@@ -1,12 +1,7 @@
 Changelog
 =========
 
-1.1.0 (unreleased)
+2.0.0 (2016-12-07)
 ------------------
 
-- Fix checking permission for types
-  [vangheem]
-
-- Fix query filter tile to handle sub-filters that are not in the current
-  base query for the result set
-  [vangheem]
+- Initial public release

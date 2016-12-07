@@ -12,7 +12,7 @@ def read(*rnames):
 
 setup(
     name='castle.cms',
-    version='1.1.0',
+    version='2.0.0',
     description='',
     long_description='%s\n%s\n%s' % (
         read('README.rst'),
@@ -21,6 +21,9 @@ setup(
     ),
     classifiers=[
         "Programming Language :: Python",
+        "Framework :: Plone :: 5.0",
+        "Framework :: Plone",
+        "Framework :: Plone :: 5.1"
     ],
     author='Nathan Van Gheem',
     author_email='nathan.vangheem@wildcardcorp.com',
