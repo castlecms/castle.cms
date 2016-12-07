@@ -65,3 +65,45 @@ class TestContent(unittest.TestCase):
         cc = content.Creator(self.portal, self.request)
         data = cc()
         self.assertEqual(json.loads(data)['valid'], True)
+
+
+class TestPageLayoutSelector(unittest.TestCase):
+
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        login(self.portal, TEST_USER_NAME)
+        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
+
+    def test_get_front_page(self):
+        view = content.PageLayoutSelector(self.portal['front-page'], self.request)
+        result = json.loads(view())
+        self.assertEqual(result['success'], True)
+        self.assertEqual(result['page_layout'], 'frontpage.html')
+        self.assertEqual(result['section_layout'], None)
+
+    def test_set_front_page(self):
+        view = content.PageLayoutSelector(self.portal['front-page'], self.request)
+        self.request.form.update({
+            'data': json.dumps({
+                'page_layout': 'foobar.html',
+                'section_layout': 'foobar.html'
+            }),
+            'action': 'save'
+        })
+        view()
+
+        # check results...
+        del self.request.form['action']
+        result = json.loads(view())
+        self.assertEqual(result['success'], True)
+        self.assertEqual(result['page_layout'], 'foobar.html')
+        self.assertEqual(result['section_layout'], 'foobar.html')
+
+        # also check that the registry entry value set since front page is default
+        # page for site
+        self.assertEqual(
+            self.portal.portal_registry['castle.cms.default_layout'],
+            'foobar.html')

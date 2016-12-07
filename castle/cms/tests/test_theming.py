@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from castle.cms import theming
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from plone.registry import field as registry_field
+from plone.registry import Record
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
 import unittest
 
@@ -67,3 +71,15 @@ class TestTheming(unittest.TestCase):
         result = transform(self.request, MINIMAL_RESULT, context=self.portal)
         self.assertTrue('<div>foobar</div>' in ''.join(result))
         self.assertTrue('data-pat-structure' in ''.join(result))
+
+    def test_use_default_layout_in_registry(self):
+        transform = theming.getTransform(self.portal, self.request)
+        layout_name = transform.get_layout_name(self.portal)
+        self.assertEqual(layout_name, 'index.html')
+        registry = getUtility(IRegistry)
+        field = registry_field.TextLine(title=u'Default layout', required=False)
+        new_record = Record(field)
+        registry.records['castle.cms.default_layout'] = new_record
+        registry['castle.cms.default_layout'] = u'foobar.html'
+        layout_name = transform.get_layout_name(self.portal)
+        self.assertEqual(layout_name, 'foobar.html')

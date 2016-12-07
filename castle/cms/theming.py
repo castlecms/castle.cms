@@ -268,7 +268,14 @@ class _Transform(object):
                     context = aq_parent(context)
 
         if selected is None:
-            selected = default_layout
+            if ISiteRoot.providedBy(context):
+                # check if a default layout is set
+                try:
+                    selected = context.portal_registry['castle.cms.default_layout'] or default_layout  # noqa
+                except (AttributeError, KeyError):
+                    selected = default_layout
+            else:
+                selected = default_layout
         return selected
 
     def get_layout(self, context, default_layout='index.html', request=None, loader=None):

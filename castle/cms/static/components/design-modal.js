@@ -40,6 +40,9 @@ define([
       $.ajax({
         url: $('body').attr('data-base-url') + '/@@page-layout-selector'
       }).done(function(data){
+        if(!data.available[data.page_layout]){
+          data.page_layout = null;
+        }
         data.original_page_layout = data.page_layout;
         data.original_applied_context = data.applied_context;
         data.original_applied = data.applied;

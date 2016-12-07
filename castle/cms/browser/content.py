@@ -14,10 +14,13 @@ from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
 from plone.app.content.browser import i18n
+from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from plone.registry import field as registry_field
+from plone.registry import Record
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
@@ -627,6 +630,16 @@ class PageLayoutSelector(BrowserView):
         data = json.loads(data)
         adapted.pageSiteLayout = data['page_layout']
         adapted.sectionSiteLayout = data['section_layout']
+        parent = aq_parent(self.context)
+        if ISiteRoot.providedBy(parent):
+            # check if default page...
+            if getDefaultPage(parent) == self.context.id:
+                # also set site wide global layout setting...
+                registry = getUtility(IRegistry)
+                field = registry_field.TextLine(title=u'Default layout', required=False)
+                new_record = Record(field)
+                registry.records['castle.cms.default_layout'] = new_record
+                registry['castle.cms.default_layout'] = data['section_layout']
         return {
             'success': True
         }
