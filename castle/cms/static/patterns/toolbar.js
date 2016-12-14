@@ -275,14 +275,14 @@ define([
       session_id = session_id.split('"')[1];
 
       return {
-        token: this.props.chat_token + session_id,
+        token: this.props.chat_info.token + session_id,
         open: false,
         missed: false
       };
     },
     checkMissedMessages: function() {
 
-      var frontpage = this.props.chat_frontpage;
+      var frontpage = this.props.chat_info.frontpage;
       if( frontpage === undefined || frontpage === null ) {
         return;
       }
@@ -291,8 +291,10 @@ define([
         frontpage += '/';
       }
 
+      var url = frontpage + 'api/messageWaiting/' + this.props.username;
+
       $.ajax({
-        url: frontpage + 'api/messageWaiting/' + this.props.user
+        url: url
       }).done(function(res) {
         this.setState({
           missed: res
@@ -338,7 +340,7 @@ define([
           D.div({className: 'castle-chat-divider-link'},
             D.a({
               className: 'castle-chat-missed-message',
-              href: this.props.chat_frontpage + 'plone/' + this.state.token,
+              href: this.props.chat_info.frontpage + 'plone/' + this.state.token,
               target: '_blank'
             }, 'View more'))
           );
@@ -374,7 +376,7 @@ define([
         return null;
       }
 
-      if( this.props.chat_frontpage === null || this.props.chat_url === null ) {
+      if( this.props.chat_info.frontpage === null || this.props.chat_info.chat_url === null ) {
         return null;
       }
 
@@ -399,7 +401,7 @@ define([
         var message = 'No new messages';
         var broken = false;
 
-        if( this.props.user_email === "" ) {
+        if( this.props.chat_info.email === "" ) {
           broken = true;
           message = 'A valid email must be associated with your profile before using chat';
         }
@@ -416,9 +418,8 @@ define([
         }else{
           dropdownContent.push(D.div({className: 'castle-chat-empty'}, message));
         }
-
-        var href = this.props.chat_frontpage + 'plone/' + this.state.token;
-        href += '/' + this.props.user + '/' + this.props.user_email;
+        var href = this.props.chat_info.frontpage + 'plone/' + this.state.token;
+        href += '/' + this.props.username + '/' + this.props.chat_info.email;
 
         if( !broken ) {
           dropdownContent.push(
@@ -661,12 +662,8 @@ define([
             e.stopPropagation();
           }}, [
           R.createElement(ChatDropdown, {
-            chat_token: this.props.chat_token,
-            chat_url: this.props.chat_url,
-            user: this.props.user_id,
-            chat_frontpage: this.props.chat_frontpage,
-            user_email: this.props.user_email,
-            portal_url: this.props.portal_url,
+            chat_info: this.props.chat_info,
+            username: this.props.user.name,
             ref: 'chat',
             name: 'chat'
           }),

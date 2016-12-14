@@ -504,11 +504,7 @@ class Toolbar(BrowserView):
             'lock_info': self.get_lock_info(),
             'messages': list(reversed(IStatusMessage(self.request).get_all())),
             'user_id': api.user.get_current().getId(),
-            'chat_token': chat_info['token'],
-            'chat_url': chat_info['url'],
-            'chat_frontpage': chat_info['frontpage'],
-            'portal_url': chat_info['base_url'],
-            'user_email': api.user.get_current().email
+            'chat_info': chat_info
         }
 
         if '@@castle-toolbar' in self.request.URL:

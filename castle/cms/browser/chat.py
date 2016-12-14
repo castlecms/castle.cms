@@ -23,7 +23,7 @@ def chatInfo():
         'frontpage': frontpage,
         'token': user_token_stub,
         'user': getattr(current, 'id', ''),
-        'email': getattr(current, 'email', '')
+        'email': current.getProperty('email')
     }
 
 class ChatLogin(BrowserView):
@@ -36,9 +36,11 @@ class ChatLogin(BrowserView):
         if cookie:
             session = get_active_sessions(cookie)
             if session:
+
+                user = session[0]['user']
                 return json.dumps({
                     'status': 'success',
-                    'user': session[0]['userid']
+                    'user': user.getUserName()
                 })
 
         return json.dumps({ 'status': 'failure' })
