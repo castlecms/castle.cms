@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
+2.0.1 (2016-12-14)
 ------------------
 
 - fix ipod/ipad safari video background image issue
