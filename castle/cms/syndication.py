@@ -17,7 +17,7 @@ from zope.globalrequest import getRequest
 class LayoutAwareItem(adapters.DexterityItem):
     adapts(ILayoutAware, IFeed)
 
-    def render_content_core(self):
+    def render_content_core(self, site=None):
         try:
             layout = getLayout(self.context)
         except TypeError:
@@ -27,7 +27,14 @@ class LayoutAwareItem(adapters.DexterityItem):
                    in getAdapters((self.context, req), IFilter)]
         layout = apply_filters(filters, layout)
         dom = getHTMLSerializer(layout)
-        tiles.renderTiles(req, dom.tree, self.context.absolute_url() + '/layout_view')
+
+        kwargs = {
+            'baseURL': self.context.absolute_url() + '/layout_view'
+        }
+        if site is not None:
+            kwargs['site'] = site
+
+        tiles.renderTiles(req, dom.tree, **kwargs)
         gridsystem.merge(req, dom.tree)
 
         content = contentpanel_xpath(dom.tree)

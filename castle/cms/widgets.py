@@ -300,6 +300,10 @@ class MapPointWidget(BaseWidget):
 
     implementsOnly(IMapMarkersWidget)
 
+    klass = style = title = lang = onclick = ondblclick = onmousedown = ''
+    onmouseup = onmouseover = onmousemove = onmouseout = onkeypress = ''
+    onkeydown = onkeyup = ''
+
     pattern = 'mapselect'
     pattern_options = BaseWidget.pattern_options.copy()
 

@@ -10,10 +10,12 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.browser.syndication.adapters import DexterityItem
 from Products.CMFPlone.browser.syndication.adapters import FolderFeed
 from Products.CMFPlone.interfaces import ISiteSchema
+from Products.CMFPlone.interfaces.syndication import IFeedItem
 from Products.CMFPlone.utils import getSiteLogo
 from ZODB.POSException import POSKeyError
 from zope.component import adapts
 from zope.component import getUtility
+from zope.component import queryMultiAdapter
 from zope.globalrequest import getRequest
 from zope.interface import implements
 
@@ -46,9 +48,12 @@ class LDData(object):
     def __init__(self, context):
         self.site = api.portal.get()
         feed = FolderFeed(self.site)
+        self.item = None
         try:
-            self.item = DexterityItem(context, feed)
+            self.item = queryMultiAdapter((context, feed), IFeedItem)
         except POSKeyError:
+            pass
+        if self.item is None:
             self.item = NoFileDexterityItem(context, feed)
         self.context = context
         self.registry = getUtility(IRegistry)
