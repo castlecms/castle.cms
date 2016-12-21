@@ -275,7 +275,7 @@ define([
       session_id = session_id.split('"')[1];
 
       return {
-        token: this.props.chat_info.token + session_id,
+        token: this.props.chat_info.token,
         open: false,
         missed: false
       };
@@ -291,10 +291,20 @@ define([
         frontpage += '/';
       }
 
-      var url = frontpage + 'api/messageWaiting/' + this.props.username;
+      var url = frontpage + 'api/messageWaiting';
+
+      var data = {
+        cookie: this.props.chat_info.token,
+        user: {
+          email: this.props.chat_info.email,
+          name: this.props.username
+        }
+      };
 
       $.ajax({
-        url: url
+        url: url,
+        data: data,
+        method: 'POST'
       }).done(function(res) {
         this.setState({
           missed: res
@@ -390,9 +400,7 @@ define([
       var content = [
         D.button({
           className: classList,
-          onClick: function() {
-            this.setState({open: !this.state.open});
-          }.bind(this)
+          onClick: this.btnClicked
         }, 'Chat')
       ];
 
@@ -642,6 +650,11 @@ define([
           open: false
         });
       }
+      if(this.refs.chat && 'chat' !== btn.props.name && this.refs.chat.state.open){
+        this.refs.chat.setState({
+          open: false
+        });
+      }
       if(this.refs.user && 'user' !== btn.props.name && this.refs.user.state.open){
         this.refs.user.setState({
           open: false
@@ -664,6 +677,7 @@ define([
           R.createElement(ChatDropdown, {
             chat_info: this.props.chat_info,
             username: this.props.user.name,
+            onClick: this.btnClicked,
             ref: 'chat',
             name: 'chat'
           }),
@@ -857,6 +871,9 @@ define([
         component.refs.top.refs.messages.setState({
           open: false,
           showUnread: false
+        });
+        component.refs.top.refs.chat.setState({
+          open: false
         });
       });
 
