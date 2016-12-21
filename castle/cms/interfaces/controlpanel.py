@@ -1,5 +1,6 @@
 from castle.cms import constants
 from castle.cms.vocabularies import BusinessTypesVocabulary
+from plone.keyring import django_random
 from Products.CMFPlone.interfaces import controlpanel
 from Products.CMFPlone.utils import validate_json
 from zope import schema
@@ -319,6 +320,12 @@ class IAPISettings(Interface):
     rocket_chat_front_page = schema.TextLine(
         title=u'Rocket.Chat User URL',
         description=u'URL of the Rocket.Chat server to connect to',
+        required=False
+    )
+
+    rocket_chat_secret = schema.TextLine(
+        title=u'Rocket.Chat secret',
+        description=u'Text string used to salt Rocket.Chat authentication tokens',
         required=False
     )
 

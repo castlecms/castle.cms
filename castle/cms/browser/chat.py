@@ -13,23 +13,23 @@ except ImportError:
 
 def chatInfo():
 
-    url = api.portal.get_registry_record('castle.rocket_chat_server')
     frontpage = api.portal.get_registry_record('castle.rocket_chat_front_page')
+    salt = api.portal.get_registry_record('castle.rocket_chat_secret')
+
+    if frontpage[-1] != '/':
+        frontpage = frontpage + '/'
+
+    url = frontpage.replace('http://', 'ws://')
+    url = url + 'websocket'
 
     current = api.user.get_current()
-
-    portal = api.portal.get()
-    portal_path = '-'.join(portal.getPhysicalPath()[1:])
-
-    user_token_stub = '%s-session-%s-' % (portal_path, current.id)
-
-
     base_url = api.portal.get().absolute_url()
+
     return {
         'url': url,
         'base_url': base_url,
         'frontpage': frontpage,
-        'token': createToken(),
+        'token': createToken(salt),
         'user': getattr(current, 'id', ''),
         'email': current.getProperty('email')
     }
@@ -44,12 +44,15 @@ class ChatLogin(BrowserView):
         user = self.request.get('user')
         if cookie:
             self.request.set('_authenticator', cookie)
+
+            salt = api.portal.get_registry_record('castle.rocket_chat_secret')
+
             manager = getUtility(IKeyManager)
             keyring = _getKeyring(user, manager=manager)
             for key in keyring:
                 if key is None:
                     continue
-                value = hmac.new(key, user, sha).hexdigest()
+                value = hmac.new(key, user + salt, sha).hexdigest()
                 if _is_equal(value, cookie):
                     return json.dumps({
                         'status': 'success',
