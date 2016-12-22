@@ -262,6 +262,10 @@ define([
   var ChatDropdown = cutils.Class([Dropdown], {
     getInitialState: function() {
 
+      if( this.props.chat_info === null ) {
+        return {};
+      }
+      
       this.checkMissedMessages();
 
       var session_id = document.cookie.split(';').find(function(item) {
@@ -381,6 +385,10 @@ define([
       return output;
     },
     render: function() {
+
+      if( this.props.chat_info === null ) {
+        return null;
+      }
 
       if( window.location.href.indexOf('/chat') >= 0 ) {
         return null;

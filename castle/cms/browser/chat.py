@@ -16,6 +16,9 @@ def chatInfo():
     frontpage = api.portal.get_registry_record('castle.rocket_chat_front_page')
     salt = api.portal.get_registry_record('castle.rocket_chat_secret')
 
+    if frontpage is None or salt == '':
+        return
+
     if frontpage[-1] != '/':
         frontpage = frontpage + '/'
 

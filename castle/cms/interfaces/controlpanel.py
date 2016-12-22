@@ -7,7 +7,6 @@ from zope import schema
 from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
 
-
 def create_term(val, label):
     return SimpleVocabulary.createTerm(val, val, label)
 
@@ -326,7 +325,8 @@ class IAPISettings(Interface):
     rocket_chat_secret = schema.TextLine(
         title=u'Rocket.Chat secret',
         description=u'Text string used to salt Rocket.Chat authentication tokens',
-        required=False
+        required=False,
+        default=unicode(django_random.get_random_string(64))
     )
 
 class IArchivalSettings(Interface):
