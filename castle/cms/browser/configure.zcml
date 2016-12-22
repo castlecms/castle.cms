@@ -658,4 +658,11 @@
     allowed_attributes="options"
     />
 
+  <browser:page
+    name="ping-draft"
+    for="*"
+    permission="cmf.ModifyPortalContent"
+    class=".content.PingCurrentDraft"
+    layer="..interfaces.ICastleLayer" />
+
 </configure>

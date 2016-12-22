@@ -38,6 +38,7 @@ from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from plone.app.drafts.utils import getCurrentDraft
 
 import json
 import logging
@@ -692,3 +693,14 @@ class i18njs(i18n.i18njs):
 
     def __call__(self, domain='widgets', language='en'):
         return super(i18njs, self).__call__(domain, language)
+
+
+class PingCurrentDraft(BrowserView):
+    """
+    To add to the current draft modified time
+    """
+
+    def __call__(self):
+        draft = getCurrentDraft(self.request, create=False)
+        if draft is not None:
+            draft._p_changed = 1

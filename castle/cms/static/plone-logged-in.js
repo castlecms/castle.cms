@@ -24,6 +24,7 @@ if (window.jQuery) {
 require([
   'jquery',
   'mockup-patterns-modal',
+  'mockup-utils',
   'castle-url/patterns/toolbar',
   'mockup-patterns-relateditems',
   'mockup-patterns-querystring',
@@ -38,7 +39,7 @@ require([
   'castle-url/patterns/previewselect',
   'castle-url/patterns/imagewidget',
   'castle-url/patterns/focalpointselect'
-], function($, Modal) {
+], function($, Modal, utils) {
   'use strict';
 
   /* XXX monkey patch modal to NOT squash all clicks */
@@ -68,6 +69,26 @@ require([
       $("#formfield-form-widgets-authenticated_users_only").hide();
     }else{
       $("#formfield-form-widgets-authenticated_users_only").show();
+    }
+
+    if($('.template-edit').size() > 0){
+      // we are currently editing a mosaic form, ping draft support every 5 minutes
+      // to make sure it increments draft edit time so it doesn't get cleaned
+      // when a user it working on it
+      var pingDraft = function(){
+        setTimeout(function(){
+          $.ajax({
+            url: $('body').attr('data-base-url') + '/@@ping-draft',
+            method: 'POST',
+            data: {
+              _authenticator: utils.getAuthenticator()
+            }
+          }).done(function(){
+            pingDraft();
+          });
+        }, 1000 * 60 * 5);
+      };
+      pingDraft();
     }
   });
 });

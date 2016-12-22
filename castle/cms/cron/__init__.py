@@ -92,3 +92,7 @@ def forced_publish_alert(argv=sys.argv):
 
 def crawler(argv=sys.argv):
     return run_it('_crawler')
+
+
+def clean_drafts(argv=sys.argv):
+    return run_it('_clean_drafts')

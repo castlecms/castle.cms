@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.0.4 (unreleased)
+------------------
+
+- add clean-drafts script
+  [vangheem]
+
+- add ping draft view so that the clean-drafts script knows not to clean a potentially
+  active draft
+  [vangheem]
+
 2.0.3 (2016-12-20)
 ------------------
 
