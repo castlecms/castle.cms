@@ -16,7 +16,6 @@ DRAFT_DURATION = 60 * 60 * 1  # 1 hour
 
 
 def clean(site):
-    import pdb; pdb.set_trace()
     setSite(site)
     pdrafts = api.portal.get_tool('portal_drafts')
     for userid in pdrafts.drafts.keys():
