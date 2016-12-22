@@ -1,0 +1,148 @@
+#castle-chat-message-box {
+  overflow-y: scroll;
+  clear: both;
+  width: 100%;
+  height: 85%;
+
+  li {
+    list-style: none;
+    line-height: 1.15em;
+  }
+
+  .castle-chat-message-conversation-header {
+    border-bottom: 1px solid @plone-gray-lighter;
+    margin-top: 10px;
+  }
+
+  .castle-chat-message-text {
+    font-size: @plone-font-size-small;
+    padding: 2px;
+  }
+
+  .castle-chat-message-date {
+    font-size: @plone-font-size-small;
+    color: @plone-gray-lighter;
+    margin-left: 10px;
+  }
+}
+
+#castle-chat-channel-box {
+  padding-left: 5px;
+  max-height: 500px;
+  width: 300px;
+  overflow-y: scroll;
+
+  .castle-chat-channel-link {
+    cursor: pointer;
+  }
+
+  .castle-chat-channel-unread {
+    font-weight: bold;
+    color: #a94442;
+  }
+
+  .castle-chat-channel-link:hover {
+    background-color: #ddd;
+  }
+}
+
+#castle-chat-messenger-box {
+  height: 300px;
+  li {
+    list-style: none;
+  }
+
+  .castle-chat-joined {
+    font-style: italic;
+    color: #ddd;
+  }
+}
+
+button.castle-chat-channel-alert {
+  background-color: #a94442;
+}
+
+#rocketchat {
+  background-color: white;
+  min-height: 300px;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+
+#castle-chat-menu-item {
+  .castle-chat-dropdown {
+    position: absolute;
+    white-space: pre-line;
+    min-width: 300px;
+  }
+
+  .castle-chat-hidden {
+    transition: 'display 1s';
+    display: none;
+  }
+
+  .castle-chat-divider-link {
+    color: @castle_light_grey_color;
+    text-align: center;
+    width: 100%;
+  }
+
+  .castle-chat-goto-link {
+    width: 100%;
+    background-color: @toolbar-color;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid @toolbar-separator-color;
+    border-top: none;
+  }
+
+  .castle-chat-empty {
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    margin: auto;
+    padding: 50px;
+    border: 1px solid @toolbar-separator-color;
+    background-color: @toolbar-color;
+    color: @castle_light_grey_color;
+  }
+
+  .castle-chat-missed-channel {
+    border-top: none;
+    padding: 10px;
+
+    .castle-chat-missed-message {
+      white-space: normal;
+      word-break: break-all;
+      margin-left: 10px;
+    }
+  }
+
+  .castle-chat-channel-header {
+    padding: 2px;
+    border: 1px solid @toolbar-separator-color;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .castle-chat-preview {
+    background-color: @toolbar-btn-bg-color;
+    border: 1px solid @toolbar-separator-color;
+    list-style-type: none;
+    width: 400px;
+    height: 75vh;
+    overflow-y: scroll;
+
+    .castle-chat-missed {
+      float: right;
+      position: relative;
+      color: @castle_light_grey_color;
+    }
+
+    .castle-chat-username {
+      color: @castle_light_grey_color;
+      margin-right: 10px;
+      border-bottom: 1px solid @toolbar-separator-color;
+    }
+  }
+}
