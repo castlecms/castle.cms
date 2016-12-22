@@ -43,11 +43,10 @@ class ChatLogin(BrowserView):
 
         self.request.response.setHeader('Content-Type', 'application/json')
 
-        cookie = self.request.get('cookie')
+        token = self.request.get('token')
         user = self.request.get('user')
-        if cookie:
-            self.request.set('_authenticator', cookie)
 
+        if token:
             salt = api.portal.get_registry_record('castle.rocket_chat_secret')
 
             manager = getUtility(IKeyManager)
@@ -56,7 +55,7 @@ class ChatLogin(BrowserView):
                 if key is None:
                     continue
                 value = hmac.new(key, user + salt, sha).hexdigest()
-                if _is_equal(value, cookie):
+                if _is_equal(value, token):
                     return json.dumps({
                         'status': 'success',
                         'user': user

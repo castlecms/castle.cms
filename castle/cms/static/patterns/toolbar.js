@@ -265,18 +265,8 @@ define([
       if( this.props.chat_info === null ) {
         return {};
       }
-      
+
       this.checkMissedMessages();
-
-      var session_id = document.cookie.split(';').find(function(item) {
-        if( item.trim().indexOf('castle_session_id') >= 0 ) {
-          return item;
-        }
-
-        return false;
-      });
-
-      session_id = session_id.split('"')[1];
 
       return {
         token: this.props.chat_info.token,
@@ -298,7 +288,7 @@ define([
       var url = frontpage + 'api/messageWaiting';
 
       var data = {
-        cookie: this.props.chat_info.token,
+        token: this.props.chat_info.token,
         user: {
           email: this.props.chat_info.email,
           name: this.props.username

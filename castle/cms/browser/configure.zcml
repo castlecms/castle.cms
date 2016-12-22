@@ -62,7 +62,7 @@
 
   <browser:page
     for="*"
-    name="verify-cookie"
+    name="verify-token"
     class=".chat.ChatLogin"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
