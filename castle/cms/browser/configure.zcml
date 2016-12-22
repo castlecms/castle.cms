@@ -61,7 +61,7 @@
   />
 
   <browser:page
-    for="*"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="verify-token"
     class=".chat.ChatLogin"
     permission="zope2.View"
