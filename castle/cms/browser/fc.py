@@ -272,7 +272,7 @@ class RenameActionView(rename.RenameActionView):
             newid = self.request.form['newid_' + index].encode('utf8')
             newtitle = self.request.form['newtitle_' + index]
 
-            lockable = ILockable(obj)
+            lockable = ILockable(obj, None)
             if lockable:
                 lockable.clear_locks()
 
