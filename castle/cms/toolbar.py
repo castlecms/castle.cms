@@ -2,7 +2,7 @@ from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from castle.cms import caching
-from castle.cms.browser.chat import chatInfo
+from castle.cms.browser.chat import get_chat_info
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
 from plone import api
@@ -488,7 +488,7 @@ class Toolbar(BrowserView):
         user_menu = self.get_menu('user_menu', ['user'])
         management_menu = self.get_menu('management_menu')
 
-        chat_info = chatInfo()
+        chat_info = get_chat_info()
 
         data = {
             'data-base-url': self.real_context.absolute_url(),

@@ -1,20 +1,30 @@
-from Products.Five import BrowserView
-from castle.cms.lockout import get_active_sessions
-from plone.keyring.interfaces import IKeyManager
-from plone.protect.authenticator import createToken, _is_equal, _getKeyring
 from plone import api
+from plone.keyring.interfaces import IKeyManager
+from plone.protect.authenticator import _getKeyring
+from plone.protect.authenticator import _is_equal
+from plone.protect.authenticator import createToken
+from Products.Five import BrowserView
 from zope.component import getUtility
-import json, hmac
+from plone.api.exc import InvalidParameterError
+
+import hmac
+import json
+
+
 try:
     from hashlib import sha1 as sha
 except ImportError:
     import sha
 
 
-def chatInfo():
+def get_chat_info():
 
-    frontpage = api.portal.get_registry_record('castle.rocket_chat_front_page')
-    salt = api.portal.get_registry_record('castle.rocket_chat_secret')
+    try:
+        frontpage = api.portal.get_registry_record('castle.rocket_chat_front_page')
+        salt = api.portal.get_registry_record('castle.rocket_chat_secret')
+    except InvalidParameterError:
+        frontpage = None
+        salt = ''
 
     if frontpage is None or salt == '':
         return
@@ -36,6 +46,7 @@ def chatInfo():
         'user': getattr(current, 'id', ''),
         'email': current.getProperty('email')
     }
+
 
 class ChatLogin(BrowserView):
 
@@ -60,10 +71,10 @@ class ChatLogin(BrowserView):
                         'status': 'success',
                         'user': user
                     })
-        return json.dumps({ 'status': 'failure' })
+        return json.dumps({'status': 'failure'})
 
 
 class ChatView(BrowserView):
 
     def chatInfo(self):
-        return json.dumps(chatInfo())
+        return json.dumps(get_chat_info())
