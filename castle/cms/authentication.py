@@ -220,10 +220,12 @@ class Authenticator(object):
         return data
 
     def change_password(self, member, new_password):
-        member.setSecurityProfile(password=new_password)
-        member.setMemberProperties(mapping={
-            'reset_password_required': False
+        user = api.user.get(member.getId())
+        user.setMemberProperties(mapping={
+            'reset_password_required': False,
+            'reset_password_time': time.time()
         })
+        member.setSecurityProfile(password=new_password)
 
 
 def install_acl_users(app, logger=None):

@@ -1,23 +1,27 @@
-import time
-from castle.cms import cache
 from castle.cms import authentication
+from castle.cms import cache
 from castle.cms import texting
 from castle.cms.interfaces import IAuthenticator
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.interfaces import ISiteSchema
 from castle.cms.utils import get_managers
-from castle.cms.utils import send_email, strings_differ
+from castle.cms.utils import send_email
+from castle.cms.utils import strings_differ
 from plone import api
 from plone.protect.authenticator import createToken
+from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
+from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
+from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
+from zope.interface import alsoProvides
 from zope.interface import implements
-from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError, ExpiredRequestError
 
 import json
+import time
 
 
 class SecureLoginView(BrowserView):
@@ -189,11 +193,12 @@ The user requesting this access logged this information:
                 reset_password = user.getProperty(
                     'reset_password_required', False)
 
-                return json.dumps({
-                    'success': True,
-                    'resetpassword': reset_password,
-                    'authenticator': createToken()
-                })
+                with api.env.adopt_user(user=user):
+                    return json.dumps({
+                        'success': True,
+                        'resetpassword': reset_password,
+                        'authenticator': createToken()
+                    })
             else:
                 return json.dumps({
                     'success': False,
@@ -301,6 +306,7 @@ The user requesting this access logged this information:
         userid = self.request.form.get('userid')
         randomstring = self.request.form.get('code')
         password = self.request.form.get('password')
+        alsoProvides(self.request, IDisableCSRFProtection)
         try:
             pw_tool.resetPassword(userid, randomstring, password)
         except ExpiredRequestError:
@@ -337,7 +343,8 @@ The user requesting this access logged this information:
             'supportedAuthSchemes': self.authenticator.get_supported_auth_schemes(),
             'twoFactorEnabled': self.authenticator.two_factor_enabled,
             'apiEndpoint': '{}/@@secure-login'.format(site_url),
-            'successUrl': site_url
+            'successUrl': site_url,
+            'authenticator': createToken()
         }
 
         username = None

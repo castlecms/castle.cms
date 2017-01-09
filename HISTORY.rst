@@ -4,6 +4,12 @@ Changelog
 2.0.4 (unreleased)
 ------------------
 
+- fix issue where password reset wasn't sticking
+  [vangheem]
+
+- make sure logout page shows login form
+  [vangheem]
+
 - add clean-drafts script
   [vangheem]
 

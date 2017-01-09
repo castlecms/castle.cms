@@ -355,7 +355,7 @@ require([
       if(disabled){
         onKeyUp = function(){};
       }
-      return D.div({className: C('form-' + STATES.RESET_PASSWORD)}, [
+      return D.div({className: C('form-' + STATES.RESET_PASSWORD) + ' ' + C('form-' + STATES.CHANGE_PASSWORD)}, [
         D.h2({ className: 'auth-title' }, 'Change password'),
         D.p({ className: 'auth-description' }, help),
         D.div({ className: 'form-group'}, [
@@ -428,7 +428,10 @@ require([
     update: function(){
       var $container = $(this.refs.container.getDOMNode());
       var $selectedForm = $('.' + C('form-' + this.state.state));
-      $container.height($selectedForm.height() + 20);
+
+      setTimeout(function(){
+        $container.height($selectedForm.height() + 20);
+      }, 500);
 
       if(this.state.state !== this.state.last_state){
         $('input:visible:first', $selectedForm).focus();
