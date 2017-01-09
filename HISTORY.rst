@@ -1,8 +1,11 @@
 Changelog
 =========
 
-2.0.4 (unreleased)
+2.0.4 (2017-01-09)
 ------------------
+
+- add rocket chat integration
+  [sam schwartz]
 
 - fix issue where password reset wasn't sticking
   [vangheem]
