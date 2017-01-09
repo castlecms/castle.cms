@@ -428,7 +428,7 @@ require([
     update: function(){
       var $container = $(this.refs.container.getDOMNode());
       var $selectedForm = $('.' + C('form-' + this.state.state));
-      $container.height($selectedForm.height());
+      $container.height($selectedForm.height() + 20);
 
       if(this.state.state !== this.state.last_state){
         $('input:visible:first', $selectedForm).focus();
