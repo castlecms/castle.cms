@@ -40,7 +40,7 @@ def _query_val(val):
 class QueryListingTile(BaseTile):
     implements(IPersistentTile)
 
-    query_attrs = ('SearchableText', 'Subject', 'sort_on', 'Title', 'selected-year')
+    query_attrs = ('SearchableText', 'Subject', 'sort_on', 'Title')
     mapped_tags = set([
         'Flyer',
         'Handbook',
@@ -77,10 +77,9 @@ class QueryListingTile(BaseTile):
         if 'sort_on' not in parsed:
             parsed['sort_on'] = 'effective'  # defaults to this
 
-        if 'selected-year' in parsed:
+        if 'selected-year' in self.request.form:
             # need to turn this into a date query
-            year = parsed['selected-year']
-            del parsed['selected-year']
+            year = self.request.form['selected-year']
             try:
                 start = DateTime(abs(int(year)), 1, 1)
                 end = DateTime(int(year) + 1, 1, 1) - 1
@@ -121,10 +120,10 @@ class QueryListingTile(BaseTile):
                 if attr in query and len(set(val) & set(_query_val(query[attr]))) > 0:
                     subject_filter = val[0]
                 else:
-                    if attr in ('SearchableText', 'Title'):
-                        query[attr] = val[0]
-                    else:
+                    if attr == 'Subject':
                         query[attr] = val
+                    else:
+                        query[attr] = val[0]
 
         result = catalog(**query)
         if subject_filter is not None:

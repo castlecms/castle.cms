@@ -4,6 +4,9 @@ Changelog
 2.0.5 (unreleased)
 ------------------
 
+- Fix parsing querylisting selected-year query
+  [vangheem]
+
 - Fix parsing querylisting Title/SearchableText query
   [vangheem]
 
