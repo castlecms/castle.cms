@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.5 (unreleased)
+------------------
+
+- Fix parsing querylisting Title/SearchableText query
+  [vangheem]
+
 2.0.4 (2017-01-09)
 ------------------
 

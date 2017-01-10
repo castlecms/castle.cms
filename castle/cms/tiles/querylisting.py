@@ -121,7 +121,10 @@ class QueryListingTile(BaseTile):
                 if attr in query and len(set(val) & set(_query_val(query[attr]))) > 0:
                     subject_filter = val[0]
                 else:
-                    query[attr] = val
+                    if attr in ('SearchableText', 'Title'):
+                        query[attr] = val[0]
+                    else:
+                        query[attr] = val
 
         result = catalog(**query)
         if subject_filter is not None:
