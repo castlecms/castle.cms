@@ -193,12 +193,17 @@ The user requesting this access logged this information:
                 reset_password = user.getProperty(
                     'reset_password_required', False)
 
-                with api.env.adopt_user(user=user):
-                    return json.dumps({
-                        'success': True,
-                        'resetpassword': reset_password,
-                        'authenticator': createToken()
-                    })
+                resp = {
+                    'success': True,
+                    'resetpassword': reset_password
+                }
+                try:
+                    with api.env.adopt_user(user=user):
+                        resp['authenticator'] = createToken()
+                        return json.dumps(resp)
+                except:
+                    resp['authenticator'] = createToken()
+                    return json.dumps(resp)
             else:
                 return json.dumps({
                     'success': False,
