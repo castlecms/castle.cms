@@ -57,7 +57,10 @@ except:
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
+parser.add_argument('--site-id', dest='site_id', default='Plone')
+parser.add_argument('--dir', dest='dir', default='./export')
 args, _ = parser.parse_known_args()
+
 
 def spoofRequest(app):
     """
@@ -74,7 +77,7 @@ app = spoofRequest(app)  # noqa
 
 user = app.acl_users.getUser('admin')  # noqa
 newSecurityManager(None, user.__of__(app.acl_users))  # noqa
-site = app['Plone']
+site = app[args.site_id]
 setSite(site)
 
 _filedata_marker = 'filedata://'
@@ -85,7 +88,7 @@ _uid_separator = '||||'
 _date_re = re.compile('^[0-9]{4}\-[0-9]{2}\-[0-9]{2}.*$')
 
 
-export_folder = os.path.abspath('./export')
+export_folder = os.path.abspath(args.dir)
 catalog = site.portal_catalog
 workflow = site.portal_workflow
 ptool = site.plone_utils
@@ -396,7 +399,10 @@ def exportObj(obj):
     im_width = 0
     image_to_lead = None
     for field in obj.Schema().fields():
-        fdata = field.getRaw(obj)
+        try:
+            fdata = field.getRaw(obj)
+        except ValueError:
+            continue
         if type(fdata) == ImplicitAcquisitionWrapper:
             fdata = fdata.aq_base
         data[field.__name__] = fdata
