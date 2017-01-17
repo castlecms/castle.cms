@@ -125,6 +125,35 @@ class KMLFeedView(FeedView):
             pass
 
 
+class JSONFeedView(FeedView):
+    content_type = 'application/json'
+
+    def index(self):
+        items = []
+        feed = self.feed()
+        for item in feed.items:
+            items.append({
+                'title': item.title,
+                'description': item.description,
+                'url': item.link,
+                'modified': item.modified.ISO8601(),
+                'file_url': item.file_url,
+                'file_type': item.file_type,
+                'file_length': item.file_length,
+                'uid': feed.uid
+            })
+
+        return json.dumps({
+            'url': feed.link,
+            'title': feed.title,
+            'description': feed.description,
+            'modified': feed.modified.ISO8601(),
+            'uid': feed.uid,
+            'logo': feed.logo,
+            'items': items
+        })
+
+
 class ContentFeedView(BrowserView):
 
     @property

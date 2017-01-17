@@ -1,4 +1,5 @@
 from castle.cms import install
+from cStringIO import StringIO
 from plone.app.robotframework.testing import PloneRobotFixture
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
@@ -15,7 +16,12 @@ from zope.globalrequest import clearRequest
 from zope.globalrequest import setRequest
 from ZPublisher import HTTPResponse
 
+import base64
 import os
+import re
+import sys
+import transaction
+import unittest
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -102,3 +108,106 @@ SELENIUM_FIXTURE = SeleniumCastleLayer()
 SELENIUM_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(SELENIUM_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
     name="SeleniumTesting:Functional")
+
+
+class ResponseWrapper:
+    '''Decorates a response object with additional introspective methods.'''
+
+    _bodyre = re.compile('\r\n\r\n(.*)', re.MULTILINE | re.DOTALL)
+
+    def __init__(self, response, outstream, path):
+        self._response = response
+        self._outstream = outstream
+        self._path = path
+
+    def __getattr__(self, name):
+        return getattr(self._response, name)
+
+    @property
+    def output(self):
+        '''Returns the complete output, headers and all.'''
+        return self._outstream.getvalue()
+
+    @property
+    def body(self):
+        '''Returns the page body, i.e. the output par headers.'''
+        body = self._bodyre.search(self.getOutput())
+        if body is not None:
+            body = body.group(1)
+        return body
+
+    @property
+    def path(self):
+        '''Returns the path used by the request.'''
+        return self._path
+
+    @property
+    def status_code(self):
+        return self._response.getStatus()
+
+    def getHeader(self, name):
+        '''Returns the value of a response header.'''
+        return self.headers.get(name.lower())
+
+    def getCookie(self, name):
+        '''Returns a response cookie.'''
+        return self.cookies.get(name)
+
+
+class BaseTest(unittest.TestCase):
+
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+
+    def publish(self, path, basic=None, env=None, extra=None,
+                request_method='GET', stdin=None, handle_errors=True):
+        """
+        Mostly pulled from Testing.functional
+        """
+        from ZPublisher.Request import Request
+        from ZPublisher.Response import Response
+        from ZPublisher.Publish import publish_module
+
+        transaction.commit()
+
+        if env is None:
+            env = {}
+        if extra is None:
+            extra = {}
+
+        env['SERVER_NAME'] = self.request['SERVER_NAME']
+        env['SERVER_PORT'] = self.request['SERVER_PORT']
+        env['REQUEST_METHOD'] = request_method
+
+        p = path.split('?')
+        if len(p) == 1:
+            env['PATH_INFO'] = p[0]
+        elif len(p) == 2:
+            [env['PATH_INFO'], env['QUERY_STRING']] = p
+        else:
+            raise TypeError('')
+
+        if basic:
+            env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring(basic)
+
+        if stdin is None:
+            stdin = StringIO()
+
+        outstream = StringIO()
+        response = Response(stdout=outstream, stderr=sys.stderr)
+        request = Request(stdin, env, response)
+        if extra:
+            # Needed on Plone 3 when adding things to the path in a querystring
+            # is not enough.
+            for key, value in extra.items():
+                request[key] = value
+
+        publish_module('Zope2',
+                       debug=not handle_errors,
+                       request=request,
+                       response=response)
+
+        return ResponseWrapper(response, outstream, path)

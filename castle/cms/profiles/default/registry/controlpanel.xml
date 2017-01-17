@@ -37,6 +37,7 @@
       <element>atom.xml|Atom</element>
       <element>itunes.xml|iTunes</element>
       <element>feed.kml|KML</element>
+      <element>feed.json|JSON</element>
     </value>
   </record>
 
