@@ -36,12 +36,13 @@ class CastleStatusMessage(StatusMessage):
         except KeyError:
             messages = []
 
-        site_path = '/'.join(self.site_path)
+        site_path = context_path = '/'.join(self.site_path)
         context = get_context_from_request(self.context)
         if context:
-            context_path = '/'.join(context.getPhysicalPath())
-        else:
-            context_path = site_path
+            try:
+                context_path = '/'.join(context.getPhysicalPath())
+            except AttributeError:
+                pass
 
         messages.append({
             'text': text,

@@ -4,6 +4,13 @@ Changelog
 2.0.5 (unreleased)
 ------------------
 
+New:
+
+- Add new JSON feed type
+  [vangheem]
+
+Fixes:
+
 - Fix parsing querylisting selected-year query
   [vangheem]
 

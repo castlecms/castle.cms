@@ -354,7 +354,7 @@
    <property name="title">Syndication</property>
    <property name="description"></property>
    <property
-      name="url_expr">string:${object_url}/@@synPropertiesForm</property>
+      name="url_expr">string:${folder/absolute_url}/@@synPropertiesForm</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
    <property name="available_expr"></property>

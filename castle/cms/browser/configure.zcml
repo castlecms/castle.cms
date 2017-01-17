@@ -465,6 +465,13 @@
     template="templates/itunes.xml.pt"
     layer="..interfaces.ICastleLayer"
     />
+  <browser:page
+    for="Products.CMFPlone.interfaces.syndication.ISyndicatable"
+    class=".syndication.JSONFeedView"
+    name="feed.json"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
 
   <browser:page
     name="sitemap.xml.gz"
