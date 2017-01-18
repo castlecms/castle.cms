@@ -16,8 +16,7 @@ setup(
     description='Castle CMS Plone distribution main package',
     long_description='%s\n%s\n%s' % (
         read('README.rst'),
-        read('HISTORY.rst'),
-        read('LICENSE')
+        read('HISTORY.rst')
     ),
     keywords="plone cms castle",
     classifiers=[
