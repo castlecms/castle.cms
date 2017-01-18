@@ -57,7 +57,7 @@ class DefaultRecorder(object):
 class LoggedInRecorder(object):
     def __call__(self):
         data = super(LoggedInRecorder, self).__call__()
-        data['user'] = self.object.getId()
+        data['user'] = self.event.object.getId()
         return data
 
 
