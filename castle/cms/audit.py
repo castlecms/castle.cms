@@ -54,6 +54,13 @@ class DefaultRecorder(object):
         return data
 
 
+class LoggedInRecorder(object):
+    def __call__(self):
+        data = super(LoggedInRecorder, self).__call__()
+        data['user'] = self.object.getId()
+        return data
+
+
 class WorkflowRecorder(DefaultRecorder):
 
     @property
@@ -101,7 +108,7 @@ _registered = {
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),
     ITrashed: AuditData('content', 'Trashed'),
-    IUserLoggedInEvent: AuditData('user', 'Logged in'),
+    IUserLoggedInEvent: AuditData('user', 'Logged in', recorder_class=LoggedInRecorder),
     IUserLoggedOutEvent: AuditData('user', 'Logged out'),
     IPrincipalDeletedEvent: AuditData('user', 'Deleted'),
     ICredentialsUpdatedEvent: AuditData('user', 'Password updated'),

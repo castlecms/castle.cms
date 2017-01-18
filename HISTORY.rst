@@ -1,10 +1,11 @@
 Changelog
 =========
 
-2.0.6 (unreleased)
+2.0.6 (2017-01-18)
 ------------------
 
-- Nothing changed yet.
+- Fix logged in event not recorder in the audit log correctly
+  [vangheem]
 
 
 2.0.5 (2017-01-18)
@@ -16,9 +17,6 @@ New:
   [vangheem]
 
 Fixes:
-
-- Fix logged in event not recorder in the audit log correctly
-  [vangheem]
 
 - Fix parsing querylisting selected-year query
   [vangheem]
