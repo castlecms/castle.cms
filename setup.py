@@ -12,15 +12,17 @@ def read(*rnames):
 
 setup(
     name='castle.cms',
-    version='2.0.4',
-    description='',
+    version='2.0.5',
+    description='Castle CMS Plone distribution main package',
     long_description='%s\n%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst'),
         read('LICENSE')
     ),
+    keywords="plone cms castle",
     classifiers=[
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
         "Framework :: Plone :: 5.0",
         "Framework :: Plone",
         "Framework :: Plone :: 5.1"
