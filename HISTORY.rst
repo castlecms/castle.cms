@@ -4,7 +4,9 @@ Changelog
 2.0.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Be able to provide your own google maps api key so that working with the
+  mapping widget works more consistently.
+  [vangheem]
 
 
 2.0.7 (2017-01-18)

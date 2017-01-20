@@ -224,6 +224,11 @@ class IAPISettings(Interface):
         default=u'http://localhost:6543/convert',
         required=False)
 
+    google_maps_api_key = schema.TextLine(
+        title=u'Google Maps API Key',
+        default=None,
+        required=False)
+
     google_api_email = schema.TextLine(
         title=u'Google API Email',
         default=None,
