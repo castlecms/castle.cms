@@ -395,7 +395,12 @@ define([
       if(window.google && window.google.maps){
         self.initialize();
       }else{
-        $script('https://maps.google.com/maps/api/js?v=3&sensor=false', function(){
+        var mapApiUrl = 'https://maps.google.com/maps/api/js?v=3&sensor=false';
+        var apiKey = $('body').attr('data-google-maps-api-key');
+        if(apiKey){
+          mapApiUrl += '&key=' + apiKey;
+        }
+        $script(mapApiUrl, function(){
           self.initialize();
         });
       }

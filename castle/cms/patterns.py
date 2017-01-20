@@ -161,7 +161,9 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             'castle.required_file_upload_fields', []) or []
         data.update({
             'data-available-slots': json.dumps(self.get_available_slot_tiles()),
-            'data-required-file-upload-fields': json.dumps(required_upload_fields)
+            'data-required-file-upload-fields': json.dumps(required_upload_fields),
+            'data-google-maps-api-key': self.registry.get(
+                'castle.google_maps_api_key', '') or ''
         })
 
         show_tour = False
