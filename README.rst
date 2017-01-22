@@ -86,6 +86,12 @@ In addition to Plone standard features...
 - 2-factor authentication
 
 
+Optional Dependencies
+=====================
+
+- install `argon2_cffi` to use more secure password hashing
+
+
 Running tests
 =============
 

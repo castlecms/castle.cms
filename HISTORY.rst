@@ -8,6 +8,9 @@ Changelog
   mapping widget works more consistently.
   [vangheem]
 
+- Use argon2 pw encryption scheme by default
+  [vangheem]
+
 
 2.0.7 (2017-01-18)
 ------------------

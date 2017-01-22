@@ -1,4 +1,11 @@
 # login/lockout and shield integration
+from AccessControl.AuthEncoding import _randrange
+from AccessControl.AuthEncoding import constant_time_compare
+from AccessControl.AuthEncoding import pw_encrypt
+from AccessControl.AuthEncoding import registerScheme
+from AccessControl.AuthEncoding import SSHADigestScheme
+from binascii import a2b_base64
+from binascii import b2a_base64
 from castle.cms import shield
 from castle.cms.interfaces import ICastleLayer
 from castle.cms.lockout import LOGGED_IN_MARKER_KEY
@@ -16,7 +23,14 @@ from zope.globalrequest import getRequest
 from ZPublisher.interfaces import IPubAfterTraversal
 from ZPublisher.interfaces import IPubBeforeCommit
 
+import binascii
 import logging
+
+
+try:
+    import argon2
+except ImportError:
+    argon2 = None
 
 
 log = logging.getLogger(__name__)
@@ -137,3 +151,35 @@ def beforeCommit(event):
                 resp.redirect('%s/@@session-removed' % site.absolute_url())
             else:
                 session_manager.log(session)
+
+
+if argon2 is not None:
+    # only available when installed...
+
+    class Argon2Scheme(SSHADigestScheme):
+        """
+        scheme follows this format...
+
+        argon:salt:hashed
+        """
+        ph = argon2.PasswordHasher()
+
+        def _format(self, pw):
+            return b2a_base64(self.ph.hash(pw))
+
+        def encrypt(self, pw):
+            pw = str(pw)
+            return self._format(pw)
+
+        def validate(self, reference, attempt):
+            try:
+                ref = a2b_base64(reference)
+            except binascii.Error:
+                # Not valid base64.
+                return False
+
+            return self.ph.verify(ref, attempt)
+
+    registerScheme('argon2', Argon2Scheme())
+    # we patch this to be default because plone doesn't provide a param
+    pw_encrypt.func_defaults = ('argon2',)
