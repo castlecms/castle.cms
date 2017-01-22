@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.8 (unreleased)
+2.0.8 (2017-01-21)
 ------------------
 
 - Be able to provide your own google maps api key so that working with the
