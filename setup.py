@@ -66,7 +66,8 @@ setup(
             'selenium',
             'plone.app.testing',
             'responses',
-            'mock'
+            'mock',
+            'argon2_cffi'
         ],
         'development': [
             'zest.releaser',

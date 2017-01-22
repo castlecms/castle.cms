@@ -14,11 +14,18 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 from zope.component import queryUtility
 from castle.cms.interfaces import IAuthenticator
+from castle.cms import security
+from AccessControl import AuthEncoding
 
 import json
 import responses
 import time
 import unittest
+
+try:
+    import argon2
+except ImportError:
+    argon2 = None
 
 
 SHIELD = constants.SHIELD
@@ -278,3 +285,19 @@ class TestTwoFactor(unittest.TestCase):
         result = json.loads(view())
         self.assertTrue(result['success'])
         self.assertTrue(result['countryBlocked'])
+
+
+if argon2 is not None:
+    class TestArgon2(unittest.TestCase):
+        def test_registered(self):
+            self.assertTrue('argon2' in [s[0] for s in AuthEncoding._schemes])
+
+        def test_encrypt(self):
+            scheme = security.Argon2Scheme()
+            encrypted = scheme.encrypt('foobar')
+            self.assertTrue(scheme.validate(encrypted, 'foobar'))
+
+        def test_argon_is_used_by_default(self):
+            encrypted = AuthEncoding.pw_encrypt('foobar')
+            self.assertTrue('{argon2}' in encrypted)
+            self.assertTrue(AuthEncoding.pw_validate(encrypted, 'foobar'))
