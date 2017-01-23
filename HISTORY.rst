@@ -4,7 +4,8 @@ Changelog
 2.0.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add automatic session refresh support
+  [vangheem]
 
 
 2.0.8 (2017-01-21)

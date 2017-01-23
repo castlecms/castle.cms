@@ -24,7 +24,6 @@ if (window.jQuery) {
 require([
   'jquery',
   'mockup-patterns-modal',
-  'mockup-utils',
   'castle-url/patterns/toolbar',
   'mockup-patterns-relateditems',
   'mockup-patterns-querystring',
@@ -38,20 +37,14 @@ require([
   'castle-url/patterns/mapselect',
   'castle-url/patterns/previewselect',
   'castle-url/patterns/imagewidget',
-  'castle-url/patterns/focalpointselect'
-], function($, Modal, utils) {
-  'use strict';
+  'castle-url/patterns/focalpointselect',
 
-  /* XXX monkey patch modal to NOT squash all clicks */
-  if(Modal.prototype._init === undefined){
-    Modal.prototype._init = Modal.prototype.init;
-    Modal.prototype.init = function(){
-      this.options.loadLinksWithinModal = false;
-      this.options.backdropOptions.closeOnClick = false;
-      this.options.backdropOptions.closeOnEsc = false;
-      Modal.prototype._init.apply(this, []);
-    };
-  }
+  // scripts
+  'castle-url/scripts/patches',
+  'castle-url/scripts/drafts',
+  'castle-url/scripts/session'
+], function($) {
+  'use strict';
 
   if($(window).width() > 1040){
     $(document).ready(function(){
@@ -60,35 +53,4 @@ require([
       }
     });
   }
-
-  // TODO: Needs to be moved to controlpanel js
-  $(document).ready(function() {
-    var cookieNegotiation = (
-      $("#form-widgets-use_cookie_negotiation > input").value === 'selected');
-    if (cookieNegotiation !== true) {
-      $("#formfield-form-widgets-authenticated_users_only").hide();
-    }else{
-      $("#formfield-form-widgets-authenticated_users_only").show();
-    }
-
-    if($('.template-edit').size() > 0){
-      // we are currently editing a mosaic form, ping draft support every 5 minutes
-      // to make sure it increments draft edit time so it doesn't get cleaned
-      // when a user it working on it
-      var pingDraft = function(){
-        setTimeout(function(){
-          $.ajax({
-            url: $('body').attr('data-base-url') + '/@@ping-draft',
-            method: 'POST',
-            data: {
-              _authenticator: utils.getAuthenticator()
-            }
-          }).done(function(){
-            pingDraft();
-          });
-        }, 1000 * 60 * 5);
-      };
-      pingDraft();
-    }
-  });
 });
