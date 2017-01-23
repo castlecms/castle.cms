@@ -128,3 +128,6 @@ def castle(context):
     # password reset timeout interval...
     portal_password_reset = api.portal.get_tool('portal_password_reset')
     portal_password_reset.setExpirationTimeout(6)
+
+    # update default session duration
+    site.acl_users.session.timeout = 30 * 60
