@@ -17,7 +17,6 @@ require([
   };
 
   var check = function(){
-    console.log('check');
     var lastChecked = localStorage.getItem(storageKey);
     var now = (new Date()).getTime();
     if(lastChecked){
