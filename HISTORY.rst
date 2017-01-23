@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.9 (unreleased)
+2.0.9 (2017-01-23)
 ------------------
 
 - Add automatic session refresh support
