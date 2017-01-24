@@ -4,7 +4,8 @@ Changelog
 2.0.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Override default Zope2 logging to log actual plone username in Z2.log
+  [vangheem]
 
 
 2.0.9 (2017-01-23)
