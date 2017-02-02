@@ -4,6 +4,11 @@ Changelog
 2.0.10 (unreleased)
 -------------------
 
+- Fix fullcalendar issue with selecting text when one is dropped on page.
+  This requires building with mockup on fix-jquery-event-drag-compat branch
+  or master once it's merged
+  [vangheem]
+
 - Override default Zope2 logging to log actual plone username in Z2.log
   [vangheem]
 

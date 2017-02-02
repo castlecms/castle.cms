@@ -33,3 +33,16 @@ libs/intro.js/introjs-rtl.css
 libs/intro.js/minified/
 libs/intro.js/package.json
 libs/intro.js/themes/
+libs/bootstrap/less/glyphicons.less
+libs/es6-promise/es6-promise.js
+libs/es6-promise/es6-promise.min.js
+libs/es6-promise/promise.js
+libs/es6-promise/test/
+libs/eventEmitter/EventEmitter.js
+libs/eventEmitter/README.md
+libs/eventEmitter/UNLICENSE
+libs/eventEmitter/component.json
+libs/fullcalendar/dist/fullcalendar.print.min.css
+libs/fullcalendar/dist/gcal.min.js
+libs/fullcalendar/dist/locale-all.js
+libs/fullcalendar/dist/locale/
