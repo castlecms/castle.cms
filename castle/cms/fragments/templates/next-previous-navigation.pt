@@ -1,10 +1,8 @@
 <tal:defs
-  tal:define="folder nocall: data_context|context;
-                      nextprev python: utils.get_next_prev(folder, context);
-                      next nextprev/next;
-                      prev nextprev/prev;">
-
-  <div class="castle-nextprev" tal:condition="python: (next or prev) and folder != context">
+  tal:define="nextprev python: utils.get_next_prev(context);
+              next nextprev/next;
+              prev nextprev/prev;">
+  <div class="castle-nextprev" tal:condition="python: (next or prev)">
 
     <div class="castle-nextprev-prev castle-nextprev-${prev/portal_type}"
          tal:condition="prev">

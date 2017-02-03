@@ -4,6 +4,9 @@ Changelog
 2.0.10 (unreleased)
 -------------------
 
+- Fix next/prev nav fragment to work with pages and site root
+  [vangheem]
+
 - Fix fullcalendar issue with selecting text when one is dropped on page.
   This requires building with mockup on fix-jquery-event-drag-compat branch
   or master once it's merged

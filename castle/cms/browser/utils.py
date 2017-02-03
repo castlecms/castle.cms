@@ -399,9 +399,9 @@ class Utils(BrowserView):
     def get_logo(self):
         return getSiteLogo()
 
-    def get_next_prev(self, folder, obj):
+    def get_next_prev(self, obj):
         try:
-            nextprev = NextPrevious(folder)
+            nextprev = NextPrevious(obj)
             return {
                 'next': nextprev.getNextItem(obj),
                 'prev': nextprev.getPreviousItem(obj)
