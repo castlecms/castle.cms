@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.10 (unreleased)
+2.0.10 (2017-02-06)
 -------------------
 
 - Fix next/prev nav fragment to work with pages and site root
