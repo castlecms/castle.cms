@@ -178,7 +178,10 @@ if argon2 is not None:
                 # Not valid base64.
                 return False
 
-            return self.ph.verify(ref, attempt)
+            try:
+                return self.ph.verify(ref, attempt)
+            except argon2.exceptions.Argon2Error:
+                return False
 
     registerScheme('argon2', Argon2Scheme())
     # we patch this to be default because plone doesn't provide a param
