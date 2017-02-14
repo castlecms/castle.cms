@@ -8,7 +8,6 @@ from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
-from chameleon.exc import ParseError
 from lxml import etree
 from lxml.html import fromstring
 from lxml.html import tostring
@@ -292,11 +291,9 @@ class _Transform(object):
 
             try:
                 layout = loader[selected_name]
-	    except ParseError as e:
-		logger.error('Failed parsing content layout: %s' % e)
+	    except Exception as e:
+		logger.error('Failed parsing content layout', exc_info=True)
 		layout = None
-            except:
-                layout = None
 
             if layout is None:
                 # default to 'index.html' now
