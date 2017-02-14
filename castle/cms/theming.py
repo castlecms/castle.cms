@@ -32,9 +32,11 @@ from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 
 import Globals
+import logging
 import json
 import re
 
+logger = logging.getLogger('castle.cms')
 
 OVERRIDE_ENVIRON_KEY = 'castle.override.theme'
 wrapper_xpath = etree.XPath('//*[@id="visual-portal-wrapper"]')
@@ -289,8 +291,9 @@ class _Transform(object):
 
             try:
                 layout = loader[selected_name]
-            except:
-                layout = None
+	    except Exception as e:
+		logger.error('Failed parsing content layout', exc_info=True)
+		layout = None
 
             if layout is None:
                 # default to 'index.html' now
@@ -437,6 +440,7 @@ class _Transform(object):
                     "type": "cell",
                     "info": {"pos": {"width": width, "x": 0}}
                 })
+                
 
             classes.append('-'.join(classes))
             classes.append('col-count-%i' % len(found))
