@@ -4,7 +4,9 @@ Changelog
 2.0.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- If commenting enabled on a folder, it will become the default for all children
+  in that folder.
+  [vangheem]
 
 
 2.0.10 (2017-02-06)
