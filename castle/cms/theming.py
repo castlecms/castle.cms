@@ -8,6 +8,7 @@ from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
+from chameleon.exc import ParseError
 from lxml import etree
 from lxml.html import fromstring
 from lxml.html import tostring
@@ -32,9 +33,11 @@ from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 
 import Globals
+import logging
 import json
 import re
 
+logger = logging.getLogger('castle.cms')
 
 OVERRIDE_ENVIRON_KEY = 'castle.override.theme'
 wrapper_xpath = etree.XPath('//*[@id="visual-portal-wrapper"]')
@@ -289,6 +292,9 @@ class _Transform(object):
 
             try:
                 layout = loader[selected_name]
+	    except ParseError as e:
+		logger.error('Failed parsing content layout: %s' % e)
+		layout = None
             except:
                 layout = None
 
@@ -437,6 +443,7 @@ class _Transform(object):
                     "type": "cell",
                     "info": {"pos": {"width": width, "x": 0}}
                 })
+                
 
             classes.append('-'.join(classes))
             classes.append('col-count-%i' % len(found))
