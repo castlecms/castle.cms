@@ -680,4 +680,13 @@
     class=".content.PingCurrentDraft"
     layer="..interfaces.ICastleLayer" />
 
+
+  <browser:page
+    name="conversation_view"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    layer="plone.app.discussion.interfaces.IDiscussionLayer"
+    class=".discussion.CastleConversationView"
+    permission="zope2.View"
+    />
+
 </configure>
