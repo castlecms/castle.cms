@@ -44,14 +44,6 @@
     />
 
   <monkey:patch
-    description="Fix POSKeyErrors for missing blob errors on syndication feeds"
-    class="Products.CMFPlone.browser.syndication.adapters.DexterityItem"
-    original="__init__"
-    replacement=".patches.DexterityItem__init__"
-    preserveOriginal="True"
-    />
-
-  <monkey:patch
     description="Better VHM support OOTB"
     class="Products.SiteAccess.VirtualHostMonster.VirtualHostMonster"
     original="__call__"

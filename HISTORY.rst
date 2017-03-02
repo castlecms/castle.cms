@@ -4,6 +4,9 @@ Changelog
 2.0.11 (unreleased)
 -------------------
 
+- Provide image_url for json feed
+  [vangheem]
+
 - If commenting enabled on a folder, it will become the default for all children
   in that folder.
   [vangheem]

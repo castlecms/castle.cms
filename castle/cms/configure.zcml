@@ -111,6 +111,15 @@
     name="castle.cms.vocabularies.Countries"
     />
 
+  <!-- override default syndication -->
+  <adapter factory=".syndication.DexterityItem"
+    for="plone.dexterity.interfaces.IDexterityItem
+         Products.CMFPlone.interfaces.syndication.IFeed"
+    provides="Products.CMFPlone.interfaces.syndication.IFeedItem" />
+  <adapter factory=".syndication.DexterityItem"
+    for="plone.dexterity.interfaces.IDexterityContainer
+         Products.CMFPlone.interfaces.syndication.IFeed"
+    provides="Products.CMFPlone.interfaces.syndication.IFeedItem" />
   <adapter factory=".syndication.LayoutAwareItem"
     for="plone.app.blocks.layoutbehavior.ILayoutAware
          Products.CMFPlone.interfaces.syndication.IFeed"

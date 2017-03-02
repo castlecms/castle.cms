@@ -137,9 +137,10 @@ class JSONFeedView(FeedView):
                 'description': item.description,
                 'url': item.link,
                 'modified': item.modified.ISO8601(),
-                'file_url': item.file_url,
+                'file_url': item.file_type and item.file_url,
                 'file_type': item.file_type,
                 'file_length': item.file_length,
+                'image_url': item.image_url,
                 'uid': feed.uid
             })
 
