@@ -108,26 +108,6 @@ class NoopTransform(object):
     transformUnicode = transformIterable = transformString
 
 
-def DexterityItem__init__(self, context, feed):
-    try:
-        self._old___init__(context, feed)
-    except (POSKeyError, AttributeError, TypeError):
-        pass
-
-    try:
-        primary = IPrimaryFieldInfo(self.context, None)
-    except TypeError:
-        primary = None
-    try:
-        if primary and INamedField.providedBy(primary.field):
-            file = primary.field.get(self.context)
-            if file.getSize() > 0:
-                self.file = file
-                self.field_name = primary.fieldname
-    except (POSKeyError, AttributeError):
-        pass
-
-
 def AppInitializer_initialize(self):
     self._old_initialize()
     app = self.app[0]

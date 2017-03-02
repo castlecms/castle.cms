@@ -1,20 +1,61 @@
 from castle.cms.theming import contentpanel_xpath
+from castle.cms.utils import has_image
 from lxml.html import tostring
 from plone.app.blocks import gridsystem
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.utils import getLayout
+from plone.dexterity.interfaces import IDexterityContent
+from plone.namedfile.interfaces import INamedField
 from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFPlone.browser.syndication import adapters
 from Products.CMFPlone.interfaces.syndication import IFeed
 from repoze.xmliter.utils import getHTMLSerializer
+from ZODB.POSException import POSKeyError
 from zope.component import adapts
 from zope.component import getAdapters
 from zope.globalrequest import getRequest
 
 
-class LayoutAwareItem(adapters.DexterityItem):
+class DexterityItem(adapters.DexterityItem):
+    image = None
+    file = None
+
+    def __init__(self, context, feed):
+        self.context = context
+        self.feed = feed
+        try:
+            self._init()
+        except (POSKeyError, AttributeError, TypeError):
+            pass
+
+    def _init(self):
+        """
+        moved here just so we can wrap it in exception block more nicely
+        """
+        try:
+            primary = IPrimaryFieldInfo(self.context, None)
+            if (INamedField.providedBy(primary.field) and
+                    hasattr(primary.field, 'getSize') and
+                    primary.field.getSize() > 0):
+                self.file = primary.field
+                self.field_name = primary.fieldname
+        except TypeError:
+            pass
+
+        if has_image(self.context):
+            self.image = self.file = self.context.image
+            self.field_name = 'image'
+
+    @property
+    def image_url(self):
+        if self.image:
+            return '{}/@@images/image'.format(self.base_url)
+
+
+class LayoutAwareItem(DexterityItem):
     adapts(ILayoutAware, IFeed)
 
     def render_content_core(self, site=None):
