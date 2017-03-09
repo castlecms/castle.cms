@@ -179,19 +179,19 @@ define([
 
       // check if we should upgrade the size
       if(scalesInfo && defaultScale && (containerW > imageW || containerH > imageH)){
+        // we upgrade image to....
+        // something as big as what will fit container but not bigger than it needs to be
         // attempt image upgrade...
         var targetScale = defaultScale;
-        var upgradedH;
-        var upgradedW;
+        var upgradedH = imageH;
+        var upgradedW = imageW;
         for(var scale in scalesInfo){
           var info = scalesInfo[scale];
-          if(info.w > imageW || info.h > imageH){
-            if(!upgradedW || (info.w < upgradedW || info.h < upgradedH)){
-              // already upgraded, see if this scale is more appropriate
-              upgradedW = info.w;
-              upgradedH = info.h;
-              targetScale = scale;
-            }
+          if((info.w > upgradedW || info.h > upgradedH) &&
+             (upgradedW < containerW || upgradedH < containerH)){
+            upgradedW = info.w;
+            upgradedH = info.h;
+            targetScale = scale;
           }
         }
         if(targetScale !== defaultScale){
