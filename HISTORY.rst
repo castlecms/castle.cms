@@ -7,6 +7,7 @@ Changelog
 - Fix image focus point upgrade issue where it would request more images than
   it should
   [vangheem]
+
 - Provide image_url for json feed
   [vangheem]
 
