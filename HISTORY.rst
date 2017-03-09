@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.11 (unreleased)
+2.0.11 (2017-03-09)
 -------------------
 
 - Fix image focus point upgrade issue where it would request more images than
