@@ -174,7 +174,7 @@ content moved over to start working with.
 Export
 ~~~~~~
 
-Copy the this export script into your existing site's main buildout folder of your site::
+Copy the export script into your existing site's main buildout folder of your site::
 
   https://raw.githubusercontent.com/castlecms/castle.cms/master/castle/cms/_scripts/export-content.py
 
@@ -188,3 +188,21 @@ id of your install plone site.
 To customize the export script so only parts of the site are exported,
 you can change the final line in the script to a custom catalog query that only
 pulls in the content you want to export.
+
+
+Import
+~~~~~~
+
+First off, copy the exported directory that you did in the previous step to
+the castle installation folder.
+
+Next, copy the import script into your new castle site's main buildout folder::
+
+  https://raw.githubusercontent.com/castlecms/castle.cms/master/castle/cms/_scripts/importjson.py
+
+Then, to run the import script::
+
+  ./bin/client1 run importjson.py --site-id=mysiteid --export-directory=./export
+
+This is assuming that "client1" is an instance of your site and "mysiteid" is the
+id of your install plone site.
