@@ -10,8 +10,10 @@ define([
   'castle-url/components/image-focal-point-selector',
   'underscore',
   'mockup-patterns-select2',
+  'castle-url/components/content-browser',
   'castle-url/libs/moxie/bin/js/moxie'
-], function($, R, cutils, utils, ImageEditor, FocalPointSelector, _, Select2) {
+], function($, R, cutils, utils, ImageEditor, FocalPointSelector, _,
+            Select2, ContentBrowserComponent) {
   'use strict';
   var D = R.DOM;
 
@@ -579,6 +581,7 @@ define([
           dropTxt,
           D.button({ ref: 'upload_btn', className: 'btn btn-default castle-btn-select-files' }, 'Select files'),
         ]),
+        that.renderUploadLocation(),
         that.renderAutoApprove(),
         that.renderFileList()
       ]);
@@ -590,6 +593,76 @@ define([
         ]),
         content
       ]);
+    },
+
+    browsing: true,
+    selectFolderClicked: function(){
+      var that = this;
+
+      var query = new utils.QueryHelper({
+        vocabularyUrl: $('body').attr('data-portal-url') + '/@@getVocabulary?name=plone.app.vocabularies.Catalog',
+        batchSize: 18,
+        pattern: this,
+        sort_on: 'getObjPositionInParent',
+        sort_order: 'ascending',
+        attributes: ['UID', 'Title', 'portal_type', 'path', 'review_state', 'is_folderish'],
+        baseCriteria: [{
+          i: 'portal_type',
+          o: 'plone.app.querystring.operation.list.contains',
+          v: ['Folder']
+        }]
+      });
+      query.currentPath = that.props.location;
+
+      var ContentBrowserBinder = cutils.BindComponentFactoryRoot(
+          ContentBrowserComponent, function(){
+            return {
+              onSelectItem: function(item){
+                that.props.location = item.path;
+                that.forceUpdate();
+              },
+              query: query
+            };
+          }, 'content-browser-react-container');
+      ContentBrowserBinder({});
+    },
+
+    renderUploadLocation: function(){
+      var that = this;
+      if(that.props.location){
+        return D.div({ className: 'pick-location'}, [
+          D.div({ className: 'pick-location-folder'}, D.a({
+            className: 'contenttype-folder', href: '#',
+            onClick: function(e){
+              e.preventDefault();
+              that.selectFolderClicked();
+            }
+          }, ' ')),
+          D.div({ className: 'pick-location-location'}, [
+            'Upload to: ',
+            that.props.location
+          ]),
+          D.div({ className: 'pick-location-remove'}, D.button({
+            className: 'remove',
+            onClick: function(e){
+              e.preventDefault();
+              that.props.location = null;
+              that.forceUpdate();
+            }
+          }, 'x'))
+        ]);
+      }else{
+        return D.div({ className: 'no-location'}, [
+          D.a({ href: '#', onClick: function(e){
+            e.preventDefault();
+            var portalUrl = $('body').attr('data-portal-url');
+            var folderUrl = $('body').attr('data-folder-url');
+            that.props.location = folderUrl.replace(portalUrl, '') || '/';
+            that.forceUpdate();
+            that.selectFolderClicked();
+          }}, 'Specify upload location')
+        ]);
+      }
     },
 
     renderHeader: function(){

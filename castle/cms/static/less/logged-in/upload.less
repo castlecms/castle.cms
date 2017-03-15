@@ -227,3 +227,45 @@
     height: 100px;
   }
 }
+
+
+/* location picker */
+.castle-upload-container {
+  .pick-location, .no-location {
+
+  }
+  .pick-location{
+    border: 2px dashed #dedede;
+    border-top: 0px;
+    width: 400px;
+    position: relative;
+    height: 30px;
+    overflow: hidden;
+
+    > div {
+      position: absolute;
+      top: 0;
+      height: 30px;
+    }
+    .pick-location-folder {
+      left: 0;
+      background-color: #dedede;
+      padding: 6px 0px 0px 12px;
+    }
+    .pick-location-location {
+      left: 50px;
+      line-height: 27px;
+    }
+    .pick-location-remove {
+      right: 0;
+
+      button.remove {
+        padding: 2px 11px;
+        font-size: 1.1em;
+      }
+    }
+  }
+  .no-location {
+    font-size: 13px;
+  }
+}

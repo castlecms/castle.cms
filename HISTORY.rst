@@ -7,6 +7,9 @@ Changelog
 - Be able to provide additional views for the existing content tile
   [vangheem]
 
+- Be able to specify upload location
+  [vangheem]
+
 
 2.0.11 (2017-03-09)
 -------------------

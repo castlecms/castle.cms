@@ -157,13 +157,17 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         if api.user.is_anonymous():
             return data
 
+        folder = self.context
+        if not IDexterityContainer.providedBy(folder):
+            folder = aq_parent(folder)
         required_upload_fields = self.registry.get(
             'castle.required_file_upload_fields', []) or []
         data.update({
             'data-available-slots': json.dumps(self.get_available_slot_tiles()),
             'data-required-file-upload-fields': json.dumps(required_upload_fields),
             'data-google-maps-api-key': self.registry.get(
-                'castle.google_maps_api_key', '') or ''
+                'castle.google_maps_api_key', '') or '',
+            'data-folder-url': folder.absolute_url()
         })
 
         show_tour = False
