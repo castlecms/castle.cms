@@ -158,3 +158,33 @@ Processes
 ---------
 
 - ``bin/twitter-monitor``: Monitor Twitter for mentions of your site
+
+
+
+Export/Import
+-------------
+
+Castle provides a simple export/import mechanism that does not use transmogrifier.
+
+You are still able to build your own custom transmogrifier pipelines to import/export
+into castle; however, our scripts seem to work in a lot of cases to get your
+content moved over to start working with.
+
+
+Export
+~~~~~~
+
+Copy the this export script into your existing site's main buildout folder of your site::
+
+  https://raw.githubusercontent.com/castlecms/castle.cms/master/castle/cms/_scripts/export-content.py
+
+Then, to run the export script::
+
+  ./bin/client1 run export-content.py --site-id=mysiteid --dir=./export
+
+This is assuming that "client1" is an instance of your site and "mysiteid" is the
+id of your install plone site.
+
+To customize the export script so only parts of the site are exported,
+you can change the final line in the script to a custom catalog query that only
+pulls in the content you want to export.
