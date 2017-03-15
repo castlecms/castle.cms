@@ -4,6 +4,9 @@ Changelog
 2.0.12 (unreleased)
 -------------------
 
+- Fix showing non-image content on lead image browse selector. Fixes #30
+  [vangheem]
+
 - Be able to provide additional views for the existing content tile
   [vangheem]
 

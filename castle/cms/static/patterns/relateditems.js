@@ -65,6 +65,7 @@ define([
         pattern: this.props.parent,
         sort_on: 'getObjPositionInParent',
         sort_order: 'ascending',
+        baseCriteria: this.props.baseCriteria.slice(),
         attributes: ['UID', 'Title', 'portal_type', 'path', 'review_state', 'is_folderish']
       });
       // get current path instead?
@@ -208,6 +209,7 @@ define([
       if(this.props.multiple && this.props.maximumSelectionSize !== 1){
         multiple = true;
       }
+      var qh = that.getQueryHelper();
       var ContentBrowserBinder = cutils.BindComponentFactoryRoot(
         ContentBrowserComponent, function(){
           return {
@@ -221,7 +223,8 @@ define([
               });
               that.addSelection(uids);
             },
-            query: that.getQueryHelper(),
+            baseCriteria: qh.options.baseCriteria,
+            query: qh,
             multiple: multiple,
             selectableTypes: that.props.selectableTypes
           };

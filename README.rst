@@ -272,3 +272,12 @@ Finally, the ZCML to register it::
       for="plone.dexterity.interfaces.IDexterityContent castle.cms.interfaces.ICastleLayer"
       factory=".myview.MyTileView"
       />
+
+
+
+Lead images
+-----------
+
+- all content has lead images
+- lead images can be references to other images on the site
+  - this includes other lead images on other content

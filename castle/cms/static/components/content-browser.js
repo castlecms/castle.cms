@@ -309,7 +309,8 @@ define([
       query.options.sort_on = this.state.sort_on;
       query.options.sort_order = this.state.sort_order;
       query.options.useBaseCriteria = true;
-      query.options.baseCriteria = that.state.criterias.slice(0);
+      var baseCriteria = this.props.baseCriteria.slice();
+      query.options.baseCriteria = baseCriteria.concat(that.state.criterias.slice());
       if(that.state.filter){
         query.options.baseCriteria.push({
           i: 'Title',
@@ -584,7 +585,8 @@ define([
         multiple: false,
         selectableTypes: null,
         onSelectItem: function(){},
-        onSelectItems: function(){}
+        onSelectItems: function(){},
+        baseCriteria: []
       });
     }
   });
