@@ -363,6 +363,7 @@ def mkdir_p(path):
         else:
             raise
 
+
 def createPath(path):
     path = path[len(site_path):]
     xpath = os.path.join(export_folder, path.lstrip('/'))
@@ -489,9 +490,12 @@ def writeExport(obj, data):
                     writeExport(eobj, edata)
             fobj = aq_parent(fobj)
     path = createPath(objpath)
-    fi = open(path, 'w')
-    fi.write(dumps(data))
-    fi.close()
+    try:
+        fi = open(path, 'w')
+        fi.write(dumps(data))
+        fi.close()
+    except UnicodeDecodeError:
+        print('Error exporting {}'.format(objpath))
 
 
 def runExport(brains):
