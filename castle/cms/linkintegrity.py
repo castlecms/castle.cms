@@ -78,6 +78,8 @@ def get_tile_data_links(obj, data):
     refs = set()
     if type(data) in (dict, PersistentMapping, PersistentDict):
         for field_name in ('content', 'video', 'image', 'images', 'audio'):
+            if field_name not in data:
+                continue
             val = data.get(field_name)
             if isinstance(val, basestring):
                 links = extractLinks(val)

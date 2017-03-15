@@ -280,4 +280,3 @@ Lead images
 
 - all content has lead images
 - lead images can be references to other images on the site
-  - this includes other lead images on other content

@@ -1,6 +1,7 @@
 from castle.cms import audit
 from castle.cms import tasks
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
+from castle.cms.lead import check_lead_image
 from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.blocks.interfaces import DEFAULT_CONTENT_LAYOUT_REGISTRY_KEY
@@ -101,6 +102,13 @@ def onContentModified(obj, event):
     except CannotGetPortalError:
         pass
     _touchContributors(obj)
+
+
+def onEditFinished(obj, event):
+    """
+    on forms submission of done editing page...
+    """
+    check_lead_image(obj, request=getRequest())
 
 
 def onObjectEvent(obj, event):

@@ -56,6 +56,10 @@
     for="plone.dexterity.interfaces.IDexterityContent
          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
     handler=".subscribers.onContentModified" />
+  <subscriber
+    for="plone.dexterity.interfaces.IDexterityContent
+         plone.dexterity.interfaces.IEditFinishedEvent"
+    handler=".subscribers.onEditFinished" />
 
 
   <!-- basic object events for auditing purposes -->

@@ -4,6 +4,9 @@ Changelog
 2.0.12 (unreleased)
 -------------------
 
+- Automatically detect image in content if no lead image is set. Fixes #28
+  [vangheem]
+
 - Fix showing non-image content on lead image browse selector. Fixes #30
   [vangheem]
 
