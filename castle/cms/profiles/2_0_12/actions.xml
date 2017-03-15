@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<object name="portal_actions" meta_type="Plone Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <object name="toolbar_menu" meta_type="CMF Action Category">
+  <object name="paste" meta_type="CMF Action">
+   <property name="csrf" type="boolean">True</property>
+  </object>
+ </object>
+</object>

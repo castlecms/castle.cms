@@ -255,6 +255,7 @@
     <element value="Add portal content"/>
    </property>
    <property name="visible">True</property>
+   <property name="csrf" type="boolean">True</property>
   </object>
   <object name="delete" meta_type="CMF Action">
    <property name="title">Delete</property>

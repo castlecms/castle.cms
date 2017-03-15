@@ -280,3 +280,19 @@ Lead images
 
 - all content has lead images
 - lead images can be references to other images on the site
+
+
+
+Castle upgrades
+---------------
+
+Right now, there is no way that is exposed nicely in site setup to run castle
+upgrades.
+
+To run upgrades::
+
+  - go to /manage on your plone site
+  - Then, portal_setup
+  - click the "Upgrades" tab
+  - select "castle.cms:default" and click "choose profile"
+  - from here, you should get a list of available upgrades to run

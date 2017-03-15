@@ -72,6 +72,7 @@
   <include package=".behaviors" />
   <include package=".caching" />
   <include package=".ordering" />
+  <include package=".upgrades" />
 
   <include file="subscribers.zcml" />
   <include file="patches.zcml" />

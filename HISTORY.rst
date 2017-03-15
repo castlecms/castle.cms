@@ -4,6 +4,10 @@ Changelog
 2.0.12 (unreleased)
 -------------------
 
+- Fix paste button not working and throwing unauthorized errors because of
+  missing csrf token. Fixes #19
+  [vangheem]
+
 - Automatically detect image in content if no lead image is set. Fixes #28
   [vangheem]
 

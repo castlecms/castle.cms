@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="castle.cms">
+
+  <genericsetup:registerProfile
+      name="2_0_12"
+      title="Castle CMS upgrade to 2.0.12 profile"
+      directory="../profiles/2_0_12"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:upgradeStep
+      title="Upgrade Castle to 2.0.12"
+      description=""
+      source="*"
+      destination="2012"
+      handler=".upgrade_2_0_12.upgrade"
+      profile="castle.cms:default"/>
+
+</configure>
