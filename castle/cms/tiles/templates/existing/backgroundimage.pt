@@ -1,0 +1,33 @@
+<tal:wrap tal:define="utils view/tile/utils;
+                      data view/tile/data;
+                      df view/tile/display_fields;
+                      idt data/image_display_type|string:landscape;
+                      existing nocall: view/tile/content|nothing;
+                      url python: utils.get_object_url(existing);
+                      has_image python: 'image' in df and utils.has_image(existing);
+                      fp python: view.tile.get_focal_point();
+                      content_title existing/Title;
+                      title python: data.get('title', '');
+                      effective existing/effective|nothing;
+                      desc python: utils.get_summary_text(existing);
+                      truncate_count python: data.get('truncate_count', 18);
+                      desc python: truncate_count and utils.truncate_text(desc, truncate_count, clean=True) or desc;">
+
+<div class="existing-content existing-content-backgroundimage
+            portal-type-${python: utils.normalize(existing.portal_type)} ${idt}">
+  <a href="${url}" tal:condition="has_image">
+    <div tal:replace="structure python: utils.focal_image_tag(existing, 'tile', focal=fp)" />
+    <div class="info-text">
+      <h2 tal:condition="title">${title}</h2>
+      <h3 tal:condition="content_title">${content_title}</h3>
+      <p class="date"
+         tal:content="python: utils.format_date(effective, 'notime')"
+         tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+      <p tal:replace="structure desc"
+          tal:condition="python: 'description' in df"></p>
+    </div>
+  </a>
+  <p class="missing-image" tal:condition="not: has_image">No image found</p>
+</div>
+
+</tal:wrap>

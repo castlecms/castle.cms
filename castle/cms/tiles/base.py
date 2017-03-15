@@ -8,6 +8,7 @@ from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.interface import implements
 from zope.security import checkPermission
+from castle.cms.tiles.views import getTileView
 
 import json
 import logging
@@ -145,6 +146,26 @@ class BaseTile(Tile):
 
     def render(self):
         return self.index()
+
+
+class DisplayTypeTileMixin(object):
+    display_type_name = ''
+    display_type_default = 'default'
+    display_type_fallback_view = None
+
+    def render_display(self):
+        view = getTileView(
+            self.context, self.request, self.display_type_name,
+            self.data.get('display_type', self.display_type_default) or self.display_type_default,
+            default=self.display_type_default)
+        if view is None:
+            if self.display_type_fallback_view:
+                view = self.display_type_fallback_view(self.context, self.request)
+            else:
+                return '<div>Warning: No display found</div>'
+
+        view.tile = self
+        return view()
 
 
 class BaseImagesTile(BaseTile):

@@ -4,7 +4,8 @@ Changelog
 2.0.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Be able to provide additional views for the existing content tile
+  [vangheem]
 
 
 2.0.11 (2017-03-09)

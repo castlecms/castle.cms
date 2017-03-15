@@ -206,3 +206,69 @@ Then, to run the import script::
 
 This is assuming that "client1" is an instance of your site and "mysiteid" is the
 id of your install plone site.
+
+
+
+Tile display types
+------------------
+
+There are a few different tiles that castle provides that allow you to customize
+the display type. The display type field is a way of providing a different
+view onto the content.
+
+Available display type tiles(listing with display type vocab id):
+
+ - Navigation(navigation)
+ - Existing content(existing)
+ - Gallery(gallery)
+ - Query Listing(querylisting)
+
+
+Providing your own display types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are 3 components to registering a display type for a tile:
+  - Display type class
+  - Page template
+  - ZCML registration
+
+I know, probably too much but not a lot of thought has gone into how to make
+this more simple for the developer at this point.
+
+
+Example custom display type
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We'll go through an example for the existing content tile
+
+Display type class::
+
+    class MyTileView(BaseTileView):
+        name = 'myview'
+        preview = '++plone++castle/path/to/image.png'
+        order = 1
+        index = ViewPageTemplateFile('myview.pt')
+        tile_name = 'existing'
+
+
+Then, the template::
+
+    <tal:wrap tal:define="utils view/tile/utils;
+                          data view/tile/data;
+                          df view/tile/display_fields;
+                          idt data/image_display_type|string:landscape;
+                          existing nocall: view/tile/content|nothing;
+                          url python: utils.get_object_url(existing);
+                          has_image python: 'image' in df and utils.has_image(existing);">
+     <h3><a href="${url}">${existing/Title}</a></h3>
+    </tal:wrap>
+
+
+Finally, the ZCML to register it::
+
+    <adapter
+      name="existing.myview"
+      provides="castle.cms.interfaces.ITileView"
+      for="plone.dexterity.interfaces.IDexterityContent castle.cms.interfaces.ICastleLayer"
+      factory=".myview.MyTileView"
+      />

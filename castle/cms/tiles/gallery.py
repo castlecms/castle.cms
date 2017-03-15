@@ -1,6 +1,6 @@
 from castle.cms.tiles.base import BaseImagesTile
+from castle.cms.tiles.base import DisplayTypeTileMixin
 from castle.cms.tiles.views import BaseTileView
-from castle.cms.tiles.views import getTileView
 from castle.cms.tiles.views import TileViewsSource
 from castle.cms.widgets import ImageRelatedItemsFieldWidget
 from castle.cms.widgets import PreviewSelectFieldWidget
@@ -10,17 +10,19 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
 
 
-class GalleryTile(BaseImagesTile):
+class DefaultView(BaseTileView):
+    name = 'default'
+    order = 0
+    index = ViewPageTemplateFile('templates/gallery/default.pt')
+    tile_name = 'gallery'
 
-    def render(self):
-        view = getTileView(self.context, self.request, 'gallery',
-                           self.data.get('display_type', 'default') or 'default',
-                           default='default')
-        if view is None:
-            view = DefaultView(self.context, self.request)
 
-        view.tile = self
-        return view()
+class GalleryTile(BaseImagesTile, DisplayTypeTileMixin):
+    display_type_name = 'gallery'
+    display_type_default = 'default'
+    display_type_fallback_view = DefaultView
+
+    render = DisplayTypeTileMixin.render_display
 
 
 class IGalleryTileSchema(model.Schema):
@@ -42,10 +44,3 @@ class IGalleryTileSchema(model.Schema):
         source=TileViewsSource('gallery'),
         default='default'
     )
-
-
-class DefaultView(BaseTileView):
-    name = 'default'
-    order = 0
-    index = ViewPageTemplateFile('templates/gallery/default.pt')
-    tile_name = 'gallery'

@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-import unittest
-from plone import api
-from castle.cms.tests.utils import render_tile, get_tile
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
+from castle.cms.tests.utils import get_tile
+from castle.cms.tests.utils import render_tile
+from plone import api
 from plone.app.testing import login
 from plone.app.testing import setRoles
-from castle.cms.tiles.querylisting import QueryListingTile
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.uuid.interfaces import IUUID
+
+import unittest
 
 
 class TestTiles(unittest.TestCase):
@@ -142,13 +144,13 @@ class TestTiles(unittest.TestCase):
 
     def test_querylisting_results(self):
         api.content.create(type='Document', id='page1', container=self.portal,
-                           subject=('foobar',))
+                           subject=('foobar',), title='Foobar')
         api.content.create(type='Document', id='page2', container=self.portal,
-                           subject=('foobar',))
+                           subject=('foobar',), title='Foobar')
         api.content.create(type='Document', id='page3', container=self.portal,
-                           subject=('foobar', 'foobar2'))
+                           subject=('foobar', 'foobar2'), title='Foobar')
         api.content.create(type='Document', id='page4', container=self.portal,
-                           subject=('foobar', 'foobar2'))
+                           subject=('foobar', 'foobar2'), title='Foobar')
         data = {
             'query': [{
                 'i': 'Subject',
@@ -164,4 +166,23 @@ class TestTiles(unittest.TestCase):
             'Subject': 'foobar'
         })
         tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', data)
-        self.assertEqual(tile.results()['total'], 2)
+        self.assertEqual(tile.results()['total'], 4)
+
+        name = self.prefix + 'querylisting'
+        page = render_tile(self.request, self.portal, name, data)
+        self.assertTrue('Foobar' in page)
+
+    def test_existing_content_tile(self):
+        page = api.content.create(
+            type='Document', id='page1', container=self.portal,
+            subject=('foobar',), title='Foobar', description='Some foobar stuff')
+        data = {
+            'content': [IUUID(page)]
+        }
+        name = self.prefix + 'existing'
+        html = render_tile(self.request, page, name, data)
+        self.assertTrue('existing-content-basic' in html)
+
+        data['display_type'] = 'backgroundimage'
+        html = render_tile(self.request, page, name, data)
+        self.assertTrue('existing-content-backgroundimage' in html)

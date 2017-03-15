@@ -383,4 +383,18 @@
     factory=".navigation.VerticalView"
     />
 
+  <!-- existing content views -->
+  <adapter
+    name="existing.basic"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".existing.BasicView"
+    />
+  <adapter
+    name="existing.backgroundimage"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".existing.BackgroundImageView"
+    />
+
 </configure>

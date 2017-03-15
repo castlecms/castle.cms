@@ -1,6 +1,6 @@
 from castle.cms.tiles.base import BaseTile
+from castle.cms.tiles.base import DisplayTypeTileMixin
 from castle.cms.tiles.views import BaseTileView
-from castle.cms.tiles.views import getTileView
 from castle.cms.tiles.views import TileViewsSource
 from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import PreviewSelectFieldWidget
@@ -37,8 +37,68 @@ def _query_val(val):
     return _list(val)
 
 
-class QueryListingTile(BaseTile):
+class DefaultView(BaseTileView):
+    name = 'default'
+    preview = '++plone++castle/images/previews/querylisting/default.png'
+    order = 0
+    index = ViewPageTemplateFile('templates/querylisting/default.pt')
+    tile_name = 'querylisting'
+
+
+class DefaultNaturalView(BaseTileView):
+    name = 'default-natural'
+    label = 'Default(Natural image)'
+    preview = '++plone++castle/images/previews/querylisting/default.png'
+    order = 0
+    index = ViewPageTemplateFile('templates/querylisting/default-natural.pt')
+    tile_name = 'querylisting'
+
+
+class CompactView(BaseTileView):
+    name = 'compact'
+    preview = '++plone++castle/images/previews/querylisting/compact.png'
+    order = 1
+    index = ViewPageTemplateFile('templates/querylisting/compact.pt')
+    tile_name = 'querylisting'
+
+
+class GridView(BaseTileView):
+    name = 'grid'
+    preview = '++plone++castle/images/previews/querylisting/grid.png'
+    order = 2
+    index = ViewPageTemplateFile('templates/querylisting/grid.pt')
+    tile_name = 'querylisting'
+
+
+class TiledView(BaseTileView):
+    name = 'tiled'
+    preview = '++plone++castle/images/previews/querylisting/tiled.png'
+    order = 3
+    index = ViewPageTemplateFile('templates/querylisting/tiled.pt')
+    tile_name = 'querylisting'
+
+
+class TaggedView(BaseTileView):
+    name = 'tagged'
+    preview = '++plone++castle/images/previews/querylisting/tagged.png'
+    order = 5
+    index = ViewPageTemplateFile('templates/querylisting/tagged.pt')
+    tile_name = 'querylisting'
+
+
+class BlogView(BaseTileView):
+    name = 'blog'
+    order = 5
+    index = ViewPageTemplateFile('templates/querylisting/blog.pt')
+    tile_name = 'querylisting'
+
+
+class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     implements(IPersistentTile)
+
+    display_type_name = 'querylisting'
+    display_type_default = 'default'
+    display_type_fallback_view = DefaultView
 
     query_attrs = ('SearchableText', 'Subject', 'sort_on', 'Title')
     mapped_tags = set([
@@ -118,6 +178,9 @@ class QueryListingTile(BaseTile):
             if form.get(attr):
                 val = _list(form.get(attr))
                 if attr in query and len(set(val) & set(_query_val(query[attr]))) > 0:
+                    # matches here when subject is in the original query
+                    # so we're trying to turn this into an AND query with manual
+                    # filtering later
                     subject_filter = val[0]
                 else:
                     if attr == 'Subject':
@@ -194,72 +257,6 @@ class QueryListingTile(BaseTile):
             'selector': '#query-results-%s' % self.id or ''
         }
         return json.dumps(config)
-
-    def render_display(self):
-        view = getTileView(self.context, self.request, 'querylisting',
-                           self.data.get('display_type', 'default') or 'default',
-                           default='default')
-        if view is None:
-            view = DefaultView(self.context, self.request)
-
-        view.tile = self
-        return view()
-
-
-class DefaultView(BaseTileView):
-    name = 'default'
-    preview = '++plone++castle/images/previews/querylisting/default.png'
-    order = 0
-    index = ViewPageTemplateFile('templates/querylisting/default.pt')
-    tile_name = 'querylisting'
-
-
-class DefaultNaturalView(BaseTileView):
-    name = 'default-natural'
-    label = 'Default(Natural image)'
-    preview = '++plone++castle/images/previews/querylisting/default.png'
-    order = 0
-    index = ViewPageTemplateFile('templates/querylisting/default-natural.pt')
-    tile_name = 'querylisting'
-
-
-class CompactView(BaseTileView):
-    name = 'compact'
-    preview = '++plone++castle/images/previews/querylisting/compact.png'
-    order = 1
-    index = ViewPageTemplateFile('templates/querylisting/compact.pt')
-    tile_name = 'querylisting'
-
-
-class GridView(BaseTileView):
-    name = 'grid'
-    preview = '++plone++castle/images/previews/querylisting/grid.png'
-    order = 2
-    index = ViewPageTemplateFile('templates/querylisting/grid.pt')
-    tile_name = 'querylisting'
-
-
-class TiledView(BaseTileView):
-    name = 'tiled'
-    preview = '++plone++castle/images/previews/querylisting/tiled.png'
-    order = 3
-    index = ViewPageTemplateFile('templates/querylisting/tiled.pt')
-    tile_name = 'querylisting'
-
-
-class TaggedView(BaseTileView):
-    name = 'tagged'
-    preview = '++plone++castle/images/previews/querylisting/tagged.png'
-    order = 5
-    index = ViewPageTemplateFile('templates/querylisting/tagged.pt')
-    tile_name = 'querylisting'
-
-
-class BlogView(BaseTileView):
-    name = 'blog'
-    order = 5
-    index = ViewPageTemplateFile('templates/querylisting/blog.pt')
-    tile_name = 'querylisting'
 
 
 class IQueryListingTileSchema(model.Schema):
