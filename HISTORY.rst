@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.12 (unreleased)
+2.0.12 (2017-03-15)
 -------------------
 
 - Fix paste button not working and throwing unauthorized errors because of
