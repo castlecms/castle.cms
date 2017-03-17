@@ -4,7 +4,8 @@ Changelog
 2.0.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- auto detect lead images from content in the layout
+  [vangheem]
 
 
 2.0.12 (2017-03-15)

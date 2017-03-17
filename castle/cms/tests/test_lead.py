@@ -68,6 +68,18 @@ class TestLeadImages(unittest.TestCase):
         image = lead.find_image(self.page_obj)
         self.assertEquals(IUUID(image), self.img_uid)
 
+    def test_find_image_in_annotation_with_html_on_object(self):
+        annotations = IAnnotations(self.page_obj)
+        annotations[ANNOTATIONS_KEY_PREFIX + 'foobar'] = {
+            'content': '''
+<p>
+<img src="resolveuid/{}/@@images/image/large" />
+</p>
+            '''.format(self.img_uid)
+        }
+        image = lead.find_image(self.page_obj)
+        self.assertEquals(IUUID(image), self.img_uid)
+
     def test_add_reference_image(self):
         self.page_obj.text = RichTextValue('''
 <p>

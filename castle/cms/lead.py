@@ -46,13 +46,24 @@ def find_image_in_annotation(data):
                 continue
             if isinstance(data, list):
                 val = val[0]
-            im = uuidToObject(val)
-            if im is not None and has_image(im):
-                return im
+            if not isinstance(val, basestring):
+                continue
+            val = val.strip()
+            if '<' in val:
+                # possible html...
+                return find_image_in_html(val)
+            else:
+                im = uuidToObject(val)
+                if im is not None and has_image(im):
+                    return im
 
 
 def find_image_in_html(html):
-    dom = fromstring(html)
+    try:
+        dom = fromstring(html)
+    except:
+        # could not parse...
+        return
     for img in dom.cssselect('img'):
         src = img.attrib.get('src')
         if not src:
