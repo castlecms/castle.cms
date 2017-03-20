@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.14 (unreleased)
+2.0.14 (2017-03-20)
 -------------------
 
 - Provide information on lead image when inspecting history
