@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.13 (unreleased)
+2.0.13 (2017-03-20)
 -------------------
 
 - Fix invalid date issue from crawled pages on search results page
