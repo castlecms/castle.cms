@@ -5,7 +5,6 @@ from plone.app.blocks import gridsystem
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.utils import getLayout
-from plone.dexterity.interfaces import IDexterityContent
 from plone.namedfile.interfaces import INamedField
 from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
@@ -48,6 +47,15 @@ class DexterityItem(adapters.DexterityItem):
         if has_image(self.context):
             self.image = self.file = self.context.image
             self.field_name = 'image'
+
+    @property
+    def file_length(self):
+        if self.has_enclosure:
+            try:
+                return self.file.getSize()
+            except POSKeyError:
+                pass
+        return 0
 
     @property
     def image_url(self):

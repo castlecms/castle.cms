@@ -4,7 +4,8 @@ Changelog
 2.0.14 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Handle zeoserver errors for syndication
+  [vangheem]
 
 
 2.0.13 (2017-03-20)
