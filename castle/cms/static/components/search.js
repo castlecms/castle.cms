@@ -235,13 +235,18 @@ require([
       if(this.state.searchSite){
         target = '_blank';
       }
+
+      var dateNode = '';
+      if(modified.isValid()){
+        dateNode = D.span({ className: 'result-modified' }, modified.fromNow());
+      }
       return D.li({}, [
         D.span({ className: "result-title" }, [
           ct,
           D.a({ href: item.url, target: target, className: "state-" + item.review_state }, item.Title)
         ]),
         D.span({ className: 'result-url'}, item.base_url),
-        D.span({ className: 'result-modified' }, modified.fromNow()),
+        dateNode,
         D.span({ className: "result-description" }, item.Description),
         download
       ]);

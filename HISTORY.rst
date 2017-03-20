@@ -4,6 +4,9 @@ Changelog
 2.0.13 (unreleased)
 -------------------
 
+- Fix invalid date issue from crawled pages on search results page
+  [vangheem]
+
 - auto detect lead images from content in the layout
   [vangheem]
 

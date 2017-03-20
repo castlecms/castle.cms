@@ -70,10 +70,12 @@ class Crawler(object):
         'created': [
             'meta[name="DC.date.created"]',
             'meta[name="creationDate"]',
+            'meta[name="publicationDate"]',
         ],
         'modified': [
             'meta[name="DC.date.modified"]',
             'meta[name="modificationDate"]',
+            'meta[name="publicationDate"]',
         ],
         'effective': [
             'meta[name="publicationDate"]',

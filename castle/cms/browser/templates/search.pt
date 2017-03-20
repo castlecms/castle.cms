@@ -15,7 +15,7 @@
           href="${portal_url}/++plone++castle/less/misc/search.css?v=4">
   </metal:block>
   <metal:javascript fill-slot="javascript_head_slot">
-    <script type="text/javascript" src="${context/portal_url}/++plone++castle/components/search.js?v=4">
+    <script type="text/javascript" src="${context/portal_url}/++plone++castle/components/search.js?v=5">
     </script>
   </metal:javascript>
 </head>
