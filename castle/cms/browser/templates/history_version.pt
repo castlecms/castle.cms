@@ -108,9 +108,30 @@ window.onpopstate = function(e){
         <div tal:replace="structure python: view.getContent(obj)" />
 
         <hr />
-        <p class="discreet" tal:condition="python: utils.has_image(obj)">
-          This version has a lead image assigned to it.
-        </p>
+        <h3>Lead image</h3>
+        <div class="history-lead-image"
+             tal:define="referenced python: view.get_referenced_image(obj)">
+          <div class="history-has-lead-image" tal:condition="python: utils.has_image(obj)">
+            <p class="discreet">
+              This version has a lead image assigned to it.
+            </p>
+            <img src="${obj/absolute_url}/@@images/image/mini" />
+            <p tal:condition="python: referenced is None">
+              Filename: ${python: obj.image.filename}
+            </p>
+            <p tal:condition="python: referenced is not None">
+              Referenced image:
+              <a href="${python: referenced.absolute_url()}/view">
+                ${python: utils.get_path(referenced)}
+              </a>
+            </p>
+          </div>
+          <div class="history-no-lead-image" tal:condition="python: not utils.has_image(obj)">
+            <p class="discreet">
+              No lead image assigned to this version.
+            </p>
+          </div>
+        </div>
       </div>
 
     </metal:main>

@@ -90,6 +90,9 @@ class IUtils(Interface):
     def add_resource_on_request():
         pass
 
+    def get_path():
+        pass
+
 
 class IDashboardUtils(Interface):
     def get_totals():

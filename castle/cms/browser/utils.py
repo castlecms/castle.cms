@@ -108,6 +108,9 @@ class Utils(BrowserView):
     def has_image(self, obj):
         return utils.has_image(obj)
 
+    def get_path(self, obj):
+        return utils.get_path(obj)
+
     def valid_date(self, date):
         if not date:
             return False

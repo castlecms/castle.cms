@@ -1,3 +1,4 @@
+from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.interfaces import IVersionViewLayer
 from DateTime import DateTime
 from lxml.html import fromstring
@@ -84,3 +85,10 @@ class HistoryVersionView(DiffView):
             if str(version['version_id']) == self.request.form.get('version'):
                 self.version_info = version
         return self.template()
+
+    def get_referenced_image(self, obj):
+        if IReferenceNamedImage.providedBy(obj.image):
+            catalog = api.portal.get_tool('portal_catalog')
+            brains = catalog.unrestrictedSearchResults(UID=self.context.image.reference)
+            if len(brains) > 0:
+                return brains[0].getObject()

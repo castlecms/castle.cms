@@ -4,6 +4,9 @@ Changelog
 2.0.14 (unreleased)
 -------------------
 
+- Provide information on lead image when inspecting history
+  [vangheem]
+
 - Handle zeoserver errors for syndication
   [vangheem]
 
