@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.15 (unreleased)
+2.0.15 (2017-03-21)
 -------------------
 
 - Fix OFS missing import in importtypes
