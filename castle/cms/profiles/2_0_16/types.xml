@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<object meta_type="Plone Types Tool" name="portal_types">
+ <property name="title">Controls the available content types in your portal</property>
+ <object meta_type="Dexterity FTI" name="Event" />
+</object>

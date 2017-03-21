@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<object name="Event" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+ <!-- Enabled behaviors -->
+ <property name="behaviors" purge="false">
+  <element value="plone.app.event.dx.behaviors.IEventBasic"/>
+  <element value="plone.app.event.dx.behaviors.IEventRecurrence"/>
+  <element value="plone.app.event.dx.behaviors.IEventLocation"/>
+  <element value="plone.app.event.dx.behaviors.IEventAttendees"/>
+  <element value="plone.app.event.dx.behaviors.IEventContact"/>
+  <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
+  <element value="plone.app.content.interfaces.INameFromTitle"/>
+  <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>
+  <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+  <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
+  <element value="plone.app.dexterity.behaviors.id.IShortName"/>
+  <element value="plone.app.relationfield.behavior.IRelatedItems"/>
+  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="plone.app.lockingbehavior.behaviors.ILocking" />
+
+  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage" />
+  <element value="castle.cms.behaviors.search.ISearch"/>
+
+  <!-- do we want layout support?
+  <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
+  <element value="plone.app.drafts.interfaces.IDraftable" />
+  -->
+ </property>
+
+</object>

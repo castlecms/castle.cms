@@ -287,17 +287,18 @@ def readPass(path):
             readObject(filepath)
 
 
-print('------------------------------')
-print('Start importing')
-print('------------------------------')
-if args.overwrite:
+if __name__ == '__main__':
     print('------------------------------')
-    print('Importing with overwrite enabled')
+    print('Start importing')
     print('------------------------------')
+    if args.overwrite:
+        print('------------------------------')
+        print('Importing with overwrite enabled')
+        print('------------------------------')
 
-print('doing read pass...')
-# readPass(args.export_directory)
-print('creating objects now...')
-# importFolders(args.export_directory)
-importPages(args.export_directory)
-transaction.commit()
+    print('doing read pass...')
+    # readPass(args.export_directory)
+    print('creating objects now...')
+    # importFolders(args.export_directory)
+    importPages(args.export_directory)
+    transaction.commit()

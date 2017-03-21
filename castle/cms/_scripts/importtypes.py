@@ -4,7 +4,12 @@ from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.dexterity.behaviors.metadata import IBasic
 from plone.app.dexterity.behaviors.metadata import ICategorization
 from plone.app.dexterity.behaviors.metadata import IPublication
+from plone.app.event.dx.behaviors import IEventAttendees
+from plone.app.event.dx.behaviors import IEventBasic
+from plone.app.event.dx.behaviors import IEventContact
+from plone.app.event.dx.behaviors import IEventLocation
 from plone.app.textfield.value import RichTextValue
+from plone.event.utils import pydt
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 
@@ -46,7 +51,12 @@ FOLDER_DEFAULT_PAGE_LAYOUT = u"""
   </body>
 </html>
 """
+
 _types = {}
+
+
+def registerImportType(name, klass):
+    _types[name] = klass
 
 
 def isBase64(s):
@@ -79,8 +89,19 @@ def _generate_file_repo_object_id(path):
     return path.replace('/', '-')
 
 
+def DateTime_to_datetime(val):
+    if hasattr(val, 'asdatetime'):
+        return pydt(val)
+    return val
+
+
 class BaseImportType(object):
     layout = ''
+    fields_mapping = {}
+    data_converters = {}
+    lead_image_field_names = ('image', 'leadImage')
+    lead_image_caption_field_names = ('leadCaption', 'leadImage_caption')
+    behavior_data_mappers = ()
 
     def __init__(self, data, path, read_phase):
         self.data = data
@@ -100,19 +121,25 @@ class BaseImportType(object):
         data = {
             '_plone.uuid': self.data['uid']
         }
-        if self.field_data.get('image'):
-            im_data = self.field_data.get('image')
-            if hasattr(im_data, 'read'):
-                im_data = im_data.read()
-            filename = self.field_data.get('image_filename')
-            if not filename:
-                filename = self.field_data['id']
-            data['image'] = NamedBlobImage(
-                data=decodeFileData(im_data),
-                filename=toUnicode(filename))
-            if not data['image'].contentType:
-                data['image'].contentType = 'image/jpeg'
-            data['imageCaption'] = self.field_data.get('imageCaption')
+
+        # handle lead images
+        for field_name in self.lead_image_field_names:
+            if self.field_data.get(field_name):
+                im_data = self.field_data.get(field_name)
+                if hasattr(im_data, 'read'):
+                    im_data = im_data.read()
+                filename = self.field_data.get('image_filename')
+                if not filename:
+                    filename = self.field_data['id']
+                data['image'] = NamedBlobImage(
+                    data=decodeFileData(im_data),
+                    filename=toUnicode(filename))
+                if not data['image'].contentType:
+                    data['image'].contentType = 'image/jpeg'
+                for caption_field_name in self.lead_image_caption_field_names:
+                    if caption_field_name in self.field_data:
+                        data['imageCaption'] = self.field_data.get(caption_field_name)
+
         return dict(
             id=self.field_data['id'],
             type=self.data['portal_type'],
@@ -143,7 +170,7 @@ class BaseImportType(object):
 
             bdata = IPublication(obj)
             if field_data['effectiveDate']:
-                bdata.effective = field_data['effectiveDate'].asdatetime()
+                bdata.effective = pydt(field_data['effectiveDate'])
 
         ldata = ILocation(obj, None)
         if ldata:
@@ -166,22 +193,43 @@ class BaseImportType(object):
             elif self.layout:
                 bdata.contentLayout = self.layout
 
+        inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
+        for IBehavior, field_name in self.behavior_data_mappers:
+
+            original_field_name = inv_field_mapping.get(field_name, field_name)
+
+            if original_field_name not in self.field_data:
+                # data not here...
+                continue
+
+            behavior = IBehavior(obj, None)
+            if behavior is None:
+                # behavior not valid for obj type
+                continue
+
+            val = self.field_data[original_field_name]
+
+            if field_name in self.data_converters:
+                val = self.data_converters[field_name](val)
+
+            setattr(behavior, field_name, val)
+
 
 class DocumentType(BaseImportType):
     layout = '++contentlayout++default/document.html'
-_types['Document'] = DocumentType
+registerImportType('Document', DocumentType)
 
 
 class FolderType(BaseImportType):
     layout = '++contentlayout++castle/folder.html'
-_types['Folder'] = FolderType
+registerImportType('Folder', FolderType)
 
 
 class NewsItemType(BaseImportType):
 
     layout = '++contentlayout++castle/newsitem.html'
 
-_types['News Item'] = NewsItemType
+registerImportType('News Item', NewsItemType)
 
 
 class FileType(BaseImportType):
@@ -209,7 +257,7 @@ class FileType(BaseImportType):
             data=decodeFileData(self.field_data['file'].read()),
             filename=toUnicode(self.field_data.get('file_filename')))
         return data
-_types['File'] = FileType
+registerImportType('File', FileType)
 
 
 class ImageType(BaseImportType):
@@ -219,7 +267,7 @@ class ImageType(BaseImportType):
         _id = _generate_file_repo_object_id(path)
         self.field_data['id'] = _id
         self.path = '/image-repository/' + _id
-_types['Image'] = ImageType
+registerImportType('Image', ImageType)
 
 
 class LinkType(BaseImportType):
@@ -247,7 +295,35 @@ class LinkType(BaseImportType):
         else:
             data['remoteUrl'] = self.field_data['remoteUrl']
         return data
-_types['Link'] = LinkType
+registerImportType('Link', LinkType)
+
+
+class EventType(BaseImportType):
+    fields_mapping = {
+        'startDate': 'start',
+        'endDate': 'end',
+        'eventUrl': 'event_url',
+        'contactEmail': 'contact_email',
+        'contactName': 'contact_name',
+        'contactPhone': 'contact_phone'
+    }
+    data_converters = {
+        'start': DateTime_to_datetime,
+        'end': DateTime_to_datetime
+    }
+    behavior_data_mappers = (
+        (IEventBasic, 'start'),
+        (IEventBasic, 'end'),
+        (IEventBasic, 'whole_day'),
+        (IEventBasic, 'open_end'),
+        (IEventAttendees, 'attendees'),
+        (IEventLocation, 'location'),
+        (IEventContact, 'contact_name'),
+        (IEventContact, 'contact_email'),
+        (IEventContact, 'contact_phone'),
+        (IEventContact, 'event_url'),
+    )
+registerImportType('Event', EventType)
 
 
 def getImportType(data, path, read_phase):

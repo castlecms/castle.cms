@@ -18,4 +18,19 @@
       handler=".upgrade_2_0_12.upgrade"
       profile="castle.cms:default"/>
 
+  <genericsetup:registerProfile
+      name="2_0_16"
+      title="Castle CMS upgrade to 2.0.16 profile"
+      directory="../profiles/2_0_16"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:upgradeStep
+      title="Upgrade Castle to 2.0.16"
+      description=""
+      source="*"
+      destination="2016"
+      handler=".upgrade_2_0_16.upgrade"
+      profile="castle.cms:default"/>
+
 </configure>

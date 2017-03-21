@@ -4,7 +4,11 @@ Changelog
 2.0.16 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix event type to have lead image and search customization
+  [vangheem]
+
+- Fix import of event type
+  [vangheem]
 
 
 2.0.15 (2017-03-21)

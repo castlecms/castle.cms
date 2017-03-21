@@ -208,6 +208,38 @@ This is assuming that "client1" is an instance of your site and "mysiteid" is th
 id of your install plone site.
 
 
+To register your own import type(Event example)::
+
+    from castle.cms._scripts.importtypes import BaseImportType
+    from castle.cms._scripts.importtypes import registerImportType
+    from castle.cms._scripts.importtypes import DateTime_to_datetime
+
+    class MyImportType(BaseImportType):
+        fields_mapping = {
+            # list of original field names to new field names
+            # 'startDate': 'start'
+        }
+        data_converters = {
+            # field name -> func(val) -> val
+            # convert data to the format it should be
+            # 'start': DateTime_to_datetime,
+        }
+        behavior_data_mappers = (
+            # (Behavior Interface, field name)
+            # to set behavior data from export data...
+            # (IEventBasic, 'start'),
+        )
+
+        def post_creation(self, obj):
+            '''
+            Additional custom data migration after object is created
+            ''''
+            super(MyType, self).post_creation(obj)
+            obj.foo = 'bar'
+
+    registerImportType('MyType', MyImportType)
+
+
 
 Tile display types
 ------------------
