@@ -4,7 +4,11 @@ Changelog
 2.0.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix OFS missing import in importtypes
+  [vangheem]
+
+- JSON feed now works with body option
+  [obct537]
 
 
 2.0.14 (2017-03-20)
