@@ -1,6 +1,3 @@
-import base64
-import re
-
 from castle.cms.behaviors.location import ILocation
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contenttypes.behaviors.richtext import IRichText
@@ -10,6 +7,10 @@ from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+
+import base64
+import OFS
+import re
 
 
 FOLDER_DEFAULT_PAGE_LAYOUT = u"""
@@ -169,6 +170,7 @@ class BaseImportType(object):
 class DocumentType(BaseImportType):
     layout = '++contentlayout++default/document.html'
 _types['Document'] = DocumentType
+
 
 class FolderType(BaseImportType):
     layout = '++contentlayout++castle/folder.html'
