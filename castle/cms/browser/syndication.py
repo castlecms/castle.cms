@@ -131,8 +131,10 @@ class JSONFeedView(FeedView):
     def index(self):
         items = []
         feed = self.feed()
+        render_body = feed.settings.render_body
+
         for item in feed.items:
-            items.append({
+            json_item = {
                 'title': item.title,
                 'description': item.description,
                 'url': item.link,
@@ -142,7 +144,11 @@ class JSONFeedView(FeedView):
                 'file_length': item.file_length,
                 'image_url': item.image_url,
                 'uid': feed.uid
-            })
+            }
+
+            if render_body:
+                json_item['body'] = item.render_content_core()
+            items.append(json_item)
 
         return json.dumps({
             'url': feed.link,
