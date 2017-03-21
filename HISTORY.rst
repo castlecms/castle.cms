@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.16 (unreleased)
+2.0.16 (2017-03-21)
 -------------------
 
 - Fix event type to have lead image and search customization
