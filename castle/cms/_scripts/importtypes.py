@@ -125,12 +125,21 @@ class BaseImportType(object):
         # handle lead images
         for field_name in self.lead_image_field_names:
             if self.field_data.get(field_name):
-                im_data = self.field_data.get(field_name)
-                if hasattr(im_data, 'read'):
-                    im_data = im_data.read()
+                im_obj = self.field_data.get(field_name)
+                if hasattr(im_obj, 'read'):
+                    im_data = im_obj.read()
+                else:
+                    im_data = im_obj
+
+                if not im_data:
+                    continue
+
                 filename = self.field_data.get('image_filename')
                 if not filename:
-                    filename = self.field_data['id']
+                    if hasattr(im_obj, 'filename'):
+                        filename = im_obj.filename
+                    else:
+                        filename = self.field_data['id']
                 data['image'] = NamedBlobImage(
                     data=decodeFileData(im_data),
                     filename=toUnicode(filename))

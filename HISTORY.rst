@@ -4,7 +4,9 @@ Changelog
 2.0.17 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix issue where empty lead images would get imported from old lead image package
+  and no filename would be found.
+  [vangheem]
 
 
 2.0.16 (2017-03-21)
