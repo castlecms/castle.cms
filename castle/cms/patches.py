@@ -11,13 +11,13 @@ from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
 from plone import api
 from plone.keyring.interfaces import IKeyManager
-from plone.namedfile.interfaces import INamedField
-from plone.rfc822.interfaces import IPrimaryFieldInfo
+from plone.registry.interfaces import IRegistry
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
+from Products.CMFPlone.interfaces import ITinyMCESchema
 from time import time
-from ZODB.POSException import POSKeyError
 from zope.component import getGlobalSiteManager
+from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implementer
 
@@ -29,18 +29,49 @@ def HideSiteLayoutFields_update(self):
     return
 
 
+_rich_text_widget_types = (
+    'plone_app_z3cform_wysiwyg_widget_WysiwygWidget',
+    'plone_app_z3cform_wysiwyg_widget_WysiwygFieldWidget',
+    'plone_app_widgets_dx_RichTextWidget',
+    'plone_app_z3cform_widget_RichTextFieldWidget',
+
+)
+
+
 def MosaicRegistry_parseRegistry(self):
     cache_key = '%s-mosaic-registry' % '/'.join(api.portal.get().getPhysicalPath()[1:])
     try:
-        return cache.get(cache_key)
+        result = cache.get(cache_key)
     except KeyError:
         result = self._old_parseRegistry()
         cache.set(cache_key, result, 60 * 2)  # cache for 2 minutes
+
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(ITinyMCESchema, prefix="plone", check=False)
+    if settings.libraries_spellchecker_choice != 'AtD':
         return result
+
+    # add atd config to toolbar dynamically
+    mos_settings = result['plone']['app']['mosaic']
+    mos_settings['richtext_toolbar']['AtD'] = {
+        'category': u'actions',
+        'name': u'toolbar-AtD',
+        'weight': 0,
+        'favorite': False,
+        'label': u'After the deadline',
+        'action': u'AtD',
+        'icon': False
+    }
+    for widget_type in _rich_text_widget_types:
+        mos_settings['widget_actions'][widget_type]['actions'].append('toolbar-AtD')
+    mos_settings['structure_tiles']['text']['available_actions'].append('toolbar-AtD')
+    mos_settings['app_tiles']['plone_app_standardtiles_rawhtml']['available_actions'].append('toolbar-AtD')  # noqa
+    return result
 
 
 if not hasattr(ElasticSearchCatalog, 'original_searchResults'):
     ElasticSearchCatalog.original_searchResults = ElasticSearchCatalog.searchResults
+
     def searchResultsTrashed(self, REQUEST=None, check_perms=False, **kw):
         if 'trashed' not in kw:
             kw['trashed'] = False

@@ -84,7 +84,7 @@ def find_image(obj):
             im = find_image_in_annotation(data)
             if im:
                 return im
-    if not getattr(obj, 'contentLayout', None) and getattr(obj, 'content'):
+    if not getattr(obj, 'contentLayout', None) and getattr(obj, 'content', None):
         im = find_image_in_html(obj.content)
         if im is not None:
             return im

@@ -14,6 +14,7 @@ from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
 from plone.app.content.browser import i18n
+from plone.app.drafts.utils import getCurrentDraft
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.dexterity.interfaces import IDexterityContainer
@@ -38,7 +39,6 @@ from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
-from plone.app.drafts.utils import getCurrentDraft
 
 import json
 import logging
@@ -46,6 +46,17 @@ import math
 import os
 import shutil
 import tempfile
+
+
+try:
+    # Python 2.6-2.7
+    from HTMLParser import HTMLParser
+except ImportError:
+    # Python 3
+    from html.parser import HTMLParser
+
+
+html_parser = HTMLParser()
 
 
 logger = logging.getLogger('castle.cms')
@@ -590,6 +601,7 @@ class QualityCheckContent(BrowserView):
             html = adapter.render_content_core().strip()
         except:
             html = ''
+
         if html:
             dom = fromstring(html)
             last = 1
@@ -608,7 +620,8 @@ class QualityCheckContent(BrowserView):
             'id': self.context.getId(),
             'description': self.context.Description(),
             'linksValid': valid,
-            'headersOrdered': headers_ordered
+            'headersOrdered': headers_ordered,
+            'html': html_parser.unescape(html)
         })
 
 

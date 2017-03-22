@@ -4,7 +4,12 @@ Changelog
 2.0.18 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Make AtD support work with mosaic rich text tiles
+  [vangheem]
+
+- Integrate AtD with quality check. If active, quality check will also notify
+  potential spelling/grammar issues.
+  [vangheem]
 
 
 2.0.17 (2017-03-22)
