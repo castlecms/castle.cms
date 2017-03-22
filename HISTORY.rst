@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.0.18 (unreleased)
-----------------
+2.0.18 (2017-03-22)
+-------------------
 
 - Make AtD support work with mosaic rich text tiles
   [vangheem]
