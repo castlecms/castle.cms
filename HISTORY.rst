@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.17 (unreleased)
+2.0.17 (2017-03-22)
 -------------------
 
 - Fix issue where empty lead images would get imported from old lead image package
