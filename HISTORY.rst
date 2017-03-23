@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.19 (unreleased)
+2.0.19 (2017-03-23)
 -------------------
 
 - Fix case where default page would not be imported correctly on some sites. By
