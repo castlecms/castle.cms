@@ -110,9 +110,12 @@ class BaseImportType(object):
         self.read_phase = read_phase
         self.original_type = data['portal_type']
         if data.get('is_default_page'):
+            # change to be folder instead of sub-item...
             self.path = '/'.join(path.split('/')[:-1])
-            if data.get('has_sibling_pages'):
-                self.data['portal_type'] = 'Folder'
+            self.data['portal_type'] = 'Folder'
+            # disabled for now, can think about how to use this more properly...
+            # if data.get('has_sibling_pages'):
+            #     self.data['portal_type'] = 'Folder'
 
     def get_path(self):
         return self.path
@@ -121,33 +124,6 @@ class BaseImportType(object):
         data = {
             '_plone.uuid': self.data['uid']
         }
-
-        # handle lead images
-        for field_name in self.lead_image_field_names:
-            if self.field_data.get(field_name):
-                im_obj = self.field_data.get(field_name)
-                if hasattr(im_obj, 'read'):
-                    im_data = im_obj.read()
-                else:
-                    im_data = im_obj
-
-                if not im_data:
-                    continue
-
-                filename = self.field_data.get('image_filename')
-                if not filename:
-                    if hasattr(im_obj, 'filename'):
-                        filename = im_obj.filename
-                    else:
-                        filename = self.field_data['id']
-                data['image'] = NamedBlobImage(
-                    data=decodeFileData(im_data),
-                    filename=toUnicode(filename))
-                if not data['image'].contentType:
-                    data['image'].contentType = 'image/jpeg'
-                for caption_field_name in self.lead_image_caption_field_names:
-                    if caption_field_name in self.field_data:
-                        data['imageCaption'] = self.field_data.get(caption_field_name)
 
         return dict(
             id=self.field_data['id'],
@@ -199,6 +175,9 @@ class BaseImportType(object):
         if bdata:
             if self.data['portal_type'] == 'Folder' and 'text' in self.field_data:
                 bdata.content = FOLDER_DEFAULT_PAGE_LAYOUT % self.field_data['text']
+                # need to explicitly reset contentLayout value because this data
+                # could be overwritten
+                bdata.contentLayout = None
             elif self.layout:
                 bdata.contentLayout = self.layout
 
@@ -222,6 +201,33 @@ class BaseImportType(object):
                 val = self.data_converters[field_name](val)
 
             setattr(behavior, field_name, val)
+
+        # handle lead images
+        for field_name in self.lead_image_field_names:
+            if self.field_data.get(field_name):
+                im_obj = self.field_data.get(field_name)
+                if hasattr(im_obj, 'read'):
+                    im_data = im_obj.read()
+                else:
+                    im_data = im_obj
+
+                if not im_data:
+                    continue
+
+                filename = self.field_data.get('image_filename')
+                if not filename:
+                    if hasattr(im_obj, 'filename'):
+                        filename = im_obj.filename
+                    else:
+                        filename = self.field_data['id']
+                obj.image = NamedBlobImage(
+                    data=decodeFileData(im_data),
+                    filename=toUnicode(filename))
+                if not obj.image.contentType:
+                    obj.image.contentType = 'image/jpeg'
+                for caption_field_name in self.lead_image_caption_field_names:
+                    if caption_field_name in self.field_data:
+                        obj.imageCaption = self.field_data.get(caption_field_name)
 
 
 class DocumentType(BaseImportType):

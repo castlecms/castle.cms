@@ -4,7 +4,9 @@ Changelog
 2.0.19 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix case where default page would not be imported correctly on some sites. By
+  default import will always attempt to treat a lead image for folder content.
+  [vangheem]
 
 
 2.0.18 (2017-03-22)
