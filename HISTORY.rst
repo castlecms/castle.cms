@@ -4,7 +4,8 @@ Changelog
 2.0.20 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Be able to specify external url for the image tile.
+  [vangheem]
 
 
 2.0.19 (2017-03-23)

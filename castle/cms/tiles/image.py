@@ -48,16 +48,24 @@ class ImageTile(BaseTile):
         return self.utils.get_object(self.data['image'][0])
 
     def get_link(self):
+        if self.data.get('external_link'):
+            return self.data.get('external_link')
+
         link = self.data.get('link')
         if not link:
             return
         try:
-            return self.utils.get_object(link[0])
+            ob = self.utils.get_object(link[0])
+            if ob is not None:
+                return ob.absolute_url()
         except:
             pass
 
 
 class IImageTileSchema(model.Schema):
+
+    model.fieldset(
+        'link', label='Link', fields=('link', 'external_link'))
 
     form.widget(image=ImageRelatedItemFieldWidget)
     image = schema.List(
@@ -125,6 +133,13 @@ class IImageTileSchema(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
         )
+    )
+
+    external_link = schema.TextLine(
+        title=u'External Link',
+        description=u'If provided, internal link is ignored',
+        required=False,
+        default=u''
     )
 
     @invariant

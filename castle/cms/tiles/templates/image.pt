@@ -6,12 +6,12 @@
   <div class="image-tile-container ${dt}"
        tal:define="caption view/data/caption|nothing"
        tal:condition="nocall: image">
-    <a href="${link/absolute_url|nothing}" tal:omit-tag="not: link"
+    <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt in ('natural', 'fullwidth')">
       <img src="${image/absolute_url}/@@images/image/${scale}"
            alt="${image/Description}" />
     </a>
-    <a href="${link/absolute_url|nothing}" tal:omit-tag="not: link"
+    <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt not in ('natural', 'fullwidth')">
       <div tal:replace="structure python: view.utils.focal_image_tag(image, scale, focal=fp)" />
     </a>
