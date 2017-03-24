@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.21 (unreleased)
+2.0.21 (2017-03-24)
 -------------------
 
 - Fix some cases where default plone workflow was assumed
