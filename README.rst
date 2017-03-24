@@ -117,6 +117,8 @@ To specify custom Firefox binary to match versions:
 
 Non-Selenium tests:
 
+since selenium can be flaky...
+
 .. code-block:: shell
 
   ./bin/test -s castle.cms -t \!selenium

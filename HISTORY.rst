@@ -4,7 +4,8 @@ Changelog
 2.0.21 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix some cases where default plone workflow was assumed
+  [vangheem]
 
 
 2.0.20 (2017-03-24)

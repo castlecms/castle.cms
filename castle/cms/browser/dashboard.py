@@ -2,6 +2,7 @@ from castle.cms import ua
 from castle.cms.interfaces import IDashboardUtils
 from castle.cms.lockout import get_active_sessions
 from castle.cms.lockout import SessionManager
+from castle.cms.utils import publish_content
 from collective.elasticsearch.es import ElasticSearchCatalog
 from elasticsearch import TransportError
 from plone import api
@@ -42,9 +43,10 @@ class Dashboard(BrowserView):
             dashboards = self.context['dashboards']
             if not IHideFromBreadcrumbs.providedBy(dashboards):
                 alsoProvides(dashboards, IHideFromBreadcrumbs)
-            if api.content.get_state(obj=dashboards, default='Unknown') != 'published':
+            if api.content.get_state(obj=dashboards, default='Unknown') not in (
+                    'published', 'publish_internally'):
                 write = True
-                api.content.transition(obj=dashboards, transition='publish')
+                publish_content(dashboards)
 
         member = api.user.get_current()
         user_id = member.getId()

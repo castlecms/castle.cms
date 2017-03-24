@@ -39,6 +39,7 @@ from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from castle.cms.utils import publish_content
 
 import json
 import logging
@@ -208,8 +209,8 @@ class Creator(BrowserView):
     def handle_auto_folder_creation(self, folder, type_):
         # we only auto publish built-in repositories, otherwise, leave it be
         try:
-            if api.content.get_state(obj=folder) != 'published':
-                api.content.transition(obj=folder, transition='publish')
+            if api.content.get_state(obj=folder) not in ('published', 'publish_internally'):
+                publish_content(folder)
         except WorkflowException:
             pass
 

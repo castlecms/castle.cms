@@ -761,3 +761,14 @@ def get_permission_title(permission):
     if add_perm_ob:
         permission = add_perm_ob.title
     return permission
+
+
+def publish_content(obj):
+    try:
+        api.content.transition(obj=obj, transition='publish')
+    except api.exc.InvalidParameterError:
+        try:
+            api.content.transition(obj=obj, transition='publish_internally')
+        except api.exc.InvalidParameterError:
+            # not a valid transition, move on I guess...
+            pass
