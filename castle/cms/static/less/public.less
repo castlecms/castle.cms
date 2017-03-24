@@ -103,3 +103,43 @@
     width: 16.66666667%;
   }
 }
+
+.feature-tile-row {
+  background-color: white;
+}
+.feature-tile-expanded-container {
+  position: absolute;
+  left: -999em;
+  display: inline;
+  &.active {
+    width: 100%;
+    float: left;
+    left: auto;
+    position: relative;
+  }
+}
+
+@media (min-width: 991px) {
+  .mosaic-grid-row {
+    position: relative;
+  }
+  .feature-tile-expanded-container.active {
+    ~ .mosaic-position-two-thirds {
+      position: absolute;
+      top: 0px;
+      left: 66.666666%;
+    }
+    ~ .mosaic-position-third {
+      position: absolute;
+      top: 0px;
+      right: 33.333333%;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .feature-tile-expanded-container.active {
+    float: none;
+    width: auto;
+  }
+}

@@ -85,7 +85,8 @@ $(document).ready(function(){
     var $feature = $(this);
     var $details = $('.feature-tile-expanded-container', $feature);
 
-    var $rowContainer = $feature.closest('.row');
+    var $rowContainer = $feature.closest('.row .mosaic-grid-cell');
+
     $rowContainer.addClass('feature-tile-row');
     $details.insertAfter($rowContainer);
 
