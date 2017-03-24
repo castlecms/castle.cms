@@ -667,7 +667,7 @@ define([
     render: function(){
       var imgSrc = [D.img({ src: $('body').attr('data-portal-url') + '/++plone++castle/images/castle-logo.png', alt:'Castle'})];
       return D.div({className: 'castle-toolbar-container-top'}, [
-         D.a({ href:'/', className: 'castle-toolbar-logo'}, imgSrc),
+         D.a({ href:$('body').attr('data-portal-url'), className: 'castle-toolbar-logo'}, imgSrc),
         this.renderBreadcrumbs(),
         D.div({ className: 'castle-toolbar-buttons', onClick: function(e){
             e.stopPropagation();

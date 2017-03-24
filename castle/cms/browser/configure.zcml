@@ -689,4 +689,17 @@
     permission="zope2.View"
     />
 
+  <!--
+    AtD Support
+    Plone's support for ATD with http connection does not work
+  -->
+  <browser:page
+    for="*"
+    name="checkDocument"
+    class=".atd.ATDProxyView"
+    permission="zope2.View"
+    attribute="checkDocument"
+    layer="..interfaces.ICastleLayer"
+    />
+
 </configure>

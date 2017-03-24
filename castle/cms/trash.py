@@ -11,7 +11,7 @@ def object(ob):
     if state is not None and state != 'private':
         try:
             api.content.transition(obj=ob, to_state='private')
-        except:
+        except api.exc.InvalidParameterError:
             pass
 
     alsoProvides(ob, ITrashed)

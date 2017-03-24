@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from castle.cms.testing import BaseTest
-from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.tests.test_image import zptlogo
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
@@ -23,12 +22,14 @@ class TestSyndication(BaseTest):
     def test_json_feed_when_active(self):
         settings = FeedSettings(self.portal)
         settings.feed_types = ['feed.json']
+        settings.enabled = True
         resp = self.publish('/plone/feed.json')
         self.assertEqual(resp.status_code, 200)
 
     def test_json_feed_contents(self):
         settings = FeedSettings(self.portal)
         settings.feed_types = ['feed.json']
+        settings.enabled = True
         resp = self.publish('/plone/feed.json')
         result = json.loads(resp.body)
         self.assertEqual(result['title'], u'Plone site')
@@ -37,6 +38,7 @@ class TestSyndication(BaseTest):
 
     def test_image_url_with_json(self):
         settings = FeedSettings(self.portal)
+        settings.enabled = True
         settings.feed_types = ['feed.json']
         page = self.portal['front-page']
         page.image = self._get_image()

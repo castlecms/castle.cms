@@ -117,6 +117,8 @@ To specify custom Firefox binary to match versions:
 
 Non-Selenium tests:
 
+since selenium can be flaky...
+
 .. code-block:: shell
 
   ./bin/test -s castle.cms -t \!selenium
@@ -328,3 +330,16 @@ To run upgrades::
   - click the "Upgrades" tab
   - select "castle.cms:default" and click "choose profile"
   - from here, you should get a list of available upgrades to run
+
+
+After the deadline
+------------------
+
+Castle integrates with Plone's basic tinymce after the deadline support to::
+
+  - also support after the deadline in rich text tiles
+  - integrate spelling/grammar check with content quality check
+
+To utilize after the deadline integration, configure after the deadline in the
+plone tinymce configuration panel and castle will pay attention to the settings
+selected there.

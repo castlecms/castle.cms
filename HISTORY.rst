@@ -1,10 +1,51 @@
 Changelog
 =========
 
-2.0.17 (unreleased)
+2.0.22 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.0.21 (2017-03-24)
+-------------------
+
+- Fix some cases where default plone workflow was assumed
+  [vangheem]
+
+
+2.0.20 (2017-03-24)
+-------------------
+
+- Be able to specify external url for the image tile.
+  [vangheem]
+
+
+2.0.19 (2017-03-23)
+-------------------
+
+- Fix case where default page would not be imported correctly on some sites. By
+  default import will always attempt to treat a lead image for folder content.
+  [vangheem]
+
+
+2.0.18 (2017-03-22)
+-------------------
+
+- Make AtD support work with mosaic rich text tiles
+  [vangheem]
+
+- Integrate AtD with quality check. If active, quality check will also notify
+  potential spelling/grammar issues.
+  [vangheem]
+
+
+2.0.17 (2017-03-22)
+-------------------
+
+- Fix issue where empty lead images would get imported from old lead image package
+  and no filename would be found.
+  [vangheem]
 
 
 2.0.16 (2017-03-21)

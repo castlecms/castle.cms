@@ -95,7 +95,11 @@ def recursive_create_path(path):
                         creation_data = importtype.get_data()
                         creation_data['container'] = folder
                         creation_data['id'] = part
-                        folder = api.content.create(**creation_data)
+                        try:
+                            folder = api.content.create(**creation_data)
+                        except api.exc.InvalidParameterError:
+                            logger.error('Error creating content {}'.format(fpath), exc_info=True)
+                            return
                         importtype.post_creation(folder)
                         if data['state']:
                             try:
@@ -186,6 +190,8 @@ def importObject(filepath, count):
     importtype = getImportType(data, original_path, _read_phase)
     path = importtype.get_path()
     folder = recursive_create_path('/'.join(path.split('/')[:-1]))
+    if folder is None:
+        print('Skipped {} because of creation error'.format(filepath))
     _id = path.split('/')[-1]
 
     create = True
@@ -212,7 +218,10 @@ def importObject(filepath, count):
             aspect.setImmediatelyAddableTypes([creation_data['type']])
 
     if create:
-        obj = api.content.create(**creation_data)
+        try:
+            obj = api.content.create(**creation_data)
+        except api.exc.InvalidParameterError:
+            return logger.error('Error creating content {}'.format(filepath), exc_info=True)
     else:
         obj = folder[_id]
         for key, value in creation_data.items():
