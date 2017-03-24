@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.20 (unreleased)
+2.0.20 (2017-03-24)
 -------------------
 
 - Be able to specify external url for the image tile.
