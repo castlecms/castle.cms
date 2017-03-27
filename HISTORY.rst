@@ -4,6 +4,9 @@ Changelog
 2.0.23 (unreleased)
 -------------------
 
+- Be able to provide dynamic query for gallery and slider tiles
+  [vangheem]
+
 - Fix issue where feature tile was not mobile friendly
   [RobZoneNet]
 

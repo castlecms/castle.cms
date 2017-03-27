@@ -1,4 +1,4 @@
-from castle.cms.tiles.content import ContentTile
+from castle.cms.tiles.base import ContentTile
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model

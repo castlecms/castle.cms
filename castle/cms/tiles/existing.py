@@ -1,5 +1,5 @@
 from castle.cms.tiles.base import DisplayTypeTileMixin
-from castle.cms.tiles.content import ContentTile
+from castle.cms.tiles.base import ContentTile
 from castle.cms.tiles.content import IContentTileSchema
 from castle.cms.tiles.views import BaseTileView
 from castle.cms.tiles.views import TileViewsSource

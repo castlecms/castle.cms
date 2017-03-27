@@ -1,4 +1,5 @@
 from plone.memoize.view import memoize
+from castle.cms.utils import parse_query_from_data
 from plone.memoize.view import memoize_contextless
 from plone.tiles import Tile
 from plone.tiles.interfaces import IPersistentTile
@@ -168,8 +169,42 @@ class DisplayTypeTileMixin(object):
         return view()
 
 
-class BaseImagesTile(BaseTile):
+class ContentTile(BaseTile):
     implements(IPersistentTile)
+    default_display_fields = ('title', 'image', 'description')
+    sort_limit = 1
+
+    def render(self):
+        return self.index()
+
+    @property
+    def content(self):
+        if self.data.get('use_query') in ('True', True, 'true'):
+            catalog = getToolByName(self.context, 'portal_catalog')
+            items = catalog(**self.query)
+            if len(items) > 0:
+                return items[0].getObject()
+        else:
+            return self.utils.get_object(self.data['content'][0])
+
+    @property
+    def query(self):
+        parsed = parse_query_from_data(self.data, self.context)
+        if self.sort_limit:
+            parsed['sort_limit'] = self.sort_limit
+        return parsed
+
+    @property
+    def display_fields(self):
+        df = self.data.get('display_fields', None)
+        if df is None:
+            df = self.default_display_fields
+        return df
+
+
+class BaseImagesTile(ContentTile):
+    implements(IPersistentTile)
+    sort_limit = 0
 
     def get_image_data_from_brain(self, brain):
         base_url = brain.getURL()
@@ -217,6 +252,21 @@ class BaseImagesTile(BaseTile):
 
     @property
     def images(self):
+        if self.data.get('use_query') in ('True', True, 'true'):
+            return self.query_images()
+        else:
+            return self.get_selected_images()
+
+    def query_images(self):
+        catalog = getToolByName(self.context, 'portal_catalog')
+        results = []
+        query = self.query
+        query['hasImage'] = True
+        for brain in catalog(**query):
+            results.append(self.get_image_data_from_brain(brain))
+        return results
+
+    def get_selected_images(self):
         results = []
         brains = list(self.catalog(UID=self.data.get('images', [])))
         # we need to order this since catalog results are not ordered

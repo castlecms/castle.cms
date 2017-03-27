@@ -1,11 +1,9 @@
-import json
-
 from castle.cms.tiles.base import BaseImagesTile
-from castle.cms.widgets import ImageRelatedItemsFieldWidget
-from plone.autoform import directives as form
-from plone.supermodel import model
+from castle.cms.tiles.content import IImagesTileSchema
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
+
+import json
 
 
 class SliderTile(BaseImagesTile):
@@ -29,19 +27,7 @@ class SliderTile(BaseImagesTile):
         return self.data.get('height', 250)
 
 
-class ISliderTileSchema(model.Schema):
-
-    form.widget(images=ImageRelatedItemsFieldWidget)
-    images = schema.List(
-        title=u"Images",
-        description=u"Select images or folders of images to display in slider."
-                    u" If the image has a related item selected, that "
-                    u"related item will be used for the link and description "
-                    u"for the slide display",
-        value_type=schema.Choice(
-            vocabulary='plone.app.vocabularies.Catalog'
-        )
-    )
+class ISliderTileSchema(IImagesTileSchema):
 
     animation = schema.Choice(
         title=u'Animation',

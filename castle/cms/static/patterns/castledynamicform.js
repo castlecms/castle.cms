@@ -86,7 +86,7 @@ define([
       return $('div[id$="-query"]', this.$form);
     },
     getContent: function(){
-      return $('div[id$="-content"]', this.$form);
+      return $('div[id$="-content"],div[id$="-images"]', this.$form);
     },
     getCustomText: function(){
       return $('div[id$="-custom_text"]', this.$form);
