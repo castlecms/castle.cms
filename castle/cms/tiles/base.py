@@ -180,7 +180,7 @@ class BaseImagesTile(BaseTile):
             'thumb': '%s/@@images/image/thumb' % base_url,
             'original': base_url,
             'title': brain.Title,
-            'description': brain.Description,
+            'description': brain.Description or '',
             'link': '%s/view' % base_url
         }
 
@@ -194,7 +194,7 @@ class BaseImagesTile(BaseTile):
             'thumb': '%s/@@images/image/thumb' % base_url,
             'original': base_url,
             'title': im.Title(),
-            'description': im.Description(),
+            'description': im.Description() or '',
             'link': '%s/view' % related.absolute_url()
         }
 

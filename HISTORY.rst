@@ -4,7 +4,8 @@ Changelog
 2.0.23 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Provide link back to original image item from slider/gallery tiles
+  [vangheem]
 
 
 2.0.22 (2017-03-27)
