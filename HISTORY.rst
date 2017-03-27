@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.25 (2017-03-27)
+2.0.24 (2017-03-27)
 -------------------
 
 - Do not require selection of images for gallery/slider tile so that query
