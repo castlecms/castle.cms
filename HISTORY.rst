@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.23 (unreleased)
+2.0.23 (2017-03-27)
 -------------------
 
 - Be able to provide dynamic query for gallery and slider tiles
