@@ -177,16 +177,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         for attr in self.query_attrs:
             if form.get(attr):
                 val = _list(form.get(attr))
-                if attr in query and len(set(val) & set(_query_val(query[attr]))) > 0:
-                    # matches here when subject is in the original query
-                    # so we're trying to turn this into an AND query with manual
-                    # filtering later
-                    subject_filter = val[0]
-                else:
-                    if attr == 'Subject':
-                        query[attr] = val
+                if attr == 'Subject':
+                    if attr in query and len(set(val) & set(_query_val(query[attr]))) > 0:
+                        # matches here when subject is in the original query
+                        # so we're trying to turn this into an AND query with manual
+                        # filtering later
+                        subject_filter = val[0]
                     else:
-                        query[attr] = val[0]
+                        query[attr] = val
+                else:
+                    query[attr] = val[0]
 
         result = catalog(**query)
         if subject_filter is not None:

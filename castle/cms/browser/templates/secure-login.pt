@@ -6,19 +6,21 @@
           rel="stylesheet" type="text/css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   </head>
-  <body tal:define="utils context/@@castle-utils;
-                    logo utils/get_logo|nothing" class="secure-login-template">
+  <body tal:define="utils context/@@castle-utils;" class="secure-login-template">
 
     <div id="visual-wrapper">
       <div class="castle-login-header">
-        <div class="row" tal:condition="logo">
+        <div class="row" tal:condition="not: view/auth/is_zope_root">
           <div class="col-md-12">
-            <img src="${logo}" />
+            <img src="${utils/get_logo|nothing}" />
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-12" tal:condition="not: view/auth/is_zope_root">
             <h1 tal:on-error="string:Castle CMS">${python: utils.get_registry_value('plone.site_title')}</h1>
+          </div>
+          <div class="col-md-12" tal:condition="view/auth/is_zope_root">
+            <h1>Root authentication</h1>
           </div>
         </div>
       </div>

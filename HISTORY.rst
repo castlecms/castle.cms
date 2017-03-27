@@ -4,7 +4,8 @@ Changelog
 2.0.22 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix case where query results would not correctly get results when using the filter.
+  [vangheem]
 
 
 2.0.21 (2017-03-24)
