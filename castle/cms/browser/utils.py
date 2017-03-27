@@ -17,7 +17,6 @@ from plone.app.layout.globals.interfaces import IViewView
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.layout.viewlets.common import GlobalSectionsViewlet
 from plone.app.uuid.utils import uuidToObject
-from plone.event.utils import pydt
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry

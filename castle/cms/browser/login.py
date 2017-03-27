@@ -1,4 +1,4 @@
-from castle.cms import authentication
+from ZODB.POSException import ConnectionStateError
 from castle.cms import cache
 from castle.cms import texting
 from castle.cms.interfaces import IAuthenticator
@@ -348,9 +348,13 @@ The user requesting this access logged this information:
             'supportedAuthSchemes': self.authenticator.get_supported_auth_schemes(),
             'twoFactorEnabled': self.authenticator.two_factor_enabled,
             'apiEndpoint': '{}/@@secure-login'.format(site_url),
-            'successUrl': site_url,
-            'authenticator': createToken()
+            'successUrl': site_url
         }
+        try:
+            data['authenticator'] = createToken()
+        except ConnectionStateError:
+            # zope root related issue here...
+            pass
 
         username = None
         pwreset = self.request.form.get('pwreset') == 'true'
