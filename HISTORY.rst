@@ -1,10 +1,19 @@
 Changelog
 =========
 
-2.0.24 (unreleased)
+2.0.25 (2017-03-27)
 -------------------
 
-- Nothing changed yet.
+- Do not require selection of images for gallery/slider tile so that query
+  field will work
+  [vangheem]
+
+
+2.0.24 (2017-03-27)
+-------------------
+
+- Fix cron scripts to look in more locations for zope.conf
+  [vangheem]
 
 
 2.0.23 (2017-03-27)

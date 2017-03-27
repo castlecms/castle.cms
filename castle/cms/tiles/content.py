@@ -77,7 +77,8 @@ class IImagesTileSchema(model.Schema):
                     u"gallery",
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
-        )
+        ),
+        required=False
     )
 
     form.widget(query=QueryFieldWidget)
