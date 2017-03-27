@@ -21,7 +21,7 @@ js-plone-logged-in-build:
 
 
 watch-less-plone:
-	python watch-run.py --command="grunt --gruntfile=watchable-grunt.js less-plone" --dirs /opt/plone/src/castle.cms/castle/cms/static/less
+	python watch-run.py --command="grunt --gruntfile=watchable-grunt.js less-plone" --dirs /opt/castle/src/castle.cms/castle/cms/static/less
 
 watch-less-plone-logged-in:
-	python watch-run.py --command="grunt --gruntfile=watchable-grunt.js less-plone-logged-in" --dirs /opt/plone/src/castle.cms/castle/cms/static/less
+	python watch-run.py --command="grunt --gruntfile=watchable-grunt.js less-plone-logged-in" --dirs /opt/castle/src/castle.cms/castle/cms/static/less

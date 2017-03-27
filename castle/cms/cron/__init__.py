@@ -14,6 +14,12 @@ parser.add_argument('--site-id', dest='siteid',
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
 
+possible_zope_confs = (
+    '/opt/plone/parts/client1/etc/zope.conf',
+    '/opt/castle/parts/client1/etc/zope.conf'
+)
+
+
 def script_runner(script, argv=sys.argv):
     args, _ = parser.parse_known_args()
     instance = args.instance
@@ -41,7 +47,10 @@ def script_runner(script, argv=sys.argv):
 
 def run_it(module):
     from Zope2 import configure
-    configure('/opt/plone/parts/client1/etc/zope.conf')
+    for zope_conf in possible_zope_confs:
+        if os.path.exists(zope_conf):
+            configure(zope_conf)
+            break
     import Zope2
     app = Zope2.app()
     from Testing.ZopeTestCase.utils import makerequest
