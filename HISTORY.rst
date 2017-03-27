@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.24 (unreleased)
+2.0.24 (2017-03-27)
 -------------------
 
 - Fix cron scripts to look in more locations for zope.conf
