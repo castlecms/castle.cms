@@ -4,6 +4,9 @@ Changelog
 2.0.23 (unreleased)
 -------------------
 
+- Fix issue where feature tile was not mobile friendly
+  [RobZoneNet]
+
 - Provide link back to original image item from slider/gallery tiles
   [vangheem]
 
