@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.28 (unreleased)
+2.0.28 (2017-03-28)
 -------------------
 
 - Use ssl for maps data urls
