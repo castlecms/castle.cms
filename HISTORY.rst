@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.27 (unreleased)
+2.0.27 (2017-03-27)
 -------------------
 
 - Fix issue where archetypes content in castle.cms would cause potentially
