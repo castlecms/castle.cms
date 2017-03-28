@@ -48,8 +48,8 @@ define([
       self.map = L.map(self.$el[0], {
         scrollWheelZoom: false
       }).setView([center.lat, center.lng], self.options.initialZoom);
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: ''
       }).addTo(self.map);
 
       _.each(markers, function(marker){

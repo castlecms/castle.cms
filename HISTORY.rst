@@ -4,7 +4,8 @@ Changelog
 2.0.28 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Use ssl for maps data urls
+  [vangheem]
 
 
 2.0.27 (2017-03-27)
