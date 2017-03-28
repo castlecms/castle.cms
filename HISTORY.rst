@@ -4,7 +4,8 @@ Changelog
 2.0.26 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix potential issue with upgrading to latest version of collective.elasticsearch
+  [vangheem]
 
 
 2.0.25 (2017-03-27)

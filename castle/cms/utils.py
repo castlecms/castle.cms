@@ -396,7 +396,7 @@ def inline_images_in_dom(dom, portal=None, site_url=None):
 def ESConnectionFactoryFactory(registry=None):
     if registry is None:
         registry = getUtility(IRegistry)
-    settings = registry.forInterface(IElasticSettings)
+    settings = registry.forInterface(IElasticSettings, check=False)
     hosts = settings.hosts
     opts = dict(
         timeout=getattr(settings, 'timeout', 0.5),
