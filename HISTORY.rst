@@ -4,7 +4,8 @@ Changelog
 2.0.25 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix regression from login fix
+  [vangheem]
 
 
 2.0.24 (2017-03-27)

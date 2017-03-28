@@ -1,4 +1,5 @@
 from ZODB.POSException import ConnectionStateError
+from castle.cms import authentication
 from castle.cms import cache
 from castle.cms import texting
 from castle.cms.interfaces import IAuthenticator
