@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.26 (unreleased)
+2.0.26 (2017-03-27)
 -------------------
 
 - Fix potential issue with upgrading to latest version of collective.elasticsearch
