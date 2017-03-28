@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.25 (unreleased)
+2.0.25 (2017-03-27)
 -------------------
 
 - Fix regression from login fix
