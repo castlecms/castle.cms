@@ -1,10 +1,11 @@
-from castle.cms.interfaces import IReferenceNamedImage
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import IHasDefaultImage
+from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.interfaces import ITrashed
+from OFS.interfaces import IItem
 from plone import api
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IImage
@@ -14,7 +15,7 @@ from plone.uuid.interfaces import IUUID
 from ZODB.POSException import POSKeyError
 
 
-@indexer(IDexterityContent)
+@indexer(IItem)
 def getRawRelatedItems(obj):
     try:
         result = []
@@ -32,21 +33,21 @@ def getRawRelatedItems(obj):
         return []
 
 
-@indexer(ILocation)
+@indexer(IItem)
 def getLocation(obj):
     bdata = ILocation(obj, None)
     if bdata and bdata.location:
         return bdata.location[0]
 
 
-@indexer(IDexterityContent)
+@indexer(IItem)
 def hasImage(obj):
     if IHasDefaultImage.providedBy(obj):
         return True
     return getattr(aq_base(obj), 'image', None) is not None
 
 
-@indexer(IDexterityContent)
+@indexer(IItem)
 def image_info(obj):
     try:
         image = obj.image
@@ -72,7 +73,7 @@ def image_info(obj):
         pass
 
 
-@indexer(IDexterityContent)
+@indexer(IItem)
 def getContentTypeContent(obj):
     return 'text/html'
 
@@ -96,7 +97,7 @@ def getContentTypeImage(obj):
         pass
 
 
-@indexer(IDexterityContent)
+@indexer(IItem)
 def trashed(obj):
     while obj:
         if ITrashed.providedBy(obj):

@@ -4,7 +4,9 @@ Changelog
 2.0.27 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix issue where archetypes content in castle.cms would cause potentially
+  inconsistent search results.
+  [vangheem]
 
 
 2.0.26 (2017-03-27)
