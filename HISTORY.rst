@@ -4,7 +4,8 @@ Changelog
 2.0.29 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Change "Read transcript" link to "Transcript | Download"
+  [vangheem]
 
 
 2.0.28 (2017-03-28)

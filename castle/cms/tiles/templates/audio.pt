@@ -19,7 +19,7 @@
     </tal:desc>
     <p class="transcript"
         tal:condition="python: 'transcript' in df">
-      <a href="${audio/absolute_url}/view">Read transcript</a>
+      <a href="${audio/absolute_url}/view">Transcript | Download</a>
     </p>
   </div>
 </tal:audio>
