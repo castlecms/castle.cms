@@ -248,7 +248,7 @@ define([
       var that = this;
       var className = 'castle-btn-dropdown castle-btn-dropdown-' + this.props.name;
       var content = [D.button({ className: 'icon-' + this.props.icon + ' plone-btn plone-btn-default',
-                                onClick: this.btnClicked}, this.props.title)];
+                                onClick: this.btnClicked}, [D.span({}, this.props.title)] )];
       if(this.state.open){
         className += 'opened';
         content.push(D.ul({}, that.props.items.map(function(item){
@@ -683,7 +683,7 @@ define([
                                               user_id: this.props.user_id,
                                               ref: 'messages', onClick: this.btnClicked, name: 'messages'}),
           R.createElement(Dropdown, {icon: 'cog', items: this.props.management_menu,
-                                     ref: 'cog', onClick: this.btnClicked, name: 'cog'}),
+                                     ref: 'cog', onClick: this.btnClicked, name: 'cog', title: 'Site Settings'}),
           R.createElement(Dropdown, {icon: 'user', title: this.props.user.name, ref: 'user',
                                      items: this.props.user_menu, onClick: this.btnClicked,
                                      name: 'user'})
