@@ -7,6 +7,7 @@ Changelog
 - Change "Read transcript" link to "Transcript | Download"
   [vangheem]
 - Fix issue where a span tag was being added to the castle toolbar which is an accessibility issue.
+  [robzonenet]
 
 
 2.0.28 (2017-03-28)
