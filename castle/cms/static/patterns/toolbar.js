@@ -728,7 +728,8 @@ define([
       }
 
       if( items.length === 0 ) {
-        return '';
+        // below rendered a empty span tag when it wasn't in the more ul
+        return null;
       }
 
       return D.li({
