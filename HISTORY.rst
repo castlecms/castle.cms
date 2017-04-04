@@ -4,7 +4,8 @@ Changelog
 2.0.30 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Resolved issue where invalid sort parameters broke the querystring tile. Closes issue #42
+  [obct537]
 
 
 2.0.29 (2017-04-04)

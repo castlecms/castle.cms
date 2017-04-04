@@ -6,6 +6,7 @@ from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import PreviewSelectFieldWidget
 from castle.cms.widgets import QueryFieldWidget
 from DateTime import DateTime
+from plone import api
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
 from plone.memoize.instance import memoize
@@ -149,6 +150,8 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
                 }
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
+
+
         return parsed
 
     @property
@@ -187,6 +190,9 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
                         query[attr] = val
                 else:
                     query[attr] = val[0]
+
+        if query.get('sort_on', '') not in catalog._catalog.indexes:
+            query['sort_on'] = 'effective'
 
         result = catalog(**query)
         if subject_filter is not None:

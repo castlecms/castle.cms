@@ -172,6 +172,30 @@ class TestTiles(unittest.TestCase):
         page = render_tile(self.request, self.portal, name, data)
         self.assertTrue('Foobar' in page)
 
+    def test_querylisting_multiple_sort(self):
+        api.content.create(type='Document', id='page1', container=self.portal,
+                           subject=('foobar',), title='Foobar')
+        api.content.create(type='Document', id='page2', container=self.portal,
+                           subject=('foobar',), title='Foobar')
+        api.content.create(type='Document', id='page3', container=self.portal,
+                           subject=('foobar', 'foobar2'), title='Foobar')
+        api.content.create(type='Document', id='page4', container=self.portal,
+                           subject=('foobar', 'foobar2'), title='Foobar')
+        data = {
+            'query': [{
+                'i': 'Subject',
+                'o': 'plone.app.querystring.operation.list.contains',
+                'v': 'foobar2'
+            }],
+            'available_tags': ('foobar2',)
+        }
+        self.request.form.update({
+            'Subject': 'foobar',
+            'sort_on': 'foobar'
+        })
+        tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', data)
+        self.assertEqual(tile.results()['total'], 4)
+
     def test_existing_content_tile(self):
         page = api.content.create(
             type='Document', id='page1', container=self.portal,
