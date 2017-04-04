@@ -170,6 +170,7 @@ class _Transform(object):
         if isinstance(result, basestring):
             raw = True
         else:
+            self.rewrite(result, context.absolute_url() + '/')
             result = result.tree
 
         theme_base_url = '%s/++%s++%s/index.html' % (
@@ -178,7 +179,6 @@ class _Transform(object):
             self.name)
 
         content = self.get_fill_content(result, raw)
-
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
 
@@ -291,9 +291,9 @@ class _Transform(object):
 
             try:
                 layout = loader[selected_name]
-	    except Exception as e:
-		logger.error('Failed parsing content layout', exc_info=True)
-		layout = None
+            except Exception as e:
+                logger.error('Failed parsing content layout', exc_info=True)
+                layout = None
 
             if layout is None:
                 # default to 'index.html' now
@@ -353,16 +353,21 @@ class _Transform(object):
                     body.attrib.update(plone_view.patterns_settings())
 
     def rewrite(self, dom, base_url):
-        for node in href_xpath(dom.tree):
+        if hasattr(dom, 'tree'):
+            tree = dom.tree
+        else:
+            tree = dom
+        for node in href_xpath(tree):
             url = node.get('href')
             if url:
                 url = join(base_url, url)
                 node.set('href', url)
-        for node in src_xpath(dom.tree):
+        for node in src_xpath(tree):
             url = node.get('src')
             if url:
                 url = join(base_url, url)
                 node.set('src', url)
+        return tree
 
     def bbb(self, dom, result):
         """
@@ -440,7 +445,6 @@ class _Transform(object):
                     "type": "cell",
                     "info": {"pos": {"width": width, "x": 0}}
                 })
-                
 
             classes.append('-'.join(classes))
             classes.append('col-count-%i' % len(found))

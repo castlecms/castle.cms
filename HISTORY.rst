@@ -4,6 +4,10 @@ Changelog
 2.0.30 (unreleased)
 -------------------
 
+- fix cases where generated absolute url was incorrect based on the original
+  result html not being used for the base path
+  [vangheem]
+
 - Resolved issue where invalid sort parameters broke the querystring tile. Closes issue #42
   [obct537]
 

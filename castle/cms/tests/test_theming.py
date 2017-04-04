@@ -4,6 +4,7 @@ from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone.registry import field as registry_field
 from plone.registry import Record
 from plone.registry.interfaces import IRegistry
+from repoze.xmliter.utils import getHTMLSerializer
 from zope.component import getUtility
 
 import unittest
@@ -83,3 +84,13 @@ class TestTheming(unittest.TestCase):
         registry['castle.cms.default_layout'] = u'foobar.html'
         layout_name = transform.get_layout_name(self.portal)
         self.assertEqual(layout_name, 'foobar.html')
+
+    def test_apply_does_not_transform_inner_content(self):
+        transform = theming.getTransform(self.portal, self.request)
+        self.request.environ['X-CASTLE-LAYOUT'] = MINIMAL_LAYOUT
+        result = ''.join(transform(self.request, getHTMLSerializer(['''
+<div id="content">
+<a href="foo/bar" />
+</div>''']), context=self.portal))
+        self.assertTrue('++theme++castle.theme/foo/bar' not in result)
+        self.assertTrue('http://nohost/plone/foo/bar' in result)
