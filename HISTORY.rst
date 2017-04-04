@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.29 (unreleased)
+2.0.29 (2017-04-04)
 -------------------
 
 - Change "Read transcript" link to "Transcript | Download"
