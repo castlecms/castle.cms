@@ -493,8 +493,12 @@ def get_backend_url():
 def parse_query_from_data(data, context=None):
     if context is None:
         context = api.portal.get()
-    parsed = queryparser.parseFormquery(context,
-                                        data.get('query', {}) or {})
+    query = data.get('query', {}) or {}
+    try:
+        parsed = queryparser.parseFormquery(context, query)
+    except KeyError:
+        logger.info('Error parsing query {}'.format(repr(query)))
+        parsed = {}
 
     index_modifiers = getUtilitiesFor(IParsedQueryIndexModifier)
     for name, modifier in index_modifiers:
