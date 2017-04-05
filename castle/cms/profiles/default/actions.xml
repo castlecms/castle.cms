@@ -328,7 +328,7 @@
    <property name="title">Rules</property>
    <property name="description"></property>
    <property
-      name="url_expr">string:${object/absolute_url}/@@manage-content-rules</property>
+      name="url_expr">string:${plone_context_state/canonical_object_url}/@@manage-content-rules</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
    <property
