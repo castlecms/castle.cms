@@ -67,7 +67,8 @@ setup(
             'plone.app.testing',
             'responses',
             'mock',
-            'argon2_cffi'
+            'argon2_cffi',
+            'plone.app.robotframework'
         ],
         'development': [
             'zest.releaser',
