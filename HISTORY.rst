@@ -4,6 +4,9 @@ Changelog
 2.0.30 (unreleased)
 -------------------
 
+- Handle issue getting current user when logging in. Can happen with authomatic
+  [vangheem]
+
 - fix cases where generated absolute url was incorrect based on the original
   result html not being used for the base path
   [vangheem]

@@ -1,6 +1,4 @@
 # login/lockout and shield integration
-from AccessControl.AuthEncoding import _randrange
-from AccessControl.AuthEncoding import constant_time_compare
 from AccessControl.AuthEncoding import pw_encrypt
 from AccessControl.AuthEncoding import registerScheme
 from AccessControl.AuthEncoding import SSHADigestScheme
@@ -71,7 +69,7 @@ def onUserLogsIn(event):
             site = getSite()
             raise Redirect('%s/@@disabled-user' % site.absolute_url())
     except api.exc.UserNotFoundError:
-        pass
+        log.warn('could not find logged in user {}'.format(repr(event.object)))
 
 
 @adapter(IPubAfterTraversal)
