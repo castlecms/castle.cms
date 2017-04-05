@@ -14,7 +14,8 @@ Changelog
 - Resolved issue where invalid sort parameters broke the querystring tile. Closes issue #42
   [obct537]
 
-- Resolved issue where the images were missing due to the url being wrong. Closes issue #17  [robzonenet]
+- Resolved issue where the images were missing due to the url being wrong. Closes issue #17
+  [robzonenet]
 
 
 
