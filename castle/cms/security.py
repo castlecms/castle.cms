@@ -66,9 +66,12 @@ def onUserLogsIn(event):
 
     # do not even allow user to login if the account has been
     # disabled
-    if api.user.get_roles(user=event.object) == ['Authenticated']:
-        site = getSite()
-        raise Redirect('%s/@@disabled-user' % site.absolute_url())
+    try:
+        if api.user.get_roles(user=event.object) == ['Authenticated']:
+            site = getSite()
+            raise Redirect('%s/@@disabled-user' % site.absolute_url())
+    except api.exc.UserNotFoundError:
+        pass
 
 
 @adapter(IPubAfterTraversal)
