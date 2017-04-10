@@ -99,7 +99,7 @@ class IImageTileSchema(model.Schema):
     display_type = schema.Choice(
         title=u'Display type',
         required=True,
-        default=u'natural',
+        default=u'fullwidth',
         vocabulary=SimpleVocabulary([
             SimpleTerm('natural', 'natural', u'Natural'),
             SimpleTerm('fullwidth', 'fullwidth', u'Natural(Full width)'),
