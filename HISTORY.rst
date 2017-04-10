@@ -53,6 +53,9 @@ Changelog
 - export-content.py now works to export dexterity and mosaic pages
   [vangheem]
 
+- Navigation tile now has a depth option
+  [obct537]
+
 - fix crawling gz sitemaps
   [vangheem]
 
