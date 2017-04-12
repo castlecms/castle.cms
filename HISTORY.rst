@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.30 (unreleased)
+2.0.30 (2017-04-12)
 -------------------
 
 - Fix create user to send out correct password reset url
