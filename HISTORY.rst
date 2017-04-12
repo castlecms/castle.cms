@@ -17,6 +17,10 @@ Changelog
 - Resolved issue where the images were missing due to the url being wrong. Closes issue #17
   [robzonenet]
 
+- Resolved issue where the the words 'site settings' showed up when clicked
+  [robzonenet]
+
+
 
 
 2.0.29 (2017-04-04)
