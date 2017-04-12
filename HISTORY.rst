@@ -4,7 +4,8 @@ Changelog
 2.0.31 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix crawling gz sitemaps
+  [vangheem]
 
 
 2.0.30 (2017-04-12)

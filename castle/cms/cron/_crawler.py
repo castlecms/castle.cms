@@ -18,6 +18,7 @@ from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.CMFPlone.log import logger
+from StringIO import StringIO
 from tendo import singleton
 from urlparse import urlparse
 from zope.annotation.interfaces import IAnnotations
@@ -25,6 +26,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 
+import gzip
 import requests
 import sys
 import time
@@ -277,7 +279,12 @@ class Crawler(object):
         self.data['tracking'][sitemap] = DateTime().ISO8601().decode('utf8')
         transaction.commit()
 
-        dom = etree.fromstring(resp.content)
+        if sitemap.lower().endswith('.gz'):
+            sitemap_content = gzip.GzipFile(fileobj=StringIO(resp.content)).read()
+        else:
+            sitemap_content = resp.content
+
+        dom = etree.fromstring(sitemap_content)
         crawled_urls = []
         for url_node in dom.xpath("//*[local-name() = 'url']"):
             loc = url_node.xpath("*[local-name() = 'loc']")
