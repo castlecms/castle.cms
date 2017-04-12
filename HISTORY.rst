@@ -4,6 +4,9 @@ Changelog
 2.0.30 (unreleased)
 -------------------
 
+- Fix create user to send out correct password reset url
+  [vangheem]
+
 - Handle issue getting current user when logging in. Can happen with authomatic
   [vangheem]
 
