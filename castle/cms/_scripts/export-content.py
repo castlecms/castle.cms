@@ -21,8 +21,11 @@ from Products.ZCatalog.Lazy import LazyCat
 from StringIO import StringIO
 from Testing.makerequest import makerequest
 from ZODB.blob import Blob
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 from zope.component.hooks import setSite
-from zope.dottedname.resolve import resolve
+from zope.interface import Interface
+from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
 
 import argparse
@@ -34,13 +37,19 @@ import re
 
 
 try:
+    from plone.uuid.interfaces import IUUID
+except ImportError:
+    def IUUID(obj, default=None):
+        return default
+
+try:
     from Products.PressRoom.content.PressContact import PressContact
-except:
+except ImportError:
     PressContact = False
 
 try:
     from Products.CMFPlone import defaultpage
-except:
+except ImportError:
     defaultpage = None
 
 try:
@@ -53,6 +62,24 @@ try:
 except:
     ContentListing = object()
 
+try:
+    from plone.dexterity.interfaces import IDexterityContent
+except ImportError:
+    class IDexterityContent(Interface):
+        pass
+
+try:
+    from plone.app.blocks.layoutbehavior import ILayoutAware
+except ImportError:
+    class ILayoutAware(Interface):
+        pass
+
+
+try:
+    from plone.namedfile.file import NamedBlobImage
+except ImportError:
+    NamedBlobImage = object()
+
 
 parser = argparse.ArgumentParser(
     description='...')
@@ -62,7 +89,7 @@ parser.add_argument('--dir', dest='dir', default='./export')
 args, _ = parser.parse_known_args()
 
 
-def spoofRequest(app):
+def spoof_request(app):
     """
     Make REQUEST variable to be available on the Zope application server.
 
@@ -73,7 +100,7 @@ def spoofRequest(app):
     newSecurityManager(None, OmnipotentUser().__of__(app.acl_users))
     return makerequest(app)
 
-app = spoofRequest(app)  # noqa
+app = spoof_request(app)  # noqa
 
 user = app.acl_users.getUser('admin')  # noqa
 newSecurityManager(None, user.__of__(app.acl_users))  # noqa
@@ -100,7 +127,7 @@ class BaseTypeSerializer(object):
     toklass = None
 
     @classmethod
-    def getTypeName(cls):
+    def get_type_name(cls):
         return "%s.%s" % (cls.klass.__module__, cls.klass.__name__)
 
     @classmethod
@@ -109,7 +136,7 @@ class BaseTypeSerializer(object):
             obj = obj.aq_base
         data = cls._serialize(obj)
         results = {
-            'type': cls.getTypeName(),
+            'type': cls.get_type_name(),
             'data': data
         }
         return _type_marker + dumps(results)
@@ -117,9 +144,11 @@ class BaseTypeSerializer(object):
     @classmethod
     def _serialize(cls, obj):
         return cls.toklass(obj)
+
     @classmethod
     def deserialize(cls, data):
         return cls._deserialize(data)
+
     @classmethod
     def _deserialize(cls, data):
         return cls.klass(data)
@@ -156,6 +185,7 @@ class setSerializer(BaseTypeSerializer):
 
 class OFSFileSerializer(BaseTypeSerializer):
     klass = OFS.Image.File
+
     @classmethod
     def _serialize(cls, obj):
         try:
@@ -168,6 +198,7 @@ class OFSFileSerializer(BaseTypeSerializer):
             'title': obj.title,
             'content_type': obj.content_type
         }
+
     @classmethod
     def _deserialize(cls, data):
         file = base64.b64decode(data['data'])
@@ -179,12 +210,14 @@ class OFSFileSerializer(BaseTypeSerializer):
 
 class BlobSerializer(BaseTypeSerializer):
     klass = Blob
+
     @classmethod
     def _serialize(cls, obj):
         blobfi = openBlob(obj)
         data = blobfi.read()
         blobfi.close()
         return {'data': base64.b64encode(data)}
+
     @classmethod
     def _deserialize(cls, data):
         blob = Blob()
@@ -201,12 +234,15 @@ class OFSImageSerializer(OFSFileSerializer):
 
 class DateTimeSerializer(BaseTypeSerializer):
     klass = DateTime
+
     @classmethod
-    def getTypeName(cls):
+    def get_type_name(cls):
         return 'DateTime.DateTime'
+
     @classmethod
     def _serialize(cls, obj):
         return obj.ISO8601()
+
     @classmethod
     def _deserialize(cls, data):
         return DateTime(data)
@@ -214,9 +250,11 @@ class DateTimeSerializer(BaseTypeSerializer):
 
 class datetimeSerializer(BaseTypeSerializer):
     klass = datetime
+
     @classmethod
     def _serialize(cls, obj):
         return obj.isoformat()
+
     @classmethod
     def _deserialize(cls, data):
         return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S.%f')
@@ -225,6 +263,7 @@ class datetimeSerializer(BaseTypeSerializer):
 class recordSerializer(BaseTypeSerializer):
     klass = record
     toklass = dict
+
     @classmethod
     def _deserialize(cls, data):
         rec = record()
@@ -236,9 +275,11 @@ class recordSerializer(BaseTypeSerializer):
 class ContentListingSerializer(BaseTypeSerializer):
     klass = ContentListing
     toklass = list
+
     @classmethod
     def _serialize(cls, obj):
         return list(obj._basesequence)
+
     @classmethod
     def _deserialize(cls, data):
         return LazyCat(data)
@@ -246,6 +287,7 @@ class ContentListingSerializer(BaseTypeSerializer):
 
 class BlobWrapperSerializer(BaseTypeSerializer):
     klass = BlobWrapper
+
     @classmethod
     def _serialize(cls, obj):
         blob = obj.getBlob()
@@ -255,11 +297,33 @@ class BlobWrapperSerializer(BaseTypeSerializer):
         return {
             'data': base64.b64encode(data),
             'filename': obj.getFilename()}
+
     @classmethod
     def _deserialize(cls, data):
-        io = StringIO(data['data'])
+        io = StringIO(base64.b64decode(data['data']))
         io.filename = data['filename']
         return io
+
+
+class NamedBlobImageSerializer(BaseTypeSerializer):
+    klass = NamedBlobImage
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            'data': base64.b64encode(obj.data),
+            'filename': obj.filename,
+            'content_type': obj.contentType
+        }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return NamedBlobImage(
+            base64.b64decode(data['data']),
+            filename=data['filename'],
+            contentType=data['content_type']
+        )
+
 
 _serializers = {
     PM1: PM1Serializer,
@@ -277,25 +341,29 @@ _serializers = {
     Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
     BlobWrapper: BlobWrapperSerializer,
+    NamedBlobImage: NamedBlobImageSerializer
 }
 
 
 if PressContact:
     class ContentObjectSerializer(BaseTypeSerializer):
         klass = PressContact
+
         @classmethod
         def _serialize(cls, obj):
             return _uid_marker + obj.UID()
+
         @classmethod
         def _deserialize(cls, data):
             return None
     _serializers[PressContact] = ContentObjectSerializer
 
+
 class Deferred:
     pass
 
 
-def customhandler(obj):
+def custom_handler(obj):
     if hasattr(obj, 'aq_base'):
         obj = obj.aq_base
     _type = type(obj)
@@ -309,49 +377,8 @@ def customhandler(obj):
     return obj
 
 
-def decodeUid(v):
-    v = v[len(_uid_marker):]
-    return v.split(_uid_separator)
-
-
-def custom_decoder(d):
-    if isinstance(d, list):
-        pairs = enumerate(d)
-    elif isinstance(d, dict):
-        pairs = d.items()
-    result = []
-    for k, v in pairs:
-        if isinstance(v, basestring):
-            if v.startswith(_filedata_marker):
-                if v == _filedata_marker + _deferred_marker:
-                    v = Deferred
-                else:
-                    filedata = v[len(_filedata_marker):]
-                    if filedata:
-                        v = StringIO(base64.b64decode(filedata))
-                    else:
-                        v = ''
-            elif v.startswith(_type_marker):
-                v = v[len(_type_marker):]
-                results = loads(v)
-                _type = resolve(results['type'])
-                serializer = _serializers[_type]
-                v = serializer.deserialize(results['data'])
-        elif isinstance(v, (dict, list)):
-            v = custom_decoder(v)
-        result.append((k, v))
-    if isinstance(d, list):
-        return [x[1] for x in result]
-    elif isinstance(d, dict):
-        return dict(result)
-
-
-def loads(data):
-    return json.loads(data, object_hook=custom_decoder)
-
-
 def dumps(data):
-    return json.dumps(data, default=customhandler)
+    return json.dumps(data, default=custom_handler)
 
 
 def mkdir_p(path):
@@ -364,7 +391,14 @@ def mkdir_p(path):
             raise
 
 
-def createPath(path):
+def get_uid(obj):
+    value = IUUID(obj, None)
+    if not value and hasattr(obj, 'UID'):
+        value = obj.UID()
+    return value
+
+
+def create_path(path):
     path = path[len(site_path):]
     xpath = os.path.join(export_folder, path.lstrip('/'))
     xpathsplit = xpath.split('/')
@@ -373,112 +407,203 @@ def createPath(path):
     return xpath
 
 
-def getReferencedImages(data):
-    images = []
-    for key, value in data.items():
-        if not isinstance(value, basestring):
-            continue
-        try:
-            dom = fromstring(value)
-        except:
-            continue
-        for el in dom.cssselect('img'):
-            src = el.attrib.get('src', '')
-            if 'resolveuid' not in src:
-                continue
-            uid = src.split('resolveuid/')[-1].split(
-                '/@@images')[0].split('/image_')[0]
-            brains = catalog(UID=uid)
-            if len(brains) > 0:
-                images.append(brains[0].getObject())
-    return images
-
-
-def exportObj(obj):
-    data = {}
+class ContentExporter(object):
 
     im_width = 0
     image_to_lead = None
-    for field in obj.Schema().fields():
+
+    def __init__(self, obj):
+        self.obj = obj
+
+    def get_field_data(self):
+        pass
+
+    def get_referenced_images(self, data):
+        images = []
+        for key, value in data.items():
+            if not isinstance(value, basestring):
+                continue
+            try:
+                dom = fromstring(value)
+            except:
+                continue
+            for el in dom.cssselect('img'):
+                src = el.attrib.get('src', '')
+                if 'resolveuid' not in src:
+                    continue
+                uid = src.split('resolveuid/')[-1].split(
+                    '/@@images')[0].split('/image_')[0]
+                brains = catalog(UID=uid)
+                if len(brains) > 0:
+                    images.append(brains[0].getObject())
+        return images
+
+    def get_object_data(self):
+        is_dp = False
+        if not IFolder.providedBy(self.obj):
+            if defaultpage:
+                container = aq_parent(self.obj)
+                if container:
+                    is_dp = defaultpage.is_default_page(container, self.obj)
+            else:
+                is_dp = ptool.isDefaultPage(self.obj)
+
+        has_sibling_pages = True
+        if is_dp:
+            container = aq_parent(self.obj)
+            res = catalog(path={'query': '/'.join(container.getPhysicalPath())})
+            if len([b for b in res if b.UID != self.image_to_lead]) > 1:
+                has_sibling_pages = False
+
         try:
-            fdata = field.getRaw(obj)
-        except ValueError:
-            continue
-        if type(fdata) == ImplicitAcquisitionWrapper:
-            fdata = fdata.aq_base
-        data[field.__name__] = fdata
-        if field.__name__ in ('image', 'file'):
-            data[field.__name__ + '_filename'] = field.getFilename(obj)
-            data[field.__name__ + '_contentType'] = field.getContentType(obj)
-        if field.__name__ == 'image':
-            im = field.get(obj)
-            if im:
-                im_width = im.width
+            state = workflow.getInfoFor(ob=self.obj, name='review_state')
+        except:
+            state = None
+        return {
+            'portal_type': self.obj.portal_type,
+            'layout': self.obj.getLayout(),
+            'uid': get_uid(self.obj),
+            'is_default_page': is_dp,
+            'state': state,
+            'has_sibling_pages': has_sibling_pages
+        }
 
-    images = getReferencedImages(data)
 
-    # try to find image to associate with it if there is none
-    if im_width < 200:
-        if len(images) > 0 and images[0].portal_type == 'Image':
-            image = images[0]
-            if len(image.getBackReferences(relationship='isReferencing')) < 2:
-                im = image.getImage()
-                data.update({
-                    'image': image.Schema().getField('image').getRaw(image),
-                    'image_filename': image.getFilename(),
-                    'image_contentType': image.getContentType(),
-                    'imageCaption': image.Description()
-                })
-                image_to_lead = image.UID()
-                images = images[1:]
+class ArchetypesExporter(ContentExporter):
 
-    if image_to_lead and 'text' in data:
-        data['text'] = data['text'].replace(image_to_lead, obj.UID())
+    def get_field_data(self):
+        data = {}
 
-    is_dp = False
-    if not IFolder.providedBy(obj):
-        if defaultpage:
-            container = aq_parent(obj)
-            if container:
-                is_dp = defaultpage.is_default_page(container, obj)
-        else:
-            is_dp = ptool.isDefaultPage(obj)
+        for field in self.obj.Schema().fields():
+            try:
+                fdata = field.getRaw(self.obj)
+            except ValueError:
+                continue
+            if type(fdata) == ImplicitAcquisitionWrapper:
+                fdata = fdata.aq_base
+            data[field.__name__] = fdata
+            if field.__name__ in ('image', 'file'):
+                data[field.__name__ + '_filename'] = field.getFilename(self.obj)
+                data[field.__name__ + '_contentType'] = field.getContentType(self.obj)
+            if field.__name__ == 'image':
+                im = field.get(self.obj)
+                if im:
+                    self.im_width = im.width
+        return data
 
-    has_sibling_pages = True
-    if is_dp:
-        container = aq_parent(obj)
-        res = catalog(path={'query': '/'.join(container.getPhysicalPath())})
-        if len([b for b in res if b.UID != image_to_lead]) > 1:
-            has_sibling_pages = False
+    def get_referenced_images(self, data):
+        images = super(ArchetypesExporter, self).get_referenced_images(data)
+        if self.im_width < 200:
+            if len(images) > 0 and images[0].portal_type == 'Image':
+                image = images[0]
+                if len(image.getBackReferences(relationship='isReferencing')) < 2:
+                    data.update({
+                        'image': image.Schema().getField('image').getRaw(image),
+                        'image_filename': image.getFilename(),
+                        'image_contentType': image.getContentType(),
+                        'imageCaption': image.Description()
+                    })
+                    self.image_to_lead = get_uid(image)
+                    images = images[1:]
+        return images
 
-    try:
-        state = workflow.getInfoFor(ob=obj, name='review_state')
-    except:
-        state = None
-    alldata = {
-        'portal_type': obj.portal_type,
-        'layout': obj.getLayout(),
-        'data': data,
-        'uid': obj.UID(),
-        'is_default_page': is_dp,
-        'state': state,
-        'has_sibling_pages': has_sibling_pages
-    }
+
+class DexterityExporter(ContentExporter):
+
+    def get_field_data(self):
+        from plone.dexterity.interfaces import IDexterityFTI
+        from plone.behavior.interfaces import IBehaviorAssignable
+
+        data = {}
+
+        schema = getUtility(IDexterityFTI, name=self.obj.portal_type).lookupSchema()
+        for name, field in getFieldsInOrder(schema):
+            data[name] = getattr(self.obj, name, None)
+
+        behavior_assignable = IBehaviorAssignable(self.obj)
+        for behavior in behavior_assignable.enumerateBehaviors():
+            binst = behavior.interface(self.obj)
+            bdata = {}
+            for name, field in getFieldsInOrder(behavior.interface):
+                bdata[name] = getattr(binst, name, None)
+            data[behavior.interface.__identifier__] = bdata
+
+        if ILayoutAware.providedBy(self.obj):
+            from plone.tiles.data import ANNOTATIONS_KEY_PREFIX
+            from plone.app.blocks.utils import getLayout
+            from repoze.xmliter.utils import getHTMLSerializer
+            from plone.app.blocks import tiles
+            from plone.app.blocks import gridsystem
+            from lxml.html import tostring
+            tdata = {}
+            annotations = IAnnotations(self.obj, {})
+            for key in annotations.keys():
+                if key.startswith(ANNOTATIONS_KEY_PREFIX):
+                    adata = annotations[key]
+                    tdata[key] = adata
+            data['tile_data'] = tdata
+
+            req = site.REQUEST
+            layout = getLayout(self.obj)
+            dom = getHTMLSerializer(layout)
+
+            try:
+                tiles.renderTiles(req, dom.tree, site=site,
+                                  baseURL=self.obj.absolute_url() + '/layout_view')
+            except TypeError:
+                tiles.renderTiles(req, dom.tree,
+                                  baseURL=self.obj.absolute_url() + '/layout_view')
+            gridsystem.merge(req, dom.tree)
+
+            data['rendered_layout'] = tostring(dom.tree)
+
+        return data
+
+
+def export_archetype_obj(obj):
+
+    exporter = ArchetypesExporter(obj)
+    data = exporter.get_field_data()
+    images = exporter.get_referenced_images(data)
+
+    if exporter.image_to_lead and 'text' in data:
+        data['text'] = data['text'].replace(exporter.image_to_lead, get_uid(obj))
+
+    alldata = exporter.get_object_data()
+    alldata['data'] = data
+
     yield obj, alldata
     for ref in images:
-        if ref.UID() == obj.UID():
+        if get_uid(ref) == get_uid(obj):
             continue
         if ref.portal_type != 'Image':
             continue
-        if image_to_lead == ref.UID():
+        if exporter.image_to_lead == get_uid(ref):
             continue
-        for o, d in exportObj(ref):
-            if o.UID() == ref.UID() or o.UID() == obj.UID():
+        for o, d in export_obj(ref):
+            if get_uid(o) == get_uid(ref) or get_uid(o) == get_uid(obj):
                 continue
             yield o, d
 
 
-def writeExport(obj, data):
+def export_dexterity_obj(obj):
+    exporter = DexterityExporter(obj)
+    data = exporter.get_field_data()
+    alldata = exporter.get_object_data()
+    alldata['data'] = data
+    yield obj, alldata
+
+
+def export_obj(obj):
+    if IDexterityContent.providedBy(obj):
+        func = export_dexterity_obj
+    else:
+        func = export_archetype_obj
+    for result in func(obj):
+        yield result
+
+
+def write_export(obj, data):
     objpath = '/'.join(obj.getPhysicalPath())
     if IFolder.providedBy(obj):
         objpath = os.path.join(objpath, '__folder__')
@@ -486,10 +611,10 @@ def writeExport(obj, data):
         fobj = aq_parent(obj)
         while not ISiteRoot.providedBy(fobj):
             if not os.path.exists(os.path.join('/'.join(fobj.getPhysicalPath()), '__folder__')):
-                for eobj, edata in exportObj(fobj):
-                    writeExport(eobj, edata)
+                for eobj, edata in export_obj(fobj):
+                    write_export(eobj, edata)
             fobj = aq_parent(fobj)
-    path = createPath(objpath)
+    path = create_path(objpath)
     try:
         fi = open(path, 'w')
         fi.write(dumps(data))
@@ -498,14 +623,14 @@ def writeExport(obj, data):
         print('Error exporting {}'.format(objpath))
 
 
-def runExport(brains):
+def run_export(brains):
     size = len(brains)
     for idx, brain in enumerate(brains):
         path = brain.getPath()
-        print 'processing, ', path, ' ', str(idx + 1) + '/' + str(size)
+        print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
         obj = brain.getObject()
-        for obj, data in exportObj(obj):
-            writeExport(obj, data)
+        for obj, data in export_obj(obj):
+            write_export(obj, data)
 
 
-runExport(catalog())
+run_export(catalog())

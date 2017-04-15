@@ -1,30 +1,24 @@
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
-from datetime import datetime
-from DateTime import DateTime
-from StringIO import StringIO
-import base64
-from persistent.dict import PersistentDict
-from Persistence.mapping import PersistentMapping as PM1
-from persistent.mapping import PersistentMapping as PM2
-from persistent.list import PersistentList
 from BTrees.OOBTree import OOBTree
-import re
+from DateTime import DateTime
+from datetime import datetime
+from Persistence.mapping import PersistentMapping as PM1
+from persistent.dict import PersistentDict
+from persistent.list import PersistentList
+from persistent.mapping import PersistentMapping as PM2
+from plone.app.blob.field import BlobWrapper
+from plone.app.blob.utils import openBlob
+from plone.app.contentlisting.contentlisting import ContentListing
+from plone.namedfile.file import NamedBlobImage
+from Products.ZCatalog.Lazy import LazyCat
+from StringIO import StringIO
+from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
-from ZODB.blob import Blob
-from plone.app.blob.utils import openBlob
-from Products.ZCatalog.Lazy import LazyCat
-try:
-    from plone.app.contentlisting.contentlisting import ContentListing
-except:
-    ContentListing = object()
 
-from plone.app.blob.field import BlobWrapper
+import base64
+import json
 import OFS
+import re
 
 
 _filedata_marker = 'filedata://'
@@ -38,25 +32,30 @@ _date_re = re.compile('^[0-9]{4}\-[0-9]{2}\-[0-9]{2}.*$')
 class BaseTypeSerializer(object):
     klass = None
     toklass = None
+
     @classmethod
-    def getTypeName(kls):
+    def get_type_name(kls):
         return "%s.%s" % (kls.klass.__module__, kls.klass.__name__)
+
     @classmethod
     def serialize(kls, obj):
         if hasattr(obj, 'aq_base'):
             obj = obj.aq_base
         data = kls._serialize(obj)
         results = {
-            'type': kls.getTypeName(),
+            'type': kls.get_type_name(),
             'data': data
         }
         return _type_marker + dumps(results)
+
     @classmethod
     def _serialize(kls, obj):
         return kls.toklass(obj)
+
     @classmethod
     def deserialize(kls, data):
         return kls._deserialize(data)
+
     @classmethod
     def _deserialize(kls, data):
         return kls.klass(data)
@@ -93,6 +92,7 @@ class setSerializer(BaseTypeSerializer):
 
 class OFSFileSerializer(BaseTypeSerializer):
     klass = OFS.Image.File
+
     @classmethod
     def _serialize(kls, obj):
         try:
@@ -105,6 +105,7 @@ class OFSFileSerializer(BaseTypeSerializer):
             'title': obj.title,
             'content_type': obj.content_type
         }
+
     @classmethod
     def _deserialize(kls, data):
         file = base64.b64decode(data['data'])
@@ -116,12 +117,14 @@ class OFSFileSerializer(BaseTypeSerializer):
 
 class BlobSerializer(BaseTypeSerializer):
     klass = Blob
+
     @classmethod
     def _serialize(kls, obj):
         blobfi = openBlob(obj)
         data = blobfi.read()
         blobfi.close()
         return {'data': base64.b64encode(data)}
+
     @classmethod
     def _deserialize(kls, data):
         blob = Blob()
@@ -138,12 +141,15 @@ class OFSImageSerializer(OFSFileSerializer):
 
 class DateTimeSerializer(BaseTypeSerializer):
     klass = DateTime
+
     @classmethod
-    def getTypeName(kls):
+    def get_type_name(kls):
         return 'DateTime.DateTime'
+
     @classmethod
     def _serialize(kls, obj):
         return obj.ISO8601()
+
     @classmethod
     def _deserialize(kls, data):
         return DateTime(data)
@@ -151,9 +157,11 @@ class DateTimeSerializer(BaseTypeSerializer):
 
 class datetimeSerializer(BaseTypeSerializer):
     klass = datetime
+
     @classmethod
     def _serialize(kls, obj):
         return obj.isoformat()
+
     @classmethod
     def _deserialize(kls, data):
         return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S.%f')
@@ -162,6 +170,7 @@ class datetimeSerializer(BaseTypeSerializer):
 class recordSerializer(BaseTypeSerializer):
     klass = record
     toklass = dict
+
     @classmethod
     def _deserialize(kls, data):
         rec = record()
@@ -173,9 +182,11 @@ class recordSerializer(BaseTypeSerializer):
 class ContentListingSerializer(BaseTypeSerializer):
     klass = ContentListing
     toklass = list
+
     @classmethod
     def _serialize(kls, obj):
         return list(obj._basesequence)
+
     @classmethod
     def _deserialize(kls, data):
         return LazyCat(data)
@@ -183,6 +194,7 @@ class ContentListingSerializer(BaseTypeSerializer):
 
 class BlobWrapperSerializer(BaseTypeSerializer):
     klass = BlobWrapper
+
     @classmethod
     def _serialize(kls, obj):
         blob = obj.getBlob()
@@ -192,11 +204,33 @@ class BlobWrapperSerializer(BaseTypeSerializer):
         return {
             'data': base64.b64encode(data),
             'filename': obj.getFilename()}
+
     @classmethod
     def _deserialize(kls, data):
-        io = StringIO(data['data'])
+        io = StringIO(base64.b64decode(data['data']))
         io.filename = data['filename']
         return io
+
+
+class NamedBlobImageSerializer(BaseTypeSerializer):
+    klass = NamedBlobImage
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            'data': base64.b64encode(obj.data),
+            'filename': obj.filename,
+            'content_type': obj.contentType
+        }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return NamedBlobImage(
+            base64.b64decode(data['data']),
+            filename=data['filename'],
+            contentType=data['content_type']
+        )
+
 
 _serializers = {
     PM1: PM1Serializer,
@@ -212,7 +246,8 @@ _serializers = {
     record: recordSerializer,
     Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
-    BlobWrapper: BlobWrapperSerializer
+    BlobWrapper: BlobWrapperSerializer,
+    NamedBlobImage: NamedBlobImageSerializer
 }
 
 
@@ -220,7 +255,7 @@ class Deferred:
     pass
 
 
-def customhandler(obj):
+def custom_handler(obj):
     if hasattr(obj, 'aq_base'):
         obj = obj.aq_base
     _type = type(obj)
@@ -232,11 +267,6 @@ def customhandler(obj):
     else:
         return None
     return obj
-
-
-def decodeUid(v):
-    v = v[len(_uid_marker):]
-    return v.split(_uid_separator)
 
 
 def custom_decoder(d):
@@ -279,4 +309,4 @@ def loads(data):
 
 
 def dumps(data):
-    return json.dumps(data, default=customhandler)
+    return json.dumps(data, default=custom_handler)

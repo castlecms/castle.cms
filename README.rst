@@ -213,7 +213,7 @@ id of your install plone site.
 To register your own import type(Event example)::
 
     from castle.cms._scripts.importtypes import BaseImportType
-    from castle.cms._scripts.importtypes import registerImportType
+    from castle.cms._scripts.importtypes import register_import_type
     from castle.cms._scripts.importtypes import DateTime_to_datetime
 
     class MyImportType(BaseImportType):
@@ -239,7 +239,7 @@ To register your own import type(Event example)::
             super(MyType, self).post_creation(obj)
             obj.foo = 'bar'
 
-    registerImportType('MyType', MyImportType)
+    register_import_type('MyType', MyImportType)
 
 
 

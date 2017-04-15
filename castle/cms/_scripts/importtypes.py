@@ -55,26 +55,26 @@ FOLDER_DEFAULT_PAGE_LAYOUT = u"""
 _types = {}
 
 
-def registerImportType(name, klass):
+def register_import_type(name, klass):
     _types[name] = klass
 
 
-def isBase64(s):
+def is_base64(s):
     return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
 
 
-def decodeFileData(data):
+def decode_file_data(data):
     if isinstance(data, OFS.Image.Image):
         data = data.data
         if isinstance(data, OFS.Image.Pdata):
             return str(data)
         return data
-    if isBase64(data):
+    if is_base64(data):
         return base64.b64decode(data)
     return data
 
 
-def toUnicode(s):
+def to_unicode(s):
     if not isinstance(s, unicode):
         s = s.decode('utf8')
     return s
@@ -221,8 +221,8 @@ class BaseImportType(object):
                     else:
                         filename = self.field_data['id']
                 obj.image = NamedBlobImage(
-                    data=decodeFileData(im_data),
-                    filename=toUnicode(filename))
+                    data=decode_file_data(im_data),
+                    filename=to_unicode(filename))
                 if not obj.image.contentType:
                     obj.image.contentType = 'image/jpeg'
                 for caption_field_name in self.lead_image_caption_field_names:
@@ -232,19 +232,24 @@ class BaseImportType(object):
 
 class DocumentType(BaseImportType):
     layout = '++contentlayout++default/document.html'
-registerImportType('Document', DocumentType)
+
+
+register_import_type('Document', DocumentType)
 
 
 class FolderType(BaseImportType):
     layout = '++contentlayout++castle/folder.html'
-registerImportType('Folder', FolderType)
+
+
+register_import_type('Folder', FolderType)
 
 
 class NewsItemType(BaseImportType):
 
     layout = '++contentlayout++castle/newsitem.html'
 
-registerImportType('News Item', NewsItemType)
+
+register_import_type('News Item', NewsItemType)
 
 
 class FileType(BaseImportType):
@@ -269,10 +274,12 @@ class FileType(BaseImportType):
     def get_data(self):
         data = super(FileType, self).get_data()
         data['file'] = NamedBlobFile(
-            data=decodeFileData(self.field_data['file'].read()),
-            filename=toUnicode(self.field_data.get('file_filename')))
+            data=decode_file_data(self.field_data['file'].read()),
+            filename=to_unicode(self.field_data.get('file_filename')))
         return data
-registerImportType('File', FileType)
+
+
+register_import_type('File', FileType)
 
 
 class ImageType(BaseImportType):
@@ -282,7 +289,9 @@ class ImageType(BaseImportType):
         _id = _generate_file_repo_object_id(path)
         self.field_data['id'] = _id
         self.path = '/image-repository/' + _id
-registerImportType('Image', ImageType)
+
+
+register_import_type('Image', ImageType)
 
 
 class LinkType(BaseImportType):
@@ -310,7 +319,9 @@ class LinkType(BaseImportType):
         else:
             data['remoteUrl'] = self.field_data['remoteUrl']
         return data
-registerImportType('Link', LinkType)
+
+
+register_import_type('Link', LinkType)
 
 
 class EventType(BaseImportType):
@@ -338,10 +349,12 @@ class EventType(BaseImportType):
         (IEventContact, 'contact_phone'),
         (IEventContact, 'event_url'),
     )
-registerImportType('Event', EventType)
 
 
-def getImportType(data, path, read_phase):
+register_import_type('Event', EventType)
+
+
+def get_import_type(data, path, read_phase):
     if data['portal_type'] in _types:
         return _types[data['portal_type']](data, path, read_phase)
     return BaseImportType(data, path, read_phase)

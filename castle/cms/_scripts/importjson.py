@@ -1,6 +1,6 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from castle.cms._scripts import mjson
-from castle.cms._scripts.importtypes import getImportType
+from castle.cms._scripts.importtypes import get_import_type
 from lxml.html import fromstring
 from lxml.html import tostring
 from OFS.interfaces import IFolder
@@ -91,7 +91,7 @@ def recursive_create_path(path):
                         fi = open(fpath)
                         data = mjson.loads(fi.read())
                         fi.close()
-                        importtype = getImportType(data, fpath[len(args.export_directory):], None)
+                        importtype = get_import_type(data, fpath[len(args.export_directory):], None)
                         creation_data = importtype.get_data()
                         creation_data['container'] = folder
                         creation_data['id'] = part
@@ -128,7 +128,7 @@ _importable_fields = (
 _read_phase = {}
 
 
-def readObject(filepath):
+def read_object(filepath):
     # disable, we don't use
     pass
     # fi = open(filepath)
@@ -136,7 +136,7 @@ def readObject(filepath):
     # fi.close()
 
 
-def fixHtmlImages(obj):
+def fix_html_images(obj):
     try:
         html = obj.text.raw
     except:
@@ -176,7 +176,7 @@ def fixHtmlImages(obj):
             tostring(dom), mimeType=obj.text.mimeType, outputMimeType=obj.text.outputMimeType)
 
 
-def importObject(filepath, count):
+def import_object(filepath, count):
     fi = open(filepath)
     data = mjson.loads(fi.read())
     fi.close()
@@ -187,7 +187,7 @@ def importObject(filepath, count):
         return
 
     original_path = filepath[len(args.export_directory):]
-    importtype = getImportType(data, original_path, _read_phase)
+    importtype = get_import_type(data, original_path, _read_phase)
     path = importtype.get_path()
     folder = recursive_create_path('/'.join(path.split('/')[:-1]))
     if folder is None:
@@ -242,7 +242,7 @@ def importObject(filepath, count):
             # maybe workflows do not match up
             pass
 
-    fixHtmlImages(obj)
+    fix_html_images(obj)
     obj.reindexObject()
 
     if count % 50 == 0:
@@ -253,47 +253,47 @@ def importObject(filepath, count):
         app._p_jar.sync()  # noqa
 
 
-def importPages(path, count=0):
+def import_pages(path, count=0):
     for filename in os.listdir(path):
         if filename in ('.DS_Store', '__folder__'):
             continue
         count += 1
         filepath = os.path.join(path, filename)
         if os.path.isdir(filepath):
-            count = importPages(filepath, count)
+            count = import_pages(filepath, count)
         else:
             try:
-                importObject(filepath, count)
+                import_object(filepath, count)
             except:
                 logger.error('Error importing object', exc_info=True)
     return count
 
 
-def importFolders(path, count=0):
+def import_folders(path, count=0):
     for filename in sorted(os.listdir(path)):
         count += 1
         filepath = os.path.join(path, filename)
 
         if filename == '__folder__':
             try:
-                importObject(filepath, count)
+                import_object(filepath, count)
             except:
                 logger.error('Error importing object', exc_info=True)
 
         if os.path.isdir(filepath):
-            count = importFolders(filepath, count)
+            count = import_folders(filepath, count)
     return count
 
 
-def readPass(path):
+def read_pass(path):
     for filename in sorted(os.listdir(path)):
         if filename in ('.DS_Store', '__folder__'):
             continue
         filepath = os.path.join(path, filename)
         if os.path.isdir(filepath):
-            readPass(filepath)
+            read_pass(filepath)
         else:
-            readObject(filepath)
+            read_object(filepath)
 
 
 if __name__ == '__main__':
@@ -306,8 +306,8 @@ if __name__ == '__main__':
         print('------------------------------')
 
     print('doing read pass...')
-    # readPass(args.export_directory)
+    # read_pass(args.export_directory)
     print('creating objects now...')
-    # importFolders(args.export_directory)
-    importPages(args.export_directory)
+    # import_folders(args.export_directory)
+    import_pages(args.export_directory)
     transaction.commit()

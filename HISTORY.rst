@@ -4,6 +4,9 @@ Changelog
 2.0.31 (unreleased)
 -------------------
 
+- export-content.py now works to export dexterity and mosaic pages
+  [vangheem]
+
 - fix crawling gz sitemaps
   [vangheem]
 
