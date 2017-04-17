@@ -4,6 +4,9 @@ Changelog
 2.0.31 (unreleased)
 -------------------
 
+- Fix password reset template to send user's username instead of id
+  [vangheem]
+
 - export-content.py now works to export dexterity and mosaic pages
   [vangheem]
 
