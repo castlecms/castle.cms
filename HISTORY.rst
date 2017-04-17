@@ -4,6 +4,14 @@ Changelog
 2.0.31 (unreleased)
 -------------------
 
+- Fix version pin for plone.app.content to work correctly with folder contents
+  and changing date properties
+  [vangheem]
+
+- Build css/js with latest mockup but disable now/clear buttons on pickadate
+  so they are unstyled and look bad with castle.
+  [vangheem]
+
 - Fix password reset template to send user's username instead of id
   [vangheem]
 
