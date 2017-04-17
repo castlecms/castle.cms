@@ -10,6 +10,8 @@ Changelog
 - fix crawling gz sitemaps
   [vangheem]
 
+- Resolved issue where the the words 'site settings' showed up when clicked
+  [robzonenet]
 
 2.0.30 (2017-04-12)
 -------------------
