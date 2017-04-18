@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.31 (unreleased)
+2.0.31 (2017-04-18)
 -------------------
 
 - Fix version pin for plone.app.content to work correctly with folder contents
