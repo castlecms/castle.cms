@@ -4,7 +4,8 @@ Changelog
 2.0.32 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Updated defaults for the image tile
+  [obct537]
 
 
 2.0.31 (2017-04-18)
