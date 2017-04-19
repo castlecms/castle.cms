@@ -1,4 +1,5 @@
 from castle.cms.browser.files import NamedFileDownload
+from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.utils import site_has_icon
 from cStringIO import StringIO
 from PIL import Image
@@ -7,6 +8,7 @@ from plone.formwidget.namedfile.converter import b64decode_file
 from plone.namedfile.file import NamedImage
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from zope.interface import implements
 
 
 class IconView(NamedFileDownload):
@@ -32,6 +34,7 @@ icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
 img.save('logo.ico', sizes=icon_sizes)
 
     """
+    implements(ISecureLoginAllowedView)
 
     filename = 'icon.png'
 
