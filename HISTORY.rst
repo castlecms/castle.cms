@@ -4,6 +4,9 @@ Changelog
 2.0.32 (unreleased)
 -------------------
 
+- Fix 404 not being protected by login shield.
+  [vangheem]
+
 - After login should now redirect you to `/@@dashboard` or to the original
   url you requested if you were redirected to login page
   [vangheem]
