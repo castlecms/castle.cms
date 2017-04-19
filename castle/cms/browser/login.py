@@ -1,4 +1,3 @@
-from ZODB.POSException import ConnectionStateError
 from castle.cms import authentication
 from castle.cms import cache
 from castle.cms import texting
@@ -12,9 +11,11 @@ from plone import api
 from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.Five import BrowserView
 from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
 from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
+from ZODB.POSException import ConnectionStateError
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
@@ -344,12 +345,20 @@ The user requesting this access logged this information:
             return api.portal.get_tool(name)
 
     def options(self):
-        site_url = self.context.absolute_url()
+        site_url = success_url = self.context.absolute_url()
+        if ISiteRoot.providedBy(self.context):
+            success_url += '/@@dashboard'
+        if 'came_from' in self.request.form:
+            came_from = self.request.form['came_from']
+            url_tool = api.portal.get_tool('portal_url')
+            if came_from.startswith(site_url) and url_tool.isURLInPortal(came_from):
+                success_url = came_from
+
         data = {
             'supportedAuthSchemes': self.authenticator.get_supported_auth_schemes(),
             'twoFactorEnabled': self.authenticator.two_factor_enabled,
             'apiEndpoint': '{}/@@secure-login'.format(site_url),
-            'successUrl': site_url
+            'successUrl': success_url
         }
         try:
             data['authenticator'] = createToken()

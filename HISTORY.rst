@@ -4,6 +4,10 @@ Changelog
 2.0.32 (unreleased)
 -------------------
 
+- After login should now redirect you to `/@@dashboard` or to the original
+  url you requested if you were redirected to login page
+  [vangheem]
+
 - Updated defaults for the image tile
   [obct537]
 
