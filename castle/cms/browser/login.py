@@ -350,8 +350,12 @@ The user requesting this access logged this information:
             success_url += '/@@dashboard'
         if 'came_from' in self.request.form:
             came_from = self.request.form['came_from']
-            url_tool = api.portal.get_tool('portal_url')
-            if came_from.startswith(site_url) and url_tool.isURLInPortal(came_from):
+            try:
+                url_tool = api.portal.get_tool('portal_url')
+            except api.exc.CannotGetPortalError:
+                url_tool = None
+            if (came_from.startswith(site_url) and (
+                    not url_tool or url_tool.isURLInPortal(came_from))):
                 success_url = came_from
 
         data = {

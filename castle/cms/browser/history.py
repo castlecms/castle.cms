@@ -11,10 +11,13 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from Products.CMFEditions.browser.diff import DiffView
 from Products.CMFPlone.browser.syndication.adapters import SearchFeed
 from Products.CMFPlone.interfaces.syndication import IFeedItem
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 from zope.interface import noLongerProvides
+
+import json
 
 
 class HistoryView(HistoryByLineView):
@@ -92,3 +95,47 @@ class HistoryVersionView(DiffView):
             brains = catalog.unrestrictedSearchResults(UID=self.context.image.reference)
             if len(brains) > 0:
                 return brains[0].getObject()
+
+
+class UpdateComment(BrowserView):
+
+    def __call__(self):
+        self.request.response.setHeader('Content-type', 'application/json')
+
+        rt = api.portal.get_tool("portal_repository")
+        history = rt.getHistoryMetadata(self.context)
+        version_id = self.request.form.get('version_id')
+        comments = self.request.form.get('comments', '')
+        if not version_id or not version_id.isdigit():
+            return json.dumps({
+                'success': False,
+                'error': 'Must provide a valid version id'
+            })
+        version_id = int(version_id)
+
+        version = history.retrieve(version_id)
+        if version is None:
+            return json.dumps({
+                'success': False,
+                'error': 'Can not find version'
+            })
+
+        if version_id not in history._full:
+            return json.dumps({
+                'success': False,
+                'error': 'Can not find version metadata'
+            })
+
+        try:
+            history._full[version_id]['metadata']['sys_metadata']['comment'] = comments
+            history._full._p_changed = True
+        except KeyError:
+            return json.dumps({
+                'success': False,
+                'error': 'Can not find version metadata'
+            })
+
+        return json.dumps({
+            'success': True,
+            'comment': comments
+        })

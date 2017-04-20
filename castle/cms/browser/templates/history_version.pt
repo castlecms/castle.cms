@@ -6,62 +6,15 @@
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="plone">
 
-<metal:javascript fill-slot="javascript_head_slot">
-  <script>
-
-var HasHistory = !!window.history;
-
-require([
-'jquery',
-'mockup-utils',
-'pat-registry'
-], function($, utils, Registry){
-
-var load = function(url){
-utils.loading.show();
-$.ajax({
-  url: url
-}).done(function(data){
-  var body = utils.parseBodyTag(data);
-  var $dom = $(body);
-  var $newContent = $('.history-content-wrapping', $dom);
-  $('.history-content-wrapping').replaceWith($newContent);
-  $('.history-info-container').replaceWith($('.history-info-container', $dom));
-
-  Registry.scan($newContent);
-  Registry.scan($('.history-info-container'));
-  bind();
-  if(HasHistory){
-    history.pushState({}, "", url);
-  }
-}).fail(function(){
-  alert('error getting version');
-}).always(function(){
-  utils.loading.hide();
-});
-}
-
-var bind = function(){
-$('.version-selector').on('change', function(e){
-  e.preventDefault();
-  var versionId = $(this).val();
-  var url = window.location.origin + window.location.pathname + '?version=' + versionId;
-  load(url);
-});
-}
-
-$(document).ready(function(){
-  bind();
-})
-
-if(HasHistory){
-window.onpopstate = function(e){
-  load(window.location.href);
-};
-}
-});
-</script>
-</metal:javascript>
+<head>
+  <metal:javascript fill-slot="javascript_head_slot">
+    <script src="${portal_url}/++plone++castle/components/history.js"></script>
+  </metal:javascript>
+  <metal:block fill-slot="style_slot">
+    <link rel="stylesheet" type="text/css"
+          href="${portal_url}/++plone++castle/less/misc/history.css">
+  </metal:block>
+</head>
 
 <body>
 
