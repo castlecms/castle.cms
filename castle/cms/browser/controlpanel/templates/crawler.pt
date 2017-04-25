@@ -24,8 +24,6 @@
       Portal status message
     </div>
 
-
-
     <div id="content-core" tal:define="summary view/get_index_summary;
                                        cdata view/get_crawl_data">
       <div id="layout-contents">

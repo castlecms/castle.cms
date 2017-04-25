@@ -378,6 +378,14 @@
     template="templates/fourohfour.pt"
     layer="..interfaces.ICastleLayer"
     />
+  <browser:page
+    for="zope.interface.common.interfaces.IException"
+    class=".error.ErrorView"
+    name="index.html"
+    permission="zope2.View"
+    template="templates/error.pt"
+    layer="..interfaces.ICastleLayer"
+    />
 
 
   <!-- registration overrides -->
