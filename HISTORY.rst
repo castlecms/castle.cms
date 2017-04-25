@@ -4,6 +4,9 @@ Changelog
 2.0.32 (unreleased)
 -------------------
 
+- Be able to modify comments made on a historic content object history data
+  [vangheem]
+
 - Fix 404 not being protected by login shield.
   [vangheem]
 
