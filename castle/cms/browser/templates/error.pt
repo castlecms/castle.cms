@@ -1,0 +1,68 @@
+<html tal:define="portal_url context/portal_url|context/absolute_url|nothing">
+  <head>
+    <link href="${portal_url|nothing}/++plone++castle/libs/bootstrap/dist/css/bootstrap.css"
+          rel="stylesheet" type="text/css">
+    <link href="${portal_url|nothing}/++plone++castle/less/misc/secure-login.css?v=4"
+          rel="stylesheet" type="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <style>
+      .castle-login-header .site-logo {
+        max-width: 300px;
+      }
+      .error-msg {
+        max-width: 600px;
+        margin: 15px auto;
+        text-align: center;
+      }
+      .castle-login-header h1 {
+        position: relative;
+        max-width: 600px;
+        margin: 15px auto;
+        background-color: #3a99d1;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #0f4b6f;
+        box-shadow: 0 0 8px -1px rgba(0, 0, 0, 0.53);
+      }
+      .http500 {
+        position: absolute;
+        bottom: 4px;
+        right: 6px;
+        display: block;
+        font-size: 18px;
+        color: #296385;
+        text-shadow: 0px 0px 1px rgba(250, 250, 250, 0.18);
+      }
+    </style>
+  </head>
+  <body tal:define="utils context/@@castle-utils|nothing;" class="secure-login-template">
+
+    <div id="visual-wrapper">
+      <div class="castle-login-header">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>
+              Oops, there was a problem getting this page for you
+              <span class="http500">5XX Error</span>
+            </h1>
+            <h2 tal:condition="not: view/is_zope_root" tal:on-error="string:Castle CMS">
+              ${python: utils and utils.get_registry_value('plone.site_title')}</h2>
+            <h2 tal:condition="view/is_zope_root">Zope root</h2>
+            <p>{${request/ACTUAL_URL}}</p>
+          </div>
+        </div>
+        <div class="row" tal:condition="not: view/is_zope_root">
+          <div class="col-md-12">
+            <img class="site-logo" src="${utils/get_logo|nothing}" />
+          </div>
+        </div>
+      </div>
+
+      <div class="error-msg" tal:condition="view/logged_in">
+        <pre tal:content="view/format_error_message"></pre>
+        <p>Traceback and details of this error will be in the logs</p>
+      </div>
+    </div>
+  </body>
+</html>

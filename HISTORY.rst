@@ -4,6 +4,9 @@ Changelog
 2.0.32 (unreleased)
 -------------------
 
+- Better error pages with stacktrace info if it's possible to provide
+  [vangheem]
+
 - Be able to modify comments made on a historic content object history data
   [vangheem]
 
