@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.32 (unreleased)
+2.0.32 (2017-04-28)
 -------------------
 
 - Better error pages with stacktrace info if it's possible to provide
