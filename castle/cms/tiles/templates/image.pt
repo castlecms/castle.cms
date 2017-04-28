@@ -9,7 +9,9 @@
     <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt in ('natural', 'fullwidth')">
       <img src="${image/absolute_url}/@@images/image/${scale}"
-           alt="${image/Description}" />
+           alt="${image/Description}" tal:condition="python: scale not in ('original')" />
+      <img src="${image/absolute_url}/@@images/image"
+        alt="${image/Description}" tal:condition="python: scale in ('original')"/>
     </a>
     <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt not in ('natural', 'fullwidth')">
