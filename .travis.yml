@@ -6,7 +6,7 @@ before_script:
   - sleep 10
 install:
   - mkdir -p buildout-cache/{eggs,downloads}
-  - python bootstrap.py -c travis.cfg -v 2.2.5 --setuptools-version=9.1
+  - pip install -r requirements.txt
   - bin/buildout -Nc travis.cfg
 script: bin/test -s castle.cms -t \!selenium
 before_install:
