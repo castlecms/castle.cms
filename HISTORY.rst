@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.33 (unreleased)
+2.0.33 (2017-05-8)
 -------------------
 
 - Site install now wont add duplicate slot tiles
