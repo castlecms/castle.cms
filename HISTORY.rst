@@ -4,7 +4,11 @@ Changelog
 2.0.33 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Site install now wont add duplicate slot tiles
+  [obct537]
+
+- Original image scale now actually does something
+  [obct537]
 
 
 2.0.32 (2017-04-28)
