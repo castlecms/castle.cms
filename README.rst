@@ -15,23 +15,6 @@ info@wildcardcorp.com
 Welcome to the main Castle CMS package!
 =======================================
 
-This package includes a lot of customizations to default Plone and, without an installer,
-this package won't be very useful.
-
-Until there is an installer, here are some of the things you'll need:
-
-- this version of plone.app.blocks: https://github.com/castlecms/plone.app.blocks
-- this version of plone.app.registry: https://github.com/plone/plone.app.registry/pull/15
-- Redis
-- avconv (needs to be updated for ffmpeg again)
-- ElasticSearch 2.3
-- https://github.com/castlecms/elasticsearch-castle-scoring
-- https://github.com/castlecms/castlehps installed for faster search integration
-- Amazon S3 credentials
-- Google Analytics API integration
-- Plivo API
-- reCAPTCHA key
-
 
 Feature List
 ============
@@ -86,10 +69,42 @@ In addition to Plone standard features...
 - 2-factor authentication
 
 
-Optional Dependencies
-=====================
+Installation
+============
 
-- install `argon2_cffi` to use more secure password hashing
+This package includes a lot of customizations to default Plone and, without an installer,
+getting it running is a bit tricky.
+
+Dependencies
+------------
+
+- Redis
+- avconv (needs to be updated for ffmpeg again)
+- ElasticSearch 2.3
+
+
+Development setup on macOS
+--------------------------
+
+1. ``brew install redis elasticsearch libav python``
+2. ``git clone git@github.com:castlecms/castle.cms.git``
+3. ``cd castle.cms``
+4. ``virtualenv -p python2.7 .``
+5. ``bin/pip install -r requirements.txt``
+6. ``bin/buildout``
+7. Run ``elasticsearch``, ``redis-server``, ``bin/instance fg`` and ``bin/celery worker``
+8. Go to http://localhost:8080/
+
+
+Optional Dependencies
+---------------------
+
+- Install `argon2_cffi` to use more secure password hashing.
+- https://github.com/castlecms/elasticsearch-castle-scoring
+- https://github.com/castlecms/castlehps for faster search integration
+- Amazon S3 credentials to store large files on S3
+- Google API keys for Google analytics and Recaptcha integrations
+- Plivo API for SMS
 
 
 Running tests
