@@ -1,6 +1,6 @@
 <tal:container tal:define="image python: view.get_image();
                            dt python: view.data.get('display_type') or 'natural';
-                           scale python: view.data.get('scale') or 'large';
+                           scale python: view.get_scale();
                            fp python: view.get_focal_point();
                            link python: view.get_link()">
   <div class="image-tile-container ${dt}"
@@ -9,9 +9,7 @@
     <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt in ('natural', 'fullwidth')">
       <img src="${image/absolute_url}/@@images/image/${scale}"
-           alt="${image/Description}" tal:condition="python: scale not in ('original')" />
-      <img src="${image/absolute_url}/@@images/image"
-        alt="${image/Description}" tal:condition="python: scale in ('original')"/>
+           alt="${image/Description}" />
     </a>
     <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt not in ('natural', 'fullwidth')">

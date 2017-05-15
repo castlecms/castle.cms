@@ -38,6 +38,13 @@ def image_scales(context):
 class ImageTile(BaseTile):
     implements(IPersistentTile)
 
+    def __call__(self):
+        super(ImageTile, self).__call__()
+        if self.data.get('scale', None) == 'original':
+            self.data.update({'scale': ''})
+
+        return self.render()
+
     def render(self):
         return self.index()
 
@@ -46,6 +53,17 @@ class ImageTile(BaseTile):
         if not image:
             return
         return self.utils.get_object(self.data['image'][0])
+
+    def get_scale(self):
+        scale = self.data.get('scale', None)
+        if scale is None:
+            return 'large'
+
+        if scale == 'orignal':
+            return ''
+
+        return scale
+
 
     def get_link(self):
         if self.data.get('external_link'):
