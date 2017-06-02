@@ -13,6 +13,9 @@ Changelog
 - fix crawling gz sitemaps
   [vangheem]
 
+- Put in some basic styles for the depth
+  [robzonenet]
+
 
 2.0.30 (2017-04-12)
 -------------------
