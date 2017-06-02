@@ -5,6 +5,7 @@ from datetime import timedelta
 from plone.autoform import directives as form
 from plone.event.utils import is_datetime
 from plone.event.utils import pydt
+from plone.event.recurrence import recurrence_sequence_ical as recurrences
 from Products.CMFCore.utils import getToolByName
 from zope import schema
 from zope.interface import Interface
@@ -45,6 +46,18 @@ class CalendarTile(BaseTile):
                     'start': brain.start and format_date(brain.start),
                     'end': brain.end and format_date(brain.end)
                 })
+
+                if hasattr(brain, 'recurrence') and brain.recurrence is not None:
+                    time_delta = brain.end - brain.start
+                    recurring_events = recurrences(brain.start, brain.recurrence)
+                    for new_event in recurring_events:
+                        events.append({
+                            'title': brain.Title,
+                            'url': brain.getURL(),
+                            'start': format_date(new_event),
+                            'end': format_date(new_event + time_delta)
+                        })
+
             else:
                 event['start'] = format_date(brain.effective)
                 if brain.expires and brain.expires.year() != 2499:

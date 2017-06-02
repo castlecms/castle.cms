@@ -27,6 +27,7 @@ REMOVE_INDEXES = [
 METADATA = [
     'hasImage',
     'contentType',
+    'recurrence',
     'last_modified_by',
     'image_info',
     'navigation_label'
