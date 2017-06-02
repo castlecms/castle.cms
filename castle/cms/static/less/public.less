@@ -98,6 +98,20 @@
   }
 }
 
+nav.portletContent ul ul {
+    margin-left: 1em;
+}
+nav.portletContent >  ul > li > ul > li:first-child > a:first-child {
+    border-top: none;
+}
+.portletNavigationTree .portletContent > ul > li > ul a {
+    padding: 2px 15px 2px 10px !important;
+
+    &::before {
+        display: none;
+    }
+}
+
 @media (max-width: 976px) {
  .portal-type-audio .col-md-3 {
     width: 16.66666667%;
