@@ -1,9 +1,9 @@
+from castle.cms import constants
 from castle.cms.interfaces import ISecureLoginAllowedView
 from plone import api
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import queryUtility
-from castle.cms import constants
 
 
 SHIELD = constants.SHIELD

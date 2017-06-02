@@ -57,6 +57,25 @@ class TestTwoFactor(unittest.TestCase):
         self.assertTrue(opts['twoFactorEnabled'])
         self.assertEquals(len(opts['supportedAuthSchemes']), 2)
 
+    def test_success_url_is_dashboard(self):
+        registry = queryUtility(IRegistry)
+        registry['plone.two_factor_enabled'] = True
+        registry['castle.plivo_auth_id'] = u'foobar'
+        view = SecureLoginView(self.portal, self.request)
+        opts = json.loads(view.options())
+        self.assertTrue('@@dashboard' in opts['successUrl'])
+
+    def test_success_url_uses_came_from(self):
+        registry = queryUtility(IRegistry)
+        registry['plone.two_factor_enabled'] = True
+        registry['castle.plivo_auth_id'] = u'foobar'
+        self.request.form.update({
+            'came_from': self.portal.absolute_url() + '/foobar'
+        })
+        view = SecureLoginView(self.portal, self.request)
+        opts = json.loads(view.options())
+        self.assertTrue('/foobar' in opts['successUrl'])
+
     @responses.activate
     def test_send_text_message_with_code(self):
         responses.add(

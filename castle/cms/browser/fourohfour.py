@@ -1,4 +1,5 @@
 from castle.cms import archival
+from castle.cms import shield
 from castle.cms.files import aws
 from plone import api
 from Products.Five import BrowserView
@@ -9,6 +10,8 @@ from zope.component import queryMultiAdapter
 class NotFoundView(BrowserView):
 
     def __call__(self):
+        shield.protect(self.request)
+
         self.notfound = self.context
         self.context = api.portal.get()
         archive_storage = archival.Storage(self.context)

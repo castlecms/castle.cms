@@ -1,7 +1,7 @@
 <div i18n:domain="plone"
      tal:define="history view/fullHistory;"
      tal:omit-tag="">
-     <div tal:condition="not: history">—</div>
+   <div tal:condition="not: history">—</div>
 
     <table class="listing" id="history-list" tal:condition="history"
         summary="Content listing"
@@ -9,15 +9,15 @@
         <tbody>
             <tr class="odd">
                 <th class="nosort"
+                  i18n:translate="">When</th>
+                <th class="nosort"
                     i18n:translate="">What</th>
                 <th class="nosort"
                     i18n:translate="">Who</th>
-                <th class="nosort"
-                    i18n:translate="">When</th>
                 <th class="nosort" colspan="2"
                     i18n:translate="">Actions</th>
             </tr>
-            <tr tal:repeat="item history" class="historyRecord">
+            <tal:history tal:repeat="item history">
              <tal:historyItem
                 define="rhComments item/comments|nothing;
                         actor item/actor;
@@ -27,43 +27,63 @@
                         action_id python:item['action'] or item['review_state'];
                         effective item/effective_date|nothing;
                         effectiveDate python:effective and view.toLocalizedTime(item['effective_date'],long_format=True);
-                        isVersion python:item['type']=='versioning'">
-                <td>
-                  <p>${action}</p>
-                  <p i18n:translate="" tal:content="rhComments" tal:condition="rhComments" class="historyComment discreet" />
-                </td>
-                <td>
-                  <a href=""
-                    tal:condition="actor_home"
-                    tal:attributes="href actor_home"
-                    tal:content="actor_name"> runyaga </a>
-                    <span tal:condition="not: actor_home"
-                      tal:replace="actor_name"/>
-                </td>
-                <td>
-                  <span tal:content="python:view.toLocalizedTime(item['time'],long_format=True)"
-                        class="pat-moment" data-pat-moment="format:relative;"/>
-                  <tal:effective tal:condition="effective|nothing">
-                      (<span i18n:translate="label_publishing_effective" tal:omit-tag="">effective</span>:
-                      <span tal:content="python:item['effective']" class="pat-moment" data-pat-moment="format:relative;" />)
-                  </tal:effective>
-                </td>
-                <td>
-                  <a class="plone-btn plone-btn-default"
-                     tal:condition="isVersion"
-                     href="${context/absolute_url}/@@history?version=${item/version_id}">View</a>
-                  <span class="historyTools" tal:condition="isVersion">
-                    <form action="" method="post" tal:condition="item/revert_url" tal:attributes="action item/revert_url"
-                          style="display:inline">
-                        <input type="hidden" name="version_id" value="" tal:attributes="value item/version_id" />
-                        <input class="destructive" type="submit" i18n:attributes="value title_revert_revision"
-                                tal:condition="exists:item/diff_current_url"
-                                value="Revert to this revision" />
-                    </form>
-                  </span>
-                </td>
+                        isVersion python:item['type']=='versioning';
+                        when python: view.toLocalizedTime(item['time'],long_format=True)">
+                <tr tal:attributes="class python: rhComments and 'historyRecord hasComments' or 'historyRecord'">
+                  <td>
+                    <span tal:content="when"
+                          class="pat-moment" data-pat-moment="format:relative;"/>
+                    <tal:effective tal:condition="effective|nothing">
+                        (<span i18n:translate="label_publishing_effective" tal:omit-tag="">effective</span>:
+                        <span tal:content="python:item['effective']" class="pat-moment" data-pat-moment="format:relative;" />)
+                    </tal:effective>
+                  </td>
+                  <td>
+                    ${action}
+                  </td>
+                  <td>
+                    <a href=""
+                      tal:condition="actor_home"
+                      tal:attributes="href actor_home"
+                      tal:content="actor_name"> runyaga </a>
+                      <span tal:condition="not: actor_home"
+                        tal:replace="actor_name"/>
+                  </td>
+                  <td>
+                    <a class="plone-btn plone-btn-default plone-btn-xs"
+                       tal:condition="isVersion"
+                       href="${context/absolute_url}/@@history?version=${item/version_id}">View</a>
+                    <a class="plone-btn plone-btn-default plone-btn-xs btn-modify-comments"
+                       data-version-id="${item/version_id}"
+                       data-comments="${rhComments|nothing}"
+                       tal:condition="isVersion"
+                       href="#">Modify change note</a>
+                    <span class="historyTools" tal:condition="isVersion">
+                      <form method="post" tal:condition="item/revert_url"
+                            tal:attributes="action item/revert_url"
+                            data-comments="${rhComments|nothing}"
+                            data-who="${actor_name}"
+                            data-when="${when}"
+                            data-what="${action}"
+                            class="revert-form">
+                          <input type="hidden" name="version_id" tal:attributes="value item/version_id" />
+                          <input class="revert-btn plone-btn plone-btn-danger plone-btn-xs"
+                                 type="submit" i18n:attributes="value title_revert_revision"
+                                 tal:condition="exists:item/diff_current_url"
+                                 value="Revert to this revision" />
+                      </form>
+                    </span>
+                  </td>
+                </tr>
+                <tr class="historyRecord historyComment discreet" tal:condition="rhComments">
+                  <td colspan="4">
+                    <p i18n:translate="" tal:content="rhComments" tal:condition="rhComments"
+                       tal:attributes="id python: item.get('version_id', None)"
+                       class="rendered-comments" />
+                  </td>
+                </tr>
               </tal:historyItem>
-            </tr>
+            </tal:history>
         </tbody>
     </table>
 

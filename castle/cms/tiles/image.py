@@ -28,7 +28,7 @@ def image_scales(context):
     settings = registry.forInterface(IImagingSchema,
                                      prefix="plone",
                                      check=False)
-    values.append(SimpleTerm('', '', 'Original'))
+    values.append(SimpleTerm('original', 'original', 'Original'))
     for allowed_size in settings.allowed_sizes:
         name = allowed_size.split()[0]
         values.append(SimpleTerm(name, name, allowed_size))
@@ -99,7 +99,7 @@ class IImageTileSchema(model.Schema):
     display_type = schema.Choice(
         title=u'Display type',
         required=True,
-        default=u'natural',
+        default=u'fullwidth',
         vocabulary=SimpleVocabulary([
             SimpleTerm('natural', 'natural', u'Natural'),
             SimpleTerm('fullwidth', 'fullwidth', u'Natural(Full width)'),

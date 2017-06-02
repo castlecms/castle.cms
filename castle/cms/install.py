@@ -130,6 +130,12 @@ def tiles(site, req, tiles_data=_tiles_data):
             meta_data = meta_data_manager.get()
 
             existing_tiles = meta_data.get('tiles') or []
+            new_tile_id = tile['meta']['id']
+
+            if new_tile_id in [x['id'] for x in existing_tiles]:
+                # check if the tile we're trying to install is already there.
+                continue
+
             existing_tiles.append(meta)
             meta_data['tiles'] = existing_tiles
             meta_data['mode'] = 'show'

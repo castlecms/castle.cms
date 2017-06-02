@@ -1,8 +1,55 @@
 Changelog
 =========
 
-2.0.31 (unreleased)
+2.0.34 (unreleased)
 -------------------
+
+- Fixed problem breaking content history view
+  [obct537]
+
+2.0.33 (2017-05-8)
+-------------------
+
+- Site install now wont add duplicate slot tiles
+  [obct537]
+
+- Original image scale now actually does something
+  [obct537]
+
+
+2.0.32 (2017-04-28)
+-------------------
+
+- Better error pages with stacktrace info if it's possible to provide
+  [vangheem]
+
+- Be able to modify comments made on a historic content object history data
+  [vangheem]
+
+- Fix 404 not being protected by login shield.
+  [vangheem]
+
+- After login should now redirect you to `/@@dashboard` or to the original
+  url you requested if you were redirected to login page
+  [vangheem]
+
+- Updated defaults for the image tile
+  [obct537]
+
+
+2.0.31 (2017-04-18)
+-------------------
+
+- Fix version pin for plone.app.content to work correctly with folder contents
+  and changing date properties
+  [vangheem]
+
+- Build css/js with latest mockup but disable now/clear buttons on pickadate
+  so they are unstyled and look bad with castle.
+  [vangheem]
+
+- Fix password reset template to send user's username instead of id
+  [vangheem]
 
 - export-content.py now works to export dexterity and mosaic pages
   [vangheem]
@@ -16,6 +63,8 @@ Changelog
 - Put in some basic styles for the depth
   [robzonenet]
 
+- Resolved issue where the the words 'site settings' showed up when clicked
+  [robzonenet]
 
 2.0.30 (2017-04-12)
 -------------------
