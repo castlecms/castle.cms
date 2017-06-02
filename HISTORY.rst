@@ -4,8 +4,8 @@ Changelog
 2.3.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Calendar tile now renders recurring events
+  [obct537]
 
 2.3.2 (2018-12-04)
 ------------------
