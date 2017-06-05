@@ -4,7 +4,8 @@ Changelog
 2.0.34 (unreleased)
 -------------------
 
-- No changes yet
+- Fixed problem breaking content history view
+  [obct537]
 
 2.0.33 (2017-05-8)
 -------------------
@@ -58,6 +59,9 @@ Changelog
 
 - fix crawling gz sitemaps
   [vangheem]
+
+- Put in some basic styles for the depth
+  [robzonenet]
 
 - Resolved issue where the the words 'site settings' showed up when clicked
   [robzonenet]

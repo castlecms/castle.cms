@@ -78,7 +78,7 @@
                 <tr class="historyRecord historyComment discreet" tal:condition="rhComments">
                   <td colspan="4">
                     <p i18n:translate="" tal:content="rhComments" tal:condition="rhComments"
-                       id="rendered-comments-${item/version_id}"
+                       tal:attributes="id python: item.get('version_id', None)"
                        class="rendered-comments" />
                   </td>
                 </tr>
