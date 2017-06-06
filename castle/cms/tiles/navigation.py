@@ -23,6 +23,8 @@ from zope import schema
 from zope.interface import implements
 from zope.schema.vocabulary import SimpleVocabulary
 
+DEFAULT_ITEM_COUNT = 10
+
 
 class NavigationTile(BaseTile):
     implements(IGlobalTile)
@@ -84,10 +86,14 @@ class NavigationTile(BaseTile):
                 })
             if query is None:
                 return []
-            limit = self.data.get('limit') or 10
+            limit = self.data.get('limit') or DEFAULT_ITEM_COUNT
             items = catalog(**query)[:limit + 40]
             brains = [i for i in items if i.exclude_from_nav is not True][:limit]
         else:
+            '''
+            This is the "select content" case. Don't need to run any queries,
+            so we're doing this separately.
+            '''
             uids = self.data.get('content') or []
             results = dict([(b.UID, b) for b in catalog(UID=uids)])
             items = []
@@ -108,6 +114,10 @@ class NavigationTile(BaseTile):
                 brains = catalog(**new_query)
 
         def find_parent(tree, child):
+            '''
+            This method takes a new content item, and appends it to the content
+            tree in the correct location
+            '''
 
             done = False
             current = tree
@@ -143,7 +153,7 @@ class NavigationTile(BaseTile):
         brain_listing = [[x.getPath(), x] for x in brains]
         sorted_brain_listing = sorted(brain_listing, key=lambda x: x[0])
 
-        limit = self.data.get('limit') or 10
+        limit = self.data.get('limit') or DEFAULT_ITEM_COUNT
         sorted_brain_listing = sorted_brain_listing[:limit]
 
         tree = {'path': '', 'obj': None, 'sub_items': []}
@@ -275,5 +285,5 @@ class INavigationTileSchema(model.Schema):
         title=u'Limit',
         description=u'Limited number of items',
         required=True,
-        default=10
+        default=DEFAULT_ITEM_COUNT
     )
