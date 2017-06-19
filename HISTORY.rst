@@ -7,6 +7,10 @@ Changelog
 - Calendar tile now renders recurring events
   [obct537]
 
+- add upgrade step for event recurrences
+  [tkimnguyen]
+
+
 2.3.2 (2018-12-04)
 ------------------
 

@@ -51,12 +51,13 @@ class CalendarTile(BaseTile):
                     time_delta = brain.end - brain.start
                     recurring_events = recurrences(brain.start, brain.recurrence)
                     for new_event in recurring_events:
-                        events.append({
-                            'title': brain.Title,
-                            'url': brain.getURL(),
-                            'start': format_date(new_event),
-                            'end': format_date(new_event + time_delta)
-                        })
+                        if new_event != brain.start: # skip the actual event
+                            events.append({
+                                'title': brain.Title,
+                                'url': brain.getURL(),
+                                'start': format_date(new_event),
+                                'end': format_date(new_event + time_delta)
+                            })
 
             else:
                 event['start'] = format_date(brain.effective)
