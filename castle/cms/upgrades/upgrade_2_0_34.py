@@ -19,5 +19,5 @@ def upgrade(context, logger=None):
         obj = brain.getObject() # unfortunate but necessary
         if hasattr(obj, 'recurrence') and obj.recurrence is not None:
             log.info('reindexing recurrence of %s' % brain.Title)
-            brain.getObject().reindexObject(idxs=['recurrence'])
+            obj.reindexObject(idxs=['recurrence'])
     cookWhenChangingSettings(api.portal.get())
