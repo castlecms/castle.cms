@@ -24,8 +24,13 @@ Changelog
 
 2.0.34 (2017-07-03)
 -------------------
-
 - Changed map attribution string to include OpenStreepMap
+  [obct537]
+
+- Fixed problem breaking content history view
+  [obct537]
+
+- Added a toolbar button to allow users to manually mark an object for archiving
   [obct537]
 
 2.0.33 (2017-05-8)
