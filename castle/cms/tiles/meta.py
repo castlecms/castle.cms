@@ -22,7 +22,7 @@ class MetaTile(Tile):
     implements(IGlobalTile)
 
     _template = """<section class="meta-tile-container"
-                        id="meta-tile-%(id)s">%(content)s</section>"""
+                        id="meta-tile-%(id)s" aria-label="%(id)s">%(content)s</section>"""
     _tile_template = """<div class="tile-container
                                     tile-container-%(type)s
                                     tile-container-index-%(idx)i"
