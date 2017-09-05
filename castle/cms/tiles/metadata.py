@@ -113,6 +113,10 @@ class MetaDataTile(Tile):
       href="{url}/@@search" />'''.format(
             url=self.root_url
           )
+    def get_printcss_link(self):
+        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="all">'''.format(
+              url=self.root_url
+              )
 
     def __call__(self):
         portal_state = getMultiAdapter((self.context, self.request),
@@ -141,4 +145,5 @@ class MetaDataTile(Tile):
         result += unidecode(self.get_ld_data())
         result += unidecode(self.get_icons())
         result += unidecode(self.get_search_link())
+        result += unidecode(self.get_printcss_link())
         return u'<html><head>%s</head></html>' % result
