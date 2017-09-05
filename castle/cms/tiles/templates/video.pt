@@ -27,14 +27,15 @@
           <track kind="subtitles" src="${video/absolute_url}/@@view/++widget++form.widgets.subtitle_file/@@download"
                  srclang="en" tal:condition="subtitles" />
         </video>
-        <iframe tal:condition="youtube_url" style="width:100%;height:100%;"
-                width="100%" height="100%"
-                src="${python: view.tweak_youtube_url(youtube_url)}" frameborder="0" allowfullscreen=""></iframe>
+        <iframe tal:condition="youtube_url" style="border:0;width:100%;height:100%;"
+                title="${video/Title}"
+                src="${python: view.tweak_youtube_url(youtube_url)}" allowfullscreen=""></iframe>
       </div>
     </p>
     <div class="video-inner-container youtube" tal:condition="python: tile_youtube_url and not video">
-      <iframe src="${python: view.tweak_youtube_url(tile_youtube_url)}" width="100%" height="100%"
-              frameborder="0" allowfullscreen="" style="width:100%;height:100%;" ></iframe>
+      <iframe src="${python: view.tweak_youtube_url(tile_youtube_url)}"
+              title="${tile_youtube_url}"
+              allowfullscreen="" style="border:0;width:100%;height:100%;" ></iframe>
     </div>
     <p class="date"
         tal:content="python: view.utils.format_date(effective, 'notime')"
@@ -46,7 +47,7 @@
     </tal:desc>
     <p class="transcript"
         tal:condition="python: 'transcript' in df and video">
-      <a href="${video/absolute_url}/view">Transcript | Download</a>
+      <a href="${video/absolute_url}/view" aria-label="Read Transcript / Download ${video/Title}">Transcript / Download</a>
     </p>
   </tal:defs>
   </div>
