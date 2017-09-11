@@ -7,11 +7,12 @@
                   base_url item/getURL;
                   url python: utils.get_object_url(item);
                   has_image python: utils.has_image(item);
-                  desc python: item.Description or item.Title;">
+                  desc python: item.Description or item.Title;
+                  title python: item.Title or item.Description;">
   <li class="portal-type-${item/portal_type} grid-item"
       tal:condition="has_image">
     <a href="${url}">
-      <img src="${base_url}/@@images/image/large" alt="item/Description" />
+      <img src="${base_url}/@@images/image/large"  alt="${title}" />
     </a>
     <p class="description">${desc}</p>
   </li>
