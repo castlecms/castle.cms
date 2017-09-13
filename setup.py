@@ -24,7 +24,9 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Framework :: Plone :: 5.0",
         "Framework :: Plone",
-        "Framework :: Plone :: 5.1"
+        "Framework :: Plone :: 5.1",
+        "Framework :: CastleCMS",
+        "Framework :: CastleCMS :: Theme"
     ],
     author='Nathan Van Gheem',
     author_email='nathan.vangheem@wildcardcorp.com',
