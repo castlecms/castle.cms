@@ -102,3 +102,65 @@
       padding: 0px !important;
   }
 }
+
+// Not shipped with plone
+
+@page {
+  margin: 2cm;
+}
+body {
+   font-size: 12px !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+/*Prevent headings from being printed at the bottom of the page   */
+page-break-after: avoid;
+}
+
+article {
+/*Always start new articles on a new page*/
+page-break-before: always;
+}
+
+ul {
+/*Prevent images from being split up*/
+page-break-inside: avoid;
+}
+.featured-content-backgroundimage {
+  max-width: 100%;
+  height: auto !important;
+  .info-text {
+    position: static;
+    background: transparent;
+    h3 {
+      color: black;
+      font-size: 110%;
+      text-shadow: initial;
+    }
+    p {
+      color: black;
+      font-size: 100%;
+      text-shadow: initial;
+    }
+  }
+}
+
+img, .focuspoint img {
+  max-width: 100% !important;
+  min-height: initial;
+  min-width: initial;
+  display: initial;
+}
+.focuspoint {
+  page-break-inside: avoid;
+  img {
+    position: inherit;
+    top: initial !important;
+    left: initial !important;
+    max-width: 100% !important;
+  }
+}
+
+.mosaic-tile .focuspoint {
+  height: auto !important;
+}
