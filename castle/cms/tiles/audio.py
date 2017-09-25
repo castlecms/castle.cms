@@ -39,16 +39,16 @@ class AudioTile(ContentTile):
         return '%s/@@download/file/%s' % (audio.absolute_url(), fi.filename)
 
     def get_twitter_user(self):
-   user =  api.portal.get_registry_record('plone.twitter_screen_name')
-   if user == '':
-       return False
+        user =  api.portal.get_registry_record('plone.twitter_screen_name')
+        if user == '':
+            return False
 
-   return user
+        return user
 
     def get_https_url(self, audio):
-   # Twitter Player Cards require HTTPS resource URLs
-   url = audio.absolute_url()
-   return url.replace('http:', 'https:')
+        # Twitter Player Cards require HTTPS resource URLs
+        url = audio.absolute_url()
+        return url.replace('http:', 'https:')
 
     def get_content_type(self, audio):
         fi = audio.file
