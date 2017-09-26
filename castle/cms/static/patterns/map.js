@@ -46,11 +46,13 @@ define([
       }
 
       self.map = L.map(self.$el[0], {
-        scrollWheelZoom: false
+        scrollWheelZoom: false,
       }).setView([center.lat, center.lng], self.options.initialZoom);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: ''
+        attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
       }).addTo(self.map);
+
+      self.map.attributionControl.setPrefix(false);
 
       _.each(markers, function(marker){
         if(!marker){

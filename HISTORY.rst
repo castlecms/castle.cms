@@ -1,10 +1,31 @@
 Changelog
 =========
 
-2.0.34 (unreleased)
+2.x.x (unreleased)
+------------------
+
+- Fixed the missing print stylesheet
+  [robzonenet]
+
+
+2.0.36 (2017-08-01)
 -------------------
 
-- Fixed problem breaking content history view
+- Fixed issue breaking the history view on content
+  [obct537]
+
+
+2.0.35 (2017-07-26)
+-------------------
+
+- Added in a 2 level navigation
+  [robzonenet]
+
+
+2.0.34 (2017-07-03)
+-------------------
+
+- Changed map attribution string to include OpenStreepMap
   [obct537]
 
 2.0.33 (2017-05-8)
