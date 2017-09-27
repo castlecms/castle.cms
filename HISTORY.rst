@@ -1,11 +1,35 @@
+
 Changelog
 =========
 
-2.x.x (unreleased)
+unreleased
 ------------------
 
-- Fixed the missing print stylesheet
+- nothing yet
+
+2.0.41 (2017-09-26)
+-------------------
+
+- print.css improvements
   [robzonenet]
+
+2.0.40 (2017-09-26)
+-------------------
+
+- accessibility and print.css improvements
+    [robzonenet]
+
+2.0.39 (2017-09-20)
+-------------------
+
+- 2-level nav improvements for mobile
+  [robzonenet]
+
+2.0.38 (2017-09-18)
+-------------------
+
+- Fixed the missing print stylesheet
+    [robzonenet]
 
 
 2.0.36 (2017-08-01)

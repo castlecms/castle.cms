@@ -12,8 +12,8 @@ def read(*rnames):
 
 setup(
     name='castle.cms',
-    version='2.0.38.dev0',
     description='Castle CMS Plone distribution main package',
+    version='2.0.42.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
