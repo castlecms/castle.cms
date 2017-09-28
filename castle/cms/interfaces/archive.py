@@ -7,3 +7,7 @@ class IArchiveContentTransformer(Interface):
 
     def __call__(dom):
         pass
+
+
+class IArchiveManager(Interface):
+    pass

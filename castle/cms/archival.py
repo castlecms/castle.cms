@@ -1,7 +1,7 @@
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
-from castle.cms.interfaces import IArchiveContentTransformer
+from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager
 from castle.cms.utils import normalize_url
 from DateTime import DateTime
 from lxml.html import fromstring
@@ -42,28 +42,30 @@ class BaseArchivalTransformer(object):
         pass
 
 
-def getContentToArchive(delta=0):
-    days = api.portal.get_registry_record(
-        'castle.archival_number_of_days') - delta
-    types = api.portal.get_registry_record(
-        'castle.archival_types_to_archive')
-    states = api.portal.get_registry_record(
-        'castle.archival_states_to_archive')
-    if not types or not states:
-        return []
-    catalog = api.portal.get_tool('portal_catalog')
-    end = DateTime()
-    if days > 0:
-        end -= days  # we're looking for data last modified
-    query = dict(
-        portal_type=types,
-        modified={
-            'query': (DateTime('1999/09/09'), end),
-            'range': 'min:max'
-        },
-        sort_on="modified",
-        review_state=states)
-    return catalog(**query)
+class ArchiveManager(object):
+
+    def getContentToArchive(self, delta=0):
+        days = api.portal.get_registry_record(
+            'castle.archival_number_of_days') - delta
+        types = api.portal.get_registry_record(
+            'castle.archival_types_to_archive')
+        states = api.portal.get_registry_record(
+            'castle.archival_states_to_archive')
+        if not types or not states:
+            return []
+        catalog = api.portal.get_tool('portal_catalog')
+        end = DateTime()
+        if days > 0:
+            end -= days  # we're looking for data last modified
+        query = dict(
+            portal_type=types,
+            modified={
+                'query': (DateTime('1999/09/09'), end),
+                'range': 'min:max'
+            },
+            sort_on="modified",
+            review_state=states)
+        return catalog(**query)
 
 
 class ImageResourceMover(object):

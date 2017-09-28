@@ -7,7 +7,7 @@ define([
   'castle-url/libs/react/react.min',
   'mockup-utils',
   'castle-url/components/modal',
-  'castle-url/components/quality-check',
+  'castle-quality-check',
   'castle-url/components/utils'
 ], function($, Base, _, R, utils, Modal, QualityCheck, cutils) {
   'use strict';

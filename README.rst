@@ -358,11 +358,3 @@ Castle integrates with Plone's basic tinymce after the deadline support to::
 To utilize after the deadline integration, configure after the deadline in the
 plone tinymce configuration panel and castle will pay attention to the settings
 selected there.
-
-After the deadline
-------------------
-To enable 2 level navigation delete the following line::
-  <ul class="nav navbar-nav" data-tile="${portal_url}/@@fragment?name=mainlinks"></ul>
-
-Add the following line in its place ::
-  <div data-tile="${context_url}/@@castle.cms.twolevelnav"></div>

@@ -4,6 +4,7 @@ from castle.cms import archival
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 from castle.cms.cron.utils import spoof_request
+from castle.cms.interfaces import IArchiveManager
 from castle.cms.utils import get_backend_url
 from castle.cms.utils import retriable
 from castle.cms.utils import send_email
@@ -33,7 +34,9 @@ def archive(site):
         return
 
     storage = archival.Storage(site)
-    for brain in archival.getContentToArchive():
+    man = archival.ArchiveManager()
+    archive_manager = IArchiveManager(man)
+    for brain in archive_manager.getContentToArchive():
         try:
             ob = brain.getObject()
 
@@ -62,7 +65,7 @@ def archive(site):
         except:
             logger.error('Error archiving %s' % brain.getPath(), exc_info=True)
 
-    content_to_archive = archival.getContentToArchive(7)
+    content_to_archive = archive_manager.getContentToArchive(7)
     if len(content_to_archive) == 0:
         return
 
