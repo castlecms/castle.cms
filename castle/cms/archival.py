@@ -44,6 +44,8 @@ class BaseArchivalTransformer(object):
 
 class ArchiveManager(object):
 
+    implements(IArchiveManager)
+
     def getContentToArchive(self, delta=0):
         days = api.portal.get_registry_record(
             'castle.archival_number_of_days') - delta
