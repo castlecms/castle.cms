@@ -2,6 +2,7 @@ from castle.cms.tiles.base import ContentTile
 from castle.cms.widgets import AudioRelatedItemsFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
+from plone import api
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.component import getMultiAdapter
@@ -36,6 +37,18 @@ class AudioTile(ContentTile):
     def get_url(self, audio):
         fi = audio.file
         return '%s/@@download/file/%s' % (audio.absolute_url(), fi.filename)
+
+    def get_twitter_user(self):
+        user =  api.portal.get_registry_record('plone.twitter_screen_name')
+        if user == '':
+            return False
+
+        return user
+
+    def get_https_url(self, audio):
+        # Twitter Player Cards require HTTPS resource URLs
+        url = audio.absolute_url()
+        return url.replace('http:', 'https:')
 
     def get_content_type(self, audio):
         fi = audio.file

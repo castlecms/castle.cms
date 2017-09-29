@@ -114,7 +114,7 @@ class MetaDataTile(Tile):
             url=self.root_url
           )
     def get_printcss_link(self):
-        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="all">'''.format(
+        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(
               url=self.root_url
               )
 

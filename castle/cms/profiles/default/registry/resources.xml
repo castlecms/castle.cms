@@ -108,6 +108,11 @@
       </value>
   </records>
 
+  <records prefix="plone.resources/castle-quality-check"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/quality-check.js</value>
+  </records>
+
   <records prefix="plone.resources/mockup-patterns-querystring"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/patterns/querystring.js</value>

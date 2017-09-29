@@ -116,6 +116,16 @@
   />
 
   <browser:page
+    name="audioplayer"
+    for="castle.cms.interfaces.content.IAudio"
+    class=".audioplayer.AudioPlayerView"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/audio-player.pt"
+    />
+
+
+  <browser:page
     name="download"
     for="*"
     class=".files.NamedFileDownload"

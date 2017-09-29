@@ -5,6 +5,7 @@ import unittest
 from DateTime import DateTime
 from castle.cms import archival
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.interfaces import IArchiveManager
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -19,6 +20,8 @@ class TestArchival(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        man = archival.ArchiveManager()
+        self.archive_manager = IArchiveManager(man)
 
     def test_get_archival_items(self):
         login(self.portal, TEST_USER_NAME)
@@ -35,7 +38,8 @@ class TestArchival(unittest.TestCase):
         api.portal.set_registry_record(
             'castle.archival_types_to_archive', ['Document'])
 
-        self.assertEqual(len(archival.getContentToArchive()), 1)
+
+        self.assertEqual(len(self.archive_manager.getContentToArchive()), 1)
 
     def test_get_archival_items_pays_attention_to_types(self):
         login(self.portal, TEST_USER_NAME)
@@ -52,7 +56,8 @@ class TestArchival(unittest.TestCase):
         api.portal.set_registry_record(
             'castle.archival_types_to_archive', ['News Item'])
 
-        self.assertEqual(len(archival.getContentToArchive()), 0)
+
+        self.assertEqual(len(self.archive_manager.getContentToArchive()), 0)
 
     def test_flash_resource_mover_gets_els(self):
         dom = fromstring('''<html>

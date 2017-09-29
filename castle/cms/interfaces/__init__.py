@@ -2,6 +2,7 @@
 
 from .authentication import IAuthenticator
 from .archive import IArchiveContentTransformer
+from .archive import IArchiveManager
 from .content import IAudio
 from .content import ICastleApplication
 from .content import IDashboard
