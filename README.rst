@@ -130,6 +130,14 @@ To specify custom Firefox binary to match versions:
 
     FIREFOX_BINARY=/opt/firefox/firefox ./bin/test  -s castle.cms
 
+If selenium refuses to start, update the binaries:
+
+.. code-block:: shell
+    pip install -U selenium
+
+If it still doesn't run, attempt to install FF 45
+`<https://ftp.mozilla.org/pub/firefox/releases/45.0/linux-x86_64/en-US/>`_
+
 Non-Selenium tests:
 
 since selenium can be flaky...
