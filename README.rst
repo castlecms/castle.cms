@@ -154,14 +154,14 @@ Google Analytics Key File
   - service account
   - p12
 - enable Analytics API api for credentials
-- fill out email with email provided and p12 file in Castle API settings
+- fill out email with email provided and p12 file in Castle CMS API settings
 - use email for email you want to access and add it as an authorized user for the account in Google Analytics
 
 
 Cron jobs
 =========
 
-Castle uses many cron jobs that need to be setup.
+Castle CMS uses many cron jobs that need to be setup.
 
 Daily
 -----
@@ -335,8 +335,8 @@ Lead images
 
 
 
-Castle upgrades
----------------
+Castle CMS upgrades
+-------------------
 
 There is currently no UI in the Site Setup to run Castle CMS
 upgrades.
