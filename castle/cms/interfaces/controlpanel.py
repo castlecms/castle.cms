@@ -153,7 +153,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
     )
 
 
-class IAnnoucementData(Interface):
+class IAnnouncementData(Interface):
     show_announcement = schema.Bool(
         title=u'Show site announcement',
         default=False,
@@ -378,7 +378,7 @@ class IArchivalSettings(Interface):
 class ICastleSettings(
         ISiteConfiguration,
         IAPISettings,
-        IAnnoucementData,
+        IAnnouncementData,
         IArchivalSettings):
     pass
 

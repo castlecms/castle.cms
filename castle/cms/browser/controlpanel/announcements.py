@@ -2,7 +2,7 @@ from Acquisition import aq_inner
 from castle.cms import texting
 from castle.cms.browser.utils import Utils
 from castle.cms.constants import ALL_SUBSCRIBERS
-from castle.cms.interfaces import IAnnoucementData
+from castle.cms.interfaces import IAnnouncementData
 from castle.cms.tasks import send_email
 from castle.cms.tasks import send_email_to_subscribers
 from castle.cms.widgets import AjaxSelectFieldWidget
@@ -27,7 +27,7 @@ from zope.component import getUtility
 
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
-    schema = IAnnoucementData
+    schema = IAnnouncementData
     schema_prefix = 'castle'
     id = "AnnouncementsControlPanel"
     label = u"Announcements"

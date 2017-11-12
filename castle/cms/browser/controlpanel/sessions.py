@@ -7,6 +7,7 @@ from Products.Five import BrowserView
 
 class SessionsView(BrowserView):
     label = 'Active Sessions'
+    description = "View and control your site's currently logged-in user sessions."
 
     def __call__(self):
 
