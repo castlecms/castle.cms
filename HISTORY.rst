@@ -5,7 +5,8 @@ Changelog
 unreleased
 ------------------
 
-- nothing yet
+- correct typos; add descriptions to control panels
+  [tkimnguyen]
 
 2.0.41 (2017-09-26)
 -------------------
