@@ -46,7 +46,7 @@
     </tal:desc>
     <p class="transcript"
         tal:condition="python: 'transcript' in df and video">
-      <a href="${video/absolute_url}/view">Transcript | Download</a>
+      <a href="${video/absolute_url}/view">Transcript | Download <span class="hidden">${video/Title}</span></a>
     </p>
   </tal:defs>
   </div>
