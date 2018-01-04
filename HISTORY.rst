@@ -5,7 +5,8 @@ Changelog
 unreleased
 ------------------
 
-- nothing yet
+- improve URL shared via sharing buttons
+  [tkimnguyen]
 
 2.0.41 (2017-09-26)
 -------------------

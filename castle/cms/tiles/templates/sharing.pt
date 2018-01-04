@@ -3,21 +3,21 @@
                  title context/@@plone_context_state/object_title;
                  counts view/get_counts;">
   <tal:btn tal:condition="python: 'twitter' in buttons"
-           tal:define="url string:https://twitter.com/intent/tweet?text=${title}&url=${request/URL}">
+           tal:define="url string:https://twitter.com/intent/tweet?text=${title}&url=${here/absolute_url}">
     <a class="webicon twitter small" href="${url}" target="_blank">Share on Twitter</a>
     <a class="twitter link" href="${url}" target="_blank">Twitter
       <span tal:condition="counts/twitter|nothing" class="count">(${counts/twitter})</span>
     </a>
   </tal:btn>
   <tal:btn tal:condition="python: 'facebook' in buttons"
-           tal:define="url string:https://www.facebook.com/sharer/sharer.php?u=${request/URL}&t=${title}">
+           tal:define="url string:https://www.facebook.com/sharer/sharer.php?u=${here/absolute_url}&t=${title}">
     <a class="webicon facebook small" href="${url}" target="_blank">Share on Facebook</a>
     <a class="facebook link" href="${url}" target="_blank">Facebook
       <span tal:condition="counts/facebook|nothing" class="count">(${counts/facebook})</span>
     </a>
   </tal:btn>
   <tal:btn tal:condition="python: 'email' in buttons"
-           tal:define='url string:mailto:?Subject="${title}"&body=${request/URL}'>
+           tal:define='url string:mailto:?Subject="${title}"&body=${here/absolute_url}'>
     <a class="webicon mail small" href="${url}" target="_blank">Email</a>
     <a class="mail link" href="${url}" target="_blank">Email</a> 
   </tal:btn> 
