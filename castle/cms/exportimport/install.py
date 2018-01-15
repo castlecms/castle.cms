@@ -83,8 +83,8 @@ def castle(context):
 
     front_page = site['front-page']
 
-    front_page.title = u'Welcome to Castle'
-    front_page.description = u'Congratulations! You have successfully installed Castle.'
+    front_page.title = u'Welcome to CastleCMS'
+    front_page.description = u'Welcome to your new CastleCMS site.'
 
     # enable syndication by default and modify some of the settings
     registry = getUtility(IRegistry)
