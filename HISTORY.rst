@@ -8,6 +8,9 @@ unreleased
 - correct typos; add descriptions to control panels
   [tkimnguyen]
 
+- improve URL shared via sharing buttons
+  [tkimnguyen]
+
 2.0.41 (2017-09-26)
 -------------------
 
