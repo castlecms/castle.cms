@@ -5,6 +5,9 @@ Changelog
 unreleased
 ------------------
 
+- correct typos; add descriptions to control panels
+  [tkimnguyen]
+
 - improve URL shared via sharing buttons
   [tkimnguyen]
 

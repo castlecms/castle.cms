@@ -5,7 +5,7 @@
     :scale: 50 %
 
 
-For access to Castle Cloud, our hosted Castle CMS service, or to request customizations and demos, please contact us at https://castlecms.io or https://wildcardcorp.com
+For access to Castle Cloud (our hosted CastleCMS service) or to request customizations or demos, please contact us at https://castlecms.io or https://wildcardcorp.com
 
 info@wildcardcorp.com
 
@@ -166,6 +166,9 @@ Castle CMS uses many cron jobs that need to be setup.
 Daily
 -----
 
+- ``bin/clean-plone-users``: removes disabled users
+- ``bin/clean-plone-users``: removes disabled users
+- ``bin/clean-plone-users``: removes disabled users
 - ``bin/clean-plone-users``: removes disabled users
 - ``bin/social-counts``: goes through all content and updates social media counts. Can be done monthly
 - ``bin/content-popularity``: if Google Analytics is setup, will get content statistics for popularity

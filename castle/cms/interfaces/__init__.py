@@ -11,7 +11,7 @@ from .content import IMedia
 from .content import IReferenceNamedImage
 from .content import ITrashed
 from .content import IVideo
-from .controlpanel import IAnnoucementData
+from .controlpanel import IAnnouncementData
 from .controlpanel import IAPISettings
 from .controlpanel import IArchivalSettings
 from .controlpanel import IBusinessData
