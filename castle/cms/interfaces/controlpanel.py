@@ -378,7 +378,6 @@ class IArchivalSettings(Interface):
 class ICastleSettings(
         ISiteConfiguration,
         IAPISettings,
-        IAnnouncementData,
         IArchivalSettings):
     pass
 
