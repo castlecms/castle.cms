@@ -5,6 +5,9 @@ Changelog
 unreleased
 ------------------
 
+- remove duplicate location of site announcement settings
+  [tkimnguyen]
+
 - correct typos; add descriptions to control panels
   [tkimnguyen]
 
