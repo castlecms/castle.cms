@@ -89,10 +89,11 @@ Development setup on macOS
 2. ``git clone git@github.com:castlecms/castle.cms.git``
 3. ``cd castle.cms``
 4. ``virtualenv -p python2.7 .``
-5. ``bin/pip install -r requirements.txt``
-6. ``bin/buildout``
-7. Run ``elasticsearch``, ``redis-server``, ``bin/instance fg`` and ``bin/celery worker``
-8. Go to http://localhost:8080/
+5. ``bin/pip install --upgrade pip``
+6. ``bin/pip install -r requirements.txt``
+7. ``bin/buildout``
+8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg`` and ``bin/celery worker``
+9. Browse to http://localhost:8080/
 
 
 Optional Dependencies

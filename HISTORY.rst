@@ -5,6 +5,12 @@ Changelog
 unreleased
 ------------------
 
+- tweak installation instructions
+  [tkimnguyen]
+
+- add version pins
+  [tkimnguyen]
+
 - remove duplicate location of site announcement settings
   [tkimnguyen]
 
