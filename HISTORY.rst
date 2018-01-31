@@ -5,6 +5,9 @@ Changelog
 unreleased
 ------------------
 
+- tweak tour text
+  [tkimnguyen]
+
 - tweak installation instructions
   [tkimnguyen]
 

@@ -5,23 +5,24 @@ define([
   'castle-url/components/tours/utils'
 ], function($, utils){
   var steps = [{
-      intro: "Castle provides an interactive site content editor. " +
+      intro: "CastleCMS provides an interactive content editor. " +
              "To edit content, click to select it and just start writing."
     }, {
       element: document.querySelector('.mosaic-button-properties'),
-      intro: 'Site content has additional properties you will likely want to customize ' +
-             'while managing your content.',
+      intro: 'All content has additional properties you can customize: ' +
+             'lead images, change notes, tags, dates, and other settings.',
       position: 'bottom',
       onHide: function(){
         $.mosaic.overlay.open('all');
       }
     }, {
       element: document.querySelector('#autotoc-item-autotoc-0'),
-      intro: 'Default fieldset will have main site properties that are not included on the page.',
+      intro: 'The default fieldset contains properties you can set on this content item: ' +
+             'related items, tags, mapping locations',
       position: 'bottom'
     }, {
       element: document.querySelector('#autotoc-item-autotoc-1'),
-      intro: 'Categorization will help you to tag and organize you content for ' +
+      intro: 'Categorization lets you tag content for ' +
              'easier management and searching later.',
       position: 'bottom',
       valid: function(){
@@ -32,25 +33,24 @@ define([
       }
     }, {
       element: document.querySelector('.mosaic-overlay form #formfield-form-widgets-IRelatedItems-relatedItems'),
-      intro: 'Related items is used to make useful references between content. ' +
-             'These references can then be utilized to dynamically render related content onto pages ' +
-             'or just help you query and organize your content.',
+      intro: '"Related items" is used to make references to other related content. ' +
+             'These references are displayed on the page as clickable links.',
       position: 'top',
       valid: function(){
         return $('#fieldset-categorization').length > 0;
       }
     }, {
       element: document.querySelector('.mosaic-overlay form #formfield-form-widgets-IDublinCore-subjects'),
-      intro: 'Tags allow you to further organize your content. This is free-form, you can select ' +
-             'existing tags users have entered on the site or write your own new tags.',
+      intro: 'Tags allow you to further organize your content. This is free-form; you can select ' +
+             'existing tags other users have already created on the site or you can create new ones.',
       position: 'top',
       valid: function(){
         return $('#fieldset-categorization').length > 0;
       }
     }, {
       element: document.querySelector('.mosaic-overlay form #formfield-form-widgets-ILocation-coordinates'),
-      intro: 'By mapping your content, when you include maps on pages, this content will ' +
-             'populate map points. Additionally, KML(geographic XML feeds) can be created ' +
+      intro: 'By specifying location coordinates for your content, you can display them on ' +
+             'map tiles you can include anywhere on your site. Additionally, KML (geographic XML feeds) can be created ' +
              'to provide mapped content for your site.',
       position: 'top',
       valid: function(){
@@ -58,7 +58,8 @@ define([
       }
     }, {
       element: document.querySelector('#autotoc-item-autotoc-3'),
-      intro: 'Use date settings to help sort content listing your content is included in',
+      intro: 'You can set an effective date for when your content will be published, ' +
+             'and an expiry date for when your content should no longer be visible.',
       position: 'bottom',
       valid: function(){
         return $('#fieldset-dates').length > 0;
