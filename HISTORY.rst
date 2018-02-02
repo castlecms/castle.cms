@@ -5,6 +5,9 @@ Changelog
 unreleased
 ------------------
 
+- login_form allows logins only from backend URL, if set in Site panel; tweaks to field descriptions
+  [tkimnguyen]
+
 - tweak installation instructions
   [tkimnguyen]
 

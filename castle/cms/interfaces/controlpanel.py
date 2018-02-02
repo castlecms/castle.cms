@@ -71,19 +71,21 @@ class ISiteSchema(controlpanel.ISiteSchema):
 
     site_icon = schema.ASCII(
         title=u"Site Icon",
-        description=u'Castle will use this icon to generate all the various '
+        description=u'CastleCMS will use this icon to generate all the various '
                     u'icons for mobile devices necessary',
         required=False,
     )
 
     public_url = schema.TextLine(
-        title=u'Public site url',
+        title=u'Public site URL',
+        description=u'The URL the public will use to view your site.',
         default=None,
         required=False)
 
     backend_url = schema.TextLine(
-        title=u'Backend site url',
-        default=u'',
+        title=u'Backend site URL',
+        description=u'The URL from which you will be editing and maintaing site content.',
+        default=None,
         required=False)
 
     system_email_addresses = schema.List(
@@ -142,7 +144,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
                     u'This feature only works if your proxy server is '
-                    u'forwarding the user country code to the Castle server. '
+                    u'forwarding the user country code to the CastleCMS server. '
                     u'Leave empty to allow all logins.',
         missing_value=(),
         default=(),
@@ -499,5 +501,5 @@ class ICrawlerConfiguration(Interface):
     crawler_user_agent = schema.TextLine(
         title=u'User Agent',
         description=u'User agent to use when crawling sites',
-        default=u'Castle CMS Crawler 1.0'
+        default=u'CastleCMS Crawler 1.0'
     )
