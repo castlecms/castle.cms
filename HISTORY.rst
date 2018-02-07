@@ -5,7 +5,7 @@ Changelog
 unreleased
 ------------------
 
-- login_form allows logins only from backend URL, if set in Site panel; tweaks to field descriptions
+- login_form disallows logins from the public URL, if set in Site panel; tweaks to field descriptions
   [tkimnguyen]
 
 - tweak installation instructions
