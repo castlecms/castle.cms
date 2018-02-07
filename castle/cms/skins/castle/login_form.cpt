@@ -55,8 +55,8 @@
                         target python:test(target in ('_parent', '_top', '_blank', '_self'), target, None);
                         ztu modules/ZTUtils;
                         login nocall: context/@@secure-login;
-                        editing_url python:context.portal_registry['plone.backend_url'];
-                        bad_domain python: editing_url is not None and editing_url.strip() != '' and portal_url != editing_url.strip();">
+                        public_url python:context.portal_registry['plone.public_url'];
+                        bad_domain python: public_url is not None and public_url.strip() != '' and portal_url == public_url.strip().rstrip('/');">
 
             <div tal:condition="not: bad_domain">
 
