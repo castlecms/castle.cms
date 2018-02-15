@@ -12,14 +12,14 @@ info@wildcardcorp.com
 +1 (715) 869-3440
 
 =======================================
-Welcome to the main Castle CMS package!
+Welcome to the main CastleCMS package!
 =======================================
 
 
 Feature List
 ============
 
-In addition to Plone standard features, Castle CMS includes:
+In addition to Plone standard features, CastleCMS includes:
 
 - Login/lockout support
 - Content archival to Amazon S3 storage
@@ -155,14 +155,14 @@ Google Analytics Key File
   - service account
   - p12
 - enable Analytics API api for credentials
-- fill out email with email provided and p12 file in Castle CMS API settings
+- fill out email with email provided and p12 file in CastleCMS API settings
 - use email for email you want to access and add it as an authorized user for the account in Google Analytics
 
 
 Cron jobs
 =========
 
-Castle CMS uses many cron jobs that need to be setup.
+CastleCMS uses many cron jobs that need to be setup.
 
 Daily
 -----
@@ -192,10 +192,10 @@ Processes
 Export/Import
 -------------
 
-Castle CMS provides a simple export/import mechanism that does not use transmogrifier.
+CastleCMS provides a simple export/import mechanism that does not use transmogrifier.
 
 You are still able to build your own custom transmogrifier pipelines to import/export
-into Castle CMS; however, our scripts work in a lot of cases to get your
+into CastleCMS; however, our scripts work in a lot of cases to get your
 content moved over quickly.
 
 
@@ -222,9 +222,9 @@ Import
 ~~~~~~
 
 Start by copying the exported directory (that you created in the previous step) to
-the Castle CMS installation folder.
+the CastleCMS installation folder.
 
-Next, copy the import script into your new Castle CMS site's main buildout folder::
+Next, copy the import script into your new CastleCMS site's main buildout folder::
 
   https://raw.githubusercontent.com/castlecms/castle.cms/master/castle/cms/_scripts/importjson.py
 
@@ -233,7 +233,7 @@ Then, to run the import script::
   ./bin/client1 run importjson.py --site-id=mysiteid --export-directory=./export
 
 where "client1" is a ZEO client of your site and "mysiteid" is the
-ID of your Castle CMS site.
+ID of your CastleCMS site.
 
 
 To register your own import type, using Event as an example::
@@ -272,7 +272,7 @@ To register your own import type, using Event as an example::
 Tile display types
 ------------------
 
-There are tiles provided by Castle CMS that allow you to customize
+There are tiles provided by CastleCMS that allow you to customize
 the display type. The display type field is a way of providing a different
 view of the content.
 
@@ -339,10 +339,10 @@ Lead images
 
 
 
-Castle CMS upgrades
+CastleCMS upgrades
 -------------------
 
-There is currently no UI in the Site Setup to run Castle CMS
+There is currently no UI in the Site Setup to run CastleCMS
 upgrades.
 
 To run upgrades::
@@ -357,7 +357,7 @@ To run upgrades::
 After the Deadline Spellchecking
 --------------------------------
 
-Castle CMS includes Plone's TinyMCE support for After the Deadline spellchecking and::
+CastleCMS includes Plone's TinyMCE support for After the Deadline spellchecking and::
 
   - supports After the Deadline in rich text tiles
   - integrates spelling/grammar check within the content quality check dialog

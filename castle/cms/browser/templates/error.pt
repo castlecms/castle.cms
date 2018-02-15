@@ -46,7 +46,7 @@
               Oops, there was a problem getting this page for you
               <span class="http500">5XX Error</span>
             </h1>
-            <h2 tal:condition="not: view/is_zope_root" tal:on-error="string:Castle CMS">
+            <h2 tal:condition="not: view/is_zope_root" tal:on-error="string:CastleCMS">
               ${python: utils and utils.get_registry_value('plone.site_title')}</h2>
             <h2 tal:condition="view/is_zope_root">Zope root</h2>
             <p>{${request/ACTUAL_URL}}</p>

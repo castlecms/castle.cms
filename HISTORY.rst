@@ -8,6 +8,9 @@ unreleased
 - tweak tour text
   [tkimnguyen]
 
+- fix CastleCMS spelling
+  [tkimnguyen]
+
 - tweak installation instructions
   [tkimnguyen]
 
