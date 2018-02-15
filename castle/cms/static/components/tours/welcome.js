@@ -6,7 +6,7 @@ define([
   'use strict';
 
   var steps = [{
-      intro: "Welcome to Castle CMS. We've created a guide to help you get acquainted."
+      intro: "Welcome to CastleCMS. We've created a guide to help you get acquainted."
     }, {
       element: document.querySelector('.castle-toolbar-container-side'),
       intro: 'The toolbar is where you will initiate all CMS changes.',

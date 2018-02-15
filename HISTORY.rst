@@ -5,6 +5,9 @@ Changelog
 unreleased
 ------------------
 
+- fix CastleCMS spelling
+  [tkimnguyen]
+
 - tweak installation instructions
   [tkimnguyen]
 
