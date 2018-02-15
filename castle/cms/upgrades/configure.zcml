@@ -5,7 +5,7 @@
 
   <genericsetup:registerProfile
       name="2_0_12"
-      title="Castle CMS upgrade to 2.0.12 profile"
+      title="CastleCMS upgrade to 2.0.12 profile"
       directory="../profiles/2_0_12"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
@@ -20,7 +20,7 @@
 
   <genericsetup:registerProfile
       name="2_0_16"
-      title="Castle CMS upgrade to 2.0.16 profile"
+      title="CastleCMS upgrade to 2.0.16 profile"
       directory="../profiles/2_0_16"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"

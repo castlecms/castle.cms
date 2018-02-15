@@ -91,7 +91,7 @@ class MetaDataTile(Tile):
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'Castle CMS 1.0'
+                'generator': 'CastleCMS 1.0'
             }
             ldata = ILocation(context, None)
             if ldata is not None:

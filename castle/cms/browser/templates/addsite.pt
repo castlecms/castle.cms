@@ -53,7 +53,7 @@
     <div id="box">
         <header><h1><img src="/++plone++castle/images/castle-logo.png"
              tal:attributes="src string:${context/absolute_url}/++plone++castle/images/castle-logo.png"
-             alt="Castle" i18n:attributes="alt"/> Castle CMS</h1>
+             alt="Castle" i18n:attributes="alt"/> CastleCMS</h1>
         </header>
         <article>
           <h1 i18n:translate="">Create a Castle site</h1>

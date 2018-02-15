@@ -1,17 +1,17 @@
 <!-- Tablet/Mobile - Top Bar - Left Off Canvas Toggle -->
 <!-- <a class="left-off-canvas-toggle hide-for-large-up" href="#"> -->
   <div class="clearfix mobile-top-bar"
-       tal:define="site_title python: utils.get_registry_value('plone.site_title', 'Castle CMS');
+       tal:define="site_title python: utils.get_registry_value('plone.site_title', 'CastleCMS');
                    mobile_title python: utils.get_registry_value('plone.short_site_title', site_title)">
 
     <a class="left-off-canvas-toggle hide-for-large-up menu-icon" href="#">
       <img src="${portal_url}/++theme++castle.theme/img/menu.png" class="toggle-menu" alt="Menu"/>
     </a>
     <p class="show-for-medium-only tablet-site-name left">
-      <a href="${portal_url}" tal:content="site_title">Castle CMS</a>
+      <a href="${portal_url}" tal:content="site_title">CastleCMS</a>
     </p>
     <p class="show-for-small-only mobile-site-name left">
-      <a href="${portal_url}" tal:content="mobile_title">Castle CMS</a>
+      <a href="${portal_url}" tal:content="mobile_title">CastleCMS</a>
     </p>
     <a class="left-off-canvas-toggle hide-for-large-up search-icon" href="#">
       <img src="${portal_url}/++theme++castle.theme/img/search.png" class="search" alt="Search" />

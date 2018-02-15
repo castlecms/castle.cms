@@ -13,7 +13,7 @@
     </value>
   </record>
   <record name="plone.site_title" interface="Products.CMFPlone.interfaces.controlpanel.ISiteSchema" field="site_title">
-    <value>Castle CMS</value>
+    <value>CastleCMS</value>
   </record>
 
   <!-- castle logo -->

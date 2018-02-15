@@ -499,5 +499,5 @@ class ICrawlerConfiguration(Interface):
     crawler_user_agent = schema.TextLine(
         title=u'User Agent',
         description=u'User agent to use when crawling sites',
-        default=u'Castle CMS Crawler 1.0'
+        default=u'CastleCMS Crawler 1.0'
     )
