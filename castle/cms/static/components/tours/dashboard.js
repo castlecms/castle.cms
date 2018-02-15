@@ -12,7 +12,7 @@ define([
       position: 'bottom'
     }, {
       element: document.querySelector('.recent-activity'),
-      intro: 'Will give you an up-to-date list of most recent site activity.',
+      intro: 'Will give you an up-to-date list of the most recent site activity.',
       position: 'top'
     }];
 
