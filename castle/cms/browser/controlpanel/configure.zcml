@@ -121,6 +121,14 @@
     layer="castle.cms.interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="cloudflare-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    permission="plone.app.controlpanel.Site"
+    class=".cloudflare.CloudflareControlPanel"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
   <!-- overridding so we can customize styles, remove buttons -->
   <browser:page
     name="theming-controlpanel-mapper"

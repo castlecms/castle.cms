@@ -304,23 +304,6 @@ class IAPISettings(Interface):
         required=False
     )
 
-    cf_api_key = schema.TextLine(
-        title=u'Cloudflare API Key',
-        description=u'Setting an API Key here and enabling cache purging '
-                    u'activates purging against Cloudflare.',
-        required=False
-    )
-
-    cf_email = schema.TextLine(
-        title=u'Cloudflare Email',
-        description=u'One associated with cloudflare api key',
-        required=False
-    )
-
-    cf_zone_id = schema.TextLine(
-        title=u'Cloudflare Zone ID',
-        required=False)
-
     rocket_chat_front_page = schema.TextLine(
         title=u'Rocket.Chat User URL',
         description=u'URL of the Rocket.Chat server to connect to',
