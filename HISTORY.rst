@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.42 (unreleased)
+2.0.42 (2018-03-01)
 -------------------
 
 - tweak tour text
