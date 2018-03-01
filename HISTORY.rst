@@ -2,8 +2,8 @@
 Changelog
 =========
 
-unreleased
-------------------
+2.0.42 (unreleased)
+-------------------
 
 - tweak tour text
   [tkimnguyen]
