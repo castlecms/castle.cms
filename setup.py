@@ -26,8 +26,8 @@ setup(
         "Framework :: Plone",
         "Framework :: Plone :: 5.1"
     ],
-    author='Nathan Van Gheem',
-    author_email='nathan.vangheem@wildcardcorp.com',
+    author='Wildcard Corp',
+    author_email='info@wildcardcorp.com',
     url='https://github.com/castlecms/castle.cms',
     license='GPL2',
     packages=find_packages(exclude=['ez_setup']),

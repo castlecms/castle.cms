@@ -1,6 +1,10 @@
 include *.rst
 include LICENSE
 include Makefile
+include *.md
+include *.txt
+include buildout.cfg
+include travis.cfg
 recursive-include castle *.bowerrc
 recursive-include castle *.cfg
 recursive-include castle *.cpt
