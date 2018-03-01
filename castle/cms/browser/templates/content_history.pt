@@ -34,7 +34,7 @@
                     <span tal:content="when"
                           class="pat-moment" data-pat-moment="format:relative;"/>
                           [<span tal:content="when"
-                                class="pat-moment" data-pat-moment="format:MMM Do, YYYY h:mm a;"/>]
+                                class="pat-moment" data-pat-moment="format:LLL"/>]
                     <tal:effective tal:condition="effective|nothing">
                         (<span i18n:translate="label_publishing_effective" tal:omit-tag="">effective</span>:
                         <span tal:content="python:item['effective']" class="pat-moment" data-pat-moment="format:relative;" />)
