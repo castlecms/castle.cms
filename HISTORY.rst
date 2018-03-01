@@ -5,7 +5,8 @@ Changelog
 2.0.43 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- show relative and absolute datetimes in contents view
+  [robzonenet]
 
 
 2.0.42 (2018-03-01)
