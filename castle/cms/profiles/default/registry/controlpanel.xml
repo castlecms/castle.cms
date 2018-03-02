@@ -16,6 +16,7 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
+  <records interface="castle.cms.caching.cloudflare.ICloudflareSettings" />
 
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"

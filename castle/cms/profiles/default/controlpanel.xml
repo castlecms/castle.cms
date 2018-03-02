@@ -71,6 +71,12 @@
     visible="True" i18n:attributes="title">
   <permission>Manage portal</permission>
  </configlet>
+ <configlet title="Cloudflare" action_id="CloudflareControlPanel" appId="CloudflareControlPanel"
+   category="plone-advanced" condition_expr=""
+   url_expr="string:${portal_url}/@@cloudflare-controlpanel"
+   visible="True" i18n:attribute="title">
+   <permission>Manage portal</permission>
+ </configlet>
 
  <!-- hidden -->
  <configlet title="Document Viewer Async Tasks"
