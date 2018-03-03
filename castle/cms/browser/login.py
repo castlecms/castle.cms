@@ -13,8 +13,8 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.Five import BrowserView
-from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
-from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
+from Products.CMFPlone.PasswordResetTool import ExpiredRequestError
+from Products.CMFPlone.PasswordResetTool import InvalidRequestError
 from ZODB.POSException import ConnectionStateError
 from zope.component import getMultiAdapter
 from zope.component import getUtility

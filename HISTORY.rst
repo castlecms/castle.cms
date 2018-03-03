@@ -2,6 +2,13 @@
 Changelog
 =========
 
+2.1 (unreleased)
+----------------
+
+- first pass working with Plone 5.1
+  [tkimnguyen]
+
+
 2.0.43 (unreleased)
 -------------------
 

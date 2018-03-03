@@ -16,8 +16,8 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFPlone.interfaces import IPatternsSettings
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFPlone.patterns import PloneSettingsAdapter
-from Products.CMFPlone.patterns import TinyMCESettingsGenerator
+from Products.CMFPlone.patterns.settings import PatternSettingsAdapter as PloneSettingsAdapter
+from Products.CMFPlone.patterns.tinymce import TinyMCESettingsGenerator
 from zope.component import getUtility
 from zope.interface import implements
 
