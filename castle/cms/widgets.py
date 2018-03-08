@@ -493,7 +493,6 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             'filename': self.filename,
             'content_type': contentType,
             'icon': icon,
-            'thumb_width': self.thumb_width,
             'file_size': self.file_size,
             'doc_type': fct,
             'width': width,
