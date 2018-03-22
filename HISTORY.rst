@@ -5,8 +5,8 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Added fragments directory ZCML directive
+  [obct537]
 
 2.0.44 (2018-05-08)
 -------------------
