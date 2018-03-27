@@ -82,6 +82,9 @@ Changelog
 
 - Fixed problem breaking content history view
   [obct537]
+  
+- add new CastleCMS pypi classifiers
+  [lucid-0]
 
 - Added a toolbar button to allow users to manually mark an object for archiving
   [obct537]
