@@ -162,7 +162,7 @@ class IAnnouncementData(Interface):
     site_announcement = schema.Text(
         title=u"Site announcement",
         default=u'<p><strong>Breaking News:</strong> '
-                u'<a href="#" style="color: white;">Follow Updates from...</a></p>',
+                u'<em>Replace this text with your own site announcement</em></p>',
         required=False
     )
 
