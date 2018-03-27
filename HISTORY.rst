@@ -6,6 +6,9 @@ Changelog
 
 - Fixed problem breaking content history view
   [obct537]
+  
+- add new CastleCMS pypi classifiers
+  [lucid-0]
 
 2.0.33 (2017-05-8)
 -------------------
