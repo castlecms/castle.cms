@@ -1,3 +1,4 @@
+from zope import schema
 from castle.cms.tiles.base import BaseTile
 from castle.cms.browser.subscribe import SubscribeForm
 from plone.supermodel import model
@@ -9,7 +10,7 @@ class SubscriptionTile(BaseTile, SubscribeForm):
     def initialize(self):
         portal = api.portal.get()
         self.request.URL = portal.absolute_url() + '/@@subscribe'
-        self.label = u'Subscribe to email updates'
+        self.label = self.data.get('title', '')
 
         self.update()
 
@@ -18,4 +19,7 @@ class SubscriptionTile(BaseTile, SubscribeForm):
         self.initialize()
 
 class ISubscriptionTileSchema(model.Schema):
-    pass
+    title = schema.TextLine(
+        title=u"Title",
+        default=u"Subscribe to email updates"
+    )

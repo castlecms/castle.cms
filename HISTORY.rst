@@ -8,6 +8,8 @@ Changelog
 - show relative and absolute datetimes in contents view
   [robzonenet]
 
+- Change email category widget. Make subscribe title editable.
+  [lucid-0]
 
 2.0.42 (2018-03-01)
 -------------------
