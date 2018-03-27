@@ -7,6 +7,9 @@ Changelog
 
 - show relative and absolute datetimes in contents view
   [robzonenet]
+  
+- change default site announcement text
+  [tkimnguyen]
 
 
 2.0.42 (2018-03-01)
