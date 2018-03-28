@@ -1,0 +1,19 @@
+<div class="audit-log-content-container"
+      tal:define="connected view/el_connected;
+                  site_path python: '/'.join(context.getPhysicalPath());
+                  portal_url context/@@plone_portal_state/portal_url">
+
+  <div class="portalMessage warning" tal:condition="not: connected">
+    <strong>Warning</strong>
+    You are not connected to Elastic Search.
+    Make sure it is running and <a href="${portal_url}/@@elastic-controlpanel">configured properly</a>.
+    Audit Logging does not work unless Elastic search is configured.
+  </div>
+
+  <div class="portalMessage warning" tal:condition="connected">
+    <strong>Warning</strong>
+    You are connected to Elastic Search, but there was an error processing the Audit Log.
+    You can try <a href="${portal_url}/@@elastic-controlpanel">converting, then rebuilding the catalog</a>.
+    If this is a new site, you can come back later once there are some audited actions to show.
+  </div>
+</div>

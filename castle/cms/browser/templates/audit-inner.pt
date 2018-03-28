@@ -5,7 +5,7 @@
 
 <div class="portalMessage warning" tal:condition="not: connected">
   <strong>Warning</strong>
-  You have no <a href="${portal_url}/@@elastic-controlpanel">configured Elastic Search</a>.
+  You have not <a href="${portal_url}/@@elastic-controlpanel">configured Elastic Search</a>.
   Audit Logging does not work unless Elastic search is configured.
 </div>
 
