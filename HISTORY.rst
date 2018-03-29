@@ -11,7 +11,7 @@ Changelog
 - change default site announcement text
   [tkimnguyen]
 
-- Change email category widget. Make subscribe title editable.
+- Change email category widget. Make subscribe title editable. Updated to work with Plone 5.0.x
   [lucid-0]
 
 2.0.42 (2018-03-01)
