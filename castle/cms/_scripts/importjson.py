@@ -37,11 +37,16 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--export-directory', dest='export_directory')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
+parser.add_argument('--admin-user', dest='admin_user', default='admin')
 args, _ = parser.parse_known_args()
 
-
-user = app.acl_users.getUser('admin')  # noqa
-newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+user = app.acl_users.getUser(args.admin_user)  # noqa
+try:
+    newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+except:
+    logger.error('Unknown admin user; '
+                 'specify an existing Zope admin user with --admin-user (default is admin)')
+    exit(-1)
 site = app[args.site_id]  # noqa
 setSite(site)
 
