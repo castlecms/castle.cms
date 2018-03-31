@@ -5,6 +5,9 @@ Changelog
 2.1 (unreleased)
 ----------------
 
+- improve export and import scripts
+  [tkimnguyen]
+  
 - first pass working with Plone 5.1
   [tkimnguyen]
 
