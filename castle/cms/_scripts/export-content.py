@@ -27,6 +27,7 @@ from zope.component.hooks import setSite
 from zope.interface import Interface
 from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
+from plone.app.textfield import RichText
 
 import argparse
 import base64
@@ -78,6 +79,7 @@ except ImportError:
 try:
     from plone.namedfile.file import NamedBlobImage
 except ImportError:
+    print('unable to import NamedBlobImage')
     NamedBlobImage = object()
 
 
@@ -191,6 +193,7 @@ class OFSFileSerializer(BaseTypeSerializer):
         try:
             data = str(obj.data)
         except:
+            print('Error in OFSFileSerializer while serializing {}'.format('/'.join(obj.getPhysicalPath())))
             data = str(obj.data.data)
         return {
             'data': base64.b64encode(data),
@@ -318,8 +321,11 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
 
     @classmethod
     def _deserialize(cls, data):
+        realdata = data['data']
+        if len(realdata) < 10: # arbitrary
+            print "short data found in NamedBlobImageSerializer _deserialize"
         return NamedBlobImage(
-            base64.b64decode(data['data']),
+            base64.b64decode(realdata),
             filename=data['filename'],
             contentType=data['content_type']
         )
@@ -516,16 +522,27 @@ class DexterityExporter(ContentExporter):
 
         data = {}
 
-        schema = getUtility(IDexterityFTI, name=self.obj.portal_type).lookupSchema()
+        portal_type = self.obj.portal_type
+        schema = getUtility(IDexterityFTI, name=portal_type).lookupSchema()
         for name, field in getFieldsInOrder(schema):
-            data[name] = getattr(self.obj, name, None)
+            if self.obj.portal_type == 'File' and name == 'file':
+                fileobj = getattr(self.obj, name, None)
+                if fileobj is not None:
+                    data[name] = base64.b64encode(fileobj.data)
+            else:
+                data[name] = getattr(self.obj, name, None)
 
         behavior_assignable = IBehaviorAssignable(self.obj)
         for behavior in behavior_assignable.enumerateBehaviors():
             binst = behavior.interface(self.obj)
             bdata = {}
             for name, field in getFieldsInOrder(behavior.interface):
-                bdata[name] = getattr(binst, name, None)
+                if isinstance(field, RichText):
+                    textfield = getattr(binst, name, None)
+                    if textfield is not None:
+                        bdata[name] = textfield.raw
+                else:
+                    bdata[name] = getattr(binst, name, None)
             data[behavior.interface.__identifier__] = bdata
 
         if ILayoutAware.providedBy(self.obj):
@@ -551,8 +568,11 @@ class DexterityExporter(ContentExporter):
                 tiles.renderTiles(req, dom.tree, site=site,
                                   baseURL=self.obj.absolute_url() + '/layout_view')
             except TypeError:
-                tiles.renderTiles(req, dom.tree,
-                                  baseURL=self.obj.absolute_url() + '/layout_view')
+                try:
+                    tiles.renderTiles(req, dom.tree,
+                                      baseURL=self.obj.absolute_url() + '/layout_view')
+                except:
+                    tiles.renderTiles(req, dom.tree)
             gridsystem.merge(req, dom.tree)
 
             data['rendered_layout'] = tostring(dom.tree)
@@ -596,8 +616,10 @@ def export_dexterity_obj(obj):
 
 def export_obj(obj):
     if IDexterityContent.providedBy(obj):
+        print "--> Dexterity: %s" % obj.Title()
         func = export_dexterity_obj
     else:
+        print "--> Archetypes: %s" % obj.Title()
         func = export_archetype_obj
     for result in func(obj):
         yield result
