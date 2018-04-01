@@ -232,7 +232,9 @@ class BaseImportType(object):
                 # could be overwritten
                 bdata.contentLayout = None
             elif self.layout:
-                bdata.contentLayout = self.layout
+                bdata.contentLayout = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['contentLayout']
+                bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
+                bdata.rendered_layout = self.data['data']['rendered_layout']
 
         inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
         for IBehavior, field_name in self.behavior_data_mappers:
