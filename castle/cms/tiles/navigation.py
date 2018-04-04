@@ -23,6 +23,8 @@ from zope import schema
 from zope.interface import implements
 from zope.schema.vocabulary import SimpleVocabulary
 
+DEFAULT_ITEM_COUNT = 10
+
 
 class NavigationTile(BaseTile):
     implements(IGlobalTile)
@@ -56,8 +58,10 @@ class NavigationTile(BaseTile):
 
     def items(self):
         catalog = getToolByName(self.context, 'portal_catalog')
+        brains = []
         query = None
         nav_type = self.data.get('nav_type', 'currentlocation') or 'currentlocation'
+        depth = self.data.get('depth', 1)
         if nav_type in ('query', 'secondlevel', 'currentlocation'):
             if nav_type == 'query':
                 query = self.query
@@ -66,7 +70,7 @@ class NavigationTile(BaseTile):
                 if section is not None:
                     query = self.build_nav_query({
                         'path': {
-                            'depth': 1,
+                            'depth': depth,
                             'query': '/'.join(section.getPhysicalPath())
                         }
                     })
@@ -76,23 +80,87 @@ class NavigationTile(BaseTile):
                     context = self.data_context
                 query = self.build_nav_query({
                     'path': {
-                        'depth': 1,
+                        'depth': depth,
                         'query': '/'.join(context.getPhysicalPath())
                     }
                 })
             if query is None:
                 return []
-            limit = self.data.get('limit') or 10
+            limit = self.data.get('limit') or DEFAULT_ITEM_COUNT
             items = catalog(**query)[:limit + 40]
-            return [i for i in items if i.exclude_from_nav is not True][:limit]
+            brains = [i for i in items if i.exclude_from_nav is not True][:limit]
         else:
+            '''
+            This is the "select content" case. Don't need to run any queries,
+            so we're doing this separately.
+            '''
             uids = self.data.get('content') or []
             results = dict([(b.UID, b) for b in catalog(UID=uids)])
             items = []
             for uid in uids:
                 if uid in results:
                     items.append(results[uid])
-            return items
+            brains = items
+
+            if depth > 1:
+                paths = [x.getPath() for x in brains]
+                new_query = self.build_nav_query({
+                    'path': {
+                        'depth': depth,
+                        'query': paths
+                    }
+                })
+
+                brains = catalog(**new_query)
+
+        def find_parent(tree, child):
+            '''
+            This method takes a new content item, and appends it to the content
+            tree in the correct location
+            '''
+
+            done = False
+            current = tree
+
+            while not done:
+                # We're basically just walking a directory tree
+                # as long as the paths match, keep going deeper until
+                # the item we're placing is in the correct place
+
+                found = False
+                for item in current['sub_items']:
+                    if item['path'] in child[0]:
+                        current = item
+                        found = True
+
+                        # need to break, or we'll keep looking at the current
+                        # level
+                        break
+
+                if not found:
+                    # there's no objects at this level in the tree
+                    # that "child" can fit into, so place it along side
+                    done = True
+
+            current['sub_items'].append({
+                'path': child[0],
+                'obj': child[1],
+                'sub_items': []
+            })
+
+            return tree
+
+        brain_listing = [[x.getPath(), x] for x in brains]
+        sorted_brain_listing = sorted(brain_listing, key=lambda x: x[0])
+
+        limit = self.data.get('limit') or DEFAULT_ITEM_COUNT
+        sorted_brain_listing = sorted_brain_listing[:limit]
+
+        tree = {'path': '', 'obj': None, 'sub_items': []}
+        for brain in sorted_brain_listing:
+            tree = find_parent(tree, brain)
+
+        return tree
 
     def build_nav_query(self, base_query):
         query = {}
@@ -140,6 +208,7 @@ class HorizontalView(BaseTileView):
     name = 'horizontal'
     order = 0
     index = ViewPageTemplateFile('templates/navigation/horizontal.pt')
+    inner_template = ViewPageTemplateFile('templates/navigation/horizontal_inner.pt')
     tile_name = 'navigation'
 
 
@@ -167,6 +236,13 @@ class INavigationTileSchema(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
         )
+    )
+
+    depth = schema.Int(
+        title=u'Navigation Depth',
+        description=u"How many levels of navigation to display",
+        required=False,
+        default=1
     )
 
     form.widget(query=QueryFieldWidget)
@@ -209,5 +285,5 @@ class INavigationTileSchema(model.Schema):
         title=u'Limit',
         description=u'Limited number of items',
         required=True,
-        default=10
+        default=DEFAULT_ITEM_COUNT
     )

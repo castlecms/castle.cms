@@ -1,0 +1,9 @@
+<ul class="inline-list section-menu" tal:define="items options/sub_items">
+  <tal:items tal:repeat="item items">
+    <li class="navTreeItem">
+      <a tal:attributes="href item/path"
+        title="${item/path}">${python: view.tile.get_label(item['obj'])}</a>
+      <div tal:condition="item/sub_items" tal:replace="structure python: view.inner_template(sub_items=item['sub_items'])" />
+    </li>
+  </tal:items>
+</ul>
