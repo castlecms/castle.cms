@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
   'castle-url/libs/leaflet-dist/leaflet'
 ], function($, Base, _, L) {
