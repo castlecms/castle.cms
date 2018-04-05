@@ -334,6 +334,18 @@ class IAPISettings(Interface):
         default=unicode(django_random.get_random_string(64))
     )
 
+    survey_api_url = schema.TextLine(
+        title=u'Survey API URL',
+        description=u'API url for CastleCMS survey system',
+        required=False
+    )
+
+    survey_api_key = schema.TextLine(
+        title=u'Survey API Key',
+        description=u'API Key for CastleCMS survey system',
+        required=False
+    )
+
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
         title=u'Archival Enabled',

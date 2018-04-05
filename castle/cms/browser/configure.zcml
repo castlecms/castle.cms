@@ -499,6 +499,15 @@
     layer="..interfaces.ICastleLayer"
     />
 
+  <!-- survey -->
+  <browser:page
+    name="survey"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".survey.CastleSurvey"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
   <!-- subscription -->
   <browser:page
     name="subscribe"

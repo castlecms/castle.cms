@@ -1,0 +1,8 @@
+<tal:block tal:condition="not: context/portal_membership/isAnonymousUser">
+  <div>
+    <span>Survey Tile: Based on selected rules, some visitors will see an invitation.</span>
+  </div> <!--Show which survey will be rendered-->
+</tal:block>
+<tal:block tal:condition="context/portal_membership/isAnonymousUser">
+  <div class="pat-survey mosaic-survey-tile" />
+</tal:block>
