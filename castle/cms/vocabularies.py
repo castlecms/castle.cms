@@ -23,10 +23,12 @@ from plone.app.content.browser import vocabulary
 try:
     vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
 except:
     vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+    vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
@@ -145,6 +147,27 @@ class EmailCategoryVocabularyFactory(object):
 
 EmailCategoryVocabulary = EmailCategoryVocabularyFactory()
 
+
+@implementer(IVocabularyFactory)
+class SurveyVocabularyFactory(object):
+
+    def __call__(self, context):
+        registry = getUtility(IRegistry)
+        api_url = registry.get('castle.survey_api_url')
+        api_key = registry.get('castle.survey_api_key')
+        surveys = {'testurl':'Test', 'testurl2':'Survey', 'testurl3':'Values'} # surveys = results from survey api
+        terms = []
+
+        try:
+            for url, title in surveys.iteritems():
+                terms.append(SimpleTerm(value=url,title=title))
+            return SimpleVocabulary(terms)
+        except:
+            for url, title in surveys.items():
+                terms.append(SimpleTerm(value=url,title=title))
+            return SimpleVocabulary(terms)
+
+SurveyVocabulary = SurveyVocabularyFactory()
 
 BUSINES_TYPES = [
     'Restaurant',

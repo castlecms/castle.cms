@@ -24,8 +24,7 @@ if (window.jQuery) {
 require([
   'jquery',
   'pat-registry',
-  'mockup-patterns-base',
-
+  'pat-base',
   'mockup-patterns-modal',
   'mockup-patterns-select2',
   'mockup-patterns-pickadate',
@@ -51,7 +50,8 @@ require([
   'castle-url/patterns/facebook',
   'castle-url/patterns/focuspoint',
   'castle-url/patterns/masonry',
-  'castle-url/patterns/existing'
+  'castle-url/patterns/existing',
+  'castle-url/patterns/survey'
 ], function($, registry, Base, Modal) {
   'use strict';
 
