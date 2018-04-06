@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.43 (unreleased)
+2.0.43 (2018-04-06)
 -------------------
 
 - show relative and absolute datetimes in contents view
