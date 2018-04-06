@@ -104,7 +104,7 @@ class BaseImportType(object):
     layout = ''
     fields_mapping = {}
     data_converters = {}
-    lead_image_field_names = ('image', 'leadImage')
+    lead_image_field_names = ('image', 'leadImage', 'plone.app.contenttypes.behaviors.leadimage.ILeadImage')
     lead_image_caption_field_names = ('leadCaption', 'leadImage_caption')
     behavior_data_mappers = ()
 
@@ -162,7 +162,7 @@ class BaseImportType(object):
             try:
                     bdata.text = RichTextValue(field_data['text'], 'text/html', 'text/html')
             except:
-                    bdata.text = RichTextValue(field_data['plone.app.contenttypes.behaviors.richtext.IRichText']['text'], 'text/html', 'text/html')
+                    bdata.text = RichTextValue(field_data['plone.app.contenttypes.behaviors.richtext.IRichText']['text'], 'text/html', 'text/html').raw
 
         bdata = IBasic(obj, None)
         if bdata:
@@ -266,7 +266,10 @@ class BaseImportType(object):
         # handle lead images
         for field_name in self.lead_image_field_names:
             if self.field_data.get(field_name):
-                im_obj = self.field_data.get(field_name)
+                if field_name == 'plone.app.contenttypes.behaviors.leadimage.ILeadImage':
+                    im_obj = self.field_data.get(field_name)['image']
+                else:
+                    im_obj = self.field_data.get(field_name)
                 if hasattr(im_obj, 'read'):
                     im_data = im_obj.read()
                 else:
