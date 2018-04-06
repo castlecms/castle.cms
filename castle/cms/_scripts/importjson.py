@@ -35,7 +35,7 @@ logger = logging.getLogger('castle.cms')
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
-parser.add_argument('--export-directory', dest='export_directory')
+parser.add_argument('--export-directory', dest='export_directory', default='export')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 args, _ = parser.parse_known_args()
