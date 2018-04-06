@@ -218,11 +218,17 @@ class BaseImportType(object):
         try:
                 obj.modification_date = field_data['modification_date']
         except:
-                obj.modification_date = None
+                try:
+                    obj.modification_date = obj.modified()
+                except:
+                    obj.modification_date = None
         try:
                 obj.creation_date = field_data['creation_date']
         except:
-                obj.creation_date = None
+                try:
+                    obj.creation_date = obj.created()
+                except:
+                    obj.creation_date = None
 
         bdata = ILayoutAware(obj, None)
         if bdata:
