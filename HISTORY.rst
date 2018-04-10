@@ -2,6 +2,12 @@
 Changelog
 =========
 
+2.0.44 (unreleased)
+-------------------
+
+- add description to Etherpad fields
+  [tkimnguyen]
+
 2.0.43 (2018-04-06)
 -------------------
 
