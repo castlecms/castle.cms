@@ -76,18 +76,6 @@ class ISiteSchema(controlpanel.ISiteSchema):
         required=False,
     )
 
-    public_url = schema.TextLine(
-        title=u'Public site URL',
-        description=u'The URL the public will use to view your site.',
-        default=None,
-        required=False)
-
-    backend_url = schema.TextLine(
-        title=u'Backend site URL',
-        description=u'The URL from which you will be editing and maintaing site content.',
-        default=None,
-        required=False)
-
     system_email_addresses = schema.List(
         title=u"System email addresses",
         description=u'List of admin email addresses',
@@ -153,6 +141,24 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
             vocabulary='castle.cms.vocabularies.Countries'
         )
     )
+
+    public_url = schema.TextLine(
+        title=u'Public site URL',
+        description=u'The URL the public will use to view your site.',
+        default=None,
+        required=False)
+
+    backend_url = schema.TextLine(
+        title=u'Backend site URL',
+        description=u'The URL from which you will be editing and maintaining site content.',
+        default=None,
+        required=False)
+
+    disallow_login_to_public_url = schema.Bool(
+        title=u'Disallow login at public URL',
+        description=u'If set, will prevent logins at the site''s public URL',
+        default=False,
+        required=False)
 
 
 class IAnnouncementData(Interface):

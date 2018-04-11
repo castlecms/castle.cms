@@ -56,7 +56,8 @@
                         ztu modules/ZTUtils;
                         login nocall: context/@@secure-login;
                         public_url python:context.portal_registry['plone.public_url'];
-                        bad_domain python: public_url is not None and public_url.strip() != '' and portal_url == public_url.strip().rstrip('/');">
+                        disallow_login_to_public_url python:context.portal_registry['plone.disallow_login_to_public_url'];
+                        bad_domain python: disallow_login_to_public_url and public_url is not None and public_url.strip() != '' and portal_url.rstrip('/') == public_url.strip().rstrip('/');">
 
             <div tal:condition="not: bad_domain">
 

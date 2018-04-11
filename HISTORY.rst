@@ -5,7 +5,7 @@ Changelog
 unreleased
 ------------------
 
-- login_form disallows logins from the public URL, if set in Site panel; tweaks to field descriptions
+- disallow logins from public URL, if set in Security panel; tweaks to field descriptions
   [tkimnguyen]
 
 - tweak installation instructions
