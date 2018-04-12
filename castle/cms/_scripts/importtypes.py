@@ -3,6 +3,7 @@ from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.dexterity.behaviors.metadata import IBasic
 from plone.app.dexterity.behaviors.metadata import ICategorization
+from plone.app.dexterity.behaviors.metadata import IDublinCore
 from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.event.dx.behaviors import IEventAttendees
 from plone.app.event.dx.behaviors import IEventBasic
@@ -230,6 +231,17 @@ class BaseImportType(object):
                 except:
                     obj.creation_date = None
 
+        bdata = IDublinCore(obj, None)
+        if bdata:
+            dublin_core = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']
+            bdata.expires = dublin_core['expires']
+            bdata.rights = dublin_core['rights']
+            bdata.creators = tuple(dublin_core['creators'])
+            bdata.language = dublin_core['language']
+            bdata.effective = pydt(dublin_core['effective'])
+            bdata.subjects = dublin_core['subjects']
+            bdata.contributors = tuple(dublin_core['contributors'])
+
         bdata = ILayoutAware(obj, None)
         if bdata:
             if self.data['portal_type'] == 'Folder' and 'text' in self.field_data:
@@ -242,6 +254,8 @@ class BaseImportType(object):
                 bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
                 bdata.rendered_layout = self.data['data']['rendered_layout']
 
+        if obj.id == 'acronym-monday-cdn':
+            import pdb;pdb.set_trace()
         inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
         for IBehavior, field_name in self.behavior_data_mappers:
 
