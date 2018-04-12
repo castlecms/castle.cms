@@ -254,8 +254,6 @@ class BaseImportType(object):
                 bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
                 bdata.rendered_layout = self.data['data']['rendered_layout']
 
-        if obj.id == 'acronym-monday-cdn':
-            import pdb;pdb.set_trace()
         inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
         for IBehavior, field_name in self.behavior_data_mappers:
 
