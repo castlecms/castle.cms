@@ -163,7 +163,10 @@ class BaseImportType(object):
             try:
                     bdata.text = RichTextValue(field_data['text'], 'text/html', 'text/html')
             except:
-                    bdata.text = RichTextValue(field_data['plone.app.contenttypes.behaviors.richtext.IRichText']['text'], 'text/html', 'text/html').raw
+                    try:
+                        bdata.text = RichTextValue(field_data['plone.app.contenttypes.behaviors.richtext.IRichText']['text'], 'text/html', 'text/html').raw
+                    except:
+                        bdata.text = ''
 
         bdata = IBasic(obj, None)
         if bdata:
@@ -297,6 +300,8 @@ class BaseImportType(object):
                     else:
                         filename = self.field_data['id']
                 obj.image = im_data
+                if isinstance(obj.image.contentType, unicode):
+                    obj.image.contentType = obj.image.contentType.encode('ascii')
                 if not obj.image.contentType:
                     obj.image.contentType = 'image/jpeg'
                 for caption_field_name in self.lead_image_caption_field_names:
