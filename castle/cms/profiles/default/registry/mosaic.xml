@@ -34,7 +34,7 @@
 
   <record name="plone.app.mosaic.hidden_content_layouts">
     <value purge="False">
-      <element>default/news_item.html::News Item</element>
+      <element>castle/news_item.html::News Item</element>
       <element>default/basic.html::News Item</element>
       <element>default/basic.html::Folder</element>
       <element>default/basic.html::Dashboard</element>
@@ -47,7 +47,7 @@
   </record>
   <record name="plone.app.blocks.default_layout.News-Item">
     <field type="plone.registry.field.TextLine" />
-    <value>++contentlayout++default/news_item.html</value>
+    <value>++contentlayout++castle/news_item.html</value>
   </record>
   <record name="plone.app.blocks.default_layout.Dashboard">
     <field type="plone.registry.field.TextLine" />

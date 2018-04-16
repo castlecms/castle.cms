@@ -5,6 +5,9 @@ Changelog
 2.0.44 (unreleased)
 -------------------
 
+- fix default news item layout
+  [tkimnguyen]
+
 - add description to Etherpad fields
   [tkimnguyen]
 
