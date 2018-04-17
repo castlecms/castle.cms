@@ -34,8 +34,6 @@
 
   <record name="plone.app.mosaic.hidden_content_layouts">
     <value purge="False">
-      <element>castle/news_item.html::News Item</element>
-      <element>default/basic.html::News Item</element>
       <element>default/basic.html::Folder</element>
       <element>default/basic.html::Dashboard</element>
       <element>custom/basic.html</element>
