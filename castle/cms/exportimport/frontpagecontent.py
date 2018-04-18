@@ -22,7 +22,7 @@ def getTileData():
                     """
 
     TRY_CASTLE = u"""
-                    <h2 style="text-align: center;">TRY CASTLE CMS</h2>
+                    <h2 style="text-align: center;">TRY CASTLECMS</h2>
                     <div class="row text-center">
                         <div class="col-xs-10 col-xs-offset-1 col-md-4 col-md-offset-1 col-lg-3 col-lg-offset-2">
                             <h4>Sign up for a free demo today, and see how CastleCMS can benefit your business.</h4>
