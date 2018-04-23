@@ -50,7 +50,8 @@ require([
   'castle-url/patterns/subscribe',
   'castle-url/patterns/facebook',
   'castle-url/patterns/focuspoint',
-  'castle-url/patterns/masonry'
+  'castle-url/patterns/masonry',
+  'castle-url/patterns/existing'
 ], function($, registry, Base, Modal) {
   'use strict';
 

@@ -396,5 +396,11 @@
     for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
     factory=".existing.BackgroundImageView"
     />
+  <adapter
+    name="existing.simple"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".existing.SimpleView"
+    />
 
 </configure>
