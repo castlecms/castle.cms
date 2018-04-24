@@ -14,6 +14,9 @@ Changelog
 2.0.43 (2018-04-06)
 -------------------
 
+- Add simple display type to existing content tile (displays body of article)
+  [lucid-0]
+
 - show relative and absolute datetimes in contents view
   [robzonenet]
   
