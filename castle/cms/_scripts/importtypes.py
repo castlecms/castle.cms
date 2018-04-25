@@ -325,7 +325,7 @@ register_import_type('Folder', FolderType)
 
 class NewsItemType(BaseImportType):
 
-    layout = '++contentlayout++castle/newsitem.html'
+    layout = '++contentlayout++castle/news_item.html'
 
 
 register_import_type('News Item', NewsItemType)
