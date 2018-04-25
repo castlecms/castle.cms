@@ -29,12 +29,14 @@ from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
 
 import argparse
+import logging
 import base64
 import errno
 import OFS
 import os
 import re
 
+logger = logging.getLogger(__name__)
 
 try:
     from plone.uuid.interfaces import IUUID
@@ -84,6 +86,7 @@ except ImportError:
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
+parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--dir', dest='dir', default='./export')
 args, _ = parser.parse_known_args()
@@ -103,7 +106,12 @@ def spoof_request(app):
 app = spoof_request(app)  # noqa
 
 user = app.acl_users.getUser('admin')  # noqa
-newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+try:
+    newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+except:
+    logger.error('Unknown admin user; '
+                 'specify an existing Zope admin user with --admin-user (default is admin)')
+    exit(-1)
 site = app[args.site_id]
 setSite(site)
 
