@@ -107,7 +107,7 @@ def spoof_request(app):
 
 app = spoof_request(app)  # noqa
 
-user = app.acl_users.getUser('admin')  # noqa
+user = app.acl_users.getUser(args.admin_user)  # noqa
 try:
     newSecurityManager(None, user.__of__(app.acl_users))  # noqa
 except:
