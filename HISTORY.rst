@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.44 (unreleased)
+2.0.44 (2018-05-08)
 -------------------
 
 - fix default news item layout
