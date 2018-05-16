@@ -17,6 +17,8 @@
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
 
+  <records interface="castle.cms.browser.survey.ICastleSurvey" />
+
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"
           field="globally_enabled">

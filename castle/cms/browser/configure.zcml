@@ -506,6 +506,7 @@
     class=".survey.CastleSurvey"
     permission="zope2.View"
     layer="..interfaces.ICastleLayer"
+    template="templates/survey.pt"
     />
 
   <!-- subscription -->
