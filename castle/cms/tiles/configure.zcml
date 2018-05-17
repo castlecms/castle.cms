@@ -241,8 +241,7 @@
     schema=".survey.ISurveyTileSchema"
     for="*"
     layer="castle.cms.interfaces.ICastleLayer"
-    add_permission="cmf.AddPortalContent"
-    template="templates/survey.pt"
+    add_permission="cmf.ModifyPortalContent"
     permission="zope2.View"
     />
 
