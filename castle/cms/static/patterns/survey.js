@@ -63,7 +63,7 @@ define([
     },
     showInvite: function(survey_tile, survey_data) {
       var survey_url = survey_data.url+"/survey/"+survey_data.id+"?token="+this.getToken(survey_data);
-      var survey_invite = '<div class="survey-invite">You\'re been invited to take a <a href="'+survey_url+'">survey</a>!</div>'
+      var survey_invite = '<div class="survey-invite">You\'ve been invited to take a <a href="'+survey_url+'">survey</a>!</div>'
       if (survey_data.display.toLowerCase() == 'modal') {
         var modal = new Modal(survey_tile);
         modal.show();
