@@ -31,13 +31,19 @@ class SurveyTile(BaseTile):
 
 
 class ISurveyTileSchema(Interface):
-    #Manually entering survey link and title needs to be an option as opposed to just the list from API
     survey_id = schema.Choice(
        title=u'Surveys',
-       description=u'Select the survey you\'d like to display.',
+       description=u'Select a survey from the API:',
        required=True,
        vocabulary='castle.cms.vocabularies.Surveys'
     )
+
+    #If this gets added be sure to make survey_id required=False
+    #survey_url = schema.TextLine(
+    #    title=u'Custom Survey URL',
+    #    description=u'Or enter a survey URL manually',
+    #    required=False
+    #)
 
     rule = schema.Choice(
         title=u'Display Rules',
