@@ -32,16 +32,20 @@ define([
                 self.showInvite(survey_tile, survey_data);
             }, 1000);
           }
-        } else if (survey_rule == "count") {n
-          count_goal = parseInt(survey_data.count);
+        } else if (survey_rule == "count") {
+          var count_goal = parseInt(survey_data.count);
           if (!isNaN(count_goal)) {
-            var current = $.cookie('castle-page-count'); //check cookie for pages viewed
-            current+=1;
-            if (!shown && count >= count_goal) {
-              self.showInvite(survey_tile, survey_data);
-              count = 0;
+            var current = parseInt($.cookie('castle-page-count'));
+            if (isNaN(current)) {
+              current = 0; //the cookie didn't exist yet
             }
-            $.cookie('castle-page-count', count)
+            current+=1;
+            if (!shown && current >= count_goal) {
+              self.showInvite(survey_tile, survey_data);
+              current = 0;
+            }
+            console.log(current)
+            $.cookie('castle-page-count', current)
           }
         } else if (survey_rule == "leave") {
           $(document).bind("mouseleave", function(e) {
