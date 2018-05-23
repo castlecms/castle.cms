@@ -6,4 +6,4 @@ CastleCMS
    :maxdepth: 2
 
    intro.rst
-
+   fragments.rst

@@ -81,6 +81,7 @@
   <include file="indexing.zcml" />
   <include file="static.zcml" />
   <include file="theming.zcml" />
+  <include file="meta.zcml" />
 
 
   <include package="z3c.unconfigure" file="meta.zcml" />
