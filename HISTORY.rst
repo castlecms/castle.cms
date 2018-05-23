@@ -5,6 +5,9 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
+- add celery environment vars for connecting to redis
+  [tkimnguyen]
+
 - Added fragments directory ZCML directive
   [obct537]
 
