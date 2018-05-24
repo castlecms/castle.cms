@@ -15,9 +15,9 @@ class ICastleSurvey(Interface):
         required=False
     )
 
-    survey_api_key = schema.TextLine(
-        title=u'Survey API Key',
-        description=u'API Key for CastleCMS survey system',
+    survey_account_id = schema.TextLine(
+        title=u'Survey API Account ID',
+        description=u'Account ID for survey system API',
         required=False
     )
 
@@ -29,11 +29,11 @@ class CastleSurvey(form.Form):
     schema = ICastleSurvey
     template = ViewPageTemplateFile("templates/survey.pt")
 
-    def __init__(self, context, request):
-        super(CastleSurvey, self).__init__(context, request)
-        alsoProvides(request, IDisableCSRFProtection)
-        registry = getUtility(IRegistry)
-        survey_settings = registry.forInterface(ICastleSurvey, check=False)
+    #def __init__(self, context, request):
+    #    super(CastleSurvey, self).__init__(context, request)
+    #    alsoProvides(request, IDisableCSRFProtection)
+    #    registry = getUtility(IRegistry)
+    #    survey_settings = registry.forInterface(ICastleSurvey, check=False)
         #api_url = survey_settings.survey_api_url
         #api_key = survey_settings.survey_api_key
         #data = '''{
