@@ -1,6 +1,7 @@
 import pycountry
 from Acquisition import aq_parent
 from castle.cms.fragments.interfaces import IFragmentsDirectory
+from castle.cms.browser.survey import ICastleSurvey
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -18,6 +19,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from plone.app.tiles.browser.edit import AcquirableDictionary
 from plone.app.content.browser import vocabulary
 import requests
+import json
 
 # XXX needs updating in 5.1
 try:
@@ -152,30 +154,30 @@ EmailCategoryVocabulary = EmailCategoryVocabularyFactory()
 class SurveyVocabularyFactory(object):
 
     def __call__(self, context):
-        registry = getUtility(IRegistry)
-        api_url = registry.get('castle.survey_api_url')
-        api_key = registry.get('castle.survey_api_key')
-        #request_data = '''{
-            #api key, account_id
-        #}'''
-        #response = requests.post(api_url, data=request_data)
-        #surveys = response.json()['list']
-        surveys = [
-            {
-                "created_on": "2018-03-29 07:32:12.051683",
-                "form_name": "This Survey",
-                "uid": 1
-            },
-            {
-                "created_on": "2018-04-29 07:32:12.051683",
-                "form_name": "Another Survey",
-                "uid": 2
+        try:
+            survey_settings = getUtility(IRegistry).forInterface(ICastleSurvey, check=False)
+            list_url = '{}/survey-list'.format(survey_settings.survey_api_url)
+            account_id = survey_settings.survey_account_id
+            request_data = {
+                'account_id': account_id
             }
-        ]
-        terms = []
-        for survey in surveys:
-            terms.append(SimpleTerm(title=survey['form_name'], value=survey['uid']))
-        return SimpleVocabulary(terms)
+            response = requests.post(list_url, data=json.dumps(request_data))
+            result = response.json()
+            if 'status' in result:
+                if result['status'] == 'fail':
+                    #TODO raise an appropriate error
+                    result['raiseKeyError']
+            if not 'list' in result:
+                #TODO raise an appropriate errors
+                result['raiseKeyError']
+            surveys = result['list']
+            terms = []
+            for survey in surveys:
+                terms.append(SimpleTerm(title=survey['form_name'], value=survey['uid']))
+            return SimpleVocabulary(terms)
+        except:
+            #error accessing survey api
+            return SimpleVocabulary([SimpleTerm(title='Survey API is not set up properly', value=False)])
 
 SurveyVocabulary = SurveyVocabularyFactory()
 
