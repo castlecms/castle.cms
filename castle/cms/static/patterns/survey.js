@@ -96,10 +96,18 @@ define([
       }
     },
     showInvite: function(survey_tile, survey_data) {
-      this.getToken(survey_tile, survey_data);
+      if (survey_data.custom_url != null) { //custom overrides API if both were selected.
+        this.renderInvite(survey_tile, survey_data, null);
+      } else {
+        this.getToken(survey_tile, survey_data);
+      }
     },
     renderInvite: function(survey_tile, survey_data, token) {
-      var survey_url = survey_data.url+"/survey/"+survey_data.id+"?token="+token;
+      if (token === null) {
+        var survey_url = survey_data.custom_url;
+      } else {
+          var survey_url = survey_data.url+"/survey/"+survey_data.id+"?token="+token;
+      }
       var survey_invite = '<div class="survey-invite"><br><br>You\'ve been invited to take a <a href="'+survey_url+'">survey</a>!<br><br></div>'
       if (survey_data.display.toLowerCase() == 'modal') {
         var modal = new Modal(survey_tile);
