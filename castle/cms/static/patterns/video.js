@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
   'castle-url/libs/mediaelement/build/mediaelement-and-player'
 ], function($, Base, _) {
@@ -11,6 +11,7 @@ define([
   var VideoPattern = Base.extend({
     name: 'video',
     trigger: '.pat-video',
+    parse: 'mockup',
     defaults: {
     },
     init: function() {

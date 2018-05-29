@@ -234,6 +234,17 @@
     permission="zope2.View"
     />
 
+  <plone:tile
+    name="castle.cms.survey"
+    title="Survey"
+    class=".survey.SurveyTile"
+    schema=".survey.ISurveyTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
   <!-- overrides -->
   <plone:tile
     name="plone.app.standardtiles.discussion"
