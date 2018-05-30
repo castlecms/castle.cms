@@ -1,10 +1,10 @@
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'castle-url/libs/FlexSlider/jquery.flexslider'
 ], function($, Base) {
   "use strict";
- 
+
   var Slider = Base.extend({
     name: 'slider',
     trigger: '.pat-slider',
@@ -21,7 +21,7 @@ define([
       self.$el.flexslider();
     }
   });
- 
+
   return Slider;
- 
+
 });

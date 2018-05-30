@@ -304,7 +304,7 @@ define([
         content.push(D.div({ className: 'slot-manager-render-here'}, [
           D.div({}, inner),
           D.div({ className: 'form-group'}, [
-            D.label({ className: ''}, 'Add Tile'),
+            D.label({ className: ''}, 'Select a Tile'),
             D.select({ onChange: this.addTileSelected, value: 'add' },
                    this.getAvailableSlots())
           ])
@@ -314,7 +314,7 @@ define([
     },
 
     getAvailableSlots: function(){
-      var slots = [D.option({ value: 'add'}, 'Add tile')];
+      var slots = [D.option({ value: 'add'}, 'Select Tile...')];
       var available = $('body').attr('data-available-slots');
       if(available){
         available = $.parseJSON(available);

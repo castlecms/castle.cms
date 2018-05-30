@@ -14,6 +14,12 @@ Changelog
 - Added fragments directory ZCML directive
   [obct537]
 
+- Add Survey invite tile and controlpanel
+  [lucid-0]
+
+- Replace deprecated 'mockup-patterns-base' with 'pat-base' in several files
+  [lucid-0]
+
 2.0.44 (2018-05-08)
 -------------------
 
@@ -31,7 +37,7 @@ Changelog
 
 - show relative and absolute datetimes in contents view
   [robzonenet]
-  
+
 - change default site announcement text
   [tkimnguyen]
 
@@ -108,7 +114,7 @@ Changelog
 
 - Fixed problem breaking content history view
   [obct537]
-  
+
 - add new CastleCMS pypi classifiers
   [lucid-0]
 
