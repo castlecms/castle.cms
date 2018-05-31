@@ -7,6 +7,7 @@ from zope import schema
 from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
 
+
 def create_term(val, label):
     return SimpleVocabulary.createTerm(val, val, label)
 
@@ -176,7 +177,6 @@ class IAnnouncementData(Interface):
 
 
 class ISiteConfiguration(Interface):
-
     image_repo_location = schema.TextLine(
         title=u'Image repo path',
         required=True,
@@ -334,6 +334,7 @@ class IAPISettings(Interface):
         default=unicode(django_random.get_random_string(64))
     )
 
+
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
         title=u'Archival Enabled',
@@ -376,9 +377,9 @@ class IArchivalSettings(Interface):
 
 
 class ICastleSettings(
-        ISiteConfiguration,
-        IAPISettings,
-        IArchivalSettings):
+    ISiteConfiguration,
+    IAPISettings,
+    IArchivalSettings):
     pass
 
 
@@ -501,3 +502,6 @@ class ICrawlerConfiguration(Interface):
         description=u'User agent to use when crawling sites',
         default=u'CastleCMS Crawler 1.0'
     )
+
+
+

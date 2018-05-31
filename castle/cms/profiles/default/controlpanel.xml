@@ -105,4 +105,17 @@
   <permission>Plone Site Setup: Users and Groups</permission>
  </configlet>
 
+
+   <configlet
+       title="Status"
+       action_id="status-controlpanel"
+       appId="status-controlpanel"
+       category="Products"
+       condition_expr=""
+       icon_expr=""
+       url_expr="string:${portal_url}/@@status-controlpanel"
+       visible="True">
+     <permission>Manage portal</permission>
+   </configlet>
+
 </object>

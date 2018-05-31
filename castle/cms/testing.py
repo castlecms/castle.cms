@@ -7,6 +7,10 @@ from plone.app.testing import IntegrationTesting
 from plone.app.testing import MOCK_MAILHOST_FIXTURE
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import login
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
 from Products.CMFPlone.testing import PRODUCTS_CMFPLONE_ROBOT_REMOTE_LIBRARY_FIXTURE  # noqa
@@ -22,6 +26,9 @@ import re
 import sys
 import transaction
 import unittest
+import subprocess
+
+from castle.cms.browser.controlpanel.status import StatusView
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -103,7 +110,6 @@ CASTLE_ROBOT_TESTING = FunctionalTesting(
     name="CastleTesting:Robot"
 )
 
-
 SELENIUM_FIXTURE = SeleniumCastleLayer()
 SELENIUM_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(SELENIUM_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
@@ -155,7 +161,6 @@ class ResponseWrapper:
 
 
 class BaseTest(unittest.TestCase):
-
     layer = CASTLE_PLONE_INTEGRATION_TESTING
 
     def setUp(self):
@@ -211,3 +216,7 @@ class BaseTest(unittest.TestCase):
                        response=response)
 
         return ResponseWrapper(response, outstream, path)
+
+
+
+
