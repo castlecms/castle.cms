@@ -336,14 +336,6 @@ class IAPISettings(Interface):
         default=unicode(django_random.get_random_string(64))
     )
 
-    survey_list = schema.List(
-        title=u'Available Surveys',
-        description=u"This entry updated and used by Survey API",
-        default=[],
-        missing_value=[],
-        required=False,
-        value_type=schema.TextLine()
-    )
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(

@@ -3,11 +3,13 @@ from castle.cms.browser.survey import ICastleSurvey
 from zope import schema
 from zope.interface import Interface
 from plone import api
+from Products.CMFPlone.utils import getSiteLogo
 from plone.autoform.directives import widget
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 import json
+from base64 import b64encode
 
 class SurveyTile(BaseTile):
 
@@ -21,9 +23,10 @@ class SurveyTile(BaseTile):
             'rule': self.data.get('rule', 'always'),
             'display': self.data.get('display','here'),
             'duration': self.data.get('duration', 20),
-            'count': self.data.get('page_count', 5)
+            'count': self.data.get('page_count', 5),
+            'logo': getSiteLogo()
         }
-        return json.dumps(survey_data)
+        return b64encode(json.dumps(survey_data))
 
     def render(self):
         if self.context.portal_membership.isAnonymousUser():
