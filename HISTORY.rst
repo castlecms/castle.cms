@@ -5,6 +5,9 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
+- Added Beautifymarkers leaflet extension, adds map icon customization
+  [obct537]
+
 - add celery environment vars for connecting to redis
   [tkimnguyen]
 
