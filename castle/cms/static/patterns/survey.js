@@ -101,9 +101,9 @@ define([
       return xhr;
     },
 
-    getToken: function(survey_tile, survey_data) {
+    getInvite: function(survey_tile, survey_data) {
       var self = this;
-      var url = survey_data.url+"/get-survey-token";
+      var url = survey_data.url+"/get-invite";
       var data = new FormData()
       data.append('survey_id', survey_data.id);
       var xhr = self.createRequest('POST', url);
@@ -113,7 +113,7 @@ define([
       try {
         xhr.send(data);
         xhr.onload = function() {
-          self.renderInvite(self.survey_tile, self.survey_data, xhr.response.survey_token);
+          self.renderInvite(self.survey_tile, self.survey_data, xhr.response);
         }
       } catch (error) {
         console.log('Something went wrong with survey API: ' + error);
@@ -124,30 +124,62 @@ define([
       if (survey_data.custom_url != null) { //custom overrides API if both were selected.
         this.renderInvite(survey_tile, survey_data, null);
       } else {
-        this.getToken(survey_tile, survey_data);
+        this.getInvite(survey_tile, survey_data);
       }
     },
 
-    renderInvite: function(survey_tile, survey_data, token) {
-      if (token === null) {
+    renderInvite: function(survey_tile, survey_data, invite_data) {
+      if (invite_data === null) {
         var survey_url = survey_data.custom_url;
+        var title = "";
+        var desc = "";
+        var disclaimer = "";
+        var active = true;
       } else {
-        var survey_url = survey_data.url+"/survey/"+survey_data.id+"?token="+token;
+        var survey_url = invite_data.survey_endpoint;
+        var title = (invite_data.api_ext_title || "");
+        var desc = (invite_data.api_ext_desc || "");
+        var disclaimer = (invite_data.api_ext_disclaimer || "");
+        //var active = (invite_data.survey_status.toLowerCase() == "active");
+        if ('token' in invite_data) {
+          survey_url+="?token="+invite_data.token;
+        }
       }
-      var survey_invite = '<div class="survey-invite"><br><br><img src="'+survey_data.logo+'"><br>You\'ve been invited to take a <a href="'+survey_url+'">survey</a>!<br><br></div>';
-      if (survey_data.display.toLowerCase() == 'modal') {
-        var modal = new Modal(survey_tile);
-        modal.show();
-        $('.plone-modal-body').append(survey_invite);
-        $(".survey-invite").css("text-align", "center");
-      } else {
-        survey_tile.hide();
-        survey_tile.css("background-color", "	#E6E6FA");
-        survey_tile.append(survey_invite); //Show the survey invite in the .pat-survey div
-        $(".survey-invite").css("text-align", "center");
-        survey_tile.slideDown();
-      }
-      this.updateCookie('shown', true);
+      //if (active) {
+        var invite_html = '<div class="survey-invite"> \
+                            <img src="'+survey_data.logo+'">\
+                            <br>\
+                            <div class="survey-api-title">'+title+'</div>\
+                            <div class="survey-api-desc">'+desc+'</div>\
+                            <br>\
+                            <form action="'+survey_url+'"><input type="submit" value="Take Survey"/></form>\
+                            <br>\
+                          </div>';
+        var disclaimer_html = '<div class="survey-disclaimer">'+disclaimer+'</div>';
+        //You\'ve been invited to take a <a href="'+survey_url+'">survey</a>!\
+        if (survey_data.display.toLowerCase() == 'modal') {
+          var modal = new Modal(survey_tile, {loadLinksWithinModal: true});
+          modal.show();
+          $('.plone-modal-content').css({
+            "max-width": "50%",
+            "min-height": "50%"
+          });
+          $('.plone-modal-close').css({
+            "position": "relative",
+            "top": "-15px"
+          })
+          $('.plone-modal-body').append(invite_html);
+          $('.plone-modal-footer').append(disclaimer_html);
+        } else {
+          survey_tile.hide();
+          survey_tile.append(invite_html); //Show the survey invite in the .pat-survey div
+        }
+        if (survey_data.display.toLowerCase() != 'modal') {
+          survey_tile.append(disclaimer_html)
+          survey_tile.slideDown();
+        }
+        this.updateCookie('shown', true);
+      //}
     }
   });
 
