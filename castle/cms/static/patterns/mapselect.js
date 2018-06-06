@@ -31,11 +31,11 @@ define([
             return D.option({
               label: name,
               value: color
-            })
+            });
           })
         ])
     ];
-  }
+  };
 
   var getLat = function(data){
     return (data.geometry.location.lat && data.geometry.location.lat()) || data.geometry.location.G;
@@ -150,9 +150,9 @@ define([
           lat: getLat(data),
           lng: getLng(data),
           popup: this.props.tiny.tiny.getContent()
-        }
+        };
         if( icon ) {
-          marker['icon'] = icon;
+          marker.icon = icon;
         }
         this.props.parent.add(marker);
         this.hide();
@@ -167,7 +167,7 @@ define([
         tiny: {
           height: 100
         }
-      })
+      });
       this.props.tiny = new TinyMCE($el, options);
     },
     getIcon: function() {
@@ -175,7 +175,7 @@ define([
         return {
           'color': this.refs.color.getDOMNode().value,
           'iconText': this.refs.iconText.getDOMNode().value
-        }
+        };
       }else{
         return false;
       }
@@ -210,7 +210,7 @@ define([
           D.input({ref: 'iconText',  'className': 'input-group'})
         ]);
       }else{
-        return []
+        return [];
       }
     },
     renderFooter: function(){
@@ -273,7 +273,7 @@ define([
           })
         ]);
       }else{
-        return []
+        return [];
       }
     },
     renderContent: function(){

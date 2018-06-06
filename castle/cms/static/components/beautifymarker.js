@@ -60,8 +60,7 @@ define([
         iconAnchor: defaults.iconAnchor.circle,
         iconShape: 'circle',
         iconStyle: '',
-        innerIconAnchor: [0, 3] // circle with fa or glyphicon or marker with text
-          ,
+        innerIconAnchor: [0, 3], // circle with fa or glyphicon or marker with text
         innerIconStyle: '',
         isAlphaNumericIcon: false,
         text: 1,
@@ -151,7 +150,7 @@ define([
 
       getInnerIconStyle: function(options) {
 
-        var innerAnchor = L.point(options.innerIconAnchor)
+        var innerAnchor = L.point(options.innerIconAnchor);
         return 'color:' + options.textColor + ';margin-top:' + innerAnchor.y + 'px; margin-left:' + innerAnchor.x + 'px;' + options.innerIconStyle;
       },
 
@@ -198,6 +197,6 @@ define([
 
   L.BeautifyIcon.icon = function(options) {
     return new L.BeautifyIcon.Icon(options);
-  }
+  };
   return L;
 });
