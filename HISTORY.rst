@@ -4,6 +4,8 @@ Changelog
 
 2.0.43 (unreleased)
 -------------------
+- added status-controlpanel to give users the status of relevant subprocesses
+  [mattjhess]
 
 - show relative and absolute datetimes in contents view
   [robzonenet]

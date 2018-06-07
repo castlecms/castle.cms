@@ -24,4 +24,4 @@ class StatusTest(unittest.TestCase):
         if string in view:
             self.assertTrue(True, msg='None')
         else:
-            self.assertTrue(False, msg='cant find status control panel')
+            self.assertTrue(False, msg='can``t find status control panel')

@@ -7,13 +7,8 @@ from plone.app.testing import IntegrationTesting
 from plone.app.testing import MOCK_MAILHOST_FIXTURE
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
-from Products.CMFPlone.testing import PRODUCTS_CMFPLONE_ROBOT_REMOTE_LIBRARY_FIXTURE  # noqa
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from zope.configuration import xmlconfig
 from zope.globalrequest import clearRequest
@@ -26,9 +21,7 @@ import re
 import sys
 import transaction
 import unittest
-import subprocess
 
-from castle.cms.browser.controlpanel.status import StatusView
 
 
 class CastleLayer(PloneSandboxLayer):

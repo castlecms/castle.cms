@@ -5,6 +5,7 @@ import celery
 import celery.bin.base
 import celery.bin.celery
 import celery.platforms
+import os
 
 
 class StatusView(BrowserView):
@@ -12,40 +13,38 @@ class StatusView(BrowserView):
     def docsplit(self):
         retval = self.DocsplitSearch()
         if retval[0]:
-            status = 'OK'
-            icon = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Docsplit: '
-            return '<span>' + icon + status + '</span>'
+            return True
         if not retval[0]:
-            status = 'ERROR: ' + retval[1]
-            icon = '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Docsplit: '
-            return '<span>' + icon + status + '</span>'
+            return False
+
+    def docsplitError(self):
+        retval2 = self.DocsplitSearch()
+        if not retval2[0]:
+            return str(retval2[1])
 
     def elasticsearch(self):
         rs = redis.Redis("localhost")
+        rs2 = os.environ.get('REDIS_SERVER')
         try:
             rs.get(None)
-            status = 'OK'
-            icon = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Redis: '
+
+            return True
         except redis.ConnectionError as e:
-            status = 'ERROR: ' + str(e)
-            icon = '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Redis: '
-        return '<span>' + icon + status + '</span>'
+            return False
 
     def celery(self):
-        app = celery.Celery('tasks', broker='redis://')
-        status = celery.bin.celery.CeleryCommand.commands['status']()
-        status.app = status.get_app()
-        try:
-            status.run()
-            check = 'OK'
-            icon = '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Celery: '
-        except celery.bin.base.Error as e:
-            check = "ERROR: " + str(e)
-            icon = '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Celery: '
-        except redis.ConnectionError:
-            check = "ERROR: Celery cannot connect to redis"
-            icon = '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Celery: '
-        return '<span>' + icon + check + '</span>'
+        retval = self.CeleryChecker()
+        if retval[0]:
+            return True
+        if not retval[0]:
+            return False
+
+    def celeryError(self):
+        retval2 = self.CeleryChecker()
+        if 'node' in retval2[1]:
+            return retval2[1]
+        else:
+            return 'Cannot connect to Redis'
 
     def DocsplitSearch(self):
         try:
@@ -53,3 +52,17 @@ class StatusView(BrowserView):
             return True, 'ok'
         except OSError as e:
             return False, str(e)
+
+    def CeleryChecker(self):
+        app = celery.Celery('tasks', broker='redis://')
+        status = celery.bin.celery.CeleryCommand.commands['status']()
+        status.app = status.get_app()
+        try:
+            status.run()
+            return True
+        except celery.bin.base.Error as e:
+
+            return False, str(e)
+        except redis.ConnectionError as d:
+
+            return False, str(d)
