@@ -25,6 +25,9 @@ class StatusView(BrowserView):
     def elasticsearch(self):
         rs = redis.Redis("localhost")
         rs2 = os.environ.get('REDIS_SERVER')
+
+        # print os.environ('REDIS_SERVER')
+        # print redis.Redis("localhost")
         try:
             rs.get(None)
 
@@ -34,7 +37,7 @@ class StatusView(BrowserView):
 
     def celery(self):
         retval = self.CeleryChecker()
-        if retval[0]:
+        if retval:
             return True
         if not retval[0]:
             return False
