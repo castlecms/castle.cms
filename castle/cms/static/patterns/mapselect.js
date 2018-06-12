@@ -17,6 +17,26 @@ define([
 
   var D = R.DOM;
 
+  var generateColorDropdown = function(selected) {
+    var colorList = { Red: '#e6194b', Green: '#3cb44b', Yellow: '#ffe119', Blue: '#0082c8', Orange: '#f58231', Purple: '#911eb4', Cyan: '#46f0f0', Magenta: '#f032e6', Lime: '#d2f53c', Pink: '#fabebe', Teal: '#008080', Lavender: '#e6beff', Brown: '#aa6e28', Beige: '#fffac8', Maroon: '#800000', Mint: '#aaffc3', Olive: '#808000', Coral: '#ffd8b1', Navy: '#000080', Grey: '#808080', White: '#FFFFFF', Black: '#000000'};
+    var color_keys = Object.keys(colorList);
+    return [
+      D.label({}, 'Color'),
+      D.select({
+        ref: 'color',
+        defaultValue: selected,
+        className: 'input-group'},[
+          color_keys.map(function(name) {
+            var color = colorList[name];
+            return D.option({
+              label: name,
+              value: color
+            });
+          })
+        ])
+    ];
+  };
+
   var getLat = function(data){
     return (data.geometry.location.lat && data.geometry.location.lat()) || data.geometry.location.G;
   };
@@ -116,19 +136,25 @@ define([
   var MapperAddMarkerComponent = component_utils.Class([Modal], {
     getInitialState: function(){
       return {
+        customIcon: false
       };
     },
     addButtonClicked: function(e){
       e.preventDefault();
       var search = this.refs.search;
+      var icon = this.getIcon();
       if(search.state.selected !== -1){
         var data = search.state.results[search.state.selected];
-        this.props.parent.add({
+        var marker = {
           formatted: data.formatted_address,
           lat: getLat(data),
           lng: getLng(data),
           popup: this.props.tiny.tiny.getContent()
-        });
+        };
+        if( icon ) {
+          marker.icon = icon;
+        }
+        this.props.parent.add(marker);
         this.hide();
       }else{
         alert('You have not selected a location');
@@ -141,18 +167,51 @@ define([
         tiny: {
           height: 100
         }
-      })
+      });
       this.props.tiny = new TinyMCE($el, options);
+    },
+    getIcon: function() {
+      if( this.state.customIcon ) {
+        return {
+          'color': this.refs.color.getDOMNode().value,
+          'iconText': this.refs.iconText.getDOMNode().value
+        };
+      }else{
+        return false;
+      }
     },
     renderContent: function(){
       var that = this;
       return D.div({ className: 'castle-markers-container'}, [
         R.createElement(MapSearchComponent, {parent: that, ref: 'search'}),
         D.div({ className: 'form-group'}, [
+          D.label({}, 'Custom Icon'),
+          D.input({
+            type: 'checkbox',
+            onClick: function(){
+              that.setState({
+                customIcon: !that.state.customIcon
+              });
+            }
+          })
+        ]),
+        this.renderCustomIconForm(),
+        D.div({ className: 'form-group'}, [
           D.label({}, 'Text'),
           D.textarea({ ref: 'tiny' })
         ])
       ]);
+    },
+    renderCustomIconForm: function() {
+      if( this.state.customIcon) {
+        return D.div({ className: 'form-group'}, [
+          generateColorDropdown(false),
+          D.label({}, 'Label'),
+          D.input({ref: 'iconText',  'className': 'input-group'})
+        ]);
+      }else{
+        return [];
+      }
     },
     renderFooter: function(){
       var buttons = [D.button({
@@ -170,13 +229,27 @@ define([
 
   var MapperEditMarkerComponent = component_utils.Class([Modal], {
     getInitialState: function(){
+      var icon = false;
+      if( this.props.icon != false ) {
+        icon = true;
+      }
       return {
+        customIcon: icon
       };
     },
     saveButtonClicked: function(e){
       e.preventDefault();
       this.hide();
-      this.props.callback(this.props.tiny.tiny.getContent());
+      var popup = this.props.tiny.tiny.getContent();
+      var icon = false;
+      if( this.refs.color !== undefined ) {
+        icon = {
+          color: this.refs.color.getDOMNode().value,
+          iconText: this.refs.iconText.getDOMNode().value
+        };
+      }
+
+      this.props.callback(popup, icon);
     },
     componentDidMount: function(){
       Modal.componentDidMount.apply(this);
@@ -188,10 +261,38 @@ define([
       });
       this.props.tiny = new TinyMCE($el, options);
     },
+    renderCustomIconForm: function() {
+      if( this.state.customIcon ) {
+        return D.div({ className: 'form-group'}, [
+          generateColorDropdown(this.props.icon.color),
+          D.label({}, 'Label'),
+          D.input({
+            ref: 'iconText',
+            className: 'input-group',
+            defaultValue: this.props.icon.iconText
+          })
+        ]);
+      }else{
+        return [];
+      }
+    },
     renderContent: function(){
       var that = this;
       return D.div({ className: 'castle-edit-marker-container-container'}, [
         D.div({ className: 'form-group'}, [
+          D.div({ className: 'form-group'}, [
+            D.label({}, 'Custom Icon'),
+            D.input({
+              type: 'checkbox',
+              checked: this.state.customIcon,
+              onClick: function(){
+                that.setState({
+                  customIcon: !that.state.customIcon
+                });
+              }
+            })
+          ]),
+          this.renderCustomIconForm(),
           D.label({}, 'Text'),
           D.textarea({ ref: 'tiny', value: this.props.data })
         ])
@@ -238,8 +339,14 @@ define([
         MapperEditMarkerComponent, 'castle-add-marker-modal', {
           parent: this,
           data: marker.popup,
-          callback: function(popup){
+          icon: marker.icon || false,
+          callback: function(popup, icon){
             marker.popup = popup;
+            if( icon !== false ) {
+              marker.icon = icon;
+            }else{
+              delete marker.icon;
+            }
             that.forceUpdate();
             that.props.el.value = JSON.stringify(that.props.value);
           }

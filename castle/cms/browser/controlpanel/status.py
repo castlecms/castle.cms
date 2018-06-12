@@ -7,6 +7,8 @@ import celery.bin.celery
 import celery.platforms
 import os
 
+from pip import logger
+
 
 class StatusView(BrowserView):
 
@@ -22,22 +24,33 @@ class StatusView(BrowserView):
         if not retval2[0]:
             return str(retval2[1])
 
-    def elasticsearch(self):
-        rs = redis.Redis("localhost")
-        rs2 = os.environ.get('REDIS_SERVER')
-
-        # print os.environ('REDIS_SERVER')
-        # print redis.Redis("localhost")
+    def elasticsearchCheck(self):
+        r = redis.Redis()
         try:
-            rs.get(None)
-
-            return True
+            r.client_list()
+            return True, 'ok'
         except redis.ConnectionError as e:
+            return False, str(e)
+
+    def elasticsearch(self):
+        retval = self.elasticsearchCheck()
+        if retval[0]:
+            return True
+        if not retval[0]:
             return False
+
+    def elasticsearchError(self):
+        retval = self.elasticsearchCheck()
+        if retval[0]:
+            return True
+        if not retval[0]:
+            return retval[1]
+
+
 
     def celery(self):
         retval = self.CeleryChecker()
-        if retval:
+        if retval[0]:
             return True
         if not retval[0]:
             return False
@@ -62,7 +75,7 @@ class StatusView(BrowserView):
         status.app = status.get_app()
         try:
             status.run()
-            return True
+            return True, "ok"
         except celery.bin.base.Error as e:
 
             return False, str(e)

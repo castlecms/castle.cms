@@ -2,10 +2,34 @@
 Changelog
 =========
 
-2.0.43 (unreleased)
+2.0.45 (unreleased)
 -------------------
 - added status-controlpanel to give users the status of relevant subprocesses
   [mattjhess]
+
+- Added Beautifymarkers leaflet extension, adds map icon customization
+  [obct537]
+
+- add celery environment vars for connecting to redis
+  [tkimnguyen]
+
+- Added fragments directory ZCML directive
+  [obct537]
+
+2.0.44 (2018-05-08)
+-------------------
+
+- fix default news item layout
+  [tkimnguyen]
+
+- add description to Etherpad fields
+  [tkimnguyen]
+
+2.0.43 (2018-04-06)
+-------------------
+
+- Add simple display type to existing content tile (displays body of article)
+  [lucid-0]
 
 - show relative and absolute datetimes in contents view
   [robzonenet]

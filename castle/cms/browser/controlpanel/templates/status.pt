@@ -41,7 +41,7 @@
     </div>
     <div id="content-core">
         <div tal:condition="python:view.elasticsearch() == False">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Redis: ERROR
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Redis: ERROR <span tal:content="structure python: view.elasticsearchError()" />
         </div>
     </div>
     <div id="content-core">

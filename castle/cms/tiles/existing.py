@@ -31,6 +31,12 @@ class BackgroundImageView(BaseTileView):
     index = ViewPageTemplateFile('templates/existing/backgroundimage.pt')
     tile_name = DISPLAY_TYPE_KEY
 
+class SimpleView(BaseTileView):
+    name = 'simple'
+    preview = ''
+    order = 1
+    index = ViewPageTemplateFile('templates/existing/simple.pt')
+    tile_name = DISPLAY_TYPE_KEY
 
 class ExistingTile(ContentTile, DisplayTypeTileMixin):
 
@@ -99,6 +105,7 @@ class IExistingTileSchema(IContentTileSchema):
         title=u"Display Type",
         vocabulary=SimpleVocabulary([
             SimpleTerm('basic', 'basic', u'Basic'),
+            SimpleTerm('simple', 'simple', u'Simple'),
             SimpleTerm('backgroundimage', 'backgroundimage', u'Background Image')
         ]),
         default='basic'
