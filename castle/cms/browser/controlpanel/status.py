@@ -5,9 +5,7 @@ import celery
 import celery.bin.base
 import celery.bin.celery
 import celery.platforms
-import os
 
-from pip import logger
 
 
 class StatusView(BrowserView):
