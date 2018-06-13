@@ -7,7 +7,6 @@ import celery.bin.celery
 import celery.platforms
 
 
-
 class StatusView(BrowserView):
 
     def docsplit(self):
@@ -16,6 +15,13 @@ class StatusView(BrowserView):
             return True
         if not retval[0]:
             return False
+        
+    def DocsplitSearch(self):
+        try:
+            subprocess.check_call('docsplit')
+            return True, 'ok'
+        except OSError as e:
+            return False, str(e)
 
     def docsplitError(self):
         retval2 = self.DocsplitSearch()
@@ -44,8 +50,6 @@ class StatusView(BrowserView):
         if not retval[0]:
             return retval[1]
 
-
-
     def celery(self):
         retval = self.CeleryChecker()
         if retval[0]:
@@ -59,13 +63,6 @@ class StatusView(BrowserView):
             return retval2[1]
         else:
             return 'Cannot connect to Redis'
-
-    def DocsplitSearch(self):
-        try:
-            subprocess.check_call('docsplit')
-            return True, 'ok'
-        except OSError as e:
-            return False, str(e)
 
     def CeleryChecker(self):
         app = celery.Celery('tasks', broker='redis://')
