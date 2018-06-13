@@ -71,6 +71,13 @@
     visible="True" i18n:attributes="title">
   <permission>Manage portal</permission>
  </configlet>
+  <configlet title="Status" action_id="StatusControlPanel"
+                         appId="StatusControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@status-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
 
  <!-- hidden -->
  <configlet title="Document Viewer Async Tasks"
@@ -106,16 +113,6 @@
  </configlet>
 
 
-   <configlet
-       title="Status"
-       action_id="status-controlpanel"
-       appId="status-controlpanel"
-       category="Products"
-       condition_expr=""
-       icon_expr=""
-       url_expr="string:${portal_url}/@@status-controlpanel"
-       visible="True">
-     <permission>Manage portal</permission>
-   </configlet>
+
 
 </object>
