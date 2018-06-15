@@ -25,33 +25,23 @@
     </div>
 
     <div id="content-core">
-        <div tal:condition="python:view.docsplit()">
+        <div tal:condition="python:view.docsplit()[0]">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Docsplit: OK
         </div>
-    </div>
-    <div id="content-core">
-        <div tal:condition="python:view.docsplit() == False">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Docsplit: ERROR <span tal:content = "structure python: view.docsplitError()"/>
+        <div tal:condition="python:view.docsplit()[0] == False">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Docsplit: ERROR <span tal:content = "structure python: view.docsplit()[1]"/>
         </div>
-    </div>
-    <div id="content-core">
-        <div tal:condition="python:view.elasticsearch()">
+        <div tal:condition="python:view.elasticsearch()[0]">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Redis: OK
         </div>
-    </div>
-    <div id="content-core">
-        <div tal:condition="python:view.elasticsearch() == False">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Redis: ERROR <span tal:content="structure python: view.elasticsearchError()" />
+        <div tal:condition="python:view.elasticsearch()[0] == False">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Redis: ERROR: <span tal:content="structure python: view.elasticsearch()[1]" />
         </div>
-    </div>
-    <div id="content-core">
-        <div tal:condition="python:view.celery()">
+        <div tal:condition="python:view.celery()[0]">
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Celery: OK
         </div>
-    </div>
-    <div id="content-core">
-        <div tal:condition="python:view.celery() == False">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Celery: ERROR <span tal:content = "structure python: view.celeryError()"/>
+        <div tal:condition="python:view.celery()[0] == False">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Celery: ERROR <span tal:content = "structure python: view.celery()[1]"/>
         </div>
     </div>
 </metal:main>

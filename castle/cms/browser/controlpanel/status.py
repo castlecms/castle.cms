@@ -10,70 +10,40 @@ import celery.platforms
 class StatusView(BrowserView):
 
     def docsplit(self):
-        retval = self.DocsplitSearch()
-        if retval[0]:
-            return True
-        if not retval[0]:
-            return False
-        
-    def DocsplitSearch(self):
         try:
             subprocess.check_call('docsplit')
-            return True, 'ok'
+            x = True, 'ok'
         except OSError as e:
-            return False, str(e)
+            x = False, str(e)
+        if x[0]:
+            return x
+        if not x[0]:
+            return x
 
-    def docsplitError(self):
-        retval2 = self.DocsplitSearch()
-        if not retval2[0]:
-            return str(retval2[1])
-
-    def elasticsearchCheck(self):
+    def elasticsearch(self):
         r = redis.Redis()
         try:
             r.client_list()
-            return True, 'ok'
+            x = True, 'ok'
         except redis.ConnectionError as e:
-            return False, str(e)
-
-    def elasticsearch(self):
-        retval = self.elasticsearchCheck()
-        if retval[0]:
-            return True
-        if not retval[0]:
-            return False
-
-    def elasticsearchError(self):
-        retval = self.elasticsearchCheck()
-        if retval[0]:
-            return True
-        if not retval[0]:
-            return retval[1]
+            x = False, str(e)
+        if x[0]:
+            return x
+        if not x[0]:
+            return x
 
     def celery(self):
-        retval = self.CeleryChecker()
-        if retval[0]:
-            return True
-        if not retval[0]:
-            return False
-
-    def celeryError(self):
-        retval2 = self.CeleryChecker()
-        if 'node' in retval2[1]:
-            return retval2[1]
-        else:
-            return 'Cannot connect to Redis'
-
-    def CeleryChecker(self):
         app = celery.Celery('tasks', broker='redis://')
         status = celery.bin.celery.CeleryCommand.commands['status']()
         status.app = status.get_app()
         try:
             status.run()
-            return True, "ok"
+            x = True, 'ok'
         except celery.bin.base.Error as e:
-
-            return False, str(e)
+            x = False, str(e)
         except redis.ConnectionError as d:
-
-            return False, str(d)
+            x = False, str(d)
+        if x[0]:
+            return x
+        else:
+            return x
