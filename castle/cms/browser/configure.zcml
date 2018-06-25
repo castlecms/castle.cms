@@ -12,6 +12,11 @@
     <implements interface="..interfaces.ICastleApplication" />
   </class>
 
+  <browser:jbot
+     directory="overrides"
+     layer="zope.publisher.interfaces.browser.IDefaultBrowserLayer"
+     />
+
   <browser:page
     for="..interfaces.ICastleApplication"
     name="plone-addsite"
