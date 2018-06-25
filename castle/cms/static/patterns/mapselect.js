@@ -30,8 +30,7 @@ define([
             var color = colorList[name];
             return D.option({
               label: name,
-              value: color
-            });
+              value: color }, name);
           })
         ])
     ];
