@@ -5,6 +5,7 @@ from zope.interface import Interface
 from plone import api
 from Products.CMFPlone.utils import getSiteLogo
 from plone.autoform.directives import widget
+from z3c.form.browser.select import SelectWidget
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -34,7 +35,16 @@ class SurveyTile(BaseTile):
         return "<div>Survey Tile: Some visitors will see an invitation.</div>"
 
 
+class SurveyAPIWidget(SelectWidget):
+    def render(self):
+        for item in self.items:
+            if item['value'] == 'no_api':
+                return '<div class="survey-no-api">The CastleCMS Survey API is not configured properly.<br>Please enter a custom URL below, or finish configuring Survey in Site Settings.</div>'
+        return super(SurveyAPIWidget, self).render(self)
+
+
 class ISurveyTileSchema(Interface):
+    widget('survey_id', SurveyAPIWidget)
     survey_id = schema.Choice(
        title=u'Surveys',
        description=u'Select a survey from the API:',

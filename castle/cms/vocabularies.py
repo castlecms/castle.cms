@@ -177,7 +177,7 @@ class SurveyVocabularyFactory(object):
             return SimpleVocabulary(terms)
         except:
             #error accessing survey api
-            return SimpleVocabulary([SimpleTerm(title='Survey API is not set up properly', value=False)])
+            return SimpleVocabulary([SimpleTerm(title='Survey API is not set up properly', value="no_api")])
 
 SurveyVocabulary = SurveyVocabularyFactory()
 
