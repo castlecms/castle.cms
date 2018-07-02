@@ -163,13 +163,6 @@ class SurveyVocabularyFactory(object):
             }
             response = requests.post(list_url, data=json.dumps(request_data))
             result = response.json()
-            if 'status' in result:
-                if result['status'] == 'fail':
-                    #TODO raise an appropriate error
-                    result['raiseKeyError']
-            if not 'list' in result:
-                #TODO raise an appropriate errors
-                result['raiseKeyError']
             surveys = result['list']
             terms = []
             for survey in surveys:
