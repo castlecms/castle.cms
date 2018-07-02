@@ -40,7 +40,7 @@ class SurveyAPIWidget(SelectWidget):
         for item in self.items:
             if item['value'] == 'no_api':
                 return '<div class="survey-no-api">The CastleCMS Survey API is not configured properly.<br>Please enter a custom URL below, or finish configuring Survey in Site Settings.</div>'
-        return super(SurveyAPIWidget, self).render(self)
+        return super(SurveyAPIWidget, self).render()
 
 
 class ISurveyTileSchema(Interface):
