@@ -48,6 +48,7 @@ setup(
         'requests',
         'requests_oauthlib',
         'plone.app.mosaic',
+        'Products.PloneKeywordManager',
         'plone.api',
         'redis',
         'z3c.unconfigure',
