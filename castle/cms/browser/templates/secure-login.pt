@@ -17,7 +17,7 @@
         </div>
         <div class="row">
           <div class="col-md-12" tal:condition="not: view/auth/is_zope_root">
-            <h1 tal:on-error="string:Castle CMS">${python: utils.get_registry_value('plone.site_title')}</h1>
+            <h1 tal:on-error="string:CastleCMS">${python: utils.get_registry_value('plone.site_title')}</h1>
           </div>
           <div class="col-md-12" tal:condition="view/auth/is_zope_root">
             <h1>Root authentication</h1>

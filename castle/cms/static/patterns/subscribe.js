@@ -6,7 +6,7 @@ define([
 ], function($, Base) {
   'use strict';
 
-  var TweetText = Base.extend({
+  var Subscription = Base.extend({
     name: 'subscribe',
     trigger: '.pat-subscribe',
     parser: 'mockup',
@@ -56,6 +56,6 @@ define([
     }
   });
 
-  return TweetText;
+  return Subscription;
 
 });

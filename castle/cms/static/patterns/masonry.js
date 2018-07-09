@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
   'castle-url/libs/masonry.min',
   'castle-url/libs/imagesloaded'
@@ -23,6 +23,7 @@ define([
   var MasonryPattern = Base.extend({
     name: 'masonry',
     trigger: '.pat-masonry',
+    parser: 'mockup',
     defaults: {
       itemSelector: '.grid-item'
     },

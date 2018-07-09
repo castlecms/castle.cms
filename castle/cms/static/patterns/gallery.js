@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'castle-url/libs/camera/scripts/jquery.easing.1.3',
   'castle-url/libs/camera/scripts/camera'
 ], function($, Base) {
@@ -22,5 +22,5 @@ define([
     }
   });
   return Gallery;
- 
+
 });

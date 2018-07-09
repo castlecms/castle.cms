@@ -4,6 +4,8 @@
 
   <records interface="castle.cms.interfaces.ICastleSettings"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.IAnnouncementData"
+           prefix="castle" />
   <records interface="castle.cms.interfaces.ISocialMediaSchema"
            prefix="plone" />
   <records interface="castle.cms.interfaces.ISiteSchema"
@@ -14,6 +16,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
+
+  <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"

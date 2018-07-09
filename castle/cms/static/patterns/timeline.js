@@ -2,12 +2,12 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'castle-url/libs/script'
 ], function($, Base, $script) {
   'use strict';
 
-  var TweetText = Base.extend({
+  var Timeline = Base.extend({
     name: 'timeline',
     trigger: '.pat-timeline',
     parser: 'mockup',
@@ -34,6 +34,6 @@ define([
     }
   });
 
-  return TweetText;
+  return Timeline;
 
 });

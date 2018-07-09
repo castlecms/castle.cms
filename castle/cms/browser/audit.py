@@ -17,16 +17,20 @@ class AuditView(BrowserView):
     user = True
 
     inner_template = ViewPageTemplateFile('templates/audit-inner.pt')
+    error_template = ViewPageTemplateFile('templates/audit-error.pt')
 
     def __call__(self):
         self._user_cache = {}
         self.site_path = '/'.join(self.context.getPhysicalPath())
-        results = self.do_query()
-        self.results = results['hits']['hits']
-        self.total = results['hits']['total']
+        try:
+            results = self.do_query()
+            self.results = results['hits']['hits']
+            self.total = results['hits']['total']
 
-        if 'Export' in self.request.form.get('export', ''):
-            return self.export()
+            if 'Export' in self.request.form.get('export', ''):
+                return self.export()
+        except:
+            self.inner_template = self.error_template
         return super(AuditView, self).__call__()
 
     def render_inner(self):

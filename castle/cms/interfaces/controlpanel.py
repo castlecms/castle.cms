@@ -162,7 +162,7 @@ class IAnnouncementData(Interface):
     site_announcement = schema.Text(
         title=u"Site announcement",
         default=u'<p><strong>Breaking News:</strong> '
-                u'<a href="#" style="color: white;">Follow Updates from...</a></p>',
+                u'<em>Replace this text with your own site announcement</em></p>',
         required=False
     )
 
@@ -295,12 +295,14 @@ class IAPISettings(Interface):
         required=False)
 
     etherpad_url = schema.TextLine(
-        title=u'Etherpad Url',
+        title=u'Etherpad URL',
+        description=u'The full address of your Etherpad server, e.g. http://127.0.0.1:9001',
         required=False
     )
 
     etherpad_api_key = schema.TextLine(
         title=u'Etherpad API Key',
+        description=u'The hexadecimal string taken from your Etherpad installation''s APIKEY.txt',
         required=False
     )
 
@@ -333,6 +335,7 @@ class IAPISettings(Interface):
         required=False,
         default=unicode(django_random.get_random_string(64))
     )
+
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
@@ -378,7 +381,6 @@ class IArchivalSettings(Interface):
 class ICastleSettings(
         ISiteConfiguration,
         IAPISettings,
-        IAnnouncementData,
         IArchivalSettings):
     pass
 
@@ -503,5 +505,5 @@ class ICrawlerConfiguration(Interface):
     crawler_user_agent = schema.TextLine(
         title=u'User Agent',
         description=u'User agent to use when crawling sites',
-        default=u'Castle CMS Crawler 1.0'
+        default=u'CastleCMS Crawler 1.0'
     )

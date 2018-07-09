@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
   'castle-url/libs/mediaelement/build/mediaelement-and-player'
 ], function($, Base, _) {
