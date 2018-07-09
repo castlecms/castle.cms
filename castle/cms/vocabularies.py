@@ -1,6 +1,7 @@
 import pycountry
 from Acquisition import aq_parent
 from castle.cms.fragments.interfaces import IFragmentsDirectory
+from castle.cms.browser.survey import ICastleSurvey
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -17,16 +18,19 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from plone.app.tiles.browser.edit import AcquirableDictionary
 from plone.app.content.browser import vocabulary
-
+import requests
+import json
 
 # XXX needs updating in 5.1
 try:
     vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
 except:
     vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+    vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
@@ -145,6 +149,30 @@ class EmailCategoryVocabularyFactory(object):
 
 EmailCategoryVocabulary = EmailCategoryVocabularyFactory()
 
+
+@implementer(IVocabularyFactory)
+class SurveyVocabularyFactory(object):
+
+    def __call__(self, context):
+        try:
+            survey_settings = getUtility(IRegistry).forInterface(ICastleSurvey, check=False)
+            list_url = '{}/survey-list'.format(survey_settings.survey_api_url)
+            account_id = survey_settings.survey_account_id
+            request_data = {
+                'account_id': account_id
+            }
+            response = requests.post(list_url, data=json.dumps(request_data))
+            result = response.json()
+            surveys = result['list']
+            terms = []
+            for survey in surveys:
+                terms.append(SimpleTerm(title=survey['form_name'], value=survey['uid']))
+            return SimpleVocabulary(terms)
+        except:
+            #error accessing survey api
+            return SimpleVocabulary([SimpleTerm(title='Survey API is not set up properly', value="no_api")])
+
+SurveyVocabulary = SurveyVocabularyFactory()
 
 BUSINES_TYPES = [
     'Restaurant',

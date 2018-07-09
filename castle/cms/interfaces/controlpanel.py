@@ -336,6 +336,7 @@ class IAPISettings(Interface):
         default=unicode(django_random.get_random_string(64))
     )
 
+
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
         title=u'Archival Enabled',
