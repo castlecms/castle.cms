@@ -3,7 +3,10 @@ Changelog
 =========
 
 unreleased
-------------------
+----------
+
+- add Site Crawler control panel field descriptions
+  [tkimnguyen]
 
 - correct typos; add descriptions to control panels
   [tkimnguyen]

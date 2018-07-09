@@ -482,17 +482,20 @@ class IBusinessData(Interface):
 class ICrawlerConfiguration(Interface):
     crawler_active = schema.Bool(
         title=u'Active',
+        description=u'Check this to activate the site crawler. You must also specify site maps below.',
         required=False,
         default=False)
 
     crawler_index_archive = schema.Bool(
         title=u'Index archives',
+        description=u'Check this to crawl Amazon S3 archival storage.',
         required=False,
         default=False
     )
 
     crawler_site_maps = schema.List(
         title=u'Site maps',
+        description=u'URLs of the site maps of external sites to be crawled, one per line, e.g., https://plone.org/sitemap.xml.gz',
         required=False,
         value_type=schema.TextLine()
     )
