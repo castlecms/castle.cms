@@ -4,6 +4,7 @@ from castle.cms.services import twitter
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import index_in_es
 from castle.cms.utils import retriable
+from castle.cms.services.twitter import get_auth
 from datetime import datetime
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.registry.interfaces import IRegistry
@@ -105,12 +106,10 @@ def attempt_twitter_on_site(site):
     if not public_url:
         return
 
-    auth = OAuth1(
-        registry['plone.twitter_consumer_key'].encode('utf8'),
-        client_secret=registry['plone.twitter_consumer_secret'].encode('utf8'),
-        resource_owner_key=registry['plone.twitter_oauth_token'].encode('utf8'),
-        resource_owner_secret=registry['plone.twitter_oauth_secret'].encode('utf8'),
-        decoding=None)
+    auth = get_auth()
+
+    if auth == None:
+        return
 
     # normlize url...
     original_url = public_url = public_url.replace(
