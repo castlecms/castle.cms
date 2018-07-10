@@ -5,6 +5,9 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
+- check for when Twitter-related keys in twitter-monitor
+  [CorySanin]
+
 - Added Beautifymarkers leaflet extension, adds map icon customization
   [obct537]
 
