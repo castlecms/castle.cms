@@ -5,6 +5,9 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
+- add Site Crawler control panel field descriptions
+  [tkimnguyen]
+
 - check for when Twitter-related keys in twitter-monitor
   [CorySanin]
 
