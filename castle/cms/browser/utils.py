@@ -32,7 +32,6 @@ from urlparse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
-from zope.component.hooks import getSite
 from zope.interface import alsoProvides
 from zope.interface import implements
 from zope.viewlet.interfaces import IViewlet
@@ -400,22 +399,7 @@ class Utils(BrowserView):
         return self.normalizer.normalize(val)
 
     def get_logo(self):
-        '''
-        copied from Products.CMFPlone.utils.getSiteLogo
-        '''
-        from Products.CMFPlone.interfaces import ISiteSchema
-        from plone.formwidget.namedfile.converter import b64decode_file
-        site = getSite()
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(ISiteSchema, prefix="plone", check=False)
-        site_url = site.absolute_url()
-
-        if getattr(settings, 'site_logo', False):
-            filename, data = b64decode_file(settings.site_logo)
-            return '{}/@@site-logo/{}'.format(
-                site_url, filename)
-        else:
-            return '%s/++plone++castle/images/castle-logo.png' % site_url
+        return getSiteLogo()
 
     def get_next_prev(self, obj):
         try:
