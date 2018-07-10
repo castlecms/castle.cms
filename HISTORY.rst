@@ -8,6 +8,9 @@ Changelog
 - add Site Crawler control panel field descriptions
   [tkimnguyen]
 
+- check for when Twitter-related keys in twitter-monitor
+  [CorySanin]
+
 - Added Beautifymarkers leaflet extension, adds map icon customization
   [obct537]
 
