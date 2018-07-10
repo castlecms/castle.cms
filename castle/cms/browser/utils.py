@@ -23,6 +23,7 @@ from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.resources import add_resource_on_request
+from Products.CMFPlone.utils import getSiteLogo
 from Products.Five import BrowserView
 from Products.ZCatalog.interfaces import ICatalogBrain
 from unidecode import unidecode
