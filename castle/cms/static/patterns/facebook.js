@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'castle-url/libs/script'
 ], function($, Base, $script) {
   'use strict';

@@ -5,11 +5,26 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
+- add Site Crawler control panel field descriptions
+  [tkimnguyen]
+
+- check for when Twitter-related keys in twitter-monitor
+  [CorySanin]
+
+- Added Beautifymarkers leaflet extension, adds map icon customization
+  [obct537]
+
 - add celery environment vars for connecting to redis
   [tkimnguyen]
 
 - Added fragments directory ZCML directive
   [obct537]
+
+- Add Survey invite tile and controlpanel
+  [lucid-0]
+
+- Replace deprecated 'mockup-patterns-base' with 'pat-base' in several files
+  [lucid-0]
 
 2.0.44 (2018-05-08)
 -------------------
@@ -28,7 +43,7 @@ Changelog
 
 - show relative and absolute datetimes in contents view
   [robzonenet]
-  
+
 - change default site announcement text
   [tkimnguyen]
 
@@ -105,7 +120,7 @@ Changelog
 
 - Fixed problem breaking content history view
   [obct537]
-  
+
 - add new CastleCMS pypi classifiers
   [lucid-0]
 
