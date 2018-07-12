@@ -489,6 +489,15 @@ def get_backend_url():
         backend_url = api.portal.get().absolute_url()
     return backend_url
 
+def contains_backend_url(value):
+    try:
+        url = str(value)
+        backend = get_backend_url()
+        if backend in url:
+            return True
+        return False
+    except:
+        return False
 
 def parse_query_from_data(data, context=None):
     if context is None:
