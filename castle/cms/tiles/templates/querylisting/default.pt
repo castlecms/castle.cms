@@ -19,6 +19,12 @@
         <p class="pat-moment date"
            tal:content="python: utils.format_date(effective, 'notime')"
            tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+        <p class="pat-moment date"
+           tal:content="python: utils.format_date(item.start)"
+           tal:condition="python: 'startdate' in df"></p>
+        <p class="pat-moment date"
+           tal:content="python: utils.format_date(item.end)"
+           tal:condition="python: 'enddate' in df"></p>
         <p class="title">
           <a href="${url}">${item/Title}</a>
         </p>
