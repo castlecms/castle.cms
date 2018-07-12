@@ -6,7 +6,8 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 class SurveyControlPanelForm(RegistryEditForm):
     schema = ICastleSurvey
     id = "SurveyControlPanel"
-    label = u'Survey Settings'
+    label = u'GovSurvey.us Settings'
+    description = "Engage your website vistors and request feedback and improvements or just ask some general questions! Signup with https://GovSurvey.us"
 
     control_panel_view = '@@survey-controlpanel'
 
