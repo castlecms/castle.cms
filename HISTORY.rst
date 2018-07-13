@@ -5,7 +5,8 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- in query listing tile, do not display event start/end if they don't exist
+  [tkimnguyen]
 
 
 2.0.45 (2018-07-13)
