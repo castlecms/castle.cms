@@ -39,10 +39,11 @@ class TestTwoFactor(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         portal_memberdata = self.portal.portal_memberdata
-        portal_memberdata.manage_addProperty(
-            id="reset_password_required", value=False, type="boolean")
-        portal_memberdata.manage_addProperty(
-            id="reset_password_time", value=time.time(), type="float")
+        if not portal_memberdata.hasProperty("reset_password_required"):
+            portal_memberdata.manage_addProperty(
+                id="reset_password_required", value=False, type="boolean")
+            portal_memberdata.manage_addProperty(
+                id="reset_password_time", value=time.time(), type="float")
         logout()
 
     def test_authentication_adapter(self):
