@@ -327,9 +327,8 @@ class IQueryListingTileSchema(model.Schema):
         value_type=schema.Choice(
             vocabulary=SimpleVocabulary([
                 SimpleTerm('image', 'image', u'Image'),
-                SimpleTerm('date', 'date', u'Effective/Publication Date'),
-                SimpleTerm('startdate', 'startdate', u'Event Start Date and Time'),
-                SimpleTerm('enddate', 'enddate', u'Event End Date and Time'),
+                SimpleTerm('date', 'date', u'Publication (Effective) Date'),
+                SimpleTerm('eventstartend', 'eventstartend', u'Event Start and End'),
                 SimpleTerm('description', 'description', u'Overview/Summary')
             ])
         )

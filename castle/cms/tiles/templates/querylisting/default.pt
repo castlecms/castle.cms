@@ -21,7 +21,7 @@
         <p class="pat-moment date"
            tal:content="python: utils.format_date(effective, 'notime')"
            tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
-        <p tal:condition="python: 'startdate' in df or 'enddate' in df">
+        <p tal:condition="python: 'eventstartend' in df">
             <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
             to
             <span class="pat-moment date"

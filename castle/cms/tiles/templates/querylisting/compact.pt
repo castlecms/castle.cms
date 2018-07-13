@@ -8,7 +8,7 @@
                   start obj/start|nothing;
                   end obj/end|nothing;
                   desc obj/Description;
-                  has_date python: 'date' in df and utils.valid_date(effective) or 'startdate' in df or 'enddate' in df;"
+                  has_date python: 'date' in df and utils.valid_date(effective) or 'eventstartend' in df;"
       class="portal-type-${python: utils.normalize(item.portal_type)}">
     <div class="row">
       <div class="col-lg-1 col-md-2 col-md-3" tal:condition="has_date">
@@ -17,7 +17,7 @@
       </div>
       <div class="col-lg-10 col-md-10"
            tal:attributes="class python: has_date and 'col-lg-10 col-md-10' or 'col-lg-12 col-md-12'">
-        <p tal:condition="python: 'startdate' in df or 'enddate' in df">
+        <p tal:condition="python: 'eventstartend' in df">
             <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
             to
             <span class="pat-moment date"
