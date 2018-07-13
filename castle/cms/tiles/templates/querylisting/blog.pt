@@ -7,8 +7,7 @@
                          base_url item/getURL;
                          effective item/effective|nothing;
                          desc item/Description;
-                         has_image python: 'image' in df and utils.has_image(item);
-                         has_date python: 'date' in df and utils.valid_date(effective);"
+                         has_image python: 'image' in df and utils.has_image(item);"
         class="post type-post status-${item/review_state} hentry
                ${python: has_image and 'has-post-thumbnail' or ''}
                portal-type-${python: utils.normalize(item.portal_type)}">

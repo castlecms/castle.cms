@@ -5,16 +5,28 @@
   <li tal:define="obj python: item.getObject();
                   url python: utils.get_object_url(obj);
                   effective obj/effective|nothing;
+                  start obj/start|nothing;
+                  end obj/end|nothing;
                   desc obj/Description;
-                  has_date python: 'date' in df and utils.valid_date(effective);"
+                  has_date python: 'date' in df and utils.valid_date(effective) or 'eventstartend' in df;"
       class="portal-type-${python: utils.normalize(item.portal_type)}">
     <div class="row">
       <div class="col-lg-1 col-md-2 col-md-3" tal:condition="has_date">
         <p class="date"
-           tal:content="python: utils.format_date(effective, 'usdot')"></p>
+           tal:content="python: utils.format_date(effective, 'usdot')" tal:condition="python: 'date' in df"></p>
       </div>
       <div class="col-lg-10 col-md-10"
            tal:attributes="class python: has_date and 'col-lg-10 col-md-10' or 'col-lg-12 col-md-12'">
+        <p tal:condition="python: 'eventstartend' in df">
+            <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
+            to
+            <span class="pat-moment date"
+                     tal:condition="python: start.date() == end.date()"
+                     tal:content="python: utils.format_date(end, 'nodate')"></span>
+            <span class="pat-moment date"
+                     tal:condition="python: start.date() <> end.date()"
+                     tal:content="python: utils.format_date(end)"></span>
+        </p>
         <p class="title">
           <a href="${url}">
             ${obj/Title}
