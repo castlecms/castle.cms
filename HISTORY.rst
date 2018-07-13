@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.45 (unreleased)
+2.0.45 (2018-07-13)
 -------------------
 
 - add Event start and end datetimes to the query listing tile's views
