@@ -88,16 +88,7 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
         if mdtool is not None:
             mdtool.deleteMemberData(userid)
 
-    def initialize_memberdata(self):
-        portal_memberdata = api.portal.get_tool("portal_memberdata")
-        if not portal_memberdata.hasProperty("reset_password_required"):
-            portal_memberdata.manage_addProperty(
-                id="reset_password_required", value=False, type="boolean")
-            portal_memberdata.manage_addProperty(
-                id="reset_password_time", value=time.time(), type="float")
-
     def set_password(self):
-        self.initialize_memberdata()
         userid = self.request.form.get('userid')
         pw = self.request.form.get('password')
 
