@@ -5,8 +5,7 @@ Changelog
 2.0.45 (unreleased)
 -------------------
 
-- add Event start and end datetimes to the query listing tile's default view's
-  Display Fields
+- add Event start and end datetimes to the query listing tile's views
   [tkimnguyen]
 
 - add Site Crawler control panel field descriptions
