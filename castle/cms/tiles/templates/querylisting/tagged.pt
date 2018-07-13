@@ -5,6 +5,8 @@
   <tal:item tal:repeat="item python: results['items']">
   <li tal:define="url python: utils.get_object_url(item);
                   effective item/effective|nothing;
+                  start item/start|nothing;
+                  end item/end|nothing;
                   tag python: view.tile.get_tag(item);
                   desc item/Description"
       class="portal-type-${python: utils.normalize(item.portal_type)}">
@@ -14,6 +16,16 @@
     <p class="pat-moment date"
        tal:content="python: utils.format_date(effective, 'notime')"
        tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+    <p tal:condition="python: 'startdate' in df or 'enddate' in df">
+        <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
+        to
+        <span class="pat-moment date"
+                 tal:condition="python: start.date() == end.date()"
+                 tal:content="python: utils.format_date(end, 'nodate')"></span>
+        <span class="pat-moment date"
+                 tal:condition="python: start.date() <> end.date()"
+                 tal:content="python: utils.format_date(end)"></span>
+    </p>
      <p class="description" tal:condition="python: 'description' in df">
        <a href="${url}">${desc}</a>
      </p>

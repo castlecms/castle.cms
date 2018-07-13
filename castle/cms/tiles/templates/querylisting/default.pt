@@ -6,7 +6,9 @@
   <li tal:define="base_url item/getURL;
                   url python: utils.get_object_url(item);
                   has_image python: 'image' in df and utils.has_image(item);
-                  effective item/effective|nothing"
+                  effective item/effective|nothing;
+                  start item/start|nothing;
+                  end item/end|nothing;"
       class="portal-type-${python: utils.normalize(item.portal_type)}">
     <div class="row">
       <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
@@ -20,15 +22,14 @@
            tal:content="python: utils.format_date(effective, 'notime')"
            tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
         <p tal:condition="python: 'startdate' in df or 'enddate' in df">
-            From
-            <span class="pat-moment date" tal:content="python: utils.format_date(item.start)"></span>
+            <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
             to
             <span class="pat-moment date"
-                     tal:condition="python: item.start.date() == item.end.date()"
-                     tal:content="python: utils.format_date(item.end, 'nodate')"></span>
+                     tal:condition="python: start.date() == end.date()"
+                     tal:content="python: utils.format_date(end, 'nodate')"></span>
             <span class="pat-moment date"
-                     tal:condition="python: item.start.date() <> item.end.date()"
-                     tal:content="python: utils.format_date(item.end)"></span>
+                     tal:condition="python: start.date() <> end.date()"
+                     tal:content="python: utils.format_date(end)"></span>
         </p>
         <p class="title">
           <a href="${url}">${item/Title}</a>

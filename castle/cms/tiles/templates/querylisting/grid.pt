@@ -6,7 +6,9 @@
   <li tal:define="base_url item/getURL;
                   url python: utils.get_object_url(item);
                   has_image python: 'image' in df and utils.has_image(item);
-                  effective item/effective|nothing;"
+                  effective item/effective|nothing;
+                  start item/start|nothing;
+                  end item/end|nothing;"
       class="castle-grid-block-item portal-type-${python: utils.normalize(item.portal_type)}">
     <p tal:condition="has_image">
       <a href="${url}">
@@ -16,6 +18,16 @@
     <p class="date"
        tal:content="python: utils.format_date(effective, 'notime')"
        tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+    <p tal:condition="python: 'startdate' in df or 'enddate' in df">
+        <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
+        to
+        <span class="pat-moment date"
+                 tal:condition="python: start.date() == end.date()"
+                 tal:content="python: utils.format_date(end, 'nodate')"></span>
+        <span class="pat-moment date"
+                 tal:condition="python: start.date() <> end.date()"
+                 tal:content="python: utils.format_date(end)"></span>
+    </p>
     <h3 class="title">
       <a href="${url}">${item/Title}</a>
     </h3>
