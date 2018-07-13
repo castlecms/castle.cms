@@ -17,6 +17,8 @@ class NotFoundView(FourOhFourView):
 
         self.attempt_redirect()
 
+        shield.protect(self.request)
+
         self.notfound = self.context
         self.context = api.portal.get()
         archive_storage = archival.Storage(self.context)
