@@ -5,20 +5,15 @@ from plone import api
 from Products.Five import BrowserView
 from zExceptions import Redirect
 from zope.component import queryUtility, queryMultiAdapter
-from plone.app.redirector.browser import FourOhFourView
 from plone.app.redirector.interfaces import IRedirectionStorage
+from plone.app.redirector.browser import FourOhFourView
 from six.moves import urllib
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import unquote
 
-class NotFoundView(FourOhFourView):
+class FourOhFour(FourOhFourView):
 
     def __call__(self):
-
-        self.attempt_redirect()
-
-        shield.protect(self.request)
-
         self.notfound = self.context
         self.context = api.portal.get()
         archive_storage = archival.Storage(self.context)
@@ -49,7 +44,9 @@ class NotFoundView(FourOhFourView):
                 new_url += '?' + self.request.environ['QUERY_STRING']
             raise Redirect(aws.swap_url(new_url))
 
-        return self.index()
+        self.attempt_redirect()
+
+        raise Redirect('{}/not-found'.format(api.portal.get().absolute_url()))
 
     def attempt_redirect(self):
         url = self._url()
@@ -64,6 +61,7 @@ class NotFoundView(FourOhFourView):
         storage = queryUtility(IRedirectionStorage)
         if storage is None:
             return False
+
         old_path = '/'.join(old_path_elements)
 
         # First lets try with query string in cases or content migration
@@ -92,14 +90,11 @@ class NotFoundView(FourOhFourView):
 
         if not new_path:
             return False
-        else:
-            raise Redirect(new_path)
-            return True
 
         url = urllib.parse.urlsplit(new_path)
         if url.netloc:
-              # External URL
-              # avoid double quoting
+            # External URL
+            # avoid double quoting
             url_path = unquote(url.path)
             url_path = quote(url_path)
             url = urllib.parse.SplitResult(
@@ -112,3 +107,10 @@ class NotFoundView(FourOhFourView):
             url += "?" + query_string
         raise Redirect(url)
         return True
+
+class NotFoundView(BrowserView):
+
+    def __call__(self):
+        shield.protect(self.request)
+
+        return self.index()
