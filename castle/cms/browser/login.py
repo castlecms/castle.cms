@@ -22,10 +22,13 @@ from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.interface import alsoProvides
 from zope.interface import implements
-
+from DateTime import DateTime
 import json
 import time
 
+'''TODO: Remove log messages.'''
+import logging
+logger = logging.getLogger("Plone")
 
 class SecureLoginView(BrowserView):
     implements(ISecureLoginAllowedView)
@@ -172,10 +175,47 @@ The user requesting this access logged this information:
         member = mtool.getMemberById(user.getId())
 
         self.auth.change_password(member, newpw)
+        member.setMemberProperties({
+            'password_date': DateTime()
+        })
 
         return json.dumps({
             'success': True
         })
+
+    def pwexpiry(self, user):
+        registry = self.get_registry()
+        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
+        validity_period = registry['plone.pwexpiry_validity_period']
+        if pwexpiry_enabled and validity_period > 0:
+            whitelisted = ()
+            '''api.portal.get_registry_record(
+                'plone.pwexpiry_whitelisted_users'
+            )'''
+            if user.getId() not in whitelisted:
+                password_date = user.getProperty(
+                    'password_date',
+                    '2000/01/01'
+                )
+                current_time = DateTime()
+                editableUser = api.user.get(username=user.getUserName())
+                if password_date.strftime('%Y/%m/%d') != '2000/01/01':
+                    since_last_pw_reset = days_since_event(
+                        password_date.asdatetime(),
+                        current_time.asdatetime()
+                    )
+                    if validity_period - since_last_pw_reset < 0:
+                        # Password has expired
+                        editableUser.setMemberProperties({
+                            'reset_password_required': True,
+                            'reset_password_time': time.time()
+                        })
+                        return True
+                else:
+                    editableUser.setMemberProperties({
+                        'password_date': current_time
+                    })
+        return False
 
     def login(self):
         # double check auth code first
@@ -195,6 +235,9 @@ The user requesting this access logged this information:
             if authorized:
                 reset_password = user.getProperty(
                     'reset_password_required', False)
+
+                if not self.auth.is_zope_root:
+                    reset_password = reset_password | self.pwexpiry(user)
 
                 resp = {
                     'success': True,
@@ -309,6 +352,12 @@ The user requesting this access logged this information:
 
         return texting.send(text_message, phone)
 
+    def pwexpiry_check_history(self,user,newpassword):
+        pass
+
+    def pwexpiry_add_history(self,user,oldpassword):
+        pass
+
     def reset_password(self):
         pw_tool = api.portal.get_tool('portal_password_reset')
         userid = self.request.form.get('userid')
@@ -327,6 +376,7 @@ The user requesting this access logged this information:
                 'success': False,
                 'message': 'Password reset request is invalid'
             })
+
 
         return json.dumps({
             'success': True,
