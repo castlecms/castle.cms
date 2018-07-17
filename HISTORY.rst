@@ -8,6 +8,8 @@ Changelog
 - in query listing tile, do not display event start/end if they don't exist
   [tkimnguyen]
 
+- Add Keyword Manager (Products.PloneKeywordManager) by default
+  [CorySanin]
 
 2.0.45 (2018-07-13)
 -------------------
