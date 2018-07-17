@@ -163,7 +163,6 @@ The user requesting this access logged this information:
         pwexpiry_enabled = registry['plone.pwexpiry_enabled']
         max_history_pws = registry['plone.pwexpiry_password_history_size']
         if password is not None and \
-        pwexpiry_enabled and \
         max_history_pws > 0:
             enc_pw = password
             if not AuthEncoding.is_encrypted(enc_pw):
@@ -177,7 +176,6 @@ The user requesting this access logged this information:
                 # Truncate the history
                 pw_history = pw_history[-max_history_pws:]
 
-            '''api.user.get(username=user.getUserName()).setMemberProperties({'password_history': tuple(pw_history)})'''
             user.setMemberProperties({'password_history': tuple(pw_history)})
 
     def set_password(self):
