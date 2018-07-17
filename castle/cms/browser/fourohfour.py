@@ -11,6 +11,7 @@ from six.moves import urllib
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import unquote
 
+
 class FourOhFour(FourOhFourView):
 
     def __call__(self):
@@ -47,6 +48,7 @@ class FourOhFour(FourOhFourView):
         self.attempt_redirect()
 
         raise Redirect('{}/not-found'.format(api.portal.get().absolute_url()))
+
 
     def attempt_redirect(self):
         url = self._url()
@@ -112,5 +114,5 @@ class NotFoundView(BrowserView):
 
     def __call__(self):
         shield.protect(self.request)
-
+        self.request.response.setStatus(404)
         return self.index()
