@@ -22,6 +22,7 @@ from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.interface import alsoProvides
 from zope.interface import implements
+from AccessControl import AuthEncoding
 from DateTime import DateTime
 import json
 import time
@@ -141,6 +142,44 @@ The user requesting this access logged this information:
             'messageType': 'info'
         })
 
+    def pwexpiry_check_history(self,user,password):
+        registry = self.get_registry()
+        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
+        max_history_pws = registry['plone.pwexpiry_password_history_size']
+        if password is not None and \
+        pwexpiry_enabled and \
+        max_history_pws > 0:
+            pw_history = user.getProperty(
+                'password_history',
+                tuple()
+            )
+            for old_pw in pw_history[-max_history_pws:]:
+                if AuthEncoding.pw_validate(old_pw, str(password)):
+                    return True
+        return False
+
+    def pwexpiry_add_history(self,user,password):
+        registry = self.get_registry()
+        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
+        max_history_pws = registry['plone.pwexpiry_password_history_size']
+        if password is not None and \
+        pwexpiry_enabled and \
+        max_history_pws > 0:
+            enc_pw = password
+            if not AuthEncoding.is_encrypted(enc_pw):
+                enc_pw = AuthEncoding.pw_encrypt(enc_pw)
+            pw_history = list(user.getProperty(
+                'password_history',
+                tuple()
+            ))
+            pw_history.append(enc_pw)
+            if len(pw_history) > max_history_pws:
+                # Truncate the history
+                pw_history = pw_history[-max_history_pws:]
+
+            '''api.user.get(username=user.getUserName()).setMemberProperties({'password_history': tuple(pw_history)})'''
+            user.setMemberProperties({'password_history': tuple(pw_history)})
+
     def set_password(self):
         # 1. only set password for logged in user...
         if api.user.is_anonymous():
@@ -174,10 +213,16 @@ The user requesting this access logged this information:
         mtool = api.portal.get_tool('portal_membership')
         member = mtool.getMemberById(user.getId())
 
-        self.auth.change_password(member, newpw)
+        if self.pwexpiry_check_history(member, newpw):
+            return json.dumps({
+                'success': False,
+                'message': 'You\'ve used that password before.'
+            })
         member.setMemberProperties({
             'password_date': DateTime()
         })
+        self.pwexpiry_add_history(member, newpw)
+        self.auth.change_password(member, newpw)
 
         return json.dumps({
             'success': True
@@ -198,7 +243,7 @@ The user requesting this access logged this information:
                     '2000/01/01'
                 )
                 current_time = DateTime()
-                editableUser = api.user.get(username=user.getUserName())
+                editableUser = api.user.get(username=user.getId())
                 if password_date.strftime('%Y/%m/%d') != '2000/01/01':
                     since_last_pw_reset = days_since_event(
                         password_date.asdatetime(),
@@ -215,6 +260,10 @@ The user requesting this access logged this information:
                     editableUser.setMemberProperties({
                         'password_date': current_time
                     })
+        else:
+            api.user.get(username=user.getUserName()).setMemberProperties({
+                'password_date': DateTime(2016,7,11)
+            })
         return False
 
     def login(self):
@@ -352,12 +401,6 @@ The user requesting this access logged this information:
 
         return texting.send(text_message, phone)
 
-    def pwexpiry_check_history(self,user,newpassword):
-        pass
-
-    def pwexpiry_add_history(self,user,oldpassword):
-        pass
-
     def reset_password(self):
         pw_tool = api.portal.get_tool('portal_password_reset')
         userid = self.request.form.get('userid')
@@ -376,7 +419,6 @@ The user requesting this access logged this information:
                 'success': False,
                 'message': 'Password reset request is invalid'
             })
-
 
         return json.dumps({
             'success': True,
