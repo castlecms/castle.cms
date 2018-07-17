@@ -209,7 +209,3 @@ class BaseTest(unittest.TestCase):
                        response=response)
 
         return ResponseWrapper(response, outstream, path)
-
-
-
-

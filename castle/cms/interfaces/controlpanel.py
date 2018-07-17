@@ -504,6 +504,3 @@ class ICrawlerConfiguration(Interface):
         description=u'User agent to use when crawling sites',
         default=u'CastleCMS Crawler 1.0'
     )
-
-
-

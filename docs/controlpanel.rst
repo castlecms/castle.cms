@@ -3,5 +3,12 @@ Control Panels
 
 Status-ControlPanel:
 ---------------------
-The status control panel will check subprocesses that Castle-CMS needs. This control panel checks that docsplit is
-installed, that Celery is working properly, and that Redis is connected.
+The status control panel will check subprocesses that CastleCMS needs and give the user the status of the process.
+
+-checks if the user has Docsplit installed
+
+-checks if CastleCMS is able to connect to a Celery worker
+
+-checks if CastleCMS is connected to Redis
+
+-checks if CastleCMS is using Elasticsearch

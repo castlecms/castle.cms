@@ -1,4 +1,6 @@
 from Products.Five.browser import BrowserView
+from elasticsearch import Elasticsearch
+import elasticsearch
 import subprocess
 import redis
 import celery
@@ -15,22 +17,16 @@ class StatusView(BrowserView):
             x = True, 'ok'
         except OSError as e:
             x = False, str(e)
-        if x[0]:
-            return x
-        if not x[0]:
-            return x
+        return x
 
-    def elasticsearch(self):
-        r = redis.Redis()
+    def redis(self):
+        r = redis.Redis("localhost")
         try:
             r.client_list()
             x = True, 'ok'
         except redis.ConnectionError as e:
             x = False, str(e)
-        if x[0]:
-            return x
-        if not x[0]:
-            return x
+        return x
 
     def celery(self):
         app = celery.Celery('tasks', broker='redis://')
@@ -42,8 +38,15 @@ class StatusView(BrowserView):
         except celery.bin.base.Error as e:
             x = False, str(e)
         except redis.ConnectionError as d:
-            x = False, str(d)
-        if x[0]:
-            return x
-        else:
-            return x
+            x = False, 'Cannot connect to Redis'
+        return x
+
+    def elasticsearch(self):
+        es = Elasticsearch()
+        try:
+            (es.cluster.health())
+            x = True, 'ok'
+        except elasticsearch.ConnectionError as e:
+            x = False, str(e)
+        return x
+
