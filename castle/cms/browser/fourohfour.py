@@ -4,12 +4,19 @@ from castle.cms.files import aws
 from plone import api
 from Products.Five import BrowserView
 from zExceptions import Redirect
-from zope.component import queryMultiAdapter
+from zope.component import queryUtility, queryMultiAdapter
+from plone.app.redirector.browser import FourOhFourView
+from plone.app.redirector.interfaces import IRedirectionStorage
+from six.moves import urllib
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import unquote
 
-
-class NotFoundView(BrowserView):
+class NotFoundView(FourOhFourView):
 
     def __call__(self):
+
+        self.attempt_redirect()
+
         shield.protect(self.request)
 
         self.notfound = self.context
@@ -42,10 +49,66 @@ class NotFoundView(BrowserView):
                 new_url += '?' + self.request.environ['QUERY_STRING']
             raise Redirect(aws.swap_url(new_url))
 
-        # seems this overrides plone.app.redirector handler
-        redirector = queryMultiAdapter((self.context, self.request),
-                                       name=u'plone_redirector_view')
-        if redirector:
-            redirector.attempt_redirect()
-
         return self.index()
+
+    def attempt_redirect(self):
+        url = self._url()
+        if not url:
+            return False
+
+        try:
+            old_path_elements = self.request.physicalPathFromURL(url)
+        except ValueError:
+            return False
+
+        storage = queryUtility(IRedirectionStorage)
+        if storage is None:
+            return False
+        old_path = '/'.join(old_path_elements)
+
+        # First lets try with query string in cases or content migration
+
+        new_path = None
+
+        query_string = self.request.QUERY_STRING
+        if query_string:
+            new_path = storage.get("%s?%s" % (old_path, query_string))
+            # if we matched on the query_string we don't want to include it
+            # in redirect
+            if new_path:
+                query_string = ''
+
+        if not new_path:
+            new_path = storage.get(old_path)
+
+        if not new_path:
+            new_path = self.find_redirect_if_view(old_path_elements, storage)
+
+        if not new_path:
+            new_path = self.find_redirect_if_template(
+                url,
+                old_path_elements,
+                storage)
+
+        if not new_path:
+            return False
+        else:
+            raise Redirect(new_path)
+            return True
+
+        url = urllib.parse.urlsplit(new_path)
+        if url.netloc:
+              # External URL
+              # avoid double quoting
+            url_path = unquote(url.path)
+            url_path = quote(url_path)
+            url = urllib.parse.SplitResult(
+                *(url[:2] + (url_path, ) + url[3:])).geturl()
+        else:
+            url = self.request.physicalPathToURL(new_path)
+
+        # some analytics programs might use this info to track
+        if query_string:
+            url += "?" + query_string
+        raise Redirect(url)
+        return True

@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'mockup-utils',
   'castle-url/libs/react/react.min',
   'underscore',

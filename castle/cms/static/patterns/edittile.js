@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'mockup-patterns-modal',
   'mockup-utils'
 ], function($, Base, Modal, utils) {
@@ -53,5 +53,5 @@ define([
     }
   });
   return EditTile;
- 
+
 });
