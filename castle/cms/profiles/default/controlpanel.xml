@@ -71,6 +71,13 @@
     visible="True" i18n:attributes="title">
   <permission>Manage portal</permission>
  </configlet>
+ <configlet title="Status" action_id="StatusControlPanel"
+                         appId="StatusControlPanel"
+    category="plone-advanced" condition_expr=""
+    url_expr="string:${portal_url}/@@status-controlpanel"
+    visible="True" i18n:attributes="title">
+  <permission>Manage portal</permission>
+ </configlet>
 <configlet title="Survey" action_id="SurveyControlPanel"
                 appId="SurveyControlPanel"
                 category="plone-content" condition_expr=""
@@ -111,5 +118,4 @@
     i18n:attributes="title">
   <permission>Plone Site Setup: Users and Groups</permission>
  </configlet>
-
 </object>

@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Added status control panel to give users the status of relevant subprocesses
+  [mattjhess]
+
 - in query listing tile, do not display event start/end if they don't exist
   [tkimnguyen]
 

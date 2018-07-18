@@ -1,0 +1,68 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+<body>
+<metal:main metal:fill-slot="prefs_configlet_main">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/plone_control_panel"
+       i18n:translate="">
+        Site Setup
+    </a>
+
+
+
+    <h1 class="documentFirstHeading">CastleCMS Status</h1>
+        <p class="discreet">
+            Displays the status of components and subprocesses used by CastleCMS
+        </p>
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+    <div id="content-core">
+        <div tal:define="docsplit_ok python:view.docsplit()[0]">
+            <div tal:condition="docsplit_ok">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Docsplit: OK
+            </div>
+            <div tal:condition="not: docsplit_ok">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Docsplit: ERROR <span tal:content = "structure python: view.docsplit()[1]"/>
+            </div>
+        </div>
+
+            <div tal:define="redis_ok python:view.redis()[0]">
+                <div tal:condition="redis_ok">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Redis: OK
+            </div>
+            <div tal:condition="not: redis_ok">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Redis: ERROR: <span tal:content="structure python: view.redis()[1]" />
+            </div>
+        </div>
+
+        <div tal:define="celery_ok python:view.celery()[0]">
+            <div tal:condition="celery_ok">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Celery: OK
+            </div>
+            <div tal:condition="not: celery_ok">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Celery: ERROR: <span tal:content = "structure python: view.celery()[1]"/>
+            </div>
+        </div>
+
+        <div tal:define="elasticsearch_ok python:view.elasticsearch()[0]">
+            <div tal:condition="elasticsearch_ok">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Elasticsearch: OK
+            </div>
+            <div tal:condition="not: elasticsearch_ok">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Elasticsearch: ERROR <span tal:content = "structure python: view.elasticsearch()[1]"/>
+            </div>
+        </div>
+
+</metal:main>
+</body>
+</html>

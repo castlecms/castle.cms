@@ -746,4 +746,12 @@
     layer="..interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="StatusView"
+    for="*"
+    class = ".controlpanel.status.StatusView"
+    template="templates/status.pt"
+    permission="zope2.View"
+    />
+
 </configure>
