@@ -146,12 +146,15 @@ The user requesting this access logged this information:
         registry = self.get_registry()
         pwexpiry_enabled = registry['plone.pwexpiry_enabled']
         max_history_pws = registry['plone.pwexpiry_password_history_size']
+        whitelisted = registry['plone.pwexpiry_whitelisted_users']
+        if whitelisted and user.getId() in whitelisted:
+            return False
         if password is not None and \
         pwexpiry_enabled and \
         max_history_pws > 0:
             pw_history = user.getProperty(
                 'password_history',
-                tuple()
+                []
             )
             for old_pw in pw_history[-max_history_pws:]:
                 if AuthEncoding.pw_validate(old_pw, str(password)):
@@ -169,14 +172,14 @@ The user requesting this access logged this information:
                 enc_pw = AuthEncoding.pw_encrypt(enc_pw)
             pw_history = list(user.getProperty(
                 'password_history',
-                tuple()
+                []
             ))
             pw_history.append(enc_pw)
             if len(pw_history) > max_history_pws:
                 # Truncate the history
                 pw_history = pw_history[-max_history_pws:]
 
-            user.setMemberProperties({'password_history': tuple(pw_history)})
+            user.setMemberProperties({'password_history': pw_history})
 
     def set_password(self):
         # 1. only set password for logged in user...
@@ -231,11 +234,10 @@ The user requesting this access logged this information:
         pwexpiry_enabled = registry['plone.pwexpiry_enabled']
         validity_period = registry['plone.pwexpiry_validity_period']
         if pwexpiry_enabled and validity_period > 0:
-            whitelisted = ()
-            '''api.portal.get_registry_record(
-                'plone.pwexpiry_whitelisted_users'
-            )'''
-            if user.getId() not in whitelisted:
+            whitelist = registry['plone.pwexpiry_whitelisted_users']
+            whitelisted = whitelist and user.getId() not in whitelist
+            if not whitelisted:
+                logger.info('not whitelisted')
                 password_date = user.getProperty(
                     'password_date',
                     '2000/01/01'

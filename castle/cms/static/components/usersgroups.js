@@ -201,6 +201,10 @@ require([
       executeAction(
         'Are you certain you want to reset login attempt counts for this user?', 'resetattempts', $(this).attr('data-userid'));
     });
+    $('.castle-btn-togglewhitelist').off('click').on('click', function(){
+      executeAction(
+        'Are you certain you want to toggle this user\'s inclusion in the Password Expiration whitelist?', 'togglewhitelist', $(this).attr('data-userid'));
+    });
     $('.castle-btn-enable-user').off('click').on('click', function(){
       executeAction('Are you certain you want to enable this user?', 'enable', $(this).attr('data-userid'));
     });
