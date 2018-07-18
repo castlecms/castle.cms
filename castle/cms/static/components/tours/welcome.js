@@ -13,7 +13,7 @@ define([
       position: 'right'
     }, {
       element: document.querySelector('.castle-toolbar-folder_contents'),
-      intro: 'Use the Contents button to view your site''s structure, organize content, and make batch edits.',
+      intro: 'Use the Contents button to view your site \'s structure, organize content, and make batch edits.',
       position: 'right'
     }, {
       element: document.querySelector('.castle-toolbar-edit'),

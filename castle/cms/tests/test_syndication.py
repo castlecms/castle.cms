@@ -13,11 +13,11 @@ class TestSyndication(BaseTest):
         return NamedBlobImage(zptlogo, contentType='image/jpeg',
                               filename=u'foobar.jpg')
 
-    def test_json_feed_404_when_not_active(self):
+    def test_json_feed_when_not_active(self):
         settings = FeedSettings(self.portal)
         settings.feed_types = []
         resp = self.publish('/plone/feed.json')
-        self.assertEqual(resp.status_code, 404)
+        self.assertTrue(resp.status_code in [301, 302, 404])
 
     def test_json_feed_when_active(self):
         settings = FeedSettings(self.portal)

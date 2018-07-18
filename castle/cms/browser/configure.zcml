@@ -382,12 +382,21 @@
 
   <browser:page
     for="zope.publisher.interfaces.INotFound"
-    class=".fourohfour.NotFoundView"
+    class=".fourohfour.FourOhFour"
     name="index.html"
     permission="zope2.View"
     template="templates/fourohfour.pt"
     layer="..interfaces.ICastleLayer"
     />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".fourohfour.NotFoundView"
+    name="not-found"
+    permission="zope2.View"
+    template="templates/fourohfour.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+
   <browser:page
     for="zope.interface.common.interfaces.IException"
     class=".error.ErrorView"
@@ -497,6 +506,16 @@
     class=".sitemap.SiteMapView"
     permission="zope2.Public"
     layer="..interfaces.ICastleLayer"
+    />
+
+  <!-- survey -->
+  <browser:page
+    name="survey"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".survey.CastleSurvey"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    template="templates/survey.pt"
     />
 
   <!-- subscription -->

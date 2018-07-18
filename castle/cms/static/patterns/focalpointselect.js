@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
   'castle-url/libs/react/react.min',
   'castle-url/components/image-focal-point-selector',
@@ -118,6 +118,7 @@ define([
   var FocalPointSelectPattern = Base.extend({
     name: 'focalpointselect',
     trigger: '.pat-focalpointselect',
+    parser: 'mockup',
     defaults: {
     },
     init: function() {
