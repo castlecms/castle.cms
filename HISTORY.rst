@@ -4,7 +4,8 @@ Changelog
 
 2.0.45 (unreleased)
 -------------------
-- added status-controlpanel to give users the status of relevant subprocesses
+
+- Added status control panel to give users the status of relevant subprocesses
   [mattjhess]
 
 - Added Beautifymarkers leaflet extension, adds map icon customization

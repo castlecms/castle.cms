@@ -18,9 +18,9 @@
 
 
 
-    <h1 class="documentFirstHeading">Subprocesses</h1>
+    <h1 class="documentFirstHeading">CastleCMS Status</h1>
         <p class="discreet">
-            This page lists the status of processes important to CastleCMS
+            Displays the status of components and subprocesses used by CastleCMS
         </p>
     <div metal:use-macro="context/global_statusmessage/macros/portal_message">
       Portal status message
