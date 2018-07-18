@@ -237,7 +237,6 @@ The user requesting this access logged this information:
             whitelist = registry['plone.pwexpiry_whitelisted_users']
             whitelisted = whitelist and user.getId() in whitelist
             if not whitelisted:
-                logger.info('not whitelisted')
                 password_date = user.getProperty(
                     'password_date',
                     '2000/01/01'
@@ -293,6 +292,8 @@ The user requesting this access logged this information:
                     'success': True,
                     'resetpassword': reset_password
                 }
+                if reset_password:
+                    resp['message'] = 'Your password has expired.'
                 try:
                     with api.env.adopt_user(user=user):
                         resp['authenticator'] = createToken()
