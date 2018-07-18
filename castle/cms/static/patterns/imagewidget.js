@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'castle-url/libs/react/react.min',
   'castle-url/components/image-focal-point-selector',
   'castle-url/components/image-editor',

@@ -2,11 +2,27 @@
 Changelog
 =========
 
-2.0.45 (unreleased)
+2.0.46 (unreleased)
 -------------------
 
 - Added status control panel to give users the status of relevant subprocesses
   [mattjhess]
+
+- in query listing tile, do not display event start/end if they don't exist
+  [tkimnguyen]
+
+
+2.0.45 (2018-07-13)
+-------------------
+
+- add Event start and end datetimes to the query listing tile's views
+  [tkimnguyen]
+
+- add Site Crawler control panel field descriptions
+  [tkimnguyen]
+
+- check for when Twitter-related keys in twitter-monitor
+  [CorySanin]
 
 - Added Beautifymarkers leaflet extension, adds map icon customization
   [obct537]
@@ -16,6 +32,12 @@ Changelog
 
 - Added fragments directory ZCML directive
   [obct537]
+
+- Add Survey invite tile and controlpanel
+  [lucid-0]
+
+- Replace deprecated 'mockup-patterns-base' with 'pat-base' in several files
+  [lucid-0]
 
 2.0.44 (2018-05-08)
 -------------------
@@ -34,7 +56,7 @@ Changelog
 
 - show relative and absolute datetimes in contents view
   [robzonenet]
-  
+
 - change default site announcement text
   [tkimnguyen]
 
@@ -111,7 +133,7 @@ Changelog
 
 - Fixed problem breaking content history view
   [obct537]
-  
+
 - add new CastleCMS pypi classifiers
   [lucid-0]
 

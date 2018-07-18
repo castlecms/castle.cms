@@ -101,6 +101,10 @@
     name="castle.cms.vocabularies.EmailCategories"
     />
   <utility
+    component=".vocabularies.SurveyVocabulary"
+    name="castle.cms.vocabularies.Surveys"
+    />
+  <utility
     component=".vocabularies.MimeTypeVocabulary"
     name="castle.cms.vocabularies.MimeTypes"
     />

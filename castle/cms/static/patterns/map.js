@@ -2,7 +2,7 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
   'castle-url/components/beautifymarker'
 ], function($, Base, _, L) {
