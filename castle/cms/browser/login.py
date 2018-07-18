@@ -235,7 +235,7 @@ The user requesting this access logged this information:
         validity_period = registry['plone.pwexpiry_validity_period']
         if pwexpiry_enabled and validity_period > 0:
             whitelist = registry['plone.pwexpiry_whitelisted_users']
-            whitelisted = whitelist and user.getId() not in whitelist
+            whitelisted = whitelist and user.getId() in whitelist
             if not whitelisted:
                 logger.info('not whitelisted')
                 password_date = user.getProperty(
@@ -261,6 +261,7 @@ The user requesting this access logged this information:
                         'password_date': current_time
                     })
         else:
+            #for debugging
             api.user.get(username=user.getUserName()).setMemberProperties({
                 'password_date': DateTime(2016,7,11)
             })
