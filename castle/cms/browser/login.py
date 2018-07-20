@@ -13,6 +13,7 @@ from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
 from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
@@ -20,6 +21,7 @@ from ZODB.POSException import ConnectionStateError
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
+from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implements
 from AccessControl import AuthEncoding
@@ -159,7 +161,7 @@ The user requesting this access logged this information:
             for old_pw in pw_history[-max_history_pws:]:
                 if AuthEncoding.pw_validate(old_pw, str(password)):
                     return True
-        return False
+        return False #CAN GET RID OF
 
     def pwexpiry_add_history(self,user,password):
         registry = self.get_registry()
@@ -211,14 +213,18 @@ The user requesting this access logged this information:
         # 3. finally, set password
         newpw = self.request.form.get('new_password')
 
+        registration = getToolByName(self.context, 'portal_registration')
+        err_str = registration.testPasswordValidity(newpw)
+
+        if err_str is not None:
+            return json.dumps({
+                'success': False,
+                'message': translate(err_str)
+            })
+
         mtool = api.portal.get_tool('portal_membership')
         member = mtool.getMemberById(user.getId())
 
-        if self.pwexpiry_check_history(member, newpw):
-            return json.dumps({
-                'success': False,
-                'message': 'You\'ve used that password before.'
-            })
         member.setMemberProperties({
             'password_date': DateTime()
         })
@@ -259,11 +265,6 @@ The user requesting this access logged this information:
                     editableUser.setMemberProperties({
                         'password_date': current_time
                     })
-        else:
-            #for debugging
-            api.user.get(username=user.getUserName()).setMemberProperties({
-                'password_date': DateTime(2016,7,11)
-            })
         return False
 
     def login(self):

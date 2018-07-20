@@ -1,0 +1,9 @@
+<registry>
+    <record name="plone.pwexpiry_whitelisted_users">
+        <field type="plone.registry.field.Set">
+            <title>Whitelisted users</title>
+            <description>A list of userids that would not get their password disabled, nor locked after too many attempts.</description>
+            <value_type type="plone.registry.field.TextLine"/>
+        </field>
+    </record>
+</registry>

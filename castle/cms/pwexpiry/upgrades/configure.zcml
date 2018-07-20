@@ -1,0 +1,70 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:gs="http://namespaces.zope.org/genericsetup"
+    i18n_domain="castle.cms.pwexpiry">
+
+  <gs:registerProfile
+      name="0001_to_0002"
+      title="Add a browserlayer"
+      directory="profiles/0001_to_0002"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
+      />
+
+  <gs:upgradeSteps
+      source="0001"
+      destination="0002"
+      profile="castle.cms.pwexpiry:default">
+
+    <gs:upgradeDepends
+        title="Add a browserlayer, register skins"
+        import_profile="castle.cms.pwexpiry.upgrades:0001_to_0002"
+        run_deps="True"/>
+
+  </gs:upgradeSteps>
+
+  <gs:registerProfile
+      name="0002_to_0003"
+      title="Show status message 'your account has expired' in login popup."
+      directory="profiles/0002_to_0003"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
+      />
+
+  <gs:upgradeSteps
+      source="0002"
+      destination="0003"
+      profile="castle.cms.pwexpiry:default">
+
+    <gs:upgradeDepends
+        title="Show status message 'your account has expired' in login popup."
+        import_profile="castle.cms.pwexpiry.upgrades:0002_to_0003"
+        run_deps="True"/>
+
+  </gs:upgradeSteps>
+
+  <gs:registerProfile
+      name="0003_to_0004"
+      title="Include the new whitelisted_users in the registry"
+      directory="profiles/0003_to_0004"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
+      />
+
+  <gs:upgradeSteps
+      source="0003"
+      destination="0004"
+      profile="castle.cms.pwexpiry:default">
+
+    <gs:upgradeDepends
+        title="Include the new whitelisted_users in the registry"
+        import_profile="castle.cms.pwexpiry.upgrades:0003_to_0004"
+        run_deps="True"/>
+
+  </gs:upgradeSteps>
+</configure>

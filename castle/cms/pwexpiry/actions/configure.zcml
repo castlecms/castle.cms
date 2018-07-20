@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <adapter
+      name="fifteen_days_before_expiration"
+      factory=".actions.FifteenDaysBeforeExpiration"
+      provides="castle.cms.pwexpiry.interfaces.IExpirationCheck"
+      for="zope.interface.Interface"
+      />
+
+</configure>

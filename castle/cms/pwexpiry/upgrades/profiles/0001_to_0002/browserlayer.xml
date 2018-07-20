@@ -1,8 +1,5 @@
+<?xml version="1.0"?>
 <layers>
-  <layer
-    name="castle.cms"
-    interface="castle.cms.interfaces.ICastleLayer"
-    />
   <layer
     name="castle.cms.pwexpiry"
     interface="castle.cms.pwexpiry.interfaces.ICollectivePWExpiryLayer" />

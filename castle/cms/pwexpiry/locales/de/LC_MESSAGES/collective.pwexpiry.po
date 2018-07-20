@@ -1,0 +1,188 @@
+# Harald Friessnegger <harald@webmeisterei.com>, 2016, 2018.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-05-24 20:05+0000\n"
+"PO-Revision-Date: 2018-05-25 08:54+0100\n"
+"Last-Translator: Harald Frießnegger <harald@webmeisterei.com>\n"
+"Language-Team: German <kde-i18n-de@kde.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
+"Language: de\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: ../upgrades/configure.zcml:15
+msgid "Add a browserlayer"
+msgstr ""
+
+#: ../configure.zcml:29
+msgid "Adds the feature of password expiration control."
+msgstr ""
+"Ermöglicht es Passworte ablaufen zu lassen und Qualitätskriterien von"
+" Passworten zu prüfen."
+
+#: ../upgrades/configure.zcml:57
+msgid "Include the new whitelisted_users in the registry"
+msgstr ""
+
+#: ../browser/preferences/pwexpirycontrolpanel.py:135
+msgid "Never"
+msgstr "Nie"
+
+#: ../browser/preferences/pwexpirycontrolpanel.py:131
+msgid "No users were unlocked"
+msgstr "Keine Benutzer wurden entsperrt"
+
+#: ../profiles/default/controlpanel.xml
+msgid "Password expiration"
+msgstr "Passwortablauf"
+
+#: ../example_validator.py:41
+msgid "Passwords must be at least 8 characters in length."
+msgstr "Passwörter müssen aus mindestens 8 Zeichen bestehen."
+
+#: ../example_validator.py:98
+msgid ""
+"Passwords must contain at least three of the following four character "
+"groups: Uppercase characters (A through Z), Lowercase characters (a through "
+"z), Numerals (0 through 9), Special characters such as !, $, #, %"
+msgstr ""
+"Passwörter müssen mindestens 3 der folgenden Zeichengruppen enthalten: "
+"Großbuchstaben (A - Z), Kleinbuchstaben (a - z), Nummern (0 - 9), Spezial "
+"Schriftzeichen wie !, $, #, %"
+
+#: ../configure.zcml:37
+msgid ""
+"Profile intended only in Plone 4 (No need to manually run it, default "
+"install profile should do it)."
+msgstr ""
+
+#: ../upgrades/configure.zcml:36
+msgid "Show status message 'your account has expired' in login popup."
+msgstr ""
+
+#: ../browser/preferences/pwexpirycontrolpanel.py:127
+msgid "The following users were unlocked: %s, "
+msgstr "Die folgenden Benutzer wurden entsperrt: %s,"
+
+#: ../browser/preferences/pwexpirycontrolpanel.pt:38
+msgid "User's password expiration panel"
+msgstr "Passwortablauf Einstellungen des Benutzers\t"
+
+#: ../example_validator.py:80
+msgid "You have to change your password."
+msgstr "Sie müssen Ihr Passwort ändern."
+
+#: ../pwdisable_plugin.py:58
+msgid ""
+"Your account has been locked due to too many invalid attempts to login with "
+"a wrong password. Your account will remain blocked for the next ${hrs} "
+"hours. You can reset your password, or contact an administrator to unlock "
+"it, using the Contact form."
+msgstr ""
+"Ihr Konto wurde aufgrund von zu vielen ungültigen Anmeldungen für die "
+"nächsten ${hrs} Stunden gesperrt. Sie können Ihr Passwort zurücksetzen oder "
+"einen Administrator über das Kontakt Formular bitten es zu entsperren."
+
+#: ../example_validator.py:72
+msgid ""
+"Your password cannot contain your account name(Username), first name or last "
+"name."
+msgstr ""
+"Ihr Passwort darf weder ihren Benutzer- noch ihren Nach- oder Vornamen "
+"enthalten."
+
+#: ../pwexpiry_plugin.py:106
+msgid "Your password has expired."
+msgstr "Ihr Passwort ist abgelaufen."
+
+#. Default: "\n\nIn order to change your password, please visit ${server_url}/@@change-password"
+#: ../browser/emails/emails.py:63
+msgid "change_password_email_text"
+msgstr ""
+"\n\nUm Ihr Passwort zu ändern rufen Sie bitte ${server_url}/@@change-password"
+" auf."
+
+#: ../configure.zcml:29
+msgid "collective.pwexpiry"
+msgstr "Passwortablauf (collective.pwexpiry)"
+
+#: ../configure.zcml:37
+msgid "collective.pwexpiry: Plone 4 only profile"
+msgstr "Passwortablauf (collective.pwexpiry) Plone 4"
+
+#. Default: "Show all search results"
+#: ../browser/preferences/pwexpirycontrolpanel.pt:157
+msgid "description_pas_show_all_search_results"
+msgstr "Zeige alle Suchresultate"
+
+#. Default: "View and manage user's password expiration properties"
+#: ../browser/preferences/pwexpirycontrolpanel.pt:50
+msgid "description_password_expiration"
+msgstr "Zeige und administriere die Passwortablauf Einstellungen der Benutzer."
+
+#. Default: "${days} days left to password expiration"
+#: ../utils.py:35
+msgid "email_subject"
+msgstr "Ihr Passwort läuft in ${days} Tagen ab"
+
+#. Default: "Hello ${fullname},\n\nThere are ${days} days left before your password expires!\n\nPlease ensure to reset your password before it's expired."
+#: ../browser/emails/emails.py:51
+#, fuzzy
+msgid "email_text"
+msgstr ""
+"Hallo ${username},\n"
+"\n"
+"Ihr Passwort läuft in ${days} Tagen ab.\n"
+"\n"
+"Bitte ändern Sie Ihr Passwort bevor es abläuft!"
+
+#. Default: "Hello ${fullname},\n\nYour password has expired.\n\nPlease ensure to reset your password before it's expired."
+#: ../browser/emails/emails.py:71
+#, fuzzy
+msgid "email_text_expired"
+msgstr ""
+"Hallo ${username},\n"
+"\n"
+"Ihr Passwort ist abgelaufen.\n"
+"\n"
+"Bitte ändern Sie Ihr Passwort bevor es abläuft."
+
+#. Default: "This password has been used already."
+#: ../password_history_validator.py:51
+msgid "info_reused_pw"
+msgstr "Dieses Passwort wurde schon einmal verwendet."
+
+#. Default: "Apply Changes"
+#: ../browser/preferences/pwexpirycontrolpanel.pt:169
+msgid "label_apply_changes"
+msgstr "Änderungen übernehmen"
+
+#. Default: "Save whitelist"
+#: ../browser/preferences/pwexpirycontrolpanel.pt:194
+msgid "label_save_whitelist"
+msgstr "Speichern"
+
+#. Default: "Users whitelisted"
+#: ../browser/preferences/pwexpirycontrolpanel.pt:189
+msgid "label_whitelist_users"
+msgstr "Benutzer ohne Passwortablauf"
+
+#. Default: "\n\nIn order to reset your password, please visit ${server_url}/mail_password_form?userid=${username}"
+#: ../browser/emails/emails.py:83
+msgid "reset_password_email_text"
+msgstr ""
+"\n\nUm Ihr Passwort zurückzusetzen, rufen Sie bitte"
+" ${server_url}/mail_password_form?userid=${username} auf"
+
+#. Default: "\n\nThis email was sent from ${server_name}"
+#: ../browser/emails/emails.py:92
+msgid "server_name_email_text"
+msgstr "\n\nDiese Email wurde von ${server_name} versendet."
+

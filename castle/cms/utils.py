@@ -787,7 +787,7 @@ def publish_content(obj):
             # not a valid transition, move on I guess...
             pass
 
-#from collective.pwexpiry.utils
+#from castle.cms.pwexpiry.utils
 def days_since_event(event_date, current_date):
     if not event_date.tzinfo:
         event_date = pytz.utc.localize(event_date)

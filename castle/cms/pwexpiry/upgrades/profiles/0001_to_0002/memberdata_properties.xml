@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object name="portal_memberdata" meta_type="Plone Memberdata Tool">
+    <property name="password_history" type="lines"></property>
+</object>
