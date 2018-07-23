@@ -14,20 +14,10 @@
 
   <include package="collective.monkeypatcher" />
 
-  <include package=".actions" />
-  <include package=".browser" />
-  <include package=".upgrades" />
-
     <subscriber
         for="Products.CMFCore.interfaces.IMemberData
              .interfaces.IValidPasswordEntered"
         handler=".subscriber.ValidPasswordEntered"
-        />
-
-    <subscriber
-        for="Products.CMFCore.interfaces.IMemberData
-             .interfaces.IInvalidPasswordEntered"
-        handler=".subscriber.InvalidPasswordEntered"
         />
 
     <monkey:patch

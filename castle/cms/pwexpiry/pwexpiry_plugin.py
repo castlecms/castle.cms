@@ -21,7 +21,6 @@ manage_addPwExpiryPluginForm = PageTemplateFile(
     globals(), __name__='manage_addPwExpiryPlugin'
 )
 
-
 def addPwExpiryPlugin(self, id, title='', REQUEST=None):
     """
     Add PwExpiry plugin
