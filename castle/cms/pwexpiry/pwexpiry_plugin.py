@@ -141,13 +141,13 @@ class PwExpiryPlugin(BasePlugin):
         if not AuthEncoding.is_encrypted(enc_pw):
             enc_pw = AuthEncoding.pw_encrypt(enc_pw)
 
-        pw_history = list(user.getProperty('password_history', tuple()))
+        pw_history = list(user.getProperty('password_history', []))
         pw_history.append(enc_pw)
         if len(pw_history) > max_history_pws:
             # Truncate the history
             pw_history = pw_history[-max_history_pws:]
 
-        user.setMemberProperties({'password_history': tuple(pw_history)})
+        user.setMemberProperties({'password_history': pw_history})
 
 
 InitializeClass(PwExpiryPlugin)

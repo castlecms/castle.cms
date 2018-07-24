@@ -57,7 +57,6 @@ import requests
 import time
 import transaction
 import types
-import pytz
 
 
 try:
