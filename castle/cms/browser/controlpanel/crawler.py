@@ -44,7 +44,7 @@ class CrawlerControlPanel(controlpanel.ControlPanelFormWrapper):
         try:
             es = ElasticSearchCatalog(portal_catalog)
             result = es.connection.search(
-                index=es.index_name,
+                index='{index_name}_crawler'.format(index_name=es.index_name),
                 doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                 body=query)
         except TransportError:
