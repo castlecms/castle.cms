@@ -1,4 +1,5 @@
 from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
+from castle.cms.interfaces import ICrawlerConfiguration
 from castle.cms.utils import get_public_url
 from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.interfaces import IQueryAssembler
@@ -81,30 +82,35 @@ class Search(BrowserView):
         }])
 
         additional_sites = []
-        es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
-        if es.enabled:
-            query = {
-                "size": 0,
-                "aggregations": {
-                    "totals": {
-                        "terms": {
-                            "field": "domain"
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ICrawlerConfiguration, prefix='castle')
+        if settings.crawler_active and settings.crawler_site_maps:
+            es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
+            if es.enabled:
+                query = {
+                    "size": 0,
+                    "aggregations": {
+                        "totals": {
+                            "terms": {
+                                "field": "domain"
+                            }
                         }
                     }
                 }
-            }
-            try:
-                result = es.connection.search(
-                    index=es.index_name,
-                    doc_type=CRAWLED_SITE_ES_DOC_TYPE,
-                    body=query)
-                for res in result['aggregations']['totals']['buckets']:
-                    site_name = res.get('key')
-                    if '.' not in site_name or 'amazon' in site_name:
-                        continue
-                    additional_sites.append(site_name)
-            except TransportError:
-                return []
+                try:
+                    result = es.connection.search(
+                        index='{index_name}_crawler'.format(
+                            index_name=es.index_name),
+                        doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+                        body=query)
+                    for res in result['aggregations']['totals']['buckets']:
+                        site_name = res.get('key')
+                        if '.' not in site_name or 'amazon' in site_name:
+                            continue
+                        additional_sites.append(site_name)
+                except TransportError:
+                    return []
 
         parsed = urlparse(get_public_url())
 
@@ -142,7 +148,7 @@ _search_attributes = [
     'is_folderish',
     'portal_type',
     'review_state',
-    'url'
+    'path.path'
 ]
 _valid_params = [
     'SearchableText',
@@ -162,9 +168,9 @@ class SearchAjax(BrowserView):
         query = {}
         for name in _valid_params:
             if self.request.form.get(name):
-                query[name] = self.request.form[name]
+                query[name] = self.request.form[name].lower()
             elif self.request.form.get(name + '[]'):
-                query[name] = self.request.form[name + '[]']
+                query[name] = self.request.form[name + '[]'].lower()
 
         try:
             page_size = int(self.request.form.get('pageSize'))
@@ -237,15 +243,13 @@ class SearchAjax(BrowserView):
         items = []
         for res in results:
             fields = res['fields']
-
             attrs = {}
             for key in _search_attributes:
                 val = fields.get(key)
                 attrs[key] = _one(val)
 
             if 'url' not in fields:
-                path = fields.get('path.path', [''])
-                path = path[0]
+                path = _one(fields.get('path.path', ['']))
                 path = path[len(site_path):]
                 url = base_url = urljoin(base_site_url + '/', path.lstrip('/'))
                 if attrs.get('portal_type') in view_types:
@@ -278,42 +282,39 @@ class SearchAjax(BrowserView):
 
         es = ElasticSearchCatalog(self.catalog)
         qassembler = getMultiAdapter((self.request, es), IQueryAssembler)
+
         dquery, sort = qassembler.normalize(query)
+
         equery = qassembler(dquery)
 
         doc_type = es.doc_type
+        index_name = es.index_name
         if 'searchSite' in self.request.form:
             doc_type = CRAWLED_SITE_ES_DOC_TYPE
-            equery = {
-                'filtered': {
-                    'filter': {
-                        "term": {
-                            "domain": self.request.form['searchSite']
-                        }
-                    },
-                    'query': equery['function_score']['query']['filtered']['query']
-                }
-            }
+            index_name = '{index_name}_crawler'.format(index_name=es.index_name)
+            # get rid of allowedRolesAndUsers,trashed,popularity script,etc (n/a for public crawl)
+            equery = equery['function_score']['query']
+            equery['bool']['filter'] = [{'term': {'domain': self.request.form['searchSite']}}]
 
         query = {
-            'query': equery,
-            "suggest": {
-                "SearchableText": {
-                    "text": query.get('SearchableText', ''),
-                    "term": {
-                        "field": "SearchableText"
-                    }
-                }
-            }
-        }
+             'query': equery,
+             "suggest": {
+                 "SearchableText": {
+                     "text": query.get('SearchableText', ''),
+                     "term": {
+                         "field": "SearchableText"
+                     }
+                 }
+             }
+         }
 
         query_params = {
+            'stored_fields': ','.join(_search_attributes) + ',path.path',
             'from_': start,
             'size': size,
-            'fields': ','.join(_search_attributes) + ',path.path',
         }
 
-        return es.connection.search(index=es.index_name,
+        return es.connection.search(index=index_name,
                                     doc_type=doc_type,
                                     body=query,
                                     **query_params)

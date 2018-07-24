@@ -28,7 +28,6 @@ def index_site(site):
         index=es.index_name, doc_type=es.doc_type,
         scroll='30s',
         size=page_size,
-        fields=[],
         body={
             "query": {
                 "match_all": {}

@@ -480,7 +480,7 @@ define([
         ['Platform', 'Shares'],
         ['Facebook', data.facebook],
         ['Linked In', data.linkedin],
-        ['Pinterist', data.pinterist]
+        ['Pinterest', data.pinterest]
       ];
 
       if(data.twitter){

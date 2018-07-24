@@ -48,7 +48,7 @@ def get_facebook_url_data(urls):
 
 
 COUNT_URLS = {
-    'pinterist': {
+    'pinterest': {
         'url': 'http://api.pinterest.com/v1/urls/count.json?callback=foobar&url=%s',
         'slash_matters': True
     },

@@ -35,23 +35,23 @@ import transaction
 
 CRAWLER_ES_MAPPING = {
     'domain': {
-        'type': 'string',
-        'index': 'not_analyzed',
+        'type': 'keyword',
+        'index': True,
         'store': False
     },
     'sitemap': {
-        'type': 'string',
-        'index': 'not_analyzed',
+        'type': 'text',
+        'index': False,
         'store': False
     },
     'url': {
-        'type': 'string',
-        'index': 'not_analyzed',
+        'type': 'text',
+        'index': False,
         'store': False
     },
     'image_url': {
-        'type': 'string',
-        'index': 'not_analyzed',
+        'type': 'text',
+        'index': False,
         'store': False
     }
 }
@@ -101,6 +101,7 @@ class Crawler(object):
         self.settings = settings
         self.es = es
         self.site._p_jar.sync()
+        self.index_name = '{site_index_name}_crawler'.format(site_index_name=es.index_name)
         annotations = IAnnotations(site)
         if CRAWLED_DATA_KEY not in annotations:
             annotations[CRAWLED_DATA_KEY] = OOBTree({
@@ -111,13 +112,21 @@ class Crawler(object):
 
     def crawl_page(self, url):
         logger.info('Indexing ' + url)
-        resp = requests.get(url, headers={
-            'User-Agent': self.settings.crawler_user_agent
-        })
+        try:
+            resp = requests.get(url, headers={
+                'User-Agent': self.settings.crawler_user_agent
+            })
+        except Exception:
+            # unable to access the page, remove for now
+            return False
         if resp.status_code == 404 or 'html' not in resp.headers.get('content-type', ''):
             # remove from index
             return False
-        dom = html.fromstring(resp.content)
+        try:
+            dom = html.fromstring(resp.content)
+        except etree.XMLSyntaxError:
+            # unable to parse html, remove for now
+            return False  # lxml has been known to throw this as a bug, maybe use BeautifulSoup
         parsed = urlparse(url)
         data = {
             'url': url,
@@ -157,7 +166,7 @@ class Crawler(object):
     def exists_in_index(self, url):
         try:
             self.es.connection.get(
-                index=self.es.index_name,
+                index=self.index_name,
                 doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                 id=url)
             return True
@@ -172,7 +181,7 @@ class Crawler(object):
             return
         data['sitemap'] = 'archives'
         self.es.connection.index(
-            index=self.es.index_name,
+            index=self.index_name,
             doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             id=url,
             body=data
@@ -191,13 +200,12 @@ class Crawler(object):
             urls.append(aws.swap_url(url, base_url=base_url))
 
         query = {
-            "filtered": {
+            "bool": {
                 "filter": {
                     "term": {
-                        "sitemap": 'archives'
+                        "sitemap": "archives"
                     }
-                },
-                "query": {"match_all": {}}
+                }
             }
         }
         existing_urls = self.get_all_from_es(query)
@@ -217,11 +225,10 @@ class Crawler(object):
         _ids = []
         page_size = 700
         result = self.es.connection.search(
-            index=self.es.index_name,
+            index=self.index_name,
             doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             scroll='30s',
             size=page_size,
-            fields=[],
             body={
                 "query": query
             })
@@ -242,13 +249,12 @@ class Crawler(object):
         parsed = urlparse(sitemap)
         domain = parsed.netloc
         query = {
-            "filtered": {
+            "bool": {
                 "filter": {
                     "term": {
                         "domain": domain
                     }
-                },
-                "query": {"match_all": {}}
+                }
             }
         }
         ids = self.get_all_from_es(query)
@@ -258,7 +264,7 @@ class Crawler(object):
 
     def delete_from_index(self, url):
         self.es.connection.delete(
-            index=self.es.index_name,
+            index=self.index_name,
             doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             id=url)
 
@@ -313,7 +319,7 @@ class Crawler(object):
                 crawled_urls.remove(url)
                 try:
                     self.es.connection.delete(
-                        index=self.es.index_name,
+                        index=self.index_name,
                         doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                         id=url)
                 except NotFoundError:
@@ -321,7 +327,7 @@ class Crawler(object):
             else:
                 data['sitemap'] = sitemap
                 self.es.connection.index(
-                    index=self.es.index_name,
+                    index=self.index_name,
                     doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                     id=url,
                     body=data
@@ -335,27 +341,32 @@ def crawl_site(site, full=False):
     registry = getUtility(IRegistry)
     settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
     if not settings.crawler_active or not settings.crawler_site_maps:
+        logger.info("Crawler must first be enabled in Site Setup")
         return False
 
     catalog = api.portal.get_tool('portal_catalog')
     es = ElasticSearchCatalog(catalog)
+    index_name = '{site_index_name}_crawler'.format(site_index_name=es.index_name)
     if not es.enabled:
+        logger.info("Elasticsearch must be enabled in Site Setup to use crawler")
         return False
 
     # check index type is mapped, create if not
     try:
         es.connection.indices.get_mapping(
-            index=es.index_name,
+            index=index_name,
             doc_type=CRAWLED_SITE_ES_DOC_TYPE)
     except NotFoundError:
         # need to add it
         adapter = getMultiAdapter((getRequest(), es), IMappingProvider)
         mapping = adapter()
         mapping['properties'].update(CRAWLER_ES_MAPPING)
+        if not es.connection.indices.exists(index_name):
+            es.connection.indices.create(index_name)
         es.connection.indices.put_mapping(
             doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             body=mapping,
-            index=es.index_name)
+            index=index_name)
 
     crawler = Crawler(site, settings, es)
 
