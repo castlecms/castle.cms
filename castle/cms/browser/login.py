@@ -29,10 +29,6 @@ from DateTime import DateTime
 import json
 import time
 
-'''TODO: Remove log messages.'''
-import logging
-logger = logging.getLogger("Plone")
-
 class SecureLoginView(BrowserView):
     implements(ISecureLoginAllowedView)
 
@@ -144,45 +140,6 @@ The user requesting this access logged this information:
             'messageType': 'info'
         })
 
-    def pwexpiry_check_history(self,user,password):
-        registry = self.get_registry()
-        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
-        max_history_pws = registry['plone.pwexpiry_password_history_size']
-        whitelisted = registry['plone.pwexpiry_whitelisted_users']
-        if whitelisted and user.getId() in whitelisted:
-            return False
-        if password is not None and \
-        pwexpiry_enabled and \
-        max_history_pws > 0:
-            pw_history = user.getProperty(
-                'password_history',
-                []
-            )
-            for old_pw in pw_history[-max_history_pws:]:
-                if AuthEncoding.pw_validate(old_pw, str(password)):
-                    return True
-        return False #CAN GET RID OF
-
-    def pwexpiry_add_history(self,user,password):
-        registry = self.get_registry()
-        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
-        max_history_pws = registry['plone.pwexpiry_password_history_size']
-        if password is not None and \
-        max_history_pws > 0:
-            enc_pw = password
-            if not AuthEncoding.is_encrypted(enc_pw):
-                enc_pw = AuthEncoding.pw_encrypt(enc_pw)
-            pw_history = list(user.getProperty(
-                'password_history',
-                []
-            ))
-            pw_history.append(enc_pw)
-            if len(pw_history) > max_history_pws:
-                # Truncate the history
-                pw_history = pw_history[-max_history_pws:]
-
-            user.setMemberProperties({'password_history': pw_history})
-
     def set_password(self):
         # 1. only set password for logged in user...
         if api.user.is_anonymous():
@@ -228,13 +185,16 @@ The user requesting this access logged this information:
         member.setMemberProperties({
             'password_date': DateTime()
         })
-        self.pwexpiry_add_history(member, newpw)
         self.auth.change_password(member, newpw)
 
         return json.dumps({
             'success': True
         })
 
+    '''
+    this function is here since the current
+    login form doesn't use PAS for validation.
+    '''
     def pwexpiry(self, user):
         registry = self.get_registry()
         pwexpiry_enabled = registry['plone.pwexpiry_enabled']
@@ -406,9 +366,18 @@ The user requesting this access logged this information:
 
     def reset_password(self):
         pw_tool = api.portal.get_tool('portal_password_reset')
+        registration = api.portal.get_tool('portal_registration')
         userid = self.request.form.get('userid')
         randomstring = self.request.form.get('code')
         password = self.request.form.get('password')
+
+        err_str = registration.testPasswordValidity(newpw)
+        if err_str is not None:
+            return json.dumps({
+                'success': False,
+                'message': translate(err_str)
+            })
+
         alsoProvides(self.request, IDisableCSRFProtection)
         try:
             pw_tool.resetPassword(userid, randomstring, password)
