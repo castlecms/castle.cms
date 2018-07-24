@@ -786,12 +786,3 @@ def publish_content(obj):
         except api.exc.InvalidParameterError:
             # not a valid transition, move on I guess...
             pass
-
-#from castle.cms.pwexpiry.utils
-def days_since_event(event_date, current_date):
-    if not event_date.tzinfo:
-        event_date = pytz.utc.localize(event_date)
-    if not current_date.tzinfo:
-        current_date = pytz.utc.localize(current_date)
-    difference = current_date - event_date
-    return difference.days

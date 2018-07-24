@@ -7,7 +7,7 @@ from castle.cms.interfaces import ISiteSchema
 from castle.cms.utils import get_managers
 from castle.cms.utils import send_email
 from castle.cms.utils import strings_differ
-from castle.cms.utils import days_since_event
+from castle.cms.pwexpiry.utils import days_since_event
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection

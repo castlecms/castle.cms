@@ -16,6 +16,7 @@ from zope.component import queryUtility
 from castle.cms.interfaces import IAuthenticator
 from castle.cms import security
 from AccessControl import AuthEncoding
+from DateTime import DateTime
 
 import json
 import responses
@@ -306,6 +307,120 @@ class TestTwoFactor(unittest.TestCase):
         self.assertTrue(result['success'])
         self.assertTrue(result['countryBlocked'])
 
+class TestPwexpiry(unittest.TestCase):
+
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        portal_memberdata = self.portal.portal_memberdata
+        api.portal.set_registry_record(
+            name='plone.pwexpiry_enabled',
+            value=True
+        )
+        api.portal.set_registry_record(
+            name='plone.pwexpiry_whitelisted_users',
+            value=[]
+        )
+        logout()
+
+    def test_initial_login(self):
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+        self.assertFalse(result['resetpassword'])
+
+    def test_expired_login(self):
+        editableUser = api.user.get(username=TEST_USER_NAME)
+        editableUser.setMemberProperties({
+            'password_date': DateTime('01/10/2011')
+        })
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['resetpassword'])
+
+    def test_whitelist(self):
+        editableUser = api.user.get(username=TEST_USER_NAME)
+        editableUser.setMemberProperties({
+            'password_date': DateTime('01/10/2011')
+        })
+        api.portal.set_registry_record(
+            name='plone.pwexpiry_whitelisted_users',
+            value=[editableUser.getId().decode('utf-8')]
+        )
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertFalse(result['resetpassword'])
+
+    def test_password_history(self):
+        pass1 = 'N1C3P@$$w0rd'
+        pass2 = 'P@$$w0rd2018'
+        editableUser = api.user.get(username=TEST_USER_NAME)
+        editableUser.setMemberProperties({
+            'password_date': DateTime('01/10/2011')
+        })
+        login(self.portal, TEST_USER_NAME)
+
+        #-----Change password-----
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': TEST_USER_PASSWORD,
+            'new_password': pass1
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+        logout()
+
+        #-----Try logging in with new password-----
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': pass1
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertFalse(result['resetpassword'])
+
+        #-----Change password again-----
+        login(self.portal, TEST_USER_NAME)
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': pass1,
+            'new_password': pass2
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+
+        #-----Try to change password back-----
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': pass2,
+            'new_password': pass1
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertFalse(result['success'])
 
 if argon2 is not None:
     class TestArgon2(unittest.TestCase):
