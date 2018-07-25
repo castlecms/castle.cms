@@ -30,6 +30,7 @@ except ImportError:
 
 
 SHIELD = constants.SHIELD
+TEST_USER_NEW_PASSWORD = TEST_USER_PASSWORD + '123'
 
 
 class TestTwoFactor(unittest.TestCase):
@@ -270,7 +271,7 @@ class TestTwoFactor(unittest.TestCase):
             'apiMethod': 'set_password',
             'username': TEST_USER_NAME,
             'existing_password': TEST_USER_PASSWORD,
-            'new_password': TEST_USER_PASSWORD,
+            'new_password': TEST_USER_NEW_PASSWORD,
             '_authenticator': createToken()
         })
         view = SecureLoginView(self.portal, self.request)
