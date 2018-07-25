@@ -141,33 +141,22 @@ The user requesting this access logged this information:
         })
 
     def set_password(self):
-        # 1. only set password for logged in user...
-        if api.user.is_anonymous():
-            return json.dumps({
-                'success': False,
-                'message': 'Need to be logged in to reset password'
-            })
-
         acl_users = self.get_tool('acl_users')
 
-        # 2. double check existing password
-        user = acl_users.authenticate(
-            self.username, self.request.form.get('existing_password'),
-            self.request)
+        # 1. Authenticate user
+        authorized, user = self.auth.authenticate(
+            username=self.username,
+            password=self.request.form.get('existing_password'),
+            country=self.get_country_header(),
+            login=False)
 
-        if not user:
+        if not user or not authorized:
             return json.dumps({
                 'success': False,
-                'message': 'Existing password did not match'
+                'message': 'Existing credentials did not match'
             })
 
-        if user.getId() != api.user.get_current().getId():
-            return json.dumps({
-                'success': False,
-                'message': 'Error resetting'
-            })
-
-        # 3. finally, set password
+        # 2. Set password
         newpw = self.request.form.get('new_password')
 
         registration = getToolByName(self.context, 'portal_registration')
@@ -182,10 +171,13 @@ The user requesting this access logged this information:
         mtool = api.portal.get_tool('portal_membership')
         member = mtool.getMemberById(user.getId())
 
-        member.setMemberProperties({
-            'password_date': DateTime()
-        })
         self.auth.change_password(member, newpw)
+
+        self.auth.authenticate(
+            username=self.username,
+            password=newpw,
+            country=self.get_country_header(),
+            login=True)
 
         return json.dumps({
             'success': True
@@ -214,6 +206,12 @@ The user requesting this access logged this information:
                         password_date.asdatetime(),
                         current_time.asdatetime()
                     )
+
+                    '''
+                    depending how you intepret the setting, it might make
+                    more sense to check if it's <= 0 instead.
+                    Leaving as strictly LT for now.
+                    '''
                     if validity_period - since_last_pw_reset < 0:
                         # Password has expired
                         editableUser.setMemberProperties({
@@ -241,7 +239,8 @@ The user requesting this access logged this information:
             authorized, user = self.auth.authenticate(
                 username=self.username,
                 password=self.request.form.get('password'),
-                country=self.get_country_header())
+                country=self.get_country_header(),
+                login=False)
             if authorized:
                 reset_password = user.getProperty(
                     'reset_password_required', False)
@@ -255,6 +254,12 @@ The user requesting this access logged this information:
                 }
                 if reset_password:
                     resp['message'] = 'Your password has expired.'
+                else:
+                    authorized, user = self.auth.authenticate(
+                        username=self.username,
+                        password=self.request.form.get('password'),
+                        country=self.get_country_header(),
+                        login=True)
                 try:
                     with api.env.adopt_user(user=user):
                         resp['authenticator'] = createToken()

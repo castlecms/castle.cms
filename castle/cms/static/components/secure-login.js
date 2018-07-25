@@ -359,9 +359,14 @@ require([
         D.h2({ className: 'auth-title' }, 'Change password'),
         D.p({ className: 'auth-description' }, help),
         D.div({ className: 'form-group'}, [
+          D.label({ htmlFor: 'username1' + that.state.counter}, 'Username'),
+          D.input({type: 'text', value: that.state.username, disabled: true,
+                   className: 'form-control', id: 'username1' + that.state.counter})
+        ]),
+        D.div({ className: 'form-group'}, [
           D.label({ htmlFor: 'password1' + that.state.counter}, 'Existing password'),
           D.input({type: 'password', value: that.state.password, disabled: true,
-                   id: 'password1' + that.state.counter})
+                   className: 'form-control', id: 'password1' + that.state.counter})
         ]),
         D.div({ className: 'form-group'}, [
           D.label({ htmlFor: 'password2' + that.state.counter }, 'New password'),
