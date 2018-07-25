@@ -3,7 +3,5 @@
     <property name="reset_password_required" type="boolean">False</property>
     <property name="reset_password_time" type="float">0</property>
     <property name="password_date" type="date">2000/01/01</property>
-    <property name="last_notification_date" type="date">2000/01/01</property>
-    <property name="account_locked_date" type="date">2000/01/01</property>
     <property name="password_history" type="lines"></property>
 </object>
