@@ -36,6 +36,12 @@ class PasswordHistoryValidator(object):
             # No check for registrations.
             return None
 
+        if len(password) < 8:
+            return _(
+                u'Minimum 8 characters',
+                default=u'Minimum 8 characters'
+            )
+
         pwexpiry_enabled = api.portal.get_registry_record(
             'plone.pwexpiry_enabled'
         )
