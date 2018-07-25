@@ -47,6 +47,14 @@ class PasswordHistoryValidator(object):
             return None
 
         user = api.user.get_current()
+
+        # Ignore whitelisted
+        whitelisted = api.portal.get_registry_record(
+            'plone.pwexpiry_whitelisted_users'
+        )
+        if whitelisted and user.getId() in whitelisted:
+            return None
+
         pw_history = user.getProperty('password_history', [])
 
         for old_pw in pw_history[-max_history_pws:]:

@@ -75,7 +75,7 @@ class PwExpiryPlugin(BasePlugin):
         whitelisted = api.portal.get_registry_record(
             'plone.pwexpiry_whitelisted_users'
         )
-        if user.getId() in whitelisted:
+        if whitelisted and user.getId() in whitelisted:
             return None
 
         password_date = user.getProperty('password_date', '2000/01/01')
