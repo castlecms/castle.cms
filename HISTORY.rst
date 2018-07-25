@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Changed collective.documentviewer dep. version
+  [obct537]
+
 - Added status control panel to give users the status of relevant subprocesses
   [mattjhess]
 
