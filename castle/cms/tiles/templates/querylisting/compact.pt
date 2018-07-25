@@ -17,7 +17,7 @@
       </div>
       <div class="col-lg-10 col-md-10"
            tal:attributes="class python: has_date and 'col-lg-10 col-md-10' or 'col-lg-12 col-md-12'">
-        <p tal:condition="python: 'eventstartend' in df">
+        <p tal:condition="python: 'eventstartend' in df and start and end">
             <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
             to
             <span class="pat-moment date"
