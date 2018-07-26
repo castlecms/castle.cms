@@ -5,7 +5,11 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add password expiration option with whitelist
+  [CorySanin]
+
+- Fixed a bug with the tab order on the login screen
+  [CorySanin]
 
 
 2.0.45 (2018-07-13)
