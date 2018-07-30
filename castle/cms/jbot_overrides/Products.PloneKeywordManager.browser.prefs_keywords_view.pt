@@ -72,6 +72,16 @@
         </form>
       </tal:kw_fields>
 
+      <fieldset>
+          <div class="field">
+              <input type="checkbox" name="simkeyword"
+                     id="simkeyword"
+                     tal:attributes="onclick string:$('.simkeywords').css('display', (this.checked)?'initial':'none');"
+                     />
+              <label for="simkeyword">Show similar keywords</label>
+          </div>
+      </fieldset>
+
   <tal:site_has_keywords condition="python:len(catalogSubjects) > 0">
     <form action="prefs_keywords_view" method="get"
           tal:attributes="action string:${context/absolute_url}/prefs_keywords_view"
@@ -167,19 +177,20 @@
 		Select one or more keywords, then set a replacement keyword and click on 'Merge / Replace' to replace all selected value by this one. Click on Delete to remove selected values.
 		</p>
         <div class="field">
-        <div tal:repeat="subject python:search and [search] or catalogSubjects">
+        <dl tal:repeat="subject python:search and [search] or catalogSubjects">
          <tal:block
             condition="python:not show_filters or search or limit=='a-z' or (subject and limit==subject.lower()[0])"
             define="subject_id python:context.plone_utils.normalizeString(subject);
                     subject_quote python:url_quote(subject)">
+         <dt>
           <input type="checkbox" name="keywords:list"
                  tal:attributes="value subject;
                                  id string:subject-${subject_id};
                                  onclick string:document.forms['keyword_edit_form'].changeto.value='${subject}';; return true;;" />
           <label tal:content="subject" tal:attributes="for string:subject-${subject_id};">Subject</label>
           <tal:p5 tal:condition="view/is_plone_5">
-            <a href="#" class="glyphicon" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
-              <span class="glyphicon-search"></span></a>
+            <a href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
+              <span class="icon-search"></span></a>
           </tal:p5>
           <tal:p4 tal:condition="not: view/is_plone_5">
             <a href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
@@ -188,9 +199,8 @@
                    tal:attributes="src string:${portal_url}/search_icon.png;"
                    alt="Search"/></a>
           </tal:p4>
-         <?python
-         '''
-         <dd>
+         </dt>
+         <dd class="simkeywords" style="display:none;">
            <span tal:repeat="item python:pkm.getScoredMatches(subject, catalogSubjects, num, score, context=context)" style="white-space: nowrap;">
              <span tal:condition="python:subject!=item"
                    tal:define="item_id python:context.plone_utils.normalizeString(item)">
@@ -213,12 +223,10 @@
              </span>
            </span>
          </dd>
-         <!--Too complicated/unnecessary-->
-         '''
-         ?>
+
          </tal:block>
 
-        </div>
+        </dl>
 	  </div>
       <div class="field">
                 <div class="error"
@@ -251,6 +259,9 @@
 
       </fieldset>
     </form>
+    <script type="text/javascript">
+        $(document).ready(function(){$('#simkeyword')[0].checked=false;})
+    </script>
   </tal:site_has_keywords>
 
   <tal:no_keywords_yet condition="not:catalogSubjects">
