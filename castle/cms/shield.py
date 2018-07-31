@@ -37,9 +37,9 @@ def protect(req):
         protect = True
     elif setting == SHIELD.BACKEND:
         backend_url = (registry and
-                       registry.get('plone.backend_url', SHIELD.NONE) or
-                       '')
-        if backend_url.startswith(req.SERVER_URL):
+                       registry.get('plone.backend_url', []) or
+                       [])
+        if req.SERVER_URL in backend_url:
             protect = True
     if protect and api.user.is_anonymous():
         raise Redirect('{}/@@secure-login'.format(
