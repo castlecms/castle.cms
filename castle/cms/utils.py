@@ -485,9 +485,9 @@ def get_ip(req):
 def get_backend_url():
     registry = getUtility(IRegistry)
     backend_url = registry.get('plone.backend_url', None)
-    if not backend_url:
+    if not backend_url or len(backend_url) == 0:
         backend_url = api.portal.get().absolute_url()
-    return backend_url
+    return backend_url[0]
 
 
 def parse_query_from_data(data, context=None):

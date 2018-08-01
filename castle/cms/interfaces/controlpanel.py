@@ -148,15 +148,17 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=None,
         required=False)
 
-    backend_url = schema.TextLine(
-        title=u'Backend site URL',
-        description=u'The URL from which you will be editing and maintaining site content.',
-        default=None,
+    backend_url = schema.Tuple(
+        title=u'Backend site URLs',
+        description=u'The URL(s) from which you will be editing and maintaining site content. '
+                    u'One per URL per line. Main URL first.',
+        value_type=schema.TextLine(),
+        default=(),
         required=False)
 
-    disallow_login_to_public_url = schema.Bool(
-        title=u'Disallow login at public URL',
-        description=u'If set, will prevent logins at the site''s public URL',
+    only_allow_login_to_backend_urls = schema.Bool(
+        title=u'Only allow login at a backend URL',
+        description=u'If set, users can only log in if visiting from a backend URL.',
         default=False,
         required=False)
 
