@@ -8,8 +8,10 @@
   </head>
   <body
       tal:define="utils context/@@castle-utils;
-                  backend_urls python:context.portal_registry['plone.backend_url'];
-                  only_allow_login_to_backend_urls python:context.portal_registry['plone.only_allow_login_to_backend_urls'];
+                  site_login python: hasattr(context,'portal_registry');
+                  portreg python: context.portal_registry if site_login else {'plone.backend_url':[],'plone.only_allow_login_to_backend_urls':False};
+                  backend_urls python:portreg['plone.backend_url'];
+                  only_allow_login_to_backend_urls python:portreg['plone.only_allow_login_to_backend_urls'];
                   bad_domain python: only_allow_login_to_backend_urls and backend_urls is not None and portal_url.rstrip('/') not in backend_urls;"
       class="secure-login-template">
 
