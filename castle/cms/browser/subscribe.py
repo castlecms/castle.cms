@@ -6,6 +6,7 @@ from castle.cms.widgets import ReCaptchaFieldWidget
 from plone import api
 from plone.app.users.schema import checkEmailAddress
 from plone.autoform.form import AutoExtensibleForm
+from plone.autoform.directives import widget
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -19,6 +20,7 @@ from z3c.form import form
 from z3c.form import interfaces
 from z3c.form.action import ActionErrorOccurred
 from z3c.form.interfaces import WidgetActionExecutionError
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.component import getUtility
 from zope.component import queryUtility
@@ -66,10 +68,14 @@ class ISubscribeForm(Interface):
         required=False,
         constraint=check_phone_number)
 
+
+    widget(
+        'categories',
+        CheckBoxFieldWidget,
+    )
     categories = schema.List(
         title=u'Categories',
-        description=u"Narrow the types of content you'd like to recieve. "
-                    u"Leave blank to recieve everything.",
+        description=u"Select the types of content you'd like to receive.",
         required=False,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
@@ -126,7 +132,7 @@ Copy and paste this url into your web browser to confirm your address: %s
 <a href="%s">confirm your email address by clicking on this link</a>.
 </p>
 <p>
-If that does not work, copy and paste this urls into your web browser: %s
+If that does not work, copy and paste this url into your web browser: %s
 </p>""" % (url, url)
         send_email(
             [email], "Email Confirmation for subscription(%s)" % site_settings.site_title,

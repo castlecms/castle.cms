@@ -121,6 +121,14 @@
     layer="castle.cms.interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="survey-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".survey.SurveyControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
   <!-- overridding so we can customize styles, remove buttons -->
   <browser:page
     name="theming-controlpanel-mapper"
@@ -168,5 +176,15 @@
     template="templates/usergroups_groupmembership.pt"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+
+  <browser:page
+    name="status-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".status.StatusView"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/status.pt"
+    />
+
 
 </configure>

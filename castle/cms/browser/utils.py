@@ -154,6 +154,8 @@ class Utils(BrowserView):
                 str(date.year()),)
         if format == 'notime':
             return ' '.join(date.fCommon().split(' ')[:-2])
+        if format == 'nodate':
+            return ' '.join(date.fCommon().split(' ')[-2:])
         if format == 'slash':
             return '%s/%s/%s' % (
                 str(date.year()),

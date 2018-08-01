@@ -7,6 +7,7 @@ from zope import schema
 from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
 
+
 def create_term(val, label):
     return SimpleVocabulary.createTerm(val, val, label)
 
@@ -172,7 +173,7 @@ class IAnnouncementData(Interface):
     site_announcement = schema.Text(
         title=u"Site announcement",
         default=u'<p><strong>Breaking News:</strong> '
-                u'<a href="#" style="color: white;">Follow Updates from...</a></p>',
+                u'<em>Replace this text with your own site announcement</em></p>',
         required=False
     )
 
@@ -186,7 +187,6 @@ class IAnnouncementData(Interface):
 
 
 class ISiteConfiguration(Interface):
-
     image_repo_location = schema.TextLine(
         title=u'Image repo path',
         required=True,
@@ -305,12 +305,14 @@ class IAPISettings(Interface):
         required=False)
 
     etherpad_url = schema.TextLine(
-        title=u'Etherpad Url',
+        title=u'Etherpad URL',
+        description=u'The full address of your Etherpad server, e.g. http://127.0.0.1:9001',
         required=False
     )
 
     etherpad_api_key = schema.TextLine(
         title=u'Etherpad API Key',
+        description=u'The hexadecimal string taken from your Etherpad installation''s APIKEY.txt',
         required=False
     )
 
@@ -343,6 +345,7 @@ class IAPISettings(Interface):
         required=False,
         default=unicode(django_random.get_random_string(64))
     )
+
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
@@ -386,9 +389,9 @@ class IArchivalSettings(Interface):
 
 
 class ICastleSettings(
-        ISiteConfiguration,
-        IAPISettings,
-        IArchivalSettings):
+    ISiteConfiguration,
+    IAPISettings,
+    IArchivalSettings):
     pass
 
 
@@ -491,17 +494,20 @@ class IBusinessData(Interface):
 class ICrawlerConfiguration(Interface):
     crawler_active = schema.Bool(
         title=u'Active',
+        description=u'Check this to activate the site crawler. You must also specify site maps below.',
         required=False,
         default=False)
 
     crawler_index_archive = schema.Bool(
         title=u'Index archives',
+        description=u'Check this to crawl Amazon S3 archival storage.',
         required=False,
         default=False
     )
 
     crawler_site_maps = schema.List(
         title=u'Site maps',
+        description=u'URLs of the site maps of external sites to be crawled, one per line, e.g., https://plone.org/sitemap.xml.gz',
         required=False,
         value_type=schema.TextLine()
     )

@@ -2,9 +2,9 @@
 
 define([
   'jquery',
-  'mockup-patterns-base',
+  'pat-base',
   'underscore',
-  'castle-url/libs/leaflet-dist/leaflet'
+  'castle-url/components/beautifymarker'
 ], function($, Base, _, L) {
   'use strict';
 
@@ -58,7 +58,20 @@ define([
         if(!marker){
           return;
         }
-        var markerObj = L.marker([marker.lat, marker.lng]).addTo(self.map);
+        var options = {};
+        if( marker.icon != undefined ) {
+          options = {
+            icon: L.BeautifyIcon.icon({
+              isAlphaNumericIcon: true,
+              text: marker.icon.iconText,
+              borderColor: marker.icon.color,
+              textColor: marker.icon.color,
+              iconShape: 'marker'
+            })
+          };
+        }
+
+        var markerObj = L.marker([marker.lat, marker.lng], options).addTo(self.map);
         if(marker.popup){
           markerObj.bindPopup(marker.popup);
         }

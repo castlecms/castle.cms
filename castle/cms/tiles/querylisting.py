@@ -277,7 +277,7 @@ class IQueryListingTileSchema(model.Schema):
     form.widget(query=QueryFieldWidget)
     query = schema.List(
         title=u'Base query',
-        description=u"This query can be customized base on user selection",
+        description=u"This query can be customized based on user selection",
         value_type=schema.Dict(value_type=schema.Field(),
                                key_type=schema.TextLine()),
         required=False
@@ -291,13 +291,13 @@ class IQueryListingTileSchema(model.Schema):
 
     sort_reversed = schema.Bool(
         title=u'Reversed order',
-        description=u'Sort the results in reversed order',
+        description=u'Sort the results in reverse order',
         required=False,
     )
 
     limit = schema.Int(
         title=u'Limit',
-        description=u'Limit Search Results',
+        description=u'Limit number of search results',
         required=False,
         default=15,
         min=1,
@@ -327,7 +327,8 @@ class IQueryListingTileSchema(model.Schema):
         value_type=schema.Choice(
             vocabulary=SimpleVocabulary([
                 SimpleTerm('image', 'image', u'Image'),
-                SimpleTerm('date', 'date', u'Date'),
+                SimpleTerm('date', 'date', u'Publication (Effective) Date'),
+                SimpleTerm('eventstartend', 'eventstartend', u'Event Start and End'),
                 SimpleTerm('description', 'description', u'Overview/Summary')
             ])
         )

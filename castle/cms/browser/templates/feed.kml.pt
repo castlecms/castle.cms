@@ -2,6 +2,7 @@
 <kml xmlns="http://www.opengis.net/kml/2.2"
      xmlns:tal="http://xml.zope.org/namespaces/tal"
      tal:define="feed view/feed;">
+  <Document>
   <tal:item tal:repeat="item feed/items">
     <tal:coord tal:repeat="coord python: view.get_coordinates(item)">
       <Placemark>
@@ -13,4 +14,5 @@
       </Placemark>
     </tal:coord>
   </tal:item>
+  </Document>
 </kml>

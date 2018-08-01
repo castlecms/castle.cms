@@ -10,6 +10,7 @@
     "grunt-contrib-less": "latest",
     "grunt-contrib-requirejs": "~0.4.3",
     "grunt-contrib-watch": "latest",
+    "grunt-contrib-uglify": "~2",
     "grunt-sed": "~0.1.1",
     "less-plugin-inline-urls": "^1.1.0",
     "copy-webpack-plugin": "^1.1.1",

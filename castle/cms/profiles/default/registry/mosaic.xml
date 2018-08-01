@@ -34,8 +34,6 @@
 
   <record name="plone.app.mosaic.hidden_content_layouts">
     <value purge="False">
-      <element>default/news_item.html::News Item</element>
-      <element>default/basic.html::News Item</element>
       <element>default/basic.html::Folder</element>
       <element>default/basic.html::Dashboard</element>
       <element>custom/basic.html</element>
@@ -47,7 +45,7 @@
   </record>
   <record name="plone.app.blocks.default_layout.News-Item">
     <field type="plone.registry.field.TextLine" />
-    <value>++contentlayout++default/news_item.html</value>
+    <value>++contentlayout++castle/news_item.html</value>
   </record>
   <record name="plone.app.blocks.default_layout.Dashboard">
     <field type="plone.registry.field.TextLine" />
@@ -83,6 +81,7 @@
       <element>castle.cms.search</element>
       <element>castle.cms.documentviewer</element>
       <element>castle.cms.existing</element>
+      <element>castle.cms.survey</element>
     </value>
   </record>
 
@@ -175,6 +174,20 @@
            interface="plone.app.mosaic.interfaces.ITile">
     <value key="name">castle.cms.subscription</value>
     <value key="label">Subscribe</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">20</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_survey"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.survey</value>
+    <value key="label">Survey</value>
     <value key="category">advanced</value>
     <value key="tile_type">app</value>
     <value key="default_value"></value>

@@ -25,7 +25,7 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
 
     id = "CastleSettingsControlPanel"
     label = _(u"Castle Settings")
-    description = "Manage all Castle CMS-specific settings"
+    description = "Manage all CastleCMS-specific settings"
     schema = ICastleSettings
     schema_prefix = "castle"
     fields = field.Fields(ISiteConfiguration)

@@ -1,0 +1,1 @@
+<div class="pat-existing" content_url="#" tal:define="existing nocall: view/tile/content|nothing;" tal:attributes="content_url existing/absolute_url"/>

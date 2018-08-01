@@ -2,8 +2,78 @@
 Changelog
 =========
 
-unreleased
-------------------
+2.0.46 (unreleased)
+-------------------
+
+- Changed collective.documentviewer dep. version
+  [obct537]
+
+- Added status control panel to give users the status of relevant subprocesses
+  [mattjhess]
+
+- in query listing tile, do not display event start/end if they don't exist
+  [tkimnguyen]
+
+
+2.0.45 (2018-07-13)
+-------------------
+
+- add Event start and end datetimes to the query listing tile's views
+  [tkimnguyen]
+
+- add Site Crawler control panel field descriptions
+  [tkimnguyen]
+
+- check for when Twitter-related keys in twitter-monitor
+  [CorySanin]
+
+- Added Beautifymarkers leaflet extension, adds map icon customization
+  [obct537]
+
+- add celery environment vars for connecting to redis
+  [tkimnguyen]
+
+- Added fragments directory ZCML directive
+  [obct537]
+
+- Add Survey invite tile and controlpanel
+  [lucid-0]
+
+- Replace deprecated 'mockup-patterns-base' with 'pat-base' in several files
+  [lucid-0]
+
+2.0.44 (2018-05-08)
+-------------------
+
+- fix default news item layout
+  [tkimnguyen]
+
+- add description to Etherpad fields
+  [tkimnguyen]
+
+2.0.43 (2018-04-06)
+-------------------
+
+- Add simple display type to existing content tile (displays body of article)
+  [lucid-0]
+
+- show relative and absolute datetimes in contents view
+  [robzonenet]
+
+- change default site announcement text
+  [tkimnguyen]
+
+- Change email category widget. Make subscribe title editable. Updated to work with Plone 5.0.x
+  [lucid-0]
+
+2.0.42 (2018-03-01)
+-------------------
+
+- tweak tour text
+  [tkimnguyen]
+
+- fix CastleCMS spelling
+  [tkimnguyen]
 
 - disallow logins from public URL, if set in Security panel; tweaks to field descriptions
   [tkimnguyen]
@@ -69,6 +139,9 @@ unreleased
 
 - Fixed problem breaking content history view
   [obct537]
+
+- add new CastleCMS pypi classifiers
+  [lucid-0]
 
 - Added a toolbar button to allow users to manually mark an object for archiving
   [obct537]

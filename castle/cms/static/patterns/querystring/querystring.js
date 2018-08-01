@@ -85,7 +85,7 @@ define([
       var that = this;
 
       if(this.state.criterias.length === 0){
-        return D.p({ className: 'querystring-empty-criterias'}, 'No criterias defined.');
+        return D.p({ className: 'querystring-empty-criterias'}, 'No criteria defined.');
       }
 
       var criterias = [];

@@ -52,7 +52,7 @@
 
   <genericsetup:registerProfile
       name="default"
-      title="Castle CMS"
+      title="CastleCMS"
       directory="profiles/default"
       description="Installs the castle.cms package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
@@ -81,6 +81,7 @@
   <include file="indexing.zcml" />
   <include file="static.zcml" />
   <include file="theming.zcml" />
+  <include file="meta.zcml" />
 
 
   <include package="z3c.unconfigure" file="meta.zcml" />
@@ -98,6 +99,10 @@
   <utility
     component=".vocabularies.EmailCategoryVocabulary"
     name="castle.cms.vocabularies.EmailCategories"
+    />
+  <utility
+    component=".vocabularies.SurveyVocabulary"
+    name="castle.cms.vocabularies.Surveys"
     />
   <utility
     component=".vocabularies.MimeTypeVocabulary"

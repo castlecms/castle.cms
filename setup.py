@@ -12,8 +12,8 @@ def read(*rnames):
 
 setup(
     name='castle.cms',
-    description='Castle CMS Plone distribution main package',
-    version='2.0.42.dev0',
+    description='CastleCMS Plone distribution main package',
+    version='2.0.46.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
@@ -24,10 +24,12 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Framework :: Plone :: 5.0",
         "Framework :: Plone",
-        "Framework :: Plone :: 5.1"
+        "Framework :: Plone :: 5.1",
+        "Framework :: CastleCMS",
+        "Framework :: CastleCMS :: Theme"
     ],
-    author='Nathan Van Gheem',
-    author_email='nathan.vangheem@wildcardcorp.com',
+    author='Wildcard Corp',
+    author_email='info@wildcardcorp.com',
     url='https://github.com/castlecms/castle.cms',
     license='GPL2',
     packages=find_packages(exclude=['ez_setup']),

@@ -49,6 +49,7 @@
       <element key="Advanced">
         <element>castle.cms.fragment</element>
         <element>castle.cms.calendar</element>
+        <element>castle.cms.survey</element>
         <element>castle.cms.querylisting</element>
         <element>plone.app.standardtiles.contentlisting</element>
         <element>castle.cms.navigation</element>
