@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
+  [CorySanin]
+
 - Changed collective.documentviewer dep. version
   [obct537]
 
@@ -73,9 +76,6 @@ Changelog
   [tkimnguyen]
 
 - fix CastleCMS spelling
-  [tkimnguyen]
-
-- disallow logins from public URL, if set in Security panel; tweaks to field descriptions
   [tkimnguyen]
 
 - tweak installation instructions
