@@ -198,7 +198,7 @@ The user requesting this access logged this information:
                 )
                 portal_url = pstate.portal_url()
                 bad_domain = only_allow_login_to_backend_urls and \
-                             backend_urls is not None and \
+                             len(backend_urls) > 0 and \
                              portal_url.rstrip('/') not in backend_urls
                 if bad_domain:
                     return json.dumps({

@@ -15,7 +15,7 @@
          rel="stylesheet" type="text/css">
  <script tal:define="backend_urls python:context.portal_registry['plone.backend_url'];
                      only_allow_login_to_backend_urls python:context.portal_registry['plone.only_allow_login_to_backend_urls'];
-                     bad_domain python: only_allow_login_to_backend_urls and backend_urls is not None and portal_url.rstrip('/') not in backend_urls;"
+                     bad_domain python: only_allow_login_to_backend_urls and len(backend_urls) > 0 and portal_url.rstrip('/') not in backend_urls;"
          tal:condition="not:bad_domain"
          src="${portal_url}/++plone++castle/components/secure-login.js?v=404">
  </script>
@@ -24,7 +24,7 @@
 
 <body tal:define="backend_urls python:context.portal_registry['plone.backend_url'];
                   only_allow_login_to_backend_urls python:context.portal_registry['plone.only_allow_login_to_backend_urls'];
-                  bad_domain python: only_allow_login_to_backend_urls and backend_urls is not None and portal_url.rstrip('/') not in backend_urls;">
+                  bad_domain python: only_allow_login_to_backend_urls and len(backend_urls) > 0 and portal_url.rstrip('/') not in backend_urls;">
     <metal:main fill-slot="main">
 
     <div id="content-core">
