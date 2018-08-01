@@ -305,6 +305,91 @@ class TestTwoFactor(unittest.TestCase):
         self.assertTrue(result['success'])
         self.assertTrue(result['countryBlocked'])
 
+class TestEnforceBackendEditingUrl(unittest.TestCase):
+
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        logout()
+
+    def test_setting_disabled(self):
+        api.portal.set_registry_record(
+            name='plone.only_allow_login_to_backend_urls',
+            value=False
+        )
+        api.portal.set_registry_record(
+            name='plone.backend_url',
+            value=(unicode(''),)
+        )
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+
+    def test_setting_enabled_bad_url(self):
+        api.portal.set_registry_record(
+            name='plone.only_allow_login_to_backend_urls',
+            value=True
+        )
+        api.portal.set_registry_record(
+            name='plone.backend_url',
+            value=(unicode(''),)
+        )
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertFalse(result['success'])
+
+    def test_setting_enabled_good_url(self):
+        api.portal.set_registry_record(
+            name='plone.only_allow_login_to_backend_urls',
+            value=True
+        )
+        api.portal.set_registry_record(
+            name='plone.backend_url',
+            value=(
+                unicode('http://dummydomain/castle'),
+                unicode('http://nohost/plone'),
+                unicode('http://vpn.example.com')
+            )
+        )
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+
+    def test_setting_enabled_no_urls(self):
+        api.portal.set_registry_record(
+            name='plone.only_allow_login_to_backend_urls',
+            value=True
+        )
+        api.portal.set_registry_record(
+            name='plone.backend_url',
+            value=()
+        )
+        self.request.form.update({
+            'apiMethod': 'login',
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+
 
 if argon2 is not None:
     class TestArgon2(unittest.TestCase):
