@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- tweak find-broken-links.py script
+  [tkimnguyen]
+
 - Changed collective.documentviewer dep. version
   [obct537]
 
