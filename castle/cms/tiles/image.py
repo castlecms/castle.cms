@@ -89,13 +89,6 @@ class IImageTileSchema(model.Schema):
             if obj.portal_type != 'Image':
                 raise Invalid('Must provide image file')
 
-    scale = schema.Choice(
-        title=u'Scale',
-        required=True,
-        source=image_scales,
-        default=u'large'
-    )
-
     display_type = schema.Choice(
         title=u'Display type',
         required=True,
@@ -108,6 +101,13 @@ class IImageTileSchema(model.Schema):
             SimpleTerm('square', 'square', u'Square'),
             SimpleTerm('short', 'short', u'Short'),
         ])
+    )
+
+    scale = schema.Choice(
+        title=u'Resolution',
+        required=True,
+        source=image_scales,
+        default=u'large'
     )
 
     caption = schema.TextLine(
