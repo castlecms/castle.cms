@@ -96,8 +96,8 @@ class IImageTileSchema(model.Schema):
         vocabulary=SimpleVocabulary([
             SimpleTerm('natural', 'natural', u'Natural'),
             SimpleTerm('fullwidth', 'fullwidth', u'Fit container width'),
-            SimpleTerm('portrait', 'portrait', u'Crop portrait'),
-            SimpleTerm('landscape', 'landscape', u'Crop landscape'),
+            SimpleTerm('portrait', 'portrait', u'Crop rectangle portrait'),
+            SimpleTerm('landscape', 'landscape', u'Crop rectangle landscape'),
             SimpleTerm('square', 'square', u'Crop square'),
             SimpleTerm('short', 'short', u'Crop short'),
         ])
