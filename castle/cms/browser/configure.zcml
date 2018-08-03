@@ -382,12 +382,21 @@
 
   <browser:page
     for="zope.publisher.interfaces.INotFound"
-    class=".fourohfour.NotFoundView"
+    class=".fourohfour.FourOhFour"
     name="index.html"
     permission="zope2.View"
     template="templates/fourohfour.pt"
     layer="..interfaces.ICastleLayer"
     />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".fourohfour.NotFoundView"
+    name="not-found"
+    permission="zope2.View"
+    template="templates/fourohfour.pt"
+    layer="..interfaces.ICastleLayer"
+    />
+
   <browser:page
     for="zope.interface.common.interfaces.IException"
     class=".error.ErrorView"
@@ -735,6 +744,14 @@
     permission="zope2.View"
     attribute="checkDocument"
     layer="..interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="StatusView"
+    for="*"
+    class = ".controlpanel.status.StatusView"
+    template="templates/status.pt"
+    permission="zope2.View"
     />
 
 </configure>

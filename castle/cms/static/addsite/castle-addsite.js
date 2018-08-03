@@ -551,11 +551,13 @@ var siteSetup = React.createClass({
       {
         name: "plone.public_url",
         labelText: "Public URL",
+        formHelp: "The URL the public will use to view your site.",
         validators: ['url']
       },
       {
         name: "plone.backend_url",
         labelText: "Backend URL",
+        formHelp: "The URL from which you will be editing and maintaing site content.",
         validators: ['url']
       },
       {

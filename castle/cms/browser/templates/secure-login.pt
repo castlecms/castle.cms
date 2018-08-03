@@ -6,7 +6,14 @@
           rel="stylesheet" type="text/css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   </head>
-  <body tal:define="utils context/@@castle-utils;" class="secure-login-template">
+  <body
+      tal:define="utils context/@@castle-utils;
+                  site_login python: hasattr(context,'portal_registry');
+                  portreg python: context.portal_registry if site_login else {'plone.backend_url':[],'plone.only_allow_login_to_backend_urls':False};
+                  backend_urls python:portreg['plone.backend_url'];
+                  only_allow_login_to_backend_urls python:portreg['plone.only_allow_login_to_backend_urls'];
+                  bad_domain python: only_allow_login_to_backend_urls and len(backend_urls) > 0 and portal_url.rstrip('/') not in backend_urls;"
+      class="secure-login-template">
 
     <div id="visual-wrapper">
       <div class="castle-login-header">
@@ -25,7 +32,11 @@
         </div>
       </div>
 
-      <div id="secure-login" data-options="${view/options}" />
+      <div id="secure-login" data-options="${view/options}">
+        <p tal:condition="bad_domain" i18n:translate="description_bad_login_domain" class="login-exception-container">
+            You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.
+        </p>
+      </div>
 
 
 
@@ -52,7 +63,9 @@
         return;
       });
     </script>
-    <script src="${portal_url|nothing}/++plone++castle/components/secure-login.js?v=4">
+
+    <script tal:condition="not:bad_domain" src="${portal_url|nothing}/++plone++castle/components/secure-login.js?v=4">
+
     </script>
   </body>
 </html>

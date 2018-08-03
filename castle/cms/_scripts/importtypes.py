@@ -3,6 +3,7 @@ from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.dexterity.behaviors.metadata import IBasic
 from plone.app.dexterity.behaviors.metadata import ICategorization
+from plone.app.dexterity.behaviors.metadata import IDublinCore
 from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.event.dx.behaviors import IEventAttendees
 from plone.app.event.dx.behaviors import IEventBasic
@@ -60,7 +61,12 @@ def register_import_type(name, klass):
 
 
 def is_base64(s):
-    return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
+    if hasattr(s, 'len'):
+            return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
+    elif hasattr(s, 'size'):
+            return (s.size % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
+    else:
+            return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
 
 
 def decode_file_data(data):
@@ -99,7 +105,7 @@ class BaseImportType(object):
     layout = ''
     fields_mapping = {}
     data_converters = {}
-    lead_image_field_names = ('image', 'leadImage')
+    lead_image_field_names = ('image', 'leadImage', 'plone.app.contenttypes.behaviors.leadimage.ILeadImage')
     lead_image_caption_field_names = ('leadCaption', 'leadImage_caption')
     behavior_data_mappers = ()
 
@@ -125,11 +131,26 @@ class BaseImportType(object):
             '_plone.uuid': self.data['uid']
         }
 
+        try:
+                id=self.field_data['id']
+        except:
+                try:
+                        id=self.field_data['plone.app.dexterity.behaviors.id.IShortName']['id']
+                except:
+                        id=self.path.split('/')[-1]
+        try:
+                title=self.field_data['title']
+        except:
+                title=self.field_data['plone.app.content.interfaces.INameFromTitle']['title']
+        try:
+                description=self.field_data['description']
+        except:
+                description=self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
         return dict(
-            id=self.field_data['id'],
+            id=id,
             type=self.data['portal_type'],
-            title=self.field_data['title'],
-            description=self.field_data['description'],
+            title=title,
+            description=description,
             **data)
 
     def post_creation(self, obj):
@@ -139,23 +160,53 @@ class BaseImportType(object):
             bdata.contentLayout = '++contentlayout++default/document.html'
         bdata = IRichText(obj, None)
         if bdata:
-            bdata.text = RichTextValue(field_data['text'], 'text/html', 'text/html')
+            try:
+                    bdata.text = RichTextValue(field_data['text'], 'text/html', 'text/html')
+            except:
+                    try:
+                        bdata.text = RichTextValue(field_data['plone.app.contenttypes.behaviors.richtext.IRichText']['text'], 'text/html', 'text/html').raw
+                    except:
+                        bdata.text = ''
 
         bdata = IBasic(obj, None)
         if bdata:
-            bdata.title = field_data['title']
-            bdata.description = field_data['description']
+            try:
+                    bdata.title = field_data['title']
+            except:
+                    bdata.title = field_data['plone.app.content.interfaces.INameFromTitle']['title']
+            try:
+                    bdata.description = field_data['description']
+            except:
+                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
         else:
             obj.title = field_data['title']
             obj.description = field_data['description']
 
         bdata = ICategorization(obj, None)
         if bdata:
-            bdata.subjects = field_data['subject']
+            try:
+                    bdata.subjects = field_data['subject']
+            except:
+                    try:
+                            bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['subjects']
+                    except:
+                            bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.ICategorization']['subjects']
 
             bdata = IPublication(obj)
-            if field_data['effectiveDate']:
-                bdata.effective = pydt(field_data['effectiveDate'])
+            try:
+                    if field_data['effectiveDate']:
+                        bdata.effective = pydt(field_data['effectiveDate'])
+            except:
+                    try:
+                            if field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective']:
+                                bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective'])
+                    except:
+                            try:
+                                    if field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective']:
+                                        bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective'])
+                            except:
+                                    bdata.effective = None
+
 
         ldata = ILocation(obj, None)
         if ldata:
@@ -168,8 +219,31 @@ class BaseImportType(object):
                 else:
                     ldata.locations = [field_data['newsLocation']]
 
-        obj.modification_date = field_data['modification_date']
-        obj.creation_date = field_data['creation_date']
+        try:
+                obj.modification_date = field_data['modification_date']
+        except:
+                try:
+                    obj.modification_date = obj.modified()
+                except:
+                    obj.modification_date = None
+        try:
+                obj.creation_date = field_data['creation_date']
+        except:
+                try:
+                    obj.creation_date = obj.created()
+                except:
+                    obj.creation_date = None
+
+        bdata = IDublinCore(obj, None)
+        if bdata:
+            dublin_core = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']
+            bdata.expires = dublin_core['expires']
+            bdata.rights = dublin_core['rights']
+            bdata.creators = tuple(dublin_core['creators'])
+            bdata.language = dublin_core['language']
+            bdata.effective = pydt(dublin_core['effective'])
+            bdata.subjects = dublin_core['subjects']
+            bdata.contributors = tuple(dublin_core['contributors'])
 
         bdata = ILayoutAware(obj, None)
         if bdata:
@@ -179,7 +253,9 @@ class BaseImportType(object):
                 # could be overwritten
                 bdata.contentLayout = None
             elif self.layout:
-                bdata.contentLayout = self.layout
+                bdata.contentLayout = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['contentLayout']
+                bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
+                bdata.rendered_layout = self.data['data']['rendered_layout']
 
         inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
         for IBehavior, field_name in self.behavior_data_mappers:
@@ -205,7 +281,10 @@ class BaseImportType(object):
         # handle lead images
         for field_name in self.lead_image_field_names:
             if self.field_data.get(field_name):
-                im_obj = self.field_data.get(field_name)
+                if field_name == 'plone.app.contenttypes.behaviors.leadimage.ILeadImage':
+                    im_obj = self.field_data.get(field_name)['image']
+                else:
+                    im_obj = self.field_data.get(field_name)
                 if hasattr(im_obj, 'read'):
                     im_data = im_obj.read()
                 else:
@@ -220,9 +299,9 @@ class BaseImportType(object):
                         filename = im_obj.filename
                     else:
                         filename = self.field_data['id']
-                obj.image = NamedBlobImage(
-                    data=decode_file_data(im_data),
-                    filename=to_unicode(filename))
+                obj.image = im_data
+                if isinstance(obj.image.contentType, unicode):
+                    obj.image.contentType = obj.image.contentType.encode('ascii')
                 if not obj.image.contentType:
                     obj.image.contentType = 'image/jpeg'
                 for caption_field_name in self.lead_image_caption_field_names:
@@ -246,7 +325,7 @@ register_import_type('Folder', FolderType)
 
 class NewsItemType(BaseImportType):
 
-    layout = '++contentlayout++castle/newsitem.html'
+    layout = '++contentlayout++castle/news_item.html'
 
 
 register_import_type('News Item', NewsItemType)
@@ -258,7 +337,14 @@ class FileType(BaseImportType):
     def __init__(self, data, path, read_phase):
         super(FileType, self).__init__(data, path, read_phase)
         filename = self.field_data.get('file_filename')
-        _, ext = filename.lower().rsplit('.', 1)
+        if filename is None:
+            filename = path.split('/')[-1]
+        if filename is None:
+            filename = self.field_data['title']
+        try:
+            _, ext = filename.lower().rsplit('.', 1)
+        except:
+            ext = 'pdf' # provide something so it ends up in file repository
         _id = _generate_file_repo_object_id(path)
         self.field_data['id'] = _id
         if ext in ('wav', 'mp3'):
@@ -273,9 +359,12 @@ class FileType(BaseImportType):
 
     def get_data(self):
         data = super(FileType, self).get_data()
+        filename = self.field_data.get('file_filename')
+        if filename is None or not filename:
+            filename = self.field_data['id']
         data['file'] = NamedBlobFile(
-            data=decode_file_data(self.field_data['file'].read()),
-            filename=to_unicode(self.field_data.get('file_filename')))
+            data=decode_file_data(self.field_data['file']),
+            filename=to_unicode(filename))
         return data
 
 
