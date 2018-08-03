@@ -486,8 +486,9 @@ def get_backend_url():
     registry = getUtility(IRegistry)
     backend_url = registry.get('plone.backend_url', None)
     if not backend_url or len(backend_url) == 0:
-        backend_url = api.portal.get().absolute_url()
-    return backend_url[0]
+        return api.portal.get().absolute_url()
+    else:
+        return backend_url[0]
 
 def no_backend_url(value):
     try:

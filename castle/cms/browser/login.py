@@ -192,11 +192,7 @@ The user requesting this access logged this information:
             if hasattr(self.context,'portal_registry'):
                 backend_urls = self.context.portal_registry['plone.backend_url']
                 only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']
-                pstate = getMultiAdapter(
-                    (self.context, self.request),
-                    name=u'plone_portal_state'
-                )
-                portal_url = pstate.portal_url()
+                portal_url = api.portal.get().absolute_url()
                 bad_domain = only_allow_login_to_backend_urls and \
                              len(backend_urls) > 0 and \
                              portal_url.rstrip('/') not in backend_urls

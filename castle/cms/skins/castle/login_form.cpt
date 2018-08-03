@@ -64,7 +64,7 @@
 
 
             <div id="secure-login" data-options="${login/options}">
-                <p i18n:translate="description_bad_login_domain" class="login-exception-container">
+                <p tal:condition="bad_domain" i18n:translate="description_bad_login_domain" class="login-exception-container">
                     You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.
                 </p>
             </div>
@@ -75,7 +75,7 @@
                 New user?
                 </strong>
 
-                <p tal:condition="bad_domain" i18n:translate="description_no_account">
+                <p i18n:translate="description_no_account">
                 If you do not have an account here, head over to the
                 <span i18n:name="registration_form">
                     <a href=""

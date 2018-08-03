@@ -152,7 +152,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
     backend_url = schema.Tuple(
         title=u'Backend site URLs',
         description=u'The URL(s) from which you will be editing and maintaining site content. '
-                    u'One per URL per line. Main URL first.',
+                    u'One URL per line. Please enter the main URL first.',
         value_type=schema.TextLine(),
         default=(),
         required=False)
