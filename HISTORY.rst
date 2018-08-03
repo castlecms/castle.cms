@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- improve export and import scripts
+  [tkimnguyen]
+
 - tweak find-broken-links.py script
   [tkimnguyen]
 
