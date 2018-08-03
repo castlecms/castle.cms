@@ -11,10 +11,17 @@ from zope.globalrequest import getRequest
 
 import logging
 import requests
+import argparse
+import datetime
 
 
-logger = logging.getLogger('castle.cms')
+logger = logging.getLogger(__name__)
 
+
+parser = argparse.ArgumentParser(
+    description='...')
+parser.add_argument('--site-id', dest='site_id', default='Castle')
+args, _ = parser.parse_known_args()
 
 class BadResponse(object):
     status_code = 500
@@ -27,9 +34,19 @@ _safe = [
     'javascript:'
 ]
 
+_known_bad = [
+    'http://www.captcha.net',
+    'https://elements.psu.edu',
+    'https://supervisord.org',
+]
+
 def find_url(ob, url):
     if 'tmbc.me' in url:
         return False
+
+    for bad in _known_bad:
+        if url.startswith(bad):
+            return False
 
     for safe in _safe:
         if safe in url:
@@ -63,6 +80,7 @@ def find_broken(site):
 
     broken = []
     good_urls = []
+    checked_urls = []
 
     req = getRequest()
     for brain in catalog(object_provides=ILayoutAware.__identifier__):
@@ -79,7 +97,10 @@ def find_broken(site):
                 continue
             if url in good_urls:
                 continue
-
+            if url in checked_urls:
+                print('skipping already checked {}'.format(url))
+                continue
+            checked_urls.append(url)
             if find_url(ob, url):
                 good_urls.append(url)
             else:
@@ -101,6 +122,10 @@ def find_broken(site):
             url = img.attrib['src']
             if url[0] == '#' or url.startswith('data:'):
                 continue
+            if url in checked_urls:
+                print('skipping already checked {}'.format(url))
+                continue
+            checked_urls.append(url)
             if find_url(ob, url):
                 good_urls.append(url)
             else:
@@ -111,7 +136,8 @@ def find_broken(site):
                 broken.append(result)
                 print(result)
 
-    filename = 'broken-links-{}.txt'
+    now = datetime.datetime.now()
+    filename = 'broken-links-{}.txt'.format(now.isoformat())
     fi = open(filename, 'w')
     fi.write('\n'.join(broken))
     fi.close()
@@ -119,11 +145,11 @@ def find_broken(site):
 
 if __name__ == '__main__':
     login_as_admin(app)  # noqa
-
-    for oid in app.objectIds():  # noqa
-        obj = app[oid]  # noqa
-        if IPloneSiteRoot.providedBy(obj):
-            try:
-                find_broken(obj)
-            except:
-                logger.error('Could not clean users %s' % oid, exc_info=True)
+    site = app[args.site_id]  # noqa
+    if IPloneSiteRoot.providedBy(site):
+        try:
+            find_broken(site)
+        except:
+            logger.error('Encountered error %s' % site, exc_info=True)
+    else:
+            logger.error('%s is not a site' % site)
