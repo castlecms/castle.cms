@@ -95,16 +95,18 @@ class IImageTileSchema(model.Schema):
         default=u'fullwidth',
         vocabulary=SimpleVocabulary([
             SimpleTerm('natural', 'natural', u'Natural'),
-            SimpleTerm('fullwidth', 'fullwidth', u'Natural(Full width)'),
-            SimpleTerm('portrait', 'portrait', u'Portrait'),
-            SimpleTerm('landscape', 'landscape', u'Landscape'),
-            SimpleTerm('square', 'square', u'Square'),
-            SimpleTerm('short', 'short', u'Short'),
+            SimpleTerm('fullwidth', 'fullwidth', u'Fit container width'),
+            SimpleTerm('portrait', 'portrait', u'Crop portrait'),
+            SimpleTerm('landscape', 'landscape', u'Crop landscape'),
+            SimpleTerm('square', 'square', u'Crop square'),
+            SimpleTerm('short', 'short', u'Crop short'),
         ])
     )
 
     scale = schema.Choice(
         title=u'Resolution',
+        description=u'Change the resolution of the image that gets served. '
+                    u'This can safely be left at the default.',
         required=True,
         source=image_scales,
         default=u'large'
