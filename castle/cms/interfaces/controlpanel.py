@@ -72,20 +72,10 @@ class ISiteSchema(controlpanel.ISiteSchema):
 
     site_icon = schema.ASCII(
         title=u"Site Icon",
-        description=u'Castle will use this icon to generate all the various '
+        description=u'CastleCMS will use this icon to generate all the various '
                     u'icons for mobile devices necessary',
         required=False,
     )
-
-    public_url = schema.TextLine(
-        title=u'Public site url',
-        default=None,
-        required=False)
-
-    backend_url = schema.TextLine(
-        title=u'Backend site url',
-        default=u'',
-        required=False)
 
     system_email_addresses = schema.List(
         title=u"System email addresses",
@@ -143,7 +133,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
                     u'This feature only works if your proxy server is '
-                    u'forwarding the user country code to the Castle server. '
+                    u'forwarding the user country code to the CastleCMS server. '
                     u'Leave empty to allow all logins.',
         missing_value=(),
         default=(),
@@ -152,6 +142,26 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
             vocabulary='castle.cms.vocabularies.Countries'
         )
     )
+
+    public_url = schema.TextLine(
+        title=u'Public site URL',
+        description=u'The URL the public will use to view your site.',
+        default=None,
+        required=False)
+
+    backend_url = schema.Tuple(
+        title=u'Backend site URLs',
+        description=u'The URL(s) from which you will be editing and maintaining site content. '
+                    u'One URL per line. Please enter the main URL first.',
+        value_type=schema.TextLine(),
+        default=(),
+        required=False)
+
+    only_allow_login_to_backend_urls = schema.Bool(
+        title=u'Only allow login at a backend URL',
+        description=u'If set, users can only log in if visiting from a backend URL.',
+        default=False,
+        required=False)
 
 
 class IAnnouncementData(Interface):
