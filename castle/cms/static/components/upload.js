@@ -140,9 +140,13 @@ define([
       }else if(this.state.state === 'review'){
         additional.push(this.renderButtons());
         className += ' active';
-        content = D.div({}, [
-          this.renderForm()
-        ]);
+        if (!this.props.parent.state.update) {
+          content = D.div({}, [
+            this.renderForm()
+          ]);
+        }else{
+          content = D.div({}, []);
+        }
       }else if(this.state.state === 'finished'){
         additional.push(this.renderFinished());
       }else if(this.state.state === 'error'){
@@ -199,27 +203,31 @@ define([
 
     renderFinished: function(){
       // should render info on the content, link to it, etc
-      var stateAction = [];
-      if(this.state.workflow_state !== 'published'){
-        stateAction = [
-          'This file is currently not published. ',
-          D.a({ href: '#', onClick: this.publishClicked }, 'Publish immediately')
-        ];
-      }
-      var label = 'Finished uploading ';
-      if(this.state.duplicate){
-        label = D.span({}, [
-          D.b({}, 'Duplicate detected'),
-          D.span({}, ': Using file already uploaded: ')
+      if (this.props.parent.state.update) {
+        location.reload(true);
+      }else{
+        var stateAction = [];
+        if(this.state.workflow_state !== 'published'){
+          stateAction = [
+            'This file is currently not published. ',
+            D.a({ href: '#', onClick: this.publishClicked }, 'Publish immediately')
+          ];
+        }
+        var label = 'Finished uploading ';
+        if(this.state.duplicate){
+          label = D.span({}, [
+            D.b({}, 'Duplicate detected'),
+            D.span({}, ': Using file already uploaded: ')
+          ]);
+        }
+        return D.div({className: 'finished-container'}, [
+          D.p({}, [
+            label,
+            D.a({href: this.state.base_url + '/view', target: '_blank'}, this.state.title),
+            '. '
+          ].concat(stateAction)),
         ]);
       }
-      return D.div({className: 'finished-container'}, [
-        D.p({}, [
-          label,
-          D.a({href: this.state.base_url + '/view', target: '_blank'}, this.state.title),
-          '. '
-        ].concat(stateAction)),
-      ]);
     },
 
     renderProgress: function(){
@@ -285,11 +293,13 @@ define([
       var buttons = [];
 
       var canApprove = true;
-      _.each(this.props.requiredFields, function(fieldName){
-        if(!that.state[fieldName]){
-          canApprove = false;
-        }
-      });
+      if (!that.props.parent.state.update) {
+        _.each(this.props.requiredFields, function(fieldName){
+          if(!that.state[fieldName]){
+            canApprove = false;
+          }
+        });
+      }
 
       if(this.isImage()){
         buttons.push(
@@ -348,6 +358,11 @@ define([
 
       if(id !== undefined){
         fd.append('id', id);
+      }
+
+      if (that.props.parent.state.update) {
+        fd.append('content',that.props.parent.state.content);
+        fd.append('field', that.props.parent.state.field);
       }
 
       var sent = Math.round(((start - 1) / file.size) * 100);
@@ -492,6 +507,17 @@ define([
 
     componentDidMount: function(){
       var that = this;
+      if (that.props[0] != undefined) {
+        that.setState({
+          update: that.props[0].update,
+          content: that.props[0].content,
+          field: that.props[0].field
+        })
+      }else{
+        that.setState({
+          update: false
+        })
+      }
 
       var portalUrl = $('body').attr('data-portal-url');
       mOxie.Env.swf_url = portalUrl + '/++plone++castle/libs/moxie/bin/flash/Moxie.min.swf';
@@ -576,21 +602,25 @@ define([
       if(that.state.files.length > 0){
         className += ' has-files';
       }
-      var content = D.div({ className: className }, [
+      var children = [
         D.div({ ref: 'droparea', className: 'droparea' }, [
           dropTxt,
           D.button({ ref: 'upload_btn', className: 'btn btn-default castle-btn-select-files' }, 'Select files'),
         ]),
-        that.renderUploadLocation(),
         that.renderAutoApprove(),
         that.renderFileList()
-      ]);
+      ]
+      var tabs = [
+        this.props.parent.renderTabItem('upload')
+      ]
+      if (!that.state.update) {
+        children.splice(1, 0, that.renderUploadLocation());
+        tabs.splice(0, 0, this.props.parent.renderTabItem('add'));
+      }
+      var content = D.div({ className: className }, children);
 
       return D.div({ className: 'pat-autotoc autotabs fullsize'}, [
-        D.nav({ className: 'autotoc-nav'}, [
-          this.props.parent.renderTabItem('add'),
-          this.props.parent.renderTabItem('upload')
-        ]),
+        D.nav({ className: 'autotoc-nav'}, tabs),
         content
       ]);
     },

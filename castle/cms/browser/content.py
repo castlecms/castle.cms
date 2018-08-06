@@ -17,6 +17,7 @@ from plone.app.content.browser import i18n
 from plone.app.drafts.utils import getCurrentDraft
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.linkintegrity.utils import getOutgoingLinks
+from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
@@ -27,6 +28,7 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFPlone import utils as ploneutils
 from Products.CMFPlone.browser.syndication.adapters import SearchFeed
 from Products.CMFPlone.interfaces import ISelectableConstrainTypes
@@ -119,6 +121,8 @@ class Creator(BrowserView):
             return self.check()
         elif self.request.form.get('action') == 'create':
             return self.create()
+        elif self.request.form.get('action') == 'remove':
+            return self.remove_file_content()
         elif self.request.form.get('action') == 'chunk-upload':
             return self.chunk_upload()
 
@@ -128,6 +132,8 @@ class Creator(BrowserView):
         total_size = int(self.request.form['totalSize'])
         total_chunks = int(math.ceil(float(total_size) / float(chunk_size)))
         _id = self.request.form.get('id')
+        existing_id = self.request.form.get('content', None)
+        field_name = self.request.form.get('field', None)
 
         if chunk > total_chunks:
             raise Exception("More chunks than what should be possible")
@@ -135,6 +141,7 @@ class Creator(BrowserView):
         cache_key_prefix = '%s-uploads-' % '/'.join(self.context.getPhysicalPath()[1:])
         if chunk == 1:
             # initializing chunk upload
+
             _id = utils.get_random_string(50)
             filename = self.request.form['name']
             tmp_dir = tempfile.mkdtemp()
@@ -175,11 +182,19 @@ class Creator(BrowserView):
         if chunk == total_chunks:
             # finish upload
             dup = False
-            try:
-                obj = self.create_file_content(info)
-            except duplicates.DuplicateException as ex:
-                obj = ex.obj
-                dup = True
+            if not existing_id:
+                try:
+                    obj = self.create_file_content(info)
+                except duplicates.DuplicateException as ex:
+                    obj = ex.obj
+                    dup = True
+            else:
+                try:
+                    info['existing_id'] = existing_id
+                    info['field_name'] = field_name
+                    obj = self.update_file_content(info)
+                except Exception:
+                    logger.info('Failed to update content.')
             tmp_dir = '/'.join(info['tmp_file'].split('/')[:-1])
             shutil.rmtree(tmp_dir)
             cache.delete(cache_key_prefix + _id)
@@ -249,6 +264,32 @@ class Creator(BrowserView):
             location = registry.get(
                 'audio_repo_location', '/audio-repository')
         return type_, location
+
+    def update_file_content(self, info):
+            type_, location = self.get_type_and_location(info)
+            obj = uuidToObject(info['existing_id'])
+            if obj:
+                if self.sm.checkPermission(ModifyPortalContent, obj):
+                    try:
+                        fi = open(info['tmp_file'], 'r')
+                        filename = ploneutils.safe_unicode(info['name'])
+                        if 'Image' in type_:
+                            blob = NamedBlobImage(data=fi, filename=filename)
+                        else:
+                            blob = NamedBlobFile(data=fi, filename=filename)
+                        setattr(obj, info['field_name'], blob)
+                    except Exception:
+                        pass  # could not update content
+            return obj
+
+    def remove_file_content(self):
+        id = self.request.form.get('content', None)
+        field = self.request.form.get('field', None)
+        if id and field:
+            obj = uuidToObject(id)
+            if obj:
+                if self.sm.checkPermission(ModifyPortalContent, obj):
+                    setattr(obj, field, None)
 
     def create_file_content(self, info):
         type_, location = self.get_type_and_location(info)

@@ -38,6 +38,7 @@ require([
   'castle-url/patterns/previewselect',
   'castle-url/patterns/imagewidget',
   'castle-url/patterns/focalpointselect',
+  'castle-url/patterns/upload-update',
 
   // scripts
   'castle-url/scripts/patches',

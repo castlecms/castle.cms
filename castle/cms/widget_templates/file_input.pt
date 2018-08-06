@@ -1,0 +1,46 @@
+<span class="pat-upload-update"
+    i18n:domain="plone"
+    tal:attributes="id view/id;
+                    content context/UID;
+                    field view/field/getName"
+    tal:define="download_url view/download_url;
+                exists python: view.value is not None;
+                action view/action;
+                allow_nochange view/allow_nochange;
+                doc_type view/file_content_type;
+                icon view/file_icon;
+                filename view/filename;">
+    <span tal:condition="python: exists and download_url and action=='nochange'">
+        <img tal:condition="icon" src="" alt=""
+             tal:attributes="src icon;
+                             alt doc_type;
+                             title filename;"/>
+        <a
+            tal:content="view/filename"
+            tal:attributes="href download_url"
+            >Filename</a>
+        <span class="discreet"> &mdash;<tal:doc_type condition="doc_type">
+            <span tal:replace="doc_type"
+                  i18n:translate="">ContentType</span>,</tal:doc_type>
+            <span tal:define="sizekb view/file_size" tal:replace="sizekb"
+                  i18n:translate="">100</span>
+        </span>
+    </span>
+    <div tal:condition="exists" style="padding-top: 1em;">
+      <button type="button"
+              class="file-upload-btn button-field"
+              tal:attributes="id view/id;
+                              test view/field/title">Replace With New Upload</button>
+        <tal:block condition="not:view/field/required">
+            <button
+                type="button"
+                value="remove"
+                class="file-remove-btn noborder">Remove Existing File</button>
+        </tal:block>
+    </div>
+    <div tal:condition="not:exists" style="padding-top: 1em;">
+      <button type="button"
+              class="file-upload-btn button-field">Upload</button>
+    </div>
+    <div class="modal-target" />
+</span>

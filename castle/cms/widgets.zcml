@@ -38,5 +38,11 @@
     template="widget_templates/image_input.pt"
     />
   <adapter factory=".widgets.FocalNamedImageDataConverter" />
+  <z3c:widgetTemplate
+      mode="input"
+      widget="plone.formwidget.namedfile.interfaces.INamedFileWidget"
+      layer=".interfaces.ICastleLayer"
+      template="widget_templates/file_input.pt"
+      />
 
 </configure>

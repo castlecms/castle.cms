@@ -426,8 +426,12 @@ define([
     },
 
     getInitialState: function(){
+      var initSelected = 'add'
+      if (this.props[0] != undefined && this.props[0].update) {
+        initSelected = 'upload'
+      }
       return cutils.extend(Modal.getInitialState.apply(this), {
-        selected: 'add'
+        selected: initSelected
       });
     },
 
