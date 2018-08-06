@@ -68,6 +68,9 @@ Changelog
 - import script fixes
   [tkimnguyen]
 
+- Use the image_url property for file_url when file is an image
+  [lucid-0]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
