@@ -94,7 +94,7 @@ class IImageTileSchema(model.Schema):
         required=True,
         default=u'fullwidth',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('natural', 'natural', u'Natural'),
+            SimpleTerm('natural', 'natural', u'Default Size'),
             SimpleTerm('fullwidth', 'fullwidth', u'Fit container width'),
             SimpleTerm('portrait', 'portrait', u'Crop rectangle portrait'),
             SimpleTerm('landscape', 'landscape', u'Crop rectangle landscape'),
