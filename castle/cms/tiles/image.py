@@ -94,8 +94,8 @@ class IImageTileSchema(model.Schema):
         required=True,
         default=u'fullwidth',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('natural', 'natural', u'Default Size'),
-            SimpleTerm('fullwidth', 'fullwidth', u'Fit container width'),
+            SimpleTerm('natural', 'natural', u'Default size'),
+            SimpleTerm('fullwidth', 'fullwidth', u'Fit to tile size'),
             SimpleTerm('portrait', 'portrait', u'Crop rectangle portrait'),
             SimpleTerm('landscape', 'landscape', u'Crop rectangle landscape'),
             SimpleTerm('square', 'square', u'Crop square'),
