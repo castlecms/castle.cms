@@ -90,16 +90,16 @@ class IImageTileSchema(model.Schema):
                 raise Invalid('Must provide image file')
 
     display_type = schema.Choice(
-        title=u'Display type',
+        title=u'Crop Image Options',
         required=True,
         default=u'fullwidth',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('natural', 'natural', u'Default size'),
-            SimpleTerm('fullwidth', 'fullwidth', u'Fit to tile size'),
-            SimpleTerm('portrait', 'portrait', u'Crop rectangle portrait'),
-            SimpleTerm('landscape', 'landscape', u'Crop rectangle landscape'),
-            SimpleTerm('square', 'square', u'Crop square'),
-            SimpleTerm('short', 'short', u'Crop short'),
+            SimpleTerm('natural', 'natural', u'Default size (no crop applied)'),
+            SimpleTerm('fullwidth', 'fullwidth', u'Fit to tile size (no crop applied, adjusts to width of tile)'),
+            SimpleTerm('portrait', 'portrait', u'Crop portrait (larger height than width)'),
+            SimpleTerm('landscape', 'landscape', u'Crop landscape (larger width than height)'),
+            SimpleTerm('short', 'short', u'Crop short (Shorter than landscape)'),
+            SimpleTerm('square', 'square', u'Crop square (Same height and width)'),
         ])
     )
 
