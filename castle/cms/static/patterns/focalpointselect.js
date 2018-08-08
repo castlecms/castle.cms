@@ -94,6 +94,7 @@ define([
       }
 
       var focalPointSelectorOps = {
+        readOnly: that.state.hidden,
         url: that.state.previewUrl,
         width: that.state.previewWidth,
         fullWidth: that.props.width,

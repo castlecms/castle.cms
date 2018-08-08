@@ -9,6 +9,7 @@ define([
     getDefaultProps: function(){
       return {
         enabled: true,
+        readOnly: false,
         url: null,
         width: '',
         fullWidth: '',
@@ -34,7 +35,7 @@ define([
 
       if(this.props.enabled){
         centerPoint = D.div({
-          className: 'focalpoint-image-center',
+          className: 'focalpoint-image-center'+(this.props.readOnly?' focalpoint-disabled':''),
           style: {
             left: ((this.props.width / this.props.fullWidth) * this.props.focalPoint[0]) - this.props.pointerOffsetX,
             top: ((this.props.height / this.props.fullHeight) * this.props.focalPoint[1]) + this.props.pointerOffsetY
