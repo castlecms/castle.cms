@@ -95,7 +95,9 @@ class IImageTileSchema(model.Schema):
         default=u'fullwidth',
         vocabulary=SimpleVocabulary([
             SimpleTerm('natural', 'natural', u'Default size (no crop applied)'),
-            SimpleTerm('fullwidth', 'fullwidth', u'Fit to tile size (no crop applied, adjusts to width of tile)'),
+            SimpleTerm('fullwidth',
+                       'fullwidth',
+                       u'Fit to tile size (no crop applied, adjusts to width of tile)'),
             SimpleTerm('portrait', 'portrait', u'Crop portrait (larger height than width)'),
             SimpleTerm('landscape', 'landscape', u'Crop landscape (larger width than height)'),
             SimpleTerm('short', 'short', u'Crop short (Shorter than landscape)'),

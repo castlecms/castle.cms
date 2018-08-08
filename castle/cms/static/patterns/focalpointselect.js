@@ -19,6 +19,7 @@ define([
       return {
         loading: false,
         focal_point: this.props.focal_point,
+        image_focal_point: this.props.focal_point,
         image: null,
         previewImage: null,
         previewWidth: '',
@@ -85,32 +86,34 @@ define([
 
     render: function(){
       var that = this;
-      if(that.state.hidden){
-        return D.div({});
-      }
       if(that.state.loading){
         return D.div({}, 'Loading image...');
       }
       if(!that.props.exists){
         return D.div({}, 'No image selected');
       }
-      return D.div({ className: 'imagewidget-image-container'}, [
-        R.createElement(FocalPointSelector, {
-          url: that.state.previewUrl,
-          width: that.state.previewWidth,
-          fullWidth: that.props.width,
-          height: that.state.previewHeight,
-          fullHeight: that.props.height,
-          focalPoint: that.props.focal_point,
-          pointerOffsetY: -6,
-          onFocalSet: function(focal_point){
+
+      var focalPointSelectorOps = {
+        url: that.state.previewUrl,
+        width: that.state.previewWidth,
+        fullWidth: that.props.width,
+        height: that.state.previewHeight,
+        fullHeight: that.props.height,
+        focalPoint: (that.state.hidden)?this.state.image_focal_point:that.props.focal_point,
+        pointerOffsetY: -6,
+        onFocalSet: function(focal_point){
+          if(!that.state.hidden){
             that.props.focal_point = focal_point;
             that.setState({
               dirty: true
             });
             that.props.onSelected(focal_point);
           }
-        })
+        }
+      }
+
+      return D.div({ className: 'imagewidget-image-container'}, [
+        R.createElement(FocalPointSelector, focalPointSelectorOps)
       ]);
     },
   });
@@ -153,19 +156,28 @@ define([
       }), el);
 
       var portalUrl = $('body').attr('data-portal-url');
-      $relatedItems.on('change', function(e){
+      function getImageData(e){
         if(e.target.value){
-          self.component.loadImage(portalUrl + '/resolveuid/' + e.target.value + '/@@images/image?_=' + utils.generateId());
+          var that = self;
+          that.component.loadImage(portalUrl + '/resolveuid/' + e.target.value + '/@@images/image?_=' + utils.generateId());
+          $.ajax({
+            url: portalUrl + '/resolveuid/' + e.target.value + '/@@imageInfo',
+            dataType: 'JSON',
+            type: 'GET',
+          }).done(function(data){
+            that.component.setState({image_focal_point: data.focal_point});
+          })
         }else{
           self.component.setState({
             exists: false
           });
         }
-      });
+      }
+      $relatedItems.on('change', getImageData);
 
       var uid = $relatedItems.val();
       if(uid){
-        self.component.loadImage(portalUrl + '/resolveuid/' + uid + '/@@images/image?_=' + utils.generateId());
+        getImageData({target:{value: uid}});
       }
 
       if(focal_point_val){
