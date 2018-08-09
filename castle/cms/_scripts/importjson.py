@@ -35,13 +35,19 @@ logger = logging.getLogger('castle.cms')
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
-parser.add_argument('--export-directory', dest='export_directory')
+parser.add_argument('--export-directory', dest='export_directory', default='export')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
+parser.add_argument('--admin-user', dest='admin_user', default='admin')
+parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
 args, _ = parser.parse_known_args()
 
-
-user = app.acl_users.getUser('admin')  # noqa
-newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+user = app.acl_users.getUser(args.admin_user)  # noqa
+try:
+    newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+except:
+    logger.error('Unknown admin user; '
+                 'specify an existing Zope admin user with --admin-user (default is admin)')
+    exit(-1)
 site = app[args.site_id]  # noqa
 setSite(site)
 
@@ -218,6 +224,8 @@ def import_object(filepath, count):
             aspect.setImmediatelyAddableTypes([creation_data['type']])
 
     if create:
+        if args.ignore_uuids and '_plone.uuid' in creation_data:
+            del creation_data['_plone.uuid']
         try:
             obj = api.content.create(**creation_data)
         except api.exc.InvalidParameterError:
