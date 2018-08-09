@@ -24,10 +24,11 @@ define([
 
     previewClicked: function(e){
       var offset = $(this.refs.previewImage.getDOMNode()).offset();
-      this.props.onFocalSet([
-        (e.pageX - offset.left) / (this.props.width / this.props.fullWidth),
-        (e.pageY - offset.top) / (this.props.height / this.props.fullHeight),
-      ]);
+      var fpX = (e.pageX - offset.left) / (this.props.width / this.props.fullWidth);
+      fpX = Math.min(this.props.fullWidth,  Math.max(fpX,0));
+      var fpY = (e.pageY - offset.top) / (this.props.height / this.props.fullHeight);
+      fpY = Math.min(this.props.fullHeight,  Math.max(fpY,0));
+      this.props.onFocalSet([fpX, fpY]);
     },
 
     render: function(){

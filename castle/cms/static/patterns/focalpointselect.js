@@ -101,7 +101,7 @@ define([
         height: that.state.previewHeight,
         fullHeight: that.props.height,
         focalPoint: (that.state.hidden)?this.state.image_focal_point:that.props.focal_point,
-        pointerOffsetY: -6,
+        pointerOffsetY: -12,
         onFocalSet: function(focal_point){
           if(!that.state.hidden){
             that.props.focal_point = focal_point;
