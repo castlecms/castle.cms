@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Rearranged image tile settings, clarified terminology
+  [CorySanin]
+
 - tweak find-broken-links.py script
   [tkimnguyen]
 
