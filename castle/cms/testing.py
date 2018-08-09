@@ -9,7 +9,6 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
-from Products.CMFPlone.testing import PRODUCTS_CMFPLONE_ROBOT_REMOTE_LIBRARY_FIXTURE  # noqa
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from zope.configuration import xmlconfig
 from zope.globalrequest import clearRequest
@@ -22,6 +21,7 @@ import re
 import sys
 import transaction
 import unittest
+
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -103,7 +103,6 @@ CASTLE_ROBOT_TESTING = FunctionalTesting(
     name="CastleTesting:Robot"
 )
 
-
 SELENIUM_FIXTURE = SeleniumCastleLayer()
 SELENIUM_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(SELENIUM_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
@@ -155,7 +154,6 @@ class ResponseWrapper:
 
 
 class BaseTest(unittest.TestCase):
-
     layer = CASTLE_PLONE_INTEGRATION_TESTING
 
     def setUp(self):

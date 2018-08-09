@@ -133,6 +133,7 @@ To specify a custom Firefox binary to match versions:
 If Selenium refuses to start, update the binaries:
 
 .. code-block:: shell
+
     pip install -U selenium
 
 If it still doesn't run, attempt to install Firefox 45

@@ -1,6 +1,7 @@
 from castle.cms import authentication
 from castle.cms import cache
 from castle.cms import texting
+from castle.cms import _
 from castle.cms.interfaces import IAuthenticator
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.interfaces import ISiteSchema
@@ -26,6 +27,7 @@ from zope.interface import alsoProvides
 from zope.interface import implements
 from AccessControl import AuthEncoding
 from DateTime import DateTime
+from zope.i18n import translate
 import json
 import time
 
@@ -236,6 +238,21 @@ The user requesting this access logged this information:
             })
 
         try:
+            if hasattr(self.context,'portal_registry'):
+                backend_urls = self.context.portal_registry['plone.backend_url']
+                only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']
+                portal_url = api.portal.get().absolute_url()
+                bad_domain = only_allow_login_to_backend_urls and \
+                             len(backend_urls) > 0 and \
+                             portal_url.rstrip('/') not in backend_urls
+                if bad_domain:
+                    return json.dumps({
+                        'success': False,
+                        'message': translate(_(
+                            u'description_bad_login_domain',
+                            default=u'You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.'
+                        ))
+                    })
             authorized, user = self.auth.authenticate(
                 username=self.username,
                 password=self.request.form.get('password'),
