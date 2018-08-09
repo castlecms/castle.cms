@@ -17,7 +17,7 @@ define([
         fullHeight: '',
         focalPoint: [0, 0],
         pointerOffsetX: 12,
-        pointerOffsetY: 6,
+        pointerOffsetY: 12,
         onFocalSet: function(){}
       };
     },
@@ -39,7 +39,7 @@ define([
           className: 'focalpoint-image-center'+(this.props.readOnly?' focalpoint-disabled':''),
           style: {
             left: ((this.props.width / this.props.fullWidth) * this.props.focalPoint[0]) - this.props.pointerOffsetX,
-            top: ((this.props.height / this.props.fullHeight) * this.props.focalPoint[1]) + this.props.pointerOffsetY
+            top: ((this.props.height / this.props.fullHeight) * this.props.focalPoint[1]) - this.props.pointerOffsetY
           } });
       }
       return D.div({ className: 'focalpoint-image-container', onClick: this.previewClicked }, [
