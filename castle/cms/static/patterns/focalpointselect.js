@@ -18,7 +18,7 @@ define([
     getInitialState: function(){
       return {
         loading: false,
-        focal_point: this.props.focal_point,
+        override_focal_point: this.props.focal_point,
         image_focal_point: this.props.focal_point,
         image: null,
         previewImage: null,
@@ -47,13 +47,13 @@ define([
         // make a new image object for the downsize
         that.props.width = that.state.image.width;
         that.props.height = that.state.image.height;
-        if(that.props.focal_point[0] > that.state.image.width ||
-           that.props.focal_point[0] === 0){
-          that.props.focal_point[0] = that.state.image.width / 2;
+        if(that.state.override_focal_point[0] > that.state.image.width ||
+           that.state.override_focal_point[0] === 0){
+          that.state.override_focal_point[0] = that.state.image.width / 2;
         }
-        if(that.props.focal_point[1] > that.state.image.height ||
-           that.props.focal_point[1] === 0){
-          that.props.focal_point[1] = that.state.image.height / 2;
+        if(that.state.override_focal_point[1] > that.state.image.height ||
+           that.state.override_focal_point[1] === 0){
+          that.state.override_focal_point[1] = that.state.image.height / 2;
         }
         that.props.exists = true;
 
@@ -100,10 +100,10 @@ define([
         fullWidth: that.props.width,
         height: that.state.previewHeight,
         fullHeight: that.props.height,
-        focalPoint: (that.state.hidden)?this.state.image_focal_point:that.props.focal_point,
+        focalPoint: (that.state.hidden)?this.state.image_focal_point:that.state.override_focal_point,
         onFocalSet: function(focal_point){
           if(!that.state.hidden){
-            that.props.focal_point = focal_point;
+            that.state.override_focal_point = focal_point;
             that.setState({
               dirty: true
             });
