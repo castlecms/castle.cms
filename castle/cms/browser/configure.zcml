@@ -166,8 +166,8 @@
 
   <browser:page
     for="plone.app.contenttypes.interfaces.IImage"
-    name="imageInfo"
-    class=".imageInfo.ImageInfoView"
+    name="imageinfo"
+    class=".imageinfo.ImageInfoView"
     permission="zope2.View"
     layer="..interfaces.ICastleLayer"
     />
