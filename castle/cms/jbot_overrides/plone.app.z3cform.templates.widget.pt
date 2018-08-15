@@ -25,7 +25,8 @@
             tal:define="description widget/field/description"
             i18n:translate=""
             tal:content="structure description"
-            tal:condition="python:description and not hidden"
+            tal:condition="python:description and not hidden and
+                           context.request.URL.split('/')[-1] == '@@edit'"
             >field description
         </span>
     </label>
