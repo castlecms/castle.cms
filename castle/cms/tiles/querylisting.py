@@ -70,6 +70,13 @@ class GridView(BaseTileView):
     index = ViewPageTemplateFile('templates/querylisting/grid.pt')
     tile_name = 'querylisting'
 
+class FiveGridView(BaseTileView):
+    name = 'five-grid'
+    label = 'Five Column Grid'
+    preview = '++plone++castle/images/previews/querylisting/grid.png'
+    order = 3
+    index = ViewPageTemplateFile('templates/querylisting/five-grid.pt')
+    tile_name = 'querylisting'
 
 class TiledView(BaseTileView):
     name = 'tiled'
