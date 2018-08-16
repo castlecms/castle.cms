@@ -161,7 +161,7 @@ define([
           var that = self;
           that.component.loadImage(portalUrl + '/resolveuid/' + e.target.value + '/@@images/image?_=' + utils.generateId());
           $.ajax({
-            url: portalUrl + '/resolveuid/' + e.target.value + '/@@imageInfo',
+            url: portalUrl + '/resolveuid/' + e.target.value + '/@@imageinfo',
             dataType: 'JSON',
             type: 'GET',
           }).done(function(data){
