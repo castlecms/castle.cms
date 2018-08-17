@@ -1,0 +1,41 @@
+<tal:root
+    i18n:domain="plone">
+  <script type="text/javascript"
+          tal:attributes="src context/++resource++schemaeditor.js"></script>
+  <script type="text/javascript"
+          tal:attributes="src context/++resource++plone.app.dexterity.types_listing.js"></script>
+
+  <div class="portalMessage info" role="alertdialog" aria-labelledby="dialogTitle"
+       tal:condition="view/status">
+    <strong id="dialogTitle" i18n:translate="">
+      Info
+    </strong>
+    <span tal:content="view/status">
+      Status
+    </span>
+  </div>
+
+  <p class="crud-description documentDescription"
+      tal:condition="view/description"
+      tal:content="structure view/description">
+  </p>
+
+  <a class="pat-plone-modal"
+      href="${context/absolute_url}/@@add-type">
+    <button i18n:translate="">Add New Content Type&hellip;</button>
+  </a>
+
+  <a class="pat-plone-modal"
+      href="${context/absolute_url}/@@import-types">
+    <button i18n:translate="">Import Type Profiles&hellip;</button>
+  </a>
+
+  <div class="crud-form"
+      tal:repeat="form view/subforms"
+      tal:content="structure form/render">
+  </div>
+
+  <div class="action" tal:repeat="action view/actions/values">
+    <input type="submit" tal:replace="structure action/render" />
+  </div>
+</tal:root>
