@@ -163,6 +163,13 @@
     permission="zope2.View"
     layer="..interfaces.ICastleLayer"
     />
+  <browser:page
+      name="add-type"
+      for="plone.app.dexterity.interfaces.ITypesContext"
+      class=".addtype.TypeAddFormPage"
+      permission="plone.schemaeditor.ManageSchemata"
+      layer="..interfaces.ICastleLayer"
+      />
 
   <!-- icon views -->
   <browser:page
