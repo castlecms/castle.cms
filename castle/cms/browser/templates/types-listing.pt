@@ -20,8 +20,8 @@
       tal:content="structure view/description">
   </p>
 
-  <a class="pat-plone-modal"
-      href="${context/absolute_url}/@@add-type">
+  <a class=""
+      href="${context/absolute_url}/@@add-clone-type">
     <button i18n:translate="">Add New Content Type&hellip;</button>
   </a>
 
