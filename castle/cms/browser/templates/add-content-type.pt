@@ -93,7 +93,7 @@
                       tal:attributes="value type">
                         Content Type
                     </option>
-                    <option value="">New From Scratch...</option>
+                    <option value="" selected>New From Scratch...</option>
                   </select>
               </div>
               <script type="text/javascript">
