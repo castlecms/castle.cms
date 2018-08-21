@@ -406,6 +406,14 @@
     layer="..interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="fields"
+    for="plone.app.dexterity.interfaces.ITypeSchemaContext"
+    class=".fields.TypeFieldsPage"
+    permission="plone.schemaeditor.ManageSchemata"
+    layer="..interfaces.ICastleLayer"
+    />
+
 
   <!-- registration overrides -->
   <browser:page
