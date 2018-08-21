@@ -34,6 +34,7 @@
                     sl python:plone_layout.have_portlets('plone.leftcolumn', view);
                     sr python:plone_layout.have_portlets('plone.rightcolumn', view);
                     body_class python:plone_layout.bodyClass(template, view);
+                    formtitle string:New Content Type;
                     types context/portal_types/listContentTypes;"
         tal:attributes="class body_class;
                         dir python:isRTL and 'rtl' or 'ltr';
@@ -65,7 +66,8 @@
             <div id="viewlet-above-content-title" tal:content="structure provider:plone.abovecontenttitle" />
             <metal:title define-slot="content-title">
                 <h1 class="documentFirstHeading"
-                    tal:define="title context/Title">New Content Type</h1>
+                    tal:define="title context/Title"
+                    tal:content="formtitle"/>
             </metal:title>
             <div id="viewlet-below-content-title" tal:content="structure provider:plone.belowcontenttitle" />
           </header>
@@ -97,6 +99,7 @@
               <script type="text/javascript">
                 $(document).ready(function(){
                   var select = $('#form-widgets-base')[0];
+                  var inModal = $('.documentFirstHeading')[0].innerHTML != '${formtitle}';
 
                   function hideAllBtns(){
                     $('.add-type-button').each(function(index,element){
@@ -115,6 +118,13 @@
                   function updateBtns(){
                     hideAllBtns();
                     showAppropriateBtn();
+                  }
+
+                  if(inModal){
+                    $('.formControls')
+                      .removeClass('formControls')
+                      .appendTo('.pattern-modal-buttons');
+                    $('.add-type-button').removeClass('pat-plone-modal');
                   }
 
                   select.onchange = updateBtns;
