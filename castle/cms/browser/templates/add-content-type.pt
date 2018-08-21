@@ -33,7 +33,8 @@
   <body tal:define="isRTL portal_state/is_rtl;
                     sl python:plone_layout.have_portlets('plone.leftcolumn', view);
                     sr python:plone_layout.have_portlets('plone.rightcolumn', view);
-                    body_class python:plone_layout.bodyClass(template, view);"
+                    body_class python:plone_layout.bodyClass(template, view);
+                    types context/portal_types/listContentTypes;"
         tal:attributes="class body_class;
                         dir python:isRTL and 'rtl' or 'ltr';
                         python:plone_view.patterns_settings()"
@@ -83,8 +84,7 @@
 
                   <div class="fieldErrorBox"></div>
 
-                  <select id="form-widgets-base" class="select-widget required"
-                    tal:define="types context/portal_types/listContentTypes" value="News Item">
+                  <select id="form-widgets-base" class="select-widget required">
                     <option
                       tal:repeat="type types"
                       tal:content="type"
@@ -94,11 +94,49 @@
                     <option value="">New From Scratch...</option>
                   </select>
               </div>
+              <script type="text/javascript">
+                $(document).ready(function(){
+                  var select = $('#form-widgets-base')[0];
+
+                  function hideAllBtns(){
+                    $('.add-type-button').each(function(index,element){
+                      element.style.display = 'none';
+                    })
+                  }
+                  function showAppropriateBtn(){
+                    if(select.value){
+                      var btn = $('#add-type-'+select.value)[0]
+                    }
+                    else{
+                      var btn = $('#add-new-type')[0]
+                    }
+                    btn.style.display = 'initial';
+                  }
+                  function updateBtns(){
+                    hideAllBtns();
+                    showAppropriateBtn();
+                  }
+
+                  select.onchange = updateBtns;
+                  updateBtns();
+                });
+              </script>
             </metal:text>
           </section>
 
           <div class="formControls">
-            <input id="form-buttons-add" name="form.buttons.add" class="submit-widget button-field" value="Add" type="submit">
+            <a tal:repeat="type types"
+               tal:attributes="id python: 'add-type-'+type"
+               class="pat-plone-modal add-type-button"
+               href="${context/absolute_url}/${type}/@@clone">
+              <button>Create&hellip;</button>
+            </a>
+            <a
+               tal:attributes="id string:add-new-type"
+               class="pat-plone-modal add-type-button"
+               href="${context/absolute_url}/@@add-type">
+              <button>Create&hellip;</button>
+            </a>
           </div>
           <section id="viewlet-below-content-body"
                    tal:content="structure provider:plone.belowcontentbody" />
