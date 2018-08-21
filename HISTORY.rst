@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- add info and warnings for missing REDIS_SERVER env var
+  [tkimnguyen]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
