@@ -95,6 +95,7 @@
                     </option>
                     <option value="" selected>New From Scratch...</option>
                   </select>
+                  <div id="scratch-warning">It is recommended that you clone an existing content type rather than create a new one from scratch.</div>
               </div>
               <script type="text/javascript">
                 $(document).ready(function(){
@@ -105,13 +106,16 @@
                     $('.add-type-button').each(function(index,element){
                       element.style.display = 'none';
                     })
+                    $('#scratch-warning')[0].style.display = 'none';
                   }
                   function showAppropriateBtn(){
+                    var btn;
                     if(select.value){
-                      var btn = $('#add-type-'+select.value)[0]
+                      btn = $('#add-type-'+select.value.replace(' ','_'))[0]
                     }
                     else{
-                      var btn = $('#add-new-type')[0]
+                      btn = $('#add-new-type')[0]
+                      $('#scratch-warning')[0].style.display = 'initial';
                     }
                     btn.style.display = 'initial';
                   }
@@ -136,7 +140,7 @@
 
           <div class="formControls">
             <a tal:repeat="type types"
-               tal:attributes="id python: 'add-type-'+type"
+               tal:attributes="id python: 'add-type-'+type.replace(' ','_')"
                class="pat-plone-modal add-type-button"
                href="${context/absolute_url}/${type}/@@clone">
               <button>Create&hellip;</button>
