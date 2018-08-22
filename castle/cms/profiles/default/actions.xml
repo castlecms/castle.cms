@@ -529,6 +529,16 @@
    </property>
    <property name="visible">True</property>
   </object>
+  <object name="advancedmode" meta_type="CMF Action">
+   <property name="title">Toggle Advanced</property>
+   <property name="description"></property>
+   <property name="url_expr">string:${portal_url}/@@toggle-advanced</property>
+   <property name="link_target"></property>
+   <property name="icon_expr"></property>
+   <property name="available_expr"></property>
+   <property name="permissions"/>
+   <property name="visible">True</property>
+  </object>
   <object name="tour" meta_type="CMF Action">
    <property name="title">Tour Castle</property>
    <property name="description"></property>

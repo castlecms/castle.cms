@@ -582,6 +582,12 @@
     permission="zope2.View"
     />
   <browser:page
+    name="toggle-advanced"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    template="templates/toggle-advanced.pt"
+    permission="zope2.View"
+    />
+  <browser:page
     name="retour"
     for="plone.app.layout.navigation.interfaces.INavigationRoot"
     class=".tour.TourAgainView"

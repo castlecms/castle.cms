@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    tal:define="portal_state context/@@plone_portal_state;
+        lang portal_state/language;"
+    i18n:domain="plone"
+    tal:attributes="lang lang;">
+    <head>
+      <script type="text/javascript">
+        var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)advanced\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        var updateCookie = (cookieValue == 1)?'advanced=0':'advanced=1';
+        document.cookie = updateCookie;
+        window.location.href = '${context/absolute_url}/?'+updateCookie;
+      </script>
+    </head>
+    <body>
+      <noscript>You need to have javascript enabled to toggle this setting.</noscript>
+    </body>
+</html>
