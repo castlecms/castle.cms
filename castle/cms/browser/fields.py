@@ -9,13 +9,15 @@ from z3c.form import button
 
 import pkg_resources
 
-
 if pkg_resources.get_distribution('plone.resourceeditor'):
-    but = button.Button('modeleditor', title=u'Edit XML Field Model (if you dare)')
-    EnhancedSchemaListing.buttons += button.Buttons(but)
-    handler = button.Handler(but, EnhancedSchemaListing.handleModelEdit)
-    EnhancedSchemaListing.handlers.addHandler(but, handler)
-
+    advancedbtns = EnhancedSchemaListing.buttons.copy()
+    regularbtns = EnhancedSchemaListing.buttons.copy().omit('modeleditor')
 
 class TypeFieldsPage(fields.TypeFieldsPage):
-    pass
+    def __init__(self, context, request):
+        super(TypeFieldsPage, self).__init__(context, request)
+        if pkg_resources.get_distribution('plone.resourceeditor'):
+            if 'advanced=1' in request['HTTP_COOKIE']:
+                EnhancedSchemaListing.buttons = advancedbtns
+            else:
+                EnhancedSchemaListing.buttons = regularbtns
