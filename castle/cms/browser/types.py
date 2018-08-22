@@ -9,7 +9,8 @@ class TypeEditForm(types.TypeEditForm):
     #Remove clone button
     def __init__(self, context, request):
         super(TypeEditForm, self).__init__(context, request)
-        self.buttons = self.buttons.copy().omit('clone')
+        if 'advanced=1' not in request['HTTP_COOKIE']:
+            self.buttons = self.buttons.copy().omit('clone')
 
 class TypesListing(types.TypesListing):
     template = ViewPageTemplateFile('templates/types-listing.pt')
