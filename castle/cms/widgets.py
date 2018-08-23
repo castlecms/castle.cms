@@ -241,6 +241,41 @@ def MultiSelectFieldWidget(field, request):
     return widget
 
 
+class IInputSelectWidget(ITextWidget):
+    """"""
+
+class InputSelectWidget(BaseWidget):
+    """ Creates a normal select widget with an optional 'other' textbox """
+    _base = BaseInputWidget
+    implementsOnly(IInputSelectWidget)
+
+    pattern = 'inputselect'
+    pattern_options = BaseWidget.pattern_options.copy()
+
+    def _base_args(self):
+        args = super(InputSelectWidget, self)._base_args()
+
+        args.setdefault('pattern_options', {})
+
+        args['name'] = self.name
+        args['value'] = (self.request.get(self.name,
+                                          self.value) or u'[]').strip()
+
+        vocab_items = [item for item in self.vocabulary]
+        items = [{'id': item.token, 'text': item.title} for item in vocab_items]
+
+        args['pattern_options']['initialItems'] = json.dumps(items)
+        args['pattern_options']['value'] = self.value
+        args['pattern_options']['label'] = self.label
+        return args
+
+@adapter(IField, ICastleLayer)
+@implementer(IFieldWidget)
+def InputSelectFieldWidget(field, request):
+    widget = z3c.form.widget.FieldWidget(field, InputSelectWidget(request))
+    widget.vocabulary = field.vocabulary
+    return widget
+
 class IJSONListWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 

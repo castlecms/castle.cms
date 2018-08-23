@@ -37,6 +37,7 @@ require([
   'castle-url/patterns/mapselect',
   'castle-url/patterns/previewselect',
   'castle-url/patterns/imagewidget',
+  'castle-url/patterns/inputselect',
   'castle-url/patterns/focalpointselect',
   'castle-url/patterns/upload-update',
   'castle-url/patterns/widgets',
