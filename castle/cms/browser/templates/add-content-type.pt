@@ -38,8 +38,8 @@ from plone.dexterity.interfaces import IDexterityFTI
                     sr python:plone_layout.have_portlets('plone.rightcolumn', view);
                     body_class python:plone_layout.bodyClass(template, view);
                     formtitle string:New Content Type;
-                    types python: getAllUtilitiesRegisteredFor(IDexterityFTI);
-                    types2 context/portal_types/listContentTypes;"
+                    allTypes python: getAllUtilitiesRegisteredFor(IDexterityFTI);
+                    types python: [x for x in allTypes if x.__name__ != 'Document']"
         tal:attributes="class body_class;
                         dir python:isRTL and 'rtl' or 'ltr';
                         python:plone_view.patterns_settings()"
@@ -91,12 +91,17 @@ from plone.dexterity.interfaces import IDexterityFTI
 
                   <select id="form-widgets-base" class="select-widget required">
                     <option
+                      tal:attributes="value string:Document;
+                                      Selected string:;">
+                      Page
+                    </option>
+                    <option
                       tal:repeat="type types"
                       tal:content="python: type.__name__"
                       tal:attributes="value python:type.__name__">
                         Content Type
                     </option>
-                    <option value="" selected>New From Scratch...</option>
+                    <option value="">New From Scratch...</option>
                   </select>
                   <div id="scratch-warning">It is recommended that you clone an existing content type rather than create a new one from scratch.</div>
               </div>
@@ -142,7 +147,7 @@ from plone.dexterity.interfaces import IDexterityFTI
           </section>
 
           <div class="formControls">
-            <a tal:repeat="type types"
+            <a tal:repeat="type allTypes"
                tal:attributes="id python: 'add-type-'+type.__name__.replace(' ','_')"
                class="pat-plone-modal add-type-button"
                href="${context/absolute_url}/${python:type.__name__}/@@clone">
