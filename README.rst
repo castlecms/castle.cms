@@ -365,3 +365,5 @@ CastleCMS includes Plone's TinyMCE support for After the Deadline spellchecking 
 
 To use After the Deadline, go to Site Setup and configure After the Deadline in the
 TinyMCE configuration panel.
+
+
