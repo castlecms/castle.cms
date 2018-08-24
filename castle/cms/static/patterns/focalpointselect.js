@@ -24,8 +24,8 @@ define([
         previewImage: null,
         previewWidth: '',
         previewHeight: '',
-        previewUrl: '',
-        hidden: true
+        originalFocalwUrl: '',
+        originalFocal: true
       };
     },
 
@@ -94,15 +94,15 @@ define([
       }
 
       var focalPointSelectorOps = {
-        readOnly: that.state.hidden,
+        readOnly: that.state.originalFocal,
         url: that.state.previewUrl,
         width: that.state.previewWidth,
         fullWidth: that.props.width,
         height: that.state.previewHeight,
         fullHeight: that.props.height,
-        focalPoint: (that.state.hidden)?this.state.image_focal_point:that.state.override_focal_point,
+        focalPoint: (that.state.originalFocal)?this.state.image_focal_point:that.state.override_focal_point,
         onFocalSet: function(focal_point){
-          if(!that.state.hidden){
+          if(!that.state.originalFocal){
             that.state.override_focal_point = focal_point;
             that.setState({
               dirty: true
@@ -183,22 +183,22 @@ define([
       if(focal_point_val){
         $checkbox[0].checked = true;
         self.component.setState({
-          hidden: false
+          originalFocal: false
         });
       }else{
         self.component.setState({
-          hidden: true
+          originalFocal: true
         });
       }
 
       $checkbox.on('change', function(e){
         if(e.target.checked){
           self.component.setState({
-            hidden: false
+            originalFocal: false
           });
         }else{
           self.component.setState({
-            hidden: true
+            originalFocal: true
           });
           self.$el.attr('value', '');
         }
