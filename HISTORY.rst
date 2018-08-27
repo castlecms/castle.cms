@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- add copyright year to footer of new sites at create time
+  [tkimnguyen]
+
 - Rearranged image tile settings, clarified terminology
   [CorySanin]
 
