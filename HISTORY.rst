@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- import script fixes
+  [tkimnguyen]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
