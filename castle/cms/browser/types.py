@@ -9,7 +9,7 @@ class TypeEditForm(types.TypeEditForm):
     #Remove clone button
     def __init__(self, context, request):
         super(TypeEditForm, self).__init__(context, request)
-        if 'advanced=1' not in request['HTTP_COOKIE']:
+        if 'castlecms-advanced=1' not in request['HTTP_COOKIE']:
             self.buttons = self.buttons.copy().omit('clone')
 
 class TypesListing(types.TypesListing):
