@@ -32,6 +32,9 @@ Changelog
 - Rearranged image tile settings, clarified terminology
   [CorySanin]
 
+- import script fixes
+  [tkimnguyen]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
