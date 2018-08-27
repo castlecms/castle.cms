@@ -1,7 +1,7 @@
 
 define([
   'jquery',
-  'castle-url/libs/react/react.min',
+  'castle-url/libs/react/react',
   'pat-base',
   'mockup-patterns-select2',
   'mockup-utils',
@@ -15,89 +15,153 @@ define([
 
   var D = R.DOM;
 
-  var OptionalInputComponent = R.createClass({
+  var TextInputSelectComponent = R.createClass({
+    getInitialState: function() {
+      var self = this;
+
+      return {
+        hidden: !self.props.valueIsOther,
+        value: self.props.inputValue
+      };
+    },
+    checkInput: function(event) {
+      var self = this;
+
+      if( event.val == 'other' ) {
+        self.showInput();
+      }else{
+        self.hideInput();
+      }
+    },
+    renderInput: function() {
+      return D.div({id: 'input'});
+    },
     render: function() {
-      D.div({}, [
-        D.label({},'test'),
-        D.input({})
+      var self = this;
+
+      if( self.state.hidden ) {
+        return D.div({});
+      }
+
+      return D.div({
+          className: 'textinputselect-container form-group',
+          key: 'container'
+        }, [
+        D.label({
+          className: 'textinputselect-label', key: 'label'}, self.props.label + ' Other'),
+        D.input({
+          className: 'textinputselect-input form-control',
+          key: 'input',
+          defaultValue: self.state.value,
+          onKeyUp: self.updateValue})
       ]);
+    },
+    hideInput: function() {
+      var self = this;
+
+      self.setState({
+        hidden: true
+      });
+    },
+    showInput: function() {
+      var self = this;
+
+      self.setState({
+        hidden: false
+      });
+    },
+    updateValue: function(event) {
+      var self = this;
+
+      self.props.input.val(event.currentTarget.value);
     }
   });
 
-  var InputSelect = Base.extend({
+  var TextInputSelect = Base.extend({
     name: 'inputselect',
     trigger: '.pat-inputselect',
     parser: 'mockup',
     hidden_input: null,
     $input: null,
 
-    setValue: function(e) {
-      var self = this;
-
-      self.$el.val(self.$input.val());
-      debugger;
-    },
-    setupHiddenInput: function() {
-      var self = this;
-
-      var label = 'Other';
-      if( self.options.label !== undefined ) {
-        label = self.options.label + ' ' + label;
-      }
-
-      self.hidden_input = $('' +
-      '<div id="inputselect-container">' +
-        '<label id="inputselect-label" for="inputselect-other">'+label+'</label>' +
-        '<input id="inputselect-input" type="text" />' +
-      '</div>');
-
-      self.$el.after(self.hidden_input);
-      self.hidden_input.hide();
-
-      self.$input = self.hidden_input.find('#inputselect-input');
-      self.$input.on('input', self.setValue.bind(self));
-    },
     setSelectedValue: function(items) {
       var self = this;
 
       var val = self.options.value;
-      var isSelected = function(item, val) {
-        if( item.value == val ) {
-          item.selected = true;
-        }
-        return item;
-      };
+      var found = false;
+      var other = -1;
 
-      return items.map(function(item) {
-        return isSelected(item, val);
-      });
+      for( var i = 0; i < items.length; i++) {
+        if( items[i].id == val ) {
+          // items[i].selected = true;
+          found = true;
+          self.itemInVocabulary = true;
+        }
+
+        if( items[i].id == 'other' ) {
+          other = i;
+        }
+      }
+
+      if( other < 0 ) {
+        // The vocabulary didn't include an 'other' option
+        items.push({'id': 'other', 'text': 'Other'});
+        other = items.length - 1;
+      }
+
+      if( !found ) {
+        items[other].selected = true;
+
+        // need to temporarily change the value to
+        // 'other' so the select2 box will render the
+        // option correctly
+        self.$el.val('other');
+      }
+
+      return items;
     },
     init: function() {
       var self = this;
+
+      self.itemInVocabulary = false;
+
       var initialItems = JSON.parse(self.options.initialItems);
       initialItems = self.setSelectedValue(initialItems);
-      var options = {
-        data: initialItems
+
+      var select2items = {
+        'results': initialItems
       };
 
-      self.setupHiddenInput();
       self.$el.select2({
-        data: initialItems,
+        data: select2items,
         width: '20em'
       });
+
+      // We may have set the value to 'other' in order
+      // to get seleect2 to render properly, let's set it back
+      self.$el.val(self.options.value);
+
+      var options = {
+        data: initialItems,
+        input: self.$el,
+        label: self.options.label,
+        inputValue: self.options.value,
+        valueIsOther: !self.itemInVocabulary
+      };
+
+      var el = document.createElement('div');
+      self.$el.parent().append(el);
+
+      self.component = R.render(R.createElement(TextInputSelectComponent, options), el);
 
       self.$el.on('change.select2', function(e) {
         var self = this;
         if( e.type === 'change' ) {
-          if( e.added.id === 'other' ) {
-            self.hidden_input.show();
-          }else{
-
-          }
+          self.component.checkInput(e);
         }
       }.bind(self));
     }
   });
 
-  return InputSelect;
+  return TextInputSelect;
 });
