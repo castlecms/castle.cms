@@ -39,7 +39,12 @@ parser.add_argument('--export-directory', dest='export_directory', default='expo
 parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
+parser.add_argument('--stop-if-exception', dest='stop_if_exception', default=False)
+parser.add_argument('--pdb-if-exception', dest='pdb_if_exception', default=False)
 args, _ = parser.parse_known_args()
+
+stop_if_exception = args.stop_if_exception
+pdb_if_exception = args.pdb_if_exception
 
 user = app.acl_users.getUser(args.admin_user)  # noqa
 try:
@@ -105,14 +110,22 @@ def recursive_create_path(path):
                             folder = api.content.create(**creation_data)
                         except api.exc.InvalidParameterError:
                             logger.error('Error creating content {}'.format(fpath), exc_info=True)
+                            if stop_if_exception:
+                                if pdb_if_exception:
+                                    import pdb;pdb.set_trace()
+                                raise
                             return
                         importtype.post_creation(folder)
                         if data['state']:
                             try:
                                 api.content.transition(folder, to_state=data['state'])
                             except:
-                                # maybe workflows do not match up
-                                pass
+                                logger.error("maybe workflows do not match up")
+                                if stop_if_exception:
+                                    if pdb_if_exception:
+                                        import pdb;pdb.set_trace()
+                                    raise
+                                #pass
                         folder.reindexObject()
                     else:
                         folder = api.content.create(
@@ -214,6 +227,10 @@ def import_object(filepath, count):
 
     print('import path: %s' % path)
     creation_data = importtype.get_data()
+    if creation_data['type'] in ['collective.cover.content']:
+        print('    skipping omitted type %s' % creation_data['type'])
+        return # skip objects of these types
+
     creation_data['container'] = folder
 
     aspect = ISelectableConstrainTypes(folder, None)
@@ -227,9 +244,15 @@ def import_object(filepath, count):
         if args.ignore_uuids and '_plone.uuid' in creation_data:
             del creation_data['_plone.uuid']
         try:
-            obj = api.content.create(**creation_data)
+            obj = api.content.create(safe_id=True, **creation_data)
         except api.exc.InvalidParameterError:
+            if stop_if_exception:
+                logger.error('Error creating content {}'.format(filepath), exc_info=True)
+                if pdb_if_exception:
+                    import pdb;pdb.set_trace()
+                raise
             return logger.error('Error creating content {}'.format(filepath), exc_info=True)
+        # TODO set uid
     else:
         obj = folder[_id]
         for key, value in creation_data.items():
@@ -247,8 +270,12 @@ def import_object(filepath, count):
         try:
             api.content.transition(obj, to_state=data['state'])
         except:
-            # maybe workflows do not match up
-            pass
+            logger.error("maybe workflows do not match up")
+            #pass
+            if stop_if_exception:
+                if pdb_if_exception:
+                    import pdb;pdb.set_trace()
+                raise
 
     fix_html_images(obj)
     obj.reindexObject()
@@ -274,6 +301,11 @@ def import_pages(path, count=0):
                 import_object(filepath, count)
             except:
                 logger.error('Error importing object', exc_info=True)
+                if stop_if_exception:
+                    if pdb_if_exception:
+                        if filepath.find('transparency/transparency-pledge')==-1: # TODO hack skip this annoying object
+                            import pdb;pdb.set_trace()
+                    raise
     return count
 
 
@@ -287,6 +319,10 @@ def import_folders(path, count=0):
                 import_object(filepath, count)
             except:
                 logger.error('Error importing object', exc_info=True)
+                if stop_if_exception:
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
+                    raise
 
         if os.path.isdir(filepath):
             count = import_folders(filepath, count)

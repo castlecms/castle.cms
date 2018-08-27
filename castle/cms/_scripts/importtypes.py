@@ -1,4 +1,7 @@
 from castle.cms.behaviors.location import ILocation
+from imghdr import what
+from mimetypes import guess_type
+from OFS.Image import Image
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.dexterity.behaviors.metadata import IBasic
@@ -13,6 +16,7 @@ from plone.app.textfield.value import RichTextValue
 from plone.event.utils import pydt
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from StringIO import StringIO
 
 import base64
 import OFS
@@ -75,6 +79,8 @@ def decode_file_data(data):
         if isinstance(data, OFS.Image.Pdata):
             return str(data)
         return data
+    if isinstance(data, StringIO):
+        data = data.buf
     if is_base64(data):
         return base64.b64decode(data)
     return data
@@ -145,7 +151,13 @@ class BaseImportType(object):
         try:
                 description=self.field_data['description']
         except:
-                description=self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                try:
+                    description=self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                except:
+                    try:
+                        description=self.field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']
+                    except:
+                        import pdb;pdb.set_trace()
         return dict(
             id=id,
             type=self.data['portal_type'],
@@ -177,7 +189,10 @@ class BaseImportType(object):
             try:
                     bdata.description = field_data['description']
             except:
-                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                    try:
+                        bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                    except:
+                        bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']
         else:
             obj.title = field_data['title']
             obj.description = field_data['description']
@@ -190,7 +205,10 @@ class BaseImportType(object):
                     try:
                             bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['subjects']
                     except:
-                            bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.ICategorization']['subjects']
+                            try:
+                                bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.ICategorization']['subjects']
+                            except:
+                                pass # no keywords found
 
             bdata = IPublication(obj)
             try:
@@ -236,14 +254,26 @@ class BaseImportType(object):
 
         bdata = IDublinCore(obj, None)
         if bdata:
-            dublin_core = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']
-            bdata.expires = dublin_core['expires']
-            bdata.rights = dublin_core['rights']
-            bdata.creators = tuple(dublin_core['creators'])
-            bdata.language = dublin_core['language']
-            bdata.effective = pydt(dublin_core['effective'])
-            bdata.subjects = dublin_core['subjects']
-            bdata.contributors = tuple(dublin_core['contributors'])
+            if 'plone.app.dexterity.behaviors.metadata.IDublinCore' in field_data.keys():
+                dublin_core = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']
+                bdata.expires = dublin_core['expires']
+                bdata.rights = dublin_core['rights']
+                bdata.creators = tuple(dublin_core['creators'])
+                bdata.language = dublin_core['language']
+                bdata.effective = pydt(dublin_core['effective'])
+                bdata.subjects = dublin_core['subjects']
+                bdata.contributors = tuple(dublin_core['contributors'])
+            else:
+                bdata.expires = pydt(field_data.get('expirationDate'))
+                bdata.rights = field_data.get('rights')
+                creators = field_data.get('creators')
+                bdata.creators = tuple(creators) if creators else ()
+                language = field_data.get('language')
+                bdata.language = language if language is not None else ""
+                bdata.effective = pydt(field_data.get('effectiveDate'))
+                bdata.subjects = field_data.get('subject')
+                contributors = field_data.get('contributors')
+                bdata.contributors = tuple(contributors) if contributors else ()
 
         bdata = ILayoutAware(obj, None)
         if bdata:
@@ -253,9 +283,12 @@ class BaseImportType(object):
                 # could be overwritten
                 bdata.contentLayout = None
             elif self.layout:
-                bdata.contentLayout = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['contentLayout']
-                bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
-                bdata.rendered_layout = self.data['data']['rendered_layout']
+                if field_data.has_key('plone.app.blocks.layoutbehavior.ILayoutAware') and field_data['plone.app.blocks.layoutbehavior.ILayoutAware'].has_key('contentLayout'):
+                    bdata.contentLayout = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['contentLayout']
+                if field_data.has_key('plone.app.blocks.layoutbehavior.ILayoutAware') and field_data['plone.app.blocks.layoutbehavior.ILayoutAware'].has_key('content'):
+                    bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
+                if self.data['data'].has_key('rendered_layout'):
+                    bdata.rendered_layout = self.data['data']['rendered_layout']
 
         inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
         for IBehavior, field_name in self.behavior_data_mappers:
@@ -300,10 +333,43 @@ class BaseImportType(object):
                     else:
                         filename = self.field_data['id']
                 obj.image = im_data
-                if isinstance(obj.image.contentType, unicode):
+
+                is_stringio = isinstance(im_obj, StringIO)
+                if is_stringio:
+                    obj.image = NamedBlobImage(data=im_data, contentType='', filename=filename)
+                else:
+                    if not isinstance(im_obj, Image):
+                        print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+
+                if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
-                if not obj.image.contentType:
-                    obj.image.contentType = 'image/jpeg'
+                else:
+                    if isinstance(im_obj, Image):
+                        data = im_obj.data
+                    else:
+                        data = im_obj.buf
+                    image_type = what('', h=data)
+                    if image_type in ['png', 'bmp', 'jpeg', 'xbm', 'tiff', 'gif']:
+                        obj.image.contentType = 'image/%s' % image_type
+                    elif image_type == 'rast':
+                        obj.image.contentType = 'image/cmu-raster'
+                    elif image_type == 'ppm':
+                        obj.image.contentType = 'image/x-portable-pixmap'
+                    elif image_type == 'pgm':
+                        obj.image.contentType = 'image/x-portable-greymap'
+                    elif image_type == 'pbm':
+                        obj.image.contentType = 'image/x-portable-bitmap'
+                    elif image_type == 'rgb':
+                        obj.image.contentType = 'image/x-rgb'
+                    else:
+                        # look at filename extension
+                        contentType, encoding = guess_type(obj.image.filename, strict=False)
+                        if contentType:
+                            obj.image.contentType = contentType
+                        else:
+                            print("    unknown image type %s encountered; defaulting to jpeg" % image_type)
+                            import pdb;pdb.set_trace()
+                            obj.image.contentType = 'image/jpeg' # default
                 for caption_field_name in self.lead_image_caption_field_names:
                     if caption_field_name in self.field_data:
                         obj.imageCaption = self.field_data.get(caption_field_name)
