@@ -164,6 +164,14 @@
     layer="..interfaces.ICastleLayer"
     />
 
+  <browser:page
+    for="plone.app.contenttypes.interfaces.IImage"
+    name="imageinfo"
+    class=".imageinfo.ImageInfoView"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
+
   <!-- icon views -->
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
