@@ -38,4 +38,10 @@
   <div class="action" tal:repeat="action view/actions/values">
     <input type="submit" tal:replace="structure action/render" />
   </div>
+
+  <div>
+    <a href="${context/portal_url}/@@toggle-advanced">
+      <button i18n:translate="">Toggle Advanced Options</button>
+    </a>
+  </div>
 </tal:root>
