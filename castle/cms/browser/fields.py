@@ -17,7 +17,7 @@ class TypeFieldsPage(fields.TypeFieldsPage):
     def __init__(self, context, request):
         super(TypeFieldsPage, self).__init__(context, request)
         if pkg_resources.get_distribution('plone.resourceeditor'):
-            if 'advanced=1' in request['HTTP_COOKIE']:
+            if 'castlecms-advanced=1' in request['HTTP_COOKIE']:
                 EnhancedSchemaListing.buttons = advancedbtns
             else:
                 EnhancedSchemaListing.buttons = regularbtns

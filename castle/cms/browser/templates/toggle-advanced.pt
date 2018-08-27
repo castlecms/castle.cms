@@ -6,9 +6,9 @@
     <head>
       <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
       <script type="text/javascript">
-        var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)advanced\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        var updateCookie = (cookieValue == 1)?'advanced=0':'advanced=1';
-        var oldCookie = (cookieValue != 1)?'advanced=0':'advanced=1';
+        var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)castlecms-advanced\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        var updateCookie = (cookieValue == 1)?'castlecms-advanced=0':'castlecms-advanced=1';
+        var oldCookie = (cookieValue != 1)?'castlecms-advanced=0':'castlecms-advanced=1';
         var destination = document.referrer;
         if(destination && destination.indexOf('${context/absolute_url}') !== -1){
           destination = destination.replace(oldCookie,updateCookie);
