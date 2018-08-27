@@ -91,11 +91,17 @@ define([
       var found = false;
       var other = -1;
 
+      if( val == '' || val === undefined ) {
+        // Leave the select2 box empty if there's no value.
+        self.hideTextInput = true;
+        return items;
+      }
+
       for( var i = 0; i < items.length; i++) {
         if( items[i].id == val ) {
-          // items[i].selected = true;
+          items[i].selected = true;
           found = true;
-          self.itemInVocabulary = true;
+          self.hideTextInput = false;
         }
 
         if( items[i].id == 'other' ) {
@@ -123,7 +129,7 @@ define([
     init: function() {
       var self = this;
 
-      self.itemInVocabulary = false;
+      self.hideTextInput = true;
 
       var initialItems = JSON.parse(self.options.initialItems);
       initialItems = self.setSelectedValue(initialItems);
@@ -134,7 +140,7 @@ define([
 
       self.$el.select2({
         data: select2items,
-        width: '20em'
+        width: '30em'
       });
 
       // We may have set the value to 'other' in order
@@ -146,7 +152,7 @@ define([
         input: self.$el,
         label: self.options.label,
         inputValue: self.options.value,
-        valueIsOther: !self.itemInVocabulary
+        valueIsOther: !self.hideTextInput
       };
 
       var el = document.createElement('div');
