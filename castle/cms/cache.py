@@ -11,7 +11,9 @@ import redis
 import threading
 
 from zope import ramcache
+import logging
 
+logger = logging.getLogger(__name__)
 
 global_ram_cache = ramcache.ram.RAMCache()
 global_ram_cache.update(maxAge=60 * 10)
@@ -72,17 +74,20 @@ class RedisAdapter(AbstractDict):
 def get_client(fun_name=''):
     server = os.environ.get('REDIS_SERVER', None)
     if server is None:
+        logger.warn("Not using redis; REDIS_SERVER environment variable is undefined")
         return base_choose_cache(fun_name)
 
     client = getattr(thread_local, "client", None)
     if client is None:
         server = os.environ.get("REDIS_SERVER", "127.0.0.1:6379")
+        logger.info("using REDIS_SERVER %s" % server)
         host, port = server.split(':')
         client = redis.StrictRedis(host=host, port=int(port), db=0)
         try:
             client.get('test-key')
             thread_local.client = client
         except redis.exceptions.ConnectionError:
+            logger.warn("unable to connect to redis")
             return base_choose_cache(fun_name)
     return RedisAdapter(client, fun_name)
 

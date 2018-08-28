@@ -89,25 +89,29 @@ class IImageTileSchema(model.Schema):
             if obj.portal_type != 'Image':
                 raise Invalid('Must provide image file')
 
-    scale = schema.Choice(
-        title=u'Scale',
-        required=True,
-        source=image_scales,
-        default=u'large'
-    )
-
     display_type = schema.Choice(
-        title=u'Display type',
+        title=u'Crop Image Options',
         required=True,
         default=u'fullwidth',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('natural', 'natural', u'Natural'),
-            SimpleTerm('fullwidth', 'fullwidth', u'Natural(Full width)'),
-            SimpleTerm('portrait', 'portrait', u'Portrait'),
-            SimpleTerm('landscape', 'landscape', u'Landscape'),
-            SimpleTerm('square', 'square', u'Square'),
-            SimpleTerm('short', 'short', u'Short'),
+            SimpleTerm('natural', 'natural', u'Natural (default size, no crop applied)'),
+            SimpleTerm('fullwidth',
+                       'fullwidth',
+                       u'Full width (fit to tile size, no crop applied, adjusts to width of tile)'),
+            SimpleTerm('portrait', 'portrait', u'Crop portrait (larger height than width)'),
+            SimpleTerm('landscape', 'landscape', u'Crop landscape (larger width than height)'),
+            SimpleTerm('short', 'short', u'Crop short (shorter than landscape)'),
+            SimpleTerm('square', 'square', u'Crop square (same height and width)'),
         ])
+    )
+
+    scale = schema.Choice(
+        title=u'Resolution',
+        description=u'Change the resolution of the image that gets served. '
+                    u'This can safely be left at the default.',
+        required=True,
+        source=image_scales,
+        default=u'large'
     )
 
     caption = schema.TextLine(

@@ -2,13 +2,34 @@
 Changelog
 =========
 
-2.0.46 (unreleased)
--------------------
+2.1 (unreleased)
+----------------
 
 - Add password expiration option with whitelist
   [CorySanin]
 
 - Fixed a bug with the tab order on the login screen
+  [CorySanin]
+
+- The button for creating a custom content type now defaults to cloning an existing one
+  [CorySanin]
+  
+- Hide field descriptions for custom content type views
+  [CorySanin]
+
+- Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled
+  [CorySanin]
+
+- add info and warnings for missing REDIS_SERVER env var
+  [tkimnguyen]
+
+- add copyright year to footer of new sites at create time
+  [tkimnguyen]
+
+- handle Celery connection errors in Tasks control panel
+  [tkimnguyen]
+
+- Rearranged image tile settings, clarified terminology
   [CorySanin]
 
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions

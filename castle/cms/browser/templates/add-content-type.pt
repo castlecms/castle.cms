@@ -1,0 +1,190 @@
+<metal:page define-macro="master">
+<tal:doctype tal:replace="structure string:&lt;!DOCTYPE html&gt;" />
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      tal:define="portal_state context/@@plone_portal_state;
+          context_state context/@@plone_context_state;
+          plone_view context/@@plone;
+          plone_layout context/@@plone_layout;
+          lang portal_state/language;
+          view nocall:view | nocall: plone_view;
+          dummy python: plone_layout.mark_view(view);
+          portal_url portal_state/portal_url;
+          checkPermission nocall: context/portal_membership/checkPermission;
+          site_properties context/portal_properties/site_properties;
+          ajax_include_head request/ajax_include_head | nothing;
+          ajax_load python:False;"
+      i18n:domain="plone"
+      tal:attributes="lang lang;">
+
+    <metal:cache tal:replace="structure provider:plone.httpheaders" />
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <metal:topslot define-slot="top_slot" />
+
+
+  </head>
+<?python
+from zope.component import getAllUtilitiesRegisteredFor
+from plone.dexterity.interfaces import IDexterityFTI
+?>
+  <body tal:define="isRTL portal_state/is_rtl;
+                    sl python:plone_layout.have_portlets('plone.leftcolumn', view);
+                    sr python:plone_layout.have_portlets('plone.rightcolumn', view);
+                    body_class python:plone_layout.bodyClass(template, view);
+                    formtitle string:New Content Type;
+                    allTypes python: getAllUtilitiesRegisteredFor(IDexterityFTI);
+                    types python: [x for x in allTypes if x.__name__ != 'Document']"
+        tal:attributes="class body_class;
+                        dir python:isRTL and 'rtl' or 'ltr';
+                        python:plone_view.patterns_settings()"
+        id="visual-portal-wrapper">
+    <!-- these are bbb slots to be transformed by plone.app.theming -->
+    <div id="style_slot" style="display:none">
+      <metal:javascriptslot define-slot="style_slot" />
+    </div>
+    <div id="javascript_head_slot" style="display:none">
+      <metal:javascriptslot define-slot="javascript_head_slot" />
+    </div>
+
+    <article id="portal-column-content">
+
+      <metal:block define-slot="content">
+
+      <div metal:define-macro="content">
+
+
+        <metal:slot define-slot="body">
+
+        <article id="content">
+
+          <metal:bodytext define-slot="main">
+
+          <header>
+            <div id="viewlet-above-content-title" tal:content="structure provider:plone.abovecontenttitle" />
+            <metal:title define-slot="content-title">
+                <h1 class="documentFirstHeading"
+                    tal:define="title context/Title"
+                    tal:content="formtitle"/>
+            </metal:title>
+            <div id="viewlet-below-content-title" tal:content="structure provider:plone.belowcontenttitle" />
+          </header>
+
+          <section id="viewlet-above-content-body" tal:content="structure provider:plone.abovecontentbody" />
+          <section id="content-core">
+            <metal:text define-slot="content-core">
+              <div data-pat-inlinevalidation="{&quot;type&quot;:&quot;z3c.form&quot;}" class="field pat-inlinevalidation kssattr-fieldname-form.widgets.id empty" data-fieldname="form.widgets.id" id="formfield-form-widgets-id">
+                  <label for="form-widgets-base" class="horizontal">
+                      Base Content Type
+
+                      <span class="required horizontal" title="Required">&nbsp;</span>
+
+                      <span class="formHelp">Make a new content type based on an existing one</span>
+                  </label>
+
+                  <div class="fieldErrorBox"></div>
+
+                  <select id="form-widgets-base" class="select-widget required">
+                    <option
+                      tal:attributes="value string:Document;
+                                      Selected string:;">
+                      Page
+                    </option>
+                    <option
+                      tal:repeat="type types"
+                      tal:content="python: type.__name__"
+                      tal:attributes="value python:type.__name__">
+                        Content Type
+                    </option>
+                    <option value="">New From Scratch...</option>
+                  </select>
+                  <div id="scratch-warning">It is recommended that you clone an existing content type rather than create a new one from scratch.</div>
+              </div>
+              <script type="text/javascript">
+                $(document).ready(function(){
+                  var select = $('#form-widgets-base')[0];
+                  var inModal = $('.documentFirstHeading')[0].innerHTML != '${formtitle}';
+
+                  function hideAllBtns(){
+                    $('.add-type-button').each(function(index,element){
+                      element.style.display = 'none';
+                    })
+                    $('#scratch-warning')[0].style.display = 'none';
+                  }
+                  function showAppropriateBtn(){
+                    var btn;
+                    if(select.value){
+                      btn = $('#add-type-'+select.value.replace(' ','_'))[0]
+                    }
+                    else{
+                      btn = $('#add-new-type')[0]
+                      $('#scratch-warning')[0].style.display = 'initial';
+                    }
+                    btn.style.display = 'initial';
+                  }
+                  function updateBtns(){
+                    hideAllBtns();
+                    showAppropriateBtn();
+                  }
+
+                  if(inModal){
+                    $('.formControls')
+                      .removeClass('formControls')
+                      .appendTo('.pattern-modal-buttons');
+                    $('.add-type-button').removeClass('pat-plone-modal');
+                  }
+
+                  select.onchange = updateBtns;
+                  updateBtns();
+                });
+              </script>
+            </metal:text>
+          </section>
+
+          <div class="formControls">
+            <a tal:repeat="type allTypes"
+               tal:attributes="id python: 'add-type-'+type.__name__.replace(' ','_')"
+               class="pat-plone-modal add-type-button"
+               href="${context/absolute_url}/${python:type.__name__}/@@clone">
+              <button>Create&hellip;</button>
+            </a>
+            <a
+               tal:attributes="id string:add-new-type"
+               class="pat-plone-modal add-type-button"
+               href="${context/absolute_url}/@@add-type">
+              <button>Create&hellip;</button>
+            </a>
+          </div>
+          <section id="viewlet-below-content-body"
+                   tal:content="structure provider:plone.belowcontentbody" />
+
+          </metal:bodytext>
+        </article>
+
+        </metal:slot>
+      </div>
+
+      </metal:block>
+    </article>
+
+    <aside id="portal-column-one"
+           metal:define-slot="column_one_slot">
+      <metal:portlets define-slot="portlets_one_slot">
+      </metal:portlets>
+    </aside>
+
+    <aside id="portal-column-two"
+           metal:define-slot="column_two_slot">
+      <metal:portlets define-slot="portlets_two_slot">
+      </metal:portlets>
+    </aside>
+
+  </body>
+</html>
+
+</metal:page>
