@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled
+  [CorySanin]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
