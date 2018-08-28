@@ -165,12 +165,12 @@
     />
 
   <browser:page
-      name="add-clone-type"
-      for="plone.app.dexterity.interfaces.ITypesContext"
-      template="templates/add-content-type.pt"
-      permission="plone.schemaeditor.ManageSchemata"
-      layer="..interfaces.ICastleLayer"
-      />
+    name="add-clone-type"
+    for="plone.app.dexterity.interfaces.ITypesContext"
+    template="templates/add-content-type.pt"
+    permission="plone.schemaeditor.ManageSchemata"
+    layer="..interfaces.ICastleLayer"
+    />
 
   <!--@@dexterity-types-->
   <browser:page
@@ -180,6 +180,13 @@
       permission="plone.schemaeditor.ManageSchemata"
       layer="..interfaces.ICastleLayer"
       />
+  <browser:page
+    for="plone.app.contenttypes.interfaces.IImage"
+    name="imageinfo"
+    class=".imageinfo.ImageInfoView"
+    permission="zope2.View"
+    layer="..interfaces.ICastleLayer"
+    />
 
   <!-- icon views -->
   <browser:page
@@ -423,6 +430,14 @@
     layer="..interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="fields"
+    for="plone.app.dexterity.interfaces.ITypeSchemaContext"
+    class=".fields.TypeFieldsPage"
+    permission="plone.schemaeditor.ManageSchemata"
+    layer="..interfaces.ICastleLayer"
+    />
+
 
   <!-- registration overrides -->
   <browser:page
@@ -588,6 +603,12 @@
     name="finished-tour"
     for="plone.app.layout.navigation.interfaces.INavigationRoot"
     class=".tour.FinishView"
+    permission="zope2.View"
+    />
+  <browser:page
+    name="toggle-advanced"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    template="templates/toggle-advanced.pt"
     permission="zope2.View"
     />
   <browser:page
