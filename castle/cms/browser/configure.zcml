@@ -414,6 +414,14 @@
     layer="..interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="fields"
+    for="plone.app.dexterity.interfaces.ITypeSchemaContext"
+    class=".fields.TypeFieldsPage"
+    permission="plone.schemaeditor.ManageSchemata"
+    layer="..interfaces.ICastleLayer"
+    />
+
 
   <!-- registration overrides -->
   <browser:page
@@ -579,6 +587,12 @@
     name="finished-tour"
     for="plone.app.layout.navigation.interfaces.INavigationRoot"
     class=".tour.FinishView"
+    permission="zope2.View"
+    />
+  <browser:page
+    name="toggle-advanced"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    template="templates/toggle-advanced.pt"
     permission="zope2.View"
     />
   <browser:page

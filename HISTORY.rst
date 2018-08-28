@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled
+  [CorySanin]
+
 - add info and warnings for missing REDIS_SERVER env var
   [tkimnguyen]
 
