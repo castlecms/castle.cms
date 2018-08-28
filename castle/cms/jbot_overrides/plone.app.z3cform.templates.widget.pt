@@ -26,7 +26,7 @@
             i18n:translate=""
             tal:content="structure description"
             tal:condition="python:description and not hidden and
-                           context.request.URL.split('/')[-1] in ('@@edit', '@@fields')"
+                           '@@' in context.request.URL.split('/')[-1]"
             >field description
         </span>
     </label>
