@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Hide field descriptions for custom content type views
+  [CorySanin]
+
 - add info and warnings for missing REDIS_SERVER env var
   [tkimnguyen]
 
