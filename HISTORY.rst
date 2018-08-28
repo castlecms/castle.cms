@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- add info and warnings for missing REDIS_SERVER env var
+  [tkimnguyen]
+
 - add copyright year to footer of new sites at create time
   [tkimnguyen]
 
