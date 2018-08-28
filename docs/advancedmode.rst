@@ -9,8 +9,11 @@ Toggling Advanced Mode
 ----------------------
 
 Currently, to toggle Advanced Mode, there's a button on the Dexterity type list page. It
-is located there for now since everything that it shows/hides is related to Dextirity,
+is located there for now since everything that it shows/hides is related to Dexterity,
 but that could change.
+
+The setting is stored locally as a cookie (castlecms-advanced). It will persist even after
+a user logs out. But it needs to be re-enabled when switching to a new computer/browser.
 
 Elements Revealed by Enabling Advanced Mode
 -------------------------------------------
