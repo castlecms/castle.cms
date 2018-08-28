@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- The button for creating a custom content type now default to cloning an existing content type.
+  [CorySanin]
+
 - Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled
   [CorySanin]
 
