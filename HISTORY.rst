@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- handle Celery connection errors in Tasks control panel
+  [tkimnguyen]
+
 - Rearranged image tile settings, clarified terminology
   [CorySanin]
 
