@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- Hide field descriptions for custom content type views
+  [CorySanin]
+
 - Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled
   [CorySanin]
 
