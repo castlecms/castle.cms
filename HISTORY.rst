@@ -8,6 +8,9 @@ Changelog
 - add copyright year to footer of new sites at create time
   [tkimnguyen]
 
+- handle Celery connection errors in Tasks control panel
+  [tkimnguyen]
+
 - Rearranged image tile settings, clarified terminology
   [CorySanin]
 

@@ -8,11 +8,27 @@ class CeleryControlPanel(BrowserView):
 
     def info(self):
         ins = inspect()
+        try:
+            ping = ins.ping()
+        except:
+            ping = ''
+        try:
+            active = ins.active()
+        except:
+            active = ''
+        try:
+            reserved = ins.reserved()
+        except:
+            reserved = ''
+        try:
+            stats = ins.stats()
+        except:
+            stats = ''
         return {
-            'workers': ins.ping(),
-            'active': ins.active(),
-            'reserved': ins.reserved(),
-            'stats': ins.stats()
+            'workers': ping,
+            'active': active,
+            'reserved': reserved,
+            'stats': stats
         }
 
     def get_task_name(self, _id):
