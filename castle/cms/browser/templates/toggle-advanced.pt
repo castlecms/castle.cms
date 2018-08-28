@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    tal:define="portal_state context/@@plone_portal_state;
+        lang portal_state/language;"
+    i18n:domain="plone"
+    tal:attributes="lang lang;">
+    <head>
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+      <script type="text/javascript">
+        var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)castlecms-advanced\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        var updateCookie = (cookieValue == 1)?'castlecms-advanced=0':'castlecms-advanced=1';
+        var oldCookie = (cookieValue != 1)?'castlecms-advanced=0':'castlecms-advanced=1';
+        var destination = document.referrer;
+        if(destination && destination.indexOf('${context/absolute_url}') !== -1){
+          destination = destination.replace(oldCookie,updateCookie);
+        }
+        else{
+          destination = '${context/absolute_url}/';
+        }
+        if(destination.indexOf('?') === -1){
+          destination += '?'+updateCookie;
+        }
+        document.cookie = updateCookie;
+        window.location.href = destination
+      </script>
+    </head>
+    <body>
+      <noscript>You need to have javascript enabled to toggle this setting.</noscript>
+    </body>
+</html>

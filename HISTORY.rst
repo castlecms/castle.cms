@@ -8,6 +8,9 @@ Changelog
 - Hide field descriptions for custom content type views
   [CorySanin]
 
+- Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled
+  [CorySanin]
+
 - add info and warnings for missing REDIS_SERVER env var
   [tkimnguyen]
 
