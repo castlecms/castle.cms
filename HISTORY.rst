@@ -5,6 +5,9 @@ Changelog
 2.0.46 (unreleased)
 -------------------
 
+- The button for creating a custom content type now defaults to cloning an existing one
+  [CorySanin]
+  
 - Hide field descriptions for custom content type views
   [CorySanin]
 

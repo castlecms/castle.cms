@@ -165,6 +165,22 @@
     />
 
   <browser:page
+    name="add-clone-type"
+    for="plone.app.dexterity.interfaces.ITypesContext"
+    template="templates/add-content-type.pt"
+    permission="plone.schemaeditor.ManageSchemata"
+    layer="..interfaces.ICastleLayer"
+    />
+
+  <!--@@dexterity-types-->
+  <browser:page
+      name="edit"
+      for="plone.app.dexterity.interfaces.ITypesContext"
+      class=".types.TypesListingPage"
+      permission="plone.schemaeditor.ManageSchemata"
+      layer="..interfaces.ICastleLayer"
+      />
+  <browser:page
     for="plone.app.contenttypes.interfaces.IImage"
     name="imageinfo"
     class=".imageinfo.ImageInfoView"
