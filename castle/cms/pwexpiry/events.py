@@ -8,19 +8,19 @@ from zope.interface import implements
 
 
 class ValidPasswordEntered(ObjectEvent):
-    """A user enetered a valid password
+    """A user entered a valid password
     """
     implements(IValidPasswordEntered)
 
 
 class InvalidPasswordEntered(ObjectEvent):
-    """A user enetered an invalid password
+    """A user entered an invalid password
     """
     implements(IInvalidPasswordEntered)
 
 
 class UserUnlocked(object):
-    """An user has been unlocked from the control panel tool
+    """A user has been unlocked from the control panel tool
     """
     implements(IUserUnlocked)
 

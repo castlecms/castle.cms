@@ -168,6 +168,7 @@
 
                         <td class="actions"
                             tal:define="whitelisted python: pwxwhitelist and user['id'] in pwxwhitelist;
+                                        togglewlbtnval python: 'remove this user from' if whitelisted else 'add this user to';
                                         togglewlbtntxt python: 'Remove from Whitelist' if whitelisted else 'Add to Whitelist'">
                           <button tal:condition="user/can_set_password|nothing"
                                   class="plone-btn plone-btn-default plone-btn-xs
@@ -186,6 +187,7 @@
                                   tal:condition="pwexpiry_enabled"
                                   data-userid="${user/id}"
                                   data-login="${user/login}"
+                                  tal:attributes="value togglewlbtnval"
                                   tal:content="togglewlbtntxt">Toggle Whitelist</button>
                           <button class="plone-btn plone-btn-warning plone-btn-xs
                                          castle-btn-disable-user"

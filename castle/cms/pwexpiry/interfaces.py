@@ -6,7 +6,7 @@ from zope.interface import Attribute, Interface
 
 class ICustomPasswordValidator(Interface):
     """
-    Enables to define custom validators for the password
+    Defines custom validators for the password
     chosen by the users.
     """
 
