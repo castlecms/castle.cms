@@ -7,8 +7,8 @@ Changelog
 
 - The button for creating a custom content type now defaults to cloning an existing one
   [CorySanin]
-  
-- Hide field descriptions for custom content type views
+
+- Hide field descriptions when not logged in
   [CorySanin]
 
 - Hide the Edit XML button from the Dexterity fields page unless "advanced mode" is enabled

@@ -20,6 +20,7 @@
         <span class="required horizontal" title="Required"
               tal:condition="python:widget.required and widget.mode == 'input'"
               i18n:attributes="title title_required;">&nbsp;</span>
+
         <span class="formHelp"
             tal:define="description widget/field/description"
             i18n:translate=""
