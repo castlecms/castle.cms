@@ -118,8 +118,8 @@
                     <tr tal:define="oddrow repeat/user/odd;
                                     userid user/userid;
                                     userquery python:view.makeQuery(userid=userid);
-                                    assigned_roles python: [r for r in portal_roles if user['roles'][r]['inherited'] or user['roles'][r]['explicit']];
                                     group_roles python: [r for r in portal_roles if user['roles'][r]['inherited']];
+                                    assigned_roles python: group_roles + [r for r in portal_roles if r not in group_roles and user['roles'][r]['explicit']];
                                     pwexpiry_enabled context/portal_registry/plone.pwexpiry_enabled;
                                     pwxwhitelist context/portal_registry/plone.pwexpiry_whitelisted_users"
                         class="${python: not assigned_roles and 'disabled'}">
@@ -187,7 +187,8 @@
                                   tal:condition="pwexpiry_enabled"
                                   data-userid="${user/id}"
                                   data-login="${user/login}"
-                                  tal:attributes="value togglewlbtnval"
+                                  tal:attributes="value togglewlbtnval;
+                                                  title string:${python:togglewlbtnval.capitalize()} the password expiration whitelist"
                                   tal:content="togglewlbtntxt">Toggle Whitelist</button>
                           <button class="plone-btn plone-btn-warning plone-btn-xs
                                          castle-btn-disable-user"

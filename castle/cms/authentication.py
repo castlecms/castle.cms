@@ -118,8 +118,8 @@ class Authenticator(object):
         return code
 
     def authenticate(self, username=None, password=None, country=None, login=True):
-        """
-        return true if successfull
+        """return true if successfull
+        login: if a successful authentication should result in the user being logged in
         """
         if not self.is_zope_root:
             manager = LockoutManager(self.context, username)
