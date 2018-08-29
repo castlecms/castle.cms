@@ -20,12 +20,11 @@
         <span class="required horizontal" title="Required"
               tal:condition="python:widget.required and widget.mode == 'input'"
               i18n:attributes="title title_required;">&nbsp;</span>
-        <?python from plone.api.user import is_anonymous ?>
         <span class="formHelp"
             tal:define="description widget/field/description"
             i18n:translate=""
             tal:content="structure description"
-            tal:condition="python:description and not hidden and not is_anonymous()"
+            tal:condition="python:description and not hidden and hasattr(request.AUTHENTICATED_USER, '_roles')"
             >field description
         </span>
     </label>
