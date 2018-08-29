@@ -26,7 +26,8 @@
             i18n:translate=""
             tal:content="structure description"
             tal:condition="python:description and not hidden and
-                           context.request.URL.split('/')[-1] in ('@@edit', '@@fields')"
+                           hasattr(request, 'AUTHENTICATED_USER') and
+                           hasattr(request.AUTHENTICATED_USER, '_roles')"
             >field description
         </span>
     </label>
