@@ -269,7 +269,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             'url': self.this_url,
             'selector': '#query-results-%s' % self.id or ''
         }
-        return json.dumps(config)
+        
+        out = '{}'
+        try:
+            out = json.dumps(config)
+        except UnicodeError:
+            try:
+                out = json.dumps(config, ensure_ascii=False)
+            except UnicodeError:
+                return '{}'
+        return out
 
 
 class IQueryListingTileSchema(model.Schema):
