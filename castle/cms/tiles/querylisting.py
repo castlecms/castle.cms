@@ -275,9 +275,11 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             out = json.dumps(config)
         except UnicodeError:
             try:
+                # try to gracefully smooth over any unicode errors
                 out = json.dumps(config, ensure_ascii=False)
             except UnicodeError:
-                return '{}'
+                # It still didn't work. Let's just return an empty object
+                pass
         return out
 
 
