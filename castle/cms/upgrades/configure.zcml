@@ -47,5 +47,19 @@
       destination="2041"
       handler=".upgrade_2_0_41.upgrade"
       profile="castle.cms:default"/>
+  <genericsetup:registerProfile
+      name="2_0_46"
+      title="CastleCMS upgrade to 2.0.46 profile"
+      directory="../profiles/2_0_46"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:upgradeStep
+      title="Upgrade Castle to 2.0.46"
+      description=""
+      source="*"
+      destination="2046"
+      handler=".upgrade_2_0_46.upgrade"
+      profile="castle.cms:default"/>
 
 </configure>

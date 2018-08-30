@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <records interface="castle.cms.interfaces.ISecuritySchema"
+           prefix="plone" />
+
+  <record name="plone.pwexpiry_whitelisted_users">
+        <field type="plone.registry.field.List">
+            <title>Whitelisted users</title>
+            <description>Users that won't have passwords expire.</description>
+            <value_type type="plone.registry.field.TextLine"/>
+        </field>
+  </record>
+</registry>
