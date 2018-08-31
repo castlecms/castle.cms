@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<import-steps>
+    <import-step
+        id="pwexpiry_various"
+        version="0.1"
+        handler="castle.cms.pwexpiry.setuphandlers.import_various"
+        title="PwExpiryPlugin">
+    </import-step>
+</import-steps>

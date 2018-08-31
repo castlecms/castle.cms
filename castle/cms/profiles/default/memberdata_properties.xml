@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<object name="portal_memberdata" meta_type="Plone Memberdata Tool">
+    <property name="reset_password_required" type="boolean">False</property>
+    <property name="reset_password_time" type="float">0</property>
+    <property name="password_date" type="date">2000/01/01</property>
+    <property name="password_history" type="lines"></property>
+</object>

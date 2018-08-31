@@ -1,0 +1,37 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    i18n_domain="castle.cms.pwexpiry">
+
+  <five:registerPackage package="." initialize=".initialize" />
+  <i18n:registerTranslations directory="locales" />
+
+  <include package="Products.CMFCore" file="permissions.zcml" />
+
+  <include package="collective.monkeypatcher" />
+
+    <subscriber
+        for="Products.CMFCore.interfaces.IMemberData
+             .interfaces.IValidPasswordEntered"
+        handler=".subscriber.ValidPasswordEntered"
+        />
+
+    <monkey:patch
+      description="This works around password validation patches not working"
+      class="Products.CMFPlone.RegistrationTool.RegistrationTool"
+      original="testPasswordValidity"
+      replacement=".patches.extended_testPasswordValidity"
+      />
+
+  <adapter
+      name="your_package_password_history"
+      factory="castle.cms.pwexpiry.password_history_validator.PasswordHistoryValidator"
+      provides="castle.cms.pwexpiry.interfaces.ICustomPasswordValidator"
+      for="zope.interface.Interface"
+      />
+
+</configure>

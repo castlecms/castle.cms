@@ -21,6 +21,7 @@
   <include package="collective.documentviewer" />
   <include package="castle.theme" />
   <include package="collective.elasticsearch" />
+  <include package=".pwexpiry" />
 
   <!-- uncomment to do profile code
     <include package="collective.profiler" />

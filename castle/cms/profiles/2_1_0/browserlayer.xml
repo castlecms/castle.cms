@@ -1,9 +1,5 @@
 <layers>
   <layer
-    name="castle.cms"
-    interface="castle.cms.interfaces.ICastleLayer"
-    />
-  <layer
     name="castle.cms.pwexpiry"
     interface="castle.cms.pwexpiry.interfaces.ICollectivePWExpiryLayer" />
 </layers>

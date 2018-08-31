@@ -15,7 +15,7 @@ class IAuthenticator(Interface):
     def login(user):
         pass
 
-    def authenticate(username=None, password=None, country=None):
+    def authenticate(username=None, password=None, country=None, login=True):
         pass
 
     def issue_2factor_code(username):

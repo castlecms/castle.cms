@@ -143,6 +143,27 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         )
     )
 
+    pwexpiry_enabled = schema.Bool(
+        title=u'Enable Password Expiration',
+        description=u'Toggle whether or not password expiration \
+        and password history are enabled.',
+        default=False
+    )
+
+    pwexpiry_validity_period = schema.Int(
+        title=u'Password Validity Period',
+        description=u'Number of days for password validity \
+        (set to 0 to disable).',
+        default=180
+    )
+
+    pwexpiry_password_history_size = schema.Int(
+        title=u'Password History Size',
+        description=u'Number of already chosen passwords \
+        that must not be re-used (set to 0 to disable).',
+        default=5
+    )
+
     public_url = schema.TextLine(
         title=u'Public site URL',
         description=u'The URL the public will use to view your site.',

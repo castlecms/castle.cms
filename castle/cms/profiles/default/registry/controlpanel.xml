@@ -19,6 +19,14 @@
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
+  <record name="plone.pwexpiry_whitelisted_users">
+        <field type="plone.registry.field.List">
+            <title>Whitelisted users</title>
+            <description>Users that won't have passwords expire.</description>
+            <value_type type="plone.registry.field.TextLine"/>
+        </field>
+  </record>
+
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"
           field="globally_enabled">

@@ -119,7 +119,9 @@
                                     userid user/userid;
                                     userquery python:view.makeQuery(userid=userid);
                                     assigned_roles python: [r for r in portal_roles if user['roles'][r]['inherited'] or user['roles'][r]['explicit']];
-                                    group_roles python: [r for r in portal_roles if user['roles'][r]['inherited']]"
+                                    group_roles python: [r for r in portal_roles if user['roles'][r]['inherited']];
+                                    pwexpiry_enabled python:False if 'plone.pwexpiry_enabled' not in context.portal_registry else context.portal_registry['plone.pwexpiry_enabled'];
+                                    pwxwhitelist python:[] if 'plone.pwexpiry_whitelisted_users' not in context.portal_registry else context.portal_registry['plone.pwexpiry_whitelisted_users']"
                         class="${python: not assigned_roles and 'disabled'}">
 
                         <td>
@@ -164,7 +166,10 @@
                           Disabled
                         </td>
 
-                        <td class="actions">
+                        <td class="actions"
+                            tal:define="whitelisted python: pwxwhitelist and user['id'] in pwxwhitelist;
+                                        togglewlbtnval python: 'remove this user from' if whitelisted else 'add this user to';
+                                        togglewlbtntxt python: 'Remove from Whitelist' if whitelisted else 'Add to Whitelist'">
                           <button tal:condition="user/can_set_password|nothing"
                                   class="plone-btn plone-btn-default plone-btn-xs
                                          castle-btn-reset-password"
@@ -176,6 +181,15 @@
                                   type="button" tal:condition="assigned_roles"
                                   data-userid="${user/id}"
                                   data-login="${user/login}">Reset login attempts</button>
+                          <button class="plone-btn plone-btn-default plone-btn-xs
+                                         castle-btn-togglewhitelist"
+                                  type="button" tal:condition="assigned_roles"
+                                  tal:condition="pwexpiry_enabled"
+                                  data-userid="${user/id}"
+                                  data-login="${user/login}"
+                                  tal:attributes="value togglewlbtnval;
+                                                  title string:${python:togglewlbtnval.capitalize()} the password expiration whitelist"
+                                  tal:content="togglewlbtntxt">Toggle Whitelist</button>
                           <button class="plone-btn plone-btn-warning plone-btn-xs
                                          castle-btn-disable-user"
                                   type="button" tal:condition="assigned_roles"
