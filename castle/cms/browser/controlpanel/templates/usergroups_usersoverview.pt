@@ -120,8 +120,8 @@
                                     userquery python:view.makeQuery(userid=userid);
                                     assigned_roles python: [r for r in portal_roles if user['roles'][r]['inherited'] or user['roles'][r]['explicit']];
                                     group_roles python: [r for r in portal_roles if user['roles'][r]['inherited']];
-                                    pwexpiry_enabled context/portal_registry/plone.pwexpiry_enabled;
-                                    pwxwhitelist context/portal_registry/plone.pwexpiry_whitelisted_users"
+                                    pwexpiry_enabled python:False if 'plone.pwexpiry_enabled' not in context.portal_registry else context.portal_registry['plone.pwexpiry_enabled'];
+                                    pwxwhitelist python:[] if 'plone.pwexpiry_whitelisted_users' not in context.portal_registry else context.portal_registry['plone.pwexpiry_whitelisted_users']"
                         class="${python: not assigned_roles and 'disabled'}">
 
                         <td>
