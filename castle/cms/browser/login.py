@@ -191,10 +191,10 @@ The user requesting this access logged this information:
     '''
     def pwexpiry(self, user):
         registry = self.get_registry()
-        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
-        validity_period = registry['plone.pwexpiry_validity_period']
+        pwexpiry_enabled = api.portal.get_registry_record('plone.pwexpiry_enabled', default=False)
+        validity_period = api.portal.get_registry_record('plone.pwexpiry_validity_period', default=0)
         if pwexpiry_enabled and validity_period > 0:
-            whitelist = registry['plone.pwexpiry_whitelisted_users']
+            whitelist = api.portal.get_registry_record('plone.pwexpiry_whitelisted_users', default=[])
             whitelisted = whitelist and user.getId() in whitelist
             if not whitelisted:
                 password_date = user.getProperty(

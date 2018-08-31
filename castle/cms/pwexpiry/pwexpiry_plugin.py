@@ -66,14 +66,15 @@ class PwExpiryPlugin(BasePlugin):
             return None
 
         registry = getUtility(IRegistry)
-        pwexpiry_enabled = registry['plone.pwexpiry_enabled']
-        validity_period = registry['plone.pwexpiry_validity_period']
+        pwexpiry_enabled = api.portal.get_registry_record('plone.pwexpiry_enabled', default=False)
+        validity_period = api.portal.get_registry_record('plone.pwexpiry_validity_period', default=0)
         if validity_period == 0 or not pwexpiry_enabled:
             return None
 
         # Ignore whitelisted
         whitelisted = api.portal.get_registry_record(
-            'plone.pwexpiry_whitelisted_users'
+            'plone.pwexpiry_whitelisted_users',
+            default=[]
         )
         if whitelisted and user.getId() in whitelisted:
             return None
@@ -130,7 +131,8 @@ class PwExpiryPlugin(BasePlugin):
 
         # Remember passwords here
         max_history_pws = api.portal.get_registry_record(
-            'plone.pwexpiry_password_history_size'
+            'plone.pwexpiry_password_history_size',
+            default=0
         )
 
         if max_history_pws == 0:
