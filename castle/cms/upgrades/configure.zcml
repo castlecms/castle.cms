@@ -58,7 +58,7 @@
       title="Upgrade Castle to 2.1.0"
       description=""
       source="*"
-      destination="210"
+      destination="2100"
       handler=".upgrade_2_1_0.upgrade"
       profile="castle.cms:default"/>
 
