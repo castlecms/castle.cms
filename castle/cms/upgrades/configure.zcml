@@ -48,18 +48,18 @@
       handler=".upgrade_2_0_41.upgrade"
       profile="castle.cms:default"/>
   <genericsetup:registerProfile
-      name="2_0_46"
-      title="CastleCMS upgrade to 2.0.46 profile"
-      directory="../profiles/2_0_46"
+      name="2_1_0"
+      title="CastleCMS upgrade to 2.1.0 profile"
+      directory="../profiles/2_1_0"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
   <genericsetup:upgradeStep
-      title="Upgrade Castle to 2.0.46"
+      title="Upgrade Castle to 2.1.0"
       description=""
       source="*"
-      destination="2046"
-      handler=".upgrade_2_0_46.upgrade"
+      destination="210"
+      handler=".upgrade_2_1_0.upgrade"
       profile="castle.cms:default"/>
 
 </configure>

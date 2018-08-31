@@ -3,7 +3,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 
 
-PROFILE_ID = 'profile-castle.cms.upgrades:2_0_46'
+PROFILE_ID = 'profile-castle.cms.upgrades:2_1_0'
 
 
 def upgrade(context, logger=None):
