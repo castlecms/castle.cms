@@ -8,11 +8,13 @@ from castle.cms.interfaces import ISiteSchema
 from castle.cms.utils import get_managers
 from castle.cms.utils import send_email
 from castle.cms.utils import strings_differ
+from castle.cms.pwexpiry.utils import days_since_event
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
 from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
@@ -20,13 +22,14 @@ from ZODB.POSException import ConnectionStateError
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
+from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implements
+from AccessControl import AuthEncoding
+from DateTime import DateTime
 from zope.i18n import translate
-
 import json
 import time
-
 
 class SecureLoginView(BrowserView):
     implements(ISecureLoginAllowedView)
@@ -140,43 +143,89 @@ The user requesting this access logged this information:
         })
 
     def set_password(self):
-        # 1. only set password for logged in user...
-        if api.user.is_anonymous():
-            return json.dumps({
-                'success': False,
-                'message': 'Need to be logged in to reset password'
-            })
-
         acl_users = self.get_tool('acl_users')
 
-        # 2. double check existing password
-        user = acl_users.authenticate(
-            self.username, self.request.form.get('existing_password'),
-            self.request)
+        # 1. Authenticate user
+        authorized, user = self.auth.authenticate(
+            username=self.username,
+            password=self.request.form.get('existing_password'),
+            country=self.get_country_header(),
+            login=False)
 
-        if not user:
+        if not user or not authorized:
             return json.dumps({
                 'success': False,
-                'message': 'Existing password did not match'
+                'message': 'Existing credentials did not match'
             })
 
-        if user.getId() != api.user.get_current().getId():
-            return json.dumps({
-                'success': False,
-                'message': 'Error resetting'
-            })
-
-        # 3. finally, set password
+        # 2. Set password
         newpw = self.request.form.get('new_password')
+
+        registration = getToolByName(self.context, 'portal_registration')
+        err_str = registration.testPasswordValidity(newpw)
+
+        if err_str is not None:
+            return json.dumps({
+                'success': False,
+                'message': translate(err_str)
+            })
 
         mtool = api.portal.get_tool('portal_membership')
         member = mtool.getMemberById(user.getId())
 
         self.auth.change_password(member, newpw)
 
+        self.auth.authenticate(
+            username=self.username,
+            password=newpw,
+            country=self.get_country_header(),
+            login=True)
+
         return json.dumps({
             'success': True
         })
+
+    '''
+    this function is here since the current
+    login form doesn't use PAS for validation.
+    '''
+    def pwexpiry(self, user):
+        registry = self.get_registry()
+        pwexpiry_enabled = api.portal.get_registry_record('plone.pwexpiry_enabled', default=False)
+        validity_period = api.portal.get_registry_record('plone.pwexpiry_validity_period', default=0)
+        if pwexpiry_enabled and validity_period > 0:
+            whitelist = api.portal.get_registry_record('plone.pwexpiry_whitelisted_users', default=[])
+            whitelisted = whitelist and user.getId() in whitelist
+            if not whitelisted:
+                password_date = user.getProperty(
+                    'password_date',
+                    '2000/01/01'
+                )
+                current_time = DateTime()
+                editableUser = api.user.get(username=user.getId())
+                if password_date.strftime('%Y/%m/%d') != '2000/01/01':
+                    since_last_pw_reset = days_since_event(
+                        password_date.asdatetime(),
+                        current_time.asdatetime()
+                    )
+
+                    '''
+                    depending how you intepret the setting, it might make
+                    more sense to check if it's <= 0 instead.
+                    Leaving as strictly LT for now.
+                    '''
+                    if validity_period - since_last_pw_reset < 0:
+                        # Password has expired
+                        editableUser.setMemberProperties({
+                            'reset_password_required': True,
+                            'reset_password_time': time.time()
+                        })
+                        return True
+                else:
+                    editableUser.setMemberProperties({
+                        'password_date': current_time
+                    })
+        return False
 
     def login(self):
         # double check auth code first
@@ -207,15 +256,27 @@ The user requesting this access logged this information:
             authorized, user = self.auth.authenticate(
                 username=self.username,
                 password=self.request.form.get('password'),
-                country=self.get_country_header())
+                country=self.get_country_header(),
+                login=False)
             if authorized:
                 reset_password = user.getProperty(
                     'reset_password_required', False)
+
+                if not self.auth.is_zope_root:
+                    reset_password = reset_password | self.pwexpiry(user)
 
                 resp = {
                     'success': True,
                     'resetpassword': reset_password
                 }
+                if reset_password:
+                    resp['message'] = 'Your password has expired.'
+                else:
+                    authorized, user = self.auth.authenticate(
+                        username=self.username,
+                        password=self.request.form.get('password'),
+                        country=self.get_country_header(),
+                        login=True)
                 try:
                     with api.env.adopt_user(user=user):
                         resp['authenticator'] = createToken()
@@ -327,9 +388,18 @@ The user requesting this access logged this information:
 
     def reset_password(self):
         pw_tool = api.portal.get_tool('portal_password_reset')
+        registration = api.portal.get_tool('portal_registration')
         userid = self.request.form.get('userid')
         randomstring = self.request.form.get('code')
         password = self.request.form.get('password')
+
+        err_str = registration.testPasswordValidity(newpw)
+        if err_str is not None:
+            return json.dumps({
+                'success': False,
+                'message': translate(err_str)
+            })
+
         alsoProvides(self.request, IDisableCSRFProtection)
         try:
             pw_tool.resetPassword(userid, randomstring, password)

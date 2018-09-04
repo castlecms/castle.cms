@@ -55,6 +55,8 @@ class DexterityItem(adapters.DexterityItem):
                 return self.file.getSize()
             except POSKeyError:
                 pass
+            except SystemError:
+                pass
         return 0
 
     @property

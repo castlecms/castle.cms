@@ -70,6 +70,13 @@ class GridView(BaseTileView):
     index = ViewPageTemplateFile('templates/querylisting/grid.pt')
     tile_name = 'querylisting'
 
+class FiveGridView(BaseTileView):
+    name = 'five-grid'
+    label = 'Five Column Grid'
+    preview = '++plone++castle/images/previews/querylisting/grid.png'
+    order = 3
+    index = ViewPageTemplateFile('templates/querylisting/five-grid.pt')
+    tile_name = 'querylisting'
 
 class TiledView(BaseTileView):
     name = 'tiled'
@@ -262,7 +269,18 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             'url': self.this_url,
             'selector': '#query-results-%s' % self.id or ''
         }
-        return json.dumps(config)
+        
+        out = '{}'
+        try:
+            out = json.dumps(config)
+        except UnicodeError:
+            try:
+                # try to gracefully smooth over any unicode errors
+                out = json.dumps(config, ensure_ascii=False)
+            except UnicodeError:
+                # It still didn't work. Let's just return an empty object
+                pass
+        return out
 
 
 class IQueryListingTileSchema(model.Schema):

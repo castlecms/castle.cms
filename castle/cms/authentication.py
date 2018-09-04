@@ -117,9 +117,9 @@ class Authenticator(object):
         })
         return code
 
-    def authenticate(self, username=None, password=None, country=None):
-        """
-        return true if successfull
+    def authenticate(self, username=None, password=None, country=None, login=True):
+        """return true if successfull
+        login: if a successful authentication should result in the user being logged in
         """
         if not self.is_zope_root:
             manager = LockoutManager(self.context, username)
@@ -162,8 +162,9 @@ class Authenticator(object):
                 if reset_time + (24 * 60 * 60) < time.time():
                     raise AuthenticationPasswordResetWindowExpired()
 
-        acl_users.session._setupSession(user.getId(), self.request.response)
-        notify(UserLoggedInEvent(user))
+        if login:
+            acl_users.session._setupSession(user.getId(), self.request.response)
+            notify(UserLoggedInEvent(user))
 
         return True, user
 

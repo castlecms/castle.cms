@@ -354,6 +354,12 @@
     factory=".querylisting.GridView"
     />
   <adapter
+    name="querylisting.five-grid"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.FiveGridView"
+    />
+  <adapter
     name="querylisting.tiled"
     provides="..interfaces.ITileView"
     for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"

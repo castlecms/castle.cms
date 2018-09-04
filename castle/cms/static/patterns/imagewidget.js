@@ -235,7 +235,6 @@ define([
           height: that.state.previewHeight,
           fullHeight: that.props.height,
           focalPoint: that.props.focal_point,
-          pointerOffsetY: -6,
           onFocalSet: function(focal_point){
             that.props.focal_point = focal_point;
             that.setState({

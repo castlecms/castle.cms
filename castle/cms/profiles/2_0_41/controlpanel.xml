@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<object name="portal_controlpanel" meta_type="Plone Control Panel Tool"
+  i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <configlet title="Survey" action_id="SurveyControlPanel"
+                  appId="SurveyControlPanel"
+                  category="plone-content" condition_expr=""
+                  url_expr="string:${portal_url}/@@survey-controlpanel"
+                  visible="True" i18n:attributes="title">
+    <permission>Manage portal</permission>
+  </configlet>
+</object>

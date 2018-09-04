@@ -144,11 +144,12 @@ require([
         } else if(data.resetpassword){
           // need to show reset password form now
           that.setState({
-            state: STATES.CHANGE_PASSWORD,
-            message: 'Login successful.',
-            messageType: 'info',
-            authenticator: data.authenticator
-          });
+              state: STATES.CHANGE_PASSWORD,
+              message: 'Login successful.',
+              messageType: 'info',
+              authenticator: data.authenticator
+            }
+          );
         } else {
           // continue to site
           that.setState({
@@ -166,7 +167,7 @@ require([
       var that = this;
       e.preventDefault();
       that.api({
-        existing_password: that.state.password,
+        existing_password: that.state.password1,
         new_password: that.state.new_password1,
         _authenticator: that.state.authenticator,
         apiMethod: 'set_password'
@@ -359,23 +360,31 @@ require([
         D.h2({ className: 'auth-title' }, 'Change password'),
         D.p({ className: 'auth-description' }, help),
         D.div({ className: 'form-group'}, [
+          D.label({ htmlFor: 'username1' + that.state.counter}, 'Username'),
+          D.input({type: 'text', value: that.state.username, disabled: true,
+                   className: 'form-control', id: 'username1' + that.state.counter})
+        ]),
+        D.div({ className: 'form-group'}, [
           D.label({ htmlFor: 'password1' + that.state.counter}, 'Existing password'),
-          D.input({type: 'password', value: that.state.password, disabled: true,
-                   id: 'password1' + that.state.counter})
+          D.input({type: 'password', value: that.state.password1,
+                   disabled: that.state.state !== STATES.CHANGE_PASSWORD,
+                   className: 'form-control', id: 'password1' + that.state.counter})
         ]),
         D.div({ className: 'form-group'}, [
           D.label({ htmlFor: 'password2' + that.state.counter }, 'New password'),
           D.input({type: 'password', value: that.state.new_password1,
                    className: 'form-control password2', id: 'password2' + that.state.counter,
                    placeholder:'Enter new password', onKeyUp: onKeyUp,
-                   onChange: that.pwChangeValueChanged.bind(that, 'new_password1')})
+                   onChange: that.pwChangeValueChanged.bind(that, 'new_password1'),
+                   disabled: that.state.state !== STATES.CHANGE_PASSWORD})
         ]),
         D.div({ className: 'form-group'}, [
           D.label({ htmlFor: 'password3' + that.state.counter }, 'Confirm new password'),
           D.input({type: 'password', value: that.state.new_password2,
                    className: 'form-control password3', id: 'password3' + that.state.counter,
                    placeholder:'Confirm new password', onKeyUp: onKeyUp,
-                   onChange: that.pwChangeValueChanged.bind(that, 'new_password2')})
+                   onChange: that.pwChangeValueChanged.bind(that, 'new_password2'),
+                   disabled: that.state.state !== STATES.CHANGE_PASSWORD})
         ]),
         D.div({ className: C('buttons')}, [
           D.button({ className: C('login-button') + ' btn btn-primary',
@@ -400,7 +409,9 @@ require([
         D.p({ className: 'auth-description' }, help),
         D.div({ className: C('buttons')}, [
           D.button({ className: C('login-button') + ' btn btn-primary',
-                     onClick: that.request_country_exception }, 'Request access'),
+                     onClick: that.request_country_exception,
+                     disabled: that.state.state !== STATES.COUNTRY_BLOCKED
+                   }, 'Request access'),
         ]),
         message
       ]);

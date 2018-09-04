@@ -2,6 +2,7 @@ from castle.cms.exportimport.frontpagecontent import getTileData
 from castle.cms.interfaces import ICastleLayer
 from castle.cms.interfaces import IGlobalTile
 from castle.cms.tiles.meta import MetaTile
+from DateTime import DateTime
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITileDataManager
@@ -68,7 +69,12 @@ FOOTER_HTML = """
             </div>
         </form>
     </div>
-</div>"""
+    <div class="col-sm-12">
+        <p class="copyright">
+            Copyright <abbr title="Copyright symbol" i18n:name="copyright" i18n:attributes="title title_copyright;">&copy;</abbr> %s by Wildcard Corp.
+        </p> 
+    </div>
+</div>""" % DateTime().year()
 
 
 _tiles_data = {
