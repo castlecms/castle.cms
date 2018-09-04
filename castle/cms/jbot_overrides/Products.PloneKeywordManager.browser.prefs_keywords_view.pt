@@ -189,8 +189,8 @@
                                  onclick string:document.forms['keyword_edit_form'].changeto.value='${subject}';; return true;;" />
           <label tal:content="subject" tal:attributes="for string:subject-${subject_id};">Subject</label>
           <tal:p5 tal:condition="view/is_plone_5">
-            <a href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
-              <span class="icon-search"></span></a>
+            <a class="glyphicon" href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
+              <span class="glyphicon-search"></span></a>
           </tal:p5>
           <tal:p4 tal:condition="not: view/is_plone_5">
             <a href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
@@ -210,8 +210,8 @@
                                      onclick string: document.forms['keyword_edit_form'].changeto.value='${item}';; return true;;" />
               <label tal:content="item" tal:attributes="for string:item-${item_id};">Subject</label>
               <tal:p5 tal:condition="view/is_plone_5">
-                <a href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
-                  <span class="icon-search"></span></a>
+                <a class="glyphicon" href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
+                  <span class="glyphicon-search" class="icon-search"></span></a>
               </tal:p5>
               <tal:p4 tal:condition="not: view/is_plone_5">
                 <a href="#" tal:attributes="href string:${portal_url}/@@search?${field}=${subject_quote}">
@@ -266,9 +266,9 @@
 
   <tal:no_keywords_yet condition="not:catalogSubjects">
     <div i18n:translate="description_no_keywords">
-      No content in this site has any keywords assigned yet, so there's nothing
-      to manage at this time.  (To assign keywords to a piece of content, use
-      the item's "Categorization" tab while editing.)
+      No content in this site has any keywords assigned yet, so there's nothing to manage
+      at this time.  (To assign keywords to a piece of content, while editing, click the
+      properties button. Then switch to the "Categorization" tab.)
     </div>
   </tal:no_keywords_yet>
 
