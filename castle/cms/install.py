@@ -24,6 +24,7 @@ class HiddenProducts(object):
             'plone.session:default',
             'plone.app.multilingual:default',
             'Products.ATContentTypes:default',
+            'Products.PloneKeywordManager:default',
             'archetypes.multilingual:default',
             'plone.app.standardtiles:default',
             'plone.app.tiles:default',
