@@ -8,5 +8,6 @@ PROFILE_ID = 'profile-castle.cms.upgrades:2_1_0'
 
 def upgrade(context, logger=None):
     setup = getToolByName(context, 'portal_setup')
+    setup.runAllImportStepsFromProfile('profile-Products.PloneKeywordManager:default')
     setup.runAllImportStepsFromProfile(PROFILE_ID)
     cookWhenChangingSettings(api.portal.get())
