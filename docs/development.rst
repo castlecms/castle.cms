@@ -25,5 +25,3 @@ resemble the following:
 2) Add an entry in the actions.xml profile file, just like in Plone. However, if your button
    will be adding a modal functionality (not redirecting the browser to another page),
    omit the 'url_expr' value.
-
-3)
