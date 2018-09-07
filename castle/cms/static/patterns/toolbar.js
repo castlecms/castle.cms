@@ -173,7 +173,7 @@ define([
       }
 
       var Component = MenuItem;
-      if(this.state.itemMapping[item.id]){
+      if(this.state.itemMapping !== undefined && this.state.itemMapping[item.id]){
         Component = this.state.itemMapping[item.id];
       }else if(item.modal){
         Component = PatternModalItemFactory(item.modalAttributes);
