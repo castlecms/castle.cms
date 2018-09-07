@@ -7,3 +7,4 @@ CastleCMS
 
    intro.rst
    fragments.rst
+   development.rst
