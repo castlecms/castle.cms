@@ -99,9 +99,10 @@ define([
 
       for( var i = 0; i < items.length; i++) {
         if( items[i].id == val ) {
+          // We've found the value in the vocabulary
           items[i].selected = true;
           found = true;
-          self.hideTextInput = false;
+          self.hideTextInput = true;
         }
 
         if( items[i].id == 'other' ) {
@@ -117,6 +118,7 @@ define([
 
       if( !found ) {
         items[other].selected = true;
+        self.hideTextInput = false;
 
         // need to temporarily change the value to
         // 'other' so the select2 box will render the
