@@ -166,6 +166,8 @@ class BaseImportType(object):
             **data)
 
     def post_creation(self, obj):
+        if obj is None:
+            return
         field_data = self.field_data
         bdata = ILayoutAware(obj, None)
         if bdata:
@@ -340,6 +342,8 @@ class BaseImportType(object):
                 else:
                     if not isinstance(im_obj, Image):
                         print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+                    else:
+                        setattr(obj.image, 'filename', filename)
 
                 if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
