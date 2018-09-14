@@ -43,7 +43,7 @@ parser.add_argument('--stop-if-exception', dest='stop_if_exception', default=Fal
 parser.add_argument('--pdb-if-exception', dest='pdb_if_exception', default=False)
 parser.add_argument('--skip-existing', dest='skip_existing', default=True)
 parser.add_argument('--skip-transitioning', dest='skip_transitioning', default=False)
-parser.add_argument('--skip-types', dest='skip_types', default="collective.cover.content,FormFolder,FormMailerAdapter,FormTextField,FormStringField,FormThanksPage,FormSaveDataAdapter")
+parser.add_argument('--skip-types', dest='skip_types', default="collective.cover.content,FormFolder,FormMailerAdapter,FormTextField,FormStringField,FormThanksPage,FormSaveDataAdapter,FormSelectionField")
 args, _ = parser.parse_known_args()
 
 ignore_uuids = args.ignore_uuids
@@ -343,8 +343,7 @@ def import_pages(path, count=0):
                 logger.error('Error importing object', exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        if filepath.find('transparency/transparency-pledge')==-1: # TODO hack skip this annoying object
-                            import pdb;pdb.set_trace()
+                        import pdb;pdb.set_trace()
                     raise
     return count
 

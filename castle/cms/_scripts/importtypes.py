@@ -339,12 +339,12 @@ class BaseImportType(object):
                 is_stringio = isinstance(im_obj, StringIO)
                 if is_stringio:
                     namedblobimage_data = im_data
-                else:
+                elif isinstance(im_obj, Image):
                     namedblobimage_data = im_data.data
-                obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
-                if not isinstance(im_obj, Image):
+                else:
                     import pdb;pdb.set_trace()
                     print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+                obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
                 if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
