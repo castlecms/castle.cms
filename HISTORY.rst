@@ -35,6 +35,9 @@ Changelog
 - import script fixes
   [tkimnguyen]
 
+- import script fixes
+  [tkimnguyen]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
