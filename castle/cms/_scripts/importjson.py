@@ -220,8 +220,13 @@ def fix_html_images(obj):
 
 def import_object(filepath, count):
     fi = open(filepath)
-    data = mjson.loads(fi.read())
+    file_read = fi.read()
     fi.close()
+    try:
+        data = mjson.loads(file_read)
+    except:
+        print("    unable to read JSON data; skipping")
+        return
     if filepath.endswith('__folder__'):
         filepath = '/'.join(filepath.split('/')[:-1])
 
@@ -283,8 +288,6 @@ def import_object(filepath, count):
                         import pdb;pdb.set_trace()
                     raise
                 return logger.error('Error creating content {}'.format(filepath), exc_info=True)
-            # TODO set uid
-            import pdb;pdb.set_trace()
         # TODO set version history dates
         # TODO check default folder pages came over as folder with rich text tile
         # TODO any folder pages without default page should have content listing tile
