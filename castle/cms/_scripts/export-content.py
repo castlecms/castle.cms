@@ -473,12 +473,21 @@ class ContentExporter(object):
             state = workflow.getInfoFor(ob=self.obj, name='review_state')
         except:
             state = None
+
+        try:
+            review_history = workflow.getInfoFor(ob=self.obj, name='review_history')
+        except:
+            review_history = []
+        for h in review_history:
+            h['time'] = h['time'].HTML4()
+
         return {
             'portal_type': self.obj.portal_type,
             'layout': self.obj.getLayout(),
             'uid': get_uid(self.obj),
             'is_default_page': is_dp,
             'state': state,
+            'review_history' : review_history,
             'has_sibling_pages': has_sibling_pages
         }
 
@@ -658,7 +667,11 @@ def run_export(brains):
     for idx, brain in enumerate(brains):
         path = brain.getPath()
         print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
-        obj = brain.getObject()
+        try:
+            obj = brain.getObject()
+        except:
+            print('skipping - error getting object, ', path, ' ', str(idx + 1) + '/' + str(size))
+            continue
         for obj, data in export_obj(obj):
             write_export(obj, data)
 

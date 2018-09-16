@@ -288,9 +288,19 @@ def import_object(filepath, count):
                         import pdb;pdb.set_trace()
                     raise
                 return logger.error('Error creating content {}'.format(filepath), exc_info=True)
-        # TODO set version history dates
+        # TODO set review_history
+        review_history = data['review_history']
+        wtool = api.portal.get_tool(name='portal_workflow')
+        chain = wtool.getChainFor(obj)
+        if len(chain) != 1:
+            return logger.warning('There should be only one workflow for this object %s but there are %s' % (obj, len(chain)))
+        workflow_id = chain[0]
+        for h in review_history:
+            wtool.setStatusOf(workflow_id, obj, h)
+
         # TODO check default folder pages came over as folder with rich text tile
         # TODO any folder pages without default page should have content listing tile
+        # TODO get lead image captions
     else:
         obj = folder[_id]
         for key, value in creation_data.items():
