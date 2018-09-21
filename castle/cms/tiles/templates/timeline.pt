@@ -1,3 +1,7 @@
 <div style="padding:5px;">
-    <a class='pat-timeline' data-dnt='true' data-pat-timeline='${view/patternOptions}' href='#' />
+    <a tal:attributes="data-height view/height;
+                       data-theme view/theme;
+                       href view/embed_url;"
+      class="twitter-timeline" data-height="200" data-theme="light" href="#"></a>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
