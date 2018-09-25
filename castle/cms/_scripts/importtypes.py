@@ -166,6 +166,8 @@ class BaseImportType(object):
             **data)
 
     def post_creation(self, obj):
+        if obj is None:
+            return
         field_data = self.field_data
         bdata = ILayoutAware(obj, None)
         if bdata:
@@ -336,10 +338,13 @@ class BaseImportType(object):
 
                 is_stringio = isinstance(im_obj, StringIO)
                 if is_stringio:
-                    obj.image = NamedBlobImage(data=im_data, contentType='', filename=filename)
+                    namedblobimage_data = im_data
+                elif isinstance(im_obj, Image):
+                    namedblobimage_data = im_data.data
                 else:
-                    if not isinstance(im_obj, Image):
-                        print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+                    import pdb;pdb.set_trace()
+                    print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+                obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
                 if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
