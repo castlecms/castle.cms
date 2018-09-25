@@ -41,6 +41,7 @@ parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
 parser.add_argument('--stop-if-exception', dest='stop_if_exception', default=False)
 parser.add_argument('--pdb-if-exception', dest='pdb_if_exception', default=False)
+parser.add_argument('--skip-existing', dest='skip_existing', default=False)
 args, _ = parser.parse_known_args()
 
 stop_if_exception = args.stop_if_exception
@@ -106,15 +107,18 @@ def recursive_create_path(path):
                         creation_data = importtype.get_data()
                         creation_data['container'] = folder
                         creation_data['id'] = part
-                        try:
-                            folder = api.content.create(**creation_data)
-                        except api.exc.InvalidParameterError:
-                            logger.error('Error creating content {}'.format(fpath), exc_info=True)
-                            if stop_if_exception:
-                                if pdb_if_exception:
-                                    import pdb;pdb.set_trace()
-                                raise
-                            return
+                        if args.skip_existing and part in folder.objectIds():
+                            print("    skipping existing %s" % part)
+                        else:
+                            try:
+                                folder = api.content.create(**creation_data)
+                            except api.exc.InvalidParameterError:
+                                logger.error('Error creating content {}'.format(fpath), exc_info=True)
+                                if stop_if_exception:
+                                    if pdb_if_exception:
+                                        import pdb;pdb.set_trace()
+                                    raise
+                                return
                         importtype.post_creation(folder)
                         if data['state']:
                             try:
@@ -128,13 +132,17 @@ def recursive_create_path(path):
                                 #pass
                         folder.reindexObject()
                     else:
-                        folder = api.content.create(
-                            type='Folder',
-                            id=part,
-                            title=part.capitalize(),
-                            container=folder)
-                        bdata = ILayoutAware(folder)
-                        bdata.contentLayout = '++contentlayout++castle/folder-query.html'
+                        if args.skip_existing and part in folder.objectIds():
+                            print("    skipping existing %s" % part)
+                        else:
+                            print("    creating folder %s" % part)
+                            folder = api.content.create(
+                                type='Folder',
+                                id=part,
+                                title=part.capitalize(),
+                                container=folder)
+                            bdata = ILayoutAware(folder)
+                            bdata.contentLayout = '++contentlayout++castle/folder-query.html'
     return folder
 
 
@@ -219,8 +227,10 @@ def import_object(filepath, count):
             if data['portal_type'] == 'Folder':
                 cnt = folder[_id]
                 if len(folder.objectIds()) == 1 or len(cnt.objectIds()) == 0:
+                    print("    deleting folder %s" % _id)
                     api.content.delete(folder[_id])
             else:
+                print("    deleting folder %s" % _id)
                 api.content.delete(folder[_id])
         else:
             create = False
@@ -243,15 +253,18 @@ def import_object(filepath, count):
     if create:
         if args.ignore_uuids and '_plone.uuid' in creation_data:
             del creation_data['_plone.uuid']
-        try:
-            obj = api.content.create(safe_id=True, **creation_data)
-        except api.exc.InvalidParameterError:
-            if stop_if_exception:
-                logger.error('Error creating content {}'.format(filepath), exc_info=True)
-                if pdb_if_exception:
-                    import pdb;pdb.set_trace()
-                raise
-            return logger.error('Error creating content {}'.format(filepath), exc_info=True)
+        if args.skip_existing and _id in folder.objectIds():
+            print ("    skipping existing %s" % _id)
+        else:
+            try:
+                obj = api.content.create(safe_id=True, **creation_data)
+            except api.exc.InvalidParameterError:
+                if stop_if_exception:
+                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
+                    raise
+                return logger.error('Error creating content {}'.format(filepath), exc_info=True)
         # TODO set uid
     else:
         obj = folder[_id]
@@ -268,6 +281,7 @@ def import_object(filepath, count):
     importtype.post_creation(obj)
     if data['state']:
         try:
+            print("    transitioning %s to %s" % (obj.id, data['state']))
             api.content.transition(obj, to_state=data['state'])
         except:
             logger.error("maybe workflows do not match up")
