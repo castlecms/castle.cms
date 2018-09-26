@@ -5,6 +5,9 @@ Changelog
 2.1 (unreleased)
 ----------------
 
+- Add support for the Subject:list search parameter
+  [CorySanin]
+
 - Add password expiration option with whitelist
   [CorySanin]
 
