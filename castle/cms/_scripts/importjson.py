@@ -34,12 +34,26 @@ logger = logging.getLogger('castle.cms')
 
 parser = argparse.ArgumentParser(
     description='...')
-parser.add_argument('--site-id', dest='site_id', default='Plone')
+parser.add_argument('--site-id', dest='site_id', default='Castle')
 parser.add_argument('--export-directory', dest='export_directory', default='export')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
+parser.add_argument('--stop-if-exception', dest='stop_if_exception', default=False)
+parser.add_argument('--pdb-if-exception', dest='pdb_if_exception', default=False)
+parser.add_argument('--skip-existing', dest='skip_existing', default=True)
+parser.add_argument('--skip-transitioning', dest='skip_transitioning', default=False)
+parser.add_argument('--skip-types', dest='skip_types', default="collective.cover.content,FormFolder,FormMailerAdapter,FormTextField,FormStringField,FormThanksPage,FormSaveDataAdapter,FormSelectionField")
 args, _ = parser.parse_known_args()
+
+ignore_uuids = args.ignore_uuids
+stop_if_exception = args.stop_if_exception
+pdb_if_exception = args.pdb_if_exception
+skip_existing = args.skip_existing
+if args.skip_types:
+    skip_types = args.skip_types.split(',')
+else:
+    skip_types = False
 
 user = app.acl_users.getUser(args.admin_user)  # noqa
 try:
@@ -101,27 +115,47 @@ def recursive_create_path(path):
                         creation_data = importtype.get_data()
                         creation_data['container'] = folder
                         creation_data['id'] = part
-                        try:
-                            folder = api.content.create(**creation_data)
-                        except api.exc.InvalidParameterError:
-                            logger.error('Error creating content {}'.format(fpath), exc_info=True)
-                            return
-                        importtype.post_creation(folder)
-                        if data['state']:
+                        created = False
+                        if skip_existing and part in folder.objectIds():
+                            print("    skipping existing %s" % part)
+                        elif skip_types and creation_data['type'] in skip_types:
+                            print("    skipping %s (content type %s)" % (part, creation_data['type']))
+                        else:
                             try:
-                                api.content.transition(folder, to_state=data['state'])
-                            except:
-                                # maybe workflows do not match up
-                                pass
-                        folder.reindexObject()
+                                folder = api.content.create(**creation_data)
+                                created = True
+                            except api.exc.InvalidParameterError:
+                                logger.error('Error creating content {}'.format(fpath), exc_info=True)
+                                if stop_if_exception:
+                                    if pdb_if_exception:
+                                        import pdb;pdb.set_trace()
+                                    raise
+                                return
+                        if created:
+                            importtype.post_creation(folder)
+                            if data['state']:
+                                try:
+                                    api.content.transition(folder, to_state=data['state'])
+                                except:
+                                    logger.error("maybe workflows do not match up")
+                                    if stop_if_exception:
+                                        if pdb_if_exception:
+                                            import pdb;pdb.set_trace()
+                                        raise
+                                    #pass
+                            folder.reindexObject()
                     else:
-                        folder = api.content.create(
-                            type='Folder',
-                            id=part,
-                            title=part.capitalize(),
-                            container=folder)
-                        bdata = ILayoutAware(folder)
-                        bdata.contentLayout = '++contentlayout++castle/folder-query.html'
+                        if skip_existing and part in folder.objectIds():
+                            print("    skipping existing %s" % part)
+                        else:
+                            print("    creating folder %s" % part)
+                            folder = api.content.create(
+                                type='Folder',
+                                id=part,
+                                title=part.capitalize(),
+                                container=folder)
+                            bdata = ILayoutAware(folder)
+                            bdata.contentLayout = '++contentlayout++castle/folder-query.html'
     return folder
 
 
@@ -184,8 +218,13 @@ def fix_html_images(obj):
 
 def import_object(filepath, count):
     fi = open(filepath)
-    data = mjson.loads(fi.read())
+    file_read = fi.read()
     fi.close()
+    try:
+        data = mjson.loads(file_read)
+    except:
+        print("    unable to read JSON data; skipping")
+        return
     if filepath.endswith('__folder__'):
         filepath = '/'.join(filepath.split('/')[:-1])
 
@@ -206,14 +245,21 @@ def import_object(filepath, count):
             if data['portal_type'] == 'Folder':
                 cnt = folder[_id]
                 if len(folder.objectIds()) == 1 or len(cnt.objectIds()) == 0:
+                    print("    deleting folder %s" % _id)
                     api.content.delete(folder[_id])
             else:
+                print("    deleting folder %s" % _id)
                 api.content.delete(folder[_id])
         else:
             create = False
 
     print('import path: %s' % path)
     creation_data = importtype.get_data()
+    # if creation_data['type'] in ['collective.cover.content', 'FormFolder']:
+    if creation_data['type'] in skip_types:
+        print('    skipping omitted type %s' % creation_data['type'])
+        return # skip objects of these types
+
     creation_data['container'] = folder
 
     aspect = ISelectableConstrainTypes(folder, None)
@@ -224,34 +270,63 @@ def import_object(filepath, count):
             aspect.setImmediatelyAddableTypes([creation_data['type']])
 
     if create:
-        if args.ignore_uuids and '_plone.uuid' in creation_data:
+        if ignore_uuids and '_plone.uuid' in creation_data:
             del creation_data['_plone.uuid']
-        try:
-            obj = api.content.create(**creation_data)
-        except api.exc.InvalidParameterError:
-            return logger.error('Error creating content {}'.format(filepath), exc_info=True)
+
+        obj = None
+        if skip_existing and (_id in folder.objectIds() or (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None)):
+            print ("    skipping existing %s" % _id)
+        else:
+            try:
+                obj = api.content.create(safe_id=True, **creation_data)
+            except api.exc.InvalidParameterError:
+                if stop_if_exception:
+                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
+                    raise
+                return logger.error('Error creating content {}'.format(filepath), exc_info=True)
+        # TODO set review_history
+        review_history = data['review_history']
+        wtool = api.portal.get_tool(name='portal_workflow')
+        chain = wtool.getChainFor(obj)
+        if len(chain) != 1:
+            return logger.warning('There should be only one workflow for this object %s but there are %s' % (obj, len(chain)))
+        workflow_id = chain[0]
+        for h in review_history:
+            wtool.setStatusOf(workflow_id, obj, h)
+
+        # TODO check default folder pages came over as folder with rich text tile
+        # TODO any folder pages without default page should have content listing tile
+        # TODO get lead image captions
     else:
         obj = folder[_id]
         for key, value in creation_data.items():
             if key not in ('id', 'type'):
                 setattr(obj, key, value)
 
-    if path != original_path:
+    if obj is not None and path != original_path:
         storage = getUtility(IRedirectionStorage)
         rpath = os.path.join('/'.join(site.getPhysicalPath()),
                              original_path.strip('/'))
         storage.add(rpath, "/".join(obj.getPhysicalPath()))
 
-    importtype.post_creation(obj)
-    if data['state']:
-        try:
-            api.content.transition(obj, to_state=data['state'])
-        except:
-            # maybe workflows do not match up
-            pass
+    if obj is not None:
+        importtype.post_creation(obj)
+        if not args.skip_transitioning and data['state']:
+            try:
+                print("    transitioning %s to %s" % (obj.id, data['state']))
+                api.content.transition(obj, to_state=data['state'])
+            except:
+                logger.error("maybe workflows do not match up")
+                #pass
+                if stop_if_exception:
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
+                    raise
 
-    fix_html_images(obj)
-    obj.reindexObject()
+        fix_html_images(obj)
+        obj.reindexObject()
 
     if count % 50 == 0:
         print('%i processed, committing' % count)
@@ -274,6 +349,10 @@ def import_pages(path, count=0):
                 import_object(filepath, count)
             except:
                 logger.error('Error importing object', exc_info=True)
+                if stop_if_exception:
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
+                    raise
     return count
 
 
@@ -287,6 +366,10 @@ def import_folders(path, count=0):
                 import_object(filepath, count)
             except:
                 logger.error('Error importing object', exc_info=True)
+                if stop_if_exception:
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
+                    raise
 
         if os.path.isdir(filepath):
             count = import_folders(filepath, count)
