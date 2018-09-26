@@ -8,7 +8,6 @@ Changelog
 - Add Keyword Manager (Products.PloneKeywordManager) by default
   [CorySanin]
 
-
 2.1.0 (2018-09-26)
 ------------------
 

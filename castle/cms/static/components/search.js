@@ -100,11 +100,15 @@ require([
       if(that.props.Subject){
         state.Subject = that.props.Subject;
       }
+      if(that.props['Subject:list']){
+        state['Subject:list'] = that.props['Subject:list'];
+      }
       $.ajax({
         url: this.props.searchUrl,
         data: state
       }).done(function(data){
         that.props.Subject = undefined;
+        that.props['Subject:list'] = undefined;
         that.setState({
           results: data.results,
           count: data.count,
@@ -425,7 +429,7 @@ require([
     }
   });
 
-  var page = 1, searchType = 'all', Subject;
+  var page = 1, searchType = 'all', Subject, Subjectlist;
   var searchSite = false;
   try{
     page = parseInt(getParameterByName('page'));
@@ -436,6 +440,9 @@ require([
   try{
     Subject = getParameterByName('Subject');
   }catch(e){}
+  try{
+    Subjectlist = getParameterByName(encodeURIComponent('Subject:list'));
+  }catch(e){}
 
   try{
     searchSite = getParameterByName('searchSite');
@@ -445,6 +452,7 @@ require([
   var component = R.render(R.createElement(SearchComponent, cutils.extend(JSON.parse(el.getAttribute('data-search')), {
     SearchableText: getParameterByName('SearchableText') || '',
     Subject: Subject,
+    'Subject:list': Subjectlist,
     searchUrl: el.getAttribute('data-search-url'),
     searchType: searchType,
     page: page,
