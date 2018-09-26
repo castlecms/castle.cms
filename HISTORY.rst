@@ -2,10 +2,17 @@
 Changelog
 =========
 
-2.1 (unreleased)
-----------------
+2.1.1 (unreleased)
+------------------
 
 - Add Keyword Manager (Products.PloneKeywordManager) by default
+  [CorySanin]
+
+
+2.1.0 (2018-09-26)
+------------------
+
+- Add support for the Subject:list search parameter
   [CorySanin]
 
 - Add password expiration option with whitelist
@@ -35,6 +42,9 @@ Changelog
 - Rearranged image tile settings, clarified terminology
   [CorySanin]
 
+- import script fixes
+  [tkimnguyen]
+
 - disallow logins from non-backend URLs, if set in Security panel; tweaks to field descriptions
   [CorySanin]
 
@@ -52,6 +62,7 @@ Changelog
 
 - in query listing tile, do not display event start/end if they don't exist
   [tkimnguyen]
+
 
 2.0.45 (2018-07-13)
 -------------------
