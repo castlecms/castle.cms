@@ -132,7 +132,7 @@ def recursive_create_path(path):
                                     raise
                                 return
                         if created:
-                            importtype.post_creation(folder)
+                            importtype.post_creation(folder, pdb_if_exception)
                             if data['state']:
                                 try:
                                     api.content.transition(folder, to_state=data['state'])
@@ -288,7 +288,8 @@ def import_object(filepath, count):
                         import pdb;pdb.set_trace()
                     raise
                 return logger.error('Error creating content {}'.format(filepath), exc_info=True)
-        # TODO set review_history
+
+        # set workflow / review history
         review_history = data['review_history']
         wtool = api.portal.get_tool(name='portal_workflow')
         chain = wtool.getChainFor(obj)
@@ -300,7 +301,6 @@ def import_object(filepath, count):
 
         # TODO check default folder pages came over as folder with rich text tile
         # TODO any folder pages without default page should have content listing tile
-        # TODO get lead image captions
     else:
         obj = folder[_id]
         for key, value in creation_data.items():

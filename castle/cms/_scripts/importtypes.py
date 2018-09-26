@@ -165,7 +165,7 @@ class BaseImportType(object):
             description=description,
             **data)
 
-    def post_creation(self, obj):
+    def post_creation(self, obj, pdb_if_exception=False):
         if obj is None:
             return
         field_data = self.field_data
@@ -342,7 +342,8 @@ class BaseImportType(object):
                 elif isinstance(im_obj, Image):
                     namedblobimage_data = im_data.data
                 else:
-                    import pdb;pdb.set_trace()
+                    if pdb_if_exception:
+                        import pdb;pdb.set_trace()
                     print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
                 obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
