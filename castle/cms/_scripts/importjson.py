@@ -147,8 +147,6 @@ def recursive_create_path(path):
                     else:
                         if skip_existing and part in folder.objectIds():
                             print("    skipping existing %s" % part)
-                        elif skip_types and creation_data['type'] in skip_types:
-                            print("    skipping %s (content type %s)" % (part, creation_data['type']))
                         else:
                             print("    creating folder %s" % part)
                             folder = api.content.create(
