@@ -2,8 +2,8 @@
 Changelog
 =========
 
-2.1 (unreleased)
-----------------
+2.1.0 (2018-09-26)
+------------------
 
 - Add support for the Subject:list search parameter
   [CorySanin]
