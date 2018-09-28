@@ -496,7 +496,9 @@ class ArchetypesExporter(ContentExporter):
 
     def get_field_data(self):
         data = {}
-
+        if not hasattr(self.obj, 'Schema'):
+            print('No schema on {}'.format(self.obj))
+            return {}
         for field in self.obj.Schema().fields():
             try:
                 fdata = field.getRaw(self.obj)
