@@ -1,11 +1,11 @@
-
 Changelog
 =========
 
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix not Schema AttributeError on export script
+  [vangheem]
 
 
 2.1.0 (2018-09-26)
