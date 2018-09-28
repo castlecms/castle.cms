@@ -376,6 +376,8 @@ class BaseImportType(object):
                             print("    unknown image type %s encountered; defaulting to jpeg" % image_type)
                             import pdb;pdb.set_trace()
                             obj.image.contentType = 'image/jpeg' # default
+
+                # set lead image captions
                 for caption_field_name in self.lead_image_caption_field_names:
                     if caption_field_name in self.field_data:
                         obj.imageCaption = self.field_data.get(caption_field_name)

@@ -223,7 +223,7 @@ def import_object(filepath, count):
     try:
         data = mjson.loads(file_read)
     except:
-        print("    unable to read JSON data; skipping")
+        print("    unable to read JSON data; skipping %s" % filepath)
         return
     if filepath.endswith('__folder__'):
         filepath = '/'.join(filepath.split('/')[:-1])
