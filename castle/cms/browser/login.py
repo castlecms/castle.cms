@@ -143,8 +143,6 @@ The user requesting this access logged this information:
         })
 
     def set_password(self):
-        acl_users = self.get_tool('acl_users')
-
         # 1. Authenticate user
         authorized, user = self.auth.authenticate(
             username=self.username,
@@ -190,7 +188,6 @@ The user requesting this access logged this information:
     login form doesn't use PAS for validation.
     '''
     def pwexpiry(self, user):
-        registry = self.get_registry()
         pwexpiry_enabled = api.portal.get_registry_record('plone.pwexpiry_enabled', default=False)
         validity_period = api.portal.get_registry_record('plone.pwexpiry_validity_period', default=0)
         if pwexpiry_enabled and validity_period > 0:
@@ -238,7 +235,7 @@ The user requesting this access logged this information:
             })
 
         try:
-            if hasattr(self.context,'portal_registry'):
+            if hasattr(self.context, 'portal_registry'):
                 backend_urls = self.context.portal_registry['plone.backend_url']
                 only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']
                 portal_url = api.portal.get().absolute_url()
@@ -393,7 +390,7 @@ The user requesting this access logged this information:
         randomstring = self.request.form.get('code')
         password = self.request.form.get('password')
 
-        err_str = registration.testPasswordValidity(newpw)
+        err_str = registration.testPasswordValidity(password)
         if err_str is not None:
             return json.dumps({
                 'success': False,
