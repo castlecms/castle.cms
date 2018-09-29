@@ -1,6 +1,7 @@
 .DS_Store
 .installed.cfg
 .Python
+.idea
 *.swp
 *.egg-info/
 *.pyc
@@ -13,6 +14,8 @@
 /build/
 /parts/
 /var/
+/eggs/
+/share/
 ._*
 castle/cms/static/plone-compiled.js
 castle/cms/static/plone-logged-in-compiled.js
