@@ -23,15 +23,15 @@ import json
 
 # XXX needs updating in 5.1
 try:
-    vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
-    vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
-    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
-    vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
-except:
     vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
+except:
+    vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
+    vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
+    vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
 
