@@ -7,6 +7,9 @@ Changelog
 - Fix not Schema AttributeError on export script
   [vangheem]
 
+- Add support for the path search parameter
+  [CorySanin]
+
 
 2.1.0 (2018-09-26)
 ------------------
