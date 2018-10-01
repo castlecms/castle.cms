@@ -244,7 +244,8 @@ The user requesting this access logged this information:
                 portal_url = api.portal.get().absolute_url()
                 bad_domain = only_allow_login_to_backend_urls and \
                              len(backend_urls) > 0 and \
-                             portal_url.rstrip('/') not in backend_urls
+                             portal_url.rstrip('/') not in backend_urls and \
+                             portal_url.rstrip('/')+'/' not in backend_urls
                 if bad_domain:
                     return json.dumps({
                         'success': False,
