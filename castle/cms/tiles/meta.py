@@ -72,7 +72,7 @@ class MetaTile(Tile):
     def __call__(self):
         try:
             return self.index()
-        except:
+        except Exception:
             logger.warn('Error rendering meta tile', exc_info=True)
             return ''
 

@@ -53,13 +53,14 @@ def process(context):
         output_filepath = os.path.join(tmpdir, 'output.mp4')
         try:
             avconv.convert(tmpfilepath, output_filepath)
-        except:
+        except Exception:
             pass
-        if os.path.exists(output_filepath) and os.path.getsize(output_filepath) > 0:
+        if (os.path.exists(output_filepath) and
+                os.path.getsize(output_filepath) > 0):
             if md5 is not None:
                 try:
                     context._file_hash = md5(output_filepath)
-                except:
+                except Exception:
                     pass
             context._p_jar.sync()
             fi = open(output_filepath)
@@ -77,6 +78,6 @@ def process(context):
                 fi = open(output_filepath)
                 context.image = NamedBlobImage(fi, filename=u'screengrab.png')
                 fi.close()
-        except:
+        except Exception:
             logger.warn('error getting thumbnail from video')
     rmtree(tmpdir)

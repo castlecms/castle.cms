@@ -78,7 +78,8 @@ class TestTheming(unittest.TestCase):
         layout_name = transform.get_layout_name(self.portal)
         self.assertEqual(layout_name, 'index.html')
         registry = getUtility(IRegistry)
-        field = registry_field.TextLine(title=u'Default layout', required=False)
+        field = registry_field.TextLine(title=u'Default layout',
+                                        required=False)
         new_record = Record(field)
         registry.records['castle.cms.default_layout'] = new_record
         registry['castle.cms.default_layout'] = u'foobar.html'

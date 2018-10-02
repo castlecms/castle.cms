@@ -10,19 +10,19 @@ class CeleryControlPanel(BrowserView):
         ins = inspect()
         try:
             ping = ins.ping()
-        except:
+        except Exception:
             ping = ''
         try:
             active = ins.active()
-        except:
+        except Exception:
             active = ''
         try:
             reserved = ins.reserved()
-        except:
+        except Exception:
             reserved = ''
         try:
             stats = ins.stats()
-        except:
+        except Exception:
             stats = ''
         return {
             'workers': ping,

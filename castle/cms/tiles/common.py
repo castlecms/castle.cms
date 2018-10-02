@@ -1,7 +1,6 @@
 from castle.cms.interfaces import ITrashed
 from plone import api
 from plone.app.standardtiles import common
-from plone.app.standardtiles import head
 from plone.locking.browser.info import LockInfoViewlet
 from plone.locking.interfaces import ITTWLockable
 from plone.tiles import Tile

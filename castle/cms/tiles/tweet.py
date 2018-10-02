@@ -42,5 +42,5 @@ class ITweetTileSchema(model.Schema):
         title=u"Hide tweet card",
         default='visible',
         description=u"Whether or not to include any associate pictures or videos.",
-        vocabulary=SimpleVocabulary.fromValues(['visible','hidden'])
+        vocabulary=SimpleVocabulary.fromValues(['visible', 'hidden'])
     )

@@ -51,7 +51,7 @@ img.save('logo.ico', sizes=icon_sizes)
         registry = getUtility(IRegistry)
         try:
             data = registry['plone.site_icon']
-        except:
+        except Exception:
             data = None
         if data:
             filename, data = b64decode_file(data)
@@ -70,7 +70,7 @@ img.save('logo.ico', sizes=icon_sizes)
         if 'scale' in self.request.form:
             try:
                 scale = int(self.request.form['scale'])
-            except:
+            except Exception:
                 pass
         data = self.get_data()
         if data:

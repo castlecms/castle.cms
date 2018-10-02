@@ -83,7 +83,7 @@ class CreateSite(unittest.TestCase):
             WebDriverWait(self.selenium, wait).until(
                 EC.presence_of_element_located((method, locator)))
             return True
-        except:
+        except Exception:
             return False
 
     def test_query_listing(self):
@@ -110,7 +110,8 @@ class CreateSite(unittest.TestCase):
         # fill rest with news items until pagenation occurs
         pagen_trigger = 12
         while pagen_trigger > 0:
-            test_utils.create_news_item(selenium, 'test_news%s' % pagen_trigger)
+            test_utils.create_news_item(
+                selenium, 'test_news%s' % pagen_trigger)
             test_utils.add_tag(selenium, 'test_tag')
             pagen_trigger -= 1
 
@@ -126,10 +127,12 @@ class CreateSite(unittest.TestCase):
         # provid page title
         self.get('#contentTitle').send_keys('foobar-dash')
         # click save on modal dialog
-        self.click('#add-modal-react-container .modal-footer .plone-btn-primary')
+        self.click(
+            '#add-modal-react-container .modal-footer .plone-btn-primary')
         self.click('.mosaic-button-save')
         self.assertEqual(
-            self.selenium.current_url, self.portal.absolute_url() + '/foobar-dash')
+            self.selenium.current_url,
+            self.portal.absolute_url() + '/foobar-dash')
 
     def test_image_edit(self):
         selenium = self.selenium
@@ -138,7 +141,7 @@ class CreateSite(unittest.TestCase):
         # get image for upload
         try:
             test_utils.prep_file_upload(self.selenium, TEST_FILE, 'image')
-        except:
+        except Exception:
             test_utils.prep_file_upload(self.selenium, TEST_FILE, 'image')
         # click image edit button
         self.get('.file-list .castle-btn-edit').click()
@@ -158,9 +161,11 @@ class CreateSite(unittest.TestCase):
         # create basic page
         test_utils.create_page(selenium, 'basic')
         # click edit
-        test_utils.click_it(selenium, By.CSS_SELECTOR, '.castle-toolbar-edit a')
+        test_utils.click_it(
+            selenium, By.CSS_SELECTOR, '.castle-toolbar-edit a')
         # get title element
-        edit_element = self.get('.mosaic-IDublinCore-title-tile .mosaic-rich-text')
+        edit_element = self.get(
+            '.mosaic-IDublinCore-title-tile .mosaic-rich-text')
         edit_element.click()
         # clear the text from this field
         test_utils.clear_it(edit_element)
@@ -182,13 +187,15 @@ class CreateSite(unittest.TestCase):
         self.click('.mosaic-button-layout')
         self.click('.mosaic-button-customizelayout')
         # click insert select2
-        test_utils.mousedown(selenium, By.CSS_SELECTOR, '.mosaic-menu-insert .select2-chosen')
+        test_utils.mousedown(
+            selenium, By.CSS_SELECTOR, '.mosaic-menu-insert .select2-chosen')
         # select text tile to insert
         test_utils.mousedown(
             selenium, By.CSS_SELECTOR,
-            '.select2-results .mosaic-option-plone-app-standardtiles-rawhtml .select2-result-label')
+            '.select2-results .mosaic-option-plone-app-standardtiles-rawhtml .select2-result-label')  # noqa
         # click on the page to place this new text tile
-        click_placement = self.get('#content .mosaic-IDublinCore-description-tile')
+        click_placement = self.get(
+            '#content .mosaic-IDublinCore-description-tile')
         actionchain = ActionChains(selenium)
         actionchain.move_to_element_with_offset(click_placement, 0, 0)
         actionchain.click(click_placement)
@@ -200,7 +207,7 @@ class CreateSite(unittest.TestCase):
         # click the save button
         try:
             self.click('.mosaic-button-save')
-        except:
+        except Exception:
             self.selenium.find_element_by_id('form-buttons-save').click()
 
     def test_image_insert(self):
@@ -210,7 +217,8 @@ class CreateSite(unittest.TestCase):
         test_utils.create_page(selenium, 'document')
         # click edit
         self.click('.castle-toolbar-edit a')
-        # click description area so it receives focus and mce toolbar is visible
+        # click description area so it receives focus and
+        # mce toolbar is visible
         self.click('#content .mosaic-IRichText-text-tile .mosaic-rich-text')
         self.click('#content .mosaic-IDublinCore-description-tile')
         self.click('#content .mosaic-IRichText-text-tile .mosaic-rich-text')
@@ -234,16 +242,23 @@ class CreateSite(unittest.TestCase):
         selenium.get(self.portal.absolute_url())
         test_utils.create_page(selenium, 'basic')
         self.get('.castle-toolbar-edit a').click()
-        test_utils.mousedown(selenium, By.CSS_SELECTOR, '.mosaic-button-layout')
-        test_utils.mousedown(selenium, By.CSS_SELECTOR, '.mosaic-button-customizelayout')
-        test_utils.mousedown(selenium, By.CSS_SELECTOR, '.mosaic-menu-insert .select2-choice')
-        test_utils.mousedown(selenium, By.CSS_SELECTOR, '.mosaic-option-castle-cms-videotile')
+        test_utils.mousedown(
+            selenium, By.CSS_SELECTOR, '.mosaic-button-layout')
+        test_utils.mousedown(
+            selenium, By.CSS_SELECTOR, '.mosaic-button-customizelayout')
+        test_utils.mousedown(
+            selenium, By.CSS_SELECTOR, '.mosaic-menu-insert .select2-choice')
+        test_utils.mousedown(
+            selenium, By.CSS_SELECTOR, '.mosaic-option-castle-cms-videotile')
         tmpelement = self.get('#castle-cms-videotile-youtube_url')
         tmpelement.send_keys('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-        test_utils.click_it(selenium, By.CSS_SELECTOR, '.plone-modal-footer #buttons-save')
-        test_utils.click_it(selenium, By.CSS_SELECTOR, '#content > div:nth-child(2)')
+        test_utils.click_it(
+            selenium, By.CSS_SELECTOR, '.plone-modal-footer #buttons-save')
+        test_utils.click_it(
+            selenium, By.CSS_SELECTOR, '#content > div:nth-child(2)')
         test_utils.mousedown(selenium, By.CSS_SELECTOR, '.mosaic-button-save')
-        self.assertTrue(self.is_element_present(By.CSS_SELECTOR, '.video-container'))
+        self.assertTrue(
+            self.is_element_present(By.CSS_SELECTOR, '.video-container'))
 
     def test_change_page_title(self):
         selenium = self.selenium
@@ -261,7 +276,7 @@ class CreateSite(unittest.TestCase):
         self.selenium.get(self.portal.absolute_url())
         try:
             test_utils.prep_file_upload(self.selenium, TEST_FILE, 'image')
-        except:
+        except Exception:
             test_utils.prep_file_upload(self.selenium, TEST_FILE, 'image')
         # click submit
         self.click('.castle-upload-container .castle-btn-upload')
@@ -303,19 +318,23 @@ class CreateSite(unittest.TestCase):
         selenium.get(self.portal.absolute_url())
         test_utils.create_folder(selenium, 'folder')
         test_utils.create_page(selenium, 'basic')
-        self.assertEqual(self.selenium.current_url,
-                         self.portal.absolute_url() + '/test_folder/test_basic')
+        self.assertEqual(
+            self.selenium.current_url,
+            self.portal.absolute_url() + '/test_folder/test_basic')
 
     def test_createfolders(self):
         selenium = self.selenium
         self.login()
         selenium.get(self.portal.absolute_url())
         test_utils.create_folder(selenium, 'folder')
-        self.assertEqual(self.selenium.current_url, self.portal.absolute_url() + '/test_folder')
+        self.assertEqual(
+            self.selenium.current_url,
+            self.portal.absolute_url() + '/test_folder')
         selenium.get(self.portal.absolute_url())
         test_utils.create_folder(selenium, 'folder-query')
         self.assertEqual(
-            self.selenium.current_url, self.portal.absolute_url() + '/test_folder-query')
+            self.selenium.current_url,
+            self.portal.absolute_url() + '/test_folder-query')
 
     def test_link(self):
         selenium = self.selenium
@@ -346,7 +365,8 @@ class CreateSite(unittest.TestCase):
         test_utils.click_it(
             selenium, By.CSS_SELECTOR,
             '#add-modal-react-container .modal-footer .plone-btn-primary')
-        test_utils.click_it(self.selenium, By.CSS_SELECTOR, '.mosaic-button-save')
+        test_utils.click_it(
+            self.selenium, By.CSS_SELECTOR, '.mosaic-button-save')
         self.assertEqual(self.selenium.current_url,
                          self.portal.absolute_url() + '/foobar-newsitem')
 
@@ -359,7 +379,7 @@ class CreateSite(unittest.TestCase):
             '#add-modal-react-container .modal-footer .plone-btn-primary')
         try:
             self.click('.mosaic-button-save')
-        except:
+        except Exception:
             self.selenium.find_element_by_id('form-buttons-save').click()
 
     def test_impersonate(self):
@@ -415,4 +435,5 @@ class CreateSite(unittest.TestCase):
         self.open(self.portal.absolute_url() + '/@@search')
 
         self.get('.search-input').send_keys('test_document')
-        self.assertTrue('test_document' in self.get('.searchResults li .result-title').text)
+        self.assertTrue(
+            'test_document' in self.get('.searchResults li .result-title').text)  # noqa

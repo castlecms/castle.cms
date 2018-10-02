@@ -56,7 +56,7 @@ class AnalyticsView(BrowserView):
 
         try:
             result = cache.get(cache_key)
-        except:
+        except Exception:
             result = None
         if result is None:
             query = ga.get(ids='ga:' + profile, **params)
@@ -70,7 +70,7 @@ class AnalyticsView(BrowserView):
         cache_key = '%s-ga-profile' % '-'.join(api.portal.get().getPhysicalPath()[1:])
         try:
             profile = cache.get(cache_key)
-        except:
+        except Exception:
             profile = None
         if profile is None:
             profile = google.get_ga_profile(service)

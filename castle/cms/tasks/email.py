@@ -22,9 +22,10 @@ def send_email_to_subscribers(subject, html, categories=None):
     for subscriber in subscribe.all():
         if check_categories:
             # If there's no chosen categories, they recieve everything
-            if 'categories' in subscriber and len(subscriber['categories']) > 0:
-
-                # make sure that this message falls under one of their categories
+            if ('categories' in subscriber and
+                    len(subscriber['categories']) > 0):
+                # make sure that this message falls under one of
+                # their categories
                 if len(categories.intersection(subscriber['categories'])) == 0:
                     return
 

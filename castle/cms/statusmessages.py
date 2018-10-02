@@ -27,7 +27,7 @@ class CastleStatusMessage(StatusMessage):
 
         try:
             text = translate(text)
-        except:
+        except Exception:
             pass
 
         cache_key = self.get_cache_key()

@@ -26,7 +26,7 @@ class SiteConfiguration:
                     value = None
 
                     if isinstance(schema_field, schema.Bool):
-                        #JSON doesn't want to convert them back to boolean
+                        # JSON doesn't want to convert them back to boolean
                         if fieldValue == 'true':
                             value = True
                         elif fieldValue == 'false':
@@ -47,7 +47,7 @@ class SiteConfiguration:
                 'success': True,
                 'start': self.context.absolute_url()
             })
-        except:
+        except Exception:
             return json.dumps({
                 'success': False,
                 'errors': "There was a problem setting your configurations",

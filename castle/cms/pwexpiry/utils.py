@@ -5,7 +5,6 @@ from plone import api
 from Products.CMFPlone.utils import safe_unicode
 from zope.component import getMultiAdapter
 from zope.i18n import translate
-from zope.publisher.browser import TestRequest
 
 
 def send_notification_email(user, days_to_expire,

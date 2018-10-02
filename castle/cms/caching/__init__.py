@@ -188,15 +188,20 @@ class Worker(threading.Thread):
                     # XXX check valid response
                 except Exception:
                     logger.exception('Failed to purge %s', ','.join(urls))
-        except:  # FIXME: blind except
+        except Exception:  # FIXME: blind except
             logger.exception('Exception in worker thread '
                              'for (%s, %s)' % (self.host, self.scheme))
         logger.debug("%s terminating", self)
 
+
 CastlePurger = CastlePurgerFactory()
+
+
 def stopThreads():
     purger = CastlePurger
     purger.stopThreads()
+
+
 addCleanUp(stopThreads)
 del addCleanUp
 
@@ -216,13 +221,13 @@ class Purge(BrowserView):
         if dp:
             try:
                 context = context[dp]
-            except:
+            except Exception:
                 pass
         objs = [context]
         for ref in get_content_links(context):
             try:
                 objs.append(ref.to_object)
-            except:
+            except Exception:
                 pass
 
         for obj in objs:

@@ -15,7 +15,8 @@ class MappingAdapter(mapping.MappingAdapter):
         'facebook_shares': {'store': True, 'type': 'integer', 'null_value': 0},
         'twitter_shares': {'store': True, 'type': 'integer', 'null_value': 0},
         'linkedin_shares': {'store': True, 'type': 'integer', 'null_value': 0},
-        'pinterist_shares': {'store': True, 'type': 'integer', 'null_value': 0},
+        'pinterist_shares': {'store': True, 'type': 'integer',
+                             'null_value': 0},
         'searchterm_pins': {'store': True, 'type': 'string',
                             'index': 'not_analyzed', 'null_value': '[]'},
         'contributors': {'store': False, 'type': 'string',
@@ -47,7 +48,8 @@ class AdditionalIndexDataProvider(object):
             data['twitter_shares'] = tdata.get('total', 0)
         sdata = ISearch(self.obj, None)
         if sdata:
-            data['searchterm_pins'] = [t.lower() for t in sdata.searchterm_pins or [] if t]
+            data['searchterm_pins'] = [
+                t.lower() for t in sdata.searchterm_pins or [] if t]
         else:
             data['searchterm_pins'] = []
 
@@ -59,8 +61,9 @@ class AdditionalIndexDataProvider(object):
             pass
 
         try:
-            data['contributors'] = list(self.obj.creators + self.obj.contributors)
-        except:
+            data['contributors'] = list(
+                self.obj.creators + self.obj.contributors)
+        except Exception:
             pass
         path = self.obj.getPhysicalPath()
         data['parent_folder'] = '/'.join(path[:-1])

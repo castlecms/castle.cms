@@ -42,7 +42,7 @@ class NavigationTile(BaseTile):
             nav_label = brain.navigation_label
             if nav_label:
                 return nav_label
-        except:
+        except Exception:
             pass
         return brain.Title
 

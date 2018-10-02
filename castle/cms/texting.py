@@ -44,7 +44,7 @@ def send(message, numbers):
     if resp.status_code in (202, 200):
         try:
             return 'error' not in resp.json()
-        except:
+        except Exception:
             return False
     else:
         return False

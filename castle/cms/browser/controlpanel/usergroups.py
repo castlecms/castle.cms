@@ -3,7 +3,6 @@ from castle.cms.lockout import LockoutManager
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
 from zExceptions import Forbidden
-from plone import api
 
 import time
 

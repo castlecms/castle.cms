@@ -116,13 +116,13 @@ class SessionManager(object):
     def expired(self, session):
         try:
             return session.get('expired', False)
-        except:
+        except Exception:
             return False
 
     def delete(self):
         try:
             cache.delete(self.cache_key)
-        except:
+        except Exception:
             pass
 
     def expire(self, session=None):
@@ -150,7 +150,7 @@ def get_active_sessions(sessions_key=None):
             for session in cclient.client.mget(keys):
                 try:
                     session = cPickle.loads(session)
-                except:
+                except Exception:
                     continue
                 sessions.append(session)
             sessions = reversed(sorted(sessions, key=lambda x: x['updated']))
@@ -174,12 +174,12 @@ def get_active_sessions(sessions_key=None):
             )
             try:
                 cache.delete(cache_key)
-            except:
+            except Exception:
                 pass
         else:
             try:
                 session['user'] = api.user.get(session['userid'])
-            except:
+            except Exception:
                 pass
             found.append(compare_key)
             filtered.append(session)

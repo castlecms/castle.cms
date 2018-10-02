@@ -6,7 +6,6 @@ from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import PreviewSelectFieldWidget
 from castle.cms.widgets import QueryFieldWidget
 from DateTime import DateTime
-from plone import api
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
 from plone.memoize.instance import memoize
@@ -70,6 +69,7 @@ class GridView(BaseTileView):
     index = ViewPageTemplateFile('templates/querylisting/grid.pt')
     tile_name = 'querylisting'
 
+
 class FiveGridView(BaseTileView):
     name = 'five-grid'
     label = 'Five Column Grid'
@@ -77,6 +77,7 @@ class FiveGridView(BaseTileView):
     order = 3
     index = ViewPageTemplateFile('templates/querylisting/five-grid.pt')
     tile_name = 'querylisting'
+
 
 class TiledView(BaseTileView):
     name = 'tiled'
@@ -158,7 +159,6 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
 
-
         return parsed
 
     @property
@@ -209,7 +209,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         try:
             form = self.get_form()
             page = int(form.get('page', 1)) - 1
-        except:
+        except Exception:
             page = 0
         page = max(page, 0)
         start = page * self.limit
@@ -269,7 +269,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             'url': self.this_url,
             'selector': '#query-results-%s' % self.id or ''
         }
-        
+
         out = '{}'
         try:
             out = json.dumps(config)

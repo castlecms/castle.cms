@@ -5,11 +5,10 @@ from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone import api
 from plone.app.testing import login
 from plone.app.testing import setRoles
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from plone.tiles.data import ANNOTATIONS_KEY_PREFIX as TILE_ANNOTATIONS_KEY_PREFIX
+from plone.tiles.data import ANNOTATIONS_KEY_PREFIX as TILE_ANNOTATIONS_KEY_PREFIX  # noqa
 
 import unittest
 import json
@@ -36,13 +35,13 @@ class TestSlots(unittest.TestCase):
         tiles = PersistentList()
         for _ in range(2):
             tile_id = utils.get_random_string(30)
-            annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id] = PersistentDict({
+            annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id] = PersistentDict({  # noqa
                 'foo': 'bar'
             })
             tiles.append({
                 'id': tile_id
             })
-        annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id] = PersistentDict({
+        annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id] = PersistentDict({  # noqa
             'tiles': tiles
         })
 
@@ -53,7 +52,8 @@ class TestSlots(unittest.TestCase):
         })
         new_id = json.loads(view.copy_meta())['newId']
         annotations = IAnnotations(self.portal)
-        self.assertTrue(TILE_ANNOTATIONS_KEY_PREFIX + '.' + new_id in annotations)
+        self.assertTrue(
+            TILE_ANNOTATIONS_KEY_PREFIX + '.' + new_id in annotations)
         data = annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id]
         self.assertEquals(data['locked']['user'], TEST_USER_ID)
 
@@ -103,14 +103,14 @@ class TestSlots(unittest.TestCase):
         view.copy_meta()
         version_key = view.get_working_copy_key()
         copy_slot = annotations[
-            TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id + '-' + version_key]
+            TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id + '-' + version_key]  # noqa
         tile = copy_slot['tiles'][0]
         tile_id = tile['id']
         tile_data = annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id]
         tile_data['foo'] = 'bozo'
         view.save_copy()
         tile_data = annotations[
-            TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id.replace('-' + version_key, '')]
+            TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id.replace('-' + version_key, '')]  # noqa
 
         self.assertEquals(tile_data['foo'], 'bozo')
 
@@ -123,7 +123,7 @@ class TestSlots(unittest.TestCase):
         view.copy_meta()
         version_key = view.get_working_copy_key()
         copy_slot = annotations[
-            TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id + '-' + version_key]
+            TILE_ANNOTATIONS_KEY_PREFIX + '.' + self.slot_id + '-' + version_key]  # noqa
         tile = copy_slot['tiles'][0]
         copy_slot['tiles'].remove(tile)
         tile_id = tile['id']

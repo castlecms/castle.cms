@@ -44,8 +44,9 @@ class PurgeManager(object):
             'Content-Type': 'application/json'
         }
         return requests.delete(
-            'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,
+            'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
             headers=headers, data=json.dumps({'files': urls}))
+
 
 def get():
     return PurgeManager()

@@ -34,7 +34,7 @@ class DiscussionTile(discussion.DiscussionTile):
         registry = getUtility(IRegistry)
         try:
             disqus_shortname = registry['plone.disquis_shortname']
-        except:
+        except Exception:
             disqus_shortname = None
 
         if not disqus_shortname:

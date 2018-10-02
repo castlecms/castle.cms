@@ -97,7 +97,7 @@ class OFSFileSerializer(BaseTypeSerializer):
     def _serialize(kls, obj):
         try:
             data = str(obj.data)
-        except:
+        except Exception:
             data = str(obj.data.data)
         return {
             'data': base64.b64encode(data),
@@ -164,10 +164,10 @@ class datetimeSerializer(BaseTypeSerializer):
 
     @classmethod
     def _deserialize(kls, data):
-	try:
-		return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S.%f')
-	except:
-		return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S')
+        try:
+            return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S.%f')
+        except Exception:
+            return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S')
 
 
 class recordSerializer(BaseTypeSerializer):

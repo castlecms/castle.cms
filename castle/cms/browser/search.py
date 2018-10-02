@@ -121,7 +121,7 @@ class Search(BrowserView):
                 url = api.portal.get_registry_record('castle.searchurl')
                 if url:
                     return url
-            except:
+            except Exception:
                 pass
         return '%s/@@searchajax' % (
             self.context.absolute_url()
@@ -168,12 +168,12 @@ class SearchAjax(BrowserView):
 
         try:
             page_size = int(self.request.form.get('pageSize'))
-        except:
+        except Exception:
             page_size = 20
         page_size = min(page_size, 50)
         try:
             page = int(self.request.form.get('page'))
-        except:
+        except Exception:
             page = 1
         catalog = api.portal.get_tool('portal_catalog')
         es = ElasticSearchCatalog(catalog)
@@ -227,7 +227,7 @@ class SearchAjax(BrowserView):
             count = results['hits']['total']
             try:
                 suggestions = results['suggest']['SearchableText'][0]['options']
-            except:
+            except Exception:
                 suggestions = []
             results = results['hits']['hits']
 

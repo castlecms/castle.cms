@@ -82,7 +82,7 @@ def check_site(site):
         try:
             ob = uuidToObject(hit['object'])
             checked.append(hit['object'])
-        except:
+        except Exception:
             continue
 
         try:
@@ -118,7 +118,7 @@ def check_site(site):
             try:
                 user = api.user.get(wf_entry['actor'])
                 user_name = user.getProperty('fullname') or user.getId()
-            except:
+            except Exception:
                 user_name = wf_entry['actor']
             email_html += EMAIL_BODY_ITEM.format(
                 content_url=ob.absolute_url().replace(site_url, public_url),

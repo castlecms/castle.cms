@@ -21,6 +21,7 @@ class INavigationLabel(model.Schema):
         required=False
     )
 
+
 alsoProvides(INavigationLabel, IFormFieldProvider)
 
 

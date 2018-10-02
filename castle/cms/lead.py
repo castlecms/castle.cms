@@ -61,7 +61,7 @@ def find_image_in_annotation(data):
 def find_image_in_html(html):
     try:
         dom = fromstring(html)
-    except:
+    except Exception:
         # could not parse...
         return
     for img in dom.cssselect('img'):
@@ -84,7 +84,8 @@ def find_image(obj):
             im = find_image_in_annotation(data)
             if im:
                 return im
-    if not getattr(obj, 'contentLayout', None) and getattr(obj, 'content', None):
+    if (not getattr(obj, 'contentLayout', None) and
+            getattr(obj, 'content', None)):
         im = find_image_in_html(obj.content)
         if im is not None:
             return im
