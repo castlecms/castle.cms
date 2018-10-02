@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from castle.cms import subscribe
-from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm
+from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm  # noqa
 from castle.cms.browser.subscribe import SubscribeForm
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone.app.testing import logout
@@ -38,7 +38,8 @@ class TestSubscribe(unittest.TestCase):
         self.assertEquals(len(subscribe.get_phone_numbers()), 0)
 
     def test_get_phone_numbers(self):
-        data = subscribe.register('foo@bar.com', {'foo': 'bar', 'phone_number': '15555555555'})
+        data = subscribe.register(
+            'foo@bar.com', {'foo': 'bar', 'phone_number': '15555555555'})
         subscribe.confirm('foo@bar.com', data['code'])
         subscribe.confirm_phone_number('foo@bar.com', data['code'])
         self.assertEquals(len(subscribe.get_phone_numbers()), 1)
@@ -75,9 +76,10 @@ class TestSubscribeForm(unittest.TestCase):
 
     @responses.activate
     def test_user_subscribes(self):
-        responses.add(responses.POST, "https://www.google.com/recaptcha/api/siteverify",
-                      body='{"success": true}',
-                      content_type="application/json")
+        responses.add(
+            responses.POST, "https://www.google.com/recaptcha/api/siteverify",
+            body='{"success": true}',
+            content_type="application/json")
         self.request.form.update({
             'form.widgets.name': u'Foobar',
             'form.widgets.email': u'foo@bar.com',
@@ -93,9 +95,10 @@ class TestSubscribeForm(unittest.TestCase):
     @responses.activate
     def test_invalid_recaptcha(self):
         logout()
-        responses.add(responses.POST, "https://www.google.com/recaptcha/api/siteverify",
-                      body='{"success": false}',
-                      content_type="application/json")
+        responses.add(
+            responses.POST, "https://www.google.com/recaptcha/api/siteverify",
+            body='{"success": false}',
+            content_type="application/json")
         self.request.form.update({
             'form.widgets.name': u'Foobar',
             'form.widgets.email': u'foo@bar.com',
@@ -111,9 +114,10 @@ class TestSubscribeForm(unittest.TestCase):
     @responses.activate
     def test_user_exists(self):
         subscribe.register('foo@bar.com', {'foo': 'bar'})
-        responses.add(responses.POST, "https://www.google.com/recaptcha/api/siteverify",
-                      body='{"success": true}',
-                      content_type="application/json")
+        responses.add(
+            responses.POST, "https://www.google.com/recaptcha/api/siteverify",
+            body='{"success": true}',
+            content_type="application/json")
         self.request.form.update({
             'form.widgets.name': u'Foobar',
             'form.widgets.email': u'foo@bar.com',
@@ -132,9 +136,10 @@ class TestSubscribeForm(unittest.TestCase):
         subscribe.register('foo@bar.com', {'categories': [u'A']})
         subscriber = subscribe.get('foo@bar.com')
         subscribe.confirm('foo@bar.com', subscriber['code'])
-        responses.add(responses.POST, "https://www.google.com/recaptcha/api/siteverify",
-                      body='{"success": true}',
-                      content_type="application/json")
+        responses.add(
+            responses.POST, "https://www.google.com/recaptcha/api/siteverify",
+            body='{"success": true}',
+            content_type="application/json")
         self.request.form.update({
             'form.widgets.subject': u'TEST',
             'form.widgets.send_to_categories': [u'A'],
@@ -154,9 +159,10 @@ class TestSubscribeForm(unittest.TestCase):
         subscriber = subscribe.get('foo@bar.com')
         subscribe.confirm('foo@bar.com', subscriber['code'])
 
-        responses.add(responses.POST, "https://www.google.com/recaptcha/api/siteverify",
-                      body='{"success": true}',
-                      content_type="application/json")
+        responses.add(
+            responses.POST, "https://www.google.com/recaptcha/api/siteverify",
+            body='{"success": true}',
+            content_type="application/json")
         self.request.form.update({
             'form.widgets.subject': u'TEST',
             'form.widgets.send_to_categories': [u'B'],

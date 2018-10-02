@@ -11,12 +11,12 @@ from plone.app.widgets.base import InputWidget as BaseInputWidget
 from plone.app.widgets.base import TextareaWidget as BaseTextareaWidget
 from plone.app.z3cform.widget import AjaxSelectWidget as pz3c_AjaxSelectWidget
 from plone.app.z3cform.widget import QueryStringWidget as BaseQueryStringWidget
-from plone.app.z3cform.widget import RelatedItemsWidget as BaseRelatedItemsWidget
+from plone.app.z3cform.widget import RelatedItemsWidget as BaseRelatedItemsWidget  # noqa
 from plone.app.z3cform.widget import SelectWidget as pz3c_SelectWidget
 from plone.app.z3cform.widget import BaseWidget
 from plone.formwidget.namedfile.converter import NamedDataConverter
 from plone.formwidget.namedfile.interfaces import INamedImageWidget
-from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget
+from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget  # noqa
 from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.interfaces import INamedImageField
 from plone.namedfile.utils import safe_basename
@@ -362,7 +362,8 @@ class PreviewSelectWidget(pz3c_SelectWidget):
         })
         previews = self.previews.copy()
         if self.tile_name:
-            for view in getTileViews(aq_parent(self.context), self.request, self.tile_name):
+            for view in getTileViews(aq_parent(self.context),
+                                     self.request, self.tile_name):
                 previews[view.name] = view.preview
         args['pattern_options']['previews'] = previews
         return args
@@ -471,21 +472,21 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             width, height = self.value.getImageSize()
             try:
                 focal_point = self.value.focal_point
-            except:
+            except Exception:
                 focal_point = self.context._image_focal_point
-        except:
+        except Exception:
             if self.value:
                 try:
                     focal_point = [width / 2, height / 2]
-                except:
+                except Exception:
                     pass
         try:
             fct = self.file_content_type
-        except:
+        except Exception:
             fct = None
         try:
             icon = self.file_icon
-        except:
+        except Exception:
             icon = None
         return {
             'exists': self.value is not None,
@@ -503,7 +504,8 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
 
     def get_reference_options(self):
         download_url = self.download_url
-        if isinstance(self.value, basestring) and self.value.startswith('reference:'):
+        if (isinstance(self.value, basestring) and
+                self.value.startswith('reference:')):
             reference = self.value.replace('reference:', '')
         else:
             reference = self.value.reference
@@ -650,8 +652,9 @@ class FocalNamedImageDataConverter(NamedDataConverter):
                     float(req.form.get(widget.name + '.focalY'))
                 ]
                 value.focal_point = fp
-                self.widget.context._image_focal_point = fp  # backup in case other doesn't save
-            except:
+                # backup in case other doesn't save
+                self.widget.context._image_focal_point = fp
+            except Exception:
                 pass
         return value
 
@@ -681,7 +684,8 @@ class FocalPointSelectWidget(BaseWidget):
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
 def FocalPointSelectFieldWidget(field, request):
-    widget = z3c.form.widget.FieldWidget(field, FocalPointSelectWidget(request))
+    widget = z3c.form.widget.FieldWidget(
+        field, FocalPointSelectWidget(request))
     return widget
 
 

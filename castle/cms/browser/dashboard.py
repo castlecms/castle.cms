@@ -136,7 +136,7 @@ class DashboardUtils(BrowserView):
     def whois(self, ip):
         try:
             return socket.gethostbyaddr(ip)[0]
-        except:
+        except Exception:
             pass
 
     def get_creator(self, item):
@@ -152,9 +152,9 @@ class DashboardUtils(BrowserView):
             try:
                 # to check if it is hashable and correct type
                 foobar = modifier in self._user_cache  # noqa
-            except:
+            except Exception:
                 modifier = item.Creator
-        except:
+        except Exception:
             modifier = item.Creator
         if modifier in self._user_cache:
             return self._user_cache[modifier]
@@ -165,7 +165,7 @@ class DashboardUtils(BrowserView):
     def _paging(self, query, name):
         try:
             start = int(self.request.form.get(name + '_start'))
-        except:
+        except Exception:
             start = 0
         end = start + 30
         catalog = api.portal.get_tool('portal_catalog')

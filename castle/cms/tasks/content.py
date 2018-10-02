@@ -32,7 +32,7 @@ def paste_error_handle(where, op, mdatas):
 
 <p>Please contact your administrator.</p>""" % (
                     name, where.lstrip('/')))
-        except:
+        except Exception:
             logger.warn('Could not send status email ', exc_info=True)
 
 
@@ -73,7 +73,7 @@ def _paste_items(where, op, mdatas):
             # so we do not redo it
             try:
                 mdatas.remove(mdata)
-            except:
+            except Exception:
                 pass
 
     # we commit here so we can trigger conflict errors before
@@ -94,7 +94,7 @@ def _paste_items(where, op, mdatas):
 
     <p>The site has finished pasting items into /%s folder.</p>""" % (
                     name, where.lstrip('/')))
-        except:
+        except Exception:
             logger.warn('Could not send status email ', exc_info=True)
 
 
@@ -120,7 +120,7 @@ def delete_error_handle(where, op, mdatas):
 
 <p>Please contact your administrator.</p>""" % (
                     name, where.lstrip('/')))
-        except:
+        except Exception:
             logger.warn('Could not send status email ', exc_info=True)
 
 
@@ -142,7 +142,8 @@ def _delete_items(uids):
             lock_info = None
         if lock_info is not None and lock_info.is_locked():
             try:
-                plone_lock_operations = obj.restrictedTraverse('@@plone_lock_operations')
+                plone_lock_operations = obj.restrictedTraverse(
+                    '@@plone_lock_operations')
                 plone_lock_operations.safe_unlock()
             except AttributeError:
                 pass
@@ -161,7 +162,7 @@ def _delete_items(uids):
                 'msg': 'Unauthorized to delete object',
                 'title': title
             })
-        except:
+        except Exception:
             errors.append({
                 'path': obj_path,
                 'msg': 'Unknown error attempting to delete',
@@ -185,7 +186,8 @@ def _delete_items(uids):
 
         items_html = ''
         for item in deleted:
-            items_html += '<li>{0}({1})</li>'.format(item['title'], item['path'])
+            items_html += '<li>{0}({1})</li>'.format(
+                item['title'], item['path'])
         deleted_html = """
 <h3>Deleted items</h3>
 <ul>{0}</ul>""".format(items_html)
@@ -203,8 +205,9 @@ def _delete_items(uids):
 
 {2}
 """.format(name, deleted_html, errors_html))
-        except:
+        except Exception:
             logger.warn('Could not send status email ', exc_info=True)
+
 
 @task()
 def delete_items(uids):
@@ -239,12 +242,14 @@ def _trash_tree(obj):
                                'depth': -1},
                          trashed=True):
         ob = brain.getObject()
-        # we just want to reindex because trashed should get picked up for indexing now
+        # we just want to reindex because trashed should get picked
+        # up for indexing now
         ob.reindexObject(idxs=['trashed', 'modified'])
 
     # then for ones that are not
     for brain in catalog(path={'query': '/'.join(obj.getPhysicalPath()),
                                'depth': -1}):
         ob = brain.getObject()
-        # we just want to reindex because trashed should get picked up for indexing now
+        # we just want to reindex because trashed should get picked up
+        # for indexing now
         ob.reindexObject(idxs=['trashed', 'modified'])

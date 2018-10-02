@@ -29,7 +29,7 @@ head_viewlets = {
 def _date(obj, date):
     try:
         return getattr(obj, date)().ISO8601()
-    except:
+    except Exception:
         return ''
 
 
@@ -82,7 +82,7 @@ class MetaDataTile(Tile):
                     pass
             try:
                 subject = context.Subject()
-            except:
+            except Exception:
                 subject = []
 
             tags = {
@@ -103,7 +103,7 @@ class MetaDataTile(Tile):
 
             return ''.join([u'<meta name="{}" content="{}">'.format(name, value)
                             for name, value in tags.items()])
-        except:
+        except Exception:
             return u''
 
     def get_search_link(self):
@@ -113,8 +113,9 @@ class MetaDataTile(Tile):
       href="{url}/@@search" />'''.format(
             url=self.root_url
           )
+
     def get_printcss_link(self):
-        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(
+        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(  # noqa
               url=self.root_url
               )
 
@@ -138,7 +139,7 @@ class MetaDataTile(Tile):
                 try:
                     viewlet.update()
                     result += viewlet.render()
-                except:
+                except Exception:
                     logger.warn('Error rendering head viewlet %s' % name, exc_info=True)
         result += unidecode(self.get_basic_tags())
         result += unidecode(self.get_navigation_links())

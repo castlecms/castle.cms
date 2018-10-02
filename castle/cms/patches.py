@@ -39,7 +39,8 @@ _rich_text_widget_types = (
 
 
 def MosaicRegistry_parseRegistry(self):
-    cache_key = '%s-mosaic-registry' % '/'.join(api.portal.get().getPhysicalPath()[1:])
+    cache_key = '%s-mosaic-registry' % '/'.join(
+        api.portal.get().getPhysicalPath()[1:])
     try:
         result = cache.get(cache_key)
     except KeyError:
@@ -47,7 +48,8 @@ def MosaicRegistry_parseRegistry(self):
         cache.set(cache_key, result, 60 * 2)  # cache for 2 minutes
 
     registry = getUtility(IRegistry)
-    settings = registry.forInterface(ITinyMCESchema, prefix="plone", check=False)
+    settings = registry.forInterface(
+        ITinyMCESchema, prefix="plone", check=False)
     if settings.libraries_spellchecker_choice != 'AtD':
         return result
 
@@ -63,14 +65,14 @@ def MosaicRegistry_parseRegistry(self):
         'icon': False
     }
     for widget_type in _rich_text_widget_types:
-        mos_settings['widget_actions'][widget_type]['actions'].append('toolbar-AtD')
-    mos_settings['structure_tiles']['text']['available_actions'].append('toolbar-AtD')
+        mos_settings['widget_actions'][widget_type]['actions'].append('toolbar-AtD')  # noqa
+    mos_settings['structure_tiles']['text']['available_actions'].append('toolbar-AtD')  # noqa
     mos_settings['app_tiles']['plone_app_standardtiles_rawhtml']['available_actions'].append('toolbar-AtD')  # noqa
     return result
 
 
 if not hasattr(ElasticSearchCatalog, 'original_searchResults'):
-    ElasticSearchCatalog.original_searchResults = ElasticSearchCatalog.searchResults
+    ElasticSearchCatalog.original_searchResults = ElasticSearchCatalog.searchResults  # noqa
 
     def searchResultsTrashed(self, REQUEST=None, check_perms=False, **kw):
         if 'trashed' not in kw:
@@ -111,7 +113,7 @@ def manage_pasteObjects(self, cb_copy_data=None, REQUEST=None):
 
     try:
         op, mdatas = _cb_decode(cp)
-    except:
+    except Exception:
         raise CopyError(eInvalid)
 
     try:

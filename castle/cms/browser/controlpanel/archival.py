@@ -125,7 +125,7 @@ class AWSApi(object):
             return
         try:
             del self.archive_storage.archives[uid]
-        except:
+        except Exception:
             pass
 
     def save(self):

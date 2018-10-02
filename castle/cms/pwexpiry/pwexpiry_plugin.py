@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from AccessControl import AuthEncoding, ClassSecurityInfo, Unauthorized
 from castle.cms.pwexpiry.config import _
 from castle.cms.pwexpiry.utils import days_since_event
 from DateTime import DateTime
 from Globals import InitializeClass
 from plone import api
-from plone.registry.interfaces import IRegistry
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PluggableAuthService.interfaces.plugins import (IAuthenticationPlugin,
                                                               IChallengePlugin)
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.statusmessages.interfaces import IStatusMessage
-from zope.component import getUtility
 from zope.interface import implements
 
 manage_addPwExpiryPluginForm = PageTemplateFile(
     'www/addPwExpiryPlugin',
     globals(), __name__='manage_addPwExpiryPlugin'
 )
+
 
 def addPwExpiryPlugin(self, id, title='', REQUEST=None):
     """
@@ -65,7 +66,6 @@ class PwExpiryPlugin(BasePlugin):
         if not user:
             return None
 
-        registry = getUtility(IRegistry)
         pwexpiry_enabled = api.portal.get_registry_record('plone.pwexpiry_enabled', default=False)
         validity_period = api.portal.get_registry_record('plone.pwexpiry_validity_period', default=0)
         if validity_period == 0 or not pwexpiry_enabled:
@@ -93,14 +93,14 @@ class PwExpiryPlugin(BasePlugin):
                 self.REQUEST.RESPONSE.setHeader('user_expired', user.getId())
                 raise Unauthorized
         else:
-            editableUser.setMemberProperties({
+            user.setMemberProperties({
                 'password_date': current_time
             })
         return None
 
     # IChallengePlugin implementation
     security.declarePrivate('challenge')
-    def challenge(self, request, response, **kw):
+    def challenge(self, request, response, **kw):  # noqa
         """
         Challenge the user for credentials
         """
@@ -119,7 +119,7 @@ class PwExpiryPlugin(BasePlugin):
 
     # IUserManagement implementation
     security.declarePrivate('doChangeUser')
-    def doChangeUser(self, principal_id, password):
+    def doChangeUser(self, principal_id, password):  # noqa
         """
         Update user's password date and store passwords history.
         """

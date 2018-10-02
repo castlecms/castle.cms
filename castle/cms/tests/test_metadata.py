@@ -22,7 +22,8 @@ class TestMetadata(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
 
     def test_gives_location(self):
-        page = api.content.create(type='Document', title='Foobar', container=self.portal)
+        page = api.content.create(type='Document', title='Foobar',
+                                  container=self.portal)
         ldata = ILocation(page)
         ldata.locations = [u'Green Bay, WI']
 

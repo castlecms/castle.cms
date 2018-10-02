@@ -4,7 +4,7 @@ from castle.cms.files import aws
 from plone import api
 from Products.Five import BrowserView
 from zExceptions import Redirect
-from zope.component import queryUtility, queryMultiAdapter
+from zope.component import queryUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.browser import FourOhFourView
 from six.moves import urllib
@@ -31,12 +31,12 @@ class FourOhFour(FourOhFourView):
             uid = path.replace('/resolveuid/', '')
             try:
                 new_url = archive_storage.get_archive_url_by_uid(uid)
-            except:
+            except Exception:
                 pass
         else:
             try:
                 new_url = archive_storage.get_archive_url_by_path(path, wants_view)
-            except:
+            except Exception:
                 pass
         if new_url:
             # XXX need to force redirect this way since normal redirect
@@ -48,7 +48,6 @@ class FourOhFour(FourOhFourView):
         self.attempt_redirect()
 
         raise Redirect('{}/not-found'.format(api.portal.get().absolute_url()))
-
 
     def attempt_redirect(self):
         url = self._url()
@@ -109,6 +108,7 @@ class FourOhFour(FourOhFourView):
             url += "?" + query_string
         raise Redirect(url)
         return True
+
 
 class NotFoundView(BrowserView):
 

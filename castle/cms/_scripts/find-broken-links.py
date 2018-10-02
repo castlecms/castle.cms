@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--site-id', dest='site_id', default='Castle')
 args, _ = parser.parse_known_args()
 
+
 class BadResponse(object):
     status_code = 500
 
@@ -39,6 +40,7 @@ _known_bad = [
     'https://elements.psu.edu',
     'https://supervisord.org',
 ]
+
 
 def find_url(ob, url):
     if 'tmbc.me' in url:
@@ -57,20 +59,22 @@ def find_url(ob, url):
         uid = url.split('resolveuid/')[-1]
         uid = uid.split('/')[0]
         return uuidToCatalogBrain(uid) is not None
-    elif ('https://' in url or 'http://' in url) and 'http://nohost' not in url:
+    elif (('https://' in url or 'http://' in url) and
+            'http://nohost' not in url):
         try:
             print('checking ' + url)
             resp = requests.get(url)
-        except:
+        except Exception:
             resp = BadResponse()
         return resp.status_code == 200
     else:
         if 'http://nohost' in url:
             url = url.replace('http://nohost', '')
-        url = url.replace('%20', ' ').split('?')[0].split('#')[0].split('/@@images')[0]
+        url = url.replace('%20', ' ').split(
+            '?')[0].split('#')[0].split('/@@images')[0]
         try:
             return ob.restrictedTraverse(str(url), None) is not None
-        except:
+        except Exception:
             return False
 
 
@@ -93,7 +97,8 @@ def find_broken(site):
             if not anchor.attrib.get('href'):
                 continue
             url = anchor.attrib['href']
-            if url[0] == '#' or url.startswith('data:') or url.startswith('mailto:'):
+            if (url[0] == '#' or url.startswith('data:') or
+                    url.startswith('mailto:')):
                 continue
             if url in good_urls:
                 continue
@@ -106,7 +111,7 @@ def find_broken(site):
             else:
                 try:
                     text = unidecode(anchor.text_content())
-                except:
+                except Exception:
                     text = ''
                 result = '{} linking to broken -> {}({})'.format(
                     brain.getPath(),
@@ -149,7 +154,7 @@ if __name__ == '__main__':
     if IPloneSiteRoot.providedBy(site):
         try:
             find_broken(site)
-        except:
+        except Exception:
             logger.error('Encountered error %s' % site, exc_info=True)
     else:
             logger.error('%s is not a site' % site)

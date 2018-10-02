@@ -67,7 +67,7 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         cache_key = '%s-slot-tiles' % '/'.join(self.site.getPhysicalPath()[1:])
         try:
             return cache.get(cache_key)
-        except:
+        except Exception:
             pass
 
         available_tiles = self.registry.get('castle.slot_tiles')

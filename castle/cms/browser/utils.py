@@ -137,7 +137,7 @@ class Utils(BrowserView):
         if formatter is not None:
             try:
                 return date.strftime(formatter)
-            except:
+            except Exception:
                 pass
 
         if format == 'common':
@@ -310,7 +310,7 @@ class Utils(BrowserView):
 
         try:
             result = cache.get(cache_key)
-        except:
+        except Exception:
             result = None
         if result is not None:
             return result
@@ -346,7 +346,7 @@ class Utils(BrowserView):
             try:
                 url = brain.getURL()
                 alt = brain.Title
-            except:
+            except Exception:
                 url = brain.absolute_url()
                 alt = brain.Title()
             if not isinstance(alt, basestring):
@@ -420,13 +420,13 @@ class Utils(BrowserView):
         obj = aq_base(obj)
         try:
             return obj.overview.output
-        except:
+        except Exception:
             try:
                 desc = obj.Description
                 if callable(desc):
                     desc = desc()
                 return desc
-            except:
+            except Exception:
                 pass
         return ''
 

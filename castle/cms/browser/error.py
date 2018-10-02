@@ -13,7 +13,7 @@ class ErrorView(BrowserView):
     def logged_in(self):
         try:
             return not api.user.is_anonymous()
-        except:
+        except Exception:
             return False
 
     def format_error_message(self):

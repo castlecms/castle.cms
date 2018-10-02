@@ -1,5 +1,3 @@
-from zope.globalrequest import getRequest
-from zope.annotation.interfaces import IAnnotations
 from plone.memoize.interfaces import ICacheChooser
 from plone.memoize.ram import choose_cache as base_choose_cache
 from plone.memoize.ram import AbstractDict
@@ -25,7 +23,7 @@ thread_local = threading.local()
 def redis_installed():
     try:
         return isinstance(get_client(), RedisAdapter)
-    except:
+    except Exception:
         return False
 
 
@@ -74,7 +72,8 @@ class RedisAdapter(AbstractDict):
 def get_client(fun_name=''):
     server = os.environ.get('REDIS_SERVER', None)
     if server is None:
-        logger.warn("Not using redis; REDIS_SERVER environment variable is undefined")
+        logger.warn(
+            "Not using redis; REDIS_SERVER environment variable is undefined")
         return base_choose_cache(fun_name)
 
     client = getattr(thread_local, "client", None)
@@ -90,6 +89,7 @@ def get_client(fun_name=''):
             logger.warn("unable to connect to redis")
             return base_choose_cache(fun_name)
     return RedisAdapter(client, fun_name)
+
 
 directlyProvides(get_client, ICacheChooser)
 
@@ -129,4 +129,6 @@ class RamCache(object):
 
     def set(self, name, value):
         global_ram_cache.set(value, '', {'key': name})
+
+
 ram = RamCache()

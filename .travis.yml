@@ -7,8 +7,11 @@ before_script:
 install:
   - mkdir -p buildout-cache/{eggs,downloads}
   - pip install -r requirements.txt
+  - pip install flake8
   - buildout -Nc travis.cfg
-script: bin/test -s castle.cms -t \!selenium
+script:
+  - flake8 castle/cms
+  - bin/test -s castle.cms -t \!selenium
 before_install:
   - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.3/elasticsearch-2.4.3.deb && sudo dpkg -i --force-confnew elasticsearch-2.4.3.deb && sudo service elasticsearch start
   - export BOTO_CONFIG=/dev/null

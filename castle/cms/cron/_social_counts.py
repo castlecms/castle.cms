@@ -18,7 +18,6 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
 
-import itertools
 import json
 import logging
 import requests
@@ -77,6 +76,8 @@ def _get_url_data(args):
 
 
 _req_pool = Pool(6)
+
+
 def _get_urls_data(args):
     results = []
     config, urls = args
@@ -218,7 +219,7 @@ def retrieve(site):
             obj = brain.getObject()
             get_social_counts(site, obj, site_url, count)
             logger.info('retrieved social stats for: %s' % path)
-        except:
+        except Exception:
             logger.warn('error getting social count totals for: %s' % path,
                         exc_info=True)
         time.sleep(2)

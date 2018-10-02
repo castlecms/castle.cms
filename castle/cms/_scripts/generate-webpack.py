@@ -81,7 +81,8 @@ for bkey, bundle in bundles.items():
         js_requires = []
         css_requires = []
         build_filename = os.path.join(WORK_DIR, '{}-build.js'.format(bkey))
-        less_build_filename = os.path.join(WORK_DIR, '{}-build.less'.format(bkey))
+        less_build_filename = os.path.join(
+            WORK_DIR, '{}-build.less'.format(bkey))
         for resource_key in bundle.resources:
             js_object = get_js_resource_object(site, resources[resource_key])
             if js_object:
@@ -99,9 +100,11 @@ for bkey, bundle in bundles.items():
                 # the less plugin doesn't like absolute paths? wahhhhh?
                 parts = css_require.split('/')
                 filename = parts[-1]
-                alias_name = '{}-{}-dir'.format(bkey, filename.replace('.', '-'))
+                alias_name = '{}-{}-dir'.format(
+                    bkey, filename.replace('.', '-'))
                 webpack_aliases[alias_name] = '/'.join(parts[:-1])
-                fi.write('@import "{}/{}";\n'.format(webpack_aliases[alias_name], filename))
+                fi.write('@import "{}/{}";\n'.format(
+                    webpack_aliases[alias_name], filename))
 
 
 webpack_aliases.update({
@@ -184,4 +187,5 @@ print('generate original grunt file')
 with open(os.path.join(CMFPlone_DIR, '_scripts/_generate_gruntfile.py')) as fi:
     code = fi.read()
     exec(code, globals(), locals())
-# __import__('Products.CMFPlone._scripts._generate_gruntfile', globals(), locals())
+# __import__('Products.CMFPlone._scripts._generate_gruntfile',
+#            globals(), locals())

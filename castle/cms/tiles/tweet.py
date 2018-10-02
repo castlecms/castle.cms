@@ -3,13 +3,13 @@ from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
 
-import json
 import re
 
 
 class TweetTile(BaseTile):
     def render(self):
         content = self.data.get('url', '') or ''
+        self.theme = self.data.get('theme', 'light')
 
         urlRegEx = ".*twitter\.com/.*/status/([0-9]+)"
         urlParser = re.compile(urlRegEx)
@@ -18,15 +18,8 @@ class TweetTile(BaseTile):
         if matches is None:
             return ''
 
-        tweetID = matches.group(1)
-        options = {'tweetID': tweetID}
+        self.embed_url = '{content}?ref_src=twsrc%5Etfw'.format(content=content)
 
-        options['settings'] = {}
-
-        cards = self.data.get('cards', '')
-        options['settings']['cards'] = cards
-
-        self.patternOptions = json.dumps(options)
         self.portalUrl = self.context.portal_url()
 
         return self.index()
@@ -38,9 +31,10 @@ class ITweetTileSchema(model.Schema):
         description=u"URL to the tweet to include in the tile."
     )
 
-    cards = schema.Choice(
-        title=u"Hide tweet card",
-        default='visible',
-        description=u"Whether or not to include any associate pictures or videos.",
-        vocabulary=SimpleVocabulary.fromValues(['visible','hidden'])
+    theme = schema.Choice(
+        title=u"Theme",
+        description=u"Timeline color scheme.",
+        vocabulary=SimpleVocabulary.fromValues(['light', 'dark']),
+        default='light',
+        required=False
     )

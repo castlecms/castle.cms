@@ -11,7 +11,7 @@ Tries to
     * very easy to extend
     * reliable enough for practical purposes
     * assist python web apps to detect clients.
-"""
+"""  # noqa
 
 __version__ = '1.7.8'
 
@@ -36,7 +36,8 @@ class DetectorsHub(dict):
         return iter(self._known_types)
 
     def registerDetectors(self):
-        detectors = [v() for v in globals().values() if DetectorBase in getattr(v, '__mro__', [])]
+        detectors = [v() for v in globals().values()
+                     if DetectorBase in getattr(v, '__mro__', [])]
         for d in detectors:
             if d.can_register:
                 self.register(d)
@@ -71,7 +72,8 @@ class DetectorBase(object):
             if version:
                 result[self.info_type]['version'] = version
             if self.platform:
-                result['platform'] = {'name': self.platform, 'version': version}
+                result['platform'] = {'name': self.platform,
+                                      'version': version}
             return True
 
     def checkWords(self, agent):
@@ -91,7 +93,7 @@ class DetectorBase(object):
         => version string /None
         """
         version_markers = self.version_markers if \
-            isinstance(self.version_markers[0], (list, tuple)) else [self.version_markers]
+            isinstance(self.version_markers[0], (list, tuple)) else [self.version_markers]  # noqa
         version_part = agent.split(word, 1)[-1]
         for start, end in version_markers:
             if version_part.startswith(start) and end in version_part:
@@ -197,7 +199,8 @@ class Trident(Browser):
     }
 
     def getVersion(self, agent, word):
-        return self.trident_to_ie_versions.get(super(Trident, self).getVersion(agent, word))
+        return self.trident_to_ie_versions.get(
+            super(Trident, self).getVersion(agent, word))
 
 
 class MSIE(Browser):
@@ -206,10 +209,12 @@ class MSIE(Browser):
     name = "Microsoft Internet Explorer"
     version_markers = [" ", ";"]
 
+
 class MSEdge(Browser):
     look_for = "Edge"
     skip_if_found = ["MSIE"]
     version_markers = ["/", ""]
+
 
 class Galeon(Browser):
     look_for = "Galeon"
@@ -240,7 +245,9 @@ class Safari(Browser):
         if "Safari/" in agent:
             return agent.split('Safari/')[-1].split(' ')[0].strip()
         else:
-            return agent.split('Safari ')[-1].split(' ')[0].strip()  # Mobile Safari
+            # Mobile Safari
+            return agent.split('Safari ')[-1].split(' ')[0].strip()
+
 
 class GoogleBot(Browser):
     # https://support.google.com/webmasters/answer/1061943
@@ -250,6 +257,7 @@ class GoogleBot(Browser):
     bot = True
     version_markers = [('/', ';'), ('/', ' ')]
 
+
 class GoogleFeedFetcher(Browser):
     look_for = "Feedfetcher-Google"
     bot = True
@@ -257,9 +265,11 @@ class GoogleFeedFetcher(Browser):
     def get_version(self, agent):
         pass
 
+
 class RunscopeRadar(Browser):
     look_for = "runscope-radar"
     bot = True
+
 
 class GoogleAppEngine(Browser):
     look_for = "AppEngine-Google"
@@ -268,6 +278,7 @@ class GoogleAppEngine(Browser):
     def get_version(self, agent):
         pass
 
+
 class GoogleApps(Browser):
     look_for = "GoogleApps script"
     bot = True
@@ -275,13 +286,16 @@ class GoogleApps(Browser):
     def get_version(self, agent):
         pass
 
+
 class TwitterBot(Browser):
     look_for = "Twitterbot"
     bot = True
 
+
 class MJ12Bot(Browser):
     look_for = "MJ12bot"
     bot = True
+
 
 class YandexBot(Browser):
     # http://help.yandex.com/search/robots/agent.xml
@@ -289,7 +303,8 @@ class YandexBot(Browser):
     bot = True
 
     def getVersion(self, agent, word):
-        return agent[agent.index('Yandex'):].split('/')[-1].split(')')[0].strip()
+        return agent[agent.index('Yandex'):].split('/')[-1].split(')')[0].strip()  # noqa
+
 
 class BingBot(Browser):
     look_for = "bingbot"
@@ -310,45 +325,56 @@ class LinkedInBot(Browser):
     look_for = "LinkedInBot"
     bot = True
 
+
 class ArchiveDotOrgBot(Browser):
     look_for = "archive.org_bot"
     bot = True
+
 
 class YoudaoBot(Browser):
     look_for = "YoudaoBot"
     bot = True
 
+
 class YoudaoBotImage(Browser):
     look_for = "YodaoBot-Image"
     bot = True
+
 
 class RogerBot(Browser):
     look_for = "rogerbot"
     bot = True
 
+
 class TweetmemeBot(Browser):
     look_for = "TweetmemeBot"
     bot = True
+
 
 class WebshotBot(Browser):
     look_for = "WebshotBot"
     bot = True
 
+
 class SensikaBot(Browser):
     look_for = "SensikaBot"
     bot = True
+
 
 class YesupBot(Browser):
     look_for = "YesupBot"
     bot = True
 
+
 class DotBot(Browser):
     look_for = "DotBot"
     bot = True
 
+
 class PhantomJS(Browser):
     look_for = "Browser/Phantom"
     bot = True
+
 
 class FacebookExternalHit(Browser):
     look_for = 'facebookexternalhit'
@@ -358,35 +384,46 @@ class FacebookExternalHit(Browser):
 class NokiaOvi(Browser):
     look_for = "S40OviBrowser"
 
+
 class UCBrowser(Browser):
     look_for = "UCBrowser"
+
 
 class BrowserNG(Browser):
     look_for = "BrowserNG"
 
+
 class Dolfin(Browser):
     look_for = 'Dolfin'
+
 
 class NetFront(Browser):
     look_for = 'NetFront'
 
+
 class Jasmine(Browser):
     look_for = 'Jasmine'
+
 
 class Openwave(Browser):
     look_for = 'Openwave'
 
+
 class UPBrowser(Browser):
     look_for = 'UP.Browser'
+
 
 class OneBrowser(Browser):
     look_for = 'OneBrowser'
 
+
 class ObigoInternetBrowser(Browser):
     look_for = 'ObigoInternetBrowser'
 
+
 class TelecaBrowser(Browser):
     look_for = 'TelecaBrowser'
+
 
 class MAUI(Browser):
     look_for = 'Browser/MAUI'
@@ -452,7 +489,7 @@ class iPhone(Dist):
 
     def getVersion(self, agent, word):
         version_end_chars = [' ']
-        if not "iPhone OS" in agent:
+        if "iPhone OS" not in agent:
             return None
         part = agent.split('iPhone OS')[-1].strip()
         for c in version_end_chars:
@@ -468,7 +505,7 @@ class IPad(Dist):
 
     def getVersion(self, agent, word):
         version_end_chars = [' ']
-        if not "CPU OS " in agent:
+        if "CPU OS " not in agent:
             return None
         part = agent.split('CPU OS ')[-1].strip()
         for c in version_end_chars:
@@ -500,7 +537,7 @@ class MacOS(Flavor):
         return ''
 
 
-class Windows(Dist):
+class WindowsDist(Dist):
     look_for = 'Windows'
     platform = 'Windows'
 
@@ -510,16 +547,16 @@ class Windows(OS):
     platform = 'Windows'
     skip_if_found = ["Windows Phone"]
     win_versions = {
-                    "NT 10.0": "10",
-                    "NT 6.3": "8.1",
-                    "NT 6.2": "8",
-                    "NT 6.1": "7",
-                    "NT 6.0": "Vista",
-                    "NT 5.2": "Server 2003 / XP x64",
-                    "NT 5.1": "XP",
-                    "NT 5.01": "2000 SP1",
-                    "NT 5.0": "2000",
-                    "98; Win 9x 4.90": "Me"
+        "NT 10.0": "10",
+        "NT 6.3": "8.1",
+        "NT 6.2": "8",
+        "NT 6.1": "7",
+        "NT 6.0": "Vista",
+        "NT 5.2": "Server 2003 / XP x64",
+        "NT 5.1": "XP",
+        "NT 5.01": "2000 SP1",
+        "NT 5.0": "2000",
+        "98; Win 9x 4.90": "Me"
     }
 
     def getVersion(self, agent, word):
@@ -539,6 +576,7 @@ class Debian(Dist):
     look_for = 'Debian'
     version_markers = ["/", " "]
 
+
 class Chrome(Browser):
     look_for = "Chrome"
     version_markers = ["/", " "]
@@ -551,6 +589,7 @@ class Chrome(Browser):
             version = part.split('+')[0]
         return version.strip()
 
+
 class YaBrowser(Browser):
     look_for = "YaBrowser"
     name = "Yandex.Browser"
@@ -562,6 +601,7 @@ class YaBrowser(Browser):
         if '+' in version:
             version = part.split('+')[0]
         return version.strip()
+
 
 class ChromeiOS(Browser):
     look_for = "CriOS"
@@ -577,7 +617,9 @@ class ChromeOS(OS):
         version_markers = self.version_markers
         if word + '+' in agent:
             version_markers = ['+', '+']
-        return agent.split(word + version_markers[0])[-1].split(version_markers[1])[1].strip()[:-1]
+        return agent.split(
+            word + version_markers[0])[-1].split(
+                version_markers[1])[1].strip()[:-1]
 
 
 class Android(Dist):
@@ -641,7 +683,7 @@ detectorshub = DetectorsHub()
 def detect(agent, fill_none=False):
     """
     fill_none: if name/version is not detected respective key is still added to the result with value None
-    """
+    """  # noqa
     result = dict(platform=dict(name=None, version=None))
     _suggested_detectors = []
 
@@ -650,7 +692,7 @@ def detect(agent, fill_none=False):
         for detector in detectors:
             try:
                 detector.detect(agent, result)
-            except Exception as _err:
+            except Exception:
                 pass
 
     if fill_none:
@@ -680,9 +722,9 @@ def simple_detect(agent):
 
     os = os_list and " ".join(os_list) or "Unknown OS"
     os_version = os_list and (result.get('flavor') and result['flavor'].get('version')) or \
-        (result.get('dist') and result['dist'].get('version')) or (result.get('os') and result['os'].get('version')) or ""
-    browser = 'browser' in result and result['browser'].get('name') or 'Unknown Browser'
-    browser_version = 'browser' in result and result['browser'].get('version') or ""
+        (result.get('dist') and result['dist'].get('version')) or (result.get('os') and result['os'].get('version')) or ""  # noqa
+    browser = 'browser' in result and result['browser'].get('name') or 'Unknown Browser'  # noqa
+    browser_version = 'browser' in result and result['browser'].get('version') or ""  # noqa
     if browser_version:
         browser = " ".join((browser, browser_version))
     if os_version:

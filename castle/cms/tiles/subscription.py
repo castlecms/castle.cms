@@ -1,9 +1,9 @@
-from zope import schema
-from castle.cms.tiles.base import BaseTile
 from castle.cms.browser.subscribe import SubscribeForm
-from plone.supermodel import model
+from castle.cms.tiles.base import BaseTile
 from plone import api
-import requests, re, json
+from plone.supermodel import model
+from zope import schema
+
 
 class SubscriptionTile(BaseTile, SubscribeForm):
 
@@ -17,6 +17,7 @@ class SubscriptionTile(BaseTile, SubscribeForm):
     def __init__(self, context, request):
         super(SubscriptionTile, self).__init__(context, request)
         self.initialize()
+
 
 class ISubscriptionTileSchema(model.Schema):
     title = schema.TextLine(

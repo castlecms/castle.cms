@@ -93,9 +93,9 @@ class MenuItem(object):
             try:
                 if not self.condition(self):
                     return False
-            except:
+            except Exception:
                 logger.warn(
-                    'Error running condition check for toolbar item %s' % self._id,
+                    'Error running condition check for toolbar item %s' % self._id,  # noqa
                     exc_info=True)
                 return False
         return True
@@ -182,9 +182,9 @@ class Utils(object):
         return ILayoutAware.providedBy(self.context)
 
     def show_rename(self):
-        return (api.user.has_permission("Delete objects", obj=self.toolbar.folder) and
-                api.user.has_permission("Copy or Move", obj=self.toolbar.context) and
-                api.user.has_permission("Add portal content", obj=self.toolbar.context) and not
+        return (api.user.has_permission("Delete objects", obj=self.toolbar.folder) and  # noqa
+                api.user.has_permission("Copy or Move", obj=self.toolbar.context) and  # noqa
+                api.user.has_permission("Add portal content", obj=self.toolbar.context) and not  # noqa
                 self.toolbar.context_state.is_portal_root())
 
     def show_invalidate(self):
@@ -250,8 +250,8 @@ class Toolbar(BrowserView):
     def get_user_info(self):
         return {
             'id': self.user.getUserName(),
-            'name': self.user.getProperty('fullname') or self.user.getUserName(),
-            'last_login_time': self._toIso(self.user.getProperty('last_login_time'))
+            'name': self.user.getProperty('fullname') or self.user.getUserName(),  # noqa
+            'last_login_time': self._toIso(self.user.getProperty('last_login_time'))  # noqa
         }
 
     def get_workflow_info(self):
@@ -260,7 +260,8 @@ class Toolbar(BrowserView):
         workflows = wf_tool.getWorkflowsFor(self.real_context)
         if not workflows:
             return
-        state_id = wf_tool.getInfoFor(ob=self.real_context, name='review_state')
+        state_id = wf_tool.getInfoFor(
+            ob=self.real_context, name='review_state')
         if not state_id:
             return
         for w in workflows:
@@ -290,7 +291,7 @@ class Toolbar(BrowserView):
         placeful = False
         try:
             pw = api.portal.get_tool('portal_placeful_workflow')
-        except:
+        except Exception:
             pw = None
         if pw is not None:
             if _checkPermission(ManageWorkflowPolicies, self.real_context):
@@ -326,7 +327,7 @@ class Toolbar(BrowserView):
         return {
             'creator': {
                 'id': creator_id,
-                'name': creator and creator.getProperty('fullname') or creator_id
+                'name': creator and creator.getProperty('fullname') or creator_id  # noqa
             },
             'expires': self._toIso(self.real_context.expires()),
             'effective': self._toIso(self.real_context.effective()),
@@ -336,7 +337,8 @@ class Toolbar(BrowserView):
 
     def get_lock_info(self):
         if ITTWLockable.providedBy(self.real_context):
-            info = getMultiAdapter((self.real_context, self.request), name="plone_lock_info")
+            info = getMultiAdapter(
+                (self.real_context, self.request), name="plone_lock_info")
             details = info.lock_info()
             if details:
                 details = details.copy()
@@ -420,7 +422,7 @@ class Toolbar(BrowserView):
                     continue
                 del obj[conditionExpr]
 
-            if obj['permissions'] and not self.has_permission(obj['permissions']):
+            if obj['permissions'] and not self.has_permission(obj['permissions']):  # noqa
                 continue
 
             if 'url' not in obj:
@@ -469,7 +471,8 @@ class Toolbar(BrowserView):
         self.registry = getUtility(IRegistry)
         self.pactions = api.portal.get_tool('portal_actions')
 
-        self.econtext = createExprContext(self.folder, self.site, self.real_context)
+        self.econtext = createExprContext(
+            self.folder, self.site, self.real_context)
 
     def __call__(self):
         self.update()

@@ -1,10 +1,18 @@
+import argparse
+import base64
+import errno
+import logging
+import os
+import re
+from datetime import datetime
+from StringIO import StringIO
+
+import OFS
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
-from Acquisition import aq_parent
-from Acquisition import ImplicitAcquisitionWrapper
+from Acquisition import ImplicitAcquisitionWrapper, aq_parent
 from BTrees.OOBTree import OOBTree
 from DateTime import DateTime
-from datetime import datetime
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from Persistence.mapping import PersistentMapping as PM1  # noqa
@@ -13,12 +21,12 @@ from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
+from plone.app.textfield import RichText
 from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.tests.base.security import OmnipotentUser
-from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
+from Products.CMFCore.tests.base.security import (OmnipotentUser,
+                                                  PermissiveSecurityPolicy)
 from Products.ZCatalog.Lazy import LazyCat
-from StringIO import StringIO
 from Testing.makerequest import makerequest
 from ZODB.blob import Blob
 from zope.annotation.interfaces import IAnnotations
@@ -27,15 +35,6 @@ from zope.component.hooks import setSite
 from zope.interface import Interface
 from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
-from plone.app.textfield import RichText
-
-import argparse
-import logging
-import base64
-import errno
-import OFS
-import os
-import re
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +61,7 @@ except ImportError:
 
 try:
     from plone.app.contentlisting.contentlisting import ContentListing
-except:
+except ImportError:
     ContentListing = object()
 
 try:
@@ -110,9 +109,9 @@ app = spoof_request(app)  # noqa
 user = app.acl_users.getUser(args.admin_user)  # noqa
 try:
     newSecurityManager(None, user.__of__(app.acl_users))  # noqa
-except:
+except Exception:
     logger.error('Unknown admin user; '
-                 'specify an existing Zope admin user with --admin-user (default is admin)')
+                 'specify an existing Zope admin user with --admin-user (default is admin)')  # noqa
     exit(-1)
 site = app[args.site_id]
 setSite(site)
@@ -200,8 +199,9 @@ class OFSFileSerializer(BaseTypeSerializer):
     def _serialize(cls, obj):
         try:
             data = str(obj.data)
-        except:
-            print('Error in OFSFileSerializer while serializing {}'.format('/'.join(obj.getPhysicalPath())))
+        except Exception:
+            print('Error in OFSFileSerializer while serializing {}'.format(
+                '/'.join(obj.getPhysicalPath())))
             data = str(obj.data.data)
         return {
             'data': base64.b64encode(data),
@@ -330,8 +330,9 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
     @classmethod
     def _deserialize(cls, data):
         realdata = data['data']
-        if len(realdata) < 10: # arbitrary
-            print "short data found in NamedBlobImageSerializer _deserialize"
+        if len(realdata) < 10:  # arbitrary
+            print(
+                "short data found in NamedBlobImageSerializer _deserialize")
         return NamedBlobImage(
             base64.b64decode(realdata),
             filename=data['filename'],
@@ -439,7 +440,7 @@ class ContentExporter(object):
                 continue
             try:
                 dom = fromstring(value)
-            except:
+            except Exception:
                 continue
             for el in dom.cssselect('img'):
                 src = el.attrib.get('src', '')
@@ -465,18 +466,20 @@ class ContentExporter(object):
         has_sibling_pages = True
         if is_dp:
             container = aq_parent(self.obj)
-            res = catalog(path={'query': '/'.join(container.getPhysicalPath())})
+            res = catalog(
+                path={'query': '/'.join(container.getPhysicalPath())})
             if len([b for b in res if b.UID != self.image_to_lead]) > 1:
                 has_sibling_pages = False
 
         try:
             state = workflow.getInfoFor(ob=self.obj, name='review_state')
-        except:
+        except Exception:
             state = None
 
         try:
-            review_history = workflow.getInfoFor(ob=self.obj, name='review_history')
-        except:
+            review_history = workflow.getInfoFor(
+                ob=self.obj, name='review_history')
+        except Exception:
             review_history = []
         for h in review_history:
             h['time'] = h['time'].HTML4()
@@ -487,7 +490,7 @@ class ContentExporter(object):
             'uid': get_uid(self.obj),
             'is_default_page': is_dp,
             'state': state,
-            'review_history' : review_history,
+            'review_history': review_history,
             'has_sibling_pages': has_sibling_pages
         }
 
@@ -508,8 +511,10 @@ class ArchetypesExporter(ContentExporter):
                 fdata = fdata.aq_base
             data[field.__name__] = fdata
             if field.__name__ in ('image', 'file'):
-                data[field.__name__ + '_filename'] = field.getFilename(self.obj)
-                data[field.__name__ + '_contentType'] = field.getContentType(self.obj)
+                data[field.__name__ + '_filename'] = field.getFilename(
+                    self.obj)
+                data[field.__name__ + '_contentType'] = field.getContentType(
+                    self.obj)
             if field.__name__ == 'image':
                 im = field.get(self.obj)
                 if im:
@@ -521,9 +526,9 @@ class ArchetypesExporter(ContentExporter):
         if self.im_width < 200:
             if len(images) > 0 and images[0].portal_type == 'Image':
                 image = images[0]
-                if len(image.getBackReferences(relationship='isReferencing')) < 2:
+                if len(image.getBackReferences(relationship='isReferencing')) < 2:  # noqa
                     data.update({
-                        'image': image.Schema().getField('image').getRaw(image),
+                        'image': image.Schema().getField('image').getRaw(image),  # noqa
                         'image_filename': image.getFilename(),
                         'image_contentType': image.getContentType(),
                         'imageCaption': image.Description()
@@ -584,13 +589,15 @@ class DexterityExporter(ContentExporter):
             dom = getHTMLSerializer(layout)
 
             try:
-                tiles.renderTiles(req, dom.tree, site=site,
-                                  baseURL=self.obj.absolute_url() + '/layout_view')
+                tiles.renderTiles(
+                    req, dom.tree, site=site,
+                    baseURL=self.obj.absolute_url() + '/layout_view')
             except TypeError:
                 try:
-                    tiles.renderTiles(req, dom.tree,
-                                      baseURL=self.obj.absolute_url() + '/layout_view')
-                except:
+                    tiles.renderTiles(
+                        req, dom.tree,
+                        baseURL=self.obj.absolute_url() + '/layout_view')
+                except Exception:
                     tiles.renderTiles(req, dom.tree)
             gridsystem.merge(req, dom.tree)
 
@@ -606,7 +613,8 @@ def export_archetype_obj(obj):
     images = exporter.get_referenced_images(data)
 
     if exporter.image_to_lead and 'text' in data:
-        data['text'] = data['text'].replace(exporter.image_to_lead, get_uid(obj))
+        data['text'] = data['text'].replace(
+            exporter.image_to_lead, get_uid(obj))
 
     alldata = exporter.get_object_data()
     alldata['data'] = data
@@ -635,10 +643,10 @@ def export_dexterity_obj(obj):
 
 def export_obj(obj):
     if IDexterityContent.providedBy(obj):
-        print "--> Dexterity: %s" % obj.Title()
+        print("--> Dexterity: %s" % obj.Title())
         func = export_dexterity_obj
     else:
-        print "--> Archetypes: %s" % obj.Title()
+        print("--> Archetypes: %s" % obj.Title())
         func = export_archetype_obj
     for result in func(obj):
         yield result
@@ -651,7 +659,8 @@ def write_export(obj, data):
     else:
         fobj = aq_parent(obj)
         while not ISiteRoot.providedBy(fobj):
-            if not os.path.exists(os.path.join('/'.join(fobj.getPhysicalPath()), '__folder__')):
+            if not os.path.exists(
+                    os.path.join('/'.join(fobj.getPhysicalPath()), '__folder__')):  # noqa
                 for eobj, edata in export_obj(fobj):
                     write_export(eobj, edata)
             fobj = aq_parent(fobj)
@@ -671,8 +680,9 @@ def run_export(brains):
         print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
         try:
             obj = brain.getObject()
-        except:
-            print('skipping - error getting object, ', path, ' ', str(idx + 1) + '/' + str(size))
+        except Exception:
+            print('skipping - error getting object, ', path, ' ',
+                  str(idx + 1) + '/' + str(size))
             continue
         for obj, data in export_obj(obj):
             write_export(obj, data)

@@ -141,7 +141,7 @@ class Crawler(object):
             if val:
                 try:
                     data[date_field] = DateTime(val).ISO8601()
-                except:
+                except Exception:
                     pass
 
         searchable_text = [
@@ -206,7 +206,7 @@ class Crawler(object):
             # pages that have not yet been crawled
             try:
                 self.crawl_archive_url(_id)
-            except:
+            except Exception:
                 logger.error('Error indexing archive url: ' + _id, exc_info=True)
 
         for _id in set(existing_urls) - set(urls):
@@ -365,7 +365,7 @@ def crawl_site(site, full=False):
     for sitemap in settings.crawler_site_maps:
         try:
             crawler.crawl_site_map(sitemap, full)
-        except:
+        except Exception:
             logger.error('Error crawling site map: %s' % sitemap, exc_info=True)
     return True
 
@@ -392,11 +392,11 @@ def run(app):
                             setup_site(obj)
                             obj._p_jar.sync()
                             crawl_site(obj, count % 10 == 0)
-                        except:
+                        except Exception:
                             logger.error('Error crawling site %s' % oid, exc_info=True)
         except KeyError:
             pass
-        except:
+        except Exception:
             logger.error('Error setting up crawling', exc_info=True)
 
         logger.info('Waiting to crawl again')

@@ -1,9 +1,9 @@
 # implements site subscription technology
-from persistent.mapping import PersistentMapping
 from time import time
 
 from BTrees.OOBTree import OOBTree
 from castle.cms.utils import make_random_key
+from persistent.mapping import PersistentMapping
 from plone import api
 
 
@@ -101,8 +101,8 @@ def get_phone_numbers():
     storage = SubscriptionStorage()
     for subscriber in storage._data.values():
         number = subscriber.get('phone_number')
-        if (number and subscriber.get('phone_number_confirmed', False)
-                and subscriber.get('confirmed')):
+        if (number and subscriber.get('phone_number_confirmed', False) and
+                subscriber.get('confirmed')):
             numbers.append(number)
     return numbers
 

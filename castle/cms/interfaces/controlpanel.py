@@ -409,10 +409,8 @@ class IArchivalSettings(Interface):
         value_type=schema.TextLine())
 
 
-class ICastleSettings(
-    ISiteConfiguration,
-    IAPISettings,
-    IArchivalSettings):
+class ICastleSettings(ISiteConfiguration, IAPISettings,
+                      IArchivalSettings):
     pass
 
 
@@ -528,7 +526,7 @@ class ICrawlerConfiguration(Interface):
 
     crawler_site_maps = schema.List(
         title=u'Site maps',
-        description=u'URLs of the site maps of external sites to be crawled, one per line, e.g., https://plone.org/sitemap.xml.gz',
+        description=u'URLs of the site maps of external sites to be crawled, one per line, e.g., https://plone.org/sitemap.xml.gz',  # noqa
         required=False,
         value_type=schema.TextLine()
     )

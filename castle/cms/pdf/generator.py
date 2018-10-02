@@ -70,7 +70,7 @@ def create(html, css):
         bfile.write(data)
         bfile.close()
         return blob
-    except:
+    except Exception:
         logger.info(traceback.format_exc())
         raise
 
