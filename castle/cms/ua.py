@@ -721,7 +721,7 @@ def simple_detect(agent):
         os_list.append(result['os']['name'])
 
     os = os_list and " ".join(os_list) or "Unknown OS"
-    os_version = os_list and (result.get('flavor') and result['flavor'].get('version')) or \  # noqa
+    os_version = os_list and (result.get('flavor') and result['flavor'].get('version')) or \
         (result.get('dist') and result['dist'].get('version')) or (result.get('os') and result['os'].get('version')) or ""  # noqa
     browser = 'browser' in result and result['browser'].get('name') or 'Unknown Browser'  # noqa
     browser_version = 'browser' in result and result['browser'].get('version') or ""  # noqa
