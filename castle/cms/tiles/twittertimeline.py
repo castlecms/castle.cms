@@ -1,11 +1,6 @@
-import json
-
 from castle.cms.tiles.base import BaseTile
-from plone.memoize.instance import memoize
-from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
 from zope import schema
-from zope.component import getUtility
 from zope.schema.vocabulary import SimpleVocabulary
 
 
@@ -21,7 +16,8 @@ class TwitterTimelineTile(BaseTile):
 
         self.height = self.data.get('height', '400')
         self.theme = self.data.get('theme', 'light')
-        self.embed_url = 'https://twitter.com/{screenname}?ref_src=twsrc%5Etfw'.format(screenname=self.screenName)
+        self.embed_url = 'https://twitter.com/{screenname}?ref_src=twsrc%5Etfw'.format(
+            screenname=self.screenName)
         self.portalUrl = self.context.portal_url()
 
         return self.index()
