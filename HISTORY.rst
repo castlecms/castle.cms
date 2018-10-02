@@ -4,7 +4,8 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove _permissions DeprecationWarnings from startup
+  [CorySanin]
 
 
 2.1.1 (2018-10-02)
