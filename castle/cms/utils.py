@@ -72,9 +72,10 @@ ANONYMOUS_USER = "Anonymous User"
 
 
 _truncate_cleaner = Cleaner(
-    scripts=True, javascript=True, comments=True, style=True, links=True, meta=True,
-    page_structure=True, embedded=True, frames=True, forms=True, annoying_tags=True,
-    remove_tags=('div',), kill_tags=('img', 'hr'), remove_unknown_tags=True)
+    scripts=True, javascript=True, comments=True, style=True, links=True,
+    meta=True, page_structure=True, embedded=True, frames=True, forms=True,
+    annoying_tags=True, remove_tags=('div',), kill_tags=('img', 'hr'),
+    remove_unknown_tags=True)
 
 
 def truncate_text(text, max_words=30, more_link=None, clean=False):
@@ -99,7 +100,7 @@ def truncate_text(text, max_words=30, more_link=None, clean=False):
                 if not (t and t.replace('&nbsp;', '').strip()):
                     p.getparent().remove(p)
             text = tostring(xml)
-        except:
+        except Exception:
             pass
     length = int(max_words)
     if length <= 0:
@@ -161,6 +162,8 @@ def truncate_text(text, max_words=30, more_link=None, clean=False):
         out += '</%s>' % tag
     # Return string
     return out
+
+
 truncateText = truncate_text
 
 
@@ -203,7 +206,7 @@ def make_random_key(length=150, prefix=''):
 def get_paste_data(req):
     try:
         op, mdatas = _cb_decode(req['__cp'])
-    except:
+    except Exception:
         raise CopyError(eInvalid)
 
     try:
@@ -246,14 +249,11 @@ def recursive_create_path(site, path):
                 try:
                     folder = folder[part]
                 except KeyError:
-                    try:
-                        folder = api.content.create(
-                            type='Folder',
-                            id=part,
-                            title=part.capitalize().replace('-', ' '),
-                            container=folder)
-                    except:
-                        raise
+                    folder = api.content.create(
+                        type='Folder',
+                        id=part,
+                        title=part.capitalize().replace('-', ' '),
+                        container=folder)
     return folder
 
 
@@ -265,7 +265,7 @@ def retriable(count=3, sync=False, reraise=True, on_retry_exhausted=None):
             if sync:
                 try:
                     api.portal.get()._p_jar.sync()
-                except:
+                except Exception:
                     pass
             while retried < count:
                 try:
@@ -274,7 +274,7 @@ def retriable(count=3, sync=False, reraise=True, on_retry_exhausted=None):
                     retried += 1
                     try:
                         api.portal.get()._p_jar.sync()
-                    except:
+                    except Exception:
                         if retried >= count:
                             if on_retry_exhausted is not None:
                                 on_retry_exhausted(*args, **kwargs)
@@ -324,7 +324,7 @@ def verify_recaptcha(req=None):
     )
     try:
         return resp.json()['success']
-    except:
+    except Exception:
         return False
 
 
@@ -357,7 +357,7 @@ def send_email(recipients=None, subject=None, html='', text='', sender=None):
     if not text and html:
         try:
             text = html2text(html)
-        except:
+        except Exception:
             pass
 
     for recipient in cleaned_recipients:
@@ -401,7 +401,8 @@ def ESConnectionFactoryFactory(registry=None):
     opts = dict(
         timeout=getattr(settings, 'timeout', 0.5),
         sniff_on_start=getattr(settings, 'sniff_on_start', False),
-        sniff_on_connection_fail=getattr(settings, 'sniff_on_connection_fail', False),
+        sniff_on_connection_fail=getattr(
+            settings, 'sniff_on_connection_fail', False),
         sniffer_timeout=getattr(settings, 'sniffer_timeout', 0.1),
         retry_on_timeout=getattr(settings, 'retry_on_timeout', False)
     )
@@ -466,7 +467,7 @@ def is_mosaic_edit_form(request):
                 request.PUBLISHED.context.getLayout() == 'layout_view' and
                 request.PUBLISHED.__name__ == 'edit'):
             return True
-    except:
+    except Exception:
         pass
     return False
 
@@ -490,6 +491,7 @@ def get_backend_url():
     else:
         return backend_url[0]
 
+
 def no_backend_url(value):
     try:
         url = str(value)
@@ -497,8 +499,9 @@ def no_backend_url(value):
         if backend in url:
             return False
         return True
-    except:
+    except Exception:
         return True
+
 
 def parse_query_from_data(data, context=None):
     if context is None:
@@ -631,7 +634,7 @@ def get_data_from_url(url, portal=None, site_url=None):
                 ob = portal.restrictedTraverse(str(path), None)
                 data = ob.image.data
                 ct = ob.image.contentType
-        except:
+        except Exception:
             logger.error('Could not traverse image ' + url, exc_info=True)
 
     if data is None:
@@ -640,7 +643,7 @@ def get_data_from_url(url, portal=None, site_url=None):
         if file_path is None:
             try:
                 file_path = ob.context.path
-            except:
+            except Exception:
                 pass
         if file_path and os.path.exists(file_path):
             fi = open(file_path)
@@ -686,10 +689,10 @@ def get_image_info(brain):
             }
             try:
                 image_info['focal_point'] = image.focal_point
-            except:
+            except Exception:
                 try:
                     image_info['focal_point'] = obj._image_focal_point
-                except:
+                except Exception:
                     image_info['focal_point'] = [width / 2, height / 2]
         except AttributeError:
             pass
@@ -701,7 +704,7 @@ def get_image_info(brain):
                 brain = uuidToCatalogBrain(uid)
                 if brain:
                     return get_image_info(brain)
-        except:
+        except Exception:
             pass
 
     return image_info
@@ -721,7 +724,8 @@ def get_folder_contents(folder, **query):
 
 
 def site_has_icon():
-    key = '{}.has_site_icon'.format(''.join(api.portal.get().getPhysicalPath()))
+    key = '{}.has_site_icon'.format(
+        ''.join(api.portal.get().getPhysicalPath()))
     try:
         has_icon = cache.ram.get(key)
     except KeyError:
@@ -729,7 +733,7 @@ def site_has_icon():
         has_icon = False
         try:
             has_icon = bool(registry['plone.site_icon'])
-        except:
+        except Exception:
             pass
         cache.ram.set(key, has_icon)
     return has_icon
@@ -759,7 +763,7 @@ def has_image(obj):
     try:
         # check if brain has the data
         return obj.hasImage
-    except:
+    except Exception:
         if getattr(obj, 'getObject', False):
             obj = obj.getObject()
         if IHasDefaultImage.providedBy(obj):

@@ -80,4 +80,5 @@ print('generate original grunt file')
 with open(os.path.join(CMFPlone_DIR, '_scripts/_generate_gruntfile.py')) as fi:
     code = fi.read()
     exec(code, globals(), locals())
-# __import__('Products.CMFPlone._scripts._generate_gruntfile', globals(), locals())
+# __import__('Products.CMFPlone._scripts._generate_gruntfile',
+#            globals(), locals())

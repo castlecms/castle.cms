@@ -2,6 +2,7 @@ import json
 from Products.Five.browser import BrowserView
 from castle.cms import utils
 
+
 class ImageInfoView(BrowserView):
 
     def __call__(self):

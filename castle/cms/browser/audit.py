@@ -29,7 +29,7 @@ class AuditView(BrowserView):
 
             if 'Export' in self.request.form.get('export', ''):
                 return self.export()
-        except:
+        except Exception:
             self.inner_template = self.error_template
         return super(AuditView, self).__call__()
 
@@ -54,7 +54,7 @@ class AuditView(BrowserView):
         es = ESConnectionFactoryFactory()()
         try:
             return es.cluster.health()['status'] in ('green', 'yellow')
-        except:
+        except Exception:
             return False
 
     def get_obj(self, uid):
@@ -156,7 +156,7 @@ class AuditView(BrowserView):
 
         try:
             page = int(self.request.get('page', 1))
-        except:
+        except Exception:
             page = 1
         start = (page - 1) * self.limit
         results = es.search(

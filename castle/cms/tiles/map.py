@@ -46,7 +46,7 @@ class MapTile(BaseTile):
 
         try:
             markers = json.loads(self.data.get('custom_markers', '[]') or '[]')
-        except:
+        except Exception:
             markers = []
         brains = []
         catalog = api.portal.get_tool('portal_catalog')
@@ -61,7 +61,7 @@ class MapTile(BaseTile):
                 continue
             try:
                 coords = json.loads(data.coordinates)
-            except:
+            except Exception:
                 continue
             if not coords:
                 continue
@@ -97,7 +97,7 @@ def validate_center(center):
         center = json.loads(center)
         if len(center) == 0:
             return False
-    except:
+    except Exception:
         pass
     return True
 
@@ -168,7 +168,7 @@ class IMapTileSchema(model.Schema):
     def validate_center(data):
         try:
             center = json.loads(data.center)
-        except:
+        except Exception:
             return
         if len(center) == 0:
             raise Invalid('Must provide a center point')

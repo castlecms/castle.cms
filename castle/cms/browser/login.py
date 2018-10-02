@@ -1,14 +1,12 @@
-from castle.cms import authentication
-from castle.cms import cache
-from castle.cms import texting
-from castle.cms import _
-from castle.cms.interfaces import IAuthenticator
-from castle.cms.interfaces import ISecureLoginAllowedView
-from castle.cms.interfaces import ISiteSchema
-from castle.cms.utils import get_managers
-from castle.cms.utils import send_email
-from castle.cms.utils import strings_differ
+import json
+import time
+
+from castle.cms import _, authentication, cache, texting
+from castle.cms.interfaces import (IAuthenticator, ISecureLoginAllowedView,
+                                   ISiteSchema)
 from castle.cms.pwexpiry.utils import days_since_event
+from castle.cms.utils import get_managers, send_email, strings_differ
+from DateTime import DateTime
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection
@@ -16,20 +14,14 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
-from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
-from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
+from Products.PasswordResetTool.PasswordResetTool import (ExpiredRequestError,
+                                                          InvalidRequestError)
 from ZODB.POSException import ConnectionStateError
-from zope.component import getMultiAdapter
-from zope.component import getUtility
+from zope.component import getMultiAdapter, getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
-from zope.interface import alsoProvides
-from zope.interface import implements
-from AccessControl import AuthEncoding
-from DateTime import DateTime
-from zope.i18n import translate
-import json
-import time
+from zope.interface import alsoProvides, implements
+
 
 class SecureLoginView(BrowserView):
     implements(ISecureLoginAllowedView)
@@ -237,7 +229,7 @@ The user requesting this access logged this information:
         try:
             if hasattr(self.context, 'portal_registry'):
                 backend_urls = self.context.portal_registry['plone.backend_url']
-                only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']
+                only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']  # noqa
                 portal_url = api.portal.get().absolute_url()
                 bad_domain = only_allow_login_to_backend_urls and \
                              len(backend_urls) > 0 and \
@@ -247,7 +239,7 @@ The user requesting this access logged this information:
                         'success': False,
                         'message': translate(_(
                             u'description_bad_login_domain',
-                            default=u'You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.'
+                            default=u'You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.'  # noqa
                         ))
                     })
             authorized, user = self.auth.authenticate(
@@ -278,7 +270,7 @@ The user requesting this access logged this information:
                     with api.env.adopt_user(user=user):
                         resp['authenticator'] = createToken()
                         return json.dumps(resp)
-                except:
+                except Exception:
                     resp['authenticator'] = createToken()
                     return json.dumps(resp)
             else:
@@ -466,7 +458,7 @@ The user requesting this access logged this information:
                     'code': self.request.form.get('code'),
                     'userid': self.request.form.get('userid')
                 })
-            except:
+            except Exception:
                 pwreset = False
         return json.dumps(data)
 
@@ -499,7 +491,7 @@ class LoginExceptionApprovalView(BrowserView):
                         data['timestamp'] = time.time()
                         cache.set(exc_key, data, 12 * 60 * 60)
                         self.send_email(data)
-            except:
+            except Exception:
                 pass
         return self.index()
 

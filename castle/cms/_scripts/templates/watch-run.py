@@ -60,6 +60,8 @@ def initialize(directory):
         else:
             changed_time = os.stat(filepath).st_mtime
             times[filepath] = changed_time
+
+
 for directory in args.dirs:
     initialize(directory)
 

@@ -37,7 +37,7 @@ class Storage(object):
                 THEME_RESOURCE_NAME, self.theme)
             try:
                 self.themeDirectory = directory['jbot']
-            except:
+            except Exception:
                 self.themeDirectory = None
         else:
             self.themeDirectory = None
@@ -147,7 +147,7 @@ class TemplateManager(object):
         """
         try:
             return self._registerTemplate(template, token)
-        except:
+        except Exception:
             if 'jbot.error' not in self.req.environ:
                 # only log one error per request
                 self.req.environ['jbot.error'] = True

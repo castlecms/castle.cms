@@ -32,7 +32,7 @@ class FileCacheFactory(object):
     def get_cache_storage(self):
         try:
             cache = _local_file_cache.data
-        except:
+        except Exception:
             _local_file_cache.data = {}
             cache = _local_file_cache.data
         return cache
@@ -64,7 +64,8 @@ class FileChangedCacheFactory(FileCacheFactory):
         else:
             data = cache[filepath]
             # check mtime
-            if os.path.exists(filepath) and os.path.getmtime(filepath) > data['mtime']:
+            if (os.path.exists(filepath) and
+                    os.path.getmtime(filepath) > data['mtime']):
                 # need to update, it changed
                 update = True
         if update:
@@ -152,7 +153,7 @@ class ThemeFragmentsDirectory(object):
         mtime = policy.getCacheStorage()['mtime']
         try:
             cache = _theme_file_cache.data
-        except:
+        except Exception:
             cache = self._reset_cache()
 
         key = policy.getCacheKey() + template_path
@@ -168,9 +169,9 @@ class ThemeFragmentsDirectory(object):
             # check if we need to update the cache
             try:
                 template = cache['templates'][key]
-                if self.get_mtime(theme_directory[template_path]) > template['mtime']:
+                if self.get_mtime(theme_directory[template_path]) > template['mtime']:  # noqa
                     update = True
-            except:
+            except Exception:
                 raise KeyError(name)
 
         if update:
@@ -178,7 +179,8 @@ class ThemeFragmentsDirectory(object):
             if not theme_directory.isFile(str(template_path)):
                 raise KeyError(name)
             fi = theme_directory[template_path]
-            template = ZopePageTemplate(name, text=theme_directory.readFile(str(template_path)))
+            template = ZopePageTemplate(name, text=theme_directory.readFile(
+                str(template_path)))
             cache['templates'][key] = {
                 'template': template,
                 'mtime': self.get_mtime(fi)
@@ -191,7 +193,8 @@ class ThemeFragmentsDirectory(object):
 
         template_path = "%s/%s.pt" % (FRAGMENTS_DIRECTORY, name)
 
-        template = self.get_from_cache(policy, theme_directory, name, template_path)
+        template = self.get_from_cache(
+            policy, theme_directory, name, template_path)
 
         # Now disable the theme so we don't double-transform
         request.response.setHeader('X-Theme-Disabled', '1')
@@ -207,7 +210,8 @@ class ThemeFragmentsDirectory(object):
         if current_theme is None:
             raise KeyError()
 
-        theme_directory = queryResourceDirectory(THEME_RESOURCE_NAME, current_theme)
+        theme_directory = queryResourceDirectory(
+            THEME_RESOURCE_NAME, current_theme)
 
         if theme_directory is None:
             raise KeyError()

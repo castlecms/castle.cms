@@ -23,7 +23,6 @@ import transaction
 import unittest
 
 
-
 class CastleLayer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
@@ -99,7 +98,8 @@ CASTLE_PLONE_INTEGRATION_TESTING = IntegrationTesting(
 
 CASTLE_ROBOT_FIXTURE = CastleRobotLayer()
 CASTLE_ROBOT_TESTING = FunctionalTesting(
-    bases=(CASTLE_ROBOT_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE, z2.ZSERVER_FIXTURE),
+    bases=(CASTLE_ROBOT_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE,
+           z2.ZSERVER_FIXTURE),
     name="CastleTesting:Robot"
 )
 

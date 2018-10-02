@@ -2,8 +2,6 @@
 from zope.annotation.interfaces import IAnnotations
 from plone.namedfile.file import NamedBlobImage
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.tests.utils import get_tile
-from castle.cms.tests.utils import render_tile
 from plone import api
 from plone.app.testing import login
 from plone.app.testing import setRoles
@@ -42,7 +40,9 @@ class TestLeadImages(unittest.TestCase):
 <p>
 <img src="resolveuid/{}/@@images/image/large" />
 </p>
-        '''.format(IUUID(self.image_obj)), mimeType='text/html', outputMimeType='text/html')
+        '''.format(
+            IUUID(self.image_obj)), mimeType='text/html',
+            outputMimeType='text/html')
         image = lead.find_image(self.page_obj)
         self.assertEquals(IUUID(image), self.img_uid)
 
@@ -85,7 +85,8 @@ class TestLeadImages(unittest.TestCase):
 <p>
 <img src="resolveuid/{}/@@images/image/large" />
 </p>
-        '''.format(self.img_uid), mimeType='text/html', outputMimeType='text/html')
+        '''.format(self.img_uid),
+            mimeType='text/html', outputMimeType='text/html')
         lead.check_lead_image(self.page_obj)
         self.assertTrue(IReferenceNamedImage.providedBy(self.page_obj.image))
         self.assertEquals(self.page_obj.image.reference, self.img_uid)

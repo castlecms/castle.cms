@@ -46,6 +46,7 @@ def fix_urls(storage, dom):
             if original:
                 el.attrib['original-url'] = original
 
+
 def get_key_from_url(url):
     parsed = urlparse(url)
     # parsed url includes bucket so we strip off bucket to get actual key
@@ -60,7 +61,8 @@ if __name__ == '__main__':
     toremove = {}  # uid: path
     catalog = api.portal.get_tool('portal_catalog')
     registry = getUtility(IRegistry)
-    crawler_settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
+    crawler_settings = registry.forInterface(
+        ICrawlerConfiguration, prefix='castle')
     es = ElasticSearchCatalog(catalog)
     crawler = Crawler(site, crawler_settings, es)
     storage = archival.Storage(site)

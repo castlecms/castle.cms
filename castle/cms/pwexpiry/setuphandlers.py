@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 try:
     from Products.CMFPlone import __version__ as plone_version
-except:
+except ImportError:
     plone_version = '4'
 
 import logging
@@ -19,7 +19,6 @@ def import_various(context):
     Install the PwExpiryPlugin
     """
     portal = context.getSite()
-    ps = portal.portal_setup
 
     acl = getToolByName(portal, 'acl_users')
     installed = acl.objectIds()

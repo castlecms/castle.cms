@@ -41,7 +41,7 @@ def run(app):
         if IPloneSiteRoot.providedBy(obj):
             try:
                 clean(obj)
-            except:
+            except Exception:
                 logger.error('Could not clean users %s' % oid, exc_info=True)
 
 

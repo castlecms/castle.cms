@@ -19,7 +19,7 @@ import transaction
 
 url_regex = re.compile(
     r'^(?:http)s?://'
-    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # noqa
     r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
     r'(?::\d+)?'
     r'(?:/?|[/?]\S+)$', re.IGNORECASE)
@@ -54,7 +54,7 @@ while len(parsed) < args.limit:
             anchors = base_dom.cssselect('#bodyContent a')
         anchor = random.choice(anchors)
         url = anchor.attrib.get('href')
-        if (url.startswith('//') or 'Template:' in url or 'Wikipedia:' in url or
+        if (url.startswith('//') or 'Template:' in url or 'Wikipedia:' in url or  # noqa
                 'Category:' in url or 'index.php' in url or 'File:' in url or
                 'Help:' in url or 'Portal:' in url or 'Talk:' in url):
             continue
@@ -67,7 +67,8 @@ while len(parsed) < args.limit:
     # randomly decide to make new folder to put stuff in
     if random.randint(0, 100) > 90:  # 10% chance
         container = api.content.create(
-            type='Folder', title='Folder', container=container, exclude_from_nav=True)
+            type='Folder', title='Folder', container=container,
+            exclude_from_nav=True)
 
     print('parsing ' + found_url)
     resp = requests.get(found_url)

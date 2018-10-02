@@ -35,15 +35,28 @@ logger = logging.getLogger('castle.cms')
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--site-id', dest='site_id', default='Castle')
-parser.add_argument('--export-directory', dest='export_directory', default='export')
+parser.add_argument(
+    '--export-directory', dest='export_directory', default='export')
 parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
-parser.add_argument('--stop-if-exception', dest='stop_if_exception', default=False)
-parser.add_argument('--pdb-if-exception', dest='pdb_if_exception', default=False)
+parser.add_argument(
+    '--stop-if-exception', dest='stop_if_exception', default=False)
+parser.add_argument(
+    '--pdb-if-exception', dest='pdb_if_exception', default=False)
 parser.add_argument('--skip-existing', dest='skip_existing', default=True)
-parser.add_argument('--skip-transitioning', dest='skip_transitioning', default=False)
-parser.add_argument('--skip-types', dest='skip_types', default="collective.cover.content,FormFolder,FormMailerAdapter,FormTextField,FormStringField,FormThanksPage,FormSaveDataAdapter,FormSelectionField")
+parser.add_argument(
+    '--skip-transitioning', dest='skip_transitioning', default=False)
+parser.add_argument(
+    '--skip-types', dest='skip_types', default=','.join([
+        "collective.cover.content",
+        "FormFolder",
+        "FormMailerAdapter",
+        "FormTextField",
+        "FormStringField",
+        "FormThanksPage",
+        "FormSaveDataAdapter",
+        "FormSelectionField"]))
 args, _ = parser.parse_known_args()
 
 ignore_uuids = args.ignore_uuids
@@ -58,9 +71,10 @@ else:
 user = app.acl_users.getUser(args.admin_user)  # noqa
 try:
     newSecurityManager(None, user.__of__(app.acl_users))  # noqa
-except:
+except Exception:
     logger.error('Unknown admin user; '
-                 'specify an existing Zope admin user with --admin-user (default is admin)')
+                 'specify an existing Zope admin user with --admin-user '
+                 '(default is admin)')
     exit(-1)
 site = app[args.site_id]  # noqa
 setSite(site)
@@ -76,7 +90,7 @@ def traverse(path):
 
 
 def relpath(obj):
-    return '/'.join(obj.getPhysicalPath())[len('/'.join(site.getPhysicalPath())) + 1:]
+    return '/'.join(obj.getPhysicalPath())[len('/'.join(site.getPhysicalPath())) + 1:]  # noqa
 
 
 def recursive_create_path(path):
@@ -111,38 +125,43 @@ def recursive_create_path(path):
                         fi = open(fpath)
                         data = mjson.loads(fi.read())
                         fi.close()
-                        importtype = get_import_type(data, fpath[len(args.export_directory):], None)
+                        importtype = get_import_type(
+                            data, fpath[len(args.export_directory):], None)
                         creation_data = importtype.get_data()
                         creation_data['container'] = folder
                         creation_data['id'] = part
                         created = False
                         if skip_existing and part in folder.objectIds():
                             print("    skipping existing %s" % part)
-                        elif skip_types and creation_data['type'] in skip_types:
-                            print("    skipping %s (content type %s)" % (part, creation_data['type']))
+                        elif skip_types and creation_data['type'] in skip_types:  # noqa
+                            print("    skipping %s (content type %s)" % (
+                                part, creation_data['type']))
                         else:
                             try:
                                 folder = api.content.create(**creation_data)
                                 created = True
                             except api.exc.InvalidParameterError:
-                                logger.error('Error creating content {}'.format(fpath), exc_info=True)
+                                logger.error(
+                                    'Error creating content {}'.format(fpath),
+                                    exc_info=True)
                                 if stop_if_exception:
                                     if pdb_if_exception:
-                                        import pdb;pdb.set_trace()
+                                        import pdb;pdb.set_trace()  # noqa
                                     raise
                                 return
                         if created:
                             importtype.post_creation(folder)
                             if data['state']:
                                 try:
-                                    api.content.transition(folder, to_state=data['state'])
-                                except:
-                                    logger.error("maybe workflows do not match up")
+                                    api.content.transition(
+                                        folder, to_state=data['state'])
+                                except Exception:
+                                    logger.error(
+                                        "maybe workflows do not match up")
                                     if stop_if_exception:
                                         if pdb_if_exception:
-                                            import pdb;pdb.set_trace()
+                                            import pdb;pdb.set_trace()  # noqa
                                         raise
-                                    #pass
                             folder.reindexObject()
                     else:
                         if skip_existing and part in folder.objectIds():
@@ -155,7 +174,7 @@ def recursive_create_path(path):
                                 title=part.capitalize(),
                                 container=folder)
                             bdata = ILayoutAware(folder)
-                            bdata.contentLayout = '++contentlayout++castle/folder-query.html'
+                            bdata.contentLayout = '++contentlayout++castle/folder-query.html'  # noqa
     return folder
 
 
@@ -179,14 +198,14 @@ def read_object(filepath):
 def fix_html_images(obj):
     try:
         html = obj.text.raw
-    except:
+    except Exception:
         return
     if not html:
         return
     changes = False
     try:
         dom = fromstring(html)
-    except:
+    except Exception:
         return
     for el in dom.cssselect('img'):
         src = el.attrib.get('src', '')
@@ -213,7 +232,8 @@ def fix_html_images(obj):
         changes = True
     if changes:
         obj.text = RichTextValue(
-            tostring(dom), mimeType=obj.text.mimeType, outputMimeType=obj.text.outputMimeType)
+            tostring(dom), mimeType=obj.text.mimeType,
+            outputMimeType=obj.text.outputMimeType)
 
 
 def import_object(filepath, count):
@@ -222,7 +242,7 @@ def import_object(filepath, count):
     fi.close()
     try:
         data = mjson.loads(file_read)
-    except:
+    except Exception:
         print("    unable to read JSON data; skipping")
         return
     if filepath.endswith('__folder__'):
@@ -258,14 +278,14 @@ def import_object(filepath, count):
     # if creation_data['type'] in ['collective.cover.content', 'FormFolder']:
     if creation_data['type'] in skip_types:
         print('    skipping omitted type %s' % creation_data['type'])
-        return # skip objects of these types
+        return  # skip objects of these types
 
     creation_data['container'] = folder
 
     aspect = ISelectableConstrainTypes(folder, None)
     if aspect:
         if (aspect.getConstrainTypesMode() != 1 or
-                [creation_data['type']] != aspect.getImmediatelyAddableTypes()):
+                [creation_data['type']] != aspect.getImmediatelyAddableTypes()):  # noqa
             aspect.setConstrainTypesMode(1)
             aspect.setImmediatelyAddableTypes([creation_data['type']])
 
@@ -274,30 +294,39 @@ def import_object(filepath, count):
             del creation_data['_plone.uuid']
 
         obj = None
-        if skip_existing and (_id in folder.objectIds() or (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None)):
-            print ("    skipping existing %s" % _id)
+        if (skip_existing and
+                (_id in folder.objectIds() or
+                 (not ignore_uuids and api.content.get(
+                     UID=creation_data['_plone.uuid']) is not None))):
+            print("    skipping existing %s" % _id)
         else:
             try:
                 obj = api.content.create(safe_id=True, **creation_data)
             except api.exc.InvalidParameterError:
                 if stop_if_exception:
-                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
+                    logger.error('Error creating content {}'.format(filepath),
+                                 exc_info=True)
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()
+                        import pdb;pdb.set_trace()  # noqa
                     raise
-                return logger.error('Error creating content {}'.format(filepath), exc_info=True)
+                return logger.error(
+                    'Error creating content {}'.format(filepath),
+                    exc_info=True)
         # TODO set review_history
         review_history = data['review_history']
         wtool = api.portal.get_tool(name='portal_workflow')
         chain = wtool.getChainFor(obj)
         if len(chain) != 1:
-            return logger.warning('There should be only one workflow for this object %s but there are %s' % (obj, len(chain)))
+            return logger.warning(
+                'There should be only one workflow for this object %s but there are %s' % (obj, len(chain)))  # noqa
         workflow_id = chain[0]
         for h in review_history:
             wtool.setStatusOf(workflow_id, obj, h)
 
-        # TODO check default folder pages came over as folder with rich text tile
-        # TODO any folder pages without default page should have content listing tile
+        # TODO check default folder pages came over as folder with
+        #      rich text tile
+        # TODO any folder pages without default page should have content
+        #      listing tile
         # TODO get lead image captions
     else:
         obj = folder[_id]
@@ -317,12 +346,11 @@ def import_object(filepath, count):
             try:
                 print("    transitioning %s to %s" % (obj.id, data['state']))
                 api.content.transition(obj, to_state=data['state'])
-            except:
+            except Exception:
                 logger.error("maybe workflows do not match up")
-                #pass
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()
+                        import pdb;pdb.set_trace()  # noqa
                     raise
 
         fix_html_images(obj)
@@ -347,11 +375,11 @@ def import_pages(path, count=0):
         else:
             try:
                 import_object(filepath, count)
-            except:
+            except Exception:
                 logger.error('Error importing object', exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()
+                        import pdb;pdb.set_trace()  # noqa
                     raise
     return count
 
@@ -364,11 +392,11 @@ def import_folders(path, count=0):
         if filename == '__folder__':
             try:
                 import_object(filepath, count)
-            except:
+            except Exception:
                 logger.error('Error importing object', exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()
+                        import pdb;pdb.set_trace()  # noqa
                     raise
 
         if os.path.isdir(filepath):

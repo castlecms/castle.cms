@@ -3,7 +3,6 @@ from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
 
-import json
 import re
 
 

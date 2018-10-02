@@ -40,7 +40,7 @@ class TagsView(BrowserView):
                     obj.reindexObject(idxs=['Subject'])
         try:
             total = len(catalog._catalog.getIndex('Subject')._index[tag])
-        except:
+        except Exception:
             total = 0
         return {
             'success': True,
@@ -62,7 +62,7 @@ class TagsView(BrowserView):
                     obj.reindexObject(idxs=['Subject'])
         try:
             total = len(catalog._catalog.getIndex('Subject')._index[tag])
-        except:
+        except Exception:
             total = 0
         return {
             'success': True,
@@ -88,7 +88,7 @@ class TagsView(BrowserView):
 
         try:
             page = int(self.request.form.get('page'))
-        except:
+        except Exception:
             page = 1
 
         start = (page - 1) * self.batch_size

@@ -53,7 +53,7 @@ def index_site(site):
         # go through each object and reindex using bulk setting
         try:
             ob = brain.getObject()
-        except:
+        except Exception:
             print('Could not get object of %s' % brain.getPath())
             continue
         try:
