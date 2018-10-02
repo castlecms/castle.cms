@@ -4,6 +4,9 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
+- Allow trailing slashes in backend URLs
+  [CorySanin]
+
 - Fix not Schema AttributeError on export script
   [vangheem]
 
