@@ -1,2 +1,9 @@
-<div style="padding:5px;" class='pat-tweettext' data-pat-tweettext='${view/patternOptions}'>
+<div style="padding:5px;">
+  <blockquote tal:attributes="data-theme view/theme"
+    class="twitter-tweet" data-theme="light">
+    <p lang="en" dir="ltr">
+      <a tal:attributes="href view/embed_url" href="#"></a>
+    </p>
+   </blockquote>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
