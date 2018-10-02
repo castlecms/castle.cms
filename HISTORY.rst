@@ -4,6 +4,9 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
+- Fix password reset function
+  [CorySanin]
+
 - Fix not Schema AttributeError on export script
   [vangheem]
 
