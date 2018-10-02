@@ -19,6 +19,8 @@ Changelog
 - Add support for the path search parameter
   [CorySanin]
 
+- Update twitter embedding code and templates
+  [lucid-0]
 
 2.1.0 (2018-09-26)
 ------------------
