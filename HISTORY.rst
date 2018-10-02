@@ -1,14 +1,24 @@
 Changelog
 =========
 
-2.1.1 (unreleased)
+2.1.2 (unreleased)
 ------------------
 
 - Allow trailing slashes in backend URLs
   [CorySanin]
 
+
+2.1.1 (2018-10-02)
+------------------
+
+- Fix password reset function
+  [CorySanin]
+
 - Fix not Schema AttributeError on export script
   [vangheem]
+
+- Add support for the path search parameter
+  [CorySanin]
 
 
 2.1.0 (2018-09-26)
