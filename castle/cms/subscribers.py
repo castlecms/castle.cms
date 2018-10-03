@@ -130,8 +130,8 @@ def _touchContributors(obj):
             user_id = api.user.get_current().getId()
             if (user_id not in ownership.creators and
                     user_id not in ownership.contributors):
-                ownership.contributors = ownership.contributors + (user_id.decode('utf8'),)
-        except:
+                ownership.contributors = ownership.contributors + (user_id.decode('utf8'),)  # noqa
+        except Exception:
             pass
 
 
@@ -139,4 +139,5 @@ def onTrashTransitioned(obj, event):
     api.portal.show_message(
         'You are not allowed to transition an item in the recycling bin.',
         request=getRequest(), type='error')
-    raise WorkflowException('You are not allowed to transition an item in the recycling bin.')
+    raise WorkflowException(
+        'You are not allowed to transition an item in the recycling bin.')

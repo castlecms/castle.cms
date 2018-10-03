@@ -9,7 +9,7 @@ class BusinessControlPanelForm(controlpanel.RegistryEditForm):
     schema_prefix = 'castle'
     id = "BusinessControlPanel"
     label = u"Google Business Settings"
-    description = "Show you're open for business. This information will appear in Google Search and Maps. See https://www.google.com/business for details."
+    description = "Show you're open for business. This information will appear in Google Search and Maps. See https://www.google.com/business for details."  # noqa
 
     def updateFields(self):
         super(BusinessControlPanelForm, self).updateFields()

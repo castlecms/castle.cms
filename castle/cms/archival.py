@@ -27,7 +27,7 @@ logger = logging.getLogger('castle.cms')
 # gets all url() CSS directives
 RE_CSS_URL = re.compile(r"""url\(["']?([^\)'"]+)['"]?\)""")
 # inline css import...
-RE_CSS_IMPORTS = re.compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))["'];""")
+RE_CSS_IMPORTS = re.compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))["'];""")  # noqa
 
 CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'
@@ -35,6 +35,7 @@ RESOURCES_KEY_PREFIX = 'archiveresources/'
 
 class BaseArchivalTransformer(object):
     implements(IArchiveContentTransformer)
+
     def __init__(self, archiver):
         self.archiver = archiver
 
@@ -130,7 +131,7 @@ class FlashScriptResourceMover(ImageResourceMover):
     <script type="text/javascript">
 AC_FL_RunContent('codebase','http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0','width','920','height','670','src','foobar','quality','high','wmode','transparent','pluginspage','http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash','movie','foobar' );
 </script>
-    """
+    """  # noqa
 
     keep_ext = True
 
@@ -155,7 +156,7 @@ AC_FL_RunContent('codebase','http://download.macromedia.com/pub/shockwave/cabs/f
                 script = line
                 break
         if script:
-            params = script.replace('AC_FL_RunContent(', '').replace(');', '').split(',')
+            params = script.replace('AC_FL_RunContent(', '').replace(');', '').split(',')  # noqa
             swf = params[-1].replace('"', '').replace("'", '').strip()
             return swf
 
@@ -216,7 +217,8 @@ class RequestsUrlOpener(object):
             return
         if len(resp.history) > 0:
             # if it was a redirect and came_from in the url
-            if resp.history[-1].status_code in (301, 302) and 'came_from' in resp.url:
+            if (resp.history[-1].status_code in (301, 302) and
+                    'came_from' in resp.url):
                 return
 
         return {
@@ -272,7 +274,7 @@ class SubrequestUrlOpener(object):
         # since we're looking at plone here... let's try fixing up urls...
         if '++plone++' in url:
             # can always be from site root
-            url = self.public_url + '/++plone++' + url.rsplit('++plone++', 1)[-1]
+            url = self.public_url + '/++plone++' + url.rsplit('++plone++', 1)[-1]  # noqa
 
         parsed = urlparse(url)
         vhm_path = self.vhm_base + parsed.path
@@ -322,7 +324,7 @@ class Storage(object):
         try:
             self.replacements = api.portal.get_registry_record(
                 'castle.archival_replacements') or {}
-        except:
+        except Exception:
             self.replacements = {}
 
         self.view_url_types = api.portal.get_registry_record(
@@ -341,7 +343,8 @@ class Storage(object):
         return self._bucket
 
     def _initialize_s3(self):
-        bucket_name = api.portal.get_registry_record('castle.aws_s3_bucket_name')
+        bucket_name = api.portal.get_registry_record(
+            'castle.aws_s3_bucket_name')
         self._s3_conn, self._bucket = aws.get_bucket(bucket_name)
 
     def apply_replacements(self, content):
@@ -367,8 +370,8 @@ class Storage(object):
 
         return tostring(dom)
 
-    def move_to_aws(self, content, content_path, content_type='text/html; charset=utf-8',
-                    replace=True):
+    def move_to_aws(self, content, content_path,
+                    content_type='text/html; charset=utf-8', replace=True):
         # perform replacements
         if 'html' in content_type and self.replacements:
             content = self.apply_replacements(content)
@@ -489,7 +492,7 @@ class Storage(object):
             try:
                 util = Util(self)
                 content = util(content)
-            except:
+            except Exception:
                 logger.info('Error with archive utility', exc_info=True)
         return content
 

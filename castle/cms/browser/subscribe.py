@@ -44,7 +44,7 @@ def check_phone_number(val):
     number = '+' + number
     try:
         number = phonenumbers.parse(number, None)
-    except:
+    except Exception:
         raise Invalid('Not a valid phone number')
 
     if not phonenumbers.is_valid_number(number):
@@ -67,7 +67,6 @@ class ISubscribeForm(Interface):
         description=u'If you would like to receive text message alerts. ',
         required=False,
         constraint=check_phone_number)
-
 
     widget(
         'categories',
@@ -299,6 +298,7 @@ class ConfirmPhoneForm(BaseForm):
         else:
             api.portal.show_message('Code sent', request=self.request, type='info')
 
+
 class ChangeSubscription(form.EditForm):
     schema = ISubscribeForm
     fields = field.Fields(ISubscribeForm)
@@ -379,6 +379,7 @@ class ChangeSubscription(form.EditForm):
 
         self.widgets['email'].mode = interfaces.HIDDEN_MODE
         self.widgets['captcha'].mode = interfaces.HIDDEN_MODE
+
 
 class Unsubscribe(BrowserView):
     unsubscribed = False

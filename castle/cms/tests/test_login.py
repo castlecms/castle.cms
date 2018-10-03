@@ -308,6 +308,7 @@ class TestTwoFactor(unittest.TestCase):
         self.assertTrue(result['success'])
         self.assertTrue(result['countryBlocked'])
 
+
 class TestEnforceBackendEditingUrl(unittest.TestCase):
 
     layer = CASTLE_PLONE_INTEGRATION_TESTING
@@ -392,7 +393,8 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         result = json.loads(view())
         self.assertTrue(result['success'])
-        
+
+
 class TestPwexpiry(unittest.TestCase):
 
     layer = CASTLE_PLONE_INTEGRATION_TESTING
@@ -400,7 +402,6 @@ class TestPwexpiry(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        portal_memberdata = self.portal.portal_memberdata
         api.portal.set_registry_record(
             name='plone.pwexpiry_enabled',
             value=True
@@ -463,7 +464,7 @@ class TestPwexpiry(unittest.TestCase):
         })
         login(self.portal, TEST_USER_NAME)
 
-        #-----Change password-----
+        # -----Change password-----
         self.request.form.update({
             'apiMethod': 'set_password',
             'username': TEST_USER_NAME,
@@ -475,7 +476,7 @@ class TestPwexpiry(unittest.TestCase):
         self.assertTrue(result['success'])
         logout()
 
-        #-----Try logging in with new password-----
+        # -----Try logging in with new password-----
         self.request.form.update({
             'apiMethod': 'login',
             'username': TEST_USER_NAME,
@@ -485,7 +486,7 @@ class TestPwexpiry(unittest.TestCase):
         result = json.loads(view())
         self.assertFalse(result['resetpassword'])
 
-        #-----Change password again-----
+        # -----Change password again-----
         login(self.portal, TEST_USER_NAME)
         self.request.form.update({
             'apiMethod': 'set_password',
@@ -497,7 +498,7 @@ class TestPwexpiry(unittest.TestCase):
         result = json.loads(view())
         self.assertTrue(result['success'])
 
-        #-----Try to change password back-----
+        # -----Try to change password back-----
         self.request.form.update({
             'apiMethod': 'set_password',
             'username': TEST_USER_NAME,
@@ -507,6 +508,7 @@ class TestPwexpiry(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         result = json.loads(view())
         self.assertFalse(result['success'])
+
 
 if argon2 is not None:
     class TestArgon2(unittest.TestCase):

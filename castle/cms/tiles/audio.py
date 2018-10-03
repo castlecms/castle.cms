@@ -28,7 +28,7 @@ class AudioTile(ContentTile):
             for obj in audios:
                 obj = self.utils.get_object(obj)
                 try:
-                    fi = obj.file
+                    obj.file
                 except AttributeError:
                     continue
                 res.append(obj)
@@ -39,7 +39,7 @@ class AudioTile(ContentTile):
         return '%s/@@download/file/%s' % (audio.absolute_url(), fi.filename)
 
     def get_twitter_user(self):
-        user =  api.portal.get_registry_record('plone.twitter_screen_name')
+        user = api.portal.get_registry_record('plone.twitter_screen_name')
         if user == '':
             return False
 

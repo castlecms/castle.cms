@@ -14,7 +14,7 @@ class CrawlerControlPanelForm(controlpanel.RegistryEditForm):
     schema = ICrawlerConfiguration
     id = "CrawlerControlPanel"
     label = u"Site Crawler Configuration"
-    description = "Configure Elastic search to crawl other sites and include those results in your site search. Elastic search must be enabled."
+    description = "Configure Elastic search to crawl other sites and include those results in your site search. Elastic search must be enabled."  # noqa
 
 
 class CrawlerControlPanel(controlpanel.ControlPanelFormWrapper):

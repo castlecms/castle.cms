@@ -75,10 +75,7 @@ class TestTiles(unittest.TestCase):
             'theme': u'dark'
         }
         page = render_tile(self.request, self.portal, name, data)
-        # Twitter WidgetID set by default
-        self.assertTrue('684100313582833665' in page)
-        # Checking for other simple configurations
-        self.assertTrue('data-pat-timeline' in page)
+        self.assertTrue('twitter-timeline' in page)
         self.assertTrue('plone' in page)
 
     def test_tweet_render(self):
@@ -86,15 +83,14 @@ class TestTiles(unittest.TestCase):
         name = self.prefix + 'tweet'
         data = {
             'url': u'https://twitter.com/xkcdComic/status/678810713033277440',
-            'cards': 'hidden'
+            'theme': u'light'
         }
 
         page = render_tile(self.request, self.portal, name, data)
         # Pretty much just assuring it renders correctly.
         # Not much else to do here
         self.assertTrue('678810713033277440' in page)
-        self.assertTrue('data-pat-tweet' in page)
-        self.assertTrue('hidden' in page)
+        self.assertTrue('twitter-tweet' in page)
 
     def test_video_render(self):
         name = self.prefix + 'videotile'

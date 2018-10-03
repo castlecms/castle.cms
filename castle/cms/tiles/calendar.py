@@ -18,7 +18,7 @@ def format_date(dt):
     else:
         try:
             return dt.ISO8601()
-        except:
+        except Exception:
             pass
 
 

@@ -29,7 +29,7 @@ class StatusView(BrowserView):
         return x
 
     def celery(self):
-        app = celery.Celery('tasks', broker='redis://')
+        celery.Celery('tasks', broker='redis://')
         status = celery.bin.celery.CeleryCommand.commands['status']()
         status.app = status.get_app()
         try:
@@ -37,7 +37,7 @@ class StatusView(BrowserView):
             x = True, 'ok'
         except celery.bin.base.Error as e:
             x = False, str(e)
-        except redis.ConnectionError as d:
+        except redis.ConnectionError:
             x = False, 'Cannot connect to Redis'
         return x
 
@@ -49,4 +49,3 @@ class StatusView(BrowserView):
         except elasticsearch.ConnectionError as e:
             x = False, str(e)
         return x
-

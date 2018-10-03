@@ -37,8 +37,6 @@ require([
   'bootstrap-dropdown',
   'bootstrap-collapse',
   'bootstrap-tooltip',
-  'castle-url/patterns/tweettext',
-  'castle-url/patterns/timeline',
   'castle-url/patterns/slider',
   'castle-url/patterns/gallery',
   'castle-url/patterns/map',

@@ -88,7 +88,7 @@ class Authenticator(object):
     def authorize_2factor(self, username, code, offset=0):
         try:
             value = cache.get(self.get_2factor_code_key(username))
-        except:
+        except Exception:
             return False
 
         # check actual code
@@ -117,9 +117,11 @@ class Authenticator(object):
         })
         return code
 
-    def authenticate(self, username=None, password=None, country=None, login=True):
+    def authenticate(self, username=None, password=None,
+                     country=None, login=True):
         """return true if successfull
-        login: if a successful authentication should result in the user being logged in
+        login: if a successful authentication should result in the user being
+               logged in
         """
         if not self.is_zope_root:
             manager = LockoutManager(self.context, username)
@@ -163,7 +165,8 @@ class Authenticator(object):
                     raise AuthenticationPasswordResetWindowExpired()
 
         if login:
-            acl_users.session._setupSession(user.getId(), self.request.response)
+            acl_users.session._setupSession(
+                user.getId(), self.request.response)
             notify(UserLoggedInEvent(user))
 
         return True, user
@@ -172,7 +175,7 @@ class Authenticator(object):
         cache_key = self.get_country_exception_cache_key(userid)
         try:
             data = cache.get(cache_key)
-        except:
+        except Exception:
             return False
         timestamp = data.get('timestamp')
         if (data.get('granted') and timestamp and

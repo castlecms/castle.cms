@@ -1,12 +1,36 @@
-
 Changelog
 =========
 
-2.1.1 (unreleased)
+2.1.2 (unreleased)
 ------------------
 
 - Add Keyword Manager (Products.PloneKeywordManager) by default
   [CorySanin]
+
+- Remove _permissions DeprecationWarnings from startup
+  [CorySanin]
+
+- Fix change password on login
+  [CorySanin]
+
+- Allow trailing slashes in backend URLs
+  [CorySanin]
+
+
+2.1.1 (2018-10-02)
+------------------
+
+- Fix password reset function
+  [CorySanin]
+
+- Fix not Schema AttributeError on export script
+  [vangheem]
+
+- Add support for the path search parameter
+  [CorySanin]
+
+- Update twitter embedding code and templates
+  [lucid-0]
 
 2.1.0 (2018-09-26)
 ------------------

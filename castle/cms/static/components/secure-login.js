@@ -167,7 +167,8 @@ require([
       var that = this;
       e.preventDefault();
       that.api({
-        existing_password: that.state.password1,
+        username: that.state.username,
+        existing_password: that.state.existing_password,
         new_password: that.state.new_password1,
         _authenticator: that.state.authenticator,
         apiMethod: 'set_password'
@@ -368,6 +369,7 @@ require([
           D.label({ htmlFor: 'password1' + that.state.counter}, 'Existing password'),
           D.input({type: 'password', value: that.state.password1,
                    disabled: that.state.state !== STATES.CHANGE_PASSWORD,
+                   onChange: that.pwChangeValueChanged.bind(that, 'existing_password'),
                    className: 'form-control', id: 'password1' + that.state.counter})
         ]),
         D.div({ className: 'form-group'}, [

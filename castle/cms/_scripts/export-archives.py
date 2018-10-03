@@ -1,16 +1,15 @@
-from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.SecurityManager import setSecurityPolicy
-from DateTime import DateTime
-from Persistence.mapping import PersistentMapping as PM1  # noqa
-from Products.CMFCore.tests.base.security import OmnipotentUser
-from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
-from Testing.makerequest import makerequest
-from zope.component.hooks import setSite
-
 import argparse
 import json
 import os
 
+from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.SecurityManager import setSecurityPolicy
+from DateTime import DateTime
+from Persistence.mapping import PersistentMapping as PM1  # noqa
+from Products.CMFCore.tests.base.security import (OmnipotentUser,
+                                                  PermissiveSecurityPolicy)
+from Testing.makerequest import makerequest
+from zope.component.hooks import setSite
 
 parser = argparse.ArgumentParser(
     description='...')
@@ -61,5 +60,7 @@ def runExport(brains):
 
 runExport(catalog(
     portal_type=args.type,
-    created={'query': (DateTime(1900, 1, 1), DateTime(2014, 1, 1)), 'range': 'min:max'},
+    created={
+        'query': (DateTime(1900, 1, 1), DateTime(2014, 1, 1)),
+        'range': 'min:max'},
     allowedRolesAndUsers='Anonymous'))

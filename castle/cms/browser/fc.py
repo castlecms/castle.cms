@@ -302,8 +302,8 @@ class RenameActionView(rename.RenameActionView):
                 raise
             except Exception as e:
                 sp.rollback()
-                logger.error(u'Error renaming "{title}": "{exception}"'
-                    .format(title=title.decode('utf8'), exception=e))
+                logger.error(u'Error renaming "{title}": "{exception}"'.format(
+                    title=title.decode('utf8'), exception=e))
                 self.errors.append(_(u'Error renaming ${title}', mapping={
                     'title': title.decode('utf8')}))
 

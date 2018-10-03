@@ -40,7 +40,7 @@ class BaseTile(Tile):
             focal = json.loads(focal)
             if len(focal) == 2:
                 return focal
-        except:
+        except Exception:
             pass
 
     @property
@@ -131,7 +131,7 @@ class BaseTile(Tile):
                 if self.wrap:
                     res = '<div class="castle-tile-wrapper">%s</div>' % res
             return '<html><body>' + res + '</body></html>'
-        except:
+        except Exception:
             path = ['']
             if hasattr(self.context, 'getPhysicalPath'):
                 path = self.context.getPhysicalPath()
@@ -288,5 +288,5 @@ class BaseImagesTile(ContentTile):
     def get_related(self, obj):
         try:
             return obj.relatedItems[0]
-        except:
+        except Exception:
             return None

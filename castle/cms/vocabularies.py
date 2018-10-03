@@ -23,15 +23,15 @@ import json
 
 # XXX needs updating in 5.1
 try:
-    vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
-    vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
-    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
-    vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
-except:
     vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
+except KeyError:
+    vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
+    vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
+    vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
 
@@ -75,7 +75,8 @@ def AvailableFragments(context):
     terms = [SimpleVocabulary.createTerm('', '', 'Select fragment')]
     frags = []
     for frag in set(all_frags):
-        if frag in _blacklist or (not is_dash and frag in _dashboard_available):
+        if (frag in _blacklist or
+                (not is_dash and frag in _dashboard_available)):
             continue
         if frag[0] == '_' or frag[-1] == '_':
             continue
@@ -83,8 +84,11 @@ def AvailableFragments(context):
     frags.sort()
     for frag in frags:
         terms.append(
-            SimpleVocabulary.createTerm(frag, frag, frag.capitalize().replace('-', ' ')))
+            SimpleVocabulary.createTerm(
+                frag, frag, frag.capitalize().replace('-', ' ')))
     return SimpleVocabulary(terms)
+
+
 directlyProvides(AvailableFragments, IContextSourceBinder)
 
 
@@ -102,7 +106,8 @@ class RegistryValueSource(object):
             key = value
             if '|' in value:
                 key, _, value = value.partition('|')
-            terms.append(SimpleVocabulary.createTerm(key, key.encode('utf-8'), value))
+            terms.append(
+                SimpleVocabulary.createTerm(key, key.encode('utf-8'), value))
         return SimpleVocabulary(terms)
 
 
@@ -129,8 +134,11 @@ class MimeTypeVocabularyFactory(object):
                 human = 'HTML'
             elif value.split('/')[0] in ('audio', 'video', 'image'):
                 human = value.split('/')[-1].upper()
-            terms.append(SimpleVocabulary.createTerm(value, value.encode('utf-8'), human))
+            terms.append(
+                SimpleVocabulary.createTerm(
+                    value, value.encode('utf-8'), human))
         return SimpleVocabulary(terms)
+
 
 MimeTypeVocabulary = MimeTypeVocabularyFactory()
 
@@ -147,6 +155,7 @@ class EmailCategoryVocabularyFactory(object):
             terms.append(SimpleTerm(value=category, title=category))
         return SimpleVocabulary(terms)
 
+
 EmailCategoryVocabulary = EmailCategoryVocabularyFactory()
 
 
@@ -155,7 +164,8 @@ class SurveyVocabularyFactory(object):
 
     def __call__(self, context):
         try:
-            survey_settings = getUtility(IRegistry).forInterface(ICastleSurvey, check=False)
+            survey_settings = getUtility(IRegistry).forInterface(
+                ICastleSurvey, check=False)
             list_url = '{}/survey-list'.format(survey_settings.survey_api_url)
             account_id = survey_settings.survey_account_id
             request_data = {
@@ -166,11 +176,15 @@ class SurveyVocabularyFactory(object):
             surveys = result['list']
             terms = []
             for survey in surveys:
-                terms.append(SimpleTerm(title=survey['form_name'], value=survey['uid']))
+                terms.append(
+                    SimpleTerm(title=survey['form_name'], value=survey['uid']))
             return SimpleVocabulary(terms)
-        except:
-            #error accessing survey api
-            return SimpleVocabulary([SimpleTerm(title='Survey API is not set up properly', value="no_api")])
+        except Exception:
+            # error accessing survey api
+            return SimpleVocabulary([
+                SimpleTerm(title='Survey API is not set up properly',
+                           value="no_api")])
+
 
 SurveyVocabulary = SurveyVocabularyFactory()
 
@@ -255,8 +269,9 @@ del BUSINES_TYPES
 
 
 BAD_TYPES = ("ATBooleanCriterion", "ATDateCriteria", "ATDateRangeCriterion",
-             "ATListCriterion", "ATPortalTypeCriterion", "ATReferenceCriterion",
-             "ATSelectionCriterion", "ATSimpleIntCriterion", "Plone Site",
+             "ATListCriterion", "ATPortalTypeCriterion",
+             "ATReferenceCriterion", "ATSelectionCriterion",
+             "ATSimpleIntCriterion", "Plone Site",
              "ATSimpleStringCriterion", "ATSortCriterion", "TempFolder",
              "ATCurrentAuthorCriterion", "ATPathCriterion",
              "ATRelativePathCriterion", "Pad", 'Comment', 'Link')
@@ -278,6 +293,7 @@ class ReallyUserFriendlyTypesVocabulary(object):
         items = [SimpleTerm(i[1], i[1], i[0]) for i in items]
         return SimpleVocabulary(items)
 
+
 ReallyUserFriendlyTypesVocabularyFactory = ReallyUserFriendlyTypesVocabulary()
 
 
@@ -287,7 +303,8 @@ class CountriesVocabulary(object):
     def __call__(self, context):
         items = []
         for country in pycountry.countries:
-            items.append(SimpleTerm(country.alpha2, country.alpha2, country.name))
+            items.append(SimpleTerm(country.alpha2, country.alpha2,
+                                    country.name))
         return SimpleVocabulary(items)
 
 

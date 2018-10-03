@@ -190,7 +190,7 @@ class Creator(BrowserView):
             while check_put is None:
                 try:
                     check_put = cache.get(cache_key_prefix + _id)
-                except:
+                except Exception:
                     cache.set(cache_key_prefix + _id, info)
         return json.dumps({
             'success': True,
@@ -221,7 +221,7 @@ class Creator(BrowserView):
             aspect.setConstrainTypesMode(1)
             try:
                 aspect.setImmediatelyAddableTypes([type_])
-            except:
+            except Exception:
                 pass
 
         if not getattr(folder, 'exclude_from_nav', False):
@@ -285,7 +285,7 @@ class Creator(BrowserView):
         if type_ in ('Image', 'File') and exiftool is not None:
             try:
                 exiftool(info['tmp_file'])
-            except:
+            except Exception:
                 logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
         fi = open(info['tmp_file'], 'r')
@@ -306,7 +306,7 @@ class Creator(BrowserView):
                         float(self.request.form.get('focalX')),
                         float(self.request.form.get('focalY'))
                     ]
-                except:
+                except Exception:
                     pass
                 create_opts['image'] = image
             else:
@@ -342,7 +342,7 @@ class Creator(BrowserView):
             if transition_to:
                 try:
                     api.content.transition(obj=obj, transition=transition_to)
-                except:
+                except Exception:
                     pass
             return dump_object_data(obj)
         else:
@@ -402,7 +402,7 @@ content in this location."""
             if obj is not None:
                 if id not in container.objectIds():
                     return False
-        except:
+        except Exception:
             return False
         return True
 
@@ -478,7 +478,7 @@ content in this location."""
                     continue
                 try:
                     new_state = wf.states[transition.new_state_id]
-                except:
+                except Exception:
                     continue
                 if transition.new_state_id in possible_states:
                     # we can already get here... don't worry about it, ignore
@@ -600,7 +600,7 @@ class QualityCheckContent(BrowserView):
             feed = SearchFeed(api.portal.get())
             adapter = queryMultiAdapter((self.context, feed), IFeedItem)
             html = adapter.render_content_core().strip()
-        except:
+        except Exception:
             html = ''
 
         if html:

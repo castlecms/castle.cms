@@ -1,14 +1,11 @@
 from AccessControl import Unauthorized
-from Acquisition import aq_base
-from Acquisition import aq_parent
+from Acquisition import aq_base, aq_parent
 from castle.cms.behaviors.location import ILocation
-from castle.cms.interfaces import IHasDefaultImage
-from castle.cms.interfaces import IReferenceNamedImage
-from castle.cms.interfaces import ITrashed
+from castle.cms.interfaces import (IHasDefaultImage, IReferenceNamedImage,
+                                   ITrashed)
 from OFS.interfaces import IItem
 from plone import api
-from plone.app.contenttypes.interfaces import IFile
-from plone.app.contenttypes.interfaces import IImage
+from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
 from plone.uuid.interfaces import IUUID
@@ -66,7 +63,7 @@ def image_info(obj):
             except AttributeError:
                 try:
                     data['focal_point'] = obj._image_focal_point
-                except:
+                except Exception:
                     pass
         return data
     except AttributeError:
@@ -82,10 +79,10 @@ def getContentTypeContent(obj):
 def getContentTypeFile(obj):
     try:
         return obj.file.original_content_type
-    except:
+    except Exception:
         try:
             return obj.file.contentType
-        except:
+        except Exception:
             pass
 
 
@@ -93,7 +90,7 @@ def getContentTypeFile(obj):
 def getContentTypeImage(obj):
     try:
         return obj.image.contentType
-    except:
+    except Exception:
         pass
 
 
@@ -110,10 +107,10 @@ def trashed(obj):
 def last_modified_by(context):
     try:
         creator = api.user.get_current().getId()
-    except:
+    except Exception:
         try:
             creator = context.Creators()[0]
-        except:
+        except Exception:
             creator = 'admin'
 
     rt = api.portal.get_tool("portal_repository")

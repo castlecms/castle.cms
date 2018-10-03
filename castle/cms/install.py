@@ -74,13 +74,14 @@ FOOTER_HTML = """
             Copyright <abbr title="Copyright symbol" i18n:name="copyright" i18n:attributes="title title_copyright;">&copy;</abbr> %s by Wildcard Corp.
         </p> 
     </div>
-</div>""" % DateTime().year()
+</div>""" % DateTime().year()  # noqa
 
 
 _tiles_data = {
     'footer': [{
         'data': {'content': FOOTER_HTML},
-        'meta': {'type': 'plone.app.standardtiles.rawhtml', 'id': 'footer-html'}
+        'meta': {'type': 'plone.app.standardtiles.rawhtml',
+                 'id': 'footer-html'}
     }]
 }
 
@@ -151,4 +152,4 @@ def tiles(site, req, tiles_data=_tiles_data):
 
     frontpageLayout = ILayoutAware(frontpage, None)
     if frontpageLayout:
-        frontpageLayout.contentLayout = '/++contentlayout++castle/frontpage-layout.html'
+        frontpageLayout.contentLayout = '/++contentlayout++castle/frontpage-layout.html'  # noqa

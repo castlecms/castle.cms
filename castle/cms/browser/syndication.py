@@ -89,6 +89,7 @@ class SettingsForm(views.SettingsForm):
         self.applyChanges(data)
         self.request.response.redirect(self.context.absolute_url())
 
+
 SettingsFormView = wrap_form(SettingsForm)
 
 
@@ -121,7 +122,7 @@ class KMLFeedView(FeedView):
             if type(data) == dict:
                 data = [data]
             return data
-        except:
+        except Exception:
             pass
 
 

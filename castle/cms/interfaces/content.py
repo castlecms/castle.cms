@@ -39,5 +39,6 @@ class IHasDefaultImage(Interface):
     when a manual image is not specified
     """
 
+
 class IReferenceNamedImage(INamedImage):
     reference = Attribute('')

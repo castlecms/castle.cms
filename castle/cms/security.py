@@ -46,7 +46,7 @@ def onUserLogsOut(event):
         resp = request.response
         resp.expireCookie(session_manager.cookie_name)
         session_manager.delete()
-    except:
+    except Exception:
         pass
 
 
@@ -120,7 +120,8 @@ def beforeCommit(event):
 
     resp = request.response
     contentType = resp.getHeader('Content-Type')
-    if site is None or contentType is None or not contentType.startswith('text/html'):
+    if (site is None or contentType is None or
+            not contentType.startswith('text/html')):
         return None
 
     # now, check user roles. If they have none, make sure to

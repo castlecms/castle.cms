@@ -4,13 +4,17 @@
 # how normal plone theming works
 #
 #
+import json
+import logging
+import re
+from urlparse import urljoin
+
+import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
-from chameleon import PageTemplate
-from chameleon import PageTemplateLoader
+from chameleon import PageTemplate, PageTemplateLoader
 from lxml import etree
-from lxml.html import fromstring
-from lxml.html import tostring
+from lxml.html import fromstring, tostring
 from plone import api
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
@@ -25,16 +29,9 @@ from plone.resource.utils import queryResourceDirectory
 from Products.CMFCore.interfaces import ISiteRoot
 from repoze.xmliter.serializer import XMLSerializer
 from repoze.xmliter.utils import getHTMLSerializer
-from urlparse import urljoin
 from zExceptions import NotFound
-from zope.component import getMultiAdapter
-from zope.component import queryMultiAdapter
+from zope.component import getMultiAdapter, queryMultiAdapter
 from zope.interface import alsoProvides
-
-import Globals
-import logging
-import json
-import re
 
 logger = logging.getLogger('castle.cms')
 
@@ -67,7 +64,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
         self.theme = theme
         try:
             self.folder = queryResourceDirectory(THEME_RESOURCE_NAME, theme)
-        except:
+        except Exception:
             self.folder = None
         super(PageTemplateLoader, self).__init__(*args, **kwargs)
 
@@ -82,7 +79,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
 
         try:
             data = self.read_file(filename)
-        except:
+        except Exception:
             data = None
         if not data:
             filename = backup
@@ -136,11 +133,12 @@ def add_children(el, with_children):
 
 class _Transform(object):
     """
-    Warning: This object is being cached in a thread local so we can NOT store persistent
-    data anywhere here...
+    Warning: This object is being cached in a thread local so we can NOT
+    store persistent data anywhere here...
     """
     def __init__(self, name):
-        self.name = name or 'castle.theme'  # provide backup theme in case missing
+        # provide backup theme in case missing
+        self.name = name or 'castle.theme'
         self.template_cache = {}
 
     def __call__(self, request, result, context=None):
@@ -157,7 +155,7 @@ class _Transform(object):
             # could be a form/browser class
             try:
                 context = context.context
-            except:
+            except Exception:
                 context = aq_parent(context)
             context_url = context.absolute_url()
 
@@ -238,7 +236,8 @@ class _Transform(object):
                                   'plone.app.standardtiles.stylesheets')
 
     def get_loader(self):
-        return ThemeTemplateLoader(self.name, template_cache=self.template_cache)
+        return ThemeTemplateLoader(
+            self.name, template_cache=self.template_cache)
 
     def get_raw_layout(self, context, loader=None):
         """not compiled"""
@@ -280,7 +279,8 @@ class _Transform(object):
                 selected = default_layout
         return selected
 
-    def get_layout(self, context, default_layout='index.html', request=None, loader=None):
+    def get_layout(self, context, default_layout='index.html',
+                   request=None, loader=None):
         if loader is None:
             loader = self.get_loader()
         if request is not None and 'X-CASTLE-LAYOUT' in request.environ:
@@ -291,7 +291,7 @@ class _Transform(object):
 
             try:
                 layout = loader[selected_name]
-            except Exception as e:
+            except Exception:
                 logger.error('Failed parsing content layout', exc_info=True)
                 layout = None
 
@@ -302,7 +302,8 @@ class _Transform(object):
         layout.name = selected_name
         return layout
 
-    def add_body_classes(self, original_context, context, request, tree, result, raw=False):
+    def add_body_classes(self, original_context, context, request,
+                         tree, result, raw=False):
         body_classes = ''
         if raw:
             # this is a content layout likely
@@ -332,8 +333,8 @@ class _Transform(object):
                     body_classes += ' layout-custom'
 
         try:
-            body_classes += ' selected-layout-%s ' % original_context.getLayout()
-        except:
+            body_classes += ' selected-layout-%s ' % original_context.getLayout()  # noqa
+        except Exception:
             pass
         classes = '%s %s' % (
             body.attrib.get('class', ''),
@@ -438,8 +439,9 @@ class _Transform(object):
                 if 'id' in child.attrib:
                     classes.append(child.attrib['id'])
                 try:
-                    width = int(child.attrib.get('col-count-%i' % len(found), '4'))
-                except:
+                    width = int(
+                        child.attrib.get('col-count-%i' % len(found), '4'))
+                except Exception:
                     width = 4
                 child.attrib['data-grid'] = json.dumps({
                     "type": "cell",
@@ -467,7 +469,7 @@ def getTransform(context, request):
     try:
         if not policy.isThemeEnabled():
             return None
-    except:
+    except Exception:
         pass
 
     cache = policy.getCache()

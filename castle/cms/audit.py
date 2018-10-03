@@ -1,34 +1,32 @@
+import threading
+from datetime import datetime
+
+import transaction
 from castle.cms.events import IMetaTileEditedEvent
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
-from datetime import datetime
 from elasticsearch import TransportError
 from plone import api
-from plone.app.iterate.interfaces import IAfterCheckinEvent
-from plone.app.iterate.interfaces import ICancelCheckoutEvent
-from plone.app.iterate.interfaces import ICheckoutEvent
-from plone.app.iterate.interfaces import IWorkingCopyDeletedEvent
+from plone.app.iterate.interfaces import (IAfterCheckinEvent,
+                                          ICancelCheckoutEvent, ICheckoutEvent,
+                                          IWorkingCopyDeletedEvent)
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
-from Products.PluggableAuthService.interfaces.events import ICredentialsUpdatedEvent
-from Products.PluggableAuthService.interfaces.events import IPrincipalCreatedEvent
-from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
-from Products.PluggableAuthService.interfaces.events import IPropertiesUpdatedEvent
-from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
-from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
-from zope.component import ComponentLookupError
-from zope.component import getUtility
+from Products.PluggableAuthService.interfaces.events import (ICredentialsUpdatedEvent,  # noqa
+                                                             IPrincipalCreatedEvent,  # noqa
+                                                             IPrincipalDeletedEvent,  # noqa
+                                                             IPropertiesUpdatedEvent,  # noqa
+                                                             IUserLoggedInEvent,  # noqa
+                                                             IUserLoggedOutEvent)  # noqa
+from zope.component import ComponentLookupError, getUtility
 from zope.globalrequest import getRequest
 from zope.interface import providedBy
-from zope.lifecycleevent.interfaces import IObjectAddedEvent
-from zope.lifecycleevent.interfaces import IObjectCopiedEvent
-from zope.lifecycleevent.interfaces import IObjectModifiedEvent
-from zope.lifecycleevent.interfaces import IObjectMovedEvent
-from zope.lifecycleevent.interfaces import IObjectRemovedEvent
-
-import threading
-import transaction
+from zope.lifecycleevent.interfaces import (IObjectAddedEvent,
+                                            IObjectCopiedEvent,
+                                            IObjectModifiedEvent,
+                                            IObjectMovedEvent,
+                                            IObjectRemovedEvent)
 
 
 class DefaultRecorder(object):
@@ -86,7 +84,8 @@ class MetaTileRecorder(DefaultRecorder):
 
 class AuditData(object):
 
-    def __init__(self, _type, name, summary=None, recorder_class=DefaultRecorder):
+    def __init__(self, _type, name, summary=None,
+                 recorder_class=DefaultRecorder):
         self._type = _type
         self.name = name
         self.summary = summary
@@ -100,7 +99,8 @@ _registered = {
     IAfterCheckinEvent: AuditData('working copy support', 'Check in'),
     ICheckoutEvent: AuditData('working copy support', 'Check out'),
     ICancelCheckoutEvent: AuditData('working copy support', 'Cancel checkout'),
-    IWorkingCopyDeletedEvent: AuditData('working copy support', 'Working copy deleted'),
+    IWorkingCopyDeletedEvent: AuditData(
+        'working copy support', 'Working copy deleted'),
     IObjectAddedEvent: AuditData('content', 'Created'),
     IObjectCopiedEvent: AuditData('content', 'Copied'),
     IObjectModifiedEvent: AuditData('content', 'Modified'),
@@ -108,13 +108,16 @@ _registered = {
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),
     ITrashed: AuditData('content', 'Trashed'),
-    IUserLoggedInEvent: AuditData('user', 'Logged in', recorder_class=LoggedInRecorder),
+    IUserLoggedInEvent: AuditData(
+        'user', 'Logged in', recorder_class=LoggedInRecorder),
     IUserLoggedOutEvent: AuditData('user', 'Logged out'),
     IPrincipalDeletedEvent: AuditData('user', 'Deleted'),
     ICredentialsUpdatedEvent: AuditData('user', 'Password updated'),
     IPropertiesUpdatedEvent: AuditData('user', 'Properties updated'),
-    IAfterTransitionEvent: AuditData('workflow', 'Transition', recorder_class=WorkflowRecorder),
-    IMetaTileEditedEvent: AuditData('slots', 'Slot edited', recorder_class=MetaTileRecorder),
+    IAfterTransitionEvent: AuditData(
+        'workflow', 'Transition', recorder_class=WorkflowRecorder),
+    IMetaTileEditedEvent: AuditData(
+        'slots', 'Slot edited', recorder_class=MetaTileRecorder),
 }
 
 
@@ -127,7 +130,8 @@ def _create_index(es, index_name):
         'name': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
         'summary': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
         'user': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'request_uri': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'request_uri': {'store': False, 'type': 'string',
+                        'index': 'not_analyzed'},
         'date': {'store': False, 'type': 'date'},
         'object': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
         'path': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
@@ -186,7 +190,7 @@ def event(obj, event=None):
             registry = getUtility(IRegistry)
         except ComponentLookupError:
             return
-        if not registry.get('collective.elasticsearch.interfaces.IElasticSettings.enabled', False):
+        if not registry.get('collective.elasticsearch.interfaces.IElasticSettings.enabled', False):  # noqa
             return
 
         if obj is not None and ITrashed.providedBy(obj):

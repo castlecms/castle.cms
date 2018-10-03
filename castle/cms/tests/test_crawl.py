@@ -28,7 +28,8 @@ class TestCrawl(unittest.TestCase):
         catalog = api.portal.get_tool('portal_catalog')
         es = ElasticSearchCatalog(catalog)
         registry = getUtility(IRegistry)
-        settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
+        settings = registry.forInterface(
+            ICrawlerConfiguration, prefix='castle')
         crawler = Crawler(self.portal, settings, es)
         data = crawler.crawl_page(
             'https://www.foobar.com')
@@ -534,4 +535,4 @@ Captcha
 </div>
 </body>
 </html>
-'''
+'''  # noqa

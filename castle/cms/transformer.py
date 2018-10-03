@@ -28,7 +28,7 @@ def requestEnd(event):
     req = event.request
     try:
         period = time.time() - req.environ['__started__']
-    except:
+    except Exception:
         period = 0
 
     if period > 5.0:
@@ -47,7 +47,8 @@ _impersonator_template = PageTemplate("""
     <span class="anonymous" tal:condition="python: user_id != 'ANONYMOUS'">
       <span class="glyphicon glyphicon-user"></span> ${user_name}
   </span>
-</div>""")
+</div>"""  # noqa
+)
 
 
 class TransformInpersonatorOutput(object):

@@ -14,7 +14,6 @@ from zope.event import notify
 from hashlib import sha1 as sha
 
 
-
 logger = logging.getLogger(__file__)
 
 
@@ -38,7 +37,10 @@ def extended_testPasswordValidity(self, password, confirm=None, data=None):
 
     return None
 
+
 RegistrationTool.testPasswordValidity = extended_testPasswordValidity
+
+
 logger.info(
     "Patching Products.CMFDefault.RegistrationTool.testPasswordValidity"
 )
@@ -94,7 +96,7 @@ def authenticateCredentials(self, credentials):
     if is_authenticated:
         try:
             user = api.user.get(username=login)
-        except:
+        except Exception:
             return userid, login
 
         event = ValidPasswordEntered(user)
@@ -103,12 +105,13 @@ def authenticateCredentials(self, credentials):
     else:
         try:
             user = api.user.get(username=login)
-        except:
+        except Exception:
             return None
 
         event = InvalidPasswordEntered(user)
         notify(event)
         return None
+
 
 ZODBUserManager.authenticateCredentials = authenticateCredentials
 logger.info("Patching Products.PluggableAuthService.plugins.ZODBUserManager."

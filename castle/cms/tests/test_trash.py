@@ -22,12 +22,14 @@ class TestTrash(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
 
     def test_trash_object(self):
-        doc = api.content.create(type='Document', id='doc1', container=self.portal)
+        doc = api.content.create(type='Document', id='doc1',
+                                 container=self.portal)
         trash.object(doc)
         self.assertTrue(ITrashed.providedBy(doc))
 
     def test_restore_object(self):
-        doc = api.content.create(type='Document', id='doc1', container=self.portal)
+        doc = api.content.create(type='Document', id='doc1',
+                                 container=self.portal)
         trash.object(doc)
         self.assertTrue(ITrashed.providedBy(doc))
         trash.restore(doc)

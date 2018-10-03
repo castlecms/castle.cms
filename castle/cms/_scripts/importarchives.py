@@ -30,7 +30,8 @@ for item in items:
     count += 1
     content_path = '/' + '/'.join(item['path'].split('/')[2:])
     url = args.site_url.rstrip('/') + content_path
-    new_url = storage.add_url(url, content_path, item['uid'])  # need to export UID also
+    # need to export UID also
+    new_url = storage.add_url(url, content_path, item['uid'])
     if new_url:
         print('imported %s -> %s' % (url, new_url))
     else:

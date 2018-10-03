@@ -2,7 +2,7 @@ from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import ILDData
 from castle.cms.utils import site_has_icon
 from plone.app.layout.globals.interfaces import IViewView
-from plone.app.layout.navigation.defaultpage import getDefaultPage
+from Products.CMFPlone.defaultpage import get_default_page
 from plone.tiles import Tile
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.log import logger
@@ -29,7 +29,7 @@ head_viewlets = {
 def _date(obj, date):
     try:
         return getattr(obj, date)().ISO8601()
-    except:
+    except Exception:
         return ''
 
 
@@ -65,7 +65,7 @@ class MetaDataTile(Tile):
 
         if ISiteRoot.providedBy(self.context):
             try:
-                page = self.context[getDefaultPage(self.context)]
+                page = self.context[get_default_page(self.context)]
                 result += self._wrap_ld(ILDData(page).get_data())
             except AttributeError:
                 pass
@@ -77,12 +77,12 @@ class MetaDataTile(Tile):
             context = self.context
             if ISiteRoot.providedBy(context):
                 try:
-                    context = context[getDefaultPage(context)]
+                    context = context[get_default_page(context)]
                 except AttributeError:
                     pass
             try:
                 subject = context.Subject()
-            except:
+            except Exception:
                 subject = []
 
             tags = {
@@ -103,7 +103,7 @@ class MetaDataTile(Tile):
 
             return ''.join([u'<meta name="{}" content="{}">'.format(name, value)
                             for name, value in tags.items()])
-        except:
+        except Exception:
             return u''
 
     def get_search_link(self):
@@ -113,8 +113,9 @@ class MetaDataTile(Tile):
       href="{url}/@@search" />'''.format(
             url=self.root_url
           )
+
     def get_printcss_link(self):
-        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(
+        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(  # noqa
               url=self.root_url
               )
 
@@ -138,7 +139,7 @@ class MetaDataTile(Tile):
                 try:
                     viewlet.update()
                     result += viewlet.render()
-                except:
+                except Exception:
                     logger.warn('Error rendering head viewlet %s' % name, exc_info=True)
         result += unidecode(self.get_basic_tags())
         result += unidecode(self.get_navigation_links())

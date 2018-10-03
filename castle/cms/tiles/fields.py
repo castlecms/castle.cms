@@ -30,6 +30,7 @@ _supported_schemas = {
     'ILocation': ILocation
 }
 
+
 class DexterityFieldTile(BaseDexterityFieldTile):
     default_template = ViewPageTemplateFile('templates/fields/default.pt')
     image_template = ViewPageTemplateFile('templates/fields/image.pt')

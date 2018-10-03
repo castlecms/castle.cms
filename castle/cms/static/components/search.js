@@ -103,6 +103,9 @@ require([
       if(that.props['Subject:list']){
         state['Subject:list'] = that.props['Subject:list'];
       }
+      if(that.props['path']){
+        state['path'] = that.props['path'];
+      }
       $.ajax({
         url: this.props.searchUrl,
         data: state
@@ -429,7 +432,7 @@ require([
     }
   });
 
-  var page = 1, searchType = 'all', Subject, Subjectlist;
+  var page = 1, searchType = 'all', Subject, Subjectlist, path;
   var searchSite = false;
   try{
     page = parseInt(getParameterByName('page'));
@@ -442,6 +445,9 @@ require([
   }catch(e){}
   try{
     Subjectlist = getParameterByName(encodeURIComponent('Subject:list'));
+  }catch(e){}
+  try{
+    path = getParameterByName('path');
   }catch(e){}
 
   try{
@@ -456,7 +462,8 @@ require([
     searchUrl: el.getAttribute('data-search-url'),
     searchType: searchType,
     page: page,
-    searchSite: searchSite
+    searchSite: searchSite,
+    path: path
   })), el);
 
   window.onpopstate = function(e){

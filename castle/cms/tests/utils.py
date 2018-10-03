@@ -18,12 +18,12 @@ def dismiss_tour(driver, wait=1):
         el = WebDriverWait(driver, wait).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, '.introjs-skipall')))
         el.click()
-    except:
+    except Exception:
         return
     if el:
         try:
             el.click()
-        except:
+        except Exception:
             pass
 
 
@@ -38,7 +38,7 @@ def click_it(driver, method, locator, wait=10):
         element = WebDriverWait(driver, wait).until(
             EC.element_to_be_clickable((method, locator)))
         element.click()
-    except:
+    except Exception:
         # log error but still raise exception because we don't want to have
         # to wait for the tests to finish in order to inspect the problem
         filepath = screenshot(driver, locator)
@@ -49,7 +49,7 @@ def click_it(driver, method, locator, wait=10):
 def clear_it(web_element):
     try:
         web_element.clear()
-    except:
+    except Exception:
         text_length = len(web_element.text)
         while text_length > 0:
             web_element.send_keys(Keys.DELETE)
@@ -59,9 +59,10 @@ def clear_it(web_element):
 def get_element(driver, method, locator, wait=10,
                 detection=EC.visibility_of_element_located):
     try:
-        element = WebDriverWait(driver, wait).until(detection((method, locator)))
+        element = WebDriverWait(driver, wait).until(
+            detection((method, locator)))
         return element
-    except:
+    except Exception:
         filepath = screenshot(driver, locator)
         raise Exception('unable to find element %s\n%s' % (
             locator, filepath
@@ -70,7 +71,8 @@ def get_element(driver, method, locator, wait=10,
 
 def mousedown(driver, method, locator):
     # this will simulate a mousedown and up event.  This is a lower
-    # level interface with mouse events and in the background is calling a mousedown
+    # level interface with mouse events and in the background is
+    # calling a mousedown
     # some of the mosaic toolbar items need this instead of a normal "click"
     action_element = get_element(driver, method, locator)
     actionchain = ActionChains(driver)
@@ -122,19 +124,22 @@ def create_folder(selenium, foldertype, name=None):
              '#add-modal-react-container .modal-footer .plone-btn-primary')
     click_it(selenium, By.CSS_SELECTOR, '.mosaic-button-layout')
     click_it(selenium, By.CSS_SELECTOR, '.mosaic-button-changelayout')
-    click_it(selenium, By.CSS_SELECTOR,
-             '.mosaic-select-layout [data-value="castle/%s.html"]' % foldertype)
+    click_it(
+        selenium, By.CSS_SELECTOR,
+        '.mosaic-select-layout [data-value="castle/%s.html"]' % foldertype)
     click_it(selenium, By.CSS_SELECTOR, '.mosaic-button-save')
 
 
 def prep_file_upload(selenium, filetoupload, what):
     get_element(selenium, By.CSS_SELECTOR, '.castle-toolbar-add a').click()
     get_element(selenium, By.CSS_SELECTOR, ".autotoc-level-upload").click()
-    click_it(selenium, By.CSS_SELECTOR, '.castle-upload-container .droparea button')
+    click_it(selenium, By.CSS_SELECTOR,
+             '.castle-upload-container .droparea button')
     # send file name to hidden input field
-    get_element(selenium, By.CSS_SELECTOR,
-                '.castle-upload-container input[type="file"]',
-                detection=EC.presence_of_element_located).send_keys(filetoupload)
+    get_element(
+        selenium, By.CSS_SELECTOR,
+        '.castle-upload-container input[type="file"]',
+        detection=EC.presence_of_element_located).send_keys(filetoupload)
     # enter title
     get_element(
         selenium, By.CSS_SELECTOR,
@@ -143,7 +148,8 @@ def prep_file_upload(selenium, filetoupload, what):
         selenium, By.CSS_SELECTOR,
         '#castle-upload-field-title').send_keys(what)
     # enter description
-    # for some reason the element needs to be clicked prior to entering text into it.
+    # for some reason the element needs to be clicked prior to
+    # entering text into it.
     get_element(
         selenium, By.CSS_SELECTOR,
         '#castle-upload-field-description').click()
@@ -161,7 +167,8 @@ def add_tag(selenium, tagtoadd):
     click_it(selenium, By.LINK_TEXT, "Categorization")
     # type tag into tag select2
     entry_field = get_element(
-        selenium, By.CSS_SELECTOR, '#formfield-form-widgets-IDublinCore-subjects .select2-input')
+        selenium, By.CSS_SELECTOR,
+        '#formfield-form-widgets-IDublinCore-subjects .select2-input')
     entry_field.send_keys(tagtoadd)
     time.sleep(1)
     # press enter to add tag

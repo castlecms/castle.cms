@@ -1,49 +1,26 @@
-import json
-
 from castle.cms.tiles.base import BaseTile
-from plone.memoize.instance import memoize
-from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
 from zope import schema
-from zope.component import getUtility
 from zope.schema.vocabulary import SimpleVocabulary
 
 
 class TwitterTimelineTile(BaseTile):
     def render(self):
-        screenName = self.data.get('screenName', '')
+        self.screenName = self.data.get('screenName', '')
 
-        widgetID = self.get_widget_id()
+        if self.screenName is None:
+            return
 
-        if widgetID is None or screenName is None:
-            return ''
+        if self.screenName[0] == '@':
+            self.sreenName = self.screenName[1:]
 
-        parameters = {}
-        validFields = ITwitterTimelineTileSchema._InterfaceClass__attrs.keys()
-
-        # Prevent any additional values from being passed to Twitter
-        for key in self.data.keys():
-            if key in validFields:
-                parameters[key] = self.data.get(key, '')
-
-        if 'screenName' in parameters:
-            if parameters['screenName'][0] == '@':
-                parameters['screenName'] = parameters['screenName'][1:]
-
-        options = {
-            'widgetId': widgetID,
-            'parameters': parameters
-        }
-
-        self.patternOptions = json.dumps(options)
+        self.height = self.data.get('height', '400')
+        self.theme = self.data.get('theme', 'light')
+        self.embed_url = 'https://twitter.com/{screenname}?ref_src=twsrc%5Etfw'.format(
+            screenname=self.screenName)
         self.portalUrl = self.context.portal_url()
 
         return self.index()
-
-    @memoize
-    def get_widget_id(self):
-        registry = getUtility(IRegistry)
-        return registry.get('plone.twitter_timeline_widget')
 
 
 class ITwitterTimelineTileSchema(model.Schema):
@@ -57,15 +34,6 @@ class ITwitterTimelineTileSchema(model.Schema):
         description=u"Height of the rendered timeline, in pixels.",
         default=400,
         min=200,
-        required=False
-    )
-
-    tweetLimit = schema.Int(
-        title=u"Tweet limit",
-        description=u"Maximum # of tweets to show (1-20)",
-        min=1,
-        default=10,
-        max=20,
         required=False
     )
 

@@ -24,12 +24,12 @@ def get_task_name(_id):
 def get_info(task):
     try:
         kwargs = json.loads(task.get('kwargs', '{}').replace("'", '"'))
-    except:
+    except Exception:
         kwargs = {}
 
     try:
         args = json.loads(task.get('args', '{}').replace("'", '"'))
-    except:
+    except Exception:
         args = []
 
     label = _task_descriptors.get(task['name'], 'Generic task')

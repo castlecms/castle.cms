@@ -58,7 +58,7 @@ class ImageTile(BaseTile):
             ob = self.utils.get_object(link[0])
             if ob is not None:
                 return ob.absolute_url()
-        except:
+        except Exception:
             pass
 
 

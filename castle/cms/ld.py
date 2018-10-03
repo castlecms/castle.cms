@@ -1,31 +1,27 @@
+import json
+
 from Acquisition import aq_base
 from castle.cms.browser.utils import Utils
-from castle.cms.interfaces import IAudio
-from castle.cms.interfaces import ILDData
-from castle.cms.interfaces import IVideo
+from castle.cms.interfaces import IAudio, ILDData, IVideo
 from plone import api
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFPlone.browser.syndication.adapters import DexterityItem
-from Products.CMFPlone.browser.syndication.adapters import FolderFeed
+from Products.CMFPlone.browser.syndication.adapters import (DexterityItem,
+                                                            FolderFeed)
 from Products.CMFPlone.interfaces import ISiteSchema
 from Products.CMFPlone.interfaces.syndication import IFeedItem
 from Products.CMFPlone.utils import getSiteLogo
 from ZODB.POSException import POSKeyError
-from zope.component import adapts
-from zope.component import getUtility
-from zope.component import queryMultiAdapter
+from zope.component import adapts, getUtility, queryMultiAdapter
 from zope.globalrequest import getRequest
 from zope.interface import implements
-
-import json
 
 
 def format_date(dt):
     try:
         return dt.ISO8601()
-    except:
+    except Exception:
         return ''
 
 
@@ -75,7 +71,7 @@ class LDData(object):
                 "@type": "ImageObject",
                 "url": "%s/@@images/image" % self.item.base_url,
             }
-            data['thumbnailUrl'] = "%s/@@images/image/mini" % self.item.base_url
+            data['thumbnailUrl'] = "%s/@@images/image/mini" % self.item.base_url  # noqa
 
         registry = getUtility(IRegistry)
         view_about = registry.get('plone.allow_anon_views_about', False)
@@ -86,7 +82,7 @@ class LDData(object):
                     "@type": "Person",
                     "name": author
                 }
-            except:
+            except Exception:
                 pass
         return data
 
@@ -101,7 +97,7 @@ class LDAudioData(LDData):
         data['contentUrl'] = self.item.base_url
         try:
             data['caption'] = self.context.transcript.output
-        except:
+        except Exception:
             pass
         return data
 
@@ -167,7 +163,7 @@ class LDSiteData(object):
         if coordinates:
             try:
                 coordinates = json.loads(coordinates)
-            except:
+            except Exception:
                 coordinates = None
             if coordinates:
                 data['geo'] = {
@@ -204,7 +200,8 @@ class LDSiteData(object):
 
         try:
             data.update(json.loads(
-                registry.get('castle.business_additional_configuration', '{}')))
-        except:
+                registry.get(
+                    'castle.business_additional_configuration', '{}')))
+        except Exception:
             pass
         return data

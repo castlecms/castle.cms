@@ -62,7 +62,7 @@ def archive(site):
                 transaction.commit()
             else:
                 logger.error('error importing %s' % ob.absolute_url())
-        except:
+        except Exception:
             logger.error('Error archiving %s' % brain.getPath(), exc_info=True)
 
     content_to_archive = archive_manager.getContentToArchive(7)
@@ -116,7 +116,7 @@ def run(app):
         if IPloneSiteRoot.providedBy(obj):
             try:
                 archive(obj)
-            except:
+            except Exception:
                 logger.error('Could not archive %s' % oid, exc_info=True)
 
 

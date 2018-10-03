@@ -38,7 +38,6 @@ class TestArchival(unittest.TestCase):
         api.portal.set_registry_record(
             'castle.archival_types_to_archive', ['Document'])
 
-
         self.assertEqual(len(self.archive_manager.getContentToArchive()), 1)
 
     def test_get_archival_items_pays_attention_to_types(self):
@@ -56,7 +55,6 @@ class TestArchival(unittest.TestCase):
         api.portal.set_registry_record(
             'castle.archival_types_to_archive', ['News Item'])
 
-
         self.assertEqual(len(self.archive_manager.getContentToArchive()), 0)
 
     def test_flash_resource_mover_gets_els(self):
@@ -66,7 +64,7 @@ class TestArchival(unittest.TestCase):
 </head><body>
 <script type="text/javascript">
     AC_FL_RunContent('codebase','http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0','width','920','height','670','src','foobar','quality','high','wmode','transparent','pluginspage','http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash','movie','foobar' );
-    </script></body></html>''')
+    </script></body></html>''')  # noqa
         mover = archival.FlashScriptResourceMover(dom)
         els = mover.get_elements()
         self.assertEqual(len(els), 1)
@@ -84,7 +82,7 @@ class TestArchival(unittest.TestCase):
     // &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;lt;![CDATA[
     AC_FL_RunContent( 'codebase','http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0','width','630','height','341','src','avatars_2','quality','high', 'wmode','transparent','pluginspage','http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash','movie','avatars_2?12' ); //end AC code
     // ]]&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;
-    </script></body></html>''')
+    </script></body></html>''')  # noqa
         mover = archival.FlashScriptResourceMover(dom)
         els = mover.get_elements()
         self.assertEqual(len(els), 1)

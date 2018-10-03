@@ -111,7 +111,7 @@ try:
     avconv = AVConvProcess()
 except IOError:
     avconv = None
-    logger.warn('ffmpeg not installed. castle.cms will not be able to convert video')
+    logger.warn('ffmpeg not installed. castle.cms will not be able to convert video')  # noqa
 
 
 class ExifToolProcess(BaseSubProcess):
@@ -126,11 +126,12 @@ class ExifToolProcess(BaseSubProcess):
         cmd = [self.binary, '-all=', filepath]
         self._run_command(cmd)
 
+
 try:
     exiftool = ExifToolProcess()
 except IOError:
     exiftool = None
-    logger.warn('exiftool not installed. castle.cms will not be able to strip metadata')
+    logger.warn('exiftool not installed. castle.cms will not be able to strip metadata')  # noqa
 
 
 class MD5SubProcess(BaseSubProcess):
@@ -148,6 +149,7 @@ class MD5SubProcess(BaseSubProcess):
         cmd = [self.binary, filepath]
         hashval = self._run_command(cmd)
         return hashval.split('=')[1].strip()
+
 
 try:
     md5 = MD5SubProcess()
@@ -170,6 +172,7 @@ class MD5SumSubProcess(BaseSubProcess):
         cmd = [self.binary, filepath]
         hashval = self._run_command(cmd)
         return hashval.split('  ')[0].strip()
+
 
 try:
     if md5 is None:

@@ -10,7 +10,6 @@ from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.CMFPlone.log import logger
-from requests_oauthlib import OAuth1
 from tendo import singleton
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
@@ -69,7 +68,7 @@ def parse_line(site, public_url, line):
             if path in ('', '/'):
                 try:
                     ob = site[site.default_page]
-                except:
+                except Exception:
                     pass
             else:
                 ob = site.restrictedTraverse(path, None)
@@ -94,7 +93,7 @@ class StreamListener(twitter.StreamListener):
     def on_data(self, raw_data):
         try:
             parse_line(self.site, self.public_url, raw_data)
-        except:
+        except Exception:
             logger.warn('error parsing tweet', exc_info=True)
 
 
@@ -108,7 +107,7 @@ def attempt_twitter_on_site(site):
 
     auth = get_auth()
 
-    if auth == None:
+    if auth is None:
         return
 
     # normlize url...

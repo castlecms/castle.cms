@@ -9,7 +9,7 @@ logger = logging.getLogger('castle.cms')
 
 try:
     server = App.config.getConfiguration().servers[0]
-except:
+except Exception:
     server = None
 
 
@@ -19,6 +19,8 @@ def medua_log_request(medusa_request, bytes):
     logging with the actual request ob...
     """
     pass
+
+
 http_server.http_request.log = medua_log_request
 
 
