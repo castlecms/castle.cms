@@ -232,7 +232,7 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
         return NamedBlobImage(
             base64.b64decode(data['data']),
             filename=data['filename'],
-            contentType=data['content_type']
+            contentType=data['content_type'].encode('utf-8')
         )
 
 
