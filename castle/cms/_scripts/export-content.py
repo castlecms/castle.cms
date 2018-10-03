@@ -83,6 +83,11 @@ except ImportError:
     print('unable to import NamedBlobImage')
     NamedBlobImage = object()
 
+try:
+    from plone.app.textfield.value import RichTextValue
+except ImportError:
+    RichTextValue = None
+
 
 parser = argparse.ArgumentParser(
     description='...')
@@ -90,6 +95,9 @@ parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--dir', dest='dir', default='./export')
+parser.add_argument(
+    '--path-filter', dest='path_filter',
+    default=None, required=False)
 args, _ = parser.parse_known_args()
 
 
@@ -340,6 +348,27 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
         )
 
 
+class RichTextValueSerializer(BaseTypeSerializer):
+    klass = RichTextValue
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            'raw': obj.raw,
+            'mimeType': obj.mimeType,
+            'outputMimeType': obj.outputMimeType,
+            'encoding': obj.encoding
+        }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return RichTextValue(
+            raw=data['raw'],
+            mimeType=data['mimeType'],
+            outputMimeType=data['outputMimeType'],
+            encoding=data['encoding'])
+
+
 _serializers = {
     PM1: PM1Serializer,
     PM2: PM2Serializer,
@@ -374,6 +403,10 @@ if PressContact:
     _serializers[PressContact] = ContentObjectSerializer
 
 
+if RichTextValue is not None:
+    _serializers[RichTextValue] = RichTextValueSerializer
+
+
 class Deferred:
     pass
 
@@ -388,6 +421,7 @@ def custom_handler(obj):
         serializer = _serializers[_type]
         return serializer.serialize(obj)
     else:
+        print('NOT SERIALIZING {}'.format(obj))
         return None
     return obj
 
@@ -677,6 +711,11 @@ def run_export(brains):
     size = len(brains)
     for idx, brain in enumerate(brains):
         path = brain.getPath()
+        if (args.path_filter and
+                not fnmatch(path, args.path_filter)):
+            print('skipping(filtered), ', path,
+                  ' ', str(idx + 1) + '/' + str(size))
+            continue
         print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
         try:
             obj = brain.getObject()
