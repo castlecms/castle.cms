@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Various import/export fixes
+  [vangheem]
+
 - Allow trailing slashes in backend URLs
   [CorySanin]
 
