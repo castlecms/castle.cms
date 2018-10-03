@@ -14,6 +14,7 @@ from StringIO import StringIO
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
+from plone.app.textfield.value import RichTextValue
 
 import base64
 import json
@@ -235,6 +236,27 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
         )
 
 
+class RichTextValueSerializer(BaseTypeSerializer):
+    klass = RichTextValue
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            'raw': obj.raw,
+            'mimeType': obj.mimeType,
+            'outputMimeType': obj.outputMimeType,
+            'encoding': obj.encoding
+        }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return RichTextValue(
+            raw=data['raw'],
+            mimeType=data['mimeType'],
+            outputMimeType=data['outputMimeType'],
+            encoding=data['encoding'])
+
+
 _serializers = {
     PM1: PM1Serializer,
     PM2: PM2Serializer,
@@ -250,7 +272,8 @@ _serializers = {
     Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
     BlobWrapper: BlobWrapperSerializer,
-    NamedBlobImage: NamedBlobImageSerializer
+    NamedBlobImage: NamedBlobImageSerializer,
+    RichTextValue: RichTextValueSerializer
 }
 
 
