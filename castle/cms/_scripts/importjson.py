@@ -427,6 +427,6 @@ if __name__ == '__main__':
     print('doing read pass...')
     # read_pass(args.export_directory)
     print('creating objects now...')
-    # import_folders(args.export_directory)
+    import_folders(args.export_directory)
     import_pages(args.export_directory)
     transaction.commit()
