@@ -2,7 +2,7 @@ from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import ILDData
 from castle.cms.utils import site_has_icon
 from plone.app.layout.globals.interfaces import IViewView
-from plone.app.layout.navigation.defaultpage import getDefaultPage
+from Products.CMFPlone.defaultpage import get_default_page
 from plone.tiles import Tile
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.log import logger
@@ -65,7 +65,7 @@ class MetaDataTile(Tile):
 
         if ISiteRoot.providedBy(self.context):
             try:
-                page = self.context[getDefaultPage(self.context)]
+                page = self.context[get_default_page(self.context)]
                 result += self._wrap_ld(ILDData(page).get_data())
             except AttributeError:
                 pass
@@ -77,7 +77,7 @@ class MetaDataTile(Tile):
             context = self.context
             if ISiteRoot.providedBy(context):
                 try:
-                    context = context[getDefaultPage(context)]
+                    context = context[get_default_page(context)]
                 except AttributeError:
                     pass
             try:

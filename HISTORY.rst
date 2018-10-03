@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Remove _permissions DeprecationWarnings from startup
+  [CorySanin]
+
 - Fix change password on login
   [CorySanin]
 
