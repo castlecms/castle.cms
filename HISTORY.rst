@@ -7,6 +7,9 @@ Changelog
 - Fix change password on login
   [CorySanin]
 
+- Allow trailing slashes in backend URLs
+  [CorySanin]
+
 
 2.1.1 (2018-10-02)
 ------------------
