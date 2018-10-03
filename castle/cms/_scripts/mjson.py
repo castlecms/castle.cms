@@ -1,6 +1,12 @@
+import base64
+import json
+import re
+from datetime import datetime
+from StringIO import StringIO
+
+import OFS
 from BTrees.OOBTree import OOBTree
 from DateTime import DateTime
-from datetime import datetime
 from Persistence.mapping import PersistentMapping as PM1
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
@@ -8,19 +14,12 @@ from persistent.mapping import PersistentMapping as PM2
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
 from plone.app.contentlisting.contentlisting import ContentListing
+from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedBlobImage
 from Products.ZCatalog.Lazy import LazyCat
-from StringIO import StringIO
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
-from plone.app.textfield.value import RichTextValue
-
-import base64
-import json
-import OFS
-import re
-
 
 _filedata_marker = 'filedata://'
 _deferred_marker = 'deferred://'

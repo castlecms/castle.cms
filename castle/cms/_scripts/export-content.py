@@ -5,8 +5,9 @@ import logging
 import os
 import re
 from datetime import datetime
-from StringIO import StringIO
 from fnmatch import fnmatch
+from StringIO import StringIO
+
 import OFS
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
