@@ -7,6 +7,9 @@ Changelog
 - Remove _permissions DeprecationWarnings from startup
   [CorySanin]
 
+- Fix change password on login
+  [CorySanin]
+
 - Allow trailing slashes in backend URLs
   [CorySanin]
 
