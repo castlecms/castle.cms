@@ -252,9 +252,9 @@ class RichTextValueSerializer(BaseTypeSerializer):
     def _deserialize(cls, data):
         return RichTextValue(
             raw=data['raw'],
-            mimeType=data['mimeType'],
-            outputMimeType=data['outputMimeType'],
-            encoding=data['encoding'])
+            mimeType=data['mimeType'].encode('utf-8'),
+            outputMimeType=data['outputMimeType'].encode('utf-8'),
+            encoding=data['encoding'].encode('utf-8'))
 
 
 _serializers = {
