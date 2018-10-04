@@ -5,15 +5,20 @@ from Products.PloneKeywordManager.tests.test_non_ascii_keywords import NonAsciiK
 from Products.PloneKeywordManager.tests.test_setup import InstallTestCase
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
+
 class ControlPanel(ControlPanelTestCase):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
+
 
 class DexterityContent(DexterityContentTestCase):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
 
+
 class NonAsciiKeywords(NonAsciiKeywordsTestCase):
-    #layer = CASTLE_PLONE_INTEGRATION_TESTING #fails for some reason?
+    # layer = CASTLE_PLONE_INTEGRATION_TESTING #fails for some reason?
     pass
+
 
 class Install(InstallTestCase):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
+
