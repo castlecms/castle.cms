@@ -61,5 +61,19 @@
       destination="2100"
       handler=".upgrade_2_1_0.upgrade"
       profile="castle.cms:default"/>
+  <genericsetup:registerProfile
+      name="2_1_1"
+      title="CastleCMS upgrade to 2.1.1 profile"
+      directory="../profiles/2_1_1"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:upgradeStep
+      title="Upgrade Castle to 2.1.1"
+      description=""
+      source="*"
+      destination="2101"
+      handler=".upgrade_2_1_1.upgrade"
+      profile="castle.cms:default"/>
 
 </configure>

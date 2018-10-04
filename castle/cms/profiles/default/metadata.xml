@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <metadata>
-  <version>2041</version>
+  <version>2101</version>
   <dependencies>
     <dependency>profile-plone.app.querystring:default</dependency>
     <dependency>profile-plone.app.mosaic:default</dependency>
+    <dependency>profile-Products.PloneKeywordManager:default</dependency>
     <dependency>profile-collective.documentviewer:default</dependency>
     <dependency>profile-castle.theme:default</dependency>
     <dependency>profile-collective.elasticsearch:default</dependency>

@@ -14,6 +14,7 @@
 
   <include package="z3c.jbot" />
   <include package="plone.app.mosaic" />
+  <include package="Products.PloneKeywordManager" />
   <include package="plone.app.contenttypes" />
   <include package="plone.app.blocks" />
   <include package="plone.app.tiles" />

@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Add Keyword Manager (Products.PloneKeywordManager) by default
+  [CorySanin]
+
 - Remove _permissions DeprecationWarnings from startup
   [CorySanin]
 

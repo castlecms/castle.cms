@@ -29,3 +29,18 @@ Here is what the status control panel looks like if all components and subproces
    :align: center
 
    CastleCMS Status control panel showing all OK
+
+Keyword Manager Control Panel
+-----------------------------
+
+The Keyword Manager (Products.PloneKeywordManager) is useful for renaming and
+merging keywords (aka tags or subjects). Upon loading the page, it will list all
+keywords used across the current site.
+
+The checkboxes next to each keyword are used to determine which keywords to
+rename and/or merge. All selected keywords will be renamed to the value of the
+"Keyword to apply" field.
+
+Toggling the "Show similar keywords" checkbox, Keyword Manager can group similar
+keywords with each keyword. Be warned that this will produce duplicate entries
+on the page if duplicates are found.
