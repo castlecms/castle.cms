@@ -21,4 +21,3 @@ class NonAsciiKeywords(NonAsciiKeywordsTestCase):
 
 class Install(InstallTestCase):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
-
