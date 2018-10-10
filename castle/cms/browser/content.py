@@ -266,21 +266,21 @@ class Creator(BrowserView):
         return type_, location
 
     def update_file_content(self, info):
-            type_, location = self.get_type_and_location(info)
-            obj = uuidToObject(info['existing_id'])
-            if obj:
-                if self.sm.checkPermission(ModifyPortalContent, obj):
-                    try:
-                        fi = open(info['tmp_file'], 'r')
-                        filename = ploneutils.safe_unicode(info['name'])
-                        if 'Image' in type_:
-                            blob = NamedBlobImage(data=fi, filename=filename)
-                        else:
-                            blob = NamedBlobFile(data=fi, filename=filename)
-                        setattr(obj, info['field_name'], blob)
-                    except Exception:
-                        pass  # could not update content
-            return obj
+        type_, location = self.get_type_and_location(info)
+        obj = uuidToObject(info['existing_id'])
+        if obj:
+            if self.sm.checkPermission(ModifyPortalContent, obj):
+                try:
+                    fi = open(info['tmp_file'], 'r')
+                    filename = ploneutils.safe_unicode(info['name'])
+                    if 'Image' in type_:
+                        blob = NamedBlobImage(data=fi, filename=filename)
+                    else:
+                        blob = NamedBlobFile(data=fi, filename=filename)
+                    setattr(obj, info['field_name'], blob)
+                except Exception:
+                    pass  # could not update content
+        return obj
 
     def remove_file_content(self):
         id = self.request.form.get('content', None)
