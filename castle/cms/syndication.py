@@ -60,6 +60,13 @@ class DexterityItem(adapters.DexterityItem):
         return 0
 
     @property
+    def file_url(self):
+        if 'image' in self.file_type:
+            return self.image_url
+        else:
+            return super(DexterityItem, self).file_url
+
+    @property
     def image_url(self):
         if self.image:
             return '{}/@@images/image'.format(self.base_url)
