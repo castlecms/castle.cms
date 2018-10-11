@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Fix resources references which was causing a bunch of 404 errors
+  [vangheem]
+
 - Add Keyword Manager (Products.PloneKeywordManager) by default
   [CorySanin]
 

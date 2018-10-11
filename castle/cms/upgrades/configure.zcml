@@ -76,4 +76,12 @@
       handler=".upgrade_2_1_1.upgrade"
       profile="castle.cms:default"/>
 
+  <genericsetup:upgradeStep
+      title="Upgrade Castle to 2.1.2"
+      description=""
+      source="*"
+      destination="2102"
+      handler=".cook_js_resources"
+      profile="castle.cms:default" />
+
 </configure>
