@@ -201,7 +201,7 @@
 	height: 16px;
 	width: 16px;
 	border: 0;
-	background: transparent url("controls.svg") no-repeat;
+	background: transparent url("/++plone++castle/libs/mediaelement/build/controls.svg") no-repeat;
 }
 
 .no-svg .mejs-controls .mejs-button button {
