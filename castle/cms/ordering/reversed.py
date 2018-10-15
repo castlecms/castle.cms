@@ -12,8 +12,14 @@ class ReversedOrdering(DefaultOrdering):
     def notifyRemoved(self, obj_id):
         """ see interfaces.py """
         order = self._order()
-        idx = order.index(obj_id)
-        del order[idx]
+        try:
+            idx = order.index(obj_id)
+        except ValueError:
+            return
+        try:
+            del order[idx]
+        except KeyError:
+            return
 
     def getObjectPosition(self, obj_id):
         """ see interfaces.py """

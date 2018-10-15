@@ -4,6 +4,10 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Handle potential errors caused by invalid references in folder ordering.
+  See https://github.com/plone/plone.folder/pull/10 for details
+  [vangheem]
+
 - Fix resources references which was causing a bunch of 404 errors
   [vangheem]
 
