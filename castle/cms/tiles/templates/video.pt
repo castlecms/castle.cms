@@ -29,11 +29,11 @@
         </video>
         <iframe tal:condition="youtube_url" style="border:0;width:100%;height:100%;"
                 title="${video/Title}"
-                src="${python: view.tweak_youtube_url(youtube_url)}" allowfullscreen=""></iframe>
+                src="${python: view.tweak_video_url(youtube_url)}" allowfullscreen=""></iframe>
       </div>
     </p>
     <div class="video-inner-container youtube" tal:condition="python: tile_youtube_url and not video">
-      <iframe src="${python: view.tweak_youtube_url(tile_youtube_url)}"
+      <iframe src="${python: view.tweak_video_url(tile_youtube_url)}"
               title="${tile_youtube_url}"
               allowfullscreen="" style="border:0;width:100%;height:100%;" ></iframe>
     </div>

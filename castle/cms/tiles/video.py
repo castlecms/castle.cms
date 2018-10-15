@@ -37,9 +37,13 @@ class VideoTile(ContentTile):
     def loop(self):
         return self.data.get('loop', False)
 
-    def tweak_youtube_url(self, url):
+    def tweak_video_url(self, url):
         # add params for properties...
-        url = self.utils.clean_youtube_url(url)
+        parts = url.split('/')
+        if 'vimeo.com' in parts:
+            url = 'https://player.vimeo.com/video/{id}'.format(id=parts[-1:][0])
+        else:
+            url = self.utils.clean_youtube_url(url)
         url += '?'
         if self.autoplay:
             url += 'autoplay=1&'
@@ -65,7 +69,7 @@ class IVideoTileSchema(model.Schema):
 
     youtube_url = schema.TextLine(
         title=u'YouTube url',
-        description=u'Or provide a YouTube url',
+        description=u'Or provide a YouTube or Vimeo url',
         required=False)
 
     @invariant
