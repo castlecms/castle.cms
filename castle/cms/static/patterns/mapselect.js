@@ -29,9 +29,7 @@ define([
           color_keys.map(function(name) {
             var color = colorList[name];
             return D.option({
-              label: name,
-              value: color
-            });
+              value: color }, name);
           })
         ])
     ];
