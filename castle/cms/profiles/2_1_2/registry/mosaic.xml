@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+    <record name="plone.app.mosaic.default_available_actions">
+      <element>tile-background-no-margin</element>
+    </record>
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.formats.tile_background_no_margin">
+    <value key="name">tile-background-no-margin</value>
+    <value key="category">tile</value>
+    <value key="label">Background No Margin</value>
+    <value key="action">tile-toggle-class</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">2</value>
+  </records>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.formats.tile_background_rounded">
+    <value key="name">tile-background-rounded</value>
+    <value key="category">tile</value>
+    <value key="label">Background with rounded corners</value>
+    <value key="action">tile-toggle-class</value>
+    <value key="icon">true</value>
+    <value key="favorite">false</value>
+    <value key="weight">3</value>
+  </records>
+</registry>
