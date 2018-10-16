@@ -9,29 +9,29 @@
 
 <metal:content-core fill-slot="content-core">
 <metal:block define-macro="content-core"
-    tal:define="content_type view/content_type|nothing;
-                download_url string:${context/absolute_url}/@@download/file/${view/filename};
+    tal:define="content_type view/content_type|string:;
+                download_url string:${context/absolute_url}/@@download/file/${view/filename|nothing};
                 subtitles nocall: context/subtitle_file|nothing;">
   <p>
     <a tal:attributes="href download_url">
-      <img tal:attributes="src view/get_mimetype_icon;
+      <img tal:attributes="src view/get_mimetype_icon|nothing;
                            alt content_type;" border="0" />
-      <tal:name tal:content="view/filename" >Filename</tal:name>
+      <tal:name tal:content="view/filename|nothing" >Filename</tal:name>
     </a>
     <span class="discreet"
-        tal:define="size view/size;
+        tal:define="size view/size|python:0;
                     kb python:size/1024">
       &mdash; <span tal:replace="kb" /> KB</span>
   </p>
 
-  <video tal:condition="view/is_videotype" controls="controls">
+  <video tal:condition="view/is_videotype|nothing" controls="controls">
     <source tal:attributes="src download_url; type content_type"></source>
     <track kind="subtitles" src="subtitles.srt" srclang="en"
            tal:condition="subtitles"
            tal:attributes="src ${context/absolute_url}/@@view/++widget++form.widgets.subtitle_file/@@download" />
   </video>
 
-  <audio tal:condition="view/is_audiotype" controls="controls">
+  <audio tal:condition="view/is_audiotype|nothing" controls="controls">
     <source tal:attributes="src download_url; type content_type"></source>
   </audio>
 

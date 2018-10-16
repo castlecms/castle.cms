@@ -7,45 +7,89 @@ define([
 ], function($, Base, R, AddContentModal, utils) {
   'use strict';
 
-
-
   var UploadPattern = Base.extend({
     name: 'castleupload',
     trigger: '.pat-upload-update',
     parser: 'mockup',
     defaults: {},
+
+    bytesToSize: function(bytes) {
+      var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      if (bytes == 0) return '0 Byte';
+      var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+      return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    },
+
+    updateReplacement: function(name, type, size){
+      var $widget = $(this.$el);
+      $widget.find('.new-value').remove();
+      var $newValue = $('<p class="discreet new-value"/>');
+      $widget.append($newValue);
+      $newValue.html(name + '(' + type + '): ' + this.bytesToSize(size));
+      var $replace = $widget.find('#form-widgets-file-replace');
+      if($replace.size() === 0){
+        // no file to start with, let's just add hidden input here...
+        $replace = $('<input id="form-widgets-file-replace" name="form.widgets.file.action" type="hidden"/>')
+        $widget.append($replace);
+      }
+      $replace.attr('value', JSON.stringify({
+        replace: true,
+        name: name,
+        type: type,
+        size: size,
+        tmp_field_id: this.tmp_field_id
+      }));
+    },
+
     init: function () {
-      var widget = $(this.$el);
-      var content = widget.attr('content');
-      var field = widget.attr('field');
-      var data = [{
-        update: true,
-        content: content,
-        field: field
-      }]
-      var uploadButton = widget.find('.file-upload-btn');
-      var target = widget.find('.modal-target')[0];
-      uploadButton.click(function() {
-        var component = R.render(R.createElement(AddContentModal, data), target);
+      var self = this;
+      self.component = null;
+      self.tmp_field_id = 'tmp_' + utils.generateId();
+
+      var $widget = $(this.$el);
+
+      var $replace = $widget.find('#form-widgets-file-replace');
+      var existingValue = $replace.attr('value');
+      if(existingValue && existingValue.indexOf('{') !== -1){
+        // already had an existing value but error on form, update...
+        try{
+          var data = JSON.parse(existingValue);
+          if(data.replace){
+            self.updateReplacement(data.name, data.type, data.size);
+            self.tmp_field_id = data.tmp_field_id;
+          }
+        }catch(e){
+          // handle json issues
+        }
+      }
+      $widget.find('#form-widgets-file-input').click(function(evt){
+        evt.preventDefault();
+
+        var $div = $('<div/>');
+        $widget.append($div);
+
+        var data = {
+          update: true,
+          content: $('body').attr('data-uid'),
+          field: self.tmp_field_id,
+          autoUpload: true,
+          onUploadFinished: function(item, component){
+            // do something here...
+            var file = component.state.files[0];
+            self.component.hide();
+            $div.remove();
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('#form-widgets-file').css('opacity', '0.2');
+
+            self.updateReplacement(file.name, file.type, file.size);
+          }
+        };
+        self.el = R.createElement(AddContentModal, data);
+        self.component = R.render(self.el, $div[0]);
         $('.modal-backdrop').css('z-index', 'auto');
         $('.modal-content').css('margin-top', '100px');
       });
-      var removeButton = widget.find('.file-remove-btn');
-      removeButton.click(function() {
-        if (confirm('Are you sure you want to remove this file?')) {
-          var xhr = new XMLHttpRequest();
-          var fd = new FormData();
-          fd.append('action', 'remove');
-          fd.append('content', content);
-          fd.append('field', field);
-          fd.append('_authenticator', utils.getAuthenticator());
-
-          xhr.open('post', $('body').attr('data-portal-url') + '/@@content-creator');
-          xhr.send(fd);
-
-          location.reload(true);
-        }
-      })
     }
   });
 

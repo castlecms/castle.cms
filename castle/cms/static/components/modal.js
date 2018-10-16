@@ -101,7 +101,9 @@ define([
       var $el = self.getModalEl();
 
       $el.on('shown.bs.modal', function(e){
-        self.props.onShown(e, self);
+        if(self.props.onShown){
+          self.props.onShown(e, self);
+        }
       });
 
       $el.on('show.bs.modal', function(){

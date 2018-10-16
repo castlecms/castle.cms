@@ -1,8 +1,8 @@
-from Acquisition import aq_inner
-from Acquisition import aq_parent
+import json
+
+from Acquisition import aq_inner, aq_parent
 from borg.localrole.interfaces import IFactoryTempFolder
-from castle.cms import cache
-from castle.cms import theming
+from castle.cms import cache, theming
 from castle.cms.interfaces import IDashboard
 from plone import api
 from plone.app.imaging.utils import getAllowedSizes
@@ -14,14 +14,11 @@ from plone.tiles.interfaces import ITileType
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
-from Products.CMFPlone.interfaces import IPatternsSettings
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFPlone.patterns import PloneSettingsAdapter
-from Products.CMFPlone.patterns import TinyMCESettingsGenerator
+from Products.CMFPlone.interfaces import IPatternsSettings, IPloneSiteRoot
+from Products.CMFPlone.patterns import (PloneSettingsAdapter,
+                                        TinyMCESettingsGenerator)
 from zope.component import getUtility
 from zope.interface import implements
-
-import json
 
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
@@ -205,5 +202,6 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             data['data-site-layout'] = transform.get_layout_name(real_context)
 
         data['data-site-default'] = getDefaultPage(self.site) or 'front-page'
+        data['data-uid'] = IUUID(real_context)
 
         return data
