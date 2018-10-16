@@ -113,7 +113,8 @@ define([
       try {
         xhr.send(data);
         xhr.onload = function() {
-          self.renderInvite(self.survey_tile, self.survey_data, xhr.response);
+          self.invite_data = JSON.parse(xhr.response);
+          self.renderInvite(self.survey_tile, self.survey_data, self.invite_data);
         }
       } catch (error) {
         console.log('Something went wrong with survey API: ' + error);
