@@ -112,6 +112,11 @@ class Creator(BrowserView):
     def __call__(self):
         self.sm = getSecurityManager()
         self.request.response.setHeader('Content-type', 'application/json')
+        if api.user.is_anonymous():
+            self.request.response.setStatus(403)
+            return json.dumps({
+                'reason': 'No access'
+            })
         self.catalog = api.portal.get_tool('portal_catalog')
         if self.request.form.get('action') == 'check':
             return self.check()
@@ -188,13 +193,26 @@ class Creator(BrowserView):
                 try:
                     info['existing_id'] = existing_id
                     info['field_name'] = field_name
-                    obj = self.update_file_content(info)
+                    obj, success, msg = self.update_file_content(info)
+                    if not success:
+                        self.update_file_content(info)
+                        self._clean_tmp(info)
+                        return json.dumps({
+                            'success': False,
+                            'id': _id,
+                            'reason': msg
+                        })
                 except Exception:
-                    logger.info('Failed to update content.')
+                    logger.warning(
+                        'Failed to update content.', exc_info=True)
+                    self._clean_tmp(info)
+                    return json.dumps({
+                        'success': False,
+                        'id': _id
+                    })
             if not info.get('field_name', '').startswith('tmp_'):
                 # tmp files need to stick around and be managed later...
-                tmp_dir = '/'.join(info['tmp_file'].split('/')[:-1])
-                shutil.rmtree(tmp_dir)
+                self._clean_tmp(info)
             cache.delete(cache_key_prefix + _id)
             return dump_object_data(obj, dup)
         else:
@@ -209,6 +227,10 @@ class Creator(BrowserView):
             'success': True,
             'id': _id
         })
+
+    def _clean_tmp(self, info):
+        tmp_dir = '/'.join(info['tmp_file'].split('/')[:-1])
+        shutil.rmtree(tmp_dir)
 
     def detect_duplicate(self, info):
         dup_detector = duplicates.DuplicateDetector()
@@ -266,6 +288,8 @@ class Creator(BrowserView):
     def update_file_content(self, info):
         type_, location = self.get_type_and_location(info)
         obj = uuidToObject(info['existing_id'])
+        success = False
+        msg = None
         if obj:
             if self.sm.checkPermission(ModifyPortalContent, obj):
                 try:
@@ -279,9 +303,17 @@ class Creator(BrowserView):
                         else:
                             blob = NamedBlobFile(data=fi, filename=filename)
                         setattr(obj, info['field_name'], blob)
+                    success = True
                 except Exception:
-                    pass  # could not update content
-        return obj
+                    # could not update content
+                    logger.warning('Error updating content', exc_info=True)
+                    msg = 'Unknown error'
+            else:
+                msg = 'Invalid permissions'
+        else:
+            success = False
+            msg = 'Object not found'
+        return obj, success, msg
 
     def add_tmp_upload(self, obj, info):
         annotations = IAnnotations(obj)
