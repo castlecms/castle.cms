@@ -1,13 +1,11 @@
 import json
-from plone.namedfile.file import NamedBlobFile
-from zope.annotation.interfaces import IAnnotations
-from Products.CMFPlone import utils as ploneutils
 from base64 import b64decode
 
 import z3c.form.browser.textarea
 import z3c.form.interfaces
 import z3c.form.widget
 from Acquisition import aq_parent
+from castle.cms import utils
 from castle.cms.behaviors.leadimage import IRequiredLeadImage
 from castle.cms.interfaces import (ICastleLayer, IReCaptchaWidget,
                                    IReferenceNamedImage)
@@ -28,15 +26,18 @@ from plone.formwidget.namedfile.interfaces import (INamedFileWidget,
 from plone.formwidget.namedfile.widget import NamedFileWidget
 from plone.formwidget.namedfile.widget import \
     NamedImageWidget as BaseNamedImageWidget  # noqa
-from plone.namedfile.file import NamedBlobImage
+from plone.namedfile.file import NamedBlobFile, NamedBlobImage
 from plone.namedfile.interfaces import INamedFileField, INamedImageField
 from plone.namedfile.utils import safe_basename
 from plone.registry.interfaces import IRegistry
+from plone.uuid.interfaces import IUUID
+from Products.CMFPlone import utils as ploneutils
 from z3c.form.browser import text
 from z3c.form.browser.checkbox import SingleCheckBoxWidget
 from z3c.form.browser.select import SelectWidget as z3cform_SelectWidget
 from z3c.form.interfaces import NOVALUE, IFieldWidget, ITextWidget
 from z3c.form.util import getSpecification
+from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter, adapts, getUtility
 from zope.interface import (alsoProvides, implementer, implements,
                             implementsOnly)
@@ -714,10 +715,14 @@ class TmpFile(object):
         self.info = info
 
 
+class IUploadNamedFileWidget(INamedFileWidget):
+    pass
+
+
 class NamedFileDataConverter(NamedDataConverter):
     """Converts from a file-upload to a NamedFile variant.
     """
-    adapts(INamedFileField, INamedFileWidget)
+    adapts(INamedFileField, IUploadNamedFileWidget)
 
     def toWidgetValue(self, value):
         return value
@@ -736,13 +741,32 @@ class NamedFileDataConverter(NamedDataConverter):
         return super(NamedFileDataConverter, self).toFieldValue(value)
 
 
+@implementer(IUploadNamedFileWidget)
 class UploadNamedFileWidget(NamedFileWidget):
     klass = NamedFileWidget.klass + ' pat-upload-update'
     replacement = False
 
     @property
+    def pattern_options(self):
+        return json.dumps({
+            'field_name': self.name,
+            'tmp_field_id': self.get_tmp_field_id(),
+            'uid': IUUID(self.context)
+        })
+
+    @property
     def cache_name(self):
         return '__cache_' + self.name
+
+    def get_tmp_field_id(self):
+        action = self.request.get("%s.action" % self.name, None)
+        try:
+            action = json.loads(action)
+            if action.get('replace'):
+                return action['tmp_field_id']
+        except (ValueError, TypeError):
+            pass
+        return 'tmp_' + utils.get_random_string()
 
     def extract(self, default=NOVALUE):
         if getattr(self.request, self.cache_name, None):

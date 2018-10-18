@@ -1,25 +1,24 @@
+import logging
+from time import time
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms import authentication
-from castle.cms import cache
+from castle.cms import authentication, cache
 from castle.cms.interfaces import ICastleApplication
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
-from OFS.CopySupport import _cb_decode
-from OFS.CopySupport import _cb_encode
-from OFS.CopySupport import CopyError
-from OFS.CopySupport import eInvalid
-from OFS.CopySupport import eNoData
+from OFS.CopySupport import (CopyError, _cb_decode, _cb_encode, eInvalid,
+                             eNoData)
 from plone import api
 from plone.keyring.interfaces import IKeyManager
 from plone.registry.interfaces import IRegistry
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from Products.CMFPlone.interfaces import ITinyMCESchema
-from time import time
-from zope.component import getGlobalSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
+from ZODB.POSException import ConnectionStateError
+from zope.component import getGlobalSiteManager, getUtility, queryUtility
 from zope.interface import implementer
+
+logger = logging.getLogger('castle.cms')
 
 
 def HideSiteLayoutFields_update(self):
@@ -171,16 +170,20 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
         if manager is None:
             return None
 
-        for secret in manager[u"_system"]:
-            if secret is None:
-                continue
-            ticket_data = tktauth.validateTicket(
-                secret,
-                ticket,
-                timeout=self.timeout,
-                now=now,
-                mod_auth_tkt=self.mod_auth_tkt
-            )
-            if ticket_data is not None:
-                break
+        try:
+            for secret in manager[u"_system"]:
+                if secret is None:
+                    continue
+                ticket_data = tktauth.validateTicket(
+                    secret,
+                    ticket,
+                    timeout=self.timeout,
+                    now=now,
+                    mod_auth_tkt=self.mod_auth_tkt
+                )
+                if ticket_data is not None:
+                    break
+        except ConnectionStateError:
+            logger.warning(
+                'Connection state error, swallowing', exc_info=True)
     return ticket_data

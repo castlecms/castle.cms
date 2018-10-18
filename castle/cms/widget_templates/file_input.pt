@@ -20,7 +20,8 @@
                     onchange view/onchange;
                     readonly view/readonly;
                     accesskey view/accesskey;
-                    onselect view/onselect;"
+                    onselect view/onselect;
+                    data-pat-upload-update view/pattern_options"
     tal:define="download_url view/download_url;
                 exists python: view.value is not None;
                 action view/action;

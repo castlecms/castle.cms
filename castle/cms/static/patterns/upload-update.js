@@ -8,10 +8,13 @@ define([
   'use strict';
 
   var UploadPattern = Base.extend({
-    name: 'castleupload',
+    name: 'upload-update',
     trigger: '.pat-upload-update',
     parser: 'mockup',
-    defaults: {},
+    defaults: {
+      uid: null,
+      tmp_field_id: null
+    },
 
     bytesToSize: function(bytes) {
       var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -37,14 +40,17 @@ define([
         name: name,
         type: type,
         size: size,
-        tmp_field_id: this.tmp_field_id
+        tmp_field_id: this.options.tmp_field_id
       }));
     },
 
     init: function () {
+      debugger;
       var self = this;
       self.component = null;
-      self.tmp_field_id = 'tmp_' + utils.generateId();
+      if(!self.options.tmp_field_id){
+        self.tmp_field_id = 'tmp_' + utils.generateId();
+      }
 
       var $widget = $(this.$el);
 
@@ -56,7 +62,7 @@ define([
           var data = JSON.parse(existingValue);
           if(data.replace){
             self.updateReplacement(data.name, data.type, data.size);
-            self.tmp_field_id = data.tmp_field_id;
+            self.options.tmp_field_id = data.tmp_field_id;
           }
         }catch(e){
           // handle json issues
@@ -70,8 +76,8 @@ define([
 
         var data = {
           update: true,
-          content: $('body').attr('data-uid'),
-          field: self.tmp_field_id,
+          content: self.options.uid,
+          field: self.options.tmp_field_id,
           autoUpload: true,
           onUploadFinished: function(item, component){
             // do something here...
