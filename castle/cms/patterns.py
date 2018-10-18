@@ -90,7 +90,9 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
 
     def tinymce(self):
         if api.user.is_anonymous():
-            return {}
+            return {
+                'data-pat-tinymce': '{}'
+            }
         generator = CastleTinyMCESettingsGenerator(self.context, self.request)
         settings = generator.settings
 
