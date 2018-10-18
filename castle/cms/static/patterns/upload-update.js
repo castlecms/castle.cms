@@ -45,7 +45,6 @@ define([
     },
 
     init: function () {
-      debugger;
       var self = this;
       self.component = null;
       if(!self.options.tmp_field_id){
