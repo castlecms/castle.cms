@@ -42,16 +42,23 @@ class ISendEmailUsersForm(model.Schema):
     subject = schema.ASCIILine(
         title=u'Subject')
 
+    send_from = schema.TextLine(
+        title=u'Custom FROM address',
+        required=False,
+    )
+
     directives.widget(
         'send_to_groups',
         AjaxSelectFieldWidget,
         vocabulary='plone.app.vocabularies.Groups'
     )
+
     send_to_groups = schema.List(
         title=u'Send to groups',
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Groups'
-        )
+        ),
+        required=False
     )
 
     directives.widget(
@@ -59,11 +66,14 @@ class ISendEmailUsersForm(model.Schema):
         AjaxSelectFieldWidget,
         vocabulary='plone.app.vocabularies.Users'
     )
+
     send_to_users = schema.List(
         title=u'Send to users',
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Users'
-        ))
+        ),
+        required=False
+    )
 
     send_to_custom = schema.List(
         title=u'To(additional)',
@@ -104,6 +114,11 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
                     if email:
                         addresses.append(email)
 
+            try:
+                sender = data['send_from']
+            except Exception:
+                sender = None
+
             utils = Utils(self.context, self.request)
             public_url = utils.get_public_url()
             html = data['body'].output
@@ -112,7 +127,7 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
             html = apply_filters(filters, html)
             html = html.replace(self.context.absolute_url(), public_url.encode('utf8'))
 
-            send_email.delay(list(set(addresses)), data['subject'], html=html)
+            send_email.delay(list(set(addresses)), data['subject'], html=html, sender=sender)
             self.request.response.redirect('%s/@@announcements-controlpanel' % (
                 self.context.absolute_url()))
 
@@ -129,6 +144,12 @@ class ISendEmailSubscribersForm(model.Schema):
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
     )
+
+    send_from = schema.TextLine(
+        title=u'Custom FROM address',
+        required=False,
+    )
+
     body = RichText(
         title=u'Body',
         description=u'Message body',
@@ -164,7 +185,11 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
             if 'form.widgets.send_to_categories' in self.request.form:
                 categories = set(self.request.form['form.widgets.send_to_categories'])
 
-            send_email_to_subscribers.delay(data['subject'], html=html, categories=categories)
+            sender = None
+            if 'form.widgets.send_from' in self.request.form:
+                sender = self.request.form['form.widgets.send_from']
+
+            send_email_to_subscribers.delay(data['subject'], html=html, categories=categories, sender=sender)
 
             api.portal.show_message(
                 'Sending emails', request=self.request, type='info')

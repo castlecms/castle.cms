@@ -30,7 +30,7 @@
              class="pat-autotoc layouts-editor">
           <div class="tab-content" tal:define="form nocall:view/email_form;
                                                view nocall:form">
-            <h2 class="tab">Email Users</h2>
+            <h2 class="tab">Email Users or Visitors</h2>
             <div metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
           </div>
           <div class="tab-content" tal:define="form nocall:view/email_subscribers_form;
