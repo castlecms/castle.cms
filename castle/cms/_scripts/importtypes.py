@@ -56,6 +56,12 @@ FOLDER_DEFAULT_PAGE_LAYOUT = u"""
 </html>
 """
 
+dublin = 'plone.app.dexterity.behaviors.metadata.IDublinCore'
+basic = 'plone.app.dexterity.behaviors.metadata.IBasic'
+categorization = 'plone.app.dexterity.behaviors.metadata.ICategorization'
+layoutaware = 'plone.app.blocks.layoutbehavior.ILayoutAware'
+publication = 'plone.app.dexterity.behaviors.metadata.IPublication'
+
 _types = {}
 
 
@@ -137,7 +143,6 @@ class BaseImportType(object):
         data = {
             '_plone.uuid': self.data['uid']
         }
-
         try:
             id = self.field_data['id']
         except Exception:
@@ -151,16 +156,16 @@ class BaseImportType(object):
             try:
                 title = self.field_data['plone.app.content.interfaces.INameFromTitle']['title']
             except Exception:
-                title = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['title']
+                title = self.field_data[dublin]['title']
 
         try:
             description = self.field_data['description']
         except Exception:
             try:
-                description = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                description = self.field_data[dublin]['description']
             except Exception:
                 try:
-                    description = self.field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']
+                    description = self.field_data[basic]['description']
                 except Exception:
                     pdb.set_trace()
         return dict(
@@ -200,21 +205,21 @@ class BaseImportType(object):
                 try:
                     bdata.title = field_data['plone.app.content.interfaces.INameFromTitle']['title']
                 except Exception:
-                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['title']
+                    bdata.description = field_data[dublin]['title']
             try:
                 bdata.description = field_data['description']
             except Exception:
                 try:
-                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                    bdata.description = field_data[dublin]['description']
                 except Exception:
-                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']
+                    bdata.description = field_data[basic]['description']
         else:
             try:
                 obj.title = field_data['title']
                 obj.description = field_data['description']
             except Exception:
-                obj.title = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['title']
-                obj.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                obj.title = field_data[dublin]['title']
+                obj.description = field_data[dublin]['description']
 
         bdata = ICategorization(obj, None)
         if bdata:
@@ -222,12 +227,12 @@ class BaseImportType(object):
                 bdata.subjects = field_data['subject']
             except Exception:
                 try:
-                    bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['subjects']
+                    bdata.subjects = self.field_data[dublin]['subjects']
                 except Exception:
                     try:
-                        bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.ICategorization']['subjects']
+                        bdata.subjects = self.field_data[categorization]['subjects']
                     except Exception:
-                        pass # no keywords found
+                        pass  # no keywords found
 
             bdata = IPublication(obj)
             try:
@@ -235,12 +240,12 @@ class BaseImportType(object):
                     bdata.effective = pydt(field_data['effectiveDate'])
             except Exception:
                 try:
-                    if field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective']:
-                        bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective'])
+                    if field_data[dublin]['effective']:
+                        bdata.effective = pydt(field_data[dublin]['effective'])
                 except Exception:
                     try:
-                        if field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective']:
-                            bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective'])
+                        if field_data[publication]['effective']:
+                            bdata.effective = pydt(field_data[publication]['effective'])
                     except Exception:
                         bdata.effective = None
 
@@ -301,9 +306,9 @@ class BaseImportType(object):
                 # could be overwritten
                 bdata.contentLayout = None
             elif self.layout:
-                if 'plone.app.blocks.layoutbehavior.ILayoutAware' in field_data and 'contentLayout' in field_data['plone.app.blocks.layoutbehavior.ILayoutAware']:
-                    bdata.contentLayout = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['contentLayout']
-                if 'plone.app.blocks.layoutbehavior.ILayoutAware' in field_data and 'content' in field_data['plone.app.blocks.layoutbehavior.ILayoutAware']:
+                if layoutaware in field_data and 'contentLayout' in field_data[layoutaware]:
+                    bdata.contentLayout = field_data[layoutaware]['contentLayout']
+                if layoutaware in field_data and 'content' in field_data[layoutaware]:
                     bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
                 if 'rendered_layout' in self.data['data']:
                     bdata.rendered_layout = self.data['data']['rendered_layout']
@@ -360,7 +365,7 @@ class BaseImportType(object):
                 else:
                     if pdb_if_exception:
                         pdb.set_trace()
-                    logger.info("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+                    logger.info("    lead image is type %s" % type(im_obj))
                 obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
                 if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
@@ -389,9 +394,11 @@ class BaseImportType(object):
                         if contentType:
                             obj.image.contentType = contentType
                         else:
-                            logger.info("    unknown image type %s encountered; defaulting to jpeg" % image_type)
+                            logger.info("Unknown image type {};"
+                                        " defaulting to jpeg"
+                                        .format(image_type))
                             pdb.set_trace()
-                            obj.image.contentType = 'image/jpeg' # default
+                            obj.image.contentType = 'image/jpeg'  # default
                 for caption_field_name in self.lead_image_caption_field_names:
                     if caption_field_name in self.field_data:
                         obj.imageCaption = self.field_data.get(caption_field_name)
@@ -500,7 +507,7 @@ class VideoType(FileType):
 
     def __init__(self, data, path, *args):
         super(FileType, self).__init__(data, path, *args)
-        if self.original_type =='WildcardVideo':
+        if self.original_type == 'WildcardVideo':
                 self.data['portal_type'] = 'Video'
                 repo_path = '/video-repository/'
 
@@ -513,9 +520,7 @@ class VideoType(FileType):
 
     def get_data(self):
         data = super(FileType, self).get_data()
-        #if self.original_type == 'youtube-video':
-        #    data['youtube_url'] = 'https://www.youtube.com/watch?v={id}'.format(id=self.field_data['video_id'])
-        if self.original_type =='WildcardVideo':
+        if self.original_type == 'WildcardVideo':
             video_data = self.data['data']['wildcard.media.behavior.IVideo']
             if video_data['video_file']:
                 video_blob = video_data['video_file']
@@ -545,7 +550,7 @@ class VideoType(FileType):
 
 register_import_type('WildcardVideo', VideoType)
 register_import_type('video', VideoType)
-#register_import_type('youtube-video', VideoType)
+# register_import_type('youtube-video', VideoType)
 
 
 class AudioType(FileType):
@@ -563,12 +568,12 @@ class AudioType(FileType):
 
     def get_data(self):
         data = super(FileType, self).get_data()
-        if self.original_type =='audio':
+        if self.original_type == 'audio':
             data.update({
                 'file': self.data['data']['file'],
                 'transcript': self.data['data']['transcription']
             })
-        elif self.original_type =='WildcardAudio':
+        elif self.original_type == 'WildcardAudio':
             try:
                 transcript = self.data['data']['wildcard.media.behavior.IAudio']['transcript']
             except Exception:
@@ -647,5 +652,7 @@ register_import_type('Event', EventType)
 def get_import_type(data, path, *args):
     if data['portal_type'] in _types:
         return _types[data['portal_type']](data, path, *args)
-    logger.info('No explicit mapping for type {type}. Attempting base import type.'.format(type=data['portal_type']))
+    logger.info('No explicit mapping for type {type}.'
+                        ' Attempting base import type.'
+                        .format(type=data['portal_type']))
     return BaseImportType(data, path, *args)

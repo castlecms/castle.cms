@@ -244,8 +244,8 @@ def import_object(filepath):
         for import_path in import_paths:
             if filepath.startswith('{}/{}'.format(args.export_directory, import_path)):
                 do_import = True
-            if import_path.startswith(filepath[len(args.export_directory):].lstrip('/')+'/'):
-                #Don't skip folders on the way to import_paths
+            if import_path.startswith(filepath[len(args.export_directory):].lstrip('/') + '/'):
+                # Don't skip folders on the way to import_paths
                 do_import = True
         if not do_import:
             print("Skipping {path}, not in import_paths"
@@ -309,7 +309,9 @@ def import_object(filepath):
                                         ' create anyway.'.format(path=path))
             return
         elif (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None):
-            logger.warn('Skipping {path}, content with its UUID already exists. Use --ignore-uuids to create anyway.'.format(path=path))
+            logger.warn('Skipping {path}, content with its UUID already exists.'
+                                        'Use --ignore-uuids to create anyway.'
+                                                            .format(path=path))
             return
         else:
             try:
@@ -383,7 +385,7 @@ def import_content(path, count=0):
         if imported:
             count += 1
         else:
-            #folder object exists in export,but errored or was skipped
+            # folder object exists in export,but errored or was skipped
             return count
     for filename in os.listdir(path):
         if filename in ('.DS_Store', '__folder__'):
