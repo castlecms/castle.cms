@@ -13,7 +13,7 @@ def send_email(*args, **kwargs):
 
 
 @task.as_admin()
-def send_email_to_subscribers(subject, html, categories=None):
+def send_email_to_subscribers(subject, html, categories=None, sender=None):
     _utils = Utils(api.portal.get(), getRequest())
     public_url = _utils.get_public_url()
 
@@ -48,4 +48,4 @@ def send_email_to_subscribers(subject, html, categories=None):
         html = html.replace('{{unsubscribe_url}}', unsubscribe_url)
         html = html.replace('{{change_url}}', change_url)
 
-        utils.send_email([subscriber.get('email')], subject, html)
+        utils.send_email([subscriber.get('email')], subject, html, sender=sender)
