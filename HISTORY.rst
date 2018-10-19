@@ -29,6 +29,9 @@ Changelog
 - Use chunked upload on edit forms with NamedFile fields
   [lucid-0]
 
+- Allow custom FROM for announcement emails
+  [lucid-0]
+
 
 2.1.1 (2018-10-02)
 ------------------
