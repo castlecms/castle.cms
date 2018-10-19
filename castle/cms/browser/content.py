@@ -1,15 +1,22 @@
+import json
+import time
+import logging
+import math
+import os
+import shutil
+import tempfile
+
 from AccessControl import getSecurityManager
-from Acquisition import aq_base
-from Acquisition import aq_parent
-from castle.cms import cache
-from castle.cms import commands
-from castle.cms import utils
+from Acquisition import aq_base, aq_parent
+from castle.cms import cache, commands, utils
 from castle.cms.commands import exiftool
 from castle.cms.files import duplicates
 from castle.cms.interfaces import ITrashed
+from castle.cms.utils import publish_content
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
+from persistent.dict import PersistentDict
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
@@ -19,37 +26,26 @@ from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContainer
-from plone.namedfile.file import NamedBlobFile
-from plone.namedfile.file import NamedBlobImage
-from plone.registry import field as registry_field
+from plone.namedfile.file import NamedBlobFile, NamedBlobImage
 from plone.registry import Record
+from plone.registry import field as registry_field
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFPlone import utils as ploneutils
 from Products.CMFPlone.browser.syndication.adapters import SearchFeed
 from Products.CMFPlone.interfaces import ISelectableConstrainTypes
 from Products.CMFPlone.interfaces.syndication import IFeedItem
-from Products.DCWorkflow.Expression import createExprContext
-from Products.DCWorkflow.Expression import StateChangeInfo
+from Products.DCWorkflow.Expression import StateChangeInfo, createExprContext
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.Five import BrowserView
-from zope.component import getUtility
-from zope.component import queryMultiAdapter
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility, queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
-from castle.cms.utils import publish_content
-
-import json
-import logging
-import math
-import os
-import shutil
-import tempfile
-
 
 try:
     # Python 2.6-2.7
@@ -116,6 +112,11 @@ class Creator(BrowserView):
     def __call__(self):
         self.sm = getSecurityManager()
         self.request.response.setHeader('Content-type', 'application/json')
+        if api.user.is_anonymous():
+            self.request.response.setStatus(403)
+            return json.dumps({
+                'reason': 'No access'
+            })
         self.catalog = api.portal.get_tool('portal_catalog')
         if self.request.form.get('action') == 'check':
             return self.check()
@@ -192,11 +193,26 @@ class Creator(BrowserView):
                 try:
                     info['existing_id'] = existing_id
                     info['field_name'] = field_name
-                    obj = self.update_file_content(info)
+                    obj, success, msg = self.update_file_content(info)
+                    if not success:
+                        self.update_file_content(info)
+                        self._clean_tmp(info)
+                        return json.dumps({
+                            'success': False,
+                            'id': _id,
+                            'reason': msg
+                        })
                 except Exception:
-                    logger.info('Failed to update content.')
-            tmp_dir = '/'.join(info['tmp_file'].split('/')[:-1])
-            shutil.rmtree(tmp_dir)
+                    logger.warning(
+                        'Failed to update content.', exc_info=True)
+                    self._clean_tmp(info)
+                    return json.dumps({
+                        'success': False,
+                        'id': _id
+                    })
+            if not info.get('field_name', '').startswith('tmp_'):
+                # tmp files need to stick around and be managed later...
+                self._clean_tmp(info)
             cache.delete(cache_key_prefix + _id)
             return dump_object_data(obj, dup)
         else:
@@ -211,6 +227,10 @@ class Creator(BrowserView):
             'success': True,
             'id': _id
         })
+
+    def _clean_tmp(self, info):
+        tmp_dir = '/'.join(info['tmp_file'].split('/')[:-1])
+        shutil.rmtree(tmp_dir)
 
     def detect_duplicate(self, info):
         dup_detector = duplicates.DuplicateDetector()
@@ -268,19 +288,45 @@ class Creator(BrowserView):
     def update_file_content(self, info):
         type_, location = self.get_type_and_location(info)
         obj = uuidToObject(info['existing_id'])
+        success = False
+        msg = None
         if obj:
             if self.sm.checkPermission(ModifyPortalContent, obj):
                 try:
-                    fi = open(info['tmp_file'], 'r')
-                    filename = ploneutils.safe_unicode(info['name'])
-                    if 'Image' in type_:
-                        blob = NamedBlobImage(data=fi, filename=filename)
+                    if info['field_name'].startswith('tmp_'):
+                        self.add_tmp_upload(obj, info)
                     else:
-                        blob = NamedBlobFile(data=fi, filename=filename)
-                    setattr(obj, info['field_name'], blob)
+                        fi = open(info['tmp_file'], 'r')
+                        filename = ploneutils.safe_unicode(info['name'])
+                        if 'Image' in type_:
+                            blob = NamedBlobImage(data=fi, filename=filename)
+                        else:
+                            blob = NamedBlobFile(data=fi, filename=filename)
+                        setattr(obj, info['field_name'], blob)
+                    success = True
                 except Exception:
-                    pass  # could not update content
-        return obj
+                    # could not update content
+                    logger.warning('Error updating content', exc_info=True)
+                    msg = 'Unknown error'
+            else:
+                msg = 'Invalid permissions'
+        else:
+            success = False
+            msg = 'Object not found'
+        return obj, success, msg
+
+    def add_tmp_upload(self, obj, info):
+        annotations = IAnnotations(obj)
+        if '_tmp_files' not in annotations:
+            annotations['_tmp_files'] = PersistentDict()
+        tmp_files = annotations['_tmp_files']
+
+        # cleanup old ones
+        for tmp_id, item in [(k, v) for k, v in tmp_files.items()]:
+            if (time.time() - item['uploaded']) > (1 * 60 * 60):
+                del tmp_files[tmp_id]
+        info['uploaded'] = time.time()
+        tmp_files[info['field_name']] = info
 
     def remove_file_content(self):
         id = self.request.form.get('content', None)

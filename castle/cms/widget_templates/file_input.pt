@@ -1,8 +1,27 @@
-<span class="pat-upload-update"
+<span
     i18n:domain="plone"
     tal:attributes="id view/id;
-                    content context/UID;
-                    field view/field/getName"
+                    class view/klass;
+                    style view/style;
+                    title view/title;
+                    lang view/lang;
+                    onclick view/onclick;
+                    ondblclick view/ondblclick;
+                    onmousedown view/onmousedown;
+                    onmouseup view/onmouseup;
+                    onmouseover view/onmouseover;
+                    onmousemove view/onmousemove;
+                    onmouseout view/onmouseout;
+                    onkeypress view/onkeypress;
+                    onkeydown view/onkeydown;
+                    onkeyup view/onkeyup;
+                    onfocus view/onfocus;
+                    onblur view/onblur;
+                    onchange view/onchange;
+                    readonly view/readonly;
+                    accesskey view/accesskey;
+                    onselect view/onselect;
+                    data-pat-upload-update view/pattern_options"
     tal:define="download_url view/download_url;
                 exists python: view.value is not None;
                 action view/action;
@@ -10,6 +29,7 @@
                 doc_type view/file_content_type;
                 icon view/file_icon;
                 filename view/filename;">
+
     <span tal:condition="python: exists and download_url and action=='nochange'">
         <img tal:condition="icon" src="" alt=""
              tal:attributes="src icon;
@@ -26,21 +46,55 @@
                   i18n:translate="">100</span>
         </span>
     </span>
-    <div tal:condition="exists" style="padding-top: 1em;">
-      <button type="button"
-              class="file-upload-btn button-field"
-              tal:attributes="id view/id;
-                              test view/field/title">Replace With New Upload</button>
+    <div tal:condition="allow_nochange" style="padding-top: 1em;">
+        <input
+            type="radio"
+            value="nochange"
+            class="noborder"
+            tal:attributes="name string:${view/name}.action;
+                            id string:${view/id}-nochange;
+                            onclick string:document.getElementById('${view/id}-input').disabled=true;
+                            checked python:(action == 'nochange') and 'checked' or None;"
+            />
+        <label
+            tal:attributes="for string:${view/id}-nochange" i18n:translate="file_keep">Keep existing file</label>
         <tal:block condition="not:view/field/required">
-            <button
-                type="button"
+            <br />
+            <input
+                type="radio"
                 value="remove"
-                class="file-remove-btn noborder">Remove Existing File</button>
+                class="noborder"
+                tal:attributes="name string:${view/name}.action;
+                                id string:${view/id}-remove;
+                                onclick string:document.getElementById('${view/id}-input').disabled=true;
+                                checked python:action == 'remove' and 'checked' or None;"
+                />
+            <label
+                tal:attributes="for string:${view/id}-remove" i18n:translate="file_remove">Remove existing file</label>
         </tal:block>
+        <br />
+        <input
+            type="radio"
+            value="replace"
+            class="noborder"
+            tal:attributes="name string:${view/name}.action;
+                            id string:${view/id}-replace;
+                            onclick string:document.getElementById('${view/id}-input').disabled=false;
+                            checked python:(action == 'replace' or view.replacement) and 'checked' or None;" />
+        <label
+            tal:attributes="for string:${view/id}-replace" i18n:translate="file_replace">Replace with new file</label>
     </div>
-    <div tal:condition="not:exists" style="padding-top: 1em;">
-      <button type="button"
-              class="file-upload-btn button-field">Upload</button>
+    <div tal:omit-tag="not:allow_nochange" style="padding-left: 1.5em; padding-top: 0.5em;">
+        <input
+            type="file"
+            tal:attributes="id string:${view/id}-input;
+                            name view/name;
+                            size view/size;
+                            disabled view/disabled;
+                            maxlength view/maxlength;"
+            />
+        <script tal:condition="python:allow_nochange and action != 'replace'" type="text/javascript"
+            tal:content="string:document.getElementById('${view/id}-input').disabled=true;">
+        </script>
     </div>
-    <div class="modal-target" />
 </span>

@@ -203,31 +203,27 @@ define([
 
     renderFinished: function(){
       // should render info on the content, link to it, etc
-      if (this.props.parent.state.update) {
-        location.reload(true);
-      }else{
-        var stateAction = [];
-        if(this.state.workflow_state !== 'published'){
-          stateAction = [
-            'This file is currently not published. ',
-            D.a({ href: '#', onClick: this.publishClicked }, 'Publish immediately')
-          ];
-        }
-        var label = 'Finished uploading ';
-        if(this.state.duplicate){
-          label = D.span({}, [
-            D.b({}, 'Duplicate detected'),
-            D.span({}, ': Using file already uploaded: ')
-          ]);
-        }
-        return D.div({className: 'finished-container'}, [
-          D.p({}, [
-            label,
-            D.a({href: this.state.base_url + '/view', target: '_blank'}, this.state.title),
-            '. '
-          ].concat(stateAction)),
+      var stateAction = [];
+      if(this.state.workflow_state !== 'published'){
+        stateAction = [
+          'This file is currently not published. ',
+          D.a({ href: '#', onClick: this.publishClicked }, 'Publish immediately')
+        ];
+      }
+      var label = 'Finished uploading ';
+      if(this.state.duplicate){
+        label = D.span({}, [
+          D.b({}, 'Duplicate detected'),
+          D.span({}, ': Using file already uploaded: ')
         ]);
       }
+      return D.div({className: 'finished-container'}, [
+        D.p({}, [
+          label,
+          D.a({href: this.state.base_url + '/view', target: '_blank'}, this.state.title),
+          '. '
+        ].concat(stateAction)),
+      ]);
     },
 
     renderProgress: function(){
@@ -481,7 +477,7 @@ define([
       var queue = this.state.uploadQueue;
       var index = queue.indexOf(uid);
       var item = queue[index];
-      this.props.onUploadFinished(item);
+      this.props.onUploadFinished(item, this);
       queue.splice(index, 1);
       this.state.uploadQueue = queue;
       if(queue.length > 0){
@@ -507,16 +503,17 @@ define([
 
     componentDidMount: function(){
       var that = this;
-      if (that.props[0] != undefined) {
+      if (that.props.update) {
         that.setState({
-          update: that.props[0].update,
-          content: that.props[0].content,
-          field: that.props[0].field
-        })
+          update: that.props.update,
+          content: that.props.content,
+          field: that.props.field,
+          autoUpload: that.props.autoUpload
+        });
       }else{
         that.setState({
           update: false
-        })
+        });
       }
 
       var portalUrl = $('body').attr('data-portal-url');

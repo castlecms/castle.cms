@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
+import json
+import unittest
+from io import BytesIO
+
 from castle.cms.browser import content
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login, logout,
+                               setRoles)
 from plone.uuid.interfaces import IUUID
-
-import json
-import unittest
+from zope.annotation.interfaces import IAnnotations
 
 
 class TestContent(unittest.TestCase):
@@ -65,6 +65,160 @@ class TestContent(unittest.TestCase):
         cc = content.Creator(self.portal, self.request)
         data = cc()
         self.assertEqual(json.loads(data)['valid'], True)
+
+    def test_upload(self):
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'chunk': '1',
+            'chunkSize': 1024,
+            'totalSize': 1024 * 5,
+            'file': BytesIO('X' * 1024),
+            'name': 'foobar.bin'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertTrue('id' in data)
+        self.assertTrue(data['success'])
+        self.request.form.update({
+            'id': data['id']
+        })
+
+        for idx in range(4):
+            self.request.form.update({
+                'action': 'chunk-upload',
+                'chunk': str(idx + 2),
+                'file': BytesIO('X' * 1024)
+            })
+            cc = content.Creator(self.portal, self.request)
+            data = json.loads(cc())
+            self.assertTrue(data['success'])
+
+        self.assertTrue(data['valid'])
+        self.assertTrue('url' in data)
+
+        fileOb = api.content.get(path='/file-repository/foobar.bin')
+        self.assertEquals(fileOb.file.data, 'X' * 1024 * 5)
+        return fileOb
+
+    def test_update_upload(self):
+        fileOb = self.test_upload()
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'chunk': '1',
+            'chunkSize': 1024,
+            'totalSize': 1024,
+            'file': BytesIO('U' * 1024),
+            'name': 'foobar2.bin',
+            'content': IUUID(fileOb),
+            'field': 'file'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertTrue(data['valid'])
+        self.assertTrue('url' in data)
+        fileOb = api.content.get(path='/file-repository/foobar.bin')
+        self.assertEquals(fileOb.file.data, 'U' * 1024)
+
+    def test_tmp_upload(self):
+        fileOb = self.test_upload()
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'chunk': '1',
+            'chunkSize': 1024,
+            'totalSize': 1024,
+            'file': BytesIO('T' * 1024),
+            'name': 'foobar2.bin',
+            'content': IUUID(fileOb),
+            'field': 'tmp_blarg'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertTrue(data['valid'])
+        self.assertTrue('url' in data)
+        fileOb = api.content.get(path='/file-repository/foobar.bin')
+
+        # should not change!
+        self.assertEquals(fileOb.file.data, 'X' * 1024 * 5)
+
+        # tmp file should be uploaded
+        annotations = IAnnotations(fileOb)
+        tmp_files = annotations['_tmp_files']
+        self.assertTrue('tmp_blarg' in tmp_files)
+
+    def test_create_folders(self):
+        self.request.form.update({
+            'action': 'create',
+            'basePath': 'foo/bar',
+            'id': 'foobar',
+            'title': 'Foobar',
+            'selectedType[id]': 'Document',
+            'transitionTo': 'publish'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        ob = api.content.get(path='/foo/bar/foobar')
+        self.assertTrue(ob is not None)
+        self.assertEquals(
+            data['base_url'], 'http://nohost/plone/foo/bar/foobar')
+        self.assertEquals(
+            api.content.get_state(ob), 'published')
+
+
+class TestContentAccess(unittest.TestCase):
+
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        logout()
+
+    def test_accees_denied(self):
+        content.Creator(self.portal, self.request)()
+        self.assertEquals(self.request.response.getStatus(), 403)
+
+    def test_modify_content_upload_permission(self):
+        api.user.create(
+            email='foo@bar.com', username='foobar',
+            password='foobar', roles=('Member',))
+        setRoles(self.portal, 'foobar', (
+            'Member', 'Contributor', 'Reviewer'))
+        api.user.create(
+            email='foo2@bar.com', username='foobar2',
+            password='foobar2', roles=('Member',))
+        setRoles(self.portal, 'foobar2', (
+            'Member', 'Reviewer'))
+
+        login(self.portal, 'foobar')
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'chunk': '1',
+            'chunkSize': 1024,
+            'totalSize': 1024,
+            'file': BytesIO('X' * 1024),
+            'name': 'foobar.bin'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        fileOb = api.content.get(path='/file-repository/foobar.bin')
+        self.assertEquals(fileOb.file.data, 'X' * 1024)
+
+        # and publish the sucker
+        api.content.transition(fileOb, 'publish')
+
+        logout()
+        login(self.portal, 'foobar2')
+
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'file': BytesIO('U' * 1024),
+            'name': 'foobar2.bin',
+            'content': IUUID(fileOb),
+            'field': 'file'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertFalse(data['success'])
 
 
 class TestPageLayoutSelector(unittest.TestCase):

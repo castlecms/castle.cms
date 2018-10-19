@@ -413,6 +413,12 @@ define([
       }
     },
 
+    getDefaultProps: function(){
+      return {
+        update: false
+      }
+    },
+
     getId: function(){
       return this.getTab().id;
     },
@@ -426,8 +432,8 @@ define([
     },
 
     getInitialState: function(){
-      var initSelected = 'add'
-      if (this.props[0] != undefined && this.props[0].update) {
+      var initSelected = 'add';
+      if (this.props.update) {
         initSelected = 'upload'
       }
       return cutils.extend(Modal.getInitialState.apply(this), {
