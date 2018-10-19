@@ -16,6 +16,8 @@ from plone.app.blob.utils import openBlob
 from plone.app.contentlisting.contentlisting import ContentListing
 from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedBlobImage
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedFile
 from Products.ZCatalog.Lazy import LazyCat
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
@@ -215,8 +217,8 @@ class BlobWrapperSerializer(BaseTypeSerializer):
         return io
 
 
-class NamedBlobImageSerializer(BaseTypeSerializer):
-    klass = NamedBlobImage
+class NamedBlobFileSerializer(BaseTypeSerializer):
+    klass = NamedBlobFile
 
     @classmethod
     def _serialize(cls, obj):
@@ -225,6 +227,18 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
             'filename': obj.filename,
             'content_type': obj.contentType
         }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return NamedBlobFile(
+            base64.b64decode(data['data']),
+            filename=data['filename'],
+            contentType=data['content_type'].encode('utf-8')
+        )
+
+
+class NamedBlobImageSerializer(NamedBlobFileSerializer):
+    klass = NamedBlobImage
 
     @classmethod
     def _deserialize(cls, data):
@@ -272,6 +286,8 @@ _serializers = {
     ContentListing: ContentListingSerializer,
     BlobWrapper: BlobWrapperSerializer,
     NamedBlobImage: NamedBlobImageSerializer,
+    NamedBlobFile: NamedBlobFileSerializer,
+    NamedFile: NamedBlobFileSerializer,
     RichTextValue: RichTextValueSerializer
 }
 

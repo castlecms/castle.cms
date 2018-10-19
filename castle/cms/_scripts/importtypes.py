@@ -1,12 +1,6 @@
-import base64
-import re
+from castle.cms.behaviors.location import ILocation
 from imghdr import what
 from mimetypes import guess_type
-from StringIO import StringIO
-
-import OFS
-from castle.cms.behaviors.location import ILocation
-from castle.cms.compat import str, unicode
 from OFS.Image import Image
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contenttypes.behaviors.richtext import IRichText
@@ -17,6 +11,16 @@ from plone.app.event.dx.behaviors import (IEventAttendees, IEventBasic,
 from plone.app.textfield.value import RichTextValue
 from plone.event.utils import pydt
 from plone.namedfile.file import NamedBlobFile, NamedBlobImage
+from StringIO import StringIO
+
+import logging
+import base64
+import OFS
+import re
+import pdb
+
+
+logger = logging.getLogger('castle.cms')
 
 FOLDER_DEFAULT_PAGE_LAYOUT = u"""
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -50,7 +54,7 @@ FOLDER_DEFAULT_PAGE_LAYOUT = u"""
     </div>
   </body>
 </html>
-"""  # noqa
+"""
 
 _types = {}
 
@@ -113,17 +117,16 @@ class BaseImportType(object):
     lead_image_caption_field_names = ('leadCaption', 'leadImage_caption')
     behavior_data_mappers = ()
 
-    def __init__(self, data, path, read_phase):
+    def __init__(self, data, path, *args):
         self.data = data
         self.field_data = data['data']
         self.path = path
-        self.read_phase = read_phase
         self.original_type = data['portal_type']
         if data.get('is_default_page'):
             # change to be folder instead of sub-item...
             self.path = '/'.join(path.split('/')[:-1])
             self.data['portal_type'] = 'Folder'
-            # disabled for now, can think about how to use this more properly..
+            # disabled for now, can think about how to use this more properly...
             # if data.get('has_sibling_pages'):
             #     self.data['portal_type'] = 'Folder'
 
@@ -139,23 +142,27 @@ class BaseImportType(object):
             id = self.field_data['id']
         except Exception:
             try:
-                id = self.field_data['plone.app.dexterity.behaviors.id.IShortName']['id']  # noqa
-            except KeyError:
+                id = self.field_data['plone.app.dexterity.behaviors.id.IShortName']['id']
+            except Exception:
                 id = self.path.split('/')[-1]
         try:
             title = self.field_data['title']
-        except KeyError:
-            title = self.field_data['plone.app.content.interfaces.INameFromTitle']['title']  # noqa
+        except Exception:
+            try:
+                title = self.field_data['plone.app.content.interfaces.INameFromTitle']['title']
+            except Exception:
+                title = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['title']
+
         try:
             description = self.field_data['description']
-        except KeyError:
+        except Exception:
             try:
-                description = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']  # noqa
-            except KeyError:
+                description = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+            except Exception:
                 try:
-                    description = self.field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']  # noqa
-                except KeyError:
-                    import pdb;pdb.set_trace()  # noqa
+                    description = self.field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']
+                except Exception:
+                    pdb.set_trace()
         return dict(
             id=id,
             type=self.data['portal_type'],
@@ -163,18 +170,20 @@ class BaseImportType(object):
             description=description,
             **data)
 
-    def post_creation(self, obj):
+    def post_creation(self, obj, pdb_if_exception=False):
         if obj is None:
             return
         field_data = self.field_data
         bdata = ILayoutAware(obj, None)
         if bdata:
-            bdata.contentLayout = '++contentlayout++default/document.html'
+            try:
+                bdata.contentLayout = self.layout
+            except Exception:
+                bdata.contentLayout = '++contentlayout++default/document.html'
         bdata = IRichText(obj, None)
         if bdata:
             try:
-                bdata.text = RichTextValue(
-                    field_data['text'], 'text/html', 'text/html')
+                bdata.text = RichTextValue(field_data['text'], 'text/html', 'text/html')
             except Exception:
                 try:
                     bdata.text = RichTextValue(
@@ -187,31 +196,38 @@ class BaseImportType(object):
         if bdata:
             try:
                 bdata.title = field_data['title']
-            except KeyError:
-                bdata.title = field_data['plone.app.content.interfaces.INameFromTitle']['title']  # noqa
+            except Exception:
+                try:
+                    bdata.title = field_data['plone.app.content.interfaces.INameFromTitle']['title']
+                except Exception:
+                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['title']
             try:
                 bdata.description = field_data['description']
-            except KeyError:
+            except Exception:
                 try:
-                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']  # noqa
-                except KeyError:
-                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']  # noqa
+                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
+                except Exception:
+                    bdata.description = field_data['plone.app.dexterity.behaviors.metadata.IBasic']['description']
         else:
-            obj.title = field_data['title']
-            obj.description = field_data['description']
+            try:
+                obj.title = field_data['title']
+                obj.description = field_data['description']
+            except Exception:
+                obj.title = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['title']
+                obj.description = field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['description']
 
         bdata = ICategorization(obj, None)
         if bdata:
             try:
                 bdata.subjects = field_data['subject']
-            except KeyError:
+            except Exception:
                 try:
-                    bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['subjects']  # noqa
-                except KeyError:
+                    bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['subjects']
+                except Exception:
                     try:
-                        bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.ICategorization']['subjects']  # noqa
-                    except KeyError:
-                        pass  # no keywords found
+                        bdata.subjects = self.field_data['plone.app.dexterity.behaviors.metadata.ICategorization']['subjects']
+                    except Exception:
+                        pass # no keywords found
 
             bdata = IPublication(obj)
             try:
@@ -219,12 +235,12 @@ class BaseImportType(object):
                     bdata.effective = pydt(field_data['effectiveDate'])
             except Exception:
                 try:
-                    if field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective']:  # noqa
-                        bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective'])  # noqa
+                    if field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective']:
+                        bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IDublinCore']['effective'])
                 except Exception:
                     try:
-                        if field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective']:  # noqa
-                            bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective'])  # noqa
+                        if field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective']:
+                            bdata.effective = pydt(field_data['plone.app.dexterity.behaviors.metadata.IPublication']['effective'])
                     except Exception:
                         bdata.effective = None
 
@@ -240,7 +256,7 @@ class BaseImportType(object):
                     ldata.locations = [field_data['newsLocation']]
 
         try:
-                obj.modification_date = field_data['modification_date']
+            obj.modification_date = field_data['modification_date']
         except Exception:
             try:
                 obj.modification_date = obj.modified()
@@ -275,25 +291,22 @@ class BaseImportType(object):
                 bdata.effective = pydt(field_data.get('effectiveDate'))
                 bdata.subjects = field_data.get('subject')
                 contributors = field_data.get('contributors')
-                bdata.contributors = tuple(contributors) if contributors else ()  # noqa
+                bdata.contributors = tuple(contributors) if contributors else ()
 
         bdata = ILayoutAware(obj, None)
         if bdata:
-            if (self.data['portal_type'] == 'Folder' and
-                    'text' in self.field_data):
-                bdata.content = FOLDER_DEFAULT_PAGE_LAYOUT % self.field_data['text']  # noqa
-                # need to explicitly reset contentLayout value because
-                # this data could be overwritten
+            if self.data['portal_type'] == 'Folder' and 'text' in self.field_data:
+                bdata.content = FOLDER_DEFAULT_PAGE_LAYOUT % self.field_data['text']
+                # need to explicitly reset contentLayout value because this data
+                # could be overwritten
                 bdata.contentLayout = None
             elif self.layout:
-                if ILayoutAware.__identifier__ in field_data:
-                    layout_data = field_data[ILayoutAware.__identifier__]
-                    if 'contentLayout' in layout_data:
-                        bdata.contentLayout = layout_data['contentLayout']
-                    if 'content' in layout_data:
-                        bdata.content = layout_data['content']
+                if 'plone.app.blocks.layoutbehavior.ILayoutAware' in field_data and 'contentLayout' in field_data['plone.app.blocks.layoutbehavior.ILayoutAware']:
+                    bdata.contentLayout = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['contentLayout']
+                if 'plone.app.blocks.layoutbehavior.ILayoutAware' in field_data and 'content' in field_data['plone.app.blocks.layoutbehavior.ILayoutAware']:
+                    bdata.content = field_data['plone.app.blocks.layoutbehavior.ILayoutAware']['content']
                 if 'rendered_layout' in self.data['data']:
-                    bdata.rendered_layout = self.data['data']['rendered_layout']  # noqa
+                    bdata.rendered_layout = self.data['data']['rendered_layout']
 
         inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
         for IBehavior, field_name in self.behavior_data_mappers:
@@ -319,7 +332,7 @@ class BaseImportType(object):
         # handle lead images
         for field_name in self.lead_image_field_names:
             if self.field_data.get(field_name):
-                if field_name == 'plone.app.contenttypes.behaviors.leadimage.ILeadImage':  # noqa
+                if field_name == 'plone.app.contenttypes.behaviors.leadimage.ILeadImage':
                     im_obj = self.field_data.get(field_name)['image']
                 else:
                     im_obj = self.field_data.get(field_name)
@@ -345,23 +358,20 @@ class BaseImportType(object):
                 elif isinstance(im_obj, Image):
                     namedblobimage_data = im_data.data
                 else:
-                    import pdb;pdb.set_trace()  # noqa
-                    print("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))  # noqa
-                obj.image = NamedBlobImage(
-                    data=namedblobimage_data, contentType='',
-                    filename=filename)
+                    if pdb_if_exception:
+                        pdb.set_trace()
+                    logger.info("    lead image is neither StringIO nor Image but unexpected type %s" % type(im_obj))
+                obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
-                if (hasattr(obj.image, 'contentType') and
-                        isinstance(obj.image.contentType, unicode)):
-                    obj.image.contentType = obj.image.contentType.encode('ascii')  # noqa
+                if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
+                    obj.image.contentType = obj.image.contentType.encode('ascii')
                 else:
                     if isinstance(im_obj, Image):
                         data = im_obj.data
                     else:
                         data = im_obj.buf
                     image_type = what('', h=data)
-                    if image_type in ['png', 'bmp', 'jpeg', 'xbm',
-                                      'tiff', 'gif']:
+                    if image_type in ['png', 'bmp', 'jpeg', 'xbm', 'tiff', 'gif']:
                         obj.image.contentType = 'image/%s' % image_type
                     elif image_type == 'rast':
                         obj.image.contentType = 'image/cmu-raster'
@@ -375,18 +385,16 @@ class BaseImportType(object):
                         obj.image.contentType = 'image/x-rgb'
                     else:
                         # look at filename extension
-                        contentType, encoding = guess_type(
-                            obj.image.filename, strict=False)
+                        contentType, encoding = guess_type(obj.image.filename, strict=False)
                         if contentType:
                             obj.image.contentType = contentType
                         else:
-                            print("    unknown image type %s encountered; defaulting to jpeg" % image_type)  # noqa
-                            import pdb;pdb.set_trace()  # noqa
-                            obj.image.contentType = 'image/jpeg'  # default
+                            logger.info("    unknown image type %s encountered; defaulting to jpeg" % image_type)
+                            pdb.set_trace()
+                            obj.image.contentType = 'image/jpeg' # default
                 for caption_field_name in self.lead_image_caption_field_names:
                     if caption_field_name in self.field_data:
-                        obj.imageCaption = self.field_data.get(
-                            caption_field_name)
+                        obj.imageCaption = self.field_data.get(caption_field_name)
 
 
 class DocumentType(BaseImportType):
@@ -399,23 +407,34 @@ register_import_type('Document', DocumentType)
 class FolderType(BaseImportType):
     layout = '++contentlayout++castle/folder.html'
 
+    def __init__(self, data, path, *args):
+        super(FolderType, self).__init__(data, path, *args)
+        self.data['portal_type'] = 'Folder'
+
 
 register_import_type('Folder', FolderType)
+register_import_type('PressRoom', FolderType)
 
 
 class NewsItemType(BaseImportType):
 
     layout = '++contentlayout++castle/news_item.html'
 
+    def __init__(self, data, path, *args):
+        super(NewsItemType, self).__init__(data, path, *args)
+        self.data['portal_type'] = 'News Item'
+
 
 register_import_type('News Item', NewsItemType)
+register_import_type('PressClip', NewsItemType)
+register_import_type('PressRelease', NewsItemType)
 
 
 class FileType(BaseImportType):
     layout = None
 
-    def __init__(self, data, path, read_phase):
-        super(FileType, self).__init__(data, path, read_phase)
+    def __init__(self, data, path, *args):
+        super(FileType, self).__init__(data, path, *args)
         filename = self.field_data.get('file_filename')
         if filename is None:
             filename = path.split('/')[-1]
@@ -425,26 +444,40 @@ class FileType(BaseImportType):
             _, ext = filename.lower().rsplit('.', 1)
         except Exception:
             ext = 'pdf'  # provide something so it ends up in file repository
-        _id = _generate_file_repo_object_id(path)
-        self.field_data['id'] = _id
+
         if ext in ('wav', 'mp3'):
             self.data['portal_type'] = 'Audio'
-            self.path = '/audio-repository/' + _id
+            repo_path = '/audio-repository/'
         elif ext in ['webm', 'ogv', 'avi', 'wmv', 'm4v',
                      'mpg', 'mpeg', 'flv', 'mp4', 'mov']:
             self.data['portal_type'] = 'Video'
-            self.path = '/video-repository/' + _id
+            repo_path = '/video-repository/'
         else:
-            self.path = '/file-repository/' + _id
+            repo_path = '/file-repository/'
+            if ext == 'pdf':
+                self.layout = 'documentviewer'
+
+        if 'retain_paths' in args:
+            self.path = path
+        else:
+            _id = _generate_file_repo_object_id(path)
+            self.field_data['id'] = _id
+            self.path = repo_path + _id
 
     def get_data(self):
         data = super(FileType, self).get_data()
         filename = self.field_data.get('file_filename')
         if filename is None or not filename:
+            try:
+                filename = self.field_data['file'].filename
+            except Exception:
+                pass
+        if filename is None or not filename:
             filename = self.field_data['id']
-        data['file'] = NamedBlobFile(
-            data=decode_file_data(self.field_data['file']),
-            filename=to_unicode(filename))
+        if 'file' in self.field_data:
+            data['file'] = NamedBlobFile(
+                data=decode_file_data(self.field_data['file']),
+                filename=to_unicode(filename))
         return data
 
 
@@ -453,8 +486,8 @@ register_import_type('File', FileType)
 
 class ImageType(BaseImportType):
 
-    def __init__(self, data, path, read_phase):
-        super(ImageType, self).__init__(data, path, read_phase)
+    def __init__(self, data, path, *args):
+        super(ImageType, self).__init__(data, path, *args)
         _id = _generate_file_repo_object_id(path)
         self.field_data['id'] = _id
         self.path = '/image-repository/' + _id
@@ -463,12 +496,100 @@ class ImageType(BaseImportType):
 register_import_type('Image', ImageType)
 
 
+class VideoType(FileType):
+
+    def __init__(self, data, path, *args):
+        super(FileType, self).__init__(data, path, *args)
+        if self.original_type =='WildcardVideo':
+                self.data['portal_type'] = 'Video'
+                repo_path = '/video-repository/'
+
+        if 'retain_paths' in args:
+            self.path = path
+        else:
+            _id = _generate_file_repo_object_id(path)
+            self.field_data['id'] = _id
+            self.path = repo_path + _id
+
+    def get_data(self):
+        data = super(FileType, self).get_data()
+        #if self.original_type == 'youtube-video':
+        #    data['youtube_url'] = 'https://www.youtube.com/watch?v={id}'.format(id=self.field_data['video_id'])
+        if self.original_type =='WildcardVideo':
+            video_data = self.data['data']['wildcard.media.behavior.IVideo']
+            if video_data['video_file']:
+                video_blob = video_data['video_file']
+            elif video_data['video_file_ogv']:
+                video_blob = video_data['video_file_ogv']
+            elif video_data['video_file_webm']:
+                video_blob = video_data['video_file_webm']
+            if 'transcript' in video_data:
+                data.update({
+                    'transcript': video_data['transcript']
+                })
+            data.update({
+                'file': video_blob,
+                'subtitle_file': video_data['subtitle_file'],
+                'image': video_data['image'],
+            })
+        return data
+
+    def post_creation(self, obj, pdb_if_exception=False):
+        super(VideoType, self).post_creation(obj, pdb_if_exception)
+        try:
+            from castle.cms.media.video import process
+            process(obj)
+        except Exception:
+            pass
+
+
+register_import_type('WildcardVideo', VideoType)
+register_import_type('video', VideoType)
+#register_import_type('youtube-video', VideoType)
+
+
+class AudioType(FileType):
+    def __init__(self, data, path, *args):
+        super(FileType, self).__init__(data, path, *args)
+        self.data['portal_type'] = 'Audio'
+        repo_path = '/audio-repository/'
+
+        if 'retain_paths' in args:
+            self.path = path
+        else:
+            _id = _generate_file_repo_object_id(path)
+            self.field_data['id'] = _id
+            self.path = repo_path + _id
+
+    def get_data(self):
+        data = super(FileType, self).get_data()
+        if self.original_type =='audio':
+            data.update({
+                'file': self.data['data']['file'],
+                'transcript': self.data['data']['transcription']
+            })
+        elif self.original_type =='WildcardAudio':
+            try:
+                transcript = self.data['data']['wildcard.media.behavior.IAudio']['transcript']
+            except Exception:
+                transcript = ''
+            data.update({
+                'file': self.data['data']['wildcard.media.behavior.IAudio']['audio_file'],
+                'transcript': transcript
+            })
+        return data
+
+
+register_import_type('WildcardAudio', AudioType)
+register_import_type('audio', AudioType)
+
+
 class LinkType(BaseImportType):
 
     youtube = False
 
-    def __init__(self, data, path, read_phase):
-        super(LinkType, self).__init__(data, path, read_phase)
+    def __init__(self, data, path, *args):
+        super(LinkType, self).__init__(data, path, *args)
         url = self.field_data['remoteUrl']
         if 'youtube' in url:
             self.youtube = True
@@ -523,7 +644,8 @@ class EventType(BaseImportType):
 register_import_type('Event', EventType)
 
 
-def get_import_type(data, path, read_phase):
+def get_import_type(data, path, *args):
     if data['portal_type'] in _types:
-        return _types[data['portal_type']](data, path, read_phase)
-    return BaseImportType(data, path, read_phase)
+        return _types[data['portal_type']](data, path, *args)
+    logger.info('No explicit mapping for type {type}. Attempting base import type.'.format(type=data['portal_type']))
+    return BaseImportType(data, path, *args)

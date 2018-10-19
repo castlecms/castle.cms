@@ -16,7 +16,7 @@ import argparse
 import logging
 import os
 import transaction
-
+import pdb
 
 logger = logging.getLogger('castle.cms')
 
@@ -37,6 +37,9 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--site-id', dest='site_id', default='Castle')
 parser.add_argument(
     '--export-directory', dest='export_directory', default='export')
+parser.add_argument('--import-paths', dest='import_paths', default=False)
+parser.add_argument('--skip-paths', dest='skip_paths', default=False)
+
 parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
@@ -56,13 +59,36 @@ parser.add_argument(
         "FormStringField",
         "FormThanksPage",
         "FormSaveDataAdapter",
-        "FormSelectionField"]))
+        "FormSaveData2ContentAdapter",
+        "FormSelectionField",
+        "Topic"]))
+parser.add_argument('--only-types', dest='only_types', default=False)
+
+# Put files/videos/etc in to the repository paths by default,
+# Set true to retain exported path
+parser.add_argument('--retain-paths', dest='retain_paths', default=False)
+
 args, _ = parser.parse_known_args()
 
 ignore_uuids = args.ignore_uuids
 stop_if_exception = args.stop_if_exception
 pdb_if_exception = args.pdb_if_exception
-skip_existing = args.skip_existing
+retain_paths = args.retain_paths
+
+if args.import_paths:
+    import_paths = args.import_paths.split(',')
+else:
+    import_paths = False
+if args.skip_paths:
+    skip_paths = args.skip_paths.split(',')
+else:
+    skip_paths = False
+
+
+if args.only_types:
+    only_types = args.only_types.split(',')
+else:
+    only_types = False
 if args.skip_types:
     skip_types = args.skip_types.split(',')
 else:
@@ -90,7 +116,8 @@ def traverse(path):
 
 
 def relpath(obj):
-    return '/'.join(obj.getPhysicalPath())[len('/'.join(site.getPhysicalPath())) + 1:]  # noqa
+    return '/'.join(obj.getPhysicalPath())[len(
+        '/'.join(site.getPhysicalPath())) + 1:]
 
 
 def recursive_create_path(path):
@@ -110,6 +137,7 @@ def recursive_create_path(path):
                 try:
                     ob = folder[part]
                     if not IFolder.providedBy(ob):
+                        logger.warn('Existing object in traversal path is not folderish. Removing it.')
                         api.content.delete(ob)
                         raise KeyError()
                     else:
@@ -120,61 +148,18 @@ def recursive_create_path(path):
                         relpath(folder),
                         part,
                         '__folder__')
-
+                    imported = False
                     if os.path.exists(fpath):
-                        fi = open(fpath)
-                        data = mjson.loads(fi.read())
-                        fi.close()
-                        importtype = get_import_type(
-                            data, fpath[len(args.export_directory):], None)
-                        creation_data = importtype.get_data()
-                        creation_data['container'] = folder
-                        creation_data['id'] = part
-                        created = False
-                        if skip_existing and part in folder.objectIds():
-                            print("    skipping existing %s" % part)
-                        elif skip_types and creation_data['type'] in skip_types:  # noqa
-                            print("    skipping %s (content type %s)" % (
-                                part, creation_data['type']))
-                        else:
-                            try:
-                                folder = api.content.create(**creation_data)
-                                created = True
-                            except api.exc.InvalidParameterError:
-                                logger.error(
-                                    'Error creating content {}'.format(fpath),
-                                    exc_info=True)
-                                if stop_if_exception:
-                                    if pdb_if_exception:
-                                        import pdb;pdb.set_trace()  # noqa
-                                    raise
-                                return
-                        if created:
-                            importtype.post_creation(folder)
-                            if data['state']:
-                                try:
-                                    api.content.transition(
-                                        folder, to_state=data['state'])
-                                except Exception:
-                                    logger.error(
-                                        "maybe workflows do not match up")
-                                    if stop_if_exception:
-                                        if pdb_if_exception:
-                                            import pdb;pdb.set_trace()  # noqa
-                                        raise
-                            folder.reindexObject()
-                    else:
-                        if skip_existing and part in folder.objectIds():
-                            print("    skipping existing %s" % part)
-                        else:
-                            print("    creating folder %s" % part)
-                            folder = api.content.create(
-                                type='Folder',
-                                id=part,
-                                title=part.capitalize(),
-                                container=folder)
-                            bdata = ILayoutAware(folder)
-                            bdata.contentLayout = '++contentlayout++castle/folder-query.html'  # noqa
+                        imported = import_object(fpath)
+                    if not imported:
+                        logger.info("Creating plain Folder (no __folder__ file found), %s" % part)
+                        folder = api.content.create(
+                            type='Folder',
+                            id=part,
+                            title=part.capitalize(),
+                            container=folder)
+                        bdata = ILayoutAware(folder)
+                        bdata.contentLayout = '++contentlayout++castle/folder-query.html'
     return folder
 
 
@@ -190,9 +175,6 @@ _read_phase = {}
 def read_object(filepath):
     # disable, we don't use
     pass
-    # fi = open(filepath)
-    # data = mjson.loads(fi.read())
-    # fi.close()
 
 
 def fix_html_images(obj):
@@ -236,56 +218,84 @@ def fix_html_images(obj):
             outputMimeType=obj.text.outputMimeType)
 
 
-def import_object(filepath, count):
+def import_object(filepath):
     fi = open(filepath)
     file_read = fi.read()
     fi.close()
     try:
         data = mjson.loads(file_read)
     except Exception:
-        print("    unable to read JSON data; skipping")
+        print("Skipping {}; Unable to read JSON data".format(filepath))
         return
     if filepath.endswith('__folder__'):
         filepath = '/'.join(filepath.split('/')[:-1])
 
-    if data['portal_type'] in ('Topic', 'Collection', 'PressRoom'):
+    skipped = False
+    if data['portal_type'] in skip_types:
+        print('Skipping omitted type {type}'
+                                        .format(type=data['portal_type']))
+        skipped = True
+    if only_types and data['portal_type'] not in only_types:
+        print("Skipping {type} at {path}, not in only_types."
+                            .format(type=data['portal_type'], path=filepath))
+        skipped = True
+    if import_paths:
+        do_import = False
+        for import_path in import_paths:
+            if filepath.startswith('{}/{}'.format(args.export_directory, import_path)):
+                do_import = True
+            if import_path.startswith(filepath[len(args.export_directory):].lstrip('/')+'/'):
+                #Don't skip folders on the way to import_paths
+                do_import = True
+        if not do_import:
+            print("Skipping {path}, not in import_paths"
+                                .format(path=filepath))
+            skipped = True
+    if skip_paths:
+        for skip_path in skip_paths:
+            if filepath.lower().startswith('{}/{}'.format(args.export_directory, skip_path)):
+                print("Skipping {path}, in skip_paths"
+                                .format(path=filepath))
+                skipped = True
+    if skipped:
+        if os.path.isdir(filepath) and len(os.listdir(filepath)):
+            logger.warn('{path} contains additional content that will be '
+                        'skipped.'.format(path=filepath))
         return
 
     original_path = filepath[len(args.export_directory):]
-    importtype = get_import_type(data, original_path, _read_phase)
+    if retain_paths:
+        importtype = get_import_type(data, original_path, 'retain_paths')
+    else:
+        importtype = get_import_type(data, original_path)
     path = importtype.get_path()
+
     folder = recursive_create_path('/'.join(path.split('/')[:-1]))
     if folder is None:
-        print('Skipped {} because of creation error'.format(filepath))
+        logger.warn('Skipped {} because of creation error'.format(filepath))
+        return
     _id = path.split('/')[-1]
 
     create = True
     if _id in folder.objectIds():
         if args.overwrite:
-            if data['portal_type'] == 'Folder':
-                cnt = folder[_id]
-                if len(folder.objectIds()) == 1 or len(cnt.objectIds()) == 0:
-                    print("    deleting folder %s" % _id)
-                    api.content.delete(folder[_id])
+            existing = folder[_id]
+            if IFolder.providedBy(existing):
+                if len(existing.objectIds()):
+                    print("OVERWRITE: Deleting non-empty folder {path}".format(path=path))
             else:
-                print("    deleting folder %s" % _id)
-                api.content.delete(folder[_id])
+                print("OVERWRITE: Deleting content item at {path}".format(path=path))
+            api.content.delete(folder[_id])
         else:
             create = False
 
-    print('import path: %s' % path)
     creation_data = importtype.get_data()
-    # if creation_data['type'] in ['collective.cover.content', 'FormFolder']:
-    if creation_data['type'] in skip_types:
-        print('    skipping omitted type %s' % creation_data['type'])
-        return  # skip objects of these types
-
     creation_data['container'] = folder
 
     aspect = ISelectableConstrainTypes(folder, None)
     if aspect:
         if (aspect.getConstrainTypesMode() != 1 or
-                [creation_data['type']] != aspect.getImmediatelyAddableTypes()):  # noqa
+                [creation_data['type']] != aspect.getImmediatelyAddableTypes()):
             aspect.setConstrainTypesMode(1)
             aspect.setImmediatelyAddableTypes([creation_data['type']])
 
@@ -294,113 +304,114 @@ def import_object(filepath, count):
             del creation_data['_plone.uuid']
 
         obj = None
-        if (skip_existing and
-                (_id in folder.objectIds() or
-                 (not ignore_uuids and api.content.get(
-                     UID=creation_data['_plone.uuid']) is not None))):
-            print("    skipping existing %s" % _id)
+        if not args.overwrite and (_id in folder.objectIds()):
+            print('Skipping {path}, already exists. Use --overwrite to'
+                                        ' create anyway.'.format(path=path))
+            return
+        elif (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None):
+            logger.warn('Skipping {path}, content with its UUID already exists. Use --ignore-uuids to create anyway.'.format(path=path))
+            return
         else:
             try:
                 obj = api.content.create(safe_id=True, **creation_data)
+                print('Created {path}'.format(path=path))
             except api.exc.InvalidParameterError:
                 if stop_if_exception:
-                    logger.error('Error creating content {}'.format(filepath),
-                                 exc_info=True)
+                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()  # noqa
+                        pdb.set_trace()
                     raise
-                return logger.error(
-                    'Error creating content {}'.format(filepath),
-                    exc_info=True)
-        # TODO set review_history
-        review_history = data['review_history']
-        wtool = api.portal.get_tool(name='portal_workflow')
-        chain = wtool.getChainFor(obj)
-        if len(chain) != 1:
-            return logger.warning(
-                'There should be only one workflow for this object %s but there are %s' % (obj, len(chain)))  # noqa
-        workflow_id = chain[0]
-        for h in review_history:
-            wtool.setStatusOf(workflow_id, obj, h)
+                logger.error('Error creating content {}'
+                                            .format(filepath), exc_info=True)
+                return
 
-        # TODO check default folder pages came over as folder with
-        #      rich text tile
-        # TODO any folder pages without default page should have content
-        #      listing tile
-        # TODO get lead image captions
+
+# TODO check default folder pages came over as folder with rich text tile
+# TODO any folder pages without default page should have content listing tile
     else:
         obj = folder[_id]
         for key, value in creation_data.items():
             if key not in ('id', 'type'):
                 setattr(obj, key, value)
 
-    if obj is not None and path != original_path:
-        storage = getUtility(IRedirectionStorage)
-        rpath = os.path.join('/'.join(site.getPhysicalPath()),
-                             original_path.strip('/'))
-        storage.add(rpath, "/".join(obj.getPhysicalPath()))
-
     if obj is not None:
+        if path != original_path:
+            storage = getUtility(IRedirectionStorage)
+            rpath = os.path.join('/'.join(site.getPhysicalPath()),
+                                 original_path.strip('/'))
+            storage.add(rpath, "/".join(obj.getPhysicalPath()))
+
+        obj.contentLayout = importtype.layout
         importtype.post_creation(obj)
         if not args.skip_transitioning and data['state']:
             try:
-                print("    transitioning %s to %s" % (obj.id, data['state']))
+                print('Transitioning %s to %s' % (obj.id, data['state']))
                 api.content.transition(obj, to_state=data['state'])
             except Exception:
-                logger.error("maybe workflows do not match up")
+                logger.error("Error transitioning %s to %s, maybe workflows"
+                                "don't match up" % (obj.id, data['state']))
+                # pass
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()  # noqa
+                        pdb.set_trace()
                     raise
+
+        # set workflow / review history
+        if 'review_history' in data:
+            review_history = data['review_history']
+            wtool = api.portal.get_tool(name='portal_workflow')
+            chain = wtool.getChainFor(obj)
+            if len(chain):
+                workflow_id = chain[0]
+                for h in review_history:
+                    wtool.setStatusOf(workflow_id, obj, h)
+                if len(chain) != 1:
+                    return logger.warn('There should be 1 workflow for %s but'
+                                        'there are %i' % (path, len(chain)))
+        else:
+            return logger.warn('No review history on {obj}'.format(obj=obj))
 
         fix_html_images(obj)
         obj.reindexObject()
-
-    if count % 50 == 0:
-        print('%i processed, committing' % count)
-        transaction.commit()
-        app._p_jar.invalidateCache()  # noqa
-        transaction.begin()
-        app._p_jar.sync()  # noqa
+        return True
 
 
-def import_pages(path, count=0):
+def import_content(path, count=0):
+    this_folder = os.path.join(path, '__folder__')
+    if os.path.exists(this_folder):
+        imported = import_object(this_folder)
+        if imported:
+            count += 1
+        else:
+            #folder object exists in export,but errored or was skipped
+            return count
     for filename in os.listdir(path):
         if filename in ('.DS_Store', '__folder__'):
             continue
-        count += 1
         filepath = os.path.join(path, filename)
         if os.path.isdir(filepath):
-            count = import_pages(filepath, count)
+            count = import_content(filepath, count)
         else:
             try:
-                import_object(filepath, count)
+                imported = import_object(filepath)
+                if imported:
+                    count += 1
             except Exception:
-                logger.error('Error importing object', exc_info=True)
+                logger.error('Error importing {path}'.format(path=filepath),
+                                                                exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb;pdb.set_trace()  # noqa
+                        pdb.set_trace()
                     raise
-    return count
-
-
-def import_folders(path, count=0):
-    for filename in sorted(os.listdir(path)):
-        count += 1
-        filepath = os.path.join(path, filename)
-
-        if filename == '__folder__':
-            try:
-                import_object(filepath, count)
-            except Exception:
-                logger.error('Error importing object', exc_info=True)
-                if stop_if_exception:
-                    if pdb_if_exception:
-                        import pdb;pdb.set_trace()  # noqa
-                    raise
-
-        if os.path.isdir(filepath):
-            count = import_folders(filepath, count)
+        if count and count % 50 == 0:
+            print('%i processed, committing' % count)
+            transaction.commit()
+            app._p_jar.invalidateCache()  # noqa
+            transaction.begin()
+            app._p_jar.sync()  # noqa
+    if path == args.export_directory:
+        transaction.commit()
+        app._p_jar.invalidateCache()  # noqa
     return count
 
 
@@ -416,6 +427,9 @@ def read_pass(path):
 
 
 if __name__ == '__main__':
+    # logger.info('Doing read pass...')
+    # read_pass(args.export_directory)
+
     print('------------------------------')
     print('Start importing')
     print('------------------------------')
@@ -423,10 +437,6 @@ if __name__ == '__main__':
         print('------------------------------')
         print('Importing with overwrite enabled')
         print('------------------------------')
-
-    print('doing read pass...')
-    # read_pass(args.export_directory)
-    print('creating objects now...')
-    import_folders(args.export_directory)
-    import_pages(args.export_directory)
+    count = import_content(args.export_directory)
+    print('Created {count} Content Items'.format(count=count))
     transaction.commit()

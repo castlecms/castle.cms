@@ -79,6 +79,19 @@ except ImportError:
 
 
 try:
+    from plone.namedfile.file import NamedBlobFile
+except ImportError:
+    print('unable to import NamedBlobFile')
+    NamedBlobFile = object()
+
+try:
+    from plone.namedfile.file import NamedFile
+except ImportError:
+    print('unabled to import NamedFile')
+    NamedFile = object()
+
+
+try:
     from plone.namedfile.file import NamedBlobImage
 except ImportError:
     print('unable to import NamedBlobImage')
@@ -325,8 +338,8 @@ class BlobWrapperSerializer(BaseTypeSerializer):
         return io
 
 
-class NamedBlobImageSerializer(BaseTypeSerializer):
-    klass = NamedBlobImage
+class NamedBlobFileSerializer(BaseTypeSerializer):
+    klass = NamedBlobFile
 
     @classmethod
     def _serialize(cls, obj):
@@ -335,6 +348,22 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
             'filename': obj.filename,
             'content_type': obj.contentType
         }
+
+    @classmethod
+    def _deserialize(cls, data):
+        realdata = data['data']
+        if len(realdata) < 10:  # arbitrary
+            print(
+                "short data found in NamedBlobFileSerializer _deserialize")
+        return NamedBlobFile(
+            base64.b64decode(data['data']),
+            filename=data['filename'],
+            contentType=data['content_type'].encode('utf-8')
+        )
+
+
+class NamedBlobImageSerializer(NamedBlobFileSerializer):
+    klass = NamedBlobImage
 
     @classmethod
     def _deserialize(cls, data):
@@ -386,6 +415,8 @@ _serializers = {
     Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
     BlobWrapper: BlobWrapperSerializer,
+    NamedFile: NamedBlobFileSerializer,
+    NamedBlobFile: NamedBlobFileSerializer,
     NamedBlobImage: NamedBlobImageSerializer
 }
 
