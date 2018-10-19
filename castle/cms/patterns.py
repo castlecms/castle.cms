@@ -204,6 +204,6 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             data['data-site-layout'] = transform.get_layout_name(real_context)
 
         data['data-site-default'] = getDefaultPage(self.site) or 'front-page'
-        data['data-uid'] = IUUID(real_context)
+        data['data-uid'] = IUUID(real_context, None)
 
         return data
