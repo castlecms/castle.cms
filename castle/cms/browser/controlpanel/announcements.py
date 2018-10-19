@@ -58,7 +58,7 @@ class ISendEmailUsersForm(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Groups'
         ),
-        required = False
+        required=False
     )
 
     directives.widget(
