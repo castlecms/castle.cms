@@ -13,7 +13,7 @@
     <div class="row">
       <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
         <a href="${url}">
-          <div tal:replace="structure python: utils.focal_image_tag(item, 'mini')" />
+          <div tal:replace="structure python: utils.focal_image_tag(item, 'preview')" />
         </a>
       </div>
       <div class="col-lg-10 col-md-9 col-sm-8"
