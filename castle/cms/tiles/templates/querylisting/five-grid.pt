@@ -12,7 +12,7 @@
       class="castle-grid-block-item portal-type-${python: utils.normalize(item.portal_type)}">
     <p tal:condition="has_image">
       <a href="${url}">
-        <div tal:replace="structure python: utils.focal_image_tag(item, 'preview')" />
+        <div tal:replace="structure python: utils.focal_image_tag(item, 'mini')" />
       </a>
     </p>
     <p class="date"
