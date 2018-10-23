@@ -390,7 +390,7 @@ class Utils(BrowserView):
                 'data-scales-info': json.dumps(sizes_info)
             })
 
-        return tostring(imEl)
+        return tostring(el)
 
     @property
     @memoize
