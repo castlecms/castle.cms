@@ -3,6 +3,8 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+- Fix accessibility issue with the querylisting templates injecting empty A tags
+  [RobZoneNet]
 
 - Fix saving default values for Dexterity fields
   [CorySanin]
