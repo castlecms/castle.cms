@@ -92,6 +92,14 @@ class TaggedView(BaseTileView):
     tile_name = 'querylisting'
 
 
+class TagFilterView(BaseTileView):
+    name = 'tag-filter'
+    preview = '++plone++castle/images/previews/querylisting/tagged.png'
+    order = 5
+    index = ViewPageTemplateFile('templates/querylisting/tagfilter.pt')
+    tile_name = 'querylisting'
+
+
 class BlogView(BaseTileView):
     name = 'blog'
     order = 5
@@ -267,6 +275,8 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         if ('Subject' in config['query'] and
                 isinstance(config['query']['Subject'], basestring)):
             config['query']['Subject'] = [config['query']['Subject']]
+
+        config['display_type'] = self.data.get('display_type', None)
 
         out = '{}'
         try:

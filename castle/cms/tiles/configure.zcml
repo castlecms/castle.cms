@@ -372,6 +372,12 @@
     factory=".querylisting.TaggedView"
     />
   <adapter
+    name="querylisting.tag-filter"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.TagFilterView"
+    />
+  <adapter
     name="querylisting.blog"
     provides="..interfaces.ITileView"
     for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
