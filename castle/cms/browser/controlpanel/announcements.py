@@ -220,6 +220,29 @@ class SendTextForm(AutoExtensibleForm, form.Form):
                 self.context.absolute_url()))
 
 
+class IExportSubscribersForm(model.Schema):
+    directives.widget('send_to_categories', SelectFieldWidget)
+    send_to_categories = schema.List(
+        title=u'Send to categories',
+        required=False,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
+
+
+class ExportSubscribersForm(AutoExtensibleForm, form.Form):
+    schema = IExportSubscribersForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Export', name='export')
+    def handle_export(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            pass
+
+
 class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
     form = AnnouncementsControlPanelForm
     index = ViewPageTemplateFile('templates/announcements.pt')
@@ -231,6 +254,7 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_form = SendEmailUsersForm(aq_inner(context), request)
         self.email_subscribers_form = SendEmailSubscribersForm(aq_inner(context), request)
         self.text_subscribers_form = SendTextForm(aq_inner(context), request)
+        self.export_subscribers_form = ExportSubscribersForm(aq_inner(context), request)
 
     def __call__(self):
         registry = getUtility(IRegistry)
@@ -241,4 +265,5 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_form.update()
         self.email_subscribers_form.update()
         self.text_subscribers_form.update()
+        self.export_subscribers_form.update()
         return super(AnnouncementsControlPanel, self).__call__()
