@@ -221,9 +221,9 @@ class SendTextForm(AutoExtensibleForm, form.Form):
 
 
 class IExportSubscribersForm(model.Schema):
-    directives.widget('send_to_categories', SelectFieldWidget)
-    send_to_categories = schema.List(
-        title=u'Send to categories',
+    directives.widget('export_categories', SelectFieldWidget)
+    export_categories = schema.List(
+        title=u'Categories to export',
         required=False,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
@@ -240,7 +240,10 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
     def handle_export(self, action):
         data, errors = self.extractData()
         if not errors:
-            pass
+            response = self.request.response
+            cd = 'attachment; filename=subscribers.csv'
+            response.setHeader('Content-Disposition', cd)
+            response.setBody('', lock=True)
 
 
 class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
