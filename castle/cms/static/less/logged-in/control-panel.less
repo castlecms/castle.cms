@@ -437,27 +437,34 @@ body[class*="-controlpanel"] {
 
 // Unifying the buttons for the themeing control panel
 .template-theming-controlpanel {
-  #themesList .plone-btn.plone-btn-default {
-    background-color: @castle_bluish_grey !important;
-    color: white !important;
-    font-size: 0.95rem;
-    transition: background-color 0.5s ease;
-    float: left;
-    font-weight: normal !important;
-    padding: 8px 2% !important;
-    margin: 3px 1% !important;
-    width: 29%;
-    font-weight: normal !important;
-    font-family: Roboto,sans-serif !important;
-    border: 0;
-    border-radius: 0px;
-    line-height: 2.15 !important;
-    height: 50px;
-    &:hover {
-      background-color: #153559 !important;
-    }
+  #themesList {
+      .plone-btn.plone-btn-default, .plone-btn.plone-btn-danger {
+        color: white !important;
+        font-size: 0.95rem;
+        transition: background-color 0.5s ease;
+        float: left;
+        font-weight: normal !important;
+        padding: 0px;
+        margin: 3px 1% !important;
+        width: 29%;
+        font-weight: normal !important;
+        font-family: Roboto,sans-serif !important;
+        border: 0;
+        border-radius: 0px;
+        height: 50px;
+      }
+      .plone-btn.plone-btn-default {
+        background-color: @castle_bluish_grey !important;
+        &:hover {
+          background-color: #153559 !important;
+        }
+      }
   }
-  #themesList a.plone-btn.plone-btn-default {
+  #themesList a.plone-btn {
+    padding-top: 12px !important;
+    padding-bottom: 4px !important;
+  }
+  #themesList a.plone-btn.plone-btn-default, #themesList a.plone-btn.plone-btn-danger {
     height: 34px;
     vertical-align: middle;
   }
@@ -465,6 +472,7 @@ body[class*="-controlpanel"] {
     text-align: left;
     padding: 0.5em;
     height: inherit;
+    min-height: 330px;
     form {
       margin: 0px;
       padding: 0px;
@@ -473,6 +481,9 @@ body[class*="-controlpanel"] {
   .themeDescription, .themeEntryTitle {
     text-align: center;
     display: block;
+  }
+  .themeDescription:empty {
+    height: 17px;
   }
 }
 
