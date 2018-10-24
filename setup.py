@@ -66,7 +66,6 @@ setup(
     ],
     extras_require={
         'test': [
-            'selenium',
             'plone.app.testing',
             'responses',
             'mock',

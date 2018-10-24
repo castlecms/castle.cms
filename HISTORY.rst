@@ -61,6 +61,9 @@ Changelog
 - Fix saving default values for Dexterity fields
   [CorySanin]
 
+- Adding basic Robot testing setup
+  [obct537]
+
 - Handle potential errors caused by invalid references in folder ordering.
   See https://github.com/plone/plone.folder/pull/10 for details
   [vangheem]

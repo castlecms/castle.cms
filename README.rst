@@ -110,42 +110,23 @@ Optional Dependencies
 Running tests
 =============
 
-Assuming you have buildout properly installed to run the tests:
+Default ploen testing:
 
 .. code-block:: shell
 
-    Xvfb :99 &
-    Xvfb :99 -fp /usr/share/X11/fonts/misc -screen 0 1900x1900x24 &
-    export DISPLAY=:99
+  ./bin/test -s castle.cms
 
-To access the running Selenium test server on port 55001:
-
+To run only robot tests:
 .. code-block:: shell
+  ./bin/test -s castle.cms -t robot
 
-    ZSERVER_HOST=0.0.0.0 ./bin/test -s castle.cms
 
-To specify a custom Firefox binary to match versions:
-
+Without robot:
 .. code-block:: shell
+  ./bin/test -s castle.cms -t \!robot
 
-    FIREFOX_BINARY=/opt/firefox/firefox ./bin/test  -s castle.cms
-
-If Selenium refuses to start, update the binaries:
-
-.. code-block:: shell
-
-    pip install -U selenium
-
-If it still doesn't run, attempt to install Firefox 45
-`<https://ftp.mozilla.org/pub/firefox/releases/45.0/linux-x86_64/en-US/>`_
-
-Non-Selenium tests:
-
-Since Selenium can be flaky...
-
-.. code-block:: shell
-
-  ./bin/test -s castle.cms -t \!selenium
+If you have errors complaining about warning, make sure the version of selenium 
+you're using works with the version of Firefox you have installed (see above)
 
 
 Google Analytics Key File
