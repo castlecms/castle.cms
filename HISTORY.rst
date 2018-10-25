@@ -3,6 +3,9 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+- Fix the layout of the theming control panel buttons
+  [RobZoneNet]
+
 - Fix accessibility issue with the querylisting templates injecting empty A tags
   [RobZoneNet]
 
