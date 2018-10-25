@@ -28,6 +28,9 @@ Changelog
 - Fix change password on login
   [CorySanin]
 
+- Various import/export fixes
+  [vangheem]
+
 - Allow trailing slashes in backend URLs
   [CorySanin]
 

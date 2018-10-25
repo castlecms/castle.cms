@@ -5,6 +5,7 @@ import logging
 import os
 import re
 from datetime import datetime
+from fnmatch import fnmatch
 from StringIO import StringIO
 
 import OFS
@@ -78,10 +79,28 @@ except ImportError:
 
 
 try:
+    from plone.namedfile.file import NamedBlobFile
+except ImportError:
+    print('unable to import NamedBlobFile')
+    NamedBlobFile = object()
+
+try:
+    from plone.namedfile.file import NamedFile
+except ImportError:
+    print('unabled to import NamedFile')
+    NamedFile = object()
+
+
+try:
     from plone.namedfile.file import NamedBlobImage
 except ImportError:
     print('unable to import NamedBlobImage')
     NamedBlobImage = object()
+
+try:
+    from plone.app.textfield.value import RichTextValue
+except ImportError:
+    RichTextValue = None
 
 
 parser = argparse.ArgumentParser(
@@ -90,6 +109,9 @@ parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--dir', dest='dir', default='./export')
+parser.add_argument(
+    '--path-filter', dest='path_filter',
+    default=None, required=False)
 args, _ = parser.parse_known_args()
 
 
@@ -316,8 +338,8 @@ class BlobWrapperSerializer(BaseTypeSerializer):
         return io
 
 
-class NamedBlobImageSerializer(BaseTypeSerializer):
-    klass = NamedBlobImage
+class NamedBlobFileSerializer(BaseTypeSerializer):
+    klass = NamedBlobFile
 
     @classmethod
     def _serialize(cls, obj):
@@ -332,12 +354,49 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
         realdata = data['data']
         if len(realdata) < 10:  # arbitrary
             print(
+                "short data found in NamedBlobFileSerializer _deserialize")
+        return NamedBlobFile(
+            base64.b64decode(data['data']),
+            filename=data['filename'],
+            contentType=data['content_type'].encode('utf-8')
+        )
+
+
+class NamedBlobImageSerializer(NamedBlobFileSerializer):
+    klass = NamedBlobImage
+
+    @classmethod
+    def _deserialize(cls, data):
+        realdata = data['data']
+        if len(realdata) < 10:  # arbitrary
+            print(
                 "short data found in NamedBlobImageSerializer _deserialize")
         return NamedBlobImage(
             base64.b64decode(realdata),
             filename=data['filename'],
             contentType=data['content_type']
         )
+
+
+class RichTextValueSerializer(BaseTypeSerializer):
+    klass = RichTextValue
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            'raw': obj.raw,
+            'mimeType': obj.mimeType,
+            'outputMimeType': obj.outputMimeType,
+            'encoding': obj.encoding
+        }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return RichTextValue(
+            raw=data['raw'],
+            mimeType=data['mimeType'],
+            outputMimeType=data['outputMimeType'],
+            encoding=data['encoding'])
 
 
 _serializers = {
@@ -356,6 +415,8 @@ _serializers = {
     Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
     BlobWrapper: BlobWrapperSerializer,
+    NamedFile: NamedBlobFileSerializer,
+    NamedBlobFile: NamedBlobFileSerializer,
     NamedBlobImage: NamedBlobImageSerializer
 }
 
@@ -374,6 +435,10 @@ if PressContact:
     _serializers[PressContact] = ContentObjectSerializer
 
 
+if RichTextValue is not None:
+    _serializers[RichTextValue] = RichTextValueSerializer
+
+
 class Deferred:
     pass
 
@@ -388,6 +453,7 @@ def custom_handler(obj):
         serializer = _serializers[_type]
         return serializer.serialize(obj)
     else:
+        print('NOT SERIALIZING {}'.format(obj))
         return None
     return obj
 
@@ -677,6 +743,11 @@ def run_export(brains):
     size = len(brains)
     for idx, brain in enumerate(brains):
         path = brain.getPath()
+        if (args.path_filter and
+                not fnmatch(path, args.path_filter)):
+            print('skipping(filtered), ', path,
+                  ' ', str(idx + 1) + '/' + str(size))
+            continue
         print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
         try:
             obj = brain.getObject()
