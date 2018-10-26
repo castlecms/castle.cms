@@ -1,5 +1,6 @@
 from Acquisition import aq_inner
 from castle.cms import texting
+from castle.cms import subscribe
 from castle.cms.browser.utils import Utils
 from castle.cms.constants import ALL_SUBSCRIBERS
 from castle.cms.interfaces import IAnnouncementData
@@ -183,7 +184,7 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
 
             categories = set()
             if 'form.widgets.send_to_categories' in self.request.form:
-                categories = set(self.request.form['form.widgets.send_to_categories'])
+                categories = set(self.request.form['form.widgets.send_to_categories'].split(';'))
 
             sender = None
             if 'form.widgets.send_from' in self.request.form:
@@ -243,7 +244,28 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             response = self.request.response
             cd = 'attachment; filename=subscribers.csv'
             response.setHeader('Content-Disposition', cd)
-            response.setBody('', lock=True)
+            fields = ['name', 'email', 'phone_number', 'phone_number_confirmed',
+                      'confirmed', 'code', 'created', 'captcha', 'categories']
+            responsebody = ','.join(fields)
+            categories = set()
+            if 'form.widgets.export_categories' in self.request.form:
+                categories = set(self.request.form['form.widgets.export_categories'].split(';'))
+            check_categories = (categories is not None and len(categories) != 0)
+            for subscriber in subscribe.all():
+                if check_categories:
+                    if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                        if len(categories.intersection(subscriber['categories'])) == 0:
+                            break
+                row = []
+                for key in fields:
+                    if subscriber.get(key) is None:
+                        row.append('')
+                    elif isinstance(subscriber.get(key), list):
+                        row.append(';'.join(subscriber.get(key)))
+                    else:
+                        row.append(str(subscriber.get(key)))
+                responsebody += '\n' + ','.join(row)
+            response.setBody(responsebody, lock=True)
 
 
 class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
