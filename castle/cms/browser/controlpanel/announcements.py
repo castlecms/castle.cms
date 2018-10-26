@@ -249,19 +249,22 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             responsebody = ','.join(fields)
             categories = set()
             if 'form.widgets.export_categories' in self.request.form:
-                categories = set(self.request.form['form.widgets.export_categories'].split(';'))
+                if self.request.form['form.widgets.export_categories'] != u'':
+                    categories = set(self.request.form['form.widgets.export_categories'].split(';'))
             check_categories = (categories is not None and len(categories) != 0)
             for subscriber in subscribe.all():
                 if check_categories:
                     if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                        import pdb
+                        pdb.set_trace()
                         if len(categories.intersection(subscriber['categories'])) == 0:
-                            break
+                            continue
                 row = []
                 for key in fields:
                     if subscriber.get(key) is None:
                         row.append('')
                     elif isinstance(subscriber.get(key), list):
-                        row.append(';'.join(subscriber.get(key)))
+                        row.append('"' + ';'.join(subscriber.get(key)) + '"')
                     else:
                         row.append(str(subscriber.get(key)))
                 responsebody += '\n' + ','.join(row)
