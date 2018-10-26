@@ -3,6 +3,10 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+
+- Fix potential querylisting unicode errors from form input
+  [vangheem]
+
 - Fix the layout of the theming control panel buttons
   [RobZoneNet]
 

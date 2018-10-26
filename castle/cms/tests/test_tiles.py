@@ -206,3 +206,17 @@ class TestTiles(unittest.TestCase):
         data['display_type'] = 'backgroundimage'
         html = render_tile(self.request, page, name, data)
         self.assertTrue('existing-content-backgroundimage' in html)
+
+    def test_querylisting_unicode_issue(self):
+        tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', {})
+        # should not cause errors...
+        self.request.form.update({
+            'Title': u'santas ureï¿½a'
+        })
+        self.assertTrue(tile.filter_pattern_config != '{}')
+
+        tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', {})
+        self.request.form.update({
+            'Title': 'santas ureï¿½a'
+        })
+        self.assertTrue(tile.filter_pattern_config != '{}')
