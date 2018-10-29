@@ -680,14 +680,14 @@ define([
         ]);
       }else{
         return D.div({ className: 'no-location'}, [
-          D.a({ href: '#', onClick: function(e){
-            e.preventDefault();
-            var portalUrl = $('body').attr('data-portal-url');
-            var folderUrl = $('body').attr('data-folder-url');
-            that.props.location = folderUrl.replace(portalUrl, '') || '/';
-            that.forceUpdate();
-            that.selectFolderClicked();
-          }}, 'Specify upload location')
+          D.p({className: 'upload-msg'}, ['Note: By default, the files uploaded to this site are automatically put into a root folder sorted by what kind of file they are. Image/Video/Audio files are put into their respective repositories. Documents and rest of the files are put into a folder called “File repository”. Alternatively, you can also ',  D.a({ href: '#', onClick: function(e){
+              e.preventDefault();
+              var portalUrl = $('body').attr('data-portal-url');
+              var folderUrl = $('body').attr('data-folder-url');
+              that.props.location = folderUrl.replace(portalUrl, '') || '/';
+              that.forceUpdate();
+              that.selectFolderClicked();
+            }}, 'Specify upload location') ]),
         ]);
       }
     },
