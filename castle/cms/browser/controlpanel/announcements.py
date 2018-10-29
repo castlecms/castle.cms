@@ -224,7 +224,8 @@ class SendTextForm(AutoExtensibleForm, form.Form):
 class IExportSubscribersForm(model.Schema):
     directives.widget('export_categories', SelectFieldWidget)
     export_categories = schema.List(
-        title=u'Categories to export',
+        title=u'Subscribers to export',
+        description=u'Leave Empty For All Subscribers',
         required=False,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
@@ -269,6 +270,129 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             response.setBody(responsebody, lock=True)
 
 
+class IMergeCategoriesForm(model.Schema):
+    directives.widget('rename_merge_categories', SelectFieldWidget)
+    rename_merge_categories = schema.List(
+        title=u'Categories to Rename or Merge',
+        required=False,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
+    new_category_name = schema.TextLine(
+        title=u"New Category Name",
+        required=False
+    )
+
+
+class MergeCategoriesForm(AutoExtensibleForm, form.Form):
+    schema = IMergeCategoriesForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Rename/Merge', name='merge')
+    def handle_merge(self, action):
+        reg_key = 'castle.subscriber_categories'
+        data, errors = self.extractData()
+        if not errors:
+            allcategories = api.portal.get_registry_record(reg_key)
+            categories = set()
+            newname = u''
+            if 'form.widgets.rename_merge_categories' in self.request.form:
+                if self.request.form['form.widgets.rename_merge_categories'] != u'':
+                    categories = set(self.request.form['form.widgets.rename_merge_categories'].split(';'))
+            if 'form.widgets.new_category_name' in self.request.form:
+                newname = self.request.form['form.widgets.new_category_name'].split(';')[0]
+            if len(categories) > 0 and len(newname) > 0:
+                if newname in allcategories and newname not in categories:
+                    # name is already in use
+                    return
+                for category in categories:
+                    allcategories.remove(category)
+                allcategories.append(newname)
+                api.portal.set_registry_record(reg_key, allcategories)
+                for subscriber in subscribe.all():
+                    if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                        if len(categories.intersection(subscriber['categories'])) > 0:
+                            subcat = subscriber['categories']
+                            for category in categories:
+                                if category in subcat:
+                                    subcat.remove(category)
+                            subcat.append(newname)
+                            subscriber['categories'] = subcat
+
+
+class IDeleteCategoriesForm(model.Schema):
+    directives.widget('delete_categories', SelectFieldWidget)
+    delete_categories = schema.List(
+        title=u'Categories to Delete',
+        required=False,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
+
+
+class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
+    schema = IDeleteCategoriesForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Delete Categories', name='delete')
+    def handle_delete(self, action):
+        reg_key = 'castle.subscriber_categories'
+        data, errors = self.extractData()
+        if not errors:
+            allcategories = api.portal.get_registry_record(reg_key)
+            categories = set()
+            if 'form.widgets.delete_categories' in self.request.form:
+                if self.request.form['form.widgets.delete_categories'] != u'':
+                    categories = set(self.request.form['form.widgets.delete_categories'].split(';'))
+            if len(categories) > 0:
+                for category in categories:
+                    allcategories.remove(category)
+                api.portal.set_registry_record(reg_key, allcategories)
+                for subscriber in subscribe.all():
+                    if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                        if len(categories.intersection(subscriber['categories'])) > 0:
+                            subcat = subscriber['categories']
+                            for category in categories:
+                                if category in subcat:
+                                    subcat.remove(category)
+                            subscriber['categories'] = subcat
+
+
+class IAddCategoryForm(model.Schema):
+    add_categories = schema.TextLine(
+        title=u'New category',
+        description=u'Add multiple categories at once by separating them with semicolons',
+        required=False
+    )
+
+
+class AddCategoryForm(AutoExtensibleForm, form.Form):
+    schema = IAddCategoryForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Add Category', name='addcat')
+    def handle_addcat(self, action):
+        reg_key = 'castle.subscriber_categories'
+        data, errors = self.extractData()
+        if not errors:
+            allcategories = api.portal.get_registry_record(reg_key)
+            categories = set()
+            if 'form.widgets.add_categories' in self.request.form:
+                if self.request.form['form.widgets.add_categories'] != u'':
+                    categories = set(self.request.form['form.widgets.add_categories'].split(';'))
+            if len(categories) > 0:
+                for category in categories:
+                    category = category.strip()
+                    if len(category) > 0 and category not in allcategories:
+                        allcategories.append(category)
+                api.portal.set_registry_record(reg_key, allcategories)
+
+
 class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
     form = AnnouncementsControlPanelForm
     index = ViewPageTemplateFile('templates/announcements.pt')
@@ -281,6 +405,9 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_subscribers_form = SendEmailSubscribersForm(aq_inner(context), request)
         self.text_subscribers_form = SendTextForm(aq_inner(context), request)
         self.export_subscribers_form = ExportSubscribersForm(aq_inner(context), request)
+        self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
+        self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
+        self.add_category_form = AddCategoryForm(aq_inner(context), request)
 
     def __call__(self):
         registry = getUtility(IRegistry)
@@ -292,4 +419,7 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_subscribers_form.update()
         self.text_subscribers_form.update()
         self.export_subscribers_form.update()
+        self.merge_categories_form.update()
+        self.delete_categories_form.update()
+        self.add_category_form.update()
         return super(AnnouncementsControlPanel, self).__call__()

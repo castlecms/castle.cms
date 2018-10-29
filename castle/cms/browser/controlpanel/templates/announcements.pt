@@ -57,13 +57,23 @@
             <h2 class="tab">Settings</h2>
             <span tal:replace="structure realview/contents" />
           </div>
-          <div class="tab-content" tal:define="form nocall:view/export_subscribers_form;
-                                               view nocall:form">
-            <h2 class="tab">Export Subscribers (Leave Empty For All Subscribers)</h2>
+          <div class="tab-content">
+            <h2 class="tab">Manage Subscribers</h2>
             <p class="discreet">
-              Export all subscribers in a CSV
+              Manage subscibers and categories
             </p>
-            <div metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <div tal:define="form nocall:view/export_subscribers_form;
+                            view nocall:form"
+                metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <div tal:define="form nocall:view/add_category_form;
+                             view nocall:form"
+                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <div tal:define="form nocall:view/merge_categories_form;
+                             view nocall:form"
+                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <div tal:define="form nocall:view/delete_categories_form;
+                             view nocall:form"
+                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
           </div>
         </div>
       </div>
