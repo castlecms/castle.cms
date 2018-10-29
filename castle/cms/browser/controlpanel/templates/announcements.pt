@@ -59,7 +59,7 @@
           </div>
           <div class="tab-content" tal:define="form nocall:view/export_subscribers_form;
                                                view nocall:form">
-            <h2 class="tab">Export Subscribers</h2>
+            <h2 class="tab">Export Subscribers (Leave Empty For All Subscribers)</h2>
             <p class="discreet">
               Export all subscribers in a CSV
             </p>

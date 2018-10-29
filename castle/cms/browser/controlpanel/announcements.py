@@ -255,8 +255,6 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             for subscriber in subscribe.all():
                 if check_categories:
                     if ('categories' in subscriber and len(subscriber['categories']) > 0):
-                        import pdb
-                        pdb.set_trace()
                         if len(categories.intersection(subscriber['categories'])) == 0:
                             continue
                 row = []
