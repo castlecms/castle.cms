@@ -1,6 +1,12 @@
+import base64
+import json
+import re
+from datetime import datetime
+from StringIO import StringIO
+
+import OFS
 from BTrees.OOBTree import OOBTree
 from DateTime import DateTime
-from datetime import datetime
 from Persistence.mapping import PersistentMapping as PM1
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
@@ -8,18 +14,14 @@ from persistent.mapping import PersistentMapping as PM2
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
 from plone.app.contentlisting.contentlisting import ContentListing
+from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedBlobImage
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedFile
 from Products.ZCatalog.Lazy import LazyCat
-from StringIO import StringIO
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
-
-import base64
-import json
-import OFS
-import re
-
 
 _filedata_marker = 'filedata://'
 _deferred_marker = 'deferred://'
@@ -215,8 +217,8 @@ class BlobWrapperSerializer(BaseTypeSerializer):
         return io
 
 
-class NamedBlobImageSerializer(BaseTypeSerializer):
-    klass = NamedBlobImage
+class NamedBlobFileSerializer(BaseTypeSerializer):
+    klass = NamedBlobFile
 
     @classmethod
     def _serialize(cls, obj):
@@ -228,11 +230,44 @@ class NamedBlobImageSerializer(BaseTypeSerializer):
 
     @classmethod
     def _deserialize(cls, data):
+        return NamedBlobFile(
+            base64.b64decode(data['data']),
+            filename=data['filename'],
+            contentType=data['content_type'].encode('utf-8')
+        )
+
+
+class NamedBlobImageSerializer(NamedBlobFileSerializer):
+    klass = NamedBlobImage
+
+    @classmethod
+    def _deserialize(cls, data):
         return NamedBlobImage(
             base64.b64decode(data['data']),
             filename=data['filename'],
-            contentType=data['content_type']
+            contentType=data['content_type'].encode('utf-8')
         )
+
+
+class RichTextValueSerializer(BaseTypeSerializer):
+    klass = RichTextValue
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            'raw': obj.raw,
+            'mimeType': obj.mimeType,
+            'outputMimeType': obj.outputMimeType,
+            'encoding': obj.encoding
+        }
+
+    @classmethod
+    def _deserialize(cls, data):
+        return RichTextValue(
+            raw=data['raw'],
+            mimeType=data['mimeType'].encode('utf-8'),
+            outputMimeType=data['outputMimeType'].encode('utf-8'),
+            encoding=data['encoding'].encode('utf-8'))
 
 
 _serializers = {
@@ -250,7 +285,10 @@ _serializers = {
     Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
     BlobWrapper: BlobWrapperSerializer,
-    NamedBlobImage: NamedBlobImageSerializer
+    NamedBlobImage: NamedBlobImageSerializer,
+    NamedBlobFile: NamedBlobFileSerializer,
+    NamedFile: NamedBlobFileSerializer,
+    RichTextValue: RichTextValueSerializer
 }
 
 

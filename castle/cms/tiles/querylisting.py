@@ -1,10 +1,11 @@
-from castle.cms.tiles.base import BaseTile
-from castle.cms.tiles.base import DisplayTypeTileMixin
-from castle.cms.tiles.views import BaseTileView
-from castle.cms.tiles.views import TileViewsSource
+import json
+from urllib import urlencode
+from urlparse import parse_qsl
+
+from castle.cms.tiles.base import BaseTile, DisplayTypeTileMixin
+from castle.cms.tiles.views import BaseTileView, TileViewsSource
 from castle.cms.utils import parse_query_from_data
-from castle.cms.widgets import PreviewSelectFieldWidget
-from castle.cms.widgets import QueryFieldWidget
+from castle.cms.widgets import PreviewSelectFieldWidget, QueryFieldWidget
 from DateTime import DateTime
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
@@ -13,15 +14,11 @@ from plone.supermodel import model
 from plone.tiles.interfaces import IPersistentTile
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from urllib import urlencode
-from urlparse import parse_qsl
+from unidecode import unidecode
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.interface import implements
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
-
-import json
+from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 
 
 def _list(val):
@@ -247,7 +244,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         form = self.get_form()
         for attr in self.query_attrs:
             if form.get(attr):
-                params[attr] = form.get(attr)
+                params[attr] = unidecode(form.get(attr))
         if len(params) > 0:
             url += '?' + urlencode(params)
         return url
