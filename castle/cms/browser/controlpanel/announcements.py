@@ -26,6 +26,8 @@ from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
 
+reg_key = 'castle.subscriber_categories'
+
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
     schema = IAnnouncementData
@@ -292,7 +294,6 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
 
     @button.buttonAndHandler(u'Rename/Merge', name='merge')
     def handle_merge(self, action):
-        reg_key = 'castle.subscriber_categories'
         data, errors = self.extractData()
         if not errors:
             allcategories = api.portal.get_registry_record(reg_key)
@@ -340,7 +341,6 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
 
     @button.buttonAndHandler(u'Delete Categories', name='delete')
     def handle_delete(self, action):
-        reg_key = 'castle.subscriber_categories'
         data, errors = self.extractData()
         if not errors:
             allcategories = api.portal.get_registry_record(reg_key)
@@ -377,7 +377,6 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
 
     @button.buttonAndHandler(u'Add Category', name='addcat')
     def handle_addcat(self, action):
-        reg_key = 'castle.subscriber_categories'
         data, errors = self.extractData()
         if not errors:
             allcategories = api.portal.get_registry_record(reg_key)
@@ -408,6 +407,22 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
         self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
         self.add_category_form = AddCategoryForm(aq_inner(context), request)
+        self.get_sub_count()
+
+    def get_sub_count(self):
+        self.categories = api.portal.get_registry_record(reg_key)
+        self.sub_count = {}
+        for category in self.categories:
+            self.sub_count[category] = 0
+        self.invalid_category = 0
+        for subscriber in subscribe.all():
+            if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                subcat = subscriber['categories']
+                for category in subcat:
+                    if category in self.categories:
+                        self.sub_count[category] += 1
+                    else:
+                        self.invalid_category += 1
 
     def __call__(self):
         registry = getUtility(IRegistry)
