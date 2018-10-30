@@ -332,6 +332,11 @@ class IDeleteCategoriesForm(model.Schema):
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
     )
+    force_delete = schema.Bool(
+        title=u'Force Delete',
+        description=u'Delete category even if there are accounts still subscribed to it',
+        default=False,
+    )
 
 
 class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
@@ -348,18 +353,23 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
             if 'form.widgets.delete_categories' in self.request.form:
                 if self.request.form['form.widgets.delete_categories'] != u'':
                     categories = set(self.request.form['form.widgets.delete_categories'].split(';'))
+            force_delete = 'form.widgets.force_delete' in self.request.form
             if len(categories) > 0:
                 for category in categories:
-                    allcategories.remove(category)
+                    existing_subscribers = False
+                    for subscriber in subscribe.all():
+                        if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                            if len(categories.intersection(subscriber['categories'])) > 0:
+                                subcat = subscriber['categories']
+                                for category in categories:
+                                    if category in subcat:
+                                        existing_subscribers = True
+                                        if force_delete:
+                                            subcat.remove(category)
+                                subscriber['categories'] = subcat
+                    if force_delete or not existing_subscribers:
+                        allcategories.remove(category)
                 api.portal.set_registry_record(reg_key, allcategories)
-                for subscriber in subscribe.all():
-                    if ('categories' in subscriber and len(subscriber['categories']) > 0):
-                        if len(categories.intersection(subscriber['categories'])) > 0:
-                            subcat = subscriber['categories']
-                            for category in categories:
-                                if category in subcat:
-                                    subcat.remove(category)
-                            subscriber['categories'] = subcat
 
 
 class IAddCategoryForm(model.Schema):
