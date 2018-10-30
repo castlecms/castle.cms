@@ -51,7 +51,7 @@ def getTileData():
                     """  # noqa
     TWO_WIDE_2_2 = u"""
                     <h4>How much does CastleCMS cost?</h4>
-                    <p>Each CastleCMS project is a custom-developed solution, and each client&#39;s needs vary greatly. We take great pride in being able to integrate CastleCMS with your existing systems and in providing you with design, customization, training, documentation, and support you can rely on.&nbsp;Please contact us&nbsp;for a no-obligation quote, either by emailing us at&nbsp;<a href="mailto:info@wildcardcorp.com?subject=Castle%20CMS%20Quote" data-linktype="email" data-urltype="/view" data-val="info@wildcardcorp.com" data-subject="CastleCMS Quote" data-mce-href="mailto:info@wildcardcorp.com?subject=CastleCMS Quote">info@wildcardcorp.com</a>,&nbsp;calling us at <a href="tel:+1%20(715)%20869-3440" data-linktype="external" data-urltype="/view" data-val="tel:+17158693440" data-mce-href="tel:+1 (715) 869-3440">+1 (715) 869-3440</a>, or filling out our <a data-val="410ec18805c44056813340350594a777" title="Quote Request Form" data-linktype="internal" href="https://castlecms.io/contact" data-mce-href="resolveuid/410ec18805c44056813340350594a777" data-urltype="_direct_">quote request form</a>. We look forward to hearing about&nbsp;your project requirements and being a part of your solution!</p>
+                    <p>Each CastleCMS project is a custom-developed solution, and each client&#39;s needs vary greatly. We take great pride in being able to integrate CastleCMS with your existing systems and in providing you with design, customization, training, documentation, and support you can rely on.&nbsp;Please contact us&nbsp;for a no-obligation quote, either by emailing us at&nbsp;<a href="mailto:info@wildcardcorp.com?subject=CastleCMS%20Quote" data-linktype="email" data-urltype="/view" data-val="info@wildcardcorp.com" data-subject="CastleCMS Quote" data-mce-href="mailto:info@wildcardcorp.com?subject=CastleCMS Quote">info@wildcardcorp.com</a>,&nbsp;calling us at <a href="tel:+1%20(715)%20869-3440" data-linktype="external" data-urltype="/view" data-val="tel:+17158693440" data-mce-href="tel:+1 (715) 869-3440">+1 (715) 869-3440</a>, or filling out our <a data-val="410ec18805c44056813340350594a777" title="Quote Request Form" data-linktype="internal" href="https://castlecms.io/contact" data-mce-href="resolveuid/410ec18805c44056813340350594a777" data-urltype="_direct_">quote request form</a>. We look forward to hearing about&nbsp;your project requirements and being a part of your solution!</p>
                     """  # noqa
 
     FAQS = u"""<h3 style="text-align: center;" data-mce-style="text-align: center;">FREQUENTLY ASKED QUESTIONS<br></h3>"""  # noqa
@@ -163,9 +163,9 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/tSwQ6XkSvgU',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-content-mgmt.png',
                 'title': 'Intuitive Content Management',
-                'text': RichTextValue("""<p>Creating, editing, and managing large amounts of content is easier than ever before with Castle's newly-designed toolbar. Use drag and drop to upload and organize content effortlessly on your website. Filter content, apply tags, set publication and expiry dates, review and publish items, and grant specific permissions to users and groups, all using our powerful content management view.</p>
-                            <p>Need to move massive amounts of content around your site? Castle's asynchronous batch processing lets editors keep working as quickly as they need to.</p>
-                            <p>Castle also supports any number of simultaneously logged-in users and editors with absolutely no additional licensing fees.</p>
+                'text': RichTextValue("""<p>Creating, editing, and managing large amounts of content is easier than ever before with CastleCMS's newly-designed toolbar. Use drag and drop to upload and organize content effortlessly on your website. Filter content, apply tags, set publication and expiry dates, review and publish items, and grant specific permissions to users and groups, all using our powerful content management view.</p>
+                            <p>Need to move massive amounts of content around your site? CastleCMS's asynchronous batch processing lets editors keep working as quickly as they need to.</p>
+                            <p>CastleCMS also supports any number of simultaneously logged-in users and editors with absolutely no additional licensing fees.</p>
                         """)  # noqa
             },
             'meta': {
@@ -178,7 +178,7 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/wjRNcsxSShQ',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-security.png',
                 'title': 'High Security',
-                'text': RichTextValue("""<p>CastleCMS is based&nbsp;on Plone, which has&nbsp;the best security track record of any enterprise-scale content management system, but we have gone further, adding many&nbsp;security features to Castle:</p>
+                'text': RichTextValue("""<p>CastleCMS is based&nbsp;on Plone, which has&nbsp;the best security track record of any enterprise-scale content management system, but we have gone further, adding many&nbsp;security features to CastleCMS:</p>
                             <ul>
                                 <li>built-in two-factor authentication that protects you from&nbsp;stolen password exploits&nbsp;</li>
                                 <li>auto-lockout: after a&nbsp;maximum number of login attempts, users are automatically locked out</li>
@@ -187,8 +187,8 @@ def getTileData():
                                 <li>integrated reCAPTCHA to keep spammers and bots&nbsp;at bay</li>
                                 <li>personally identifiable information (PII) and metadata are automatically stripped from uploaded Office documents, PDFs, and other file types</li>
                             </ul>
-                            <p>Castle&#39;s security is granular, letting&nbsp;you secure individual content items (pages, files, images, news items, calendar events) or entire sections of your site. If a user&nbsp;isn't&nbsp;authorized to access a content item, they won&#39;t even know it&#39;s there.</p>
-                            <p>Castle's&nbsp;built-in search engine knows what each person is authorized to see, so you can rest easy knowing that private data will remain that way.</p>
+                            <p>CastleCMS&#39;s security is granular, letting&nbsp;you secure individual content items (pages, files, images, news items, calendar events) or entire sections of your site. If a user&nbsp;isn't&nbsp;authorized to access a content item, they won&#39;t even know it&#39;s there.</p>
+                            <p>CastleCMS's&nbsp;built-in search engine knows what each person is authorized to see, so you can rest easy knowing that private data will remain that way.</p>
                         """)  # noqa
             },
             'meta': {
@@ -201,8 +201,8 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/ZJR_9Zqup2k',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-social-media.png',
                 'title': 'Superior Social Media Integration',
-                'text': RichTextValue("""<p>Embed tweets, Facebook statuses, timelines, and more as tiles that you can drag anywhere onto a page. Castle&nbsp;includes &ldquo;Share on Facebook&rdquo; and &ldquo;Share on Twitter&rdquo; buttons that you can place anywhere on&nbsp;a&nbsp;site. Castle&nbsp;even supports Twitter Cards, which allow you&mdash;and those that link to you&mdash;to attach rich photos, videos, and media to tweets. The best part about these features is that they are all available on any Castle site right out of the box.</p>
-                            <p>Castle's built in search engine results are automatically adjusted&nbsp;according to&nbsp;your&nbsp;social media activity.</p>
+                'text': RichTextValue("""<p>Embed tweets, Facebook statuses, timelines, and more as tiles that you can drag anywhere onto a page. CastleCMS&nbsp;includes &ldquo;Share on Facebook&rdquo; and &ldquo;Share on Twitter&rdquo; buttons that you can place anywhere on&nbsp;a&nbsp;site. CastleCMS&nbsp;even supports Twitter Cards, which allow you&mdash;and those that link to you&mdash;to attach rich photos, videos, and media to tweets. The best part about these features is that they are all available on any CastleCMS site right out of the box.</p>
+                            <p>CastleCMS's built in search engine results are automatically adjusted&nbsp;according to&nbsp;your&nbsp;social media activity.</p>
                         """)  # noqa
             },
             'meta': {
@@ -241,7 +241,7 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/Hj9qW34Hv4o',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-easy-theming.png',
                 'title': 'Easy Theming',
-                'text': RichTextValue("""<p>Castle is extremely flexible for designers: its&nbsp;themes and designs are created&nbsp;using just&nbsp;a&nbsp;web browser, and you can&nbsp;set each individual page's design, or you can set a default design for sections of a site, or both. A Castle site can be themed to match any existing website and&nbsp;to fit into an integrated suite of web services, making it easy to integrate&nbsp;Castle-hosted content seamlessly.</p>
+                'text': RichTextValue("""<p>CastleCMS is extremely flexible for designers: its&nbsp;themes and designs are created&nbsp;using just&nbsp;a&nbsp;web browser, and you can&nbsp;set each individual page's design, or you can set a default design for sections of a site, or both. A CastleCMS site can be themed to match any existing website and&nbsp;to fit into an integrated suite of web services, making it easy to integrate&nbsp;CastleCMS-hosted content seamlessly.</p>
                         """)  # noqa
             },
             'meta': {
@@ -254,7 +254,7 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/zOVI65-TOI8',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-adv-toolbar.png',
                 'title': 'Intuitive Toolbar',
-                'text': RichTextValue("""<p>Castle&#39;s toolbar was created in&mdash;house by our user experience team. It is&nbsp;designed to place all editing&nbsp;controls at your fingertips, intuitively and effectively.</p>
+                'text': RichTextValue("""<p>CastleCMS&#39;s toolbar was created in&mdash;house by our user experience team. It is&nbsp;designed to place all editing&nbsp;controls at your fingertips, intuitively and effectively.</p>
                         <p>Move content around, change its design or layout, share it with other users, access version history, examine its analytics data, even preview before you publish it.&nbsp;</p>""")  # noqa
             },
             'meta': {
@@ -280,9 +280,9 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/SnOId_MT5H0',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-seo.png',
                 'title': 'Search Engine Optimization',
-                'text': RichTextValue("""<p>Castle generates semantic&nbsp;HTML5, ensuring that Google and other search engines correctly interpret the structure and content of your&nbsp;website. You can&nbsp;achieve higher organic search results&nbsp;for any given page&nbsp;by&nbsp;setting&nbsp;SEO keywords and meta tags, which give hints to&nbsp;search engines as to what a web page is about.</p>
-                        <p>Even if you have many contributors and editors, Castle helps you keep your site content under control by preventing anyone from uploading the same image or document twice&nbsp;and also by&nbsp;automatically uploading files&nbsp;to a central repository.</p>
-                        <p>Your content can also be automatically archived after a set&nbsp;number of days, with&nbsp;each type of content&nbsp;having its own&nbsp;archival delay. Once archived, your content is stored in inexpensive Amazon Simple Storage Service (S3) bulk cloud storage, while&nbsp;remaining seamlessly available&nbsp;to your users at the same apparent web addresses. You can even have Castle move bulky content automatically to S3 if it exceeds a certain size.</p>""")  # noqa
+                'text': RichTextValue("""<p>CastleCMS generates semantic&nbsp;HTML5, ensuring that Google and other search engines correctly interpret the structure and content of your&nbsp;website. You can&nbsp;achieve higher organic search results&nbsp;for any given page&nbsp;by&nbsp;setting&nbsp;SEO keywords and meta tags, which give hints to&nbsp;search engines as to what a web page is about.</p>
+                        <p>Even if you have many contributors and editors, CastleCMS helps you keep your site content under control by preventing anyone from uploading the same image or document twice&nbsp;and also by&nbsp;automatically uploading files&nbsp;to a central repository.</p>
+                        <p>Your content can also be automatically archived after a set&nbsp;number of days, with&nbsp;each type of content&nbsp;having its own&nbsp;archival delay. Once archived, your content is stored in inexpensive Amazon Simple Storage Service (S3) bulk cloud storage, while&nbsp;remaining seamlessly available&nbsp;to your users at the same apparent web addresses. You can even have CastleCMS move bulky content automatically to S3 if it exceeds a certain size.</p>""")  # noqa
             },
             'meta': {
                 'type': 'castle.cms.feature',
@@ -294,8 +294,8 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/N3z9d76Wk1E',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-doc-viewer.png',
                 'title': 'A Viewer for All File Types',
-                'text': RichTextValue("""<p>Castle's built-in&nbsp;document viewer works much like Adobe Reader, allowing&nbsp;you to view PDF, Word, Excel, and many other file types without ever leaving your browser. Your users won&#39;t need any locally installed programs to view or search through documents on your website.</p>
-                        <p>Castle&#39;s document viewer includes dynamic search, so you can find a specific page within a document quickly and easily. It&nbsp;supports optical character recognition (OCR), turning scanned image files into searchable text documents. PDF conversion, available with the&nbsp;Castle Cloud hosted service, turns all uploaded Office files into platform&mdash;independent PDFs.</p>""")  # noqa
+                'text': RichTextValue("""<p>CastleCMS's built-in&nbsp;document viewer works much like Adobe Reader, allowing&nbsp;you to view PDF, Word, Excel, and many other file types without ever leaving your browser. Your users won&#39;t need any locally installed programs to view or search through documents on your website.</p>
+                        <p>CastleCMS&#39;s document viewer includes dynamic search, so you can find a specific page within a document quickly and easily. It&nbsp;supports optical character recognition (OCR), turning scanned image files into searchable text documents. PDF conversion, available with the&nbsp;CastleCMS Cloud hosted service, turns all uploaded Office files into platform&mdash;independent PDFs.</p>""")  # noqa
             },
             'meta': {
                 'type': 'castle.cms.feature',
@@ -307,9 +307,9 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/zacn1repAFk',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-quality-check.png',
                 'title': 'Content Quality Assurance',
-                'text': RichTextValue("""<p>Like your own personal proofreader, Castle can suggest content edits and provide inline content analysis checks. Castle includes&nbsp;a spell-check feature, a must&mdash;have&nbsp;for creating and maintaining high quality website content.</p>
-                        <p>Castle's automatic content quality checking helps you&nbsp;improve&nbsp;content&nbsp;before it is published. This helps to improve your organic SEO.&nbsp;</p>
-                        <p>Castle also provides content analytics out of the box like no other CMS. Examine analytics for the entire site, or just portions of your site,&nbsp;and see real&mdash;time statistics. Castle queries Google Analytics directly and puts the information at your fingertips by displaying&nbsp;it&nbsp;directly on the page you are editing.</p>""")  # noqa
+                'text': RichTextValue("""<p>Like your own personal proofreader, CastleCMS can suggest content edits and provide inline content analysis checks. CastleCMS includes&nbsp;a spell-check feature, a must&mdash;have&nbsp;for creating and maintaining high quality website content.</p>
+                        <p>CastleCMS's automatic content quality checking helps you&nbsp;improve&nbsp;content&nbsp;before it is published. This helps to improve your organic SEO.&nbsp;</p>
+                        <p>CastleCMS also provides content analytics out of the box like no other CMS. Examine analytics for the entire site, or just portions of your site,&nbsp;and see real&mdash;time statistics. CastleCMS queries Google Analytics directly and puts the information at your fingertips by displaying&nbsp;it&nbsp;directly on the page you are editing.</p>""")  # noqa
             },
             'meta': {
                 'type': 'castle.cms.feature',
@@ -321,8 +321,8 @@ def getTileData():
                 'youtube_url': u'https://youtu.be/7U29U7KmlNI',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-rich-content.png',
                 'title': 'Rich Content Editing',
-                'text': RichTextValue("""<p>Castle uses TinyMCE, the state of the art in what-you-see-is-what-you-get (WYSIWYG) web editors. Change formatting, bold text, italicize text, edit images, and even embed videos right from the editor. Your videos are automatically converted to a web compatible video format. You don&#39;t need to know CSS or HTML to&nbsp;write beautiful content. Everything is in plain English for your convenience.</p>
-                        <p>But since we know not everyone&nbsp;reads&nbsp;English, Castle&#39;s editing and control interface supports more than 64 other languages as well, so international and multilingual users and content editors&nbsp;are at home&nbsp;on your&nbsp;website.</p>""")  # noqa
+                'text': RichTextValue("""<p>CastleCMS uses TinyMCE, the state of the art in what-you-see-is-what-you-get (WYSIWYG) web editors. Change formatting, bold text, italicize text, edit images, and even embed videos right from the editor. Your videos are automatically converted to a web compatible video format. You don&#39;t need to know CSS or HTML to&nbsp;write beautiful content. Everything is in plain English for your convenience.</p>
+                        <p>But since we know not everyone&nbsp;reads&nbsp;English, CastleCMS&#39;s editing and control interface supports more than 64 other languages as well, so international and multilingual users and content editors&nbsp;are at home&nbsp;on your&nbsp;website.</p>""")  # noqa
             },
             'meta': {
                 'type': 'castle.cms.feature',

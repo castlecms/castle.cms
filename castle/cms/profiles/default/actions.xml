@@ -530,7 +530,7 @@
    <property name="visible">True</property>
   </object>
   <object name="tour" meta_type="CMF Action">
-   <property name="title">Tour Castle</property>
+   <property name="title">Tour CastleCMS</property>
    <property name="description"></property>
    <property name="url_expr">string:${portal_url}/@@retour</property>
    <property name="link_target"></property>

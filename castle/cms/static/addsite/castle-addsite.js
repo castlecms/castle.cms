@@ -543,7 +543,7 @@ var siteSetup = React.createClass({
       {
         name: "plone.site_logo",
         labelText: "Site Logo",
-        formHelp: "This shows a custom Logo on your Site. Leave blank to use the default Castle logo.",
+        formHelp: "This shows a custom Logo on your site. Leave blank to use the default CastleCMS logo.",
         type: "file",
         validators: ['image'],
         isImage: true
@@ -614,11 +614,11 @@ var siteSetup = React.createClass({
       fields = this.siteFields();
     }
     else if( this.state.phase == 3 ) {
-      heading = "Castle can leverage several social media sites to publish your content.";
+      heading = "CastleCMS can leverage several social media sites to publish your content.";
       fields = this.socialMediaFields();
     }
     else if( this.state.phase == 4 ) {
-      heading = "Now let's setup a few of the various API's that Castle uses.";
+      heading = "Now let's setup some of the APIs that CastleCMS uses.";
       fields = this.APIFields();
     }
 
