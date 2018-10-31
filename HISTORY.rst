@@ -3,6 +3,8 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+- Clarified the add -- upload modal 
+  [RobZoneNet]
 
 - Fix potential querylisting unicode errors from form input
   [vangheem]
