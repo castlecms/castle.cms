@@ -6,6 +6,9 @@ Changelog
 - Clarified the add -- upload modal 
   [RobZoneNet]
 
+- Rename some Castle -> CastleCMS titles and labels
+  [tkimnguyen]
+
 - Fix potential querylisting unicode errors from form input
   [vangheem]
 

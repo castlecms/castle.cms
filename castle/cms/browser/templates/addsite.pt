@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title i18n:translate="">Create a Castle site</title>
+    <title i18n:translate="">Create a CastleCMS site</title>
     <link rel="stylesheet" type="text/css"
           tal:attributes="href string:${context/absolute_url}/++resource++plone-admin-ui.css"
           href="/++resource++plone-admin-ui.css" />
@@ -53,10 +53,10 @@
     <div id="box">
         <header><h1><img src="/++plone++castle/images/castle-logo.png"
              tal:attributes="src string:${context/absolute_url}/++plone++castle/images/castle-logo.png"
-             alt="Castle" i18n:attributes="alt"/> CastleCMS</h1>
+             alt="CastleCMS" i18n:attributes="alt"/> CastleCMS</h1>
         </header>
         <article>
-          <h1 i18n:translate="">Create a Castle site</h1>
+          <h1 i18n:translate="">Create a CastleCMS site</h1>
           <div id="form_data" style="display: none;" tal:content="view/form_data" />
           <div id="reactForm">
 

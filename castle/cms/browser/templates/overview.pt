@@ -10,7 +10,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Castle</title>
+  <title>CastleCMS</title>
   <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'/>
   <link rel="stylesheet" type="text/css"
         href="/++resource++plone-admin-ui.css"
@@ -24,12 +24,12 @@
 <div id="box">
     <header><h1><img src="/++resource++plone-logo.png"
          tal:attributes="src string:${context/absolute_url}/++plone++castle/images/castle-logo.png"
-         alt="Castle"/> CastleCMS</h1>
+         alt="CastleCMS"/> CastleCMS</h1>
     </header>
     <article>
     <div id="text">
         <h1 i18n:translate="">
-            Castle is up and running.
+            CastleCMS is up and running.
         </h1>
         <ul>
             <tal:block tal:condition="sites">
@@ -42,7 +42,7 @@
                                tal:attributes="href site/absolute_url"
                                title="Go to your instance"
                                i18n:attributes="title;"
-                               i18n:translate="">View your Castle site</a>
+                               i18n:translate="">View your CastleCMS site</a>
                         </span>
                         <div class="upgrade-warning"
                              tal:condition="python:view.outdated(site)">
@@ -65,7 +65,7 @@
                     </tal>
                 </tal:one>
                 <tal:many tal:condition="python:len(sites) &gt; 1">
-                    <h2 id="multiple-sites" i18n:translate=""> You have multiple Castle sites:</h2>
+                    <h2 id="multiple-sites" i18n:translate=""> You have multiple CastleCMS sites:</h2>
                     <ul class="sites">
                         <li tal:repeat="site sites">
                             <span class="prominent">
@@ -110,7 +110,7 @@
                     Your site has not been added yet:
                 </span>
                 <span i18n:translate="" tal:condition="sites">
-                    You can add another Castle site:
+                    You can add another CastleCMS site:
                 </span>
                 <form id="add-plone-site"
                       method="get"
@@ -120,7 +120,7 @@
                     <input type="hidden" name="site_id" value="Castle${site_number}" />
                     <input type="submit"
                            i18n:attributes="value;"
-                           value="Create a new Castle site" />
+                           value="Create a new CastleCMS site" />
                 </form>
             </li>
 

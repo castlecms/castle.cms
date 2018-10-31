@@ -6,7 +6,7 @@ Fragment description here...
 Fragment Directories
 --------------------
 
-To include new fragments into a Castle site using a non-theme add-on,
+To include new fragments into a CastleCMS site using a non-theme add-on,
 throw them in a folder, and add a declaration to your `configure.zcml`:
 
 Folder structure:

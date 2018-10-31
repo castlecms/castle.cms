@@ -665,7 +665,7 @@ define([
       }
     },
     render: function(){
-      var imgSrc = [D.img({ src: $('body').attr('data-portal-url') + '/++plone++castle/images/castle-logo.png', alt:'Castle'})];
+      var imgSrc = [D.img({ src: $('body').attr('data-portal-url') + '/++plone++castle/images/castle-logo.png', alt:'CastleCMS'})];
       return D.div({className: 'castle-toolbar-container-top'}, [
          D.a({ href:$('body').attr('data-portal-url'), className: 'castle-toolbar-logo'}, imgSrc),
         this.renderBreadcrumbs(),

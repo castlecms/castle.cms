@@ -487,7 +487,7 @@ define([
         cdata.push(['Twitter', data.twitter]);
         extra = D.p(
           { className: 'discreet'},
-          'Twitter data is not a total ever shared but a total aggregated by Castle from ' +
+          'Twitter data is not a total ever shared but a total aggregated by CastleCMS from ' +
           'Twitter\'s streaming API service.');
       }else{
         extra = D.p(
