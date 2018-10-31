@@ -220,3 +220,10 @@ class TestTiles(unittest.TestCase):
             'Title': 'santas ureï¿½a'
         })
         self.assertTrue(tile.filter_pattern_config != '{}')
+
+        tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', {})
+        self.request.form.update({
+            # form data can be list OR str
+            'Subject': ['one', 'two']
+        })
+        self.assertTrue(tile.filter_pattern_config != '{}')
