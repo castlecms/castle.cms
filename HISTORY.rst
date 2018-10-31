@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Rename some Castle -> CastleCMS titles and labels
+  [tkimnguyen]
+
 - Fix potential querylisting unicode errors from form input
   [vangheem]
 
