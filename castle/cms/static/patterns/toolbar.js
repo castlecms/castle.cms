@@ -8,6 +8,8 @@ define([
   'castle-url/components/utils',
   'castle-url/libs/react/react.min',
   'mockup-patterns-modal',
+  'castle-url/patterns/toolbar/menu-item',
+  'castle-url/patterns/toolbar/modal-item',
   'castle-url/components/add-content-modal',
   'castle-url/components/preview-content-modal',
   'castle-url/components/quality-check-modal',
@@ -16,51 +18,15 @@ define([
   'castle-url/components/slot-manager-modal',
   'castle-url/components/design-modal',
   'moment'
-], function ($, Base, Registry, utils, cutils, R, ModalPattern,
-             AddContentModal, PreviewContentModal, QualityCheckModal,
+], function ($, Base, Registry, utils, cutils, R, ModalPattern, MenuItemBase,
+             ModalMenuItemBase, AddContentModal, PreviewContentModal, QualityCheckModal,
              AnalyticsModal, WorkflowModal, SlotManagerModal, DesignModal,
              moment) {
   'use strict';
 
   var D = R.DOM;
+  var included_items = [];
 
-  var MenuItemBase = {
-    getDefaultProps: function(){
-      return {
-        showIcon: true
-      };
-    },
-    onClick: undefined,
-    getLabel: function(){
-      return this.props.item.title;
-    },
-    getClassName: function(){
-      return 'castle-toolbar-item castle-toolbar-' + this.props.item.id;
-    },
-    stripQS: function(s){
-      return s.split('?')[0];
-    },
-    isActive: function(){
-      return this.stripQS(window.location.href) === this.stripQS(this.props.item.url);
-    },
-    render: function(){
-      var item = this.props.item;
-      var className = this.getClassName();
-      if(this.isActive()){
-        className += ' active';
-      }
-      var icon = '';
-      if(this.props.showIcon === undefined || this.props.showIcon){
-        icon = D.span({ className: item.icon_class, 'aria-hidden': true });
-      }
-      return D.li(
-        { className: className},
-        D.a({ href: item.url, onClick: this.onClick, ref: 'a'}, [
-          icon,
-          this.getLabel()
-        ]));
-    }
-  };
   var MenuItem = R.createClass(MenuItemBase);
 
   var ViewPageMenuItem = cutils.Class([MenuItemBase], {
@@ -70,17 +36,7 @@ define([
     }
   });
 
-  var ModalMenuItemBase = cutils.extend(MenuItemBase, {
-    onClick: function(e){
-      e.preventDefault();
-      cutils.createModalComponent(this.props.ModalComponent, this.props.id, this.getSettings());
-    },
-    getSettings: function(){
-      return {
-        parent: this.props.parent
-      };
-    }
-  });
+
   var ModalMenuItemFactory = function(Component, id){
     return cutils.Class([ModalMenuItemBase], {
       getDefaultProps: function(){
@@ -189,13 +145,27 @@ define([
 
 
   var MenuItemRenderer = {
-    itemMapping: {
-    },
     getDefaultProps: function(){
       return {
         showIcon: true,
-        modal: false
+        modal: false,
+        itemMapping: {
+        }
       };
+    },
+    addAdditionalMenuItems: function(items) {
+      // Include menu items from external add-ons and
+      // incorporate them into the toolbar
+      var itemMapping = this.state.itemMapping;
+      var menu_items = Object.keys(items);
+      menu_items.forEach(function(key) {
+        itemMapping[key] = items[key];
+      });
+
+      this.setState({
+        'itemMapping': itemMapping
+      });
+
     },
     renderMenuItem: function(item){
       if(item === 'spacer'){
@@ -203,8 +173,8 @@ define([
       }
 
       var Component = MenuItem;
-      if(this.itemMapping[item.id]){
-        Component = this.itemMapping[item.id];
+      if(this.state.itemMapping !== undefined && this.state.itemMapping[item.id]){
+        Component = this.state.itemMapping[item.id];
       }else if(item.modal){
         Component = PatternModalItemFactory(item.modalAttributes);
       }
@@ -694,30 +664,30 @@ define([
 
 
   var SideToolbar = cutils.Class([MenuItemRenderer], {
-    itemMapping: {
-      'view-page': ViewPageMenuItem,
-      add: AddMenuItem,
-      quality: ModalMenuItemFactory(QualityCheckModal, 'quality-modal-react-container'),
-      preview: ModalMenuItemFactory(PreviewContentModal, 'preview-modal-react-container'),
-      analytics: ModalMenuItemFactory(AnalyticsModal, 'analytics-modal-react-container'),
-      slots: SlotsMenuItem,
-      design: DesignMenuItem,
-      state: WorkflowMenuItem,
-      rename: PatternModalItemFactory({
-        actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}}),
-      delete: PatternModalItemFactory({
-        loadLinksWithinModal: false,
-        actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true, displayInModal: false}}),
-      trash: PatternModalItemFactory({
-        actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}}),
-      invalidate: PatternModalItemFactory({}),
-      aliases: PatternModalItemFactory({}),
-      syndication: PatternModalItemFactory({
-        actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}})
-    },
     getInitialState: function() {
       return {
-        'hideButtons': true
+        'hideButtons': true,
+        'itemMapping': {
+          'view-page': ViewPageMenuItem,
+          add: AddMenuItem,
+          quality: ModalMenuItemFactory(QualityCheckModal, 'quality-modal-react-container'),
+          preview: ModalMenuItemFactory(PreviewContentModal, 'preview-modal-react-container'),
+          analytics: ModalMenuItemFactory(AnalyticsModal, 'analytics-modal-react-container'),
+          slots: SlotsMenuItem,
+          design: DesignMenuItem,
+          state: WorkflowMenuItem,
+          rename: PatternModalItemFactory({
+            actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}}),
+          delete: PatternModalItemFactory({
+            loadLinksWithinModal: false,
+            actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true, displayInModal: false}}),
+          trash: PatternModalItemFactory({
+            actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}}),
+          invalidate: PatternModalItemFactory({}),
+          aliases: PatternModalItemFactory({}),
+          syndication: PatternModalItemFactory({
+            actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}})
+        }
       };
     },
     getMore: function(items) {
@@ -836,8 +806,55 @@ define([
         'hiddenButtons': hidden
       });
     },
+    loadAddonButtons: function () {
+      // Include additional buttons from JS files registered by
+      // add-ons
+      //
+      // currently this only works for the side toolbar.
+      // The top toolbar is a lot more difficult to make extensible
+      var buttons = this.props.addon_buttons;
+      var paths = [];
+
+      if(buttons.side_toolbar !== undefined) {
+        paths = paths.concat(buttons.side_toolbar);
+      }
+
+      // if(buttons.top_toolbar !== undefined) {
+      //   paths = paths.concat(buttons.top_toolbar);
+      // }
+
+      require(paths, function() {
+        var buttons = {
+          'top': {},
+          'side': {}
+        };
+
+        var button_interface = ['name', 'menu', 'renderer'];
+
+        // We have no idea how many add-ons we're getting,
+        // so we can't define them ahead of time. So, for loop:
+        for(var i = 0; i<arguments.length; i++) {
+          var item = arguments[i];
+
+          // check that the argument object meets our interface
+          var props = Object.keys(item);
+          if( button_interface.every(function(key) { return props.indexOf(key) >= 0; }) ) {
+            var menu = this.refs[item.menu];
+            var itemMapping = buttons[item.menu];
+            itemMapping[item.name] = item.renderer;
+          }else{
+            continue;
+          }
+        }
+
+        // this.refs.top.addAdditionalMenuItems(buttons.top);
+        this.refs.side.addAdditionalMenuItems(buttons.side);
+
+      }.bind(this)).bind(this);
+    },
     componentDidMount: function() {
       this.calculateHidden();
+      this.loadAddonButtons();
       window.addEventListener('resize', this.calculateHidden);
     },
     componentWillUnmount: function() {

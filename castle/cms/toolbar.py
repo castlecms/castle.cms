@@ -371,6 +371,9 @@ class Toolbar(BrowserView):
                 menu = replacement
         return menu
 
+    def get_addon_buttons(self):
+        return api.portal.get_registry_record('castle.toolbar_buttons')
+
     def _get_portal_actions(self, name):
         if name not in self.pactions:
             return []
@@ -501,6 +504,7 @@ class Toolbar(BrowserView):
             'user_menu': user_menu,
             'add': self.get_addable_types(),
             'breadcrumbs': breadcrumbs_view.breadcrumbs(),
+            'addon_buttons': self.get_addon_buttons(),
             'user': self.get_user_info(),
             'workflow': self.get_workflow_info(),
             'content': self.get_content_info(),
