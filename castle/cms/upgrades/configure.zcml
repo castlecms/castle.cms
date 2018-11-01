@@ -88,7 +88,7 @@
       description=""
       source="*"
       destination="2102"
-      handler=".cook_js_resources"
+      handler=".upgrade_2_1_2.upgrade"
       profile="castle.cms:default" />
 
 </configure>

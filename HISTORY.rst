@@ -15,6 +15,10 @@ Changelog
   [RobZoneNet]
 
 - Fixes for folder_contents page. The query box layout and how it reacts to different widths of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for dashboard search button due to failing colorblindness tests
+- Be able to customize file upload fields
+  [vangheem]
+
+- Clarified the add -- upload modal 
   [RobZoneNet]
 
 - do not attempt to publish item is already published content with `@@publish-content` view.

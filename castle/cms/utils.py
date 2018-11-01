@@ -790,3 +790,56 @@ def publish_content(obj):
         except api.exc.InvalidParameterError:
             # not a valid transition, move on I guess...
             pass
+
+
+def get_upload_fields(registry=None):
+    if registry is None:
+        registry = getUtility(IRegistry)
+    upload_fields = registry.get('castle.file_upload_fields', None)
+    if upload_fields is None:
+        # not updated yet, b/w compatiable
+        required_upload_fields = registry.get(
+            'castle.required_file_upload_fields', []) or []
+        result = [{
+            'name': 'title',
+            'label': 'Title',
+            'widget': 'text',
+            'required': 'title' in required_upload_fields,
+            'for-file-types': '*'
+        }, {
+            'name': 'description',
+            'label': 'Summary',
+            'widget': 'textarea',
+            'required': 'description' in required_upload_fields,
+            'for-file-types': '*'
+        }, {
+            'name': 'tags',
+            'label': 'Tags',
+            'widget': 'tags',
+            'required': 'tags' in required_upload_fields,
+            'for-file-types': '*'
+        }, {
+            'name': 'youtube_url',
+            'label': 'Youtube URL',
+            'widget': 'text',
+            'required': 'youtube_url' in required_upload_fields,
+            'for-file-types': 'video'
+        }]
+    else:
+        result = []
+        for field in upload_fields:
+            if 'name' not in field:
+                continue
+            # make sure all required field are in place
+            if field.get('required'):
+                field['required'] = str(field['required']).lower() in ('true', 't', '1')
+            else:
+                field['required'] = False
+            if 'label' not in field:
+                field[u'label'] = field[u'name'].capitalize()
+            if 'widget' not in field:
+                field[u'widget'] = u'text'
+            if 'for-file-types' not in field:
+                field[u'for-file-types'] = u'*'
+            result.append(field)
+    return result

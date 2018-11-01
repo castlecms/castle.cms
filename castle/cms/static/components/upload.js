@@ -99,8 +99,12 @@ define([
       };
     },
 
-    valueChanged: function(attr, e){
-      this.state[attr] = e.target.value;
+    valueChanged: function(attr, widget, e){
+      if(widget == 'checkbox'){
+        this.state[attr] = e.target.checked;
+      }else{
+        this.state[attr] = e.target.value;
+      }
       this.forceUpdate();
     },
 
@@ -235,45 +239,63 @@ define([
       ]);
     },
 
-    createField: function(name, label, type){
-      var nodeType = D.input;
-      if(type === 'textarea'){
-        nodeType = D.textarea;
+    createField: function(field){
+      var name = field['name'];
+      var input;
+      if(field['widget'] == 'checkbox'){
+        input = D.input({
+          id: id, type: 'checkbox', checked: this.state[name],
+          onChange: this.valueChanged.bind(this, name, 'checkbox') })
+      }else{
+        var nodeType = D.input;
+        if(field['widget'] === 'textarea'){
+          nodeType = D.textarea;
+        }
+        input = nodeType({
+          className: 'form-control', value: this.state[name], id: id,
+          onChange: this.valueChanged.bind(this, name, 'text')});
       }
+
       var labelClass = 'col-sm-2 control-label';
-      if(this.props.requiredFields.indexOf(name) !== -1){
+      if(field['required']){
         labelClass += ' required';
       }
+
       var id = 'castle-upload-field-' + name;
       return D.div({ className: 'form-group' }, [
-        D.label({ className: labelClass, for_: id}, label),
-        D.div({className: 'col-sm-10' }, nodeType({
-          className: 'form-control', value: this.state[name], id: id,
-          onChange: this.valueChanged.bind(this, name)}))
+        D.label({ className: labelClass, for_: id}, field['label']),
+        D.div({className: 'col-sm-10' }, input)
       ]);
     },
 
-    createTagsField: function(){
+    createTagsField: function(field){
       var labelClass = 'col-sm-2 control-label';
-      if(this.props.requiredFields.indexOf('tags') !== -1){
+      if(field['required']){
         labelClass += ' required';
       }
       return D.div({ className: "field" }, [
-        D.label({className: labelClass}, 'Tags'),
+        D.label({className: labelClass}, field['label'] || 'Tags'),
         D.div({ className: 'col-sm-10' },
           D.input({ className: "pat-select2", type: "text", ref: 'select2', value: this.state.tags}))
       ]);
     },
 
     renderForm: function(){
-      var fields = [
-        this.createField('title', 'Title'),
-        this.createField('description', 'Summary', 'textarea'),
-        this.createTagsField()
-      ];
-      if(this.getType() === 'video'){
-        fields.push(this.createField('youtube_url', 'Youtube URL'));
-      }
+      var fields = [];
+      var self = this;
+      this.props.uploadFields.forEach(function(field){
+        if(field['for-file-types'] && field['for-file-types'] !== '*'){
+          var fileTypes = field['for-file-types'].split(',');
+          if(fileTypes.indexOf(self.getType()) === -1){
+            return
+          }
+        }
+        if(field.widget === 'tags'){
+          fields.push(self.createTagsField(field));
+        }else{
+          fields.push(self.createField(field));
+        }
+      });
       return D.form({ className: 'form-horizontal', key: this.props.file.uid + '-form' }, fields);
     },
 
@@ -335,19 +357,21 @@ define([
       fd.append('action', 'chunk-upload');
       fd.append('file', blob);
       fd.append('name', that.props.file.name);
-      fd.append('title', that.state.title);
-      fd.append('description', that.state.description);
+
       if(that.props.parent.props.location){
         fd.append('location', that.props.parent.props.location);
-      }
-      if(that.state.tags){
-        fd.append('tags', that.state.tags);
       }
       if(that.state.imageFocal){
         fd.append('focalX', that.state.imageFocal[0]);
         fd.append('focalY', that.state.imageFocal[1]);
       }
-      fd.append('youtube_url', that.state.youtube_url);
+
+      that.props.uploadFields.forEach(function(field){
+        if(that.state[field['name']]){
+          fd.append(field['name'], that.state[field['name']]);
+        }
+      });
+
       fd.append('totalSize', file.size);
       fd.append('chunkSize', chunkSize);
       fd.append('_authenticator', utils.getAuthenticator());
@@ -602,8 +626,11 @@ define([
       var children = [
         D.div({ ref: 'droparea', className: 'droparea' }, [
           dropTxt,
-          D.button({ ref: 'upload_btn', className: 'btn btn-default castle-btn-select-files' }, 'Select files'),
-          D.p({className: 'upload-text drop-msg'},'Files will be uploaded to central repositories unless you choose folder'),
+          D.button({
+            ref: 'upload_btn',
+            className: 'btn btn-default castle-btn-select-files' }, 'Select files'),
+          D.p({className: 'upload-text drop-msg'},
+              'Files will be uploaded to central repositories unless you choose folder'),
         ]),
         that.renderAutoApprove(),
         that.renderFileList()
@@ -736,7 +763,7 @@ define([
         D.ul({}, that.state.files.map(function(file, idx){
           return R.createElement(FileListing, {
             file: file, ref: file.uid, key: file.uid,
-            idx: idx, parent: that, requiredFields: that.getRequiredFields()});
+            idx: idx, parent: that, uploadFields: that.getUploadFields()});
         }))
       ]);
     },
@@ -745,14 +772,24 @@ define([
       return 'draggable' in document.createElement('span') && typeof(window.FileReader) != 'undefined';
     },
 
-    getRequiredFields: function(){
-      var requiredFields = $('body').attr('data-required-file-upload-fields');
-      if(requiredFields){
-        requiredFields = $.parseJSON(requiredFields);
+    getUploadFields: function(){
+      var uploadFields = $('body').attr('data-file-upload-fields');
+      if(uploadFields){
+        uploadFields = $.parseJSON(uploadFields);
       }else{
-        requiredFields = [];
+        uploadFields = [];
       }
-      return requiredFields;
+      return uploadFields;
+    },
+
+    getRequiredFields: function(){
+      var required = [];
+      this.getUploadFields().forEach(function(field){
+        if(field['required']){
+          required.push(field['name'])
+        }
+      });
+      return required;
     },
 
     getDefaultProps: function(){

@@ -1,10 +1,10 @@
 import json
-import time
 import logging
 import math
 import os
 import shutil
 import tempfile
+import time
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_base, aq_parent
@@ -12,7 +12,7 @@ from castle.cms import cache, commands, utils
 from castle.cms.commands import exiftool
 from castle.cms.files import duplicates
 from castle.cms.interfaces import ITrashed
-from castle.cms.utils import publish_content
+from castle.cms.utils import get_upload_fields, publish_content
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
@@ -398,15 +398,18 @@ class Creator(BrowserView):
                 create_opts['image'] = image
             else:
                 create_opts['file'] = NamedBlobFile(data=fi, filename=filename)
-            if type_ == 'Video':
-                create_opts['youtube_url'] = self.request.form.get('youtube_url', '')
 
-            if self.request.form.get('title'):
-                create_opts['title'] = self.request.form.get('title')
-            if self.request.form.get('description'):
-                create_opts['description'] = self.request.form.get('description')
-            if self.request.form.get('tags'):
-                create_opts['subject'] = self.request.form.get('tags').split(';')
+            for field in get_upload_fields():
+                if not field.get('name'):
+                    continue
+                name = field['name']
+                if not self.request.form.get(name):
+                    continue
+                if name in ('tags', 'subject'):
+                    # tags needs to be converted
+                    create_opts['subject'] = self.request.form.get(name).split(';')
+                else:
+                    create_opts[name] = self.request.form.get(name, '')
             return api.content.create(**create_opts)
         finally:
             fi.close()

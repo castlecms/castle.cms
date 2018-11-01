@@ -4,6 +4,7 @@ from Acquisition import aq_inner, aq_parent
 from borg.localrole.interfaces import IFactoryTempFolder
 from castle.cms import cache, theming
 from castle.cms.interfaces import IDashboard
+from castle.cms.utils import get_upload_fields
 from plone import api
 from plone.app.imaging.utils import getAllowedSizes
 from plone.app.layout.navigation.defaultpage import getDefaultPage
@@ -159,14 +160,19 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         folder = self.context
         if not IDexterityContainer.providedBy(folder):
             folder = aq_parent(folder)
-        required_upload_fields = self.registry.get(
-            'castle.required_file_upload_fields', []) or []
+
+        upload_fields = get_upload_fields(self.registry)
+        required_fields = [f['name'] for f in upload_fields
+                           if f.get('required')]
         data.update({
             'data-available-slots': json.dumps(self.get_available_slot_tiles()),
-            'data-required-file-upload-fields': json.dumps(required_upload_fields),
+            'data-file-upload-fields': json.dumps(upload_fields),
             'data-google-maps-api-key': self.registry.get(
                 'castle.google_maps_api_key', '') or '',
-            'data-folder-url': folder.absolute_url()
+            'data-folder-url': folder.absolute_url(),
+
+            # b/w compat until resources updated
+            'data-required-file-upload-fields': json.dumps(required_fields),
         })
 
         show_tour = False
