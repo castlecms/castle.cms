@@ -13,4 +13,23 @@
     </field>
     <value purge="False" />
   </record>
+
+  <record name="castle.toolbar_buttons">
+    <field type="plone.registry.field.Dict">
+      <title>Additional Castle toolbar buttons</title>
+      <required>False</required>
+      <key_type type="plone.registry.field.TextLine" />
+      <value_type type="plone.registry.field.List">
+        <required>False</required>
+        <title>Source</title>
+        <value_type type="plone.registry.field.TextLine" />
+      </value_type>
+    </field>
+    <value>
+      <element key="side_toolbar">
+      </element>
+      <element key="top_toolbar">
+      </element>
+    </value>
+  </record>
 </registry>
