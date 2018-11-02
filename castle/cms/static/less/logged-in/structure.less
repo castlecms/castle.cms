@@ -170,6 +170,11 @@ Styles here related to when you click "Manage Content" or /folder_contents
         border-radius:0;
       }
     }
+    #popover-structure-query {
+      width: auto;
+      left: auto !important;
+      right: 68px;
+    }
   }
 
   .itemRow {
@@ -404,5 +409,33 @@ body table.structure-dragging {
   // Seems like the content sways to the left and the right due to .row negative side margins for folder contents view. Taking them out
   #main-content-container{
     margin: 25px 0px 0px;
+  }
+}
+
+@media ( max-width:1178px ){
+  .pat-structure #filter #popover-structure-query {
+    left: 258px !important;
+    right: auto;
+  }
+  .pat-structure .popover.left > .arrow {
+    right: auto;
+    left: -11px;
+    border-right-width: 11px;
+    border-left-width: 0px;
+    border-right-color: #999999;
+
+    &:after {
+      /* Safari */
+      -webkit-transform: rotate(-180deg);
+      /* Firefox */
+      -moz-transform: rotate(-180deg);
+      /* IE */
+      -ms-transform: rotate(-180deg);
+      /* Opera */
+      -o-transform: rotate(-180deg);
+      transform: rotate(-180deg);
+      border-right-color: #999999;
+      right: -11px;
+    }
   }
 }
