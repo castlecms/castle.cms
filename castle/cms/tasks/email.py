@@ -27,7 +27,7 @@ def send_email_to_subscribers(subject, html, categories=None, sender=None):
                 # make sure that this message falls under one of
                 # their categories
                 if len(categories.intersection(subscriber['categories'])) == 0:
-                    return
+                    continue
 
         query = urlencode({
             'email': subscriber.get('email'),

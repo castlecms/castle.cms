@@ -1,5 +1,6 @@
 from Acquisition import aq_inner
 from castle.cms import texting
+from castle.cms import subscribe
 from castle.cms.browser.utils import Utils
 from castle.cms.constants import ALL_SUBSCRIBERS
 from castle.cms.interfaces import IAnnouncementData
@@ -21,9 +22,14 @@ from plone.supermodel import model
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
+from z3c.form.interfaces import WidgetActionExecutionError
 from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
+from zope.interface import Invalid
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+
+reg_key = 'castle.subscriber_categories'
 
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
@@ -183,11 +189,11 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
 
             categories = set()
             if 'form.widgets.send_to_categories' in self.request.form:
-                categories = set(self.request.form['form.widgets.send_to_categories'])
+                categories = set(data['send_to_categories'])
 
             sender = None
             if 'form.widgets.send_from' in self.request.form:
-                sender = self.request.form['form.widgets.send_from']
+                sender = data['send_from']
 
             send_email_to_subscribers.delay(data['subject'], html=html, categories=categories, sender=sender)
 
@@ -220,6 +226,215 @@ class SendTextForm(AutoExtensibleForm, form.Form):
                 self.context.absolute_url()))
 
 
+class IExportSubscribersForm(model.Schema):
+    directives.widget('export_categories', SelectFieldWidget)
+    export_categories = schema.List(
+        title=u'Subscribers to export',
+        description=u'Leave Empty For All Subscribers',
+        required=False,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
+
+
+class ExportSubscribersForm(AutoExtensibleForm, form.Form):
+    schema = IExportSubscribersForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Export', name='export')
+    def handle_export(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            response = self.request.response
+            cd = 'attachment; filename=subscribers.csv'
+            response.setHeader('Content-Disposition', cd)
+            fields = ['name', 'email', 'phone_number', 'phone_number_confirmed',
+                      'confirmed', 'code', 'created', 'captcha', 'categories']
+            responsebody = ','.join(fields)
+            categories = set()
+            if 'form.widgets.export_categories' in self.request.form:
+                if data['export_categories'] != u'':
+                    categories = set(data['export_categories'])
+            check_categories = (categories is not None and len(categories) != 0)
+            for subscriber in subscribe.all():
+                if check_categories:
+                    if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                        if len(categories.intersection(subscriber['categories'])) == 0:
+                            continue
+                row = []
+                for key in fields:
+                    if subscriber.get(key) is None:
+                        row.append('')
+                    elif isinstance(subscriber.get(key), list):
+                        row.append('"' + ';'.join(subscriber.get(key)) + '"')
+                    else:
+                        row.append(str(subscriber.get(key)))
+                responsebody += '\n' + ','.join(row)
+            response.setBody(responsebody, lock=True)
+
+
+class IMergeCategoriesForm(model.Schema):
+    directives.widget('rename_merge_categories', SelectFieldWidget)
+    rename_merge_categories = schema.List(
+        title=u'Categories to Rename or Merge',
+        required=True,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
+    new_category_name = schema.TextLine(
+        title=u"New Category Name",
+        required=True
+    )
+
+
+class MergeCategoriesForm(AutoExtensibleForm, form.Form):
+    schema = IMergeCategoriesForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Rename/Merge', name='merge')
+    def handle_merge(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            allcategories = api.portal.get_registry_record(reg_key)
+            categories = set()
+            newname = u''
+            if 'form.widgets.rename_merge_categories' in self.request.form:
+                if data['rename_merge_categories'] != u'':
+                    categories = set(data['rename_merge_categories'])
+            if 'form.widgets.new_category_name' in self.request.form:
+                newname = data['new_category_name'].split(';')[0]
+            if len(categories) > 0 and len(newname) > 0:
+                if newname in allcategories and newname not in categories:
+                    raise WidgetActionExecutionError(
+                        'new_category_name',
+                        Invalid(
+                            u"That category name is already in use"
+                        )
+                    )
+                    return
+                for category in categories:
+                    allcategories.remove(category)
+                allcategories.append(newname)
+                api.portal.set_registry_record(reg_key, allcategories)
+                for subscriber in subscribe.all():
+                    if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                        if len(categories.intersection(subscriber['categories'])) > 0:
+                            subcat = subscriber['categories']
+                            for category in categories:
+                                if category in subcat:
+                                    subcat.remove(category)
+                            subcat.append(newname)
+                            subscriber['categories'] = subcat
+                self.widgets['new_category_name'].value = u''
+                self.widgets['rename_merge_categories'].value = u''
+
+
+class IDeleteCategoriesForm(model.Schema):
+    directives.widget('delete_categories', SelectFieldWidget)
+    delete_categories = schema.List(
+        title=u'Categories to Delete',
+        required=True,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
+    force_delete = schema.Bool(
+        title=u'Force Delete',
+        description=u'Delete category even if there are accounts still subscribed to it',
+        default=False,
+    )
+
+
+class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
+    schema = IDeleteCategoriesForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Delete Categories', name='delete')
+    def handle_delete(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            allcategories = api.portal.get_registry_record(reg_key)
+            categories = set()
+            if 'form.widgets.delete_categories' in self.request.form:
+                if data['delete_categories'] != u'':
+                    categories = set(data['delete_categories'])
+            force_delete = 'form.widgets.force_delete' in self.request.form
+            if len(categories) > 0:
+                badcategories = []
+                for category in categories:
+                    existing_subscribers = False
+                    for subscriber in subscribe.all():
+                        if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                            if len(categories.intersection(subscriber['categories'])) > 0:
+                                subcat = subscriber['categories']
+                                for category in categories:
+                                    if category in subcat:
+                                        existing_subscribers = True
+                                        if force_delete:
+                                            subcat.remove(category)
+                                subscriber['categories'] = subcat
+                    if force_delete or not existing_subscribers:
+                        allcategories.remove(category)
+                    else:
+                        badcategories.append(category)
+                api.portal.set_registry_record(reg_key, allcategories)
+                self.widgets['delete_categories'].value = ';'.join(badcategories)
+                if len(badcategories) > 0:
+                    raise WidgetActionExecutionError(
+                        'delete_categories',
+                        Invalid(
+                            u'These category(s) still have subscribers. '
+                            u'Select "Force Delete" if you want to unsubscribe them.'
+                        )
+                    )
+
+
+class IAddCategoryForm(model.Schema):
+    add_categories = schema.TextLine(
+        title=u'New category',
+        description=u'Add multiple categories at once by separating them with semicolons',
+        required=True
+    )
+
+
+class AddCategoryForm(AutoExtensibleForm, form.Form):
+    schema = IAddCategoryForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Add Category', name='addcat')
+    def handle_addcat(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            allcategories = api.portal.get_registry_record(reg_key)
+            categories = set()
+            if 'add_categories' in data:
+                if data['add_categories'] != u'':
+                    categories = set(data['add_categories'].split(';'))
+            if len(categories) > 0:
+                badcategories = []
+                for category in categories:
+                    category = category.strip()
+                    if len(category) > 0 and category not in allcategories:
+                        allcategories.append(category)
+                    else:
+                        badcategories.append(category)
+                api.portal.set_registry_record(reg_key, allcategories)
+                self.widgets['add_categories'].value = ';'.join(badcategories)
+                if len(badcategories) > 0:
+                    raise WidgetActionExecutionError(
+                        'add_categories',
+                        Invalid(
+                            u"That category name is already in use"
+                        )
+                    )
+
+
 class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
     form = AnnouncementsControlPanelForm
     index = ViewPageTemplateFile('templates/announcements.pt')
@@ -231,6 +446,36 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_form = SendEmailUsersForm(aq_inner(context), request)
         self.email_subscribers_form = SendEmailSubscribersForm(aq_inner(context), request)
         self.text_subscribers_form = SendTextForm(aq_inner(context), request)
+        self.export_subscribers_form = ExportSubscribersForm(aq_inner(context), request)
+        self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
+        self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
+        self.add_category_form = AddCategoryForm(aq_inner(context), request)
+        self.get_sub_count()
+
+    def get_sub_count(self):
+        self.categories = api.portal.get_registry_record(reg_key)
+        self.sub_count = {}
+        for category in self.categories:
+            self.sub_count[category] = 0
+        self.invalid_category = 0
+        for subscriber in subscribe.all():
+            if ('categories' in subscriber and len(subscriber['categories']) > 0):
+                subcat = subscriber['categories']
+                for category in subcat:
+                    if category in self.categories:
+                        self.sub_count[category] += 1
+                    else:
+                        self.invalid_category += 1
+
+    def update_terms(self):
+        category_vocab_terms = []
+        for category in self.categories:
+            category_vocab_terms.append(SimpleTerm(value=category, title=category))
+        category_vocab = SimpleVocabulary(category_vocab_terms)
+        self.email_subscribers_form.widgets['send_to_categories'].terms = category_vocab
+        self.export_subscribers_form.widgets['export_categories'].terms = category_vocab
+        self.merge_categories_form.widgets['rename_merge_categories'].terms = category_vocab
+        self.delete_categories_form.widgets['delete_categories'].terms = category_vocab
 
     def __call__(self):
         registry = getUtility(IRegistry)
@@ -241,4 +486,9 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_form.update()
         self.email_subscribers_form.update()
         self.text_subscribers_form.update()
+        self.export_subscribers_form.update()
+        self.merge_categories_form.update()
+        self.delete_categories_form.update()
+        self.add_category_form.update()
+        self.update_terms()
         return super(AnnouncementsControlPanel, self).__call__()

@@ -142,7 +142,7 @@ class TestSubscribeForm(unittest.TestCase):
             content_type="application/json")
         self.request.form.update({
             'form.widgets.subject': u'TEST',
-            'form.widgets.send_to_categories': [u'A'],
+            'form.widgets.send_to_categories': u'A',
             'form.widgets.body': 'Words words words',
             'form.widgets.body_plain': 'Words words words',
             'form.buttons.send2': 'Send'
@@ -165,7 +165,7 @@ class TestSubscribeForm(unittest.TestCase):
             content_type="application/json")
         self.request.form.update({
             'form.widgets.subject': u'TEST',
-            'form.widgets.send_to_categories': [u'B'],
+            'form.widgets.send_to_categories': u'B',
             'form.widgets.body': 'Words words words',
             'form.widgets.body_plain': 'Words words words',
             'form.buttons.send2': 'Send'
