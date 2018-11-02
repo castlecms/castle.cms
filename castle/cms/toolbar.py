@@ -372,7 +372,11 @@ class Toolbar(BrowserView):
         return menu
 
     def get_addon_buttons(self):
-        return api.portal.get_registry_record('castle.toolbar_buttons')
+        return api.portal.get_registry_record(
+            'castle.toolbar_buttons', default={
+                'side_toolbar': [],
+                'top_toolbar': []
+            })
 
     def _get_portal_actions(self, name):
         if name not in self.pactions:
