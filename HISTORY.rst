@@ -8,6 +8,12 @@ Changelog
   are required fields missing or errors in fields
   [vangheem]
 
+- Add "Manage Categories" tab to announcements control panel
+  [CorySanin]
+
+- Upgrade mockup to fix dev mode on contents page
+  [vangheem]
+
 - Clarified the add -- upload modal 
   [RobZoneNet]
 
