@@ -54,29 +54,10 @@
             </p>
           </div>
           <div class="tab-content">
-            <h2 class="tab">Settings</h2>
-            <span tal:replace="structure realview/contents" />
-          </div>
-          <div class="tab-content">
             <h2 class="tab">Manage Subscribers</h2>
             <p class="discreet">
               Manage subscibers and categories
             </p>
-            <div class="rowlike"
-                 tal:define="categories nocall:view/categories;
-                             subcount nocall:view/sub_count;
-                             invalidcat nocall:view/invalid_category"
-                 tal:condition="python:len(categories) > 0">
-              <label>Number of Subscibers:</label>
-              <p tal:repeat="category categories"
-                 tal:content="python:category + ': ' + \
-                              ('0' if category not in subcount else str(subcount[category]))">
-              </p>
-              <p tal:condition="python:invalidcat > 0"
-                 tal:content="python:'Invalid Category: ' + str(invalidcat)">
-              </p>
-              <br/>
-            </div>
             <div tal:define="form nocall:view/export_subscribers_form;
                             view nocall:form"
                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
@@ -89,6 +70,24 @@
             <div tal:define="form nocall:view/delete_categories_form;
                              view nocall:form"
                  metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+                <div class="rowlike"
+                     tal:define="categories nocall:view/categories;
+                                 subcount nocall:view/sub_count;
+                                 invalidcat nocall:view/invalid_category"
+                     tal:condition="python:len(categories) > 0">
+                <label>Number of Subscibers:</label>
+                <p tal:repeat="category categories"
+                   tal:content="python:category + ': ' + \
+                                ('0' if category not in subcount else str(subcount[category]))">
+                </p>
+                <p tal:condition="python:invalidcat > 0"
+                   tal:content="python:'Invalid Category: ' + str(invalidcat)">
+              </p>
+            </div>
+          </div>
+          <div class="tab-content">
+            <h2 class="tab">Settings</h2>
+            <span tal:replace="structure realview/contents" />
           </div>
         </div>
       </div>

@@ -22,9 +22,11 @@ from plone.supermodel import model
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
+from z3c.form.interfaces import WidgetActionExecutionError
 from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
+from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 reg_key = 'castle.subscriber_categories'
@@ -307,7 +309,12 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
                 newname = self.request.form['form.widgets.new_category_name'].split(';')[0]
             if len(categories) > 0 and len(newname) > 0:
                 if newname in allcategories and newname not in categories:
-                    self.widgets['new_category_name'].error = True
+                    raise WidgetActionExecutionError(
+                        'new_category_name',
+                        Invalid(
+                            u"That category name is already in use"
+                        )
+                    )
                     return
                 for category in categories:
                     allcategories.remove(category)
@@ -377,7 +384,14 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
                         badcategories.append(category)
                 api.portal.set_registry_record(reg_key, allcategories)
                 self.widgets['delete_categories'].value = ';'.join(badcategories)
-                self.widgets['delete_categories'].error = len(badcategories) > 0
+                if len(badcategories) > 0:
+                    raise WidgetActionExecutionError(
+                        'delete_categories',
+                        Invalid(
+                            u'These category(s) still have subscribers. '
+                            u'Select "Force Delete" if you want to unsubscribe them.'
+                        )
+                    )
 
 
 class IAddCategoryForm(model.Schema):
@@ -410,9 +424,15 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
                         allcategories.append(category)
                     else:
                         badcategories.append(category)
-                self.widgets['add_categories'].value = ';'.join(badcategories)
-                self.widgets['add_categories'].error = len(badcategories) > 0
                 api.portal.set_registry_record(reg_key, allcategories)
+                self.widgets['add_categories'].value = ';'.join(badcategories)
+                if len(badcategories) > 0:
+                    raise WidgetActionExecutionError(
+                        'add_categories',
+                        Invalid(
+                            u"That category name is already in use"
+                        )
+                    )
 
 
 class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
