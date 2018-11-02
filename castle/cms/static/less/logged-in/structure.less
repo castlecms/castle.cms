@@ -41,7 +41,11 @@ Styles here related to when you click "Manage Content" or /folder_contents
   }
 
   #btngroup-mainbuttons {
-    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 5px;
+    > a {
+      margin-top: 5px
+    }
   }
 
   /* override rounded borders */
@@ -57,6 +61,10 @@ Styles here related to when you click "Manage Content" or /folder_contents
     border-right: 1px solid #cccccc;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
+  }
+
+  #btn-rearrange {
+    margin-right: 15px;
   }
 
   #btn-selected-items{
@@ -131,25 +139,34 @@ Styles here related to when you click "Manage Content" or /folder_contents
     }
   }
 
+#btn-attribute-columns, #btn-selected-items, #btn-rearrange {
+  margin-top: 10px;
+}
   #filter {
-    width:270px;
+    width:210px;
+    margin-top: 10px;
     .search-query {
       height: 32px;
       font-size: 15px;
-      padding-left:4px;
-      width: 150px;
+      padding-left:7px;
+      border-left: 1px solid #dedede;
+      border-top: 1px solid #dedede;
+      border-bottom: 1px solid #dedede;
+      border-right: none;
+      float: left;
+      max-width:  calc(~"100% - 67px");
       &:focus{
         outline:2px solid lighten(@castle-primary, 40%);
         box-shadow:none;
       }
     }
     .input-group-btn {
-      width: 120px;
+      float: left;
       #btn-query {
         font-size: 15px;
-        height: 20px;
+        height: 27px;
         margin-left: 0;
-        padding:5px;
+        padding:7px 11px 0px;
         border-radius:0;
       }
     }
@@ -383,15 +400,6 @@ body table.structure-dragging {
     position: inherit;
   }
 
-  // Since we took away the z-index above we have to make a couple changes to the bottom pagination so it doesn't come up
-  &.popover-structure-query-active .pat-structure aside ul.pagination:nth-child(2),
-  &.popover-structure-columns-active .pat-structure aside ul.pagination:nth-child(2),
-  &.popover-structure-rearrange-active .pat-structure aside ul.pagination:nth-child(2),
-  &.popover-structure-well-active .pat-structure aside ul.pagination:nth-child(2) {
-    position: inherit;
-    display: inline-block;
-    float: right;
-  }
 
   // Seems like the content sways to the left and the right due to .row negative side margins for folder contents view. Taking them out
   #main-content-container{
