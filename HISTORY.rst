@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Add "Manage Categories" tab to announcements control panel
+  [CorySanin]
+
 - Fix potential querylisting unicode errors from form input
   [vangheem]
 
