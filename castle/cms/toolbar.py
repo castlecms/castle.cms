@@ -465,12 +465,16 @@ class Toolbar(BrowserView):
             context = self.site
         return context
 
+    @property
+    @memoize
+    def context_state(self):
+        return getMultiAdapter(
+            (aq_inner(self.real_context), self.request),
+            name=u'plone_context_state')
+
     def update(self):
         self.site = api.portal.get()
 
-        self.context_state = getMultiAdapter(
-            (aq_inner(self.real_context), self.request),
-            name=u'plone_context_state')
         self.folder = self.context_state.folder()
 
         self.user = api.user.get_current()
