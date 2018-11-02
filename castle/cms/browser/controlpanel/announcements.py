@@ -25,6 +25,7 @@ from z3c.form import form
 from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 reg_key = 'castle.subscriber_categories'
 
@@ -276,14 +277,14 @@ class IMergeCategoriesForm(model.Schema):
     directives.widget('rename_merge_categories', SelectFieldWidget)
     rename_merge_categories = schema.List(
         title=u'Categories to Rename or Merge',
-        required=False,
+        required=True,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
     )
     new_category_name = schema.TextLine(
         title=u"New Category Name",
-        required=False
+        required=True
     )
 
 
@@ -306,7 +307,7 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
                 newname = self.request.form['form.widgets.new_category_name'].split(';')[0]
             if len(categories) > 0 and len(newname) > 0:
                 if newname in allcategories and newname not in categories:
-                    # name is already in use
+                    self.widgets['new_category_name'].error = True
                     return
                 for category in categories:
                     allcategories.remove(category)
@@ -321,13 +322,15 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
                                     subcat.remove(category)
                             subcat.append(newname)
                             subscriber['categories'] = subcat
+                self.widgets['new_category_name'].value = u''
+                self.widgets['rename_merge_categories'].value = u''
 
 
 class IDeleteCategoriesForm(model.Schema):
     directives.widget('delete_categories', SelectFieldWidget)
     delete_categories = schema.List(
         title=u'Categories to Delete',
-        required=False,
+        required=True,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
@@ -355,6 +358,7 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
                     categories = set(self.request.form['form.widgets.delete_categories'].split(';'))
             force_delete = 'form.widgets.force_delete' in self.request.form
             if len(categories) > 0:
+                badcategories = []
                 for category in categories:
                     existing_subscribers = False
                     for subscriber in subscribe.all():
@@ -369,14 +373,18 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
                                 subscriber['categories'] = subcat
                     if force_delete or not existing_subscribers:
                         allcategories.remove(category)
+                    else:
+                        badcategories.append(category)
                 api.portal.set_registry_record(reg_key, allcategories)
+                self.widgets['delete_categories'].value = ';'.join(badcategories)
+                self.widgets['delete_categories'].error = len(badcategories) > 0
 
 
 class IAddCategoryForm(model.Schema):
     add_categories = schema.TextLine(
         title=u'New category',
         description=u'Add multiple categories at once by separating them with semicolons',
-        required=False
+        required=True
     )
 
 
@@ -395,10 +403,15 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
                 if self.request.form['form.widgets.add_categories'] != u'':
                     categories = set(self.request.form['form.widgets.add_categories'].split(';'))
             if len(categories) > 0:
+                badcategories = []
                 for category in categories:
                     category = category.strip()
                     if len(category) > 0 and category not in allcategories:
                         allcategories.append(category)
+                    else:
+                        badcategories.append(category)
+                self.widgets['add_categories'].value = ';'.join(badcategories)
+                self.widgets['add_categories'].error = len(badcategories) > 0
                 api.portal.set_registry_record(reg_key, allcategories)
 
 
@@ -434,6 +447,16 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
                     else:
                         self.invalid_category += 1
 
+    def update_terms(self):
+        category_vocab_terms = []
+        for category in self.categories:
+            category_vocab_terms.append(SimpleTerm(value=category, title=category))
+        category_vocab = SimpleVocabulary(category_vocab_terms)
+        self.email_subscribers_form.widgets['send_to_categories'].terms = category_vocab
+        self.export_subscribers_form.widgets['export_categories'].terms = category_vocab
+        self.merge_categories_form.widgets['rename_merge_categories'].terms = category_vocab
+        self.delete_categories_form.widgets['delete_categories'].terms = category_vocab
+
     def __call__(self):
         registry = getUtility(IRegistry)
         if (registry.get('castle.plivo_auth_id') and
@@ -447,4 +470,5 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.merge_categories_form.update()
         self.delete_categories_form.update()
         self.add_category_form.update()
+        self.update_terms()
         return super(AnnouncementsControlPanel, self).__call__()

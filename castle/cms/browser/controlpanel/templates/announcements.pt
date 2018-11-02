@@ -69,7 +69,8 @@
                  tal:condition="python:len(categories) > 0">
               <label>Number of Subscibers:</label>
               <p tal:repeat="category categories"
-                 tal:content="python:category + ': ' + str(subcount[category])">
+                 tal:content="python:category + ': ' + \
+                              ('0' if category not in subcount else str(subcount[category]))">
               </p>
               <p tal:condition="python:invalidcat > 0"
                  tal:content="python:'Invalid Category: ' + str(invalidcat)">

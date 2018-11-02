@@ -1,5 +1,6 @@
 from castle.cms import constants
 from castle.cms.vocabularies import BusinessTypesVocabulary
+from plone.autoform import directives
 from plone.keyring import django_random
 from Products.CMFPlone.interfaces import controlpanel
 from Products.CMFPlone.utils import validate_json
@@ -198,6 +199,7 @@ class IAnnouncementData(Interface):
         required=False
     )
 
+    directives.omitted('subscriber_categories')
     subscriber_categories = schema.List(
         title=u'Subscription Categories',
         description=u"Categories that users can subscribe to. One per line",
