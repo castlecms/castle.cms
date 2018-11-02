@@ -3,6 +3,10 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+
+- Upgrade mockup to fix dev mode on contents page
+  [vangheem]
+
 - Clarified the add -- upload modal 
   [RobZoneNet]
 
