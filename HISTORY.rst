@@ -7,6 +7,15 @@ Changelog
 - Add "Manage Categories" tab to announcements control panel
   [CorySanin]
 
+- Upgrade mockup to fix dev mode on contents page
+  [vangheem]
+
+- Clarified the add -- upload modal 
+  [RobZoneNet]
+
+- Rename some Castle -> CastleCMS titles and labels
+  [tkimnguyen]
+
 - Fix potential querylisting unicode errors from form input
   [vangheem]
 

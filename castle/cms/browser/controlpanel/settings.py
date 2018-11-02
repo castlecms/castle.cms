@@ -24,7 +24,7 @@ class ArchivalForm(group.GroupForm):
 class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
 
     id = "CastleSettingsControlPanel"
-    label = _(u"Castle Settings")
+    label = _(u"CastleCMS Settings")
     description = "Manage all CastleCMS-specific settings"
     schema = ICastleSettings
     schema_prefix = "castle"

@@ -375,3 +375,9 @@ Just regular plone compile resources::
 
     ./bin/plone-compile-resources --site-id=Castle --bundle=plone
     ./bin/plone-compile-resources --site-id=Castle --bundle=plone-logged-in
+
+
+Running local dependencies
+--------------------------
+
+    $ docker run -p 6379:6379 redis

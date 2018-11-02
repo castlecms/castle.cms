@@ -8,8 +8,8 @@
 
   <genericsetup:importStep
       name="castle.cms.install"
-      title="Castle Install"
-      description="Import Castle initial setup"
+      title="CastleCMS Install"
+      description="Import CastleCMS initial setup"
       handler=".install.castle">
   </genericsetup:importStep>
 

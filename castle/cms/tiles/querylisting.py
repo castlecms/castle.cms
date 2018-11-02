@@ -244,7 +244,12 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         form = self.get_form()
         for attr in self.query_attrs:
             if form.get(attr):
-                params[attr] = unidecode(form.get(attr))
+                val = form.get(attr)
+                if isinstance(val, list):
+                    val = [unidecode(v) for v in val]
+                else:
+                    val = unidecode(val)
+                params[attr] = val
         if len(params) > 0:
             url += '?' + urlencode(params)
         return url
@@ -262,13 +267,13 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         if ('Subject' in config['query'] and
                 isinstance(config['query']['Subject'], basestring)):
             config['query']['Subject'] = [config['query']['Subject']]
-        config['ajaxResults'] = {
-            'url': self.this_url,
-            'selector': '#query-results-%s' % self.id or ''
-        }
 
         out = '{}'
         try:
+            config['ajaxResults'] = {
+                'url': self.this_url,
+                'selector': '#query-results-%s' % self.id or ''
+            }
             out = json.dumps(config)
         except UnicodeDecodeError:
             try:
