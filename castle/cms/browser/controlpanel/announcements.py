@@ -189,11 +189,11 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
 
             categories = set()
             if 'form.widgets.send_to_categories' in self.request.form:
-                categories = set(self.request.form['form.widgets.send_to_categories'].split(';'))
+                categories = set(data['send_to_categories'])
 
             sender = None
             if 'form.widgets.send_from' in self.request.form:
-                sender = self.request.form['form.widgets.send_from']
+                sender = data['send_from']
 
             send_email_to_subscribers.delay(data['subject'], html=html, categories=categories, sender=sender)
 
@@ -255,8 +255,8 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             responsebody = ','.join(fields)
             categories = set()
             if 'form.widgets.export_categories' in self.request.form:
-                if self.request.form['form.widgets.export_categories'] != u'':
-                    categories = set(self.request.form['form.widgets.export_categories'].split(';'))
+                if data['export_categories'] != u'':
+                    categories = set(data['export_categories'])
             check_categories = (categories is not None and len(categories) != 0)
             for subscriber in subscribe.all():
                 if check_categories:
@@ -303,10 +303,10 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
             categories = set()
             newname = u''
             if 'form.widgets.rename_merge_categories' in self.request.form:
-                if self.request.form['form.widgets.rename_merge_categories'] != u'':
-                    categories = set(self.request.form['form.widgets.rename_merge_categories'].split(';'))
+                if data['rename_merge_categories'] != u'':
+                    categories = set(data['rename_merge_categories'])
             if 'form.widgets.new_category_name' in self.request.form:
-                newname = self.request.form['form.widgets.new_category_name'].split(';')[0]
+                newname = data['new_category_name'].split(';')[0]
             if len(categories) > 0 and len(newname) > 0:
                 if newname in allcategories and newname not in categories:
                     raise WidgetActionExecutionError(
@@ -361,8 +361,8 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'form.widgets.delete_categories' in self.request.form:
-                if self.request.form['form.widgets.delete_categories'] != u'':
-                    categories = set(self.request.form['form.widgets.delete_categories'].split(';'))
+                if data['delete_categories'] != u'':
+                    categories = set(data['delete_categories'])
             force_delete = 'form.widgets.force_delete' in self.request.form
             if len(categories) > 0:
                 badcategories = []
@@ -413,9 +413,9 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
         if not errors:
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
-            if 'form.widgets.add_categories' in self.request.form:
-                if self.request.form['form.widgets.add_categories'] != u'':
-                    categories = set(self.request.form['form.widgets.add_categories'].split(';'))
+            if 'add_categories' in data:
+                if data['add_categories'] != u'':
+                    categories = set(data['add_categories'].split(';'))
             if len(categories) > 0:
                 badcategories = []
                 for category in categories:
