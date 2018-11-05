@@ -256,7 +256,7 @@ define([
           onChange: this.valueChanged.bind(this, name, 'text')});
       }
 
-      var labelClass = 'col-sm-2 control-label';
+      var labelClass = 'col-sm-4 control-label';
       if(field['required']){
         labelClass += ' required';
       }
@@ -264,18 +264,18 @@ define([
       var id = 'castle-upload-field-' + name;
       return D.div({ className: 'form-group' }, [
         D.label({ className: labelClass, for_: id}, field['label']),
-        D.div({className: 'col-sm-10' }, input)
+        D.div({className: 'col-sm-8' }, input)
       ]);
     },
 
     createTagsField: function(field){
-      var labelClass = 'col-sm-2 control-label';
+      var labelClass = 'col-sm-4 control-label';
       if(field['required']){
         labelClass += ' required';
       }
       return D.div({ className: "field" }, [
         D.label({className: labelClass}, field['label'] || 'Tags'),
-        D.div({ className: 'col-sm-10' },
+        D.div({ className: 'col-sm-8' },
           D.input({ className: "pat-select2", type: "text", ref: 'select2', value: this.state.tags}))
       ]);
     },
