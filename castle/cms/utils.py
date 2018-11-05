@@ -830,16 +830,20 @@ def get_upload_fields(registry=None):
         for field in upload_fields:
             if 'name' not in field:
                 continue
+            # need to make copy of data otherwise we're potentially
+            # modifying the record directly
+            data = {}
+            data.update(field)
             # make sure all required field are in place
-            if field.get('required'):
-                field['required'] = str(field['required']).lower() in ('true', 't', '1')
+            if data.get('required'):
+                data['required'] = str(data['required']).lower() in ('true', 't', '1')
             else:
-                field['required'] = False
-            if 'label' not in field:
-                field[u'label'] = field[u'name'].capitalize()
+                data['required'] = False
+            if 'label' not in data:
+                data[u'label'] = data[u'name'].capitalize()
             if 'widget' not in field:
-                field[u'widget'] = u'text'
-            if 'for-file-types' not in field:
-                field[u'for-file-types'] = u'*'
-            result.append(field)
+                data[u'widget'] = u'text'
+            if 'for-file-types' not in data:
+                data[u'for-file-types'] = u'*'
+            result.append(data)
     return result
