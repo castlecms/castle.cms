@@ -55,6 +55,17 @@ class TestContent(unittest.TestCase):
         wf()
         self.assertEqual(api.content.get_state(doc), 'published')
 
+    def test_publish_content_twice(self):
+        doc = api.content.create(
+            type='Document',
+            id='doc',
+            container=self.portal)
+        pc = content.PublishContent(doc, self.request)
+        pc()
+        # second once used to cause InvalidParameterError
+        pc()
+        self.assertEqual(api.content.get_state(doc), 'published')
+
     def test_check(self):
         self.request.form.update({
             'action': 'check',
