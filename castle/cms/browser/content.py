@@ -784,7 +784,12 @@ class PublishContent(BrowserView):
 
     def __call__(self):
         self.request.response.setHeader('Content-type', 'application/json')
-        api.content.transition(self.context, 'publish')
+        try:
+            state = api.content.get_state(obj=self.context)
+        except WorkflowException:
+            state = 'published'
+        if state != 'published':
+            api.content.transition(self.context, 'publish')
         return json.dumps({
             'success': True
         })

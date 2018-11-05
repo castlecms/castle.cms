@@ -4,6 +4,9 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- do not attempt to publish item is already published content with `@@publish-content` view.
+  [vangheem]
+
 - Add "Manage Categories" tab to announcements control panel
   [CorySanin]
 
