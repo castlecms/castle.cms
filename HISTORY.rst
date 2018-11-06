@@ -8,14 +8,20 @@ Changelog
   are required fields missing or errors in fields
   [vangheem]
 
+- Clarified the add -- upload modal 
+  [RobZoneNet]
+
+- Fixes for folder_contents page. The query box layout and how it reacts to different widths of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for dashboard search button due to failing colorblindness tests
+  [RobZoneNet]
+
+- do not attempt to publish item is already published content with `@@publish-content` view.
+  [vangheem]
+
 - Add "Manage Categories" tab to announcements control panel
   [CorySanin]
 
 - Upgrade mockup to fix dev mode on contents page
   [vangheem]
-
-- Clarified the add -- upload modal 
-  [RobZoneNet]
 
 - Rename some Castle -> CastleCMS titles and labels
   [tkimnguyen]
