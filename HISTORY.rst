@@ -3,6 +3,11 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+
+- Show form errors in the mosaic interface so user knows if there
+  are required fields missing or errors in fields
+  [vangheem]
+
 - Fixed the ability to click on "Add News Item" and getting the expected add news item modal.
   [RobZoneNet]
 
