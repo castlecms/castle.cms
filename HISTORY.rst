@@ -3,8 +3,10 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+- Fixed the ability to click on "Add News Item" and getting the expected add news item modal.
+  [RobZoneNet]
 
-- Clarified the add -- upload modal 
+- Clarified the add -- upload modal
   [RobZoneNet]
 
 - Fixes for folder_contents page. The query box layout and how it reacts to different widths of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for dashboard search button due to failing colorblindness tests

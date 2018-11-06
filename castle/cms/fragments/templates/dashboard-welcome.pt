@@ -36,7 +36,7 @@
     <li class="castle-grid-block-item">
       <a href="${context/absolute_url}"
          class="add-content-btn contenttype-news-item"
-         data-type="News%20Item"
+         data-type="News Item"
          data-path="/">Add news item</a></li>
     <li class="castle-grid-block-item">
       <a href="${context/absolute_url}"
@@ -65,7 +65,7 @@
            class="add-content-btn
                   contenttype-${python: type.lower().replace(' ', '-')}"
            tal:condition="root"
-           data-type="${python: interest['type'].replace(' ', '%20')}"
+           data-type="${python: interest['type']}"
            data-path="/">Add ${python: interest['pt'].title.lower()}</a>
         <a href="${python: interest['loc']}"
            class="add-content-btn
