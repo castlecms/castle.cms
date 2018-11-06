@@ -486,3 +486,23 @@ div.mosaic-toolbar {
     pointer-events: all;
   }
 }
+
+.castle-editor-errors {
+  top: 75px;
+  right: 20px;
+  position: fixed;
+  opacity: 1;
+  z-index: 99999999;
+  min-width: 450px;
+  
+  .portalMessage dd ul {
+    padding-left: 0;
+    .title {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    .title::after {
+      content: ':';
+    }
+  }
+}

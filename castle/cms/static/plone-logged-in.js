@@ -21,6 +21,7 @@ if (window.jQuery) {
   } );
 }
 
+
 require([
   'jquery',
   'mockup-patterns-modal',

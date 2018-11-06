@@ -4,6 +4,10 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
+- Show form errors in the mosaic interface so user knows if there
+  are required fields missing or errors in fields
+  [vangheem]
+
 - Add "Manage Categories" tab to announcements control panel
   [CorySanin]
 
