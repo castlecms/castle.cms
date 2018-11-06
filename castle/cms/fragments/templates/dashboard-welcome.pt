@@ -21,7 +21,7 @@
    <img src="${user_url}" />
  </div>
   <p class="welcome-message">
-    What do you need to do todayZ?<br/>
+    What do you need to do today?<br/>
     (<a href="${dutils/site/absolute_url}/dashboards/${userId}/edit">Edit dashboard</a>)
   </p>
 
