@@ -4,7 +4,7 @@ from plone.dexterity.interfaces import IDexterityContent
 from Products.Five import BrowserView
 from zope.component import getAdapters
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -28,8 +28,8 @@ def getTileView(context, request, tile_name, view_name, default=None):
         return getTileView(context, request, tile_name, default)
 
 
+@implementer(ITileView)
 class BaseTileView(BrowserView):
-    implements(ITileView)
     order = 0
     name = None
     tile_name = None
@@ -46,8 +46,8 @@ class BaseTileView(BrowserView):
         return self.index()
 
 
+@implementer(IContextSourceBinder)
 class TileViewsSource(object):
-    implements(IContextSourceBinder)
 
     def __init__(self, tile_name):
         self.tile_name = tile_name

@@ -10,7 +10,7 @@ from time import time
 from uuid import uuid4
 from zope.component import getUtility
 
-import cPickle
+import pickle
 import logging
 
 
@@ -91,7 +91,7 @@ class SessionManager(object):
         )
 
     def register(self):
-        self.session_id = uuid4()
+        self.session_id = str(uuid4())
         self.request.response.setCookie(self.cookie_name, self.session_id)
         self.log({})
 
@@ -149,7 +149,7 @@ def get_active_sessions(sessions_key=None):
         if keys:
             for session in cclient.client.mget(keys):
                 try:
-                    session = cPickle.loads(session)
+                    session = pickle.loads(session)
                 except Exception:
                     continue
                 sessions.append(session)

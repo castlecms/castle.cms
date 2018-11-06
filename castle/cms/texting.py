@@ -12,7 +12,7 @@ def send(message, numbers):
     if numbers == ALL_SUBSCRIBERS:
         numbers = subscribe.get_phone_numbers()
 
-    if isinstance(numbers, basestring):
+    if isinstance(numbers, str):
         numbers = [numbers]
 
     clean_numbers = []

@@ -5,7 +5,7 @@ from . import cloudflare
 from App.config import getConfiguration
 from castle.cms.linkintegrity import get_content_links
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
+from Products.CMFPlone.utils import getAllowedSizes
 from plone.cachepurging.hooks import KEY
 from plone.cachepurging.interfaces import ICachePurgingSettings
 from plone.cachepurging.interfaces import IPurger
@@ -19,19 +19,18 @@ from z3c.caching.interfaces import IPurgeEvent
 from z3c.caching.interfaces import IPurgePaths
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
-from zope.component import adapts
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 from zope.testing.cleanup import addCleanUp
 from ZPublisher.interfaces import IPubSuccess
 from collective.documentviewer.settings import Settings as DocViewerSettings
 
 import atexit
 import logging
-import Queue
+import queue
 import threading
 
 
@@ -105,9 +104,8 @@ def purge(event):
             CastlePurger.purgeAsync(urls, cf)
 
 
+@implementer(IPurger)
 class CastlePurgerFactory(object):
-
-    implements(IPurger)
 
     def __init__(self, backlog=200):
         self.worker = None
@@ -117,13 +115,13 @@ class CastlePurgerFactory(object):
 
     def purgeAsync(self, urls, purger):
         if self.worker is None:
-            self.queue = Queue.Queue(self.backlog)
+            self.queue = queue.Queue(self.backlog)
             self.worker = Worker(self.queue, self)
             self.worker.start()
         try:
             self.queue.put((urls, purger), block=False)
             logger.debug('Queued %s' % ','.join(urls))
-        except Queue.Full:
+        except queue.Full:
             # Make a loud noise. Ideally the queue size would be
             # user-configurable - but the more likely case is that the purge
             # host is down.
@@ -144,7 +142,7 @@ class CastlePurgerFactory(object):
         self.worker.stopping = True
         try:
             self.queue.put(None, block=False)
-        except Queue.Full:
+        except queue.Full:
             # no problem - self.stopping should be seen.
             pass
         ok = True
@@ -160,9 +158,9 @@ class Worker(threading.Thread):
     """Worker thread for purging.
     """
 
-    def __init__(self, queue, producer):
+    def __init__(self, _queue, producer):
         self.producer = producer
-        self.queue = queue
+        self.queue = _queue
         self.stopping = False
         super(Worker, self).__init__(name="PurgeThread for castle")
 
@@ -273,6 +271,8 @@ class Purge(BrowserView):
         return self.index()
 
 
+@implementer(IPurgePaths)
+@adapter(IImageScaleTraversable)
 class LeadImagePurgePaths(object):
     """Paths to purge for lead images
 
@@ -282,9 +282,6 @@ class LeadImagePurgePaths(object):
     * ${object_path}/@@images/image/mini etc
 
     """
-
-    implements(IPurgePaths)
-    adapts(IImageScaleTraversable)
 
     def __init__(self, context):
         self.context = context
@@ -305,6 +302,8 @@ class LeadImagePurgePaths(object):
         return []
 
 
+@implementer(IPurgePaths)
+@adapter(IFile)
 class DocViewerPurgePaths(object):
     """
     Paths to purge for person objects
@@ -313,9 +312,6 @@ class DocViewerPurgePaths(object):
     - and all objects inside folder
 
     """
-
-    implements(IPurgePaths)
-    adapts(IFile)
 
     def __init__(self, context):
         self.context = context

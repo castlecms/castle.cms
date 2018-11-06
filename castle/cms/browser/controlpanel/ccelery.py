@@ -43,7 +43,7 @@ class CeleryControlPanel(BrowserView):
         obj_path = ''
         obj = None
         args = info['args']
-        if len(args) > 0 and isinstance(args[0], basestring):
+        if len(args) > 0 and isinstance(args[0], str):
             obj_path = args[0].replace('object://', '')
             obj = self.site.unrestrictedTraverse(str(obj_path), None)
 

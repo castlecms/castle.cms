@@ -33,7 +33,7 @@ class SiteConfiguration:
                             value = False
 
                     elif isinstance(schema_field, schema.TextLine):
-                        value = unicode(fieldValue)
+                        value = str(fieldValue)
 
                     elif isinstance(schema_field, schema.ASCII):
                         value = str(fieldValue)

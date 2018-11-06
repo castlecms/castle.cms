@@ -11,7 +11,7 @@ from plone.app.event.dx.behaviors import (IEventAttendees, IEventBasic,
 from plone.app.textfield.value import RichTextValue
 from plone.event.utils import pydt
 from plone.namedfile.file import NamedBlobFile, NamedBlobImage
-from StringIO import StringIO
+from io import StringIO
 
 from zope.interface import Interface
 from zope.component import getUtilitiesFor, getGlobalSiteManager
@@ -128,7 +128,8 @@ class BaseImportType(object):
     data_converters = {}
     lead_image_field_names = (
         'image', 'leadImage',
-        'plone.app.contenttypes.behaviors.leadimage.ILeadImage')
+        'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
+        'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior')
     lead_image_caption_field_names = ('leadCaption', 'leadImage_caption')
     behavior_data_mappers = ()
 
@@ -207,7 +208,9 @@ class BaseImportType(object):
             except Exception:
                 try:
                     bdata.text = RichTextValue(
-                        field_data['plone.app.contenttypes.behaviors.richtext.IRichText']['text'], # noqa
+                        field_data.get(
+                            'plone.app.contenttypes.behaviors.richtext.IRichText',
+                            field_data.get('plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'))['text'], # noqa
                         'text/html', 'text/html').raw
                 except Exception:
                     bdata.text = ''
@@ -352,7 +355,8 @@ class BaseImportType(object):
         # handle lead images
         for field_name in self.lead_image_field_names:
             if self.field_data.get(field_name):
-                if field_name == 'plone.app.contenttypes.behaviors.leadimage.ILeadImage':
+                if field_name in ('plone.app.contenttypes.behaviors.leadimage.ILeadImage',
+                                  'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior'):
                     im_obj = self.field_data.get(field_name)['image']
                 else:
                     im_obj = self.field_data.get(field_name)

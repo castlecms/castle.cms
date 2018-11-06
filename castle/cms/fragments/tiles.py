@@ -23,7 +23,7 @@ class FragmentTile(Tile):
     def update(self):
         try:
             self.index = getFragment(self.context, self.request,
-                                     self.data['name'].encode('utf-8'))
+                                     self.data['name'])
         except KeyError:
             logger.error(u"Theme fragment '{0:s}' was not found.".format(
                 self.data['name']

@@ -13,7 +13,7 @@ from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
-from urlparse import urlparse
+from urllib.parse import urlparse
 from zExceptions import Redirect
 from zope.component import adapter
 from zope.component.hooks import getSite
@@ -173,7 +173,7 @@ if argon2 is not None:
         ph = argon2.PasswordHasher()
 
         def _format(self, pw):
-            return b2a_base64(self.ph.hash(pw))
+            return b2a_base64(self.ph.hash(pw).encode('utf-8'))
 
         def encrypt(self, pw):
             pw = str(pw)

@@ -46,7 +46,7 @@ def find_image_in_annotation(data):
                 continue
             if isinstance(data, list):
                 val = val[0]
-            if not isinstance(val, basestring):
+            if not isinstance(val, str):
                 continue
             val = val.strip()
             if '<' in val:

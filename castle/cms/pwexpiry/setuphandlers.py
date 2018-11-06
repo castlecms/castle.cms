@@ -7,9 +7,9 @@ except ImportError:
 import logging
 
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
+from Products.PlonePAS.setuphandlers import activatePluginInterfaces
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
-from pwexpiry_plugin import addPwExpiryPlugin
+from .pwexpiry_plugin import addPwExpiryPlugin
 
 logger = logging.getLogger('castle.cms.pwexpiry')
 

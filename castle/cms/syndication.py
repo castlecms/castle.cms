@@ -13,7 +13,7 @@ from Products.CMFPlone.browser.syndication import adapters
 from Products.CMFPlone.interfaces.syndication import IFeed
 from repoze.xmliter.utils import getHTMLSerializer
 from ZODB.POSException import POSKeyError
-from zope.component import adapts
+from zope.component import adapter
 from zope.component import getAdapters
 from zope.globalrequest import getRequest
 
@@ -75,8 +75,8 @@ class DexterityItem(adapters.DexterityItem):
             return self.image.contentType
 
 
+@adapter(ILayoutAware, IFeed)
 class LayoutAwareItem(DexterityItem):
-    adapts(ILayoutAware, IFeed)
 
     def render_content_core(self, site=None):
         try:

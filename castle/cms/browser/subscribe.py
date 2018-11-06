@@ -13,7 +13,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import ISiteSchema
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from urllib import urlencode
+from urllib.parse import urlencode
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form

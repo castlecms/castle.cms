@@ -5,7 +5,7 @@ from lxml.etree import tostring
 from lxml.html import fromstring
 from lxml.html.clean import Cleaner
 from plone import api
-from plone.app.blob.utils import openBlob
+from castle.cms.utils import open_blob
 from plone.registry.interfaces import IRegistry
 from ZODB.blob import Blob
 from zope.component import getMultiAdapter
@@ -33,7 +33,7 @@ def create_raw_from_view(context, view_name='pdf', css_files=[]):
     css = []
     for css_file in css_files:
         ct, data = get_data_from_url(css_file)
-        if isinstance(data, basestring):
+        if isinstance(data, str):
             css.append(data)
     xml = fromstring(html)
     cleaner(xml)
@@ -85,7 +85,7 @@ def create(html, css):
 
 
 def screenshot(blob):
-    blobfi = openBlob(blob)
+    blobfi = open_blob(blob)
     filepath = docsplit.dump_image(blobfi.read(), '1000', 'gif')
     blobfi.close()
 

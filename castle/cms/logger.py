@@ -1,9 +1,7 @@
-from ZServer.medusa import http_server
+import logging
+from datetime import datetime
 
 import App
-import logging
-import time
-
 
 logger = logging.getLogger('castle.cms')
 
@@ -11,25 +9,6 @@ try:
     server = App.config.getConfiguration().servers[0]
 except Exception:
     server = None
-
-
-def medua_log_request(medusa_request, bytes):
-    """
-    we are patching default logging to disable so we can use our better
-    logging with the actual request ob...
-    """
-    pass
-
-
-http_server.http_request.log = medua_log_request
-
-
-def log_date_string(when):
-    logtime = time.localtime(when)
-    return time.strftime('%d/', logtime) + \
-           http_server.http_date.monthname[logtime[1]] + \
-           time.strftime('/%Y:%H:%M:%S ', logtime) + \
-           http_server.tz_for_log
 
 
 def log_request(request):
@@ -75,7 +54,7 @@ def log_request(request):
             origin,
             '- %s [%s] "%s" %d %s "%s" "%s"\n' % (
                 user_name,
-                log_date_string(time.time()),
+                datetime.utcnow().isoformat(),
                 request_info,
                 resp.getStatus(),
                 resp.headers.get('content-length', '0'),

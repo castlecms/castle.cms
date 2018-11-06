@@ -8,8 +8,8 @@ from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.Five import BrowserView
-from urlparse import urljoin
-from urlparse import urlparse
+from urllib.parse import urljoin
+from urllib.parse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 

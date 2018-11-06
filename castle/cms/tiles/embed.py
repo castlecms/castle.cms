@@ -4,12 +4,12 @@ from plone.registry.interfaces import IRegistry
 from plone.tiles.interfaces import IPersistentTile
 from zope import schema
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Interface
 
 
+@implementer(IPersistentTile)
 class EmbedTile(BaseTile):
-    implements(IPersistentTile)
 
     def render(self):
         content = self.data.get('code', '') or ''

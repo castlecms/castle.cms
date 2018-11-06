@@ -14,7 +14,7 @@ from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import invariant
 from zope.interface import provider
 from zope.schema.interfaces import IContextSourceBinder
@@ -36,8 +36,8 @@ def image_scales(context):
     return SimpleVocabulary(values)
 
 
+@implementer(IPersistentTile)
 class ImageTile(BaseTile):
-    implements(IPersistentTile)
 
     def render(self):
         return self.index()

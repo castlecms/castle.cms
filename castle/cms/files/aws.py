@@ -4,10 +4,10 @@ import math
 import urllib
 from datetime import datetime
 from time import time
-from urlparse import urlparse
+from urllib.parse import urlparse
 
-from boto.s3.connection import (ProtocolIndependentOrdinaryCallingFormat,
-                                S3Connection)
+from boto.s3.connection import ProtocolIndependentOrdinaryCallingFormat
+from boto.s3.connection import S3Connection
 from collective.celery.utils import getCelery
 from persistent.mapping import PersistentMapping
 from plone.namedfile.file import NamedBlobFile
@@ -62,8 +62,8 @@ def move_file(obj):
 
     key = KEY_PREFIX + uid
     filename = obj.file.filename
-    if not isinstance(filename, unicode):
-        filename = unicode(filename, 'utf-8', errors="ignore")
+    if not isinstance(filename, str):
+        filename = str(filename, 'utf-8', errors="ignore")
     filename = urllib.quote(filename.encode("utf8"))
     disposition = "attachment; filename*=UTF-8''%s" % filename
 

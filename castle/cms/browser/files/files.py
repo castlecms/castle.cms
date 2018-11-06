@@ -1,32 +1,38 @@
 import base64
 import logging
-from cStringIO import StringIO
+from io import StringIO
 from os import fstat
 
 import zope.publisher.interfaces
 from Acquisition import aq_inner
 from castle.cms.files import aws
 from castle.cms.interfaces import IReferenceNamedImage
+from castle.cms.utils import open_blob
 from PIL import Image
 from plone import api
-from plone.app.blob.download import handleRequestRange
-from plone.app.blob.iterators import BlobStreamIterator
-from plone.app.blob.utils import openBlob
 from plone.app.contenttypes.browser import file
-from plone.app.imaging.utils import getAllowedSizes
 from plone.namedfile import browser as namedfile
 from plone.namedfile.interfaces import INamedBlobFile
 from plone.namedfile.scaling import ImageScaling
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import getAllowedSizes
 from Products.Five import BrowserView
 from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
-from webdav.common import rfc1123_date
 from zExceptions import NotFound
 from ZODB.POSException import POSKeyError
 from zope.component import getMultiAdapter
 
 
 logger = logging.getLogger('castle.cms')
+
+try:
+    from webdav.common import rfc1123_date
+except ImportError:
+    from App.Common import rfc1123_date
+
+# XXX needs port
+# from plone.app.blob.download import handleRequestRange
+# from plone.app.blob.iterators import BlobStreamIterator
 
 
 class DownloadAsPNG(BrowserView):
@@ -37,7 +43,7 @@ class DownloadAsPNG(BrowserView):
             raise NotFound
 
         blob = self.context.image._blob
-        return openBlob(blob)
+        return open_blob(blob)
 
     def __call__(self):
         fi = self.get_data()
@@ -111,11 +117,11 @@ class DownloadBlob(BrowserView):
 
         if data:
             is_blob = False
-            if isinstance(data, basestring):
+            if isinstance(data, str) or isinstance(data, bytes):
                 length = len(data)
             else:
                 is_blob = True
-                blobfi = openBlob(data)
+                blobfi = open_blob(data)
                 length = fstat(blobfi.fileno()).st_size
                 blobfi.close()
 

@@ -326,7 +326,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         )
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(''),)
+            value=(str(''),)
         )
         self.request.form.update({
             'apiMethod': 'login',
@@ -344,7 +344,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         )
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(''),)
+            value=(str(''),)
         )
         self.request.form.update({
             'apiMethod': 'login',
@@ -363,9 +363,9 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         api.portal.set_registry_record(
             name='plone.backend_url',
             value=(
-                unicode('http://dummydomain/castle'),
-                unicode('http://nohost/plone'),
-                unicode('http://vpn.example.com')
+                str('http://dummydomain/castle'),
+                str('http://nohost/plone'),
+                str('http://vpn.example.com')
             )
         )
         self.request.form.update({
@@ -547,7 +547,7 @@ class TestPwexpiry(unittest.TestCase):
 if argon2 is not None:
     class TestArgon2(unittest.TestCase):
         def test_registered(self):
-            self.assertTrue('argon2' in [s[0] for s in AuthEncoding._schemes])
+            self.assertTrue('argon2' in AuthEncoding.listSchemes())
 
         def test_encrypt(self):
             scheme = security.Argon2Scheme()
@@ -555,6 +555,7 @@ if argon2 is not None:
             self.assertTrue(scheme.validate(encrypted, 'foobar'))
 
         def test_argon_is_used_by_default(self):
+            import pdb; pdb.set_trace()
             encrypted = AuthEncoding.pw_encrypt('foobar')
-            self.assertTrue('{argon2}' in encrypted)
+            self.assertTrue(b'{argon2}' in encrypted)
             self.assertTrue(AuthEncoding.pw_validate(encrypted, 'foobar'))

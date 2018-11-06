@@ -11,7 +11,9 @@ from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
 from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.utils import clear_object_cache, index_in_es, retriable
+from castle.cms.utils import clear_object_cache
+from castle.cms.utils import index_in_es
+from castle.cms.utils import retriable
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName

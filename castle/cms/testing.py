@@ -3,7 +3,7 @@ import json
 import re
 import sys
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 
 import transaction
 from castle.cms import install
@@ -22,7 +22,6 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
-# from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
 from zope.configuration import xmlconfig

@@ -9,11 +9,11 @@ from plone.tiles.interfaces import ITileDataManager
 from Products.CMFPlone.interfaces import INonInstallable
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(INonInstallable)
 class HiddenProducts(object):
-    implements(INonInstallable)
 
     def getNonInstallableProducts(self):
         return []

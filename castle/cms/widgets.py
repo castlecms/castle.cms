@@ -12,7 +12,6 @@ from castle.cms.interfaces import ICastleLayer
 from castle.cms.interfaces import IReCaptchaWidget
 from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.tiles.views import getTileViews
-from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.uuid.utils import uuidToObject
 from plone.app.widgets.base import InputWidget as BaseInputWidget
 from plone.app.widgets.base import TextareaWidget as BaseTextareaWidget
@@ -43,15 +42,19 @@ from z3c.form.interfaces import ITextWidget
 from z3c.form.util import getSpecification
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
-from zope.component import adapts
 from zope.component import getUtility
 from zope.interface import alsoProvides
 from zope.interface import implementer
-from zope.interface import implements
-from zope.interface import implementsOnly
+from zope.interface import implementer_only
 from zope.schema.interfaces import IField
 from zope.schema.interfaces import IList
 from ZPublisher.HTTPRequest import FileUpload
+
+
+try:
+    from plone.app.contenttypes.behaviors.leadimage import ILeadImageBehavior as ILeadImage
+except ImportError:
+    from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 
 
 class MultiSelectWidget(pz3c_SelectWidget):
@@ -254,12 +257,11 @@ class IJSONListWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IJSONListWidget)
 class JsonListWidget(BaseWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseInputWidget
-
-    implementsOnly(IJSONListWidget)
 
     pattern = 'mapselect'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -276,8 +278,8 @@ class IMapMarkersWidget(IJSONListWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IMapMarkersWidget)
 class MapMarkersWidget(JsonListWidget):
-    implementsOnly(IMapMarkersWidget)
 
     pattern = 'mapselect'
     pattern_options = JsonListWidget.pattern_options.copy()
@@ -304,12 +306,11 @@ def UseQueryWidget(field, request):
     return widget
 
 
+@implementer_only(IMapMarkersWidget)
 class MapPointWidget(BaseWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseInputWidget
-
-    implementsOnly(IMapMarkersWidget)
 
     klass = style = title = lang = onclick = ondblclick = onmousedown = ''
     onmouseup = onmouseover = onmousemove = onmouseout = onkeypress = ''
@@ -336,12 +337,11 @@ def MapPointFieldWidget(field, request):
     return widget
 
 
+@implementer_only(IMapMarkersWidget)
 class MapPointsWidget(MapPointWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseInputWidget
-
-    implementsOnly(IMapMarkersWidget)
 
     pattern = 'mapselect'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -365,8 +365,9 @@ class IFileUploadFieldsWidget(IJSONListWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IFileUploadFieldsWidget)
 class FileUploadFieldsWidget(MapPointsWidget):
-    implementsOnly(IFileUploadFieldsWidget)
+
     pattern = 'fileuploadfieldswidget'
 
     def _base_args(self):
@@ -385,10 +386,10 @@ def FileUploadFieldsFieldWidget(field, request):
     return widget
 
 
+@adapter(IList, IJSONListWidget)
 class JSONListWidgetDataConverter(NamedDataConverter):
     """Converts from a file-upload to a NamedFile variant.
     """
-    adapts(IList, IJSONListWidget)
 
     def toWidgetValue(self, value):
         return json.dumps(value)
@@ -397,7 +398,7 @@ class JSONListWidgetDataConverter(NamedDataConverter):
         fields = json.loads(value)
         for field in fields or []:
             if 'required' in field and isinstance(field['required'], bool):
-                field['required'] = unicode(field['required']).lower()
+                field['required'] = str(field['required']).lower()
         return fields
 
 
@@ -435,11 +436,10 @@ def NavigationTypeWidget(field, request):
     return widget
 
 
+@implementer_only(IReCaptchaWidget)
 class ReCaptchaWidget(text.TextWidget):
     maxlength = 7
     size = 8
-
-    implementsOnly(IReCaptchaWidget)
 
     def public_key(self):
         registry = getUtility(IRegistry)
@@ -457,12 +457,11 @@ class ITinyMCETextWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(ITinyMCETextWidget)
 class TinyMCETextWidget(BaseWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseTextareaWidget
-
-    implementsOnly(ITinyMCETextWidget)
 
     pattern = 'tinymce'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -505,10 +504,10 @@ class IFocalNamedImageWidget(INamedImageWidget):
     pass
 
 
+@implementer(IFocalNamedImageWidget)
 class FocalNamedImageWidget(BaseNamedImageWidget):
     """A widget for a named file object
     """
-    implements(IFocalNamedImageWidget)
 
     def get_image_options(self):
         download_url = self.download_url
@@ -545,7 +544,7 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             'filename': self.filename,
             'content_type': contentType,
             'icon': icon,
-            'thumb_width': self.thumb_width,
+            'thumb_width': self.width or 128,
             'file_size': self.file_size,
             'doc_type': fct,
             'width': width,
@@ -555,7 +554,7 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
 
     def get_reference_options(self):
         download_url = self.download_url
-        if (isinstance(self.value, basestring) and
+        if (isinstance(self.value, str) and
                 self.value.startswith('reference:')):
             reference = self.value.replace('reference:', '')
         else:
@@ -579,7 +578,7 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             'disabled': self.disabled,
             'maxlength': self.maxlength
         }
-        is_string = isinstance(self.value, basestring)
+        is_string = isinstance(self.value, str)
         if (IReferenceNamedImage.providedBy(self.value) or
                 (is_string and self.value.startswith('reference:'))):
             result.update(self.get_reference_options())
@@ -609,10 +608,10 @@ def FocalNamedImageFieldWidget(field, request):
     return widget
 
 
+@adapter(INamedImageField, IFocalNamedImageWidget)
 class FocalNamedImageDataConverter(NamedDataConverter):
     """Converts from a file-upload to a NamedFile variant.
     """
-    adapts(INamedImageField, IFocalNamedImageWidget)
 
     def toWidgetValue(self, value):
         return value
@@ -625,7 +624,7 @@ class FocalNamedImageDataConverter(NamedDataConverter):
 
             filename = safe_basename(value.filename)
 
-            if filename is not None and not isinstance(filename, unicode):
+            if filename is not None and not isinstance(filename, str):
                 # Work-around for
                 # https://bugs.launchpad.net/zope2/+bug/499696
                 filename = filename.decode('utf-8')
@@ -643,10 +642,10 @@ class FocalNamedImageDataConverter(NamedDataConverter):
                 filename = req.get(widget.name + '.filename')
                 if type(filename) in (list, set, tuple) and filename:
                     filename = filename[0]
-                if not isinstance(filename, unicode):
+                if not isinstance(filename, str):
                     filename = filename.decode('utf8')
                 args['filename'] = filename
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 if value.startswith('reference:'):
                     reference = value.replace('reference:', '')
                     obj = uuidToObject(reference)
@@ -714,12 +713,11 @@ class IFocalPointSelectWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IFocalPointSelectWidget)
 class FocalPointSelectWidget(BaseWidget):
     """Widget to select focal point"""
 
     _base = BaseInputWidget
-
-    implementsOnly(IFocalPointSelectWidget)
 
     pattern = 'focalpointselect'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -744,8 +742,8 @@ class ITOCWidget(IJSONListWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IMapMarkersWidget)
 class TOCWidget(JsonListWidget):
-    implementsOnly(IMapMarkersWidget)
 
     pattern = 'toccreator'
     pattern_options = JsonListWidget.pattern_options.copy()
@@ -768,10 +766,10 @@ class IUploadNamedFileWidget(INamedFileWidget):
     pass
 
 
+@adapter(INamedFileField, IUploadNamedFileWidget)
 class NamedFileDataConverter(NamedDataConverter):
     """Converts from a file-upload to a NamedFile variant.
     """
-    adapts(INamedFileField, IUploadNamedFileWidget)
 
     def toWidgetValue(self, value):
         return value

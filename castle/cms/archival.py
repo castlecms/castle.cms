@@ -1,25 +1,23 @@
+import hashlib
+import logging
+import re
+from urllib.parse import urljoin, urlparse
+
+import requests
+
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
 from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager
 from castle.cms.utils import normalize_url
 from DateTime import DateTime
-from lxml.html import fromstring
-from lxml.html import tostring
+from lxml.html import fromstring, tostring
 from plone import api
 from plone.subrequest import subrequest
 from plone.uuid.interfaces import IUUID
-from urlparse import urljoin
-from urlparse import urlparse
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
-from zope.interface import implements
-
-import hashlib
-import logging
-import re
-import requests
-
+from zope.interface import implementer
 
 logger = logging.getLogger('castle.cms')
 
@@ -33,8 +31,8 @@ CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'
 
 
+@implementer(IArchiveContentTransformer)
 class BaseArchivalTransformer(object):
-    implements(IArchiveContentTransformer)
 
     def __init__(self, archiver):
         self.archiver = archiver
@@ -43,9 +41,8 @@ class BaseArchivalTransformer(object):
         pass
 
 
+@implementer(IArchiveManager)
 class ArchiveManager(object):
-
-    implements(IArchiveManager)
 
     def getContentToArchive(self, delta=0):
         days = api.portal.get_registry_record(

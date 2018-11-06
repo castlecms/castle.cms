@@ -1,12 +1,14 @@
 import json
 
-from Acquisition import aq_inner, aq_parent
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from borg.localrole.interfaces import IFactoryTempFolder
-from castle.cms import cache, theming
+from castle.cms import cache
+from castle.cms import theming
 from castle.cms.interfaces import IDashboard
+from castle.cms.services.google import youtube
 from castle.cms.utils import get_upload_fields
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.memoize.view import memoize
@@ -15,12 +17,13 @@ from plone.tiles.interfaces import ITileType
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
-from Products.CMFPlone.interfaces import IPatternsSettings, IPloneSiteRoot
-from Products.CMFPlone.patterns import (PloneSettingsAdapter,
-                                        TinyMCESettingsGenerator)
+from Products.CMFPlone.interfaces import IPatternsSettings
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.CMFPlone.patterns.settings import PatternSettingsAdapter
+from Products.CMFPlone.patterns.tinymce import TinyMCESettingsGenerator
+from Products.CMFPlone.utils import getAllowedSizes
 from zope.component import getUtility
-from zope.interface import implements
-from castle.cms.services.google import youtube
+from zope.interface import implementer
 
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
@@ -45,13 +48,13 @@ class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
         return config
 
 
-class CastleSettingsAdapter(PloneSettingsAdapter):
+@implementer(IPatternsSettings)
+class CastleSettingsAdapter(PatternSettingsAdapter):
     """
     This adapter will handle all default plone settings.
 
     Right now, it only does tinymce
     """
-    implements(IPatternsSettings)
 
     def __init__(self, context, request, field):
         super(CastleSettingsAdapter, self).__init__(context, request, field)
@@ -115,7 +118,7 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             initial = None
         else:
             initial = IUUID(folder, None)
-        current_path = folder.absolute_url()[len(generator.portal_url):]
+        current_path = folder.absolute_url()[len(generator.nav_root_url):]
 
         scales = []
         for name, info in sorted(getAllowedSizes().items(), key=lambda x: x[1][0]):
@@ -133,12 +136,12 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             'relatedItems': {
                 'vocabularyUrl':
                     '%s/@@getVocabulary?name=plone.app.vocabularies.Catalog' % (
-                        generator.portal_url)
+                        generator.nav_root_url)
             },
             'upload': {
                 'initialFolder': initial,
                 'currentPath': current_path,
-                'baseUrl': generator.portal_url,
+                'baseUrl': generator.nav_root_url,
                 'relativePath': '@@fileUpload',
                 'uploadMultiple': False,
                 'maxFiles': 1,
@@ -147,7 +150,7 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             'base_url': self.context.absolute_url(),
             'tiny': generator.get_tiny_config(),
             # This is for loading the languages on tinymce
-            'loadingBaseUrl': '%s/++plone++static/components/tinymce-builded/js/tinymce' % generator.portal_url,  # noqa
+            'loadingBaseUrl': '%s/++plone++static/components/tinymce-builded/js/tinymce' % generator.nav_root_url,  # noqa
             'prependToUrl': 'resolveuid/',
             'linkAttribute': 'UID',
             'prependToScalePart': '/@@images/image/',

@@ -12,7 +12,7 @@ from datetime import datetime
 from lxml import etree
 from lxml.html import tostring
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
+from Products.CMFPlone.utils import getAllowedSizes
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.layout.viewlets.common import GlobalSectionsViewlet
@@ -27,13 +27,13 @@ from Products.CMFPlone.utils import getSiteLogo
 from Products.Five import BrowserView
 from Products.ZCatalog.interfaces import ICatalogBrain
 from unidecode import unidecode
-from urlparse import parse_qs
-from urlparse import urlparse
+from urllib.parse import parse_qs
+from urllib.parse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
 
@@ -49,8 +49,8 @@ def _clean_youtube_id(val):
     return val.split('&')[0]
 
 
+@implementer(IUtils)
 class Utils(BrowserView):
-    implements(IUtils)
 
     @property
     @memoize
@@ -91,7 +91,7 @@ class Utils(BrowserView):
             return val.getObject()
         if not val:
             return None
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             if val[0] == '/':
                 # it's a path
                 return self.site.restrictedTraverse(val.strip('/'), None)
@@ -100,7 +100,7 @@ class Utils(BrowserView):
                 obj = uuidToObject(val)
                 if obj:
                     return obj
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             return None
         return val
 
@@ -113,7 +113,7 @@ class Utils(BrowserView):
     def valid_date(self, date):
         if not date:
             return False
-        if isinstance(date, basestring):
+        if isinstance(date, str):
             date = DateTime(date)
         if date.year() == 1969:
             return False
@@ -122,14 +122,14 @@ class Utils(BrowserView):
     def iso_date(self, date):
         if not date:
             return ''
-        if isinstance(date, basestring):
+        if isinstance(date, str):
             date = DateTime(date)
         return date.ISO8601()
 
     def format_date(self, date, format='common', formatter=None):
         if not date:
             return ''
-        if isinstance(date, basestring):
+        if isinstance(date, str):
             date = DateTime(date)
         if isinstance(date, datetime):
             date = DateTime(date)
@@ -218,7 +218,7 @@ class Utils(BrowserView):
         return url
 
     def get_youtube_url(self, obj):
-        if isinstance(obj, basestring):
+        if isinstance(obj, str):
             url = obj
         else:
             try:
@@ -349,7 +349,7 @@ class Utils(BrowserView):
             except Exception:
                 url = brain.absolute_url()
                 alt = brain.Title()
-            if not isinstance(alt, basestring):
+            if not isinstance(alt, str):
                 alt = ''
             attrib.update({
                 'src': '{0}/@@images/image/{1}'.format(url, scale or ''),

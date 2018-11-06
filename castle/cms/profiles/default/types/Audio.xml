@@ -26,7 +26,7 @@
   <element value="plone.app.dexterity.behaviors.filename.INameFromFileName"/>
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
-  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
+  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior"/>
   <element value="castle.cms.behaviors.location.ILocation"/>
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>

@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 
-import Globals
+from App.config import getConfiguration
 from DateTime import DateTime
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
@@ -53,7 +53,7 @@ class Storage(object):
     def _get_fs_path(self):
         """ returns FS path for jbot storage.
         """
-        base_path = '/'.join(Globals.data_dir.split('/')[:-1])
+        base_path = '/'.join(getConfiguration().data_dir.split('/')[:-1])
         jbot_dir = os.path.join(base_path, 'jbot')
         site_id = '-'.join(self.site.getPhysicalPath()[1:])
         fs_path = os.path.join(jbot_dir, site_id, self.theme)
@@ -104,8 +104,7 @@ class Storage(object):
                 DateTime(self.get_modified(filename)) > DateTime(os.stat(filepath).st_mtime))
 
 
-class _TemplateManager(object):
-    interface.implements(interfaces.ITemplateManager)
+class _TemplateManager:
 
     def __init__(self):
         self.syspaths = tuple(sys.path)
@@ -212,8 +211,8 @@ class _TemplateManager(object):
                 return True
 
 
+@interface.implementer(interfaces.ITemplateManager)
 class TemplateManagerFactory(object):
-    interface.implements(interfaces.ITemplateManager)
 
     def __init__(self):
         self.manager = _TemplateManager()

@@ -14,17 +14,17 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
-from Products.PasswordResetTool.PasswordResetTool import (ExpiredRequestError,
-                                                          InvalidRequestError)
+from Products.CMFPlone.PasswordResetTool import (ExpiredRequestError,
+                                                 InvalidRequestError)
 from ZODB.POSException import ConnectionStateError
 from zope.component import getMultiAdapter, getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
-from zope.interface import alsoProvides, implements
+from zope.interface import alsoProvides, implementer
 
 
+@implementer(ISecureLoginAllowedView)
 class SecureLoginView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     def __init__(self, context, request):
         super(SecureLoginView, self).__init__(context, request)
@@ -464,8 +464,8 @@ The user requesting this access logged this information:
         return json.dumps(data)
 
 
+@implementer(ISecureLoginAllowedView)
 class LoginExceptionApprovalView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     message = 'Incorrect code for country exception.'
     success = False

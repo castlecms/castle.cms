@@ -64,7 +64,7 @@ def get_content_links(obj):
     except AttributeError:
         pass
 
-    if getattr(obj, 'image', None):
+    if getattr(obj, 'image', None) is not None:
         if IReferenceNamedImage.providedBy(obj.image):
             sub_obj = uuidToObject(obj.image.reference)
             if sub_obj:
@@ -81,7 +81,7 @@ def get_tile_data_links(obj, data):
             if field_name not in data:
                 continue
             val = data.get(field_name)
-            if isinstance(val, basestring):
+            if isinstance(val, str):
                 links = extractLinks(val)
                 refs |= li.getObjectsFromLinks(obj, links)
             elif isinstance(val, list):

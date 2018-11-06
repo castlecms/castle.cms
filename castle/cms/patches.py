@@ -3,24 +3,17 @@ from time import time
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms import authentication
-from castle.cms import cache
+from castle.cms import authentication, cache
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
-from OFS.CopySupport import CopyError
-from OFS.CopySupport import _cb_decode
-from OFS.CopySupport import _cb_encode
-from OFS.CopySupport import eInvalid
-from OFS.CopySupport import eNoData
+from OFS.CopySupport import (CopyError, _cb_decode, _cb_encode)
 from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from ZODB.POSException import ConnectionStateError
-from zope.component import getGlobalSiteManager
-from zope.component import queryUtility
+from zope.component import getGlobalSiteManager, queryUtility
 from zope.interface import implementer
-
 
 logger = logging.getLogger('castle.cms')
 
@@ -70,12 +63,12 @@ def manage_pasteObjects(self, cb_copy_data=None, REQUEST=None):
     else:
         cp = None
     if cp is None:
-        raise CopyError(eNoData)
+        raise CopyError('No data')
 
     try:
         op, mdatas = _cb_decode(cp)
     except Exception:
-        raise CopyError(eInvalid)
+        raise CopyError('Could not decode')
 
     try:
         if mdatas[0][0].startswith('cache:'):

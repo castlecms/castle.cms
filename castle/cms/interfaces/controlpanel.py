@@ -370,7 +370,7 @@ class IAPISettings(Interface):
         title=u'Rocket.Chat secret',
         description=u'Text string used to salt Rocket.Chat authentication tokens',
         required=False,
-        default=unicode(django_random.get_random_string(64))
+        default=str(django_random.get_random_string(64))
     )
 
     matomo_base_url = schema.URI(

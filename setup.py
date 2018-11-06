@@ -75,6 +75,7 @@ setup(
         'redis>=2.10.5<3',
         'setuptools',
         'python-dateutil',
+        'boto',
         'pyopenssl',
         'phonenumbers',
         'html2text',
@@ -86,6 +87,7 @@ setup(
         # misc
         'z3c.unconfigure',
         'z3c.jbot',
+        'plone.app.blocks>=10.0.0',
     ],
     extras_require={
         'test': [

@@ -3,6 +3,8 @@ from castle.cms.fragments.interfaces import IFragmentsDirectory
 
 
 def getFragment(context, request, name):
+    if isinstance(name, bytes):
+        name = name.decode('utf-8')
     utils = getAllUtilitiesRegisteredFor(IFragmentsDirectory)
     utils.sort(key=lambda u: u.order)
     for util in reversed(utils):

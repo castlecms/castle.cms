@@ -2,7 +2,7 @@ import base64
 import json
 import re
 from datetime import datetime
-from StringIO import StringIO
+from io import StringIO
 
 import OFS
 from BTrees.OOBTree import OOBTree
@@ -11,8 +11,6 @@ from Persistence.mapping import PersistentMapping as PM1
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2
-from plone.app.blob.field import BlobWrapper
-from plone.app.blob.utils import openBlob
 from plone.app.contentlisting.contentlisting import ContentListing
 from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedBlobImage
@@ -22,6 +20,12 @@ from Products.ZCatalog.Lazy import LazyCat
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
+
+
+try:
+    from plone.app.blob.field import BlobWrapper
+except ImportError:
+    BlobWrapper = None
 
 _filedata_marker = 'filedata://'
 _deferred_marker = 'deferred://'
@@ -203,7 +207,7 @@ class BlobWrapperSerializer(BaseTypeSerializer):
     @classmethod
     def _serialize(kls, obj):
         blob = obj.getBlob()
-        blobfi = openBlob(blob)
+        blobfi = blob.open('r')
         data = blobfi.read()
         blobfi.close()
         return {

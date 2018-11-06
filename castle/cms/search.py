@@ -5,7 +5,7 @@ from collective.elasticsearch import query
 from collective.elasticsearch.interfaces import IAdditionalIndexDataProvider
 from plone import api
 from zope.annotation.interfaces import IAnnotations
-from zope.interface import implements
+from zope.interface import implementer
 
 
 class MappingAdapter(mapping.MappingAdapter):
@@ -28,8 +28,8 @@ class MappingAdapter(mapping.MappingAdapter):
     })
 
 
+@implementer(IAdditionalIndexDataProvider)
 class AdditionalIndexDataProvider(object):
-    implements(IAdditionalIndexDataProvider)
 
     def __init__(self, obj):
         self.obj = obj

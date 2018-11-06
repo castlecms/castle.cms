@@ -7,7 +7,7 @@ from plone.transformchain.interfaces import ITransform
 from Products.CMFPlone.log import logger
 from repoze.xmliter.serializer import XMLSerializer
 from zope.component import adapter
-from zope.interface import implements
+from zope.interface import implementer
 from ZPublisher.interfaces import IPubEnd
 from ZPublisher.interfaces import IPubStart
 from castle.cms.logger import log_request
@@ -51,8 +51,8 @@ _impersonator_template = PageTemplate("""
 )
 
 
+@implementer(ITransform)
 class TransformInpersonatorOutput(object):
-    implements(ITransform)
 
     order = 10000
 

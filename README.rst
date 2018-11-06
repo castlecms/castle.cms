@@ -16,6 +16,47 @@ Welcome to the main CastleCMS package!
 =======================================
 
 
+WORKING ON THIS BRANCH!!!
+=========================
+
+This branch is highly experimental branch to make castle work with Python 3.6+ and Plone 5.2
+
+To get started:
+
+.. code-block:: shell
+    python -m venv env
+    env/bin/pip install -r requirements.txt
+    env/bin/buildout -c develop.cfg
+
+To Run:
+
+    bin/instance fg
+
+
+What works...?
+
+    - mostly everything
+
+What doesn't work:
+
+    - tests
+    - ? needs more testing but I'm sure a bunch is still broken
+
+
+But, things are basically moved to new changes--the hard work ahead though.
+
+
+CHANGES TO 5.2!!
+================
+
+- plone.app.contenttypes.behaviors.leadimage.ILeadImage renamed to
+  plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior
+  (needs uprade?)
+- plone.app.contenttypes.behaviors.richtext.IRichText to
+  plone.app.contenttypes.behaviors.richtext.IRichTextBehavior
+  (needs uprade?)
+
+
 Feature List
 ============
 

@@ -63,7 +63,7 @@ class ExistingTile(ContentTile, DisplayTypeTileMixin):
             return ''
         if type(val) in (set, list, tuple):
             val = joiner.join(val)
-        if isinstance(val, basestring) and '\n' in val:
+        if isinstance(val, str) and '\n' in val:
             val = joiner.join(val.splitlines())
         return val
 

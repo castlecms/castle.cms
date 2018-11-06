@@ -31,16 +31,16 @@ from zope.component import getAllUtilitiesRegisteredFor
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.interface import implements
+from zope.interface import implementer
 
 
 logger = logging.getLogger('castle.cms')
 
 
+@implementer(IToolbarModifier)
 class BaseToolbarModifier(object):
     order = 0
     layer = None
-    implements(IToolbarModifier)
 
     def __init__(self, context, request):
         self.context = context

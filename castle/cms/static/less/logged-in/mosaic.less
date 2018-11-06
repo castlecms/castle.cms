@@ -6,6 +6,7 @@ div.mosaic-toolbar {
    we could do this at the app layer but this is
    a bit easier. Just pay attention here! */
 .mosaic-option-ILeadImage-image-caption,
+.mosaic-option-ILeadImageBehavior-image-caption,
 .mosaic-option-plone-app-standardtiles-image,
 .mosaic-option-plone-app-standardtiles-embed,
 .mosaic-option-plone-app-standardtiles-attachment,
@@ -23,6 +24,7 @@ div.mosaic-toolbar {
 // .mosaic-option-plone-app-standardtiles-rawhtml,
 .mosaic-option.mosaic-option-text,
 .mosaic-option-ILeadImage-image,
+.mosaic-option-ILeadImageBehavior-image,
 .mosaic-option-ILocation-coordinates,
 .mosaic-option-tile-align-right,
 .mosaic-option-tile-align-left,
@@ -116,6 +118,7 @@ div.mosaic-toolbar {
 }
 
 .mosaic-IRichText-text-tile,
+.mosaic-IRichTextBehavior-text-tile,
 .castle-rawhtml-tile,
 .mosaic-text-tile{
   &.mosaic-selected-tile {
@@ -467,7 +470,8 @@ div.mosaic-toolbar {
   .mosaic-tile.mosaic-IDublinCore-description-tile .mosaic-tile-content-empty > *:first-child:before{
     content: "Empty description. Click to edit\2026";
   }
-  .mosaic-tile.mosaic-IRichText-text-tile .mosaic-tile-content-empty > *:first-child:before{
+  .mosaic-tile.mosaic-IRichText-text-tile .mosaic-tile-content-empty > *:first-child:before,
+  .mosaic-tile.mosaic-IRichTextBehavior-text-tile .mosaic-tile-content-empty > *:first-child:before{
     content: "Text empty. Click to edit\2026";
   }
 }

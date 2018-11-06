@@ -16,9 +16,9 @@ from Products.Five import BrowserView
 from z3c.form import button
 from z3c.form import field
 from zope import schema
-from zope.component import adapts
+from zope.component import adapter
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -51,9 +51,9 @@ class IFeedSettings(IBaseFeedSettings):
     )
 
 
+@implementer(IFeedSettings)
+@adapter(ISyndicatable)
 class FeedSettings(settings.FeedSettings):
-    implements(IFeedSettings)
-    adapts(ISyndicatable)
 
     def __getattr__(self, name):
         default = None

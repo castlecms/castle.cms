@@ -7,9 +7,8 @@
 import json
 import logging
 import re
-from urlparse import urljoin
+from urllib.parse import urljoin
 
-import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
@@ -101,9 +100,9 @@ class ThemeTemplateLoader(PageTemplateLoader):
         if filename in self.file_cache:
             return self.file_cache[filename]
         try:
-            if isinstance(filename, unicode):
-                filename = filename.encode('utf8')
-            result = unicode(self.folder.readFile(filename), 'utf8')
+            if isinstance(filename, bytes):
+                filename = filename.decode('utf-8')
+            result = str(self.folder.readFile(filename), 'utf8')
             self.file_cache[filename] = result
             return result
         except (NotFound, IOError):
@@ -167,7 +166,7 @@ class _Transform(object):
         portal_url = portal.absolute_url()
 
         raw = False
-        if isinstance(result, basestring):
+        if isinstance(result, str):
             raw = True
         else:
             self.rewrite(result, context.absolute_url() + '/')
@@ -198,7 +197,8 @@ class _Transform(object):
             utils=utils
         )
 
-        dom = getHTMLSerializer([layout])
+        dom = getHTMLSerializer(
+            [layout.encode('utf-8')], pretty_print=False, encoding='utf-8')
         self.rewrite(dom, theme_base_url)
         if not raw:
             # old style things...
@@ -429,14 +429,15 @@ class _Transform(object):
             if len(content) == 0:
                 content = content_xpath(result)
             if len(content) > 0:
-                main_html = html.tostring(content[0])
+                main_html = html.tostring(content[0]).decode('utf-8')
 
             column1 = column1_xpath(result)
             if len(column1) > 0 and len(column1[0]) > 0:
-                column1_html = html.tostring(column1[0])
+                column1_html = html.tostring(column1[0]).decode('utf-8')
             column2 = column2_xpath(result)
             if len(column2) > 0 and len(column2[0]) > 0:
-                column2_html = html.tostring(column2[0])
+                column2_html = html.tostring(column2[0]).decode('utf-8')
+
         return {
             'main': main_html,
             'left': column1_html,
@@ -487,7 +488,7 @@ class _Transform(object):
 
 
 def getTransform(context, request):
-    DevelopmentMode = Globals.DevelopmentMode
+    DevelopmentMode = api.env.debug_mode()
     policy = theming_policy(request)
 
     # Obtain settings. Do nothing if not found
@@ -560,7 +561,7 @@ class Policy(ThemingPolicy):
 
         # Resolve DevelopmentMode late (i.e. not on import time) since it may
         # be set during import or test setup time
-        DevelopmentMode = Globals.DevelopmentMode
+        DevelopmentMode = api.env.debug_mode()
 
         # Disable theming if the response sets a header
         if self.request.response.getHeader('X-Theme-Disabled'):
@@ -624,7 +625,7 @@ def transformIterable(self, result, encoding):
     except AttributeError:
         pass
 
-    DevelopmentMode = Globals.DevelopmentMode
+    DevelopmentMode = api.env.debug_mode()
 
     try:
         # if we are here, it means we are rendering the the

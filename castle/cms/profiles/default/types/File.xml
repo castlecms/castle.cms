@@ -24,7 +24,7 @@
   <element value="plone.app.dexterity.behaviors.metadata.IPublication"/>
   <element value="plone.app.dexterity.behaviors.metadata.IOwnership"/>
   <element value="plone.app.dexterity.behaviors.filename.INameFromFileName"/>
-  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
+  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior"/>
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.location.ILocation"/>

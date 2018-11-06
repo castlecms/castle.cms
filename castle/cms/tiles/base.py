@@ -4,10 +4,10 @@ from plone.memoize.view import memoize_contextless
 from plone.tiles import Tile
 from plone.tiles.interfaces import IPersistentTile
 from Products.CMFCore.utils import getToolByName
-from urllib import quote_plus
+from urllib.parse import quote_plus
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
-from zope.interface import implements
+from zope.interface import implementer
 from zope.security import checkPermission
 from castle.cms.tiles.views import getTileView
 
@@ -170,8 +170,8 @@ class DisplayTypeTileMixin(object):
         return view()
 
 
+@implementer(IPersistentTile)
 class ContentTile(BaseTile):
-    implements(IPersistentTile)
     default_display_fields = ('title', 'image', 'description')
     sort_limit = 1
 
@@ -203,8 +203,8 @@ class ContentTile(BaseTile):
         return df
 
 
+@implementer(IPersistentTile)
 class BaseImagesTile(ContentTile):
-    implements(IPersistentTile)
     sort_limit = 0
 
     def get_image_data_from_brain(self, brain):

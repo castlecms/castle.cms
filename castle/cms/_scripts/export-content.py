@@ -6,7 +6,7 @@ import os
 import re
 from datetime import datetime
 from fnmatch import fnmatch
-from StringIO import StringIO
+from io import StringIO
 
 import OFS
 from AccessControl.SecurityManagement import newSecurityManager
@@ -21,8 +21,6 @@ from Persistence.mapping import PersistentMapping as PM1  # noqa
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
-from plone.app.blob.field import BlobWrapper
-from plone.app.blob.utils import openBlob
 from plone.app.textfield import RichText
 from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
@@ -103,6 +101,11 @@ try:
     from plone.app.textfield.value import RichTextValue
 except ImportError:
     RichTextValue = None
+
+try:
+    from plone.app.blob.field import BlobWrapper
+except ImportError:
+    BlobWrapper = None
 
 
 parser = argparse.ArgumentParser(
@@ -328,7 +331,7 @@ class BlobWrapperSerializer(BaseTypeSerializer):
     @classmethod
     def _serialize(cls, obj):
         blob = obj.getBlob()
-        blobfi = openBlob(blob)
+        blobfi = blob.open('r')
         data = blobfi.read()
         blobfi.close()
         return {
