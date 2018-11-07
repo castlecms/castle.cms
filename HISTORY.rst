@@ -4,6 +4,9 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
+- Handle potentially weird ConnectionStateError on login
+  [vangheem]
+
 - Be able to customize file upload fields
   [vangheem]
 
