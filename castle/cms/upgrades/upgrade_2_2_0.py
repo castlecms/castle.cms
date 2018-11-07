@@ -4,7 +4,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 from zope.component import getUtility
 
-PROFILE_ID = 'profile-castle.cms.upgrades:2_1_2'
+PROFILE_ID = 'profile-castle.cms.upgrades:2_2_0'
 
 
 def upgrade(context, logger=None):

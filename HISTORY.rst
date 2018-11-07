@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1.2 (unreleased)
+2.2.0 (unreleased)
 ------------------
 
 - Show form errors in the mosaic interface so user knows if there

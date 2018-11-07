@@ -5,7 +5,7 @@ from copy import deepcopy
 
 from castle.cms.patterns import CastleSettingsAdapter
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.upgrades import upgrade_2_1_2
+from castle.cms.upgrades import upgrade_2_2_0
 from castle.cms.utils import get_upload_fields
 from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
 from plone.registry.field import List
@@ -88,7 +88,7 @@ class TestFileUploadFields(unittest.TestCase):
         self.assertIn('castle.required_file_upload_fields', registry.records._fields)
         self.assertIn('castle.required_file_upload_fields', registry.records._values)
 
-        upgrade_2_1_2.upgrade(self.portal)
+        upgrade_2_2_0.upgrade(self.portal)
         self.assertEquals(len(registry['castle.file_upload_fields']), 4)
 
         self.assertTrue(registry['castle.file_upload_fields'] is not None)
@@ -110,5 +110,5 @@ class TestFileUploadFields(unittest.TestCase):
             u'for-file-types': u'*'
         })
         registry['castle.file_upload_fields'] = fields
-        upgrade_2_1_2.upgrade(self.portal)
+        upgrade_2_2_0.upgrade(self.portal)
         self.assertEquals(len(registry['castle.file_upload_fields']), 5)
