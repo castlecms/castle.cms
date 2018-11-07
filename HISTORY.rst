@@ -4,6 +4,9 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
+- Be able to customize file upload fields
+  [vangheem]
+
 - Show form errors in the mosaic interface so user knows if there
   are required fields missing or errors in fields
   [vangheem]
@@ -14,9 +17,10 @@ Changelog
 - Clarified the add -- upload modal
   [RobZoneNet]
 
-- Fixes for folder_contents page. The query box layout and how it reacts to different widths of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for dashboard search button due to failing colorblindness tests
-- Be able to customize file upload fields
-  [vangheem]
+- Fixes for folder_contents page. The query box layout and how it reacts to different widths
+  of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for
+  dashboard search button due to failing colorblindness tests
+  [RobZoneNet]
 
 - Clarified the add -- upload modal 
   [RobZoneNet]
