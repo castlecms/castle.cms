@@ -372,7 +372,11 @@ class Toolbar(BrowserView):
         return menu
 
     def get_addon_buttons(self):
-        return api.portal.get_registry_record('castle.toolbar_buttons')
+        return api.portal.get_registry_record(
+            'castle.toolbar_buttons', default={
+                'side_toolbar': [],
+                'top_toolbar': []
+            })
 
     def _get_portal_actions(self, name):
         if name not in self.pactions:
@@ -461,12 +465,16 @@ class Toolbar(BrowserView):
             context = self.site
         return context
 
+    @property
+    @memoize
+    def context_state(self):
+        return getMultiAdapter(
+            (aq_inner(self.real_context), self.request),
+            name=u'plone_context_state')
+
     def update(self):
         self.site = api.portal.get()
 
-        self.context_state = getMultiAdapter(
-            (aq_inner(self.real_context), self.request),
-            name=u'plone_context_state')
         self.folder = self.context_state.folder()
 
         self.user = api.user.get_current()

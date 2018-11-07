@@ -1,8 +1,11 @@
 Changelog
 =========
 
-2.1.2 (unreleased)
+2.2.0 (unreleased)
 ------------------
+
+- Be able to customize file upload fields
+  [vangheem]
 
 - Show form errors in the mosaic interface so user knows if there
   are required fields missing or errors in fields
@@ -11,10 +14,12 @@ Changelog
 - Fixed the ability to click on "Add News Item" and getting the expected add news item modal.
   [RobZoneNet]
 
-- Clarified the add -- upload modal
+- Fixes for folder_contents page. The query box layout and how it reacts to different widths
+  of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for
+  dashboard search button due to failing colorblindness tests
   [RobZoneNet]
 
-- Fixes for folder_contents page. The query box layout and how it reacts to different widths of a browser. Fixed the top tool bars as well for narrow browsers. Fixed colors for dashboard search button due to failing colorblindness tests
+- Clarified the add -- upload modal 
   [RobZoneNet]
 
 - do not attempt to publish item is already published content with `@@publish-content` view.

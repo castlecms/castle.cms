@@ -42,7 +42,7 @@ class CastleLayer(PloneSandboxLayer):
                        castle.cms.tests,
                        context=configurationContext)
 
-    def setUpPloneSite(self, portal):
+    def setUpPloneSite(self, portal, retried=False):
         # Configure five.globalrequest
         portal.REQUEST['PARENTS'] = [portal.__parent__]
         setRequest(portal.REQUEST)
