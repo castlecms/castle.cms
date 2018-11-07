@@ -79,6 +79,9 @@ setup(
         ],
         'profile': [
             'collective.profiler'
+        ],
+        'forms': [
+            'collective.easyform [recaptcha]'
         ]
     },
     entry_points="""
