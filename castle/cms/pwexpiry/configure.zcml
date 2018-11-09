@@ -30,7 +30,7 @@
   <adapter
       name="your_package_password_history"
       factory="castle.cms.pwexpiry.password_history_validator.PasswordHistoryValidator"
-      provides="castle.cms.pwexpiry.interfaces.ICustomPasswordValidator"
+      provides="castle.cms.interfaces.passwordvalidation.ICustomPasswordValidator"
       for="zope.interface.Interface"
       />
 
