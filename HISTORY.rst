@@ -4,6 +4,9 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
+- Add option to block passwords that have been Pwned
+  [CorySanin]
+
 - Handle potentially weird ConnectionStateError on login
   [vangheem]
 
@@ -22,7 +25,7 @@ Changelog
   dashboard search button due to failing colorblindness tests
   [RobZoneNet]
 
-- Clarified the add -- upload modal 
+- Clarified the add -- upload modal
   [RobZoneNet]
 
 - do not attempt to publish item is already published content with `@@publish-content` view.
