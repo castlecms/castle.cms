@@ -1,5 +1,5 @@
 from .config import _
-from .interfaces import ICollectivePWExpiryLayer
+from castle.cms.interfaces.passwordvalidation import ICollectivePWExpiryLayer
 from AccessControl import AuthEncoding
 from castle.cms.pwexpiry.interfaces import ICustomPasswordValidator
 from Products.CMFCore.utils import getToolByName

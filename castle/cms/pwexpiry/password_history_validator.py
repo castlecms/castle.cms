@@ -4,7 +4,7 @@ from plone import api
 from zope.interface import implementer
 
 from .config import _
-from .interfaces import ICollectivePWExpiryLayer
+from castle.cms.interfaces.passwordvalidation import ICollectivePWExpiryLayer
 
 
 @implementer(ICustomPasswordValidator)

@@ -16,7 +16,7 @@
 
     <subscriber
         for="Products.CMFCore.interfaces.IMemberData
-             .interfaces.IValidPasswordEntered"
+             castle.cms.interfaces.passwordvalidation.IValidPasswordEntered"
         handler=".subscriber.ValidPasswordEntered"
         />
 
