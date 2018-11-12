@@ -144,6 +144,13 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         )
     )
 
+    hibp_enabled = schema.Bool(
+        title=u'Block passwords that have been Pwned',
+        description=u'Prevent users from setting new passwords that have been \
+        leaked and included in the Pwned Passwords list.',
+        default=False
+    )
+
     pwexpiry_enabled = schema.Bool(
         title=u'Enable Password Expiration',
         description=u'Toggle whether or not password expiration \

@@ -26,6 +26,14 @@ class HaveIBeenPwned(object):
             # No check for registrations.
             return None
 
+        hibp_enabled = api.portal.get_registry_record(
+            'plone.hibp_enabled'
+        )
+
+        if not hibp_enabled:
+            # hibp has been disabled.
+            return None
+
         sha = hashlib.sha1(password).hexdigest()
         needle = sha[5:].upper()
         url = 'https://api.pwnedpasswords.com/range/' + sha[:5]

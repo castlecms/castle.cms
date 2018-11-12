@@ -12,14 +12,14 @@
 
     <adapter
         name="eight_char_min"
-        factory="castle.cms.password_validation.eight.EightCharMin"
+        factory="castle.cms.passwordvalidation.eight.EightCharMin"
         provides="castle.cms.interfaces.passwordvalidation.ICustomPasswordValidator"
         for="zope.interface.Interface"
         />
 
     <adapter
         name="hibp_db"
-        factory="castle.cms.password_validation.hibp.HaveIBeenPwned"
+        factory="castle.cms.passwordvalidation.hibp.HaveIBeenPwned"
         provides="castle.cms.interfaces.passwordvalidation.ICustomPasswordValidator"
         for="zope.interface.Interface"
         />

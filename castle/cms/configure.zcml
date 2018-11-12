@@ -74,7 +74,7 @@
   <include package=".caching" />
   <include package=".ordering" />
   <include package=".upgrades" />
-  <include package=".password_validation" />
+  <include package=".passwordvalidation" />
   <include package=".pwexpiry" />
 
   <include file="subscribers.zcml" />
