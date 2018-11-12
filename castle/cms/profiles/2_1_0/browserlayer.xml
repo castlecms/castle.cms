@@ -1,5 +1,5 @@
 <layers>
   <layer
     name="castle.cms.pwexpiry"
-    interface="castle.cms.pwexpiry.interfaces.ICollectivePWExpiryLayer" />
+    interface="castle.cms.interfaces.passwordvalidation.ICollectivePWExpiryLayer" />
 </layers>

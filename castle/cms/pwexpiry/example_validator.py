@@ -1,5 +1,4 @@
 from .config import _
-from castle.cms.interfaces.passwordvalidation import ICollectivePWExpiryLayer
 from AccessControl import AuthEncoding
 from castle.cms.pwexpiry.interfaces import ICustomPasswordValidator
 from Products.CMFCore.utils import getToolByName
@@ -23,12 +22,6 @@ class ADPasswordValidator(object):
         """
         Password validation method
         """
-
-        # Don't check the password if castle.cms.pwexpiry hasn't
-        # been installed yet.
-        if not ICollectivePWExpiryLayer \
-                .providedBy(self.context.REQUEST):
-            return None
 
         # Permit empty passwords here to allow registration links.
         # Plone will force the user to set one.
