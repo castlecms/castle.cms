@@ -27,13 +27,13 @@ class HaveIBeenPwned(object):
             return None
 
         sha = hashlib.sha1(password).hexdigest()
-        needle = sha[5:]
+        needle = sha[5:].upper()
         url = 'https://api.pwnedpasswords.com/range/' + sha[:5]
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'castle.cms')
         haystacks = urllib2.urlopen(req).readlines()
         for haystack in haystacks:
-            if needle == haystack[:35]:
+            if needle == haystack[:35].upper():
                 return _(
                     u'Password must not appear on "Have I Been Pwned?" database',
                     default=u'Password must not appear on "Have I Been Pwned?" database'
