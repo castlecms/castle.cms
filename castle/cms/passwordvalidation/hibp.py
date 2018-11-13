@@ -27,7 +27,8 @@ class HaveIBeenPwned(object):
             return None
 
         hibp_enabled = api.portal.get_registry_record(
-            'plone.hibp_enabled'
+            'plone.hibp_enabled',
+            default=False
         )
 
         if not hibp_enabled:
