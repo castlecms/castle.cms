@@ -22,6 +22,7 @@ import json
 import responses
 import time
 import unittest
+import uuid
 
 try:
     import argon2
@@ -508,6 +509,75 @@ class TestPwexpiry(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         result = json.loads(view())
         self.assertFalse(result['success'])
+
+
+class TestHIBP(unittest.TestCase):
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        api.portal.set_registry_record(
+            name='plone.hibp_enabled',
+            value=True
+        )
+
+    def test_pwned_pass(self):
+        badpass = 'password'
+        login(self.portal, TEST_USER_NAME)
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': TEST_USER_PASSWORD,
+            'new_password': badpass
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertFalse(result['success'])
+
+    def test_good_pass(self):
+        '''
+        uuid is used to decrease the likelihood of the
+        password ever getting pwned and causing the test to fail.
+        Not very likely to begin with, but still.
+        '''
+        goodpass = 'N1C3P@$$w0rd-' + str(uuid.uuid4())
+        login(self.portal, TEST_USER_NAME)
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': TEST_USER_PASSWORD,
+            'new_password': goodpass
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        if not result['success']:
+            # In case you think this test is failing because the password was pwned
+            # Spoiler: it probably wasn't and isn't
+            print '\n\n\nPassword used: ' + goodpass
+        self.assertTrue(result['success'])
+
+    def test_hibp_toggle(self):
+        badpass = 'password'
+
+        # Disable HIBP
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        api.portal.set_registry_record(
+            name='plone.hibp_enabled',
+            value=False
+        )
+
+        login(self.portal, TEST_USER_NAME)
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': TEST_USER_PASSWORD,
+            'new_password': badpass
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
 
 
 if argon2 is not None:
