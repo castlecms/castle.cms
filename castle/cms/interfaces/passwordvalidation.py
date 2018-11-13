@@ -31,8 +31,3 @@ class IUserUnlocked(Interface):
     """
 
     user = Attribute("The user that was unlocked")
-
-
-class ICollectivePWExpiryLayer(Interface):
-    """A layer specific to the castle.cms.pwexpiry package.
-    """

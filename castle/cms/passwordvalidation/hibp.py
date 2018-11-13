@@ -2,7 +2,7 @@ from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 from plone import api
 from zope.interface import implementer
 import hashlib
-import urllib2
+import requests
 
 from castle.cms import _
 
@@ -37,9 +37,8 @@ class HaveIBeenPwned(object):
         sha = hashlib.sha1(password).hexdigest()
         needle = sha[5:].upper()
         url = 'https://api.pwnedpasswords.com/range/' + sha[:5]
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'castle.cms')
-        haystacks = urllib2.urlopen(req).readlines()
+        req = requests.get(url, headers={'User-Agent': 'castle.cms'})
+        haystacks = req.text.split('\n')
         for haystack in haystacks:
             if needle == haystack[:35].upper():
                 return _(

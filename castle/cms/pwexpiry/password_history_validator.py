@@ -4,7 +4,6 @@ from plone import api
 from zope.interface import implementer
 
 from .config import _
-from castle.cms.interfaces.passwordvalidation import ICollectivePWExpiryLayer
 
 
 @implementer(ICustomPasswordValidator)
@@ -20,12 +19,6 @@ class PasswordHistoryValidator(object):
         """
         Password validation method
         """
-
-        # Don't check the password if castle.cms.pwexpiry hasn't
-        # been installed yet.
-        if not ICollectivePWExpiryLayer \
-                .providedBy(self.context.REQUEST):
-            return None
 
         # Permit empty passwords here to allow registration links.
         # Plone will force the user to set one.
