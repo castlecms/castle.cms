@@ -7,6 +7,7 @@ from plone import api
 from plone.app.uuid.utils import uuidToObject
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
+from boto.exception import S3ResponseError
 
 import json
 import logging
@@ -154,18 +155,14 @@ class AWSApi(object):
             raise Unauthorized
 
         content = self.request.form.get('value')
+        key = self.bucket.get_key(key_name)
+        key.set_contents_from_string(content, headers={
+            'Content-Type': 'text/html; charset=utf-8'
+        }, replace=True)
         try:
-            key = self.bucket.get_object(Key=key_name)
-            key.put(
-                ACL='public-read',
-                Body=content,
-                ContentType="text/html; charset=utf-8")
-        except botocore.exceptions.ClientError:
-            logger.error(
-                'error saving object {key} in bucket {name}'.format(
-                    key=key_name,
-                    name=self.bucket.name),
-                log_exc=True)
+            key.make_public()
+        except S3ResponseError:
+            logger.warn('Missing private canned url for bucket')
 
     def list(self):
         result = []
