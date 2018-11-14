@@ -3,6 +3,9 @@ Changelog
 
 2.1.2 (unreleased)
 ------------------
+- Accessibility colorblindness changes for editing buttons. The default bootstrap colors are mostly not accessible.  Changed colors for things like notifications numbers, information messages, and some other buttons.
+  [RobZoneNet]
+
 - Fixed the ability to click on "Add News Item" and getting the expected add news item modal.
   [RobZoneNet]
 
