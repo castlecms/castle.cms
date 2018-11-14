@@ -18,6 +18,7 @@ from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from boto.exception import S3ResponseError
 
 
 logger = logging.getLogger('castle.cms')
@@ -49,23 +50,23 @@ def get_bucket(s3_bucket=None):
 
     endpoint = registry.get('castle.aws_s3_host_endpoint', None)
     if endpoint:
-        s3args['endpoint_url'] = endpoint
-
-    s3 = boto3.resource('s3', **s3args)
-    bucket = None
-    try:
-        s3.meta.client.head_bucket(Bucket=s3_bucket)
-        bucket = s3.Bucket(s3_bucket)
-    except botocore.exceptions.ClientError as e:
-        bucket = None
-        error_code = e.response['Error']['Code']
-        if error_code == '404':
-            logger.warning('bucket {name} not found'.format(name=s3_bucket))
+        parsed_endpoint = urlparse(endpoint)
+        if parsed_endpoint.scheme == 'https':
+            is_secure = True
         else:
-            logger.error('error querying for bucket {name} (code {code})'.format(
-                name=s3_bucket,
-                code=error_code,
-                log_exc=True))
+            is_secure = False
+        host = parsed_endpoint.netloc
+        if parsed_endpoint.port:
+            s3_conn = S3Connection(
+                s3_id, s3_key, host=host, port=parsed_endpoint.port,
+                is_secure=is_secure,
+                calling_format=ProtocolIndependentOrdinaryCallingFormat())
+        else:
+            s3_conn = S3Connection(
+                s3_id, s3_key, host=host, is_secure=is_secure,
+                calling_format=ProtocolIndependentOrdinaryCallingFormat())
+    else:
+        s3_conn = S3Connection(s3_id, s3_key)
 
     return s3, bucket
 
@@ -146,7 +147,10 @@ def set_permission(obj):
     # set aws public/private and get url
     object_acl = s3_obj.Acl()
     if public:
-        object_acl.put(ACL='public-read')
+        try:
+            key.make_public()
+        except S3ResponseError:
+            logger.warn('Missing private canned url for bucket')
         expires_in = 0
         # a public URL is not fetchable with no expiration, apparently
         url = '{endpoint_url}/{bucket}/{key}'.format(
