@@ -78,16 +78,26 @@ Styles here related to when you click "Manage Content" or /folder_contents
   }
 
   #btn-recycle{
-    background-color: #f0ad4e;
-    border-color: #eea236;
-    color: #fff;
+    background-color: @btn-warning-bg;
+    border-color: @btn-warning-border;
+    border-color: darken(@btn-warning-bg, 5%);
+    color: @btn-warning-color;
+    font-weight: 700;
 
     &:hover{
-      background-color: #ec971f;
-      border-color: #d58512;
+      background-color: darken(@btn-warning-bg, 15%);
     }
   }
 
+  #btn-delete {
+    background-color: @btn-danger-bg;
+    border-color: darken(@btn-danger-border, 5%);
+    color: #fff;
+    font-weight: 700;
+    &:hover{
+          background-color: darken(@btn-danger-bg, 20%);
+      }
+  }
   //CONTENT POPOVERS
   .popover{
     border-radius:0;

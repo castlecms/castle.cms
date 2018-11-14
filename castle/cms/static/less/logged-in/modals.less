@@ -1,5 +1,4 @@
 
-
 // ADD Content Modal
 #add-modal-react-container {
   .modal-dialog {
@@ -522,6 +521,35 @@ a.btn.btn-default.drop-link {
   font-size: 1em;
   font-family: 'Open Sans',Arial,sans-serif;
 }
+
+
+#form-buttons-Move {
+  background-color: @btn-warning-bg;
+  border-color: @btn-warning-border;
+  color: @btn-warning-color;
+  &:hover{
+        background-color: darken(@btn-primary-bg, 20%);
+    }
+}
+
+#form-buttons-Delete {
+  background-color: @btn-danger-bg;
+  border-color: @btn-danger-border;
+  color: @btn-danger-color;
+  &:hover{
+        background-color: darken(@btn-danger-bg, 20%);
+    }
+}
+
+#form-buttons-Cancel {
+  background-color: @btn-brand-bg;
+  border-color: @btn-brand-border;
+  color: @btn-brand-color;
+  &:hover{
+        background-color: darken(@btn-brand-bg, 20%);
+    }
+}
+
 @media( min-width:768px ){
   #quality-content-modal .modal-dialog{
     width:50%;
