@@ -41,7 +41,7 @@ CRAWLER_ES_MAPPING = {
     },
     'sitemap': {
         'type': 'text',
-        'index': False,
+        'index': True,
         'store': False
     },
     'url': {
@@ -209,7 +209,6 @@ class Crawler(object):
             }
         }
         existing_urls = self.get_all_from_es(query)
-
         for _id in set(urls) - set(existing_urls):
             # pages that have not yet been crawled
             try:
