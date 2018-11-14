@@ -61,12 +61,8 @@ class AdditionalIndexDataProvider(object):
             pass
 
         try:
-<<<<<<< HEAD
             data['contributors'] = list(
                 self.obj.creators + self.obj.contributors)
-=======
-            data['contributors'] = list(self.obj.creators + self.obj.contributors)
->>>>>>> Replace 'string' with 'text' in _default_mapping
         except Exception:
             pass
         path = self.obj.getPhysicalPath()
