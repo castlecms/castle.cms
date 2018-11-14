@@ -1,0 +1,6 @@
+<layers>
+  <layer
+    name="castle.cms.pwexpiry"
+    interface="castle.cms.pwexpiry.interfaces.ICollectivePWExpiryLayer"
+    remove="True" />
+</layers>
