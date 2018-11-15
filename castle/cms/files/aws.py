@@ -47,6 +47,8 @@ def get_bucket(s3_bucket=None):
         else:
             is_secure = False
         host = parsed_endpoint.netloc
+        if ':' in host:
+            host = host.split(':')[0]
         if parsed_endpoint.port:
             s3_conn = S3Connection(
                 s3_id, s3_key, host=host, port=parsed_endpoint.port,

@@ -297,16 +297,16 @@ class SearchAjax(BrowserView):
             equery['bool']['filter'] = [{'term': {'domain': self.request.form['searchSite']}}]
 
         query = {
-             'query': equery,
-             "suggest": {
-                 "SearchableText": {
-                     "text": query.get('SearchableText', ''),
-                     "term": {
-                         "field": "SearchableText"
-                     }
-                 }
-             }
-         }
+            'query': equery,
+            "suggest": {
+                "SearchableText": {
+                    "text": query.get('SearchableText', ''),
+                    "term": {
+                        "field": "SearchableText"
+                    }
+                }
+            }
+        }
 
         query_params = {
             'stored_fields': ','.join(_search_attributes) + ',path.path',

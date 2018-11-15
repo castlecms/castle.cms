@@ -29,8 +29,8 @@ def archive(site):
             not api.portal.get_registry_record('castle.aws_s3_key') or
             not api.portal.get_registry_record('castle.aws_s3_secret') or
             not api.portal.get_registry_record('plone.public_url')):
-        logger.error('Can not archive content. Either not enabled, S3 API not set or no public '
-                     'url set')
+        logger.error('Can not archive content for {id}. Either not enabled, S3 API not set or no public '
+                     'url set'.format(id=site.id))
         return
 
     storage = archival.Storage(site)
