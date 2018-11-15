@@ -395,6 +395,39 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         self.assertTrue(result['success'])
 
 
+class TestPasswordLength(unittest.TestCase):
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        login(self.portal, TEST_USER_NAME)
+
+    def test_short_password(self):
+        shortpass = 'pass'
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': TEST_USER_PASSWORD,
+            'new_password': shortpass
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertFalse(result['success'])
+
+    def test_long_password(self):
+        longpass = 'N1C3P@$$w0rd'
+        self.request.form.update({
+            'apiMethod': 'set_password',
+            'username': TEST_USER_NAME,
+            'existing_password': TEST_USER_PASSWORD,
+            'new_password': longpass
+        })
+        view = SecureLoginView(self.portal, self.request)
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+
+
 class TestPwexpiry(unittest.TestCase):
 
     layer = CASTLE_PLONE_INTEGRATION_TESTING

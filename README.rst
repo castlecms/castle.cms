@@ -169,11 +169,9 @@ Daily
 -----
 
 - ``bin/clean-plone-users``: removes disabled users
-- ``bin/clean-plone-users``: removes disabled users
-- ``bin/clean-plone-users``: removes disabled users
-- ``bin/clean-plone-users``: removes disabled users
 - ``bin/social-counts``: goes through all content and updates social media counts. Can be done monthly
 - ``bin/content-popularity``: if Google Analytics is setup, will get content statistics for popularity
+- ``bin/clean-drafts``: clean old draft data
 
 Weekly
 ------
@@ -187,7 +185,7 @@ Processes
 ---------
 
 - ``bin/twitter-monitor``: Monitor Twitter for mentions of your site
-
+- ``bin/castle-crawler``: Crawl sites defined in crawler settings
 
 
 Export/Import

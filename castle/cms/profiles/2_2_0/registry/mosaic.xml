@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="plone">
-    <record name="plone.app.mosaic.default_available_actions">
+
+  <record name="plone.app.mosaic.default_available_actions">
+    <value purge="False">
       <element>tile-background-no-margin</element>
-    </record>
+    </value>
+  </record>
   <records interface="plone.app.mosaic.interfaces.IFormat"
            prefix="plone.app.mosaic.formats.tile_background_no_margin">
     <value key="name">tile-background-no-margin</value>

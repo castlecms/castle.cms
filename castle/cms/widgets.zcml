@@ -48,4 +48,6 @@
   <adapter factory=".widgets.NamedFileDataConverter" />
   <adapter factory=".widgets.NamedFileFieldWidget" />
 
+  <adapter factory=".widgets.JSONListWidgetDataConverter" />
+
 </configure>

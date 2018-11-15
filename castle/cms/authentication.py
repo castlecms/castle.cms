@@ -23,6 +23,7 @@ from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import implementer
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+from ZODB.POSException import ConnectionStateError
 
 import time
 
@@ -167,7 +168,15 @@ class Authenticator(object):
         if login:
             acl_users.session._setupSession(
                 user.getId(), self.request.response)
-            notify(UserLoggedInEvent(user))
+            try:
+                notify(UserLoggedInEvent(user))
+            except ConnectionStateError:
+                # On root login, it's possible no db state
+                # is loaded but the key ring needs to be rotated.
+                # This can cause an difficult to reproduce error.
+                # Really, we don't care so much if we see this
+                # error here. It'll get rotated another time.
+                pass
 
         return True, user
 

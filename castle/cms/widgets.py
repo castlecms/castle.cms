@@ -41,7 +41,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter, adapts, getUtility
 from zope.interface import (alsoProvides, implementer, implements,
                             implementsOnly)
-from zope.schema.interfaces import IField
+from zope.schema.interfaces import IField, IList
 from ZPublisher.HTTPRequest import FileUpload
 
 
@@ -350,6 +350,46 @@ class MapPointsWidget(MapPointWidget):
 def MapPointsFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field, MapPointsWidget(request))
     return widget
+
+
+class IFileUploadFieldsWidget(IJSONListWidget):
+    """Marker interface for the Select2Widget."""
+
+
+class FileUploadFieldsWidget(MapPointsWidget):
+    implementsOnly(IFileUploadFieldsWidget)
+    pattern = 'fileuploadfieldswidget'
+
+    def _base_args(self):
+        args = super(FileUploadFieldsWidget, self)._base_args()
+        args['name'] = self.name
+        args['value'] = (self.request.get(self.name,
+                                          self.value) or u'[]').strip()
+        return args
+
+
+@adapter(IField, ICastleLayer)
+@implementer(IFieldWidget)
+def FileUploadFieldsFieldWidget(field, request):
+    widget = z3c.form.widget.FieldWidget(field,
+                                         FileUploadFieldsWidget(request))
+    return widget
+
+
+class JSONListWidgetDataConverter(NamedDataConverter):
+    """Converts from a file-upload to a NamedFile variant.
+    """
+    adapts(IList, IJSONListWidget)
+
+    def toWidgetValue(self, value):
+        return json.dumps(value)
+
+    def toFieldValue(self, value):
+        fields = json.loads(value)
+        for field in fields:
+            if 'required' in field and isinstance(field['required'], bool):
+                field['required'] = unicode(field['required']).lower()
+        return fields
 
 
 class PreviewSelectWidget(pz3c_SelectWidget):

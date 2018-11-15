@@ -411,8 +411,22 @@ class IArchivalSettings(Interface):
         value_type=schema.TextLine())
 
 
+class IContentSettings(Interface):
+    file_upload_fields = schema.List(
+        title=u'File upload fields',
+        description=u'These fields will map to content field values after uploaded.',
+        value_type=schema.Dict(
+            key_type=schema.TextLine(),
+            value_type=schema.TextLine()
+        )
+    )
+
+    # XXX Should also make slot_tiles editable here
+    # but will require a custom widget
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
-                      IArchivalSettings):
+                      IArchivalSettings, IContentSettings):
     pass
 
 

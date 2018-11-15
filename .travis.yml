@@ -5,7 +5,12 @@ services:
 before_script:
   - sleep 10
 install:
-  - mkdir -p buildout-cache/{eggs,downloads}
+  - mkdir -p {eggs,downloads}
+  - wget https://launchpad.net/plone/5.0/5.0.8/+download/Plone-5.0.8-UnifiedInstaller.tgz
+  - tar -zxvf Plone-*.tgz > /dev/null
+  - tar -xvjf Plone-*/packages/buildout-cache.tar.bz2 > /dev/null
+  - cp -rf buildout-cache/eggs/* eggs/
+  - cp -rf buildout-cache/downloads/* downloads/
   - pip install -r requirements.txt
   - pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0
   - buildout -Nc travis.cfg

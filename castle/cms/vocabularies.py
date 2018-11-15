@@ -177,7 +177,7 @@ class SurveyVocabularyFactory(object):
             terms = []
             for survey in surveys:
                 terms.append(
-                    SimpleTerm(title=survey['form_name'], value=survey['uid']))
+                    SimpleTerm(title=survey['survey_name'], value=survey['uid']))
             return SimpleVocabulary(terms)
         except Exception:
             # error accessing survey api

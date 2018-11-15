@@ -113,7 +113,11 @@ define([
       try {
         xhr.send(data);
         xhr.onload = function() {
-          self.invite_data = JSON.parse(xhr.response);
+          try {
+            self.invite_data = JSON.parse(xhr.response);
+          } catch (error) {
+            self.invite_data = xhr.response;
+          }
           self.renderInvite(self.survey_tile, self.survey_data, self.invite_data);
         }
       } catch (error) {

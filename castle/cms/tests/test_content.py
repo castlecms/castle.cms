@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from copy import deepcopy
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 import json
 import unittest
 from io import BytesIO
@@ -173,6 +176,40 @@ class TestContent(unittest.TestCase):
             data['base_url'], 'http://nohost/plone/foo/bar/foobar')
         self.assertEquals(
             api.content.get_state(ob), 'published')
+
+    def test_save_file_saves_custom_field_values(self):
+
+        # add new field
+        registry = getUtility(IRegistry)
+        fields = deepcopy(registry['castle.file_upload_fields'])
+        for f in fields:
+            f['required'] = unicode(f['required']).lower()
+        fields.append({
+            u'name': u'foobar',
+            u'label': u'Foobar',
+            u'widget': u'text',
+            u'required': u'false',
+            u'for-file-types': u'*'
+        })
+        registry['castle.file_upload_fields'] = fields
+
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'chunk': '1',
+            'chunkSize': 1024,
+            'totalSize': 1024,
+            'file': BytesIO('X' * 1024),
+            'name': 'foobar.bin',
+            'title': 'Foobar',
+            'foobar': 'Some value here'
+        })
+        cc = content.Creator(self.portal, self.request)
+        cc()
+
+        fileOb = api.content.get(path='/file-repository/foobar.bin')
+        self.assertEquals(fileOb.file.data, 'X' * 1024)
+        self.assertEquals(fileOb.foobar, 'Some value here')
+        return fileOb
 
 
 class TestContentAccess(unittest.TestCase):

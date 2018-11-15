@@ -2,18 +2,6 @@
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="plone">
 
-  <record name="castle.required_file_upload_fields">
-    <field type="plone.registry.field.List">
-      <title>Required file upload fields</title>
-      <required>False</required>
-      <value_type type="plone.registry.field.TextLine">
-      </value_type>
-    </field>
-    <value>
-      <element>title</element>
-    </value>
-  </record>
-
   <record name="castle.toolbar_buttons">
     <field type="plone.registry.field.Dict">
       <title>Additional Castle toolbar buttons</title>

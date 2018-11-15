@@ -1,11 +1,11 @@
 from Acquisition import aq_inner
-from plone.app.contenttypes import browser
+from plone.app.contenttypes.browser import file
 from Products.CMFCore.utils import getToolByName
 from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
 from zope.component import getMultiAdapter
 
 
-class FileView(browser.file.FileView):
+class FileView(file.FileView):
 
     @property
     def moved(self):

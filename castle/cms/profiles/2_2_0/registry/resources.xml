@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <records prefix="plone.resources/mockup-patterns-tinymce"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/tinymce/pattern.js</value>
+      <value key="url">++plone++castle/patterns/tinymce</value>
+      <value key="css">
+        <element>++plone++castle/patterns/tinymce/less/pattern.tinymce.less</element>
+      </value>
+  </records>
+  <records prefix="plone.resources/mockup-patterns-querystring"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/querystring.js</value>
+      <value key="css">
+        <element>++resource++mockup/querystring/pattern.querystring.less</element>
+      </value>
+  </records>
+</registry>

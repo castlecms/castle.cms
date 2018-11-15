@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from castle.cms.pwexpiry.interfaces import (IInvalidPasswordEntered,
-                                            IUserUnlocked,
-                                            IValidPasswordEntered)
+from castle.cms.interfaces.passwordvalidation import (IInvalidPasswordEntered,
+                                                      IUserUnlocked,
+                                                      IValidPasswordEntered)
 from zope.component.interfaces import ObjectEvent
 from zope.interface import implements
 
