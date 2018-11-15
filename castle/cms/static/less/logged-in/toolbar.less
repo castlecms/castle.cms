@@ -322,16 +322,28 @@
 .castle-toolbar-unread-message-count {
   width: 25px;
   height: 25px;
-  background-color: #d34800;
-  border-radius: 13px;
+  background-color: @brand-warning;
+  border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
-  color: white;
-  border: 1px solid #8f3100;
+  color: @btn-warning-color;
+  border: 1px solid @btn-warning-border;
+  font-weight: bold;
 }
 
 .castle-toolbar-container-top .castle-toolbar-buttons .castle-btn-dropdown-messagesopened > ul{
   width: 450px;
+}
+
+.plone-btn-warning {
+  background-color: @brand-warning;
+  color: @btn-warning-color;
+  border: 1px solid @btn-warning-border;
+}
+
+.alert.status.alert-error, .portalMessage.alert-error, .alert.status.error, .portalMessage.error,
+.alert.status.alert-success, .portalMessage.alert-success, .alert.status.info, .portalMessage.info {
+  color: #444 !important;
 }
 
 // // TEST

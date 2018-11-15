@@ -4,6 +4,9 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
+- Accessibility colorblindness changes for editing buttons. The default bootstrap colors are mostly not accessible.  Changed colors for things like notifications numbers, information messages, and some other buttons.
+  [RobZoneNet]
+
 - Handle potentially weird ConnectionStateError on login
   [vangheem]
 
