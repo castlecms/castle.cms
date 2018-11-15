@@ -14,6 +14,7 @@ from plone.registry.interfaces import IRegistry
 from urlparse import urlparse
 from zope.component import getUtility
 from zope.component.hooks import setSite
+from boto.exception import S3ResponseError
 
 import argparse
 import requests
