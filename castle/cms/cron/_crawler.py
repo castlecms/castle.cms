@@ -196,7 +196,7 @@ class Crawler(object):
         for key, archive_data in storage.archives.items():
             # archives do not need to be re-indexed ever.
             # see if the key is in ES, if it is move on
-            url = archive_data.get('view_url', archive_data['url'])
+            url = archive_data.get('view_url', None) or archive_data['url']
             urls.append(aws.swap_url(url, base_url=base_url))
 
         query = {
