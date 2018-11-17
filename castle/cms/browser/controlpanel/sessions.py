@@ -10,14 +10,22 @@ class SessionsView(BrowserView):
     description = "View and control your site's currently logged-in user sessions."
 
     def __call__(self):
+        self.timeout = self.context.acl_users.session.timeout
 
-        if self.request.REQUEST_METHOD == 'POST' and self.request.form.get('id'):
-            session_id = self.request.form.get('id')
-            user_id = self.request.form.get('userid')
-            user = api.user.get(user_id)
-            sm = SessionManager(self.context, self.request, user)
-            sm.session_id = session_id
-            sm.expire()
+        if self.request.REQUEST_METHOD == 'POST':
+            if self.request.form.get('id'):
+                session_id = self.request.form.get('id')
+                user_id = self.request.form.get('userid')
+                user = api.user.get(user_id)
+                sm = SessionManager(self.context, self.request, user)
+                sm.session_id = session_id
+                sm.expire()
+            if self.request.form.get('timeout'):
+                timeout = self.request.form.get('timeout')
+                try:
+                    self.context.acl_users.session.timeout = int(timeout)
+                except Exception:
+                    pass  # handle non-int duration entered
 
         self.sessions = get_active_sessions()
 
