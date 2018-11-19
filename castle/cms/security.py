@@ -118,6 +118,12 @@ def beforeCommit(event):
 
     site = api.portal.get()
 
+    try:
+        if site['RobotRemote']:
+            return None
+    except KeyError:
+        pass
+
     resp = request.response
     contentType = resp.getHeader('Content-Type')
     if (site is None or contentType is None or
