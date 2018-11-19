@@ -4,6 +4,9 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
+- Integrate robot framework
+  [obct537]
+
 - Make recaptcha work with embeddable content tiles
   [lucid-0]
 
