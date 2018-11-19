@@ -14,14 +14,16 @@ class AnalyticsView(BrowserView):
         self.request.response.setHeader('Content-type', 'application/json')
         paths = self.get_paths()
 
-        social_data = social.get_stats(self.context)
-        if social_data:
-            social_data = dict(social_data)
+        if self.request.get('api') == 'ga':
+            data = self.ga_api_call(paths)
+        else:
+            data = social.get_stats(self.context)
+            if data:
+                data = dict(data)
 
         return json.dumps({
             'paths': paths,
-            'data': self.ga_api_call(paths),
-            'social': social_data
+            'data': data
         })
 
     def ga_api_call(self, paths):

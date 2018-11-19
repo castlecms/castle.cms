@@ -134,8 +134,7 @@ define([
         that.setState({
           loading: false,
           data: data.data,
-          paths: data.paths,
-          social: data.social
+          paths: data.paths
         });
       }).fail(function(){
         alert('failed to load analytic data');
@@ -407,6 +406,24 @@ define([
         tab: 'realtime',
         loading: false
       };
+    },
+    load: function(){
+      var that = this;
+      utils.loading.show();
+      $.ajax({
+        url: $('body').attr('data-base-url') + '/@@content-analytics',
+        data: {
+          api: 'social'
+        }
+      }).done(function(data){
+        that.setState({
+          social: data.data
+        });
+      }).fail(function(){
+        alert('failed to load analytic data');
+      }).always(function(){
+        utils.loading.hide();
+      });
     },
     tabClicked: function(tab){
       this.setState({
