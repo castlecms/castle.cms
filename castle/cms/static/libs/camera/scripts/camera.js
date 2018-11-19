@@ -291,7 +291,7 @@
 				dataBox = '';
 			}
 			//
-			$('.camera_target_content .cameraContent:eq('+loopMove+')',wrap).append('<a class="camera_link" href="'+allLinks[loopMove]+'" '+dataBox+' target="'+allTargets[loopMove]+'"><span class="sr-only">Image '+loopMoveNum+'</span></a>');
+			$('.camera_target_content .cameraContent:eq('+loopMove+')',wrap).append('<a class="camera_link" href="'+allLinks[loopMove]+'" '+dataBox+' target="'+allTargets[loopMove]+'"><span class="sr-only">Image '+loopMoveNum+'.</span></a>');
 		}
 
 	}
