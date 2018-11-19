@@ -4,7 +4,7 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
-- Integrate robot framework
+- Adding basic Robot testing setup
   [obct537]
 
 - Make recaptcha work with embeddable content tiles
@@ -63,9 +63,6 @@ Changelog
 
 - Fix saving default values for Dexterity fields
   [CorySanin]
-
-- Adding basic Robot testing setup
-  [obct537]
 
 - Handle potential errors caused by invalid references in folder ordering.
   See https://github.com/plone/plone.folder/pull/10 for details
