@@ -4,8 +4,8 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Since the carousel is behind aria-hidden, the whole thing is wisely skipped by screen readers. But still it is a requirement to not leave anchor tags empty  https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html see 2.4.4 and https://www.w3.org/TR/2016/NOTE-WCAG20-TECHS-20161007/G91.
+  [RobZoneNet]
 
 2.2.0 (2018-11-15)
 ------------------
@@ -31,7 +31,7 @@ Changelog
   dashboard search button due to failing colorblindness tests
   [RobZoneNet]
 
-- Clarified the add -- upload modal 
+- Clarified the add -- upload modal
   [RobZoneNet]
 
 - do not attempt to publish item is already published content with `@@publish-content` view.
