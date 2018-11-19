@@ -39,6 +39,17 @@ class SimpleView(BaseTileView):
     index = ViewPageTemplateFile('templates/existing/simple.pt')
     tile_name = DISPLAY_TYPE_KEY
 
+    @property
+    def has_recaptcha(self):
+        try:
+            if 'collective.easyform.fields.ReCaptcha' in \
+                    self.tile.content.fields_model:
+                return True
+            else:
+                return False
+        except Exception:
+            return False
+
 
 class ExistingTile(ContentTile, DisplayTypeTileMixin):
 

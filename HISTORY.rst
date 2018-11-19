@@ -4,6 +4,9 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
+- Make recaptcha work with embeddable content tiles
+  [lucid-0]
+
 - Since the carousel is behind aria-hidden, the whole thing is wisely skipped by screen readers. But still it is a requirement to not leave anchor tags empty  https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html see 2.4.4 and https://www.w3.org/TR/2016/NOTE-WCAG20-TECHS-20161007/G91.
   [RobZoneNet]
 
