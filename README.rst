@@ -110,7 +110,7 @@ Optional Dependencies
 Running tests
 =============
 
-Default ploen testing:
+Default plone testing:
 
 .. code-block:: shell
 
