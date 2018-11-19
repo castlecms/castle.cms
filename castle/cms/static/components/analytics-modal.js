@@ -134,7 +134,8 @@ define([
         that.setState({
           loading: false,
           data: data.data,
-          paths: data.paths
+          paths: data.paths,
+          social: data.social
         });
       }).fail(function(){
         alert('failed to load analytic data');
