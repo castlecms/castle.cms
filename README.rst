@@ -360,3 +360,31 @@ Running local dependencies
 --------------------------
 
     $ docker run -p 6379:6379 redis
+
+
+Forks/Custom releases
+---------------------
+
+Castle maintains forks and custom releases of packages ocassionally. Here is the
+status and reasoning for our forks:
+
+- plone.app.blocks: https://github.com/castlecms/plone.app.blocks
+  (Hard fork): Castle heavily customizes how Plone renders things including how "blocks" are rendered
+- plone-app-mosaic: https://github.com/castlecms/plone.app.mosaic/tree/castlecms
+  (Hard fork): Originally for fixes but at this point, we will maintain the fork
+  until we have reason not to or we have better alternative layout engines.
+- plonetheme.barceloneta:
+  (Hard fork): Castle rendering of barceloneta. No Diazo.
+- plone.app.registry
+  (Dev release): Release to get Plone 5.1 features into Castle based off Plone 5.0.
+  Can be removed once we go to 5.2
+- plone.app.standardtiles
+  (Dev release): Unknown status on if we still need this release.
+- Products.ZCatalog
+  (Dev release): unknown status
+- z3c.relationfield
+  (Dev release): PR: https://github.com/zopefoundation/z3c.relationfield/pull/7
+- mockup: https://github.com/plone/mockup/tree/2.4.x
+  (Dev release): TinyMCE backport fixes from 5.1
+- Products-CMFPlone
+  (Dev release): TinyMCE backport fixes from 5.1
