@@ -407,7 +407,8 @@ define([
         loading: false
       };
     },
-    load: function(){
+    componentDidMount: function(){
+      Modal.componentDidMount.call(this);
       var that = this;
       utils.loading.show();
       $.ajax({
