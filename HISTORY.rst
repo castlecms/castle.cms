@@ -4,7 +4,8 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Make recaptcha work with embeddable content tiles
+  [lucid-0]
 
 
 2.2.0 (2018-11-15)
