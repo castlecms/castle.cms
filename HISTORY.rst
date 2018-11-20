@@ -4,6 +4,9 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
+- Do not redirect to `/not-found`, just directly render not found template
+  [vangheem]
+
 - Adding basic Robot testing setup
   [obct537]
 

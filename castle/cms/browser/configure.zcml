@@ -412,14 +412,6 @@
     template="templates/fourohfour.pt"
     layer="..interfaces.ICastleLayer"
     />
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    class=".fourohfour.NotFoundView"
-    name="not-found"
-    permission="zope2.View"
-    template="templates/fourohfour.pt"
-    layer="..interfaces.ICastleLayer"
-    />
 
   <browser:page
     for="zope.interface.common.interfaces.IException"
