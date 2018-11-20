@@ -35,7 +35,7 @@ setup(
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['castle'],
     install_requires=[
-        'Products.CMFPlone>=5.0.10',
+        'Products.CMFPlone>=5.0.10.dev2',
         'Products.CMFPlacefulWorkflow',
         'plone.app.caching',
         'plone.app.dexterity',
