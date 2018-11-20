@@ -61,6 +61,9 @@
             <div tal:define="form nocall:view/export_subscribers_form;
                             view nocall:form"
                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <div tal:define="form nocall:view/import_subscribers_form;
+                            view nocall:form"
+                metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
             <div tal:define="form nocall:view/add_category_form;
                              view nocall:form"
                  metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
