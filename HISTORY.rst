@@ -4,6 +4,9 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
+- Upgrade CMFPlone to fix meta bundle ordering
+  [vangheem]
+
 - Do not redirect to `/not-found`, just directly render not found template
   [vangheem]
 
