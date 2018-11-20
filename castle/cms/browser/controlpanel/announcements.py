@@ -7,8 +7,7 @@ from castle.cms.interfaces import IAnnouncementData
 from castle.cms.tasks import send_email
 from castle.cms.tasks import send_email_to_subscribers
 from castle.cms.widgets import AjaxSelectFieldWidget
-from castle.cms.widgets import SelectFieldWidget
-from castle.cms.widgets import TinyMCETextFieldWidget
+from castle.cms.widgets import SelectFieldWidget, TinyMCETextFieldWidget
 from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.app.textfield import RichText
@@ -22,6 +21,7 @@ from plone.supermodel import model
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
+from z3c.form.browser.file import FileWidget
 from z3c.form.interfaces import WidgetActionExecutionError
 from zope import schema
 from zope.component import getAdapters
@@ -30,6 +30,10 @@ from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 reg_key = 'castle.subscriber_categories'
+
+
+def toUnicode(txt):
+    return unicode(txt, "utf-8")
 
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
@@ -255,7 +259,7 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             responsebody = ','.join(fields)
             categories = set()
             if 'form.widgets.export_categories' in self.request.form:
-                if data['export_categories'] != u'':
+                if data['export_categories'] is not None and data['export_categories'] != u'':
                     categories = set(data['export_categories'])
             check_categories = (categories is not None and len(categories) != 0)
             for subscriber in subscribe.all():
@@ -273,6 +277,45 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
                         row.append(str(subscriber.get(key)))
                 responsebody += '\n' + ','.join(row)
             response.setBody(responsebody, lock=True)
+
+
+class IImportSubscribersForm(model.Schema):
+    directives.widget('csv_upload', FileWidget)
+    csv_upload = schema.ASCII(
+        title=u"Import subscribers",
+        description=u"Upload CSV file to import",
+        required=False
+    )
+
+
+class ImportSubscribersForm(AutoExtensibleForm, form.Form):
+    schema = IImportSubscribersForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Import', name='import')
+    def handle_export(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            lines = data['csv_upload'].split('\n')
+            columns = lines[0].split(',')
+            categoryindex = columns.index('categories')
+            for line in lines[1:]:
+                cols = line.split(',')
+                subscriber = {}
+                for index, col in enumerate(cols):
+                    if(index == categoryindex):
+                        continue
+                    if col == '':
+                        subscriber[columns[index]] = None
+                    elif col == 'True' or col == 'False':
+                        subscriber[columns[index]] = col == 'True'
+                    else:
+                        try:
+                            subscriber[columns[index]] = float(col)
+                        except ValueError:
+                            subscriber[columns[index]] = col
+                subscriber['categories'] = map(toUnicode, cols[categoryindex].strip('"').split(';'))
 
 
 class IMergeCategoriesForm(model.Schema):
@@ -303,7 +346,7 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
             categories = set()
             newname = u''
             if 'form.widgets.rename_merge_categories' in self.request.form:
-                if data['rename_merge_categories'] != u'':
+                if data['rename_merge_categories'] is not None and data['rename_merge_categories'] != u'':
                     categories = set(data['rename_merge_categories'])
             if 'form.widgets.new_category_name' in self.request.form:
                 newname = data['new_category_name'].split(';')[0]
@@ -361,7 +404,7 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'form.widgets.delete_categories' in self.request.form:
-                if data['delete_categories'] != u'':
+                if data['delete_categories'] is not None and data['delete_categories'] != u'':
                     categories = set(data['delete_categories'])
             force_delete = 'form.widgets.force_delete' in self.request.form
             if len(categories) > 0:
@@ -414,7 +457,7 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'add_categories' in data:
-                if data['add_categories'] != u'':
+                if data['add_categories'] is not None and data['add_categories'] != u'':
                     categories = set(data['add_categories'].split(';'))
             if len(categories) > 0:
                 badcategories = []
@@ -447,6 +490,7 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_subscribers_form = SendEmailSubscribersForm(aq_inner(context), request)
         self.text_subscribers_form = SendTextForm(aq_inner(context), request)
         self.export_subscribers_form = ExportSubscribersForm(aq_inner(context), request)
+        self.import_subscribers_form = ImportSubscribersForm(aq_inner(context), request)
         self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
         self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
         self.add_category_form = AddCategoryForm(aq_inner(context), request)
@@ -487,6 +531,7 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_subscribers_form.update()
         self.text_subscribers_form.update()
         self.export_subscribers_form.update()
+        self.import_subscribers_form.update()
         self.merge_categories_form.update()
         self.delete_categories_form.update()
         self.add_category_form.update()
