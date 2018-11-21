@@ -26,6 +26,10 @@ import transaction
 
 USE_MULTIPROCESSING = True
 
+TOKEN_AUTH_STRING = '%%%TOKEN_AUTH%%%'
+SITE_ID_STRING = '%%%SITE_ID%%%'
+BASE_URL_STRING = '%%%BASE_URL%%%'
+
 MATOMO_TOKEN_AUTH = 'castle.matomo_token_auth'
 MATOMO_BASE_URL = 'castle.matomo_base_url'
 MATOMO_SITE_ID = 'castle.matomo_site_id'
@@ -54,18 +58,18 @@ def get_facebook_url_data(urls):
 
 def get_matomo_url_data(urls):
     registry = getUtility(IRegistry)
-    site_id =  registry.get(MATOMO_SITE_ID, None)
+    site_id = registry.get(MATOMO_SITE_ID, None)
     base_url = registry.get(MATOMO_BASE_URL, None)
     token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
-    if site_id is None or site_id == '' or base_url is None  or base_url == '' or token_auth is None \
+    if site_id is None or site_id == '' or base_url is None or base_url == '' or token_auth is None \
             or token_auth == '':
         return 0
     total_count = 0
     for url in urls:
-        query_url = COUNT_URLS['twitter_matomo']['url']\
-                        .replace('%%%BASE_URL%%%', base_url).replace('%%%SITE_ID%%%', site_id).\
-                        replace('%%%TOKEN_AUTH%%%', token_auth)\
-                    % url
+        query_url = COUNT_URLS['twitter_matomo']['url'].replace(
+            BASE_URL_STRING, base_url).replace(
+            SITE_ID_STRING, site_id).replace(
+            TOKEN_AUTH_STRING, token_auth) % url
         logger.info('query_url: %s' % query_url)
         resp = requests.get(query_url).content
         datatable = json.loads(resp)
@@ -83,8 +87,13 @@ COUNT_URLS = {
         'slash_matters': True
     },
     'twitter_matomo': {
-        'url': '%%%BASE_URL%%%/?module=API&method=Actions.getOutlinks&idSite=%%%SITE_ID%%%&period=year&date=today' 
-               '&format=json&token_auth=%%%TOKEN_AUTH%%%&segment=outlinkUrl=@/intent/tweet?url=%s',
+        'url':
+            BASE_URL_STRING
+            + '/?module=API&method=Actions.getOutlinks&idSite='
+            + SITE_ID_STRING
+            + '&period=year&date=today&format=json&token_auth='
+            + TOKEN_AUTH_STRING
+            + '&segment=outlinkUrl=@/intent/tweet?url=%s',
         'generator': get_matomo_url_data,
     }
 }
@@ -96,11 +105,11 @@ def _get_url_data(args):
     resp = requests.get(access_url).content.lstrip('foobar(').rstrip(')')
     try:
         data = json.loads(resp)
-    except:
+    except ValueError:
         return 0
-    if data.has_key('count'):
+    if 'count' in data:
         return data['count']
-    elif data.has_key(u'label') and data[u'label'] == u'twitter.com':
+    elif u'label' in data and data[u'label'] == u'twitter.com':
         return data[u'nb_visits']
     else:
         return 0
@@ -145,6 +154,8 @@ def _get_urls(urls):
 
 
 _pool = Pool(processes=3)
+
+
 def _get_counts(urls):
     counts = {}
     type_order = []
