@@ -4,7 +4,9 @@ Changelog
 2.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Mamoto support (CastleCMS API control panel settings, Twitter share
+  counting and Analytics display)
+  [tkimnguyen]
 
 
 2.2.1 (2018-11-21)

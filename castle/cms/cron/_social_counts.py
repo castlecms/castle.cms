@@ -24,6 +24,11 @@ import requests
 import time
 import transaction
 
+USE_MULTIPROCESSING = True
+
+MATOMO_TOKEN_AUTH = 'castle.matomo_token_auth'
+MATOMO_BASE_URL = 'castle.matomo_base_url'
+MATOMO_SITE_ID = 'castle.matomo_site_id'
 
 logger = logging.getLogger('castle.cms')
 
@@ -47,19 +52,38 @@ def get_facebook_url_data(urls):
     return count
 
 
+def get_matomo_url_data(urls):
+    registry = getUtility(IRegistry)
+    site_id =  registry.get(MATOMO_SITE_ID, None)
+    base_url = registry.get(MATOMO_BASE_URL, None)
+    token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
+    if site_id is None or base_url is None or token_auth is None:
+        return 0
+    total_count = 0
+    for url in urls:
+        query_url = COUNT_URLS['twitter_matomo']['url']\
+                        .replace('%%%BASE_URL%%%', base_url).replace('%%%SITE_ID%%%', site_id).\
+                        replace('%%%TOKEN_AUTH%%%', token_auth)\
+                    % url
+        logger.info('query_url: %s' % query_url)
+        resp = requests.get(query_url).content
+        datatable = json.loads(resp)
+        for d in datatable:
+            # TODO also need to handle facebook.com
+            if d[u'label'] == u'twitter.com':
+                total_count += d[u'nb_visits']
+                break
+    return total_count
+
+
 COUNT_URLS = {
     'pinterist': {
         'url': 'http://api.pinterest.com/v1/urls/count.json?callback=foobar&url=%s',
         'slash_matters': True
     },
-    'linkedin': {
-        'url': 'https://www.linkedin.com/countserv/count/share?format=json&url=%s'
-    },
-    'facebook': {
-        'url': 'https://graph.facebook.com/fql?q=SELECT like_count, total_count, '
-               'share_count,click_count,comment_count FROM link_stat '
-               'WHERE url in %s',
-        'generator': get_facebook_url_data
+    'twitter_matomo': {
+        'url': '%%%BASE_URL%%%/?module=API&method=Actions.getOutlinks&idSite=%%%SITE_ID%%%&period=year&date=today&format=json&token_auth=%%%TOKEN_AUTH%%%&segment=outlinkUrl=@%s',
+        'generator': get_matomo_url_data,
     }
 }
 
@@ -68,10 +92,15 @@ def _get_url_data(args):
     config, url = args
     access_url = config['url'] % url
     resp = requests.get(access_url).content.lstrip('foobar(').rstrip(')')
-    data = json.loads(resp)
     try:
+        data = json.loads(resp)
+    except:
+        return 0
+    if data.has_key('count'):
         return data['count']
-    except KeyError:
+    elif data.has_key(u'label') and data[u'label'] == u'twitter.com':
+        return data[u'nb_visits']
+    else:
         return 0
 
 
@@ -90,7 +119,11 @@ def _get_urls_data(args):
             if config.get('slash_matters'):
                 req_urls.append((config, orig_url + '/'))
                 req_urls.append((config, _swap_protocol(orig_url + '/')))
-        results = _req_pool.map(_get_url_data, req_urls)
+        if USE_MULTIPROCESSING:
+            results = _req_pool.map(_get_url_data, req_urls)
+        else:
+            for req_url in req_urls:
+                results.append(_get_url_data(req_url))
     return results
 
 
@@ -109,7 +142,7 @@ def _get_urls(urls):
     return urls
 
 
-# _pool = Pool(processes=3)
+_pool = Pool(processes=3)
 def _get_counts(urls):
     counts = {}
     type_order = []
@@ -159,7 +192,7 @@ def get_social_counts(site, obj, site_url, count=0):
     site_path = '/'.join(site.getPhysicalPath())
     obj_path = '/'.join(obj.getPhysicalPath())
     rel_path = obj_path[len(site_path):].strip('/')
-    print('Looking up ' + rel_path)
+    print('Looking up ' + obj_path)
 
     urls = [site_url.rstrip('/') + '/' + rel_path]
     registry = getUtility(IRegistry)
@@ -182,6 +215,7 @@ def get_social_counts(site, obj, site_url, count=0):
 
     if not _has_data(counts):
         return
+    print '    %s' % counts
 
     obj._p_jar.sync()
     annotations = IAnnotations(obj)
@@ -206,6 +240,7 @@ def retrieve(site):
     registry = getUtility(IRegistry)
     site_url = registry.get('plone.public_url')
     if not site_url:
+        logger.info("No public URL is set; skipping site %s" % site)
         return
     catalog = getToolByName(site, 'portal_catalog')
     count = 0

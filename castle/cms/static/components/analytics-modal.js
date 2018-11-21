@@ -181,7 +181,7 @@ define([
         return D.p({}, 'Loading data...');
       }
       if(!this.state.data){
-        return D.p({}, 'No data could be retrieved. This is likely due because you have not configured Google Analytics API support');
+        return D.p({}, 'No data could be retrieved. Google Analytics API support may not be configured.');
       }
       var cdata = [['Count', this.translate(this.state.metrics)]];
       _.each(this.state.data.rows, function(result){
@@ -407,6 +407,25 @@ define([
         loading: false
       };
     },
+    componentDidMount: function(){
+      Modal.componentDidMount.call(this);
+      var that = this;
+      utils.loading.show();
+      $.ajax({
+        url: $('body').attr('data-base-url') + '/@@content-analytics',
+        data: {
+          api: 'social'
+        }
+      }).done(function(data){
+        that.setState({
+          social: data.data
+        });
+      }).fail(function(){
+        alert('failed to load analytic data');
+      }).always(function(){
+        utils.loading.hide();
+      });
+    },
     tabClicked: function(tab){
       this.setState({
         tab: tab
@@ -472,27 +491,26 @@ define([
     },
     renderSocialTab: function(){
       if(this.state.social === null){
-        return D.p({ className: 'discreet' }, 'No social data gathered');
+        return D.p({ className: 'discreet' }, 'No social data found (see also social-counts script)');
       }
       var extra = '';
       var data = this.state.social;
       var cdata= [
         ['Platform', 'Shares'],
-        ['Facebook', data.facebook],
-        ['Linked In', data.linkedin],
-        ['Pinterist', data.pinterist]
+        ['LinkedIn', data.linkedin],
+        ['Pinterest', data.pinterist],
+        ['Twitter (Matomo)', data.twitter_matomo],
       ];
 
       if(data.twitter){
         cdata.push(['Twitter', data.twitter]);
         extra = D.p(
           { className: 'discreet'},
-          'Twitter data is not a total ever shared but a total aggregated by CastleCMS from ' +
-          'Twitter\'s streaming API service.');
+          'Twitter shares as reported via Twitter\'s streaming API');
       }else{
         extra = D.p(
           { className: 'discreet'},
-          'Twitter data not available. Make sure it is configured correctly.');
+          'Twitter API keys may not be set (see also twitter-monitor script)');
       }
 
       cdata = google.visualization.arrayToDataTable(cdata);
