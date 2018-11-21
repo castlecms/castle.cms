@@ -498,7 +498,7 @@ define([
       var cdata= [
         ['Platform', 'Shares'],
         ['LinkedIn', data.linkedin],
-        ['Pinterest', data.pinterist],
+        ['Pinterest', data.pinterest],
         ['Twitter (Matomo)', data.twitter_matomo],
       ];
 
