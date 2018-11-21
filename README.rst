@@ -387,4 +387,4 @@ status and reasoning for our forks:
 - mockup: https://github.com/plone/mockup/tree/2.4.x
   (Dev release): TinyMCE backport fixes from 5.1
 - Products-CMFPlone
-  (Dev release): TinyMCE backport fixes from 5.1
+  (Dev release): TinyMCE backport fixes from 5.1 and bundle ordering bug: https://github.com/plone/Products.CMFPlone/pull/2632
