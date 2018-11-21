@@ -371,7 +371,8 @@ class IAPISettings(Interface):
 
     matomo_base_url = schema.URI(
         title=u'Matomo instance base URL',
-        description=u'used to query social media share outlinks via Matomo API, e.g. https://castlecms.innocraft.cloud',
+        description=u'used to query social media share outlinks via Matomo API, '
+                    'e.g. https://castlecms.innocraft.cloud',
         default=None,
         required=False)
 
@@ -387,7 +388,6 @@ class IAPISettings(Interface):
         default=u'',
         required=False
     )
-
 
 
 class IArchivalSettings(Interface):
