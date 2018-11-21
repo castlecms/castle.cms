@@ -84,7 +84,7 @@ COUNT_URLS = {
     },
     'twitter_matomo': {
         'url': '%%%BASE_URL%%%/?module=API&method=Actions.getOutlinks&idSite=%%%SITE_ID%%%&period=year&date=today' 
-               '&format=json&token_auth=%%%TOKEN_AUTH%%%&segment=outlinkUrl=@%s',
+               '&format=json&token_auth=%%%TOKEN_AUTH%%%&segment=outlinkUrl=@/intent/tweet?url=%s',
         'generator': get_matomo_url_data,
     }
 }
