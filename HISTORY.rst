@@ -4,7 +4,8 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
-- Add Mamoto support (CastleCMS API control panel settings, Twitter share counting and Analytics display)
+- Add Mamoto support (CastleCMS API control panel settings, Twitter share counting and Analytics display);
+  remove EOL'd Facebook and LinkedIn API social counts
   [tkimnguyen]
 
 - Handle potentially weird ConnectionStateError on login

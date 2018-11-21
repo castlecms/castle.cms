@@ -57,7 +57,8 @@ def get_matomo_url_data(urls):
     site_id =  registry.get(MATOMO_SITE_ID, None)
     base_url = registry.get(MATOMO_BASE_URL, None)
     token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
-    if site_id is None or base_url is None or token_auth is None:
+    if site_id is None or site_id == '' or base_url is None  or base_url == '' or token_auth is None \
+            or token_auth == '':
         return 0
     total_count = 0
     for url in urls:
@@ -77,12 +78,13 @@ def get_matomo_url_data(urls):
 
 
 COUNT_URLS = {
-    'pinterist': {
+    'pinterest': {
         'url': 'http://api.pinterest.com/v1/urls/count.json?callback=foobar&url=%s',
         'slash_matters': True
     },
     'twitter_matomo': {
-        'url': '%%%BASE_URL%%%/?module=API&method=Actions.getOutlinks&idSite=%%%SITE_ID%%%&period=year&date=today&format=json&token_auth=%%%TOKEN_AUTH%%%&segment=outlinkUrl=@%s',
+        'url': '%%%BASE_URL%%%/?module=API&method=Actions.getOutlinks&idSite=%%%SITE_ID%%%&period=year&date=today' 
+               '&format=json&token_auth=%%%TOKEN_AUTH%%%&segment=outlinkUrl=@%s',
         'generator': get_matomo_url_data,
     }
 }
