@@ -61,8 +61,9 @@ def get_matomo_url_data(urls):
     site_id = registry.get(MATOMO_SITE_ID, None)
     base_url = registry.get(MATOMO_BASE_URL, None)
     token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
-    if site_id is None or site_id == '' or base_url is None or base_url == '' or token_auth is None \
-            or token_auth == '':
+    if (site_id is None or site_id == '' or
+            base_url is None or base_url == '' or
+            token_auth is None or token_auth == ''):
         return 0
     total_count = 0
     for url in urls:
@@ -87,13 +88,11 @@ COUNT_URLS = {
         'slash_matters': True
     },
     'twitter_matomo': {
-        'url':
-            BASE_URL_STRING
-            + '/?module=API&method=Actions.getOutlinks&idSite='
-            + SITE_ID_STRING
-            + '&period=year&date=today&format=json&token_auth='
-            + TOKEN_AUTH_STRING
-            + '&segment=outlinkUrl=@/intent/tweet?url=%s',
+        'url': '{}/?module=API&method=Actions.getOutlinks&idSite={}&period=year&date=today&format=json&token_auth={}&segment=outlinkUrl=@/intent/tweet?url=%s'.format(  # noqa
+            BASE_URL_STRING,
+            SITE_ID_STRING,
+            TOKEN_AUTH_STRING
+        ),
         'generator': get_matomo_url_data,
     }
 }
