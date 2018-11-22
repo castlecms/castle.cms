@@ -110,42 +110,23 @@ Optional Dependencies
 Running tests
 =============
 
-Assuming you have buildout properly installed to run the tests:
+Default plone testing:
 
 .. code-block:: shell
 
-    Xvfb :99 &
-    Xvfb :99 -fp /usr/share/X11/fonts/misc -screen 0 1900x1900x24 &
-    export DISPLAY=:99
+  ./bin/test -s castle.cms
 
-To access the running Selenium test server on port 55001:
-
+To run only robot tests:
 .. code-block:: shell
+  ./bin/test -s castle.cms -t robot
 
-    ZSERVER_HOST=0.0.0.0 ./bin/test -s castle.cms
 
-To specify a custom Firefox binary to match versions:
-
+Without robot:
 .. code-block:: shell
+  ./bin/test -s castle.cms -t \!robot
 
-    FIREFOX_BINARY=/opt/firefox/firefox ./bin/test  -s castle.cms
-
-If Selenium refuses to start, update the binaries:
-
-.. code-block:: shell
-
-    pip install -U selenium
-
-If it still doesn't run, attempt to install Firefox 45
-`<https://ftp.mozilla.org/pub/firefox/releases/45.0/linux-x86_64/en-US/>`_
-
-Non-Selenium tests:
-
-Since Selenium can be flaky...
-
-.. code-block:: shell
-
-  ./bin/test -s castle.cms -t \!selenium
+If you have errors complaining about warning, make sure the version of selenium 
+you're using works with the version of Firefox you have installed (see above)
 
 
 Google Analytics Key File
@@ -169,11 +150,9 @@ Daily
 -----
 
 - ``bin/clean-plone-users``: removes disabled users
-- ``bin/clean-plone-users``: removes disabled users
-- ``bin/clean-plone-users``: removes disabled users
-- ``bin/clean-plone-users``: removes disabled users
 - ``bin/social-counts``: goes through all content and updates social media counts. Can be done monthly
 - ``bin/content-popularity``: if Google Analytics is setup, will get content statistics for popularity
+- ``bin/clean-drafts``: clean old draft data
 
 Weekly
 ------
@@ -187,7 +166,7 @@ Processes
 ---------
 
 - ``bin/twitter-monitor``: Monitor Twitter for mentions of your site
-
+- ``bin/castle-crawler``: Crawl sites defined in crawler settings
 
 
 Export/Import
@@ -381,3 +360,31 @@ Running local dependencies
 --------------------------
 
     $ docker run -p 6379:6379 redis
+
+
+Forks/Custom releases
+---------------------
+
+Castle maintains forks and custom releases of packages ocassionally. Here is the
+status and reasoning for our forks:
+
+- plone.app.blocks: https://github.com/castlecms/plone.app.blocks
+  (Hard fork): Castle heavily customizes how Plone renders things including how "blocks" are rendered
+- plone-app-mosaic: https://github.com/castlecms/plone.app.mosaic/tree/castlecms
+  (Hard fork): Originally for fixes but at this point, we will maintain the fork
+  until we have reason not to or we have better alternative layout engines.
+- plonetheme.barceloneta:
+  (Hard fork): Castle rendering of barceloneta. No Diazo.
+- plone.app.registry
+  (Dev release): Release to get Plone 5.1 features into Castle based off Plone 5.0.
+  Can be removed once we go to 5.2
+- plone.app.standardtiles
+  (Dev release): Unknown status on if we still need this release.
+- Products.ZCatalog
+  (Dev release): unknown status
+- z3c.relationfield
+  (Dev release): PR: https://github.com/zopefoundation/z3c.relationfield/pull/7
+- mockup: https://github.com/plone/mockup/tree/2.4.x
+  (Dev release): TinyMCE backport fixes from 5.1
+- Products-CMFPlone
+  (Dev release): TinyMCE backport fixes from 5.1 and bundle ordering bug: https://github.com/plone/Products.CMFPlone/pull/2632

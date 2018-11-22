@@ -13,7 +13,7 @@ def read(*rnames):
 setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
-    version='2.2.0.dev0',
+    version='2.2.2.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
@@ -35,7 +35,7 @@ setup(
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['castle'],
     install_requires=[
-        'Products.CMFPlone',
+        'Products.CMFPlone>=5.0.10.dev2',
         'Products.CMFPlacefulWorkflow',
         'plone.app.caching',
         'plone.app.dexterity',
@@ -66,7 +66,6 @@ setup(
     ],
     extras_require={
         'test': [
-            'selenium',
             'plone.app.testing',
             'responses',
             'mock',

@@ -19,7 +19,13 @@ define([
       var that = this;
       $('.pat-existing').each(function() {
         var main_content = $(this).attr('content_url') + ' #main-content';
-        $(this).load(main_content);
+        var has_recaptcha = $(this).attr('recaptcha');
+        function check_recaptcha() {
+          if (has_recaptcha === "True") {
+            require(['https://www.google.com/recaptcha/api.js']);
+          }
+        }
+        $(this).load(main_content, check_recaptcha);
       });
       that.loaded = true;
     }

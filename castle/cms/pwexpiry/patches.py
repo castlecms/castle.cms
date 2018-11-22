@@ -3,7 +3,7 @@ import logging
 from AccessControl import AuthEncoding
 from castle.cms.pwexpiry.events import (InvalidPasswordEntered,
                                         ValidPasswordEntered)
-from castle.cms.pwexpiry.interfaces import ICustomPasswordValidator
+from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 from plone import api
 from Products.CMFPlone.RegistrationTool import RegistrationTool
 from Products.PluggableAuthService.plugins.ZODBUserManager import \
