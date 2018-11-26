@@ -300,22 +300,39 @@ class ImportSubscribersForm(AutoExtensibleForm, form.Form):
             lines = data['csv_upload'].split('\n')
             columns = lines[0].split(',')
             categoryindex = columns.index('categories')
+            emailindex = columns.index('email')
             for line in lines[1:]:
                 cols = line.split(',')
-                subscriber = {}
-                for index, col in enumerate(cols):
-                    if(index == categoryindex):
-                        continue
-                    if col == '':
-                        subscriber[columns[index]] = None
-                    elif col == 'True' or col == 'False':
-                        subscriber[columns[index]] = col == 'True'
-                    else:
-                        try:
-                            subscriber[columns[index]] = float(col)
-                        except ValueError:
-                            subscriber[columns[index]] = col
-                subscriber['categories'] = map(toUnicode, cols[categoryindex].strip('"').split(';'))
+                if len(cols) <= 1:
+                    continue
+                subscriber = {
+                    'categories': map(toUnicode, cols[categoryindex].strip('"').split(';')),
+                    'email': cols[emailindex]
+                }
+                match = subscribe.get_subscriber(subscriber['email'])
+                if match is not None:
+                    for cat in subscriber['categories']:
+                        if cat not in match['categories']:
+                            match['categories'].append(cat)
+                else:
+                    for index, col in enumerate(cols):
+                        if(index == categoryindex):
+                            continue
+                        if col == '':
+                            subscriber[columns[index]] = None
+                        elif col == 'True' or col == 'False':
+                            subscriber[columns[index]] = col == 'True'
+                        else:
+                            try:
+                                subscriber[columns[index]] = float(col)
+                            except ValueError:
+                                subscriber[columns[index]] = col
+                    subscribe.register(subscriber['email'], subscriber)
+                for cat in subscriber['categories']:
+                    allcategories = api.portal.get_registry_record(reg_key)
+                    if cat not in allcategories:
+                        allcategories.append(cat)
+                        api.portal.set_registry_record(reg_key, allcategories)
 
 
 class IMergeCategoriesForm(model.Schema):
