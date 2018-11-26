@@ -497,9 +497,9 @@ define([
       var data = this.state.social;
       var cdata= [
         ['Platform', 'Shares'],
-        ['LinkedIn', data.linkedin],
         ['Pinterest', data.pinterest],
         ['Twitter (Matomo)', data.twitter_matomo],
+        ['Facebook (Matomo)', data.facebook_matomo],
       ];
 
       if(data.twitter){

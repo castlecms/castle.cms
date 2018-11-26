@@ -1,4 +1,3 @@
-# https://gist.github.com/jonathanmoore/2640302
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
@@ -13,7 +12,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import defaultpage
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
-from urllib import quote_plus
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
@@ -37,26 +35,7 @@ MATOMO_SITE_ID = 'castle.matomo_site_id'
 logger = logging.getLogger('castle.cms')
 
 
-def get_facebook_url_data(urls):
-    urls_string = '("%s")' % (
-        '","'.join(quote_plus(url) for url in urls)
-    )
-    access_url = COUNT_URLS['facebook']['url'] % urls_string
-    resp = requests.get(access_url).content
-    data = json.loads(resp)
-    count = 0
-    if 'data' not in data:
-        return 0
-    data = data['data']
-    for group in data:
-        count += group.get('like_count', 0)
-        count += group.get('total_count', 0)
-        count += group.get('share_count', 0)
-        count += group.get('comment_count', 0)
-    return count
-
-
-def get_matomo_url_data(urls):
+def get_twitter_matomo_url_data(urls):
     registry = getUtility(IRegistry)
     site_id = registry.get(MATOMO_SITE_ID, None)
     base_url = registry.get(MATOMO_BASE_URL, None)
@@ -71,12 +50,34 @@ def get_matomo_url_data(urls):
             BASE_URL_STRING, base_url).replace(
             SITE_ID_STRING, site_id).replace(
             TOKEN_AUTH_STRING, token_auth) % url
-        logger.info('query_url: %s' % query_url)
-        resp = requests.get(query_url).content
+        resp = requests.get(query_url, timeout=10).content
         datatable = json.loads(resp)
         for d in datatable:
-            # TODO also need to handle facebook.com
             if d[u'label'] == u'twitter.com':
+                total_count += d[u'nb_visits']
+                break
+    return total_count
+
+
+def get_facebook_matomo_url_data(urls):
+    registry = getUtility(IRegistry)
+    site_id = registry.get(MATOMO_SITE_ID, None)
+    base_url = registry.get(MATOMO_BASE_URL, None)
+    token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
+    if (site_id is None or site_id == '' or
+            base_url is None or base_url == '' or
+            token_auth is None or token_auth == ''):
+        return 0
+    total_count = 0
+    for url in urls:
+        query_url = COUNT_URLS['facebook_matomo']['url'].replace(
+            BASE_URL_STRING, base_url).replace(
+            SITE_ID_STRING, site_id).replace(
+            TOKEN_AUTH_STRING, token_auth) % url
+        resp = requests.get(query_url, timeout=10).content
+        datatable = json.loads(resp)
+        for d in datatable:
+            if d[u'label'] == u'www.facebook.com':
                 total_count += d[u'nb_visits']
                 break
     return total_count
@@ -93,8 +94,16 @@ COUNT_URLS = {
             SITE_ID_STRING,
             TOKEN_AUTH_STRING
         ),
-        'generator': get_matomo_url_data,
-    }
+        'generator': get_twitter_matomo_url_data,
+    },
+    'facebook_matomo': {
+        'url': '{}/?module=API&method=Actions.getOutlinks&idSite={}&period=year&date=today&format=json&token_auth={}&expanded=1&filter_pattern_recursive=u=%s'.format(  # noqa
+            BASE_URL_STRING,
+            SITE_ID_STRING,
+            TOKEN_AUTH_STRING
+        ),
+        'generator': get_facebook_matomo_url_data,
+    },
 }
 
 
