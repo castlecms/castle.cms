@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.2.2 (unreleased)
+2.2.2 (2018-11-26)
 ------------------
 
 - fix mosaic build js/css
