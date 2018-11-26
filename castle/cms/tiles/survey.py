@@ -21,6 +21,7 @@ class SurveyTile(BaseTile):
             'id': self.data.get('survey_id'),
             'custom_url': self.data.get('survey_url'),
             'rule': self.data.get('rule', 'always'),
+            'cookie': self.data.get('use_cookie', 'show_once'),
             'display': self.data.get('display', 'here'),
             'duration': self.data.get('duration', 20),
             'count': self.data.get('page_count', 5),
@@ -62,11 +63,22 @@ class ISurveyTileSchema(Interface):
         description=u'When should the survey display?',
         required=True,
         vocabulary=SimpleVocabulary([
-            SimpleTerm(u'always', u'always', u'Always'),
+            SimpleTerm(u'always', u'always', u'Immediately on each page effected by this tile'),
             SimpleTerm(u'timer', u'timer', u'Countdown/Timer: Visitor has been on this page for some time'),
             SimpleTerm(u'count', u'count', u'Page Count: Visitor has gone to x number of pages'),
             SimpleTerm(u'leave', u'leave', u'When Mouse Leaves top of page')
         ]),
+    )
+
+    use_cookie = schema.Choice(
+        title=u'Cookies',
+        description=u'How should cookies be used to prevent users from seeing the invite repeatedly?',
+        required=True,
+        vocabulary=SimpleVocabulary([
+            SimpleTerm(u'always', u'always', u'Always show the invite based on selected rules'),
+            SimpleTerm(u'until_clicked', u'until_clicked', u'Show the invite only until the user clicks it'),
+            SimpleTerm(u'show_once', u'show_once', u'Show the invite only once per session')
+        ])
     )
 
     duration = schema.Int(
