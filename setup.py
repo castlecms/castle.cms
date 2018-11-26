@@ -47,7 +47,7 @@ setup(
         'collective.celery',
         'requests',
         'requests_oauthlib',
-        'plone.app.mosaic',
+        'plone.app.mosaic>=2.0.0.dev18',
         'Products.PloneKeywordManager',
         'plone.api',
         'redis',
