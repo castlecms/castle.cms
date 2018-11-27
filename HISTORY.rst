@@ -4,7 +4,8 @@ Changelog
 2.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Do not error when upgrade hasn't been run for only allow backend urls
+  [vangheem]
 
 
 2.2.2 (2018-11-26)
