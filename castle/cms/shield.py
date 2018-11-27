@@ -39,8 +39,11 @@ def protect(req):
         backend_urls = (registry and
                         registry.get('plone.backend_url', SHIELD.NONE) or
                         [])
-        for backend_url in backend_urls:
-            protect |= backend_url.startswith(req.SERVER_URL)
+        for backend_url in backend_urls or []:
+            try:
+                protect |= backend_url.startswith(req.SERVER_URL)
+            except AttributeError:
+                pass
     if protect and api.user.is_anonymous():
         raise Redirect('{}/@@secure-login'.format(
             api.portal.get().absolute_url()))

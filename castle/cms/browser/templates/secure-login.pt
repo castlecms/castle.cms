@@ -11,7 +11,7 @@
                   site_login python: hasattr(context,'portal_registry');
                   portreg python: context.portal_registry if site_login else {'plone.backend_url':[],'plone.only_allow_login_to_backend_urls':False};
                   backend_urls python:portreg['plone.backend_url'] or [];
-                  only_allow_login_to_backend_urls python:portreg['plone.only_allow_login_to_backend_urls'];
+                  only_allow_login_to_backend_urls python:portreg.get('plone.only_allow_login_to_backend_urls');
                   bad_domain python: only_allow_login_to_backend_urls and len(backend_urls) > 0 and portal_url.rstrip('/') not in backend_urls;"
       class="secure-login-template">
 

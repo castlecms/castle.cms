@@ -1,11 +1,25 @@
 Changelog
 =========
 
-2.2.3 (unreleased)
+2.3.0 (unreleased)
 ------------------
+
+New:
+
+- Add Mamoto support (CastleCMS API control panel settings, Twitter & Facebook share counting and Analytics display);
+  remove EOL'd Facebook and LinkedIn API social counts
+  [tkimnguyen]
+
+Fixes:
 
 - Fixed registry upgrade blanking out the plone.backend_url recored
   [obct537]
+
+- Do not error when upgrade hasn't been run for only allow backend urls
+  [vangheem]
+
+- Handle incorrectly configured backend url/sheild settings
+  [vangheem]
 
 
 2.2.2 (2018-11-26)
