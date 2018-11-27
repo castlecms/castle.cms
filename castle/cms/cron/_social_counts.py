@@ -1,11 +1,17 @@
+import json
+import logging
+import time
+from multiprocessing import Pool
+from urllib import urlencode
+
+import requests
+
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
 from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.utils import clear_object_cache
-from castle.cms.utils import index_in_es
-from castle.cms.utils import retriable
-from multiprocessing import Pool
+from castle.cms.utils import clear_object_cache, index_in_es, retriable
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -15,18 +21,9 @@ from tendo import singleton
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
-
-import json
-import logging
-import requests
-import time
-import transaction
+from functools import partial
 
 USE_MULTIPROCESSING = True
-
-TOKEN_AUTH_STRING = '%%%TOKEN_AUTH%%%'
-SITE_ID_STRING = '%%%SITE_ID%%%'
-BASE_URL_STRING = '%%%BASE_URL%%%'
 
 MATOMO_TOKEN_AUTH = 'castle.matomo_token_auth'
 MATOMO_BASE_URL = 'castle.matomo_base_url'
@@ -35,75 +32,59 @@ MATOMO_SITE_ID = 'castle.matomo_site_id'
 logger = logging.getLogger('castle.cms')
 
 
-def get_twitter_matomo_url_data(urls):
+def get_matomo_api_url(url):
     registry = getUtility(IRegistry)
     site_id = registry.get(MATOMO_SITE_ID, None)
     base_url = registry.get(MATOMO_BASE_URL, None)
     token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
-    if (site_id is None or site_id == '' or
-            base_url is None or base_url == '' or
-            token_auth is None or token_auth == ''):
-        return 0
-    total_count = 0
+    params = {
+        'module': 'API',
+        'method': 'Actions.getOutlinks',
+        'idSite': site_id,
+        'period': 'year',
+        'date': 'today',
+        'format': 'json',
+        'token_auth': token_auth,
+        'expanded': '1',
+        'filter_pattern_recursive': '',
+        'u': url
+    }
+    return '{}/?{}'.format(
+        base_url,
+        urlencode(params)
+    )
+
+
+_matomo_data_mapping = {
+    'facebook_matomo': 'www.facebook.com',
+    'twitter_matomo': 'twitter.com'
+}
+
+
+def get_matomo_url_data(label, urls):
+    data = {
+        'facebook_matomo': 0,
+        'twitter_matomo': 0
+    }
     for url in urls:
-        query_url = COUNT_URLS['twitter_matomo']['url'].replace(
-            BASE_URL_STRING, base_url).replace(
-            SITE_ID_STRING, site_id).replace(
-            TOKEN_AUTH_STRING, token_auth) % url
+        query_url = get_matomo_api_url(url)
         resp = requests.get(query_url, timeout=10).content
         datatable = json.loads(resp)
         for d in datatable:
-            if d[u'label'] == u'twitter.com':
-                total_count += d[u'nb_visits']
-                break
-    return total_count
+            for key, label in _matomo_data_mapping.items():
+                if d['label'] == label:
+                    data[key] += d['nb_visits']
+    return data
 
 
-def get_facebook_matomo_url_data(urls):
-    registry = getUtility(IRegistry)
-    site_id = registry.get(MATOMO_SITE_ID, None)
-    base_url = registry.get(MATOMO_BASE_URL, None)
-    token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
-    if (site_id is None or site_id == '' or
-            base_url is None or base_url == '' or
-            token_auth is None or token_auth == ''):
-        return 0
-    total_count = 0
-    for url in urls:
-        query_url = COUNT_URLS['facebook_matomo']['url'].replace(
-            BASE_URL_STRING, base_url).replace(
-            SITE_ID_STRING, site_id).replace(
-            TOKEN_AUTH_STRING, token_auth) % url
-        resp = requests.get(query_url, timeout=10).content
-        datatable = json.loads(resp)
-        for d in datatable:
-            if d[u'label'] == u'www.facebook.com':
-                total_count += d[u'nb_visits']
-                break
-    return total_count
-
-
-COUNT_URLS = {
+COUNT_TYPES = {
     'pinterest': {
         'url': 'http://api.pinterest.com/v1/urls/count.json?callback=foobar&url=%s',
         'slash_matters': True
     },
-    'twitter_matomo': {
-        'url': '{}/?module=API&method=Actions.getOutlinks&idSite={}&period=year&date=today&format=json&token_auth={}&segment=outlinkUrl=@/intent/tweet?url=%s'.format(  # noqa
-            BASE_URL_STRING,
-            SITE_ID_STRING,
-            TOKEN_AUTH_STRING
-        ),
-        'generator': get_twitter_matomo_url_data,
-    },
-    'facebook_matomo': {
-        'url': '{}/?module=API&method=Actions.getOutlinks&idSite={}&period=year&date=today&format=json&token_auth={}&expanded=1&filter_pattern_recursive=u=%s'.format(  # noqa
-            BASE_URL_STRING,
-            SITE_ID_STRING,
-            TOKEN_AUTH_STRING
-        ),
-        'generator': get_facebook_matomo_url_data,
-    },
+    'matomo': {
+        'generator': partial(get_matomo_url_data, 'twitter.com'),
+    }
 }
 
 
@@ -117,8 +98,6 @@ def _get_url_data(args):
         return 0
     if 'count' in data:
         return data['count']
-    elif u'label' in data and data[u'label'] == u'twitter.com':
-        return data[u'nb_visits']
     else:
         return 0
 
@@ -136,8 +115,7 @@ def _get_urls_data(args):
         for orig_url in urls:
             req_urls.append((config, orig_url))
             if config.get('slash_matters'):
-                req_urls.append((config, orig_url + '/'))
-                req_urls.append((config, _swap_protocol(orig_url + '/')))
+                req_urls.append((config, orig_url.rstrip('/') + '/'))
         if USE_MULTIPROCESSING:
             results = _req_pool.map(_get_url_data, req_urls)
         else:
@@ -146,37 +124,23 @@ def _get_urls_data(args):
     return results
 
 
-def _swap_protocol(url):
-    if 'http://' in url:
-        return url.replace('http://', 'https://')
-    else:
-        return url.replace('https://', 'http://')
-
-
-def _get_urls(urls):
-    additional = []
-    for url in urls:
-        additional.append(_swap_protocol(url))
-    urls.extend(additional)
-    return urls
-
-
 _pool = Pool(processes=3)
 
 
-def _get_counts(urls):
+def _get_counts(urls, count_types):
     counts = {}
-    type_order = []
-    args_list = []
-    for type_, config in COUNT_URLS.items():
-        counts[type_] = 0
-        type_order.append(type_)
-        args_list.append((config, urls))
-
-    for idx, type_count in enumerate(map(_get_urls_data, args_list)):
-        type_ = type_order[idx]
-        for type_count in type_count:
-            counts[type_] += type_count
+    for type_, config in count_types.items():
+        for result in _get_urls_data((config, urls)):
+            if isinstance(result, dict):
+                # manually setting keys on social data here
+                for key, value in result.items():
+                    if key not in counts:
+                        counts[key] = 0
+                    counts[key] += value
+            else:
+                if type_ not in counts:
+                    counts[type_] = 0
+                counts[type_] += result
     return counts
 
 
@@ -208,7 +172,7 @@ def _count_diff(existing, new):
 
 
 @retriable(sync=True)
-def get_social_counts(site, obj, site_url, count=0):
+def get_social_counts(site, obj, site_url, count_types, count=0):
     counts = {}
     site_path = '/'.join(site.getPhysicalPath())
     obj_path = '/'.join(obj.getPhysicalPath())
@@ -231,12 +195,10 @@ def get_social_counts(site, obj, site_url, count=0):
         rel_path = redirect[len(site_path):].strip('/')
         urls.append(site_url.rstrip('/') + '/' + rel_path)
 
-    urls = _get_urls(urls)
-    counts = _get_counts(urls)
+    counts = _get_counts(urls, count_types)
 
     if not _has_data(counts):
         return
-    print '    %s' % counts
 
     obj._p_jar.sync()
     annotations = IAnnotations(obj)
@@ -263,6 +225,18 @@ def retrieve(site):
     if not site_url:
         logger.info("No public URL is set; skipping site %s" % site)
         return
+
+    # Which counting strategies should we use?
+    count_types = COUNT_TYPES.copy()
+    site_id = registry.get(MATOMO_SITE_ID, None)
+    base_url = registry.get(MATOMO_BASE_URL, None)
+    token_auth = registry.get(MATOMO_TOKEN_AUTH, None)
+    if not site_id or not base_url or not token_auth:
+        # filter all _matomo count types
+        for ctype in list(count_types.keys()):
+            if ctype.endswith('_matomo'):
+                del count_types[ctype]
+
     catalog = getToolByName(site, 'portal_catalog')
     count = 0
     for brain in catalog(review_state='published'):
@@ -273,7 +247,7 @@ def retrieve(site):
         count += 1
         try:
             obj = brain.getObject()
-            get_social_counts(site, obj, site_url, count)
+            get_social_counts(site, obj, site_url, count_types, count)
             logger.info('retrieved social stats for: %s' % path)
         except Exception:
             logger.warn('error getting social count totals for: %s' % path,

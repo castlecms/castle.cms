@@ -385,7 +385,7 @@ class IAPISettings(Interface):
     matomo_site_id = schema.TextLine(
         title=u'Matomo Site ID',
         description=u'from your Matomo account settings, under Websites > Manage.',
-        default=u'',
+        default=u'1',
         required=False
     )
 

@@ -399,6 +399,11 @@ define([
 
 
   var AnalyticsModalComponent = cutils.Class([Modal], {
+    dataMappings: {
+      pinterest: 'Pinterest',
+      twitter_matomo: 'Twitter (Matomo)',
+      facebook_matomo: 'Facebook (Matomo)'
+    },
     getInitialState: function(){
       return {
         social: null,
@@ -490,27 +495,32 @@ define([
       });
     },
     renderSocialTab: function(){
+      var that = this;
       if(this.state.social === null){
-        return D.p({ className: 'discreet' }, 'No social data found (see also social-counts script)');
+        return D.p(
+          { className: 'discreet' },
+          'No social data found (Make sure social count monitoring is configured)');
       }
       var extra = '';
       var data = this.state.social;
       var cdata= [
-        ['Platform', 'Shares'],
-        ['Pinterest', data.pinterest],
-        ['Twitter (Matomo)', data.twitter_matomo],
-        ['Facebook (Matomo)', data.facebook_matomo],
+        ['Platform', 'Shares']
       ];
+      Object.keys(this.dataMappings).forEach(function(dataKey){
+        if(data[dataKey]){
+          cdata.push([that.dataMappings[dataKey], data[dataKey]]);
+        }
+      });
 
       if(data.twitter){
         cdata.push(['Twitter', data.twitter]);
         extra = D.p(
           { className: 'discreet'},
           'Twitter shares as reported via Twitter\'s streaming API');
-      }else{
+      }else if(!data.twitter_matomo){
         extra = D.p(
           { className: 'discreet'},
-          'Twitter API keys may not be set (see also twitter-monitor script)');
+          'Twitter API keys may not be set (Make sure twitter monitoring is configured)');
       }
 
       cdata = google.visualization.arrayToDataTable(cdata);
