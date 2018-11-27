@@ -16,4 +16,4 @@ def upgrade(context, logger=None):
     cookWhenChangingSettings(api.portal.get())
 
     if backend_url is not None:
-        api.portal.set_registry_record('plone.backend_url', (backend_url))
+        api.portal.set_registry_record('plone.backend_url', (backend_url,))
