@@ -369,6 +369,26 @@ class IAPISettings(Interface):
         default=unicode(django_random.get_random_string(64))
     )
 
+    matomo_base_url = schema.URI(
+        title=u'Matomo instance base URL',
+        description=u'used to query social media share outlinks via Matomo API, '
+                    'e.g. https://castlecms.innocraft.cloud',
+        default=None,
+        required=False)
+
+    matomo_token_auth = schema.TextLine(
+        title=u'Matomo authentication token',
+        description=u'from your Matomo account settings, under Platform > API, User Authentication.',
+        default=u'',
+        required=False)
+
+    matomo_site_id = schema.TextLine(
+        title=u'Matomo Site ID',
+        description=u'from your Matomo account settings, under Websites > Manage.',
+        default=u'1',
+        required=False
+    )
+
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
