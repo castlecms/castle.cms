@@ -4,7 +4,8 @@ Changelog
 2.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed registry upgrade blanking out the plone.backend_url recored
+  [obct537]
 
 
 2.2.2 (2018-11-26)
