@@ -21,7 +21,7 @@ from tendo import singleton
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
-from functools import partial
+
 
 USE_MULTIPROCESSING = True
 
