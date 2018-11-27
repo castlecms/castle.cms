@@ -4,6 +4,9 @@ Changelog
 2.2.3 (unreleased)
 ------------------
 
+- Do not error when upgrade hasn't been run for only allow backend urls
+  [vangheem]
+
 - Handle incorrectly configured backend url/sheild settings
   [vangheem]
 
