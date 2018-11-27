@@ -43,7 +43,7 @@ setup(
         'plone.app.upgrade',
         'castle.theme',
         'setuptools',
-        'collective.elasticsearch',
+        'collective.elasticsearch>=2.0.2<3.0.0',
         'collective.celery',
         'requests',
         'requests_oauthlib',

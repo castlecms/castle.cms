@@ -4,7 +4,10 @@ Changelog
 2.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+New:
+
+- Upgrade to latest collective.elasticsearch
+  [vangheem]
 
 
 2.3.0 (2018-11-27)

@@ -23,9 +23,12 @@ class PhysicalNavigationBreadcrumbs(BrowserView):
             if ISiteRoot.providedBy(context):
                 break
 
-            if utils.isDefaultPage(context, self.request):
-                context = utils.parent(context)
-                continue
+            try:
+                if utils.isDefaultPage(context, self.request):
+                    context = utils.parent(context)
+                    continue
+            except AttributeError:
+                break
 
             # Some things want to be hidden from the breadcrumbs
             if IHideFromBreadcrumbs.providedBy(context):
