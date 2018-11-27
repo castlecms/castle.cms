@@ -12,6 +12,9 @@ New:
 
 Fixes:
 
+- Fixed registry upgrade blanking out the plone.backend_url recored
+  [obct537]
+
 - Do not error when upgrade hasn't been run for only allow backend urls
   [vangheem]
 
