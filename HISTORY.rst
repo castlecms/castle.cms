@@ -4,7 +4,8 @@ Changelog
 2.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Handle incorrectly configured backend url/sheild settings
+  [vangheem]
 
 
 2.2.2 (2018-11-26)
