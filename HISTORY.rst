@@ -1,8 +1,35 @@
 Changelog
 =========
 
-2.2.1 (unreleased)
+2.3.0 (unreleased)
 ------------------
+
+New:
+
+- Add Mamoto support (CastleCMS API control panel settings, Twitter & Facebook share counting and Analytics display);
+  remove EOL'd Facebook and LinkedIn API social counts
+  [tkimnguyen]
+
+Fixes:
+
+- Do not error when upgrade hasn't been run for only allow backend urls
+  [vangheem]
+
+- Handle incorrectly configured backend url/sheild settings
+  [vangheem]
+
+
+2.2.2 (2018-11-26)
+------------------
+
+- fix mosaic build js/css
+
+
+2.2.1 (2018-11-21)
+------------------
+
+- Upgrade CMFPlone to fix meta bundle ordering
+  [vangheem]
 
 - Do not redirect to `/not-found`, just directly render not found template
   [vangheem]

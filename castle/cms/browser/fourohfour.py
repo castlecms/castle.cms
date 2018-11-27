@@ -2,7 +2,6 @@ from castle.cms import archival
 from castle.cms import shield
 from castle.cms.files import aws
 from plone import api
-from Products.Five import BrowserView
 from zExceptions import Redirect
 from zope.component import queryUtility
 from plone.app.redirector.interfaces import IRedirectionStorage

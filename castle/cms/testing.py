@@ -10,7 +10,7 @@ from plone.app.testing import (MOCK_MAILHOST_FIXTURE, PLONE_FIXTURE,
                                FunctionalTesting, IntegrationTesting,
                                PloneSandboxLayer, applyProfile)
 from plone.app.robotframework import AutoLogin, RemoteLibraryLayer
-from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
+# from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.testing import z2
 from plone.app.robotframework.quickinstaller import QuickInstaller
 from plone.app.robotframework.mailhost import MockMailHost

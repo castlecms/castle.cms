@@ -371,7 +371,7 @@ status and reasoning for our forks:
 - plone.app.blocks: https://github.com/castlecms/plone.app.blocks
   (Hard fork): Castle heavily customizes how Plone renders things including how "blocks" are rendered
 - plone-app-mosaic: https://github.com/castlecms/plone.app.mosaic/tree/castlecms
-  (Hard fork): Originally for fixes but at this point, we will maintain the fork
+  (Hard fork, castlecms branch): Originally for fixes but at this point, we will maintain the fork
   until we have reason not to or we have better alternative layout engines.
 - plonetheme.barceloneta:
   (Hard fork): Castle rendering of barceloneta. No Diazo.
@@ -387,4 +387,4 @@ status and reasoning for our forks:
 - mockup: https://github.com/plone/mockup/tree/2.4.x
   (Dev release): TinyMCE backport fixes from 5.1
 - Products-CMFPlone
-  (Dev release): TinyMCE backport fixes from 5.1
+  (Dev release): TinyMCE backport fixes from 5.1 and bundle ordering bug: https://github.com/plone/Products.CMFPlone/pull/2632

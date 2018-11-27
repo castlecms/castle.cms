@@ -12,6 +12,19 @@ define([
 
   var D = R.DOM;
 
+  var trackUrl = function(url){
+    var anchor = document.createElement('a');
+    anchor.href = url;
+    var trackValue = anchor.pathname + anchor.search
+    if(window.ga){
+      window.ga('send', 'pageview', trackValue);
+    }
+    if(window._paq){
+      window._paq.push([
+        'trackEvent', 'queryfilter', trackValue]);
+    }
+  }
+
   var QueryFilterComponent = R.createClass({
     getInitialState: function(){
       return $.extend({}, true, {
@@ -104,12 +117,8 @@ define([
             searchedText: self.state.SearchableText,
             loading: false
           });
-          if(window.ga){
-            // parse url
-            var anchor = document.createElement('a');
-            anchor.href = url;
-            window.ga('send', 'pageview', anchor.pathname + anchor.search);
-          }
+          // parse url
+          trackUrl(url);
         }).always(function(){
           utils.loading.hide();
           self.state.loading = false;
@@ -308,12 +317,7 @@ define([
           Registry.scan($items);
           self.bind();
 
-          if(window.ga){
-            // parse url
-            var anchor = document.createElement('a');
-            anchor.href = url;
-            window.ga('send', 'pageview', anchor.pathname + anchor.search);
-          }
+          trackUrl(url);
         }).always(function(){
           utils.loading.hide();
         }).fail(function(){
