@@ -73,6 +73,9 @@ Fixes:
 
 New:
 
+- Add import subscribers form for announcements panel
+  [CorySanin]
+
 - Add Mamoto support (CastleCMS API control panel settings, Twitter & Facebook share counting and Analytics display);
   remove EOL'd Facebook and LinkedIn API social counts
   [tkimnguyen]

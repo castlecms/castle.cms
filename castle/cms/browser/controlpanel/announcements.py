@@ -511,7 +511,6 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
         self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
         self.add_category_form = AddCategoryForm(aq_inner(context), request)
-        self.get_sub_count()
 
     def get_sub_count(self):
         self.categories = api.portal.get_registry_record(reg_key)
@@ -552,5 +551,6 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.merge_categories_form.update()
         self.delete_categories_form.update()
         self.add_category_form.update()
+        self.get_sub_count()
         self.update_terms()
         return super(AnnouncementsControlPanel, self).__call__()
