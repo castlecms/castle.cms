@@ -328,11 +328,11 @@ class ImportSubscribersForm(AutoExtensibleForm, form.Form):
                             except ValueError:
                                 subscriber[columns[index]] = col
                     subscribe.register(subscriber['email'], subscriber)
+                allcategories = api.portal.get_registry_record(reg_key)
                 for cat in subscriber['categories']:
-                    allcategories = api.portal.get_registry_record(reg_key)
                     if cat not in allcategories:
                         allcategories.append(cat)
-                        api.portal.set_registry_record(reg_key, allcategories)
+                api.portal.set_registry_record(reg_key, allcategories)
 
 
 class IMergeCategoriesForm(model.Schema):
