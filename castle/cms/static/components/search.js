@@ -130,6 +130,15 @@ require([
         if(window.ga){
           window.ga('send', 'pageview');
         }
+        if(window._paq){
+          window._paq.push([
+            'trackSiteSearch',
+            that.state.SearchableText,
+            false,
+            data.count
+          ]);
+          window._paq.push(['trackPageView']);
+        }
       }).fail(function(){
         that.setState({
           error: true
