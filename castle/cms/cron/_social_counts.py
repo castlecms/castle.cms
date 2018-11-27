@@ -61,7 +61,7 @@ _matomo_data_mapping = {
 }
 
 
-def get_matomo_url_data(label, urls):
+def get_matomo_url_data(urls):
     data = {
         'facebook_matomo': 0,
         'twitter_matomo': 0
@@ -83,7 +83,7 @@ COUNT_TYPES = {
         'slash_matters': True
     },
     'matomo': {
-        'generator': partial(get_matomo_url_data, 'twitter.com'),
+        'generator': get_matomo_url_data,
     }
 }
 
