@@ -13,7 +13,6 @@ class AnalyticsView(BrowserView):
     def __call__(self):
         self.request.response.setHeader('Content-type', 'application/json')
         paths = self.get_paths()
-
         if self.request.get('api') == 'ga':
             data = self.ga_api_call(paths)
         else:
