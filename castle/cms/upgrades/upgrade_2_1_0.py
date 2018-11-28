@@ -17,3 +17,5 @@ def upgrade(context, logger=None):
 
     if backend_url is not None:
         api.portal.set_registry_record('plone.backend_url', (backend_url,))
+    else:
+        api.portal.set_registry_record('plone.backend_url', ())
