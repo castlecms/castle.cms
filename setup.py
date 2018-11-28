@@ -44,7 +44,7 @@ setup(
         'castle.theme',
         'setuptools',
         'collective.elasticsearch>=2.0.2<3.0.0',
-        'collective.celery',
+        'collective.celery>=1.1.1',
         'requests',
         'requests_oauthlib',
         'plone.app.mosaic>=2.0.0.dev18',
