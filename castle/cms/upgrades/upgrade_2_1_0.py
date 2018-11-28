@@ -9,7 +9,7 @@ PROFILE_ID = 'profile-castle.cms.upgrades:2_1_0'
 def upgrade(context, logger=None):
     # This value is being converted to a tuple, hold onto it or it will get
     # overwritten
-    backend_url = api.portal.get_registry_record('plone.backend_url') or ''
+    backend_url = api.portal.get_registry_record('plone.backend_url') or None
 
     setup = getToolByName(context, 'portal_setup')
     setup.runAllImportStepsFromProfile(PROFILE_ID)
@@ -17,3 +17,5 @@ def upgrade(context, logger=None):
 
     if backend_url is not None:
         api.portal.set_registry_record('plone.backend_url', (backend_url,))
+    else:
+        api.portal.set_registry_record('plone.backend_url', ())
