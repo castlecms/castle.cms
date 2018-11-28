@@ -9,6 +9,9 @@ New:
 - Upgrade to latest collective.elasticsearch
   [vangheem]
 
+- Fixed broken update step
+  [obct537]
+
 
 2.3.0 (2018-11-27)
 ------------------
