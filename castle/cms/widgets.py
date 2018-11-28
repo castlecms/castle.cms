@@ -35,6 +35,7 @@ from Products.CMFPlone import utils as ploneutils
 from z3c.form.browser import text
 from z3c.form.browser.checkbox import SingleCheckBoxWidget
 from z3c.form.browser.select import SelectWidget as z3cform_SelectWidget
+from z3c.form.converter import BaseDataConverter
 from z3c.form.interfaces import NOVALUE, IFieldWidget, ITextWidget
 from z3c.form.util import getSpecification
 from zope.annotation.interfaces import IAnnotations
@@ -268,6 +269,28 @@ class InputSelectWidget(BaseWidget):
         args['pattern_options']['value'] = self.value
         args['pattern_options']['label'] = self.label
         return args
+
+class InputSelectFieldConverter(BaseDataConverter):
+    # Since the input select widget deals with values that
+    # are either inputted manually, or selected from a
+    # vocabulary, we need to deal with either case appropriately
+
+    adapts(IField, IInputSelectWidget)
+
+    def toWidgetValue(self, value):
+        try:
+            return str(self.widget.vocabulary.getTerm(value).value)
+        except LookupError:
+            # It's an "other", just return it as is
+            return value
+
+    def toFieldValue(self, value):
+        for term in self.widget.vocabulary:
+            if value == term.title:
+                return term.value
+
+        #If it's not in the vocabulary, it's an "other" option
+        return value
 
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
