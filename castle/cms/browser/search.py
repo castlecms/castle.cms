@@ -236,7 +236,7 @@ class SearchAjax(BrowserView):
 
         items = []
         for res in results:
-            fields = res['fields']
+            fields = res['_source']
 
             attrs = {}
             for key in _search_attributes:
@@ -310,7 +310,7 @@ class SearchAjax(BrowserView):
         query_params = {
             'from_': start,
             'size': size,
-            'fields': ','.join(_search_attributes) + ',path.path',
+            '_source': 'true'
         }
 
         return es.connection.search(index=es.index_name,
