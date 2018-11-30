@@ -35,34 +35,45 @@ setup(
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['castle'],
     install_requires=[
+        # plone packages
         'Products.CMFPlone>=5.0.10.dev2',
+        'mockup>=2.4.2.dev1',
+        'plone.app.upgrade>=2.0.17',
+        'plone.app.mosaic>=2.0.0.dev18',
+        'plone.app.blocks>=10.0.0',
+        'Products.PloneKeywordManager>=2.2.1',
         'Products.CMFPlacefulWorkflow',
         'plone.app.caching',
         'plone.app.dexterity',
         'plone.app.iterate',
-        'plone.app.upgrade',
+        'plone.api',
+
+        # castle
         'castle.theme',
-        'setuptools',
+
+        # add-ons
+        'collective.documentviewer>=5.0.1',
         'collective.elasticsearch',
         'collective.celery',
-        'requests',
-        'requests_oauthlib',
-        'plone.app.mosaic>=2.0.0.dev18',
-        'Products.PloneKeywordManager',
-        'plone.api',
-        'redis',
-        'z3c.unconfigure',
-        'collective.documentviewer',
+
+        # python
+        'boto>=2.38.0<3',
+        'google-api-python-client>=1.4.2<2',
+        'redis>=2.10.3<3',
+        'requests>=2.7.0<3',
+        'requests_oauthlib>=0.5.0<1',
+        'oauth2client>=1.5.1<2'
+        'setuptools',
         'python-dateutil',
-        'boto',
-        'google-api-python-client',
         'pyopenssl',
         'phonenumbers',
         'html2text',
-        'z3c.jbot',
         'pycountry',
         'tendo',
-        'plone.app.blocks>=10.0.0'
+
+        # misc
+        'z3c.unconfigure',
+        'z3c.jbot',
     ],
     extras_require={
         'test': [
