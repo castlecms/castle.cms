@@ -300,7 +300,7 @@ class BaseImportType(object):
 
         bdata = ILayoutAware(obj, None)
         if bdata:
-            if self.data['portal_type'] == 'Folder' and 'text' in self.field_data:
+            if self.data['portal_type'] == 'Folder' and (self.field_data.get('text') or '').strip():
                 bdata.content = FOLDER_DEFAULT_PAGE_LAYOUT % self.field_data['text']
                 # need to explicitly reset contentLayout value because this data
                 # could be overwritten

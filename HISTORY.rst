@@ -4,6 +4,9 @@ Changelog
 2.3.1 (unreleased)
 ------------------
 
+- Fix import Folder to not customize layout when text is empty
+  [vangheem]
+
 - Fixed broken update step
   [obct537]
 
