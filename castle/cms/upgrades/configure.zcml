@@ -106,4 +106,19 @@
       handler=".upgrade_2_3_0.upgrade"
       profile="castle.cms:default" />
 
+  <genericsetup:registerProfile
+      name="2_3_1"
+      title="CastleCMS upgrade to 2.3.1 profile"
+      directory="../profiles/2_3_1"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:upgradeStep
+      title="Upgrade CastleCMS to 2.3.1"
+      description=""
+      source="*"
+      destination="2301"
+      handler=".upgrade_2_3_1.upgrade"
+      profile="castle.cms:default" />
+
 </configure>
