@@ -3,6 +3,8 @@ Changelog
 
 2.3.1 (unreleased)
 ------------------
+- Fix z-index issue with recurrence modal for events
+  [robzonenet]
 
 New:
 
