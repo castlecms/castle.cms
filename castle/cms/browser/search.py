@@ -133,7 +133,6 @@ _search_attributes = [
     'Description',
     'Subject',
     'Subject:list',
-    'path',
     'contentType',
     'created',
     'modified',
@@ -144,12 +143,12 @@ _search_attributes = [
     'review_state',
     'url'
 ]
+
 _valid_params = [
     'SearchableText',
     'portal_type',
     'Subject',
-    'Subject:list',
-    'path'
+    'Subject:list'
 ]
 
 

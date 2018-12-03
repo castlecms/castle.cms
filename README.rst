@@ -356,10 +356,11 @@ Just regular plone compile resources::
     ./bin/plone-compile-resources --site-id=Castle --bundle=plone-logged-in
 
 
-Running local dependencies
---------------------------
+Running local dependencies with docker
+--------------------------------------
 
     $ docker run -p 6379:6379 redis
+    $ docker run -p 9200:9200 elasticsearch:2.3.5
 
 
 Forks/Custom releases

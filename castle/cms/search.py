@@ -39,13 +39,13 @@ class AdditionalIndexDataProvider(object):
         data = {}
         counts = annotations.get(COUNT_ANNOTATION_KEY, {})
         for key, value in counts.items():
+            key = key.replace('_matomo', '')
+            if isinstance(value, dict):
+                value = value.get('total') or 0
             if key in ('page_views',):
                 data[key] = value
             else:
                 data[key + '_shares'] = value
-        if 'twitter' in counts:
-            tdata = counts['twitter']
-            data['twitter_shares'] = tdata.get('total', 0)
         sdata = ISearch(self.obj, None)
         if sdata:
             data['searchterm_pins'] = [
