@@ -133,7 +133,6 @@ _search_attributes = [
     'Description',
     'Subject',
     'Subject:list',
-    'path',
     'contentType',
     'created',
     'modified',
@@ -144,6 +143,7 @@ _search_attributes = [
     'review_state',
     'url'
 ]
+
 _valid_params = [
     'SearchableText',
     'portal_type',
@@ -236,7 +236,7 @@ class SearchAjax(BrowserView):
 
         items = []
         for res in results:
-            fields = res['_source']
+            fields = res['fields']
 
             attrs = {}
             for key in _search_attributes:
@@ -310,7 +310,7 @@ class SearchAjax(BrowserView):
         query_params = {
             'from_': start,
             'size': size,
-            '_source': 'true'
+            'fields': ','.join(_search_attributes) + ',path.path',
         }
 
         return es.connection.search(index=es.index_name,
