@@ -118,7 +118,7 @@
   <property name="title"></property>
   <object name="view-page" meta_type="CMF Action">
    <property name="title">View Page</property>
-   <property name="description"></property>
+   <property name="description">View this page</property>
    <property name="url_expr">string:${object/absolute_url}/view</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -129,7 +129,7 @@
   </object>
   <object name="folder_contents" meta_type="CMF Action">
    <property name="title">Manage Content</property>
-   <property name="description"></property>
+   <property name="description">Manage all the content of your site</property>
    <property
       name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/folder_contents</property>
    <property name="link_target"></property>
@@ -153,7 +153,7 @@
   </object>
   <object name="add" meta_type="CMF Action">
    <property name="title">Add</property>
-   <property name="description"></property>
+   <property name="description">Add a new page, link, event, folder, news item..</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -167,7 +167,7 @@
   </object>
   <object name="edit" meta_type="CMF Action">
    <property name="title">Edit</property>
-   <property name="description"></property>
+   <property name="description">Edit the content of this item</property>
    <property name="url_expr">string:${object/absolute_url}/edit</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -179,7 +179,7 @@
   </object>
   <object name="state" meta_type="CMF Action">
    <property name="title">State</property>
-   <property name="description"></property>
+   <property name="description">Change the state of this item</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -191,7 +191,7 @@
   </object>
   <object name="design" meta_type="CMF Action">
    <property name="title">Design</property>
-   <property name="description"></property>
+   <property name="description">Select this page design from designs available through your theme</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -214,7 +214,7 @@
   </object>
   <object name="cut" meta_type="CMF Action">
    <property name="title">Cut</property>
-   <property name="description"></property>
+   <property name="description">Cut this file to paste it elsewhere</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@object_cut</property>
    <property name="link_target"></property>
