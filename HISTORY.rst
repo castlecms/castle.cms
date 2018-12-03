@@ -13,6 +13,10 @@ New:
   `celery=4.2.1`
   `billiard = 3.5.0.4`
   `kombu = 4.2.1`
+
+Fixes:
+
+- Fix import Folder to not customize layout when text is empty
   [vangheem]
 
 - Fixed broken update step
