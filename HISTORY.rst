@@ -4,6 +4,9 @@ Changelog
 2.3.1 (unreleased)
 ------------------
 
+- Put in an accessibile toolbar tooltip system
+  [RobZoneNet]
+
 - Fixed broken update step
   [obct537]
 
