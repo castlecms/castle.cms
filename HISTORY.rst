@@ -3,8 +3,6 @@ Changelog
 
 2.3.1 (unreleased)
 ------------------
-- Fix z-index issue with recurrence modal for events
-  [robzonenet]
 
 New:
 
@@ -17,6 +15,9 @@ New:
   `kombu = 4.2.1`
 
 Fixes:
+
+- Fix z-index issue with recurrence modal for events
+  [robzonenet]
 
 - Fix import Folder to not customize layout when text is empty
   [vangheem]
