@@ -4,7 +4,12 @@ Changelog
 2.3.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Fixes:
+
+- Fix 2.0.41 upgrade step that cleared `slot_tiles` setting and
+  attempt to fix missing `slot_tiles` on sites that have been
+  upgraded since.
+  [vangheem]
 
 
 2.3.1 (2018-12-04)

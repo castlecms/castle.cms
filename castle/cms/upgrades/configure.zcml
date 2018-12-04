@@ -121,4 +121,12 @@
       handler=".upgrade_2_3_1.upgrade"
       profile="castle.cms:default" />
 
+  <genericsetup:upgradeStep
+      title="Upgrade CastleCMS to 2.3.2"
+      description=""
+      source="*"
+      destination="2302"
+      handler=".upgrade_2_3_2.upgrade"
+      profile="castle.cms:default" />
+
 </configure>

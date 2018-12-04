@@ -1,11 +1,6 @@
-from plone import api
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 
-
-PROFILE_ID = 'profile-castle.cms.upgrades:2_3_1'
 
 _recover_slot_tiles = {
     "Media": [
@@ -37,16 +32,6 @@ _recover_slot_tiles = {
 
 
 def upgrade(context, logger=None):
-    setup = getToolByName(context, 'portal_setup')
-    setup.runAllImportStepsFromProfile(PROFILE_ID)
-    cookWhenChangingSettings(api.portal.get())
-
-    setup.runImportStepFromProfile(
-        'profile-collective.elasticsearch:default',
-        'plone.app.registry',
-        run_dependencies=False,
-    )
-
     registry = getUtility(IRegistry)
     tiles = registry['castle.slot_tiles']
     for recover_type, recover_tiles in _recover_slot_tiles.items():
