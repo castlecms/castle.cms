@@ -5,17 +5,14 @@ services:
 matrix:
   include:
     - name: 'Unit Tests'
-      env: TEST_SUITE=unit
+      env: TEST_SUITE=unit BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Firefox'
-      env: TEST_SUITE=robot ROBOT_BROWSER=firefox
+      env: TEST_SUITE=robot ROBOT_BROWSER=firefox BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Chrome'
-      env: TEST_SUITE=robot ROBOT_BROWSER=chrome
+      env: TEST_SUITE=robot ROBOT_BROWSER=chrome BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
 addons:
   chrome: stable
   firefox: latest
-env:
-  - BOTO_CONFIG=/dev/null
-  - ES_HOST=127.0.0.1
 
 before_script:
   - export ROBOT_SELENIUM2LIBRARY_RUN_ON_FAILURE="Capture Page Screenshot"

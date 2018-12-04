@@ -124,3 +124,9 @@ if ES_ENABLED:
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
             self.assertEquals(result['results'][0]['path'], '/doc2')
+
+else:
+    class TestEmptyES(unittest.TestCase):
+        '''
+        test runner throws error if no tests defined in module
+        '''

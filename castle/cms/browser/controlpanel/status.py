@@ -1,12 +1,13 @@
-from Products.Five.browser import BrowserView
-from elasticsearch import Elasticsearch
-import elasticsearch
+import os
 import subprocess
-import redis
-import celery
-import celery.bin.base
+
 import celery.bin.celery
-import celery.platforms
+import elasticsearch
+import redis
+from collective.celery.utils import getCelery
+from collective.elasticsearch.es import ElasticSearchCatalog
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser import BrowserView
 
 
 class StatusView(BrowserView):
@@ -14,38 +15,41 @@ class StatusView(BrowserView):
     def docsplit(self):
         try:
             subprocess.check_call('docsplit')
-            x = True, 'ok'
+            return True, 'ok'
         except OSError as e:
-            x = False, str(e)
-        return x
+            return False, str(e)
 
     def redis(self):
-        r = redis.Redis("localhost")
+        server = os.environ.get("REDIS_SERVER", "127.0.0.1:6379")
+        host, _, port = server.partition(':')
+        if not host or not port:
+            return '[{}] {}'.format(server, 'Invalid configuration')
+
+        client = redis.StrictRedis(
+            host=host, port=int(port), db=0,
+            socket_timeout=0.5, socket_connect_timeout=0.5)
         try:
-            r.client_list()
-            x = True, 'ok'
+            client.client_list()
+            return True, '[{}] ok'.format(server)
         except redis.ConnectionError as e:
-            x = False, str(e)
-        return x
+            return False, '[{}] {}'.format(server, str(e))
 
     def celery(self):
-        celery.Celery('tasks', broker='redis://')
+        app = getCelery()
         status = celery.bin.celery.CeleryCommand.commands['status']()
-        status.app = status.get_app()
+        status.app = app
         try:
             status.run()
-            x = True, 'ok'
-        except celery.bin.base.Error as e:
-            x = False, str(e)
-        except redis.ConnectionError:
-            x = False, 'Cannot connect to Redis'
-        return x
+            return True, 'ok'
+        except Exception as e:
+            return False, str(e)
 
     def elasticsearch(self):
-        es = Elasticsearch()
+        catalog = getToolByName(self.context, 'portal_catalog')
+        es = ElasticSearchCatalog(catalog)
+        conn = es.connection
         try:
-            (es.cluster.health())
-            x = True, 'ok'
+            (conn.cluster.health())
+            return True, 'ok'
         except elasticsearch.ConnectionError as e:
-            x = False, str(e)
-        return x
+            return False, str(e)

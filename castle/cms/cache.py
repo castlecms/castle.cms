@@ -83,7 +83,7 @@ def get_client(fun_name=''):
     if client is None:
         server = os.environ.get("REDIS_SERVER", "127.0.0.1:6379")
         logger.debug("using REDIS_SERVER %s" % server)
-        host, port = server.split(':')
+        host, _, port = server.partition(':')
         client = redis.StrictRedis(host=host, port=int(port), db=0)
         try:
             client.get('test-key')
