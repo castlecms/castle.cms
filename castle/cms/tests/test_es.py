@@ -64,23 +64,23 @@ if ES_ENABLED:
                 # have to do commit for es integration...
                 api.content.create(
                     type='Folder',
-                    id='folder1',
+                    id='esfolder1',
                     container=self.portal,
                     title='Foobar folder')
                 api.content.create(
                     type='Document',
-                    id='doc1',
+                    id='esdoc1',
                     container=self.portal,
                     title='Foobar one')
                 doc = api.content.create(
                     type='Document',
-                    id='doc2',
+                    id='esdoc2',
                     container=self.portal,
                     subject=('foobar',),
                     title='Foobar two')
                 api.content.create(
                     type='Document',
-                    id='doc3',
+                    id='esdoc3',
                     container=self.portal,
                     title='Foobar three')
 
@@ -103,7 +103,7 @@ if ES_ENABLED:
             view = SearchAjax(self.portal, self.request)
             result = json.loads(view())
             self.assertEquals(result['count'], 4)
-            self.assertEquals(result['results'][0]['path'], '/doc2')
+            self.assertEquals(result['results'][0]['path'], '/esdoc2')
 
         def test_ajax_search_pt(self):
             self.request.form.update({
@@ -113,7 +113,7 @@ if ES_ENABLED:
             view = SearchAjax(self.portal, self.request)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
-            self.assertEquals(result['results'][0]['path'], '/folder1')
+            self.assertEquals(result['results'][0]['path'], '/esfolder1')
 
         def test_ajax_search_subject(self):
             self.request.form.update({
@@ -123,7 +123,7 @@ if ES_ENABLED:
             view = SearchAjax(self.portal, self.request)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
-            self.assertEquals(result['results'][0]['path'], '/doc2')
+            self.assertEquals(result['results'][0]['path'], '/esdoc2')
 
 else:
     class TestEmptyES(unittest.TestCase):
