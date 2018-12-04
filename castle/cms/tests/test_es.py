@@ -106,7 +106,7 @@ if ES_ENABLED:
             })
             view = SearchAjax(self.portal, self.request)
             result = json.loads(view())
-            self.assertEquals(result['count'], 4)
+            self.assertEquals(result['count'], 3)
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
         def test_ajax_search_pt(self):
