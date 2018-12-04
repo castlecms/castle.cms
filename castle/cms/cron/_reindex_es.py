@@ -1,25 +1,31 @@
+import logging
+
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
+from castle.cms.cron.utils import setup_site
 from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.hook import index_batch
+from collective.elasticsearch.interfaces import IReindexActive
 from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
-from zope.component.hooks import setSite
-
-import logging
-import transaction
-
+from zope.globalrequest import getRequest
+from zope.interface import alsoProvides
 
 logger = logging.getLogger('castle.cms')
 
 
 def index_site(site):
-    setSite(site)
+    setup_site(site)
     catalog = api.portal.get_tool('portal_catalog')
     es = ElasticSearchCatalog(catalog)
     if not es.enabled:
         return
+
+    req = getRequest()
+    assert req is not None
+    alsoProvides(req, IReindexActive)
 
     # first we want to get all document ids from elastic
     page_size = 700
