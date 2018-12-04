@@ -53,8 +53,8 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.1',
-        'collective.elasticsearch',
-        'collective.celery',
+        'collective.elasticsearch>=2.0.2<3',
+        'collective.celery>=1.1.2',
 
         # python
         'boto>=2.38.0<3',
