@@ -60,37 +60,36 @@ if ES_ENABLED:
             catalog.manage_catalogRebuild()
             transaction.commit()
 
-            if 'esfolder1' not in self.portal.objectIds():
-                # have to do commit for es integration...
-                folder = api.content.create(
-                    type='Folder',
-                    id='esfolder1',
-                    container=self.portal,
-                    title='Foobar folder')
-                api.content.create(
-                    type='Document',
-                    id='esdoc1',
-                    container=folder,
-                    title='Foobar one')
-                doc = api.content.create(
-                    type='Document',
-                    id='esdoc2',
-                    container=folder,
-                    subject=('foobar',),
-                    title='Foobar two')
-                api.content.create(
-                    type='Document',
-                    id='esdoc3',
-                    container=folder,
-                    title='Foobar three')
+            # have to do commit for es integration...
+            folder = api.content.create(
+                type='Folder',
+                id='esfolder1',
+                container=self.portal,
+                title='Foobar folder')
+            api.content.create(
+                type='Document',
+                id='esdoc1',
+                container=folder,
+                title='Foobar one')
+            doc = api.content.create(
+                type='Document',
+                id='esdoc2',
+                container=folder,
+                subject=('foobar',),
+                title='Foobar two')
+            api.content.create(
+                type='Document',
+                id='esdoc3',
+                container=folder,
+                title='Foobar three')
 
-                ann = IAnnotations(doc)
-                ann[COUNT_ANNOTATION_KEY] = {
-                    'twitter_matomo': 5,
-                    'facebook': 5,
-                }
-                doc.reindexObject()
-                transaction.commit()
+            ann = IAnnotations(doc)
+            ann[COUNT_ANNOTATION_KEY] = {
+                'twitter_matomo': 5,
+                'facebook': 5,
+            }
+            doc.reindexObject()
+            transaction.commit()
 
             url = 'http://{}:9200/plone-test-index/_flush'.format(host)
             requests.post(url)
@@ -99,7 +98,7 @@ if ES_ENABLED:
             api.content.delete(self.portal.esfolder1)
             transaction.commit()
 
-        def test_ajax_search_rank_social(self):
+        def _test_ajax_search_rank_social(self):
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'portal_type': 'Document'
