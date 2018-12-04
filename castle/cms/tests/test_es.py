@@ -62,7 +62,7 @@ if ES_ENABLED:
 
             if 'esfolder1' not in self.portal.objectIds():
                 # have to do commit for es integration...
-                api.content.create(
+                folder = api.content.create(
                     type='Folder',
                     id='esfolder1',
                     container=self.portal,
@@ -70,18 +70,18 @@ if ES_ENABLED:
                 api.content.create(
                     type='Document',
                     id='esdoc1',
-                    container=self.portal,
+                    container=folder,
                     title='Foobar one')
                 doc = api.content.create(
                     type='Document',
                     id='esdoc2',
-                    container=self.portal,
+                    container=folder,
                     subject=('foobar',),
                     title='Foobar two')
                 api.content.create(
                     type='Document',
                     id='esdoc3',
-                    container=self.portal,
+                    container=folder,
                     title='Foobar three')
 
                 ann = IAnnotations(doc)
@@ -94,6 +94,10 @@ if ES_ENABLED:
 
             url = 'http://{}:9200/plone-test-index/_flush'.format(host)
             requests.post(url)
+
+        def tearDown(self):
+            api.content.delete(self.portal.esfolder1)
+            transaction.commit()
 
         def test_ajax_search_rank_social(self):
             self.request.form.update({
