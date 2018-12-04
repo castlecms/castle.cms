@@ -13,6 +13,9 @@ matrix:
 addons:
   chrome: stable
   firefox: latest
+env:
+  - BOTO_CONFIG=/dev/null
+  - ES_HOST=127.0.0.1
 
 before_script:
   - export ROBOT_SELENIUM2LIBRARY_RUN_ON_FAILURE="Capture Page Screenshot"
@@ -30,8 +33,9 @@ before_install:
     export PATH=$PATH:$(pwd)/webdriver;
     npm install -g surge;
     fi
-  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.3/elasticsearch-2.4.3.deb && sudo dpkg -i --force-confnew elasticsearch-2.4.3.deb && sudo service elasticsearch start
-  - export BOTO_CONFIG=/dev/null
+  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.5/elasticsearch-2.3.5.deb && sudo dpkg -i --force-confnew elasticsearch-2.3.5.deb
+  - sudo /usr/share/elasticsearch/bin/plugin install https://github.com/castlecms/elasticsearch-castle-scoring/raw/master/dist/elasticsearch-castle-script-2.3.5.zip
+  - sudo service elasticsearch start
 
 install:
   - mkdir -p {eggs,downloads}
