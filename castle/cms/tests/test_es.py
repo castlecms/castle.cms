@@ -60,7 +60,7 @@ if ES_ENABLED:
             catalog.manage_catalogRebuild()
             transaction.commit()
 
-            if 'folder1' not in self.portal.objectIds():
+            if 'esfolder1' not in self.portal.objectIds():
                 # have to do commit for es integration...
                 api.content.create(
                     type='Folder',
