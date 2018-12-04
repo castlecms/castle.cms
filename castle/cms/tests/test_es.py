@@ -102,12 +102,12 @@ if ES_ENABLED:
         def test_ajax_search_rank_social(self):
             self.request.form.update({
                 'SearchableText': 'Foobar',
-                'portal_type': None
+                'portal_type': 'Document'
             })
             view = SearchAjax(self.portal, self.request)
             result = json.loads(view())
             self.assertEquals(result['count'], 4)
-            self.assertEquals(result['results'][0]['path'], '/esdoc2')
+            self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
         def test_ajax_search_pt(self):
             self.request.form.update({
@@ -127,7 +127,7 @@ if ES_ENABLED:
             view = SearchAjax(self.portal, self.request)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
-            self.assertEquals(result['results'][0]['path'], '/esdoc2')
+            self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
 else:
     class TestEmptyES(unittest.TestCase):
