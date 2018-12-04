@@ -96,11 +96,6 @@ Development setup on macOS
 9. Browse to http://localhost:8080/
 
 
-With `bin/buildout -c zeo.cfg`:
-
-- ``bin/zeo fg``, ``bin/client1 fg``, ``bin/pcelery worker parts/client1/etc/zope.conf``
-
-
 Optional Dependencies
 ---------------------
 
