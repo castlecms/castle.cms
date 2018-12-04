@@ -3,6 +3,7 @@ from Acquisition import aq_base, aq_parent
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import (IHasDefaultImage, IReferenceNamedImage,
                                    ITrashed)
+from collective.elasticsearch.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
 from plone.app.contenttypes.interfaces import IFile, IImage
@@ -10,6 +11,7 @@ from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
 from plone.uuid.interfaces import IUUID
 from ZODB.POSException import POSKeyError
+from zope.globalrequest import getRequest
 
 
 @indexer(IItem)
@@ -105,9 +107,16 @@ def trashed(obj):
 
 @indexer(IDexterityContent)
 def last_modified_by(context):
-    try:
+    req = getRequest()
+    creator = getattr(aq_base(context), '_last_modified_by', None)
+    if req is not None and not IReindexActive.providedBy(req):
+        # here, we're assuming the current user editing the object
+        # is the logged in user performing the current action
         creator = api.user.get_current().getId()
-    except Exception:
+        # also set on context so we can retrieve later when reindexing
+        context._last_modified_by = creator
+
+    if creator is None:
         try:
             creator = context.Creators()[0]
         except Exception:

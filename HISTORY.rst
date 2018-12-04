@@ -6,6 +6,9 @@ Changelog
 
 Fixes:
 
+- Fix reindexing causing `last_modified_by` index to get overwritten
+  [lucid-0,vangheem]
+
 - Fix 2.0.41 upgrade step that cleared `slot_tiles` setting and
   attempt to fix missing `slot_tiles` on sites that have been
   upgraded since.
