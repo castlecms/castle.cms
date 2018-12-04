@@ -73,10 +73,9 @@ def get_client(fun_name=''):
     server = os.environ.get('REDIS_SERVER', None)
     if server is None:
         if not getattr(get_client, '___default_warned', True):
-            logger.warning("unable to connect to redis")
+            logger.warning(
+                "Not using redis; REDIS_SERVER environment variable is undefined")
             get_client.___default_warned = False
-        logger.warning(
-            "Not using redis; REDIS_SERVER environment variable is undefined")
         return base_choose_cache(fun_name)
 
     client = getattr(thread_local, "client", None)
