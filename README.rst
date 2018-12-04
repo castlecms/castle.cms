@@ -92,7 +92,7 @@ Development setup on macOS
 5. ``bin/pip install --upgrade pip``
 6. ``bin/pip install -r requirements.txt``
 7. ``bin/buildout``
-8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg`` and ``bin/celery worker``
+8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg``
 9. Browse to http://localhost:8080/
 
 

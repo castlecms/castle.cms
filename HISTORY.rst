@@ -8,11 +8,12 @@ New:
 
 - Upgrade to latest collective.elasticsearch.
   New versions include,
-  `collective.celery=1.1.1`
-  `collective.elasticsearch=2.0.2`
-  `celery=4.2.1`
-  `billiard = 3.5.0.4`
-  `kombu = 4.2.1`
+  `collective.celery=1.1.2`,
+  `collective.elasticsearch=2.0.2`,
+  `celery=4.2.1`,
+  `billiard = 3.5.0.4`,
+  `kombu = 4.2.1`,
+  `redis = 2.10.5`
 
 Fixes:
 

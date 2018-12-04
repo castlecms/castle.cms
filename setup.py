@@ -42,6 +42,14 @@ setup(
         'plone.app.mosaic>=2.0.0.dev18',
         'plone.app.blocks>=10.0.0',
         'Products.PloneKeywordManager>=2.2.1',
+        'plone.schemaeditor>=2.0.18',
+        'plone.namedfile>=3.0.10',
+        'plone.folder>=1.0.12',
+        'AccessControl>=3.0.14',
+        'z3c.relationfield>=0.7.1.dev0',
+        'Products.ZCatalog>=3.0.3dev2',
+        'plone.app.standardtiles>=2.0.0.dev0',
+
         'Products.CMFPlacefulWorkflow',
         'plone.app.caching',
         'plone.app.dexterity',
@@ -53,8 +61,8 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.1',
-        'collective.elasticsearch',
-        'collective.celery',
+        'collective.elasticsearch>=2.0.2<3',
+        'collective.celery>=1.1.2',
 
         # python
         'boto>=2.38.0<3',
@@ -62,7 +70,8 @@ setup(
         'redis>=2.10.3<3',
         'requests>=2.7.0<3',
         'requests_oauthlib>=0.5.0<1',
-        'oauth2client>=1.5.1<2'
+        'oauth2client>=1.5.1<2',
+        'redis>=2.10.5<3',
         'setuptools',
         'python-dateutil',
         'pyopenssl',
