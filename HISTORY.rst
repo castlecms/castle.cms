@@ -4,7 +4,11 @@ Changelog
 2.3.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Fixes:
+
+- Make content listing tile persistent. This fixes issues with saving
+  data to content listing tile.
+  [vangheem]
 
 
 2.3.2 (2018-12-04)
