@@ -130,6 +130,7 @@ if ES_ENABLED:
 
 else:
     class TestEmptyES(unittest.TestCase):
-        '''
-        test runner throws error if no tests defined in module
-        '''
+        def test_nothing(self):
+            '''
+            test runner throws error if no tests defined in module
+            '''

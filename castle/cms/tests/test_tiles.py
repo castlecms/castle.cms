@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.tests.utils import get_tile
-from castle.cms.tests.utils import render_tile
-from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-from plone.uuid.interfaces import IUUID
-
 import unittest
+
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.tests.utils import get_tile, render_tile
+from plone import api
+from plone.app.blocks import formparser
+from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
+from plone.tiles.interfaces import ITileDataManager
+from plone.uuid.interfaces import IUUID
+from zope.traversing.browser.absoluteurl import absoluteURL
 
 
 class TestTiles(unittest.TestCase):
@@ -227,3 +226,62 @@ class TestTiles(unittest.TestCase):
             'Subject': ['one', 'two']
         })
         self.assertTrue(tile.filter_pattern_config != '{}')
+
+    def test_qs_tile_data(self):
+        data = {
+            'query': [{
+                "v": "../::1",
+                "o": "plone.app.querystring.operation.string.relativePath",
+                "i": "path"
+            }, {
+                "v": ["FOOBAR"],
+                "i": "Subject",
+                "o": "plone.app.querystring.operation.selection.any",
+            }],
+            'sort_on': 'getObjPositionInParent',
+            'limit': 10
+        }
+        typeName = 'plone.app.standardtiles.contentlisting'
+        tileId = 'foobar'
+        tile = self.portal.restrictedTraverse('@@%s/%s' % (
+            typeName, tileId,))
+
+        dataManager = ITileDataManager(tile)
+        dataManager.set(data)
+
+        tileURL = absoluteURL(tile, self.request)
+        self.assertTrue('FOOBAR' in tileURL)
+        self.assertTrue('_tiledata=' in tileURL)
+
+    def test_qs_order_does_not_matter(self):
+        qs = ('query.v%3Arecords=..%3A%3A1&'
+              'query.o%3Arecords=plone.app.querystring.operation.string.relativePath&'
+              'query.i%3Arecords=path&'
+              'query.o%3Arecords=plone.app.querystring.operation.selection.any&'
+              'query.i%3Arecords=Subject&'
+              'query.v%3Alist%3Arecords=FOOBAR&'
+              'sort_on=getObjPositionInParent&'
+              'sort_reversed%3Aboolean=&'
+              'limit%3Along=1000&'
+              'view_template=listing_view')
+        parsed_data = formparser.parse({
+            'QUERY_STRING': qs
+        })
+        # works
+        self.assertTrue('v' in parsed_data['query'][1])
+
+        qs = ('query.v%3Arecords=..%3A%3A1&'
+              'query.o%3Arecords=plone.app.querystring.operation.string.relativePath&'
+              'query.i%3Arecords=path&'
+              'query.v%3Alist%3Arecords=FOOBAR&'
+              'query.o%3Arecords=plone.app.querystring.operation.selection.any&'
+              'query.i%3Arecords=Subject&'
+              'sort_on=getObjPositionInParent&'
+              'sort_reversed%3Aboolean=&'
+              'limit%3Along=1000&'
+              'view_template=listing_view')
+        parsed_data = formparser.parse({
+            'QUERY_STRING': qs
+        })
+        # fails
+        self.assertTrue('v' in parsed_data['query'][1])
