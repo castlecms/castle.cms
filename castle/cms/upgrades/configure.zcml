@@ -47,6 +47,7 @@
       destination="2041"
       handler=".upgrade_2_0_41.upgrade"
       profile="castle.cms:default"/>
+
   <genericsetup:registerProfile
       name="2_1_0"
       title="CastleCMS upgrade to 2.1.0 profile"
@@ -61,6 +62,7 @@
       destination="2100"
       handler=".upgrade_2_1_0.upgrade"
       profile="castle.cms:default"/>
+
   <genericsetup:registerProfile
       name="2_1_1"
       title="CastleCMS upgrade to 2.1.1 profile"
