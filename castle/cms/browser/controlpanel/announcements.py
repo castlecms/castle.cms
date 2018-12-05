@@ -259,7 +259,7 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             responsebody = ','.join(fields)
             categories = set()
             if 'form.widgets.export_categories' in self.request.form:
-                if data['export_categories'] is not None and data['export_categories'] != u'':
+                if data['export_categories'] not in (None, ''):
                     categories = set(data['export_categories'])
             check_categories = (categories is not None and len(categories) != 0)
             for subscriber in subscribe.all():
@@ -363,7 +363,7 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
             categories = set()
             newname = u''
             if 'form.widgets.rename_merge_categories' in self.request.form:
-                if data['rename_merge_categories'] is not None and data['rename_merge_categories'] != u'':
+                if data['rename_merge_categories'] not in (None, ''):
                     categories = set(data['rename_merge_categories'])
             if 'form.widgets.new_category_name' in self.request.form:
                 newname = data['new_category_name'].split(';')[0]
@@ -421,7 +421,7 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'form.widgets.delete_categories' in self.request.form:
-                if data['delete_categories'] is not None and data['delete_categories'] != u'':
+                if data['delete_categories'] not in (None, ''):
                     categories = set(data['delete_categories'])
             force_delete = 'form.widgets.force_delete' in self.request.form
             if len(categories) > 0:
@@ -474,7 +474,7 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'add_categories' in data:
-                if data['add_categories'] is not None and data['add_categories'] != u'':
+                if data['add_categories'] not in (None, ''):
                     categories = set(data['add_categories'].split(';'))
             if len(categories) > 0:
                 badcategories = []
