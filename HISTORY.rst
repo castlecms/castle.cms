@@ -14,6 +14,9 @@ New:
 
 Fixes:
 
+- Handle error when image tile referenced image is not found
+  [vangheem]
+
 - Make content listing tile persistent. This fixes issues with saving
   data to content listing tile.
   [vangheem]
