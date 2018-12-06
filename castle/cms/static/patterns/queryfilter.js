@@ -258,8 +258,13 @@ define([
       fields.push(D.button({ type: 'submit', onClick: this.filterClicked, className: 'pull-right plone-btn plone-btn-default'}, 'Filter'));
       fields.push(D.div({ className: 'clearfix'}));
 
+      var filter_box = [];
+      if( !self.isTagFilter() ) {
+        filter_box = D.div({className: 'filter-fields'}, fields);
+      }
+
       return D.form({ ref: 'form', className: 'queryfilter-container field-count-' + widgetCount}, [
-        D.div({className: 'filter-fields'}, fields),
+        filter_box,
         D.div({ className: 'row'}, [
           D.div({className: 'col-md-9 filters'}, [
             [
