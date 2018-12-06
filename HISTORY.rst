@@ -4,6 +4,14 @@ Changelog
 2.3.3 (unreleased)
 ------------------
 
+New:
+
+- Add new recurrances indexer
+  [tkimnguyen]
+
+- Calendar tile now renders recurring events
+  [obct537]
+
 Fixes:
 
 - Make content listing tile persistent. This fixes issues with saving

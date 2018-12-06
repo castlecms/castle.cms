@@ -12,7 +12,7 @@ from plone.indexer.decorator import indexer
 from plone.uuid.interfaces import IUUID
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
-
+from plone.event.interfaces import IEvent
 
 @indexer(IItem)
 def getRawRelatedItems(obj):
@@ -93,6 +93,14 @@ def getContentTypeImage(obj):
     try:
         return obj.image.contentType
     except Exception:
+        pass
+
+
+@indexer(IEvent)
+def recurrence(obj):
+    try:
+        return obj.recurrence
+    except AttributeError:
         pass
 
 
