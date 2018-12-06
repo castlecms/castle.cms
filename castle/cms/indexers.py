@@ -100,7 +100,7 @@ def getContentTypeImage(obj):
 def recurrence(obj):
     try:
         return obj.recurrence
-    except:
+    except AttributeError:
         pass
 
 
