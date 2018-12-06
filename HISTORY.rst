@@ -4,11 +4,19 @@ Changelog
 2.3.3 (unreleased)
 ------------------
 
+New:
+
+- Add new recurrances indexer
+  [tkimnguyen]
+
 - Calendar tile now renders recurring events
   [obct537]
 
-- add upgrade step for event recurrences
-  [tkimnguyen]
+Fixes:
+
+- Make content listing tile persistent. This fixes issues with saving
+  data to content listing tile.
+  [vangheem]
 
 
 2.3.2 (2018-12-04)

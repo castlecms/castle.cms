@@ -8,6 +8,13 @@ from plone.tiles.interfaces import ITileDataContext
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
+from zope.interface import classImplements
+from plone.tiles.interfaces import IPersistentTile
+from plone.app.standardtiles.contentlisting import ContentListingTile
+
+
+# make ContentListing persistent
+classImplements(ContentListingTile, IPersistentTile)
 
 
 @implementer(ITileDataContext)
