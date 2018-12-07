@@ -14,6 +14,9 @@ New:
 
 Fixes:
 
+- Handle error when image tile referenced image is not found
+  [vangheem]
+
 - Fix use of celery with always eager setting and some tasks
   [vangheem]
 

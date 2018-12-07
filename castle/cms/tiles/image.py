@@ -86,7 +86,7 @@ class IImageTileSchema(model.Schema):
             utils = getMultiAdapter((getSite(), getRequest()),
                                     name="castle-utils")
             obj = utils.get_object(data.image[0])
-            if obj.portal_type != 'Image':
+            if not obj or obj.portal_type != 'Image':
                 raise Invalid('Must provide image file')
 
     display_type = schema.Choice(
