@@ -3,8 +3,10 @@ from castle.cms import subscribe
 from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm  # noqa
 from castle.cms.browser.subscribe import SubscribeForm
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.browser.controlpanel.announcements import ImportSubscribersForm, reg_key
 from plone.app.testing import logout
 from plone.registry.interfaces import IRegistry
+from plone import api
 from zope.component import queryUtility
 
 import responses
@@ -191,3 +193,23 @@ class TestSubscribeForm(unittest.TestCase):
         self.assertEquals(len([i for i in subscribe.all()]), 1)
         subscriber = subscribe.get_subscriber('foo@bar.com')
         self.assertTrue(subscriber['confirmed'])
+
+
+class TestImport(unittest.TestCase):
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+
+    def test_import(self):
+        self.assertEquals(len(subscribe.SubscriptionStorage()._data), 0)
+        self.assertEquals(len(api.portal.get_registry_record(reg_key)), 0)
+        self.request.form.update({
+            'form.widgets.csv_upload': u'name,email,phone_number,phone_number_confirmed,confirmed,code,created,captcha,categories\nUser,user@example.com,,False,True,,,,"News"', # noqa
+            'form.buttons.import': u'Import'
+        })
+        form = ImportSubscribersForm(self.portal, self.request)
+        form()
+        self.assertEquals(len(subscribe.SubscriptionStorage()._data), 1)
+        self.assertEquals(len(api.portal.get_registry_record(reg_key)), 1)

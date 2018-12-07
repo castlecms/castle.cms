@@ -6,6 +6,9 @@ Changelog
 
 New:
 
+- Add import subscribers form for announcements panel
+  [CorySanin]
+
 - Add new recurrances indexer
   [tkimnguyen]
 
