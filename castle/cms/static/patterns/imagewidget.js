@@ -168,7 +168,7 @@ define([
         selection = [this.props.reference];
       }
       var $re = $(that.refs.relateditem.getDOMNode());
-      var options = JSON.parse($('.pat-relateditems').attr('data-pat-relateditems'));
+      var options = JSON.parse($('.pat-imagewidget').attr('data-pat-imagewidget'));
       var pattern = new RelatedItems($re, cutils.extend(options, {
         maximumSelectionSize: 1,
         multiple: false,
