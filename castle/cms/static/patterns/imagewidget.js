@@ -168,8 +168,13 @@ define([
         selection = [this.props.reference];
       }
       var $re = $(that.refs.relateditem.getDOMNode());
-      var options = JSON.parse($('.pat-imagewidget').attr('data-pat-imagewidget'));
+      try {
+        var options = JSON.parse($('.pat-relateditems').attr('data-pat-relateditems'));
+      } catch (e) {
+        var options = {};
+      }
       var pattern = new RelatedItems($re, cutils.extend(options, {
+        vocabularyUrl: $('body').attr('data-portal-url') + '/@@getVocabulary?name=plone.app.vocabularies.Catalog',
         maximumSelectionSize: 1,
         multiple: false,
         allowAdd: false,
