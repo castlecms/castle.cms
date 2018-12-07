@@ -8,7 +8,7 @@ import shutil
 
 TMP_PDF_FILENAME = 'dump.pdf'
 
-logger = getLogger('wildcard.media')
+logger = getLogger(__name__)
 
 
 class BaseSubProcess(object):
@@ -69,8 +69,6 @@ and output:
 
 
 class AVConvProcess(BaseSubProcess):
-    """
-    """
     if os.name == 'nt':
         bin_name = 'avconv.exe'
     else:
@@ -107,11 +105,22 @@ class AVConvProcess(BaseSubProcess):
         self._run_command(cmd)
 
 
+class FfmpegProcess(AVConvProcess):
+    if os.name == 'nt':
+        bin_name = 'ffmpeg.exe'
+    else:
+        bin_name = 'ffmpeg'
+
+
 try:
     avconv = AVConvProcess()
 except IOError:
-    avconv = None
-    logger.warn('ffmpeg not installed. castle.cms will not be able to convert video')  # noqa
+    try:
+        avconv = FfmpegProcess()
+    except IOError:
+        avconv = None
+        logger.warn('ffmpeg/avconc not installed. castle.cms will not '
+                    'be able to convert video')
 
 
 class ExifToolProcess(BaseSubProcess):

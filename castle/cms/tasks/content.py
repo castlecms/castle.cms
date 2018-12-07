@@ -7,6 +7,7 @@ from castle.cms.utils import retriable
 from collective.celery import task
 from plone import api
 from Products.CMFPlone.utils import pretty_title_or_id
+from collective.celery.utils import getCelery
 
 import logging
 import transaction
@@ -45,7 +46,8 @@ def _paste_items(where, op, mdatas):
 
     count = 0
     commit_count = 0
-    portal._p_jar.sync()
+    if not getCelery().conf.task_always_eager:
+        portal._p_jar.sync()
 
     try:
         if mdatas[0][0].startswith('cache:'):
@@ -69,7 +71,8 @@ def _paste_items(where, op, mdatas):
             # commit every 50 objects moved
             transaction.commit()
             commit_count = count / 50
-            portal._p_jar.sync()
+            if not getCelery().conf.task_always_eager:
+                portal._p_jar.sync()
             # so we do not redo it
             try:
                 mdatas.remove(mdata)
