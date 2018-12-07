@@ -18,6 +18,7 @@ from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
 from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
@@ -30,10 +31,6 @@ from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 reg_key = 'castle.subscriber_categories'
-
-
-def toUnicode(txt):
-    return unicode(txt, "utf-8")
 
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
@@ -306,7 +303,7 @@ class ImportSubscribersForm(AutoExtensibleForm, form.Form):
                 if len(cols) <= 1:
                     continue
                 subscriber = {
-                    'categories': map(toUnicode, cols[categoryindex].strip('"').split(';')),
+                    'categories': map(safe_unicode, cols[categoryindex].strip('"').split(';')),
                     'email': cols[emailindex]
                 }
                 match = subscribe.get_subscriber(subscriber['email'])
