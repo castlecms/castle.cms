@@ -62,7 +62,7 @@ setup(
         # add-ons
         'collective.documentviewer>=5.0.1',
         'collective.elasticsearch>=2.0.3<3',
-        'collective.celery>=1.1.2',
+        'collective.celery>=1.1.3',
 
         # python
         'boto>=2.38.0<3',

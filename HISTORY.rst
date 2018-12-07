@@ -14,6 +14,12 @@ New:
 
 Fixes:
 
+- Fix use of celery with always eager setting and some tasks
+  [vangheem]
+
+- Work with ffmpeg as well as avconv
+  [vangheem]
+
 - Make content listing tile persistent. This fixes issues with saving
   data to content listing tile.
   [vangheem]

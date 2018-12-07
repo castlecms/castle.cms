@@ -1,19 +1,20 @@
-from boto.s3.connection import ProtocolIndependentOrdinaryCallingFormat
-from boto.s3.connection import S3Connection
-from datetime import datetime
-from persistent.mapping import PersistentMapping
-from plone.namedfile.file import NamedBlobFile
-from plone.registry.interfaces import IRegistry
-from plone.uuid.interfaces import IUUID
-from time import time
-from urlparse import urlparse
-from zope.annotation.interfaces import IAnnotations
-from zope.component import getUtility
-
 import io
 import logging
 import math
 import urllib
+from datetime import datetime
+from time import time
+from urlparse import urlparse
+
+from boto.s3.connection import (ProtocolIndependentOrdinaryCallingFormat,
+                                S3Connection)
+from collective.celery.utils import getCelery
+from persistent.mapping import PersistentMapping
+from plone.namedfile.file import NamedBlobFile
+from plone.registry.interfaces import IRegistry
+from plone.uuid.interfaces import IUUID
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 
 
 logger = logging.getLogger('castle.cms')
@@ -84,7 +85,8 @@ def move_file(obj):
     mp.complete_upload()
     blob_fi.close()
 
-    obj._p_jar.sync()
+    if not getCelery().conf.task_always_eager:
+        obj._p_jar.sync()
     obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
     obj.file.original_filename = filename
     obj.file.original_content_type = content_type
