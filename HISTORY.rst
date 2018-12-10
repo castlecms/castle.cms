@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.3.4 (unreleased)
+2.3.4 (2018-12-10)
 ------------------
 
 - Fix upgrade of `castle.slot_tiles` when it's been set to None
