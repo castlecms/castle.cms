@@ -10,7 +10,7 @@ define([
 
   var D = R.DOM;
 
-  var ModalContentComponent = cutils.Class([CastleModal], {
+  var ModalLinkContentComponent = cutils.Class([CastleModal], {
     getInitialState: function(){
       return {
       };
@@ -86,9 +86,9 @@ define([
     }
   });
 
-  var Modal = Base.extend({
-    name: 'castle-modal',
-    trigger: 'a[data-linktype="modallink"],.pat-castle-modal',
+  var ModalLinkPattern = Base.extend({
+    name: 'modallink',
+    trigger: 'a[data-linktype="modallink"],.pat-modallink',
     parser: 'mockup',
     defaults: {
       modal: {
@@ -112,12 +112,12 @@ define([
         $('body').append(el);
 
         $.get(url + '/@@content-body').done(function(data){
-          R.render(R.createElement(ModalContentComponent, {
+          R.render(R.createElement(ModalLinkContentComponent, {
             content: data
           }), el);
           Registry.scan($(el).find('.modal-body'));
         }).fail(function(){
-          R.render(R.createElement(ModalContentComponent, {
+          R.render(R.createElement(ModalLinkContentComponent, {
             content: {
               portal_type: 'Error',
               title: 'Error gettting info',
@@ -131,6 +131,6 @@ define([
     }
   });
 
-  return Modal;
+  return ModalLinkPattern;
 
 });

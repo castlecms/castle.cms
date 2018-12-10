@@ -50,7 +50,7 @@ require([
   'castle-url/patterns/masonry',
   'castle-url/patterns/existing',
   'castle-url/patterns/survey',
-  'castle-url/patterns/modal',
+  'castle-url/patterns/modallink',
 ], function($, registry, Base, Modal) {
   'use strict';
 
