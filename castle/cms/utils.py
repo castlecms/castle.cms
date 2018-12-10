@@ -769,7 +769,7 @@ def has_image(obj):
         if IHasDefaultImage.providedBy(obj):
             return True
         try:
-            return getattr(aq_base(obj), 'image', None)
+            return getattr(aq_base(obj), 'image', None) is not None
         except POSKeyError:
             return False
 

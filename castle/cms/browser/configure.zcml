@@ -59,6 +59,12 @@
     class=".content.Workflow"
     permission="zope2.View"
   />
+  <browser:page
+    for="*"
+    name="content-body"
+    class=".content.ContentBody"
+    permission="zope2.View"
+  />
 
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"

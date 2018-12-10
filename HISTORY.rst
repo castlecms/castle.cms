@@ -6,6 +6,9 @@ Changelog
 
 New:
 
+- Implement new modal link
+  [vangheem]
+
 - Add import subscribers form for announcements panel
   [CorySanin]
 

@@ -1,5 +1,12 @@
 /*
  * customizing original tiny pattern...
+ *
+ * - Download link implementation(/view vs download)
+ * - Modal popup implementation
+ * 
+ * ToDo:
+ * - extend from plone instead of copy/paste
+ * - or, should be rewritten with react?
  */
 
 define([
@@ -124,7 +131,10 @@ define([
                  'bullist numlist outdent indent | ' +
                  'unlink plonelink ploneimage',
         //'autoresize_max_height': 900,
-        'height': 400
+        'height': 400,
+        // stick here because it's easier to config without
+        // additional settings
+        linkTypes: ['internal', 'external', 'email', 'anchor']
       },
       inline: false
     },
@@ -132,7 +142,11 @@ define([
       var self = this;
       if (self.linkModal === null) {
         var $el = $('<div/>').insertAfter(self.$el);
-        var linkTypes = ['internal', 'external', 'email', 'anchor'];
+        var linkTypes = self.options.tiny.linkTypes;
+        if(!linkTypes){
+          // in case someone screws up config
+          linkTypes = ['internal', 'external', 'email', 'anchor'];
+        }
         self.linkModal = new LinkModal($el,
           $.extend(true, {}, self.options, {
             tinypattern: self,
