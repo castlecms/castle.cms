@@ -27,14 +27,31 @@ define([
 
   var QueryFilterComponent = R.createClass({
     getInitialState: function(){
+      var self = this;
+      var subject = [];
+      var tags = [];
+      if( self.isTagFilter() ) {
+        subject = self.props.tags.slice();
+      }
       return $.extend({}, true, {
          SearchableText: '',
-         Subject: [],
+         Subject: subject,
          sort_on: '',
          searchedText: '',
+         searchedTags: tags,
          'selected-year': '',
          loading: false
       }, this.props.query);
+    },
+    getTagClass: function(tag) {
+      var self = this;
+      if( self.state.searchedTags.length == 1 ) {
+        if( self.state.searchedTags.indexOf(tag) >= 0 ) {
+          return 'active';
+        }
+      }
+
+      return false;
     },
     getDefaultProps: function(){
       return {
@@ -43,7 +60,13 @@ define([
         query: {}
       };
     },
+    isTagFilter: function() {
+      return this.props.display_type == 'tag-filter';
+    },
     valueChange: function(attr, e){
+      if( this.isTagFilter() ) {
+        this.state.searchedTags = [];
+      }
       this.state[attr] = e.target.value;
       this.forceUpdate();
     },
@@ -61,6 +84,12 @@ define([
         Subject: this.state.Subject
       });
     },
+    removeTag: function(tag, e) {
+      e.preventDefault();
+      this.setState({
+        searchedTags: []
+      }, this.fetchResults.bind(this));
+    },
     clearFilter: function(e){
       var that = this;
       e.preventDefault();
@@ -75,10 +104,13 @@ define([
         return false;
       }
     },
-    filterClicked: function(e){
-      if(e){
-        e.preventDefault();
-      }
+    selectSingleFilter: function(tag, e) {
+      var self = this;
+      self.state.searchedTags = [tag];
+
+      self.filterClicked(e);
+    },
+    fetchResults: function() {
       var self = this;
       if(self.props.ajaxResults){
         self.state.loading = true;
@@ -94,9 +126,13 @@ define([
         if(self.state['selected-year']){
           formData.push({name: 'selected-year', value: self.state['selected-year']});
         }
-        self.state.Subject.forEach(function(tag){
-          formData.push({name: 'Subject', value: tag});
-        });
+
+        if( self.state.Subject ) {
+          self.state.searchedTags.forEach(function(tag){
+            formData.push({name: 'Subject', value: tag});
+          });
+        }
+
         var url = self.props.ajaxResults.url;
         if(url.indexOf('?') === -1){
           url += '?';
@@ -127,12 +163,19 @@ define([
         });
       }
     },
+    filterClicked: function(e){
+      if(e){
+        e.preventDefault();
+      }
+
+      this.fetchResults();
+    },
     render: function(){
       var self = this;
       var fields = [];
       var widgetCount = 1;
 
-      if(self.props.tags.length > 0){
+      if(self.props.tags.length > 0 && !self.isTagFilter()){
         widgetCount += 1;
         fields.push(D.div({ className: 'field-wrapper' }, [
           D.label({ htmlFor: 'select-categories' }, 'Filter by '),
@@ -163,12 +206,25 @@ define([
         ]));
       }
 
-      var filters = this.state.Subject.map(function(tag){
-        return D.li({}, [
-          tag,
-          D.button({ className: 'remove', onClick: self.removeFilter.bind(self, tag)}, 'x')
-        ]);
-      });
+      var filters = [];
+      if( self.isTagFilter() ) {
+        filters = this.state.Subject.map(function(tag){
+          return D.li({
+            className: 'filtertag' + (' ' + self.getTagClass(tag) || ''),
+            onClick: self.selectSingleFilter.bind(self, tag)}, [
+            D.a({}, tag),
+            //D.button({ className: 'remove', onClick: self.removeTag.bind(self, tag)}, 'x')
+          ]);
+        });
+      } else {
+        filters = this.state.Subject.map(function(tag){
+          return D.li({}, [
+            tag,
+            D.button({ className: 'remove', onClick: self.removeFilter.bind(self, tag)}, 'x')
+          ]);
+        });
+      }
+
       if(this.state.searchedText){
         filters.push(D.li({}, [
           this.state.searchedText,
@@ -202,13 +258,28 @@ define([
       fields.push(D.button({ type: 'submit', onClick: this.filterClicked, className: 'pull-right plone-btn plone-btn-default'}, 'Filter'));
       fields.push(D.div({ className: 'clearfix'}));
 
+      var filter_box = [];
+      if( !self.isTagFilter() ) {
+        filter_box = D.div({className: 'filter-fields'}, fields);
+      }
+
       return D.form({ ref: 'form', className: 'queryfilter-container field-count-' + widgetCount}, [
-        D.div({className: 'filter-fields'}, fields),
+        filter_box,
         D.div({ className: 'row'}, [
           D.div({className: 'col-md-9 filters'}, [
-            this.hasFilters() && D.label({}, 'Active filters:') || '',
+            [
+              this.hasFilters() &&
+              !this.isTagFilter() &&
+              D.label({}, 'Active filters:') || '',
+            ],
             D.ul({ className: 'filter-list'}, filters),
-            this.hasFilters() && D.button({ className: 'clear', onClick: this.clearFilter, style: { cursor: 'pointer'} }, 'Clear') || ''
+            [
+              this.hasFilters() &&
+              D.button({
+                className: 'clear',
+                onClick: this.clearFilter, style: { cursor: 'pointer'}
+              }, 'Clear') || ''
+            ]
           ]),
           D.div({className: 'col-md-3 sort-by'}, [
             D.label({ htmlFor: 'select-sort-by' }, 'Sort by:'),
