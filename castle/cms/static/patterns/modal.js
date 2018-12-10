@@ -88,7 +88,7 @@ define([
 
   var Modal = Base.extend({
     name: 'castle-modal',
-    trigger: '[data-linktype="modal"],.pat-castle-modal',
+    trigger: 'a[data-linktype="modal"],.pat-castle-modal',
     parser: 'mockup',
     defaults: {
       modal: {

@@ -44,6 +44,7 @@
         </div>
       </fieldset>
 
+      <% if(linkTypes.indexOf('modal') !== -1){ %>
       <fieldset class="linkType anchor" data-linkType="anchor">
         <legend id="tinylink-anchor">Anchor</legend>
         <div>
@@ -55,6 +56,7 @@
           </div>
         </div>
       </fieldset>
+      <% } %>
 
       <fieldset class="linkType modal" data-linkType="modal">
         <legend id="tinylink-modal">Modal</legend>
