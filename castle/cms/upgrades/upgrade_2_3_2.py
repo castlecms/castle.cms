@@ -33,6 +33,8 @@ _recover_slot_tiles = {
 
 def upgrade(context, logger=None):
     registry = getUtility(IRegistry)
+    if registry['castle.slot_tiles'] is None:
+        registry['castle.slot_tiles'] = {}
     tiles = registry['castle.slot_tiles']
     for recover_type, recover_tiles in _recover_slot_tiles.items():
         if recover_type not in tiles:
