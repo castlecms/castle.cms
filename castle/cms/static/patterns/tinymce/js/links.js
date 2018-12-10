@@ -397,7 +397,7 @@ define([
         /* available, none activate by default because these options
          * only get merged, not set.
         'internal',
-        'modal',
+        'modallink',
         'external',
         'email',
         'anchor',
@@ -410,7 +410,7 @@ define([
       },
       linkTypeClassMapping: {
         'internal': InternalLink,
-        'modal': InternalLink,
+        'modallink': InternalLink,
         'external': ExternalLink,
         'email': EmailLink,
         'anchor': AnchorLink,
@@ -422,7 +422,7 @@ define([
     // Image modal is going to have its own modal class, funcs and template.
     linkTypeTemplateMapping: {
       'internal': LinkTemplate,
-      'modal': LinkTemplate,
+      'modallink': LinkTemplate,
       'external': LinkTemplate,
       'email': LinkTemplate,
       'anchor': LinkTemplate,
@@ -548,7 +548,7 @@ define([
           linkModal: self,
           tinypattern: self.tinypattern
         });
-        if(type === 'internal' || type === 'modal'){
+        if(type === 'internal' || type === 'modallink'){
           var relatedItems = self.linkTypes[type].relatedItems;
           relatedItems.$el.on('loaded', function(){
             var item = relatedItems.component.state.items[0];
@@ -626,7 +626,7 @@ define([
       self.tiny.focus();
       self.tiny.selection.setRng(self.rng);
 
-      if((self.linkType === 'internal' || self.linkType === 'modal') &&
+      if((self.linkType === 'internal' || self.linkType === 'modallink') &&
          self.urlType !== DIRECT_URL_TYPE){
         href += self.urlType;
       }

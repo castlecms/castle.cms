@@ -44,7 +44,6 @@
         </div>
       </fieldset>
 
-      <% if(linkTypes.indexOf('modal') !== -1){ %>
       <fieldset class="linkType anchor" data-linkType="anchor">
         <legend id="tinylink-anchor">Anchor</legend>
         <div>
@@ -56,20 +55,19 @@
           </div>
         </div>
       </fieldset>
-      <% } %>
 
-      <fieldset class="linkType modal" data-linkType="modal">
+      <% if(linkTypes.indexOf('modallink') !== -1){ %>
+      <fieldset class="linkType modallink" data-linkType="modallink">
         <legend id="tinylink-modal">Modal</legend>
         <div>
           <div class="form-group main">
             <label>Select content for modal</label>
-            <div class="input-wrapper">
-              <!-- this gives the name to the "linkType" -->
-              <input type="text" name="internal" />
-            </div>
+            <!-- reuse internal value here! -->
+            <input type="text" name="internal" />
           </div>
         </div>
       </fieldset>
+      <% } %>
 
     </div><!-- / tabs -->
 

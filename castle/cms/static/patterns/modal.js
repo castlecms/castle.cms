@@ -88,7 +88,7 @@ define([
 
   var Modal = Base.extend({
     name: 'castle-modal',
-    trigger: 'a[data-linktype="modal"],.pat-castle-modal',
+    trigger: 'a[data-linktype="modallink"],.pat-castle-modal',
     parser: 'mockup',
     defaults: {
       modal: {
@@ -106,7 +106,10 @@ define([
         }
 
         var el = document.createElement('div');
-        $(el).addClass('castle-link-modal-wrapper').insertAfter(self.$el);
+        $(el).addClass('castle-link-modal-wrapper');
+        // inserting after screws up z-index? disable for now...
+        // $(el).insertAfter(self.$el);
+        $('body').append(el);
 
         $.get(url + '/@@content-body').done(function(data){
           R.render(R.createElement(ModalContentComponent, {

@@ -9,7 +9,6 @@
  * - or, should be rewritten with react?
  */
 
-debugger;
 define([
   'jquery',
   'underscore',
