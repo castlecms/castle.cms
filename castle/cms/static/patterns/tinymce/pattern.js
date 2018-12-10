@@ -150,7 +150,7 @@ define([
         self.linkModal = new LinkModal($el,
           $.extend(true, {}, self.options, {
             tinypattern: self,
-            linkTypes: self.options.tiny.linkTypes
+            linkTypes: linkTypes
           })
         );
         self.linkModal.show();
