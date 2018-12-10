@@ -94,7 +94,7 @@ class TaggedView(BaseTileView):
 
 class TagFilterView(BaseTileView):
     name = 'tag-filter'
-    preview = '++plone++castle/images/previews/querylisting/tagged.png'
+    preview = '++plone++castle/images/previews/querylisting/tag-filter.png'
     order = 5
     index = ViewPageTemplateFile('templates/querylisting/tagfilter.pt')
     tile_name = 'querylisting'
