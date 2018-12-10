@@ -46,6 +46,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility, queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from castle.cms.browser.utils import Utils
 
 try:
     # Python 2.6-2.7
@@ -813,3 +814,35 @@ class PingCurrentDraft(BrowserView):
         draft = getCurrentDraft(self.request, create=False)
         if draft is not None:
             draft._p_changed = 1
+
+
+class ContentBody(BrowserView):
+    def __call__(self):
+        self.request.response.setHeader('Content-type', 'application/json')
+        cutils = Utils(self.context, self.request)
+        data = {
+            'title': self.context.title,
+            'id': self.context.id,
+            'has_image': utils.has_image(self.context),
+            'youtube_url': None
+        }
+        rendered = None
+        if self.context.portal_type in ('Image',):
+            pass
+        elif self.context.portal_type == 'Video':
+            fi = getattr(self.context, 'file', None)
+            data.update({
+                'youtube_url': cutils.get_youtube_url(self.context),
+                'content_type': getattr(
+                    fi, 'original_content_type', getattr(fi, 'contentType', None))
+            })
+        else:
+            feed = SearchFeed(api.portal.get())
+            adapter = queryMultiAdapter((self.context, feed), IFeedItem)
+            rendered = adapter.render_content_core().strip()
+        return json.dumps({
+            'portal_type': self.context.portal_type,
+            'url': self.context.absolute_url(),
+            'data': data,
+            'rendered': rendered
+        })

@@ -1,5 +1,11 @@
 /*
  * customizing original tiny pattern...
+ *
+ * - Download link implementation(/view vs download)
+ * - Modal popup implementation
+ * 
+ * ToDo:
+ * - should be rewritten with react...
  */
 
 define([
@@ -132,7 +138,7 @@ define([
       var self = this;
       if (self.linkModal === null) {
         var $el = $('<div/>').insertAfter(self.$el);
-        var linkTypes = ['internal', 'external', 'email', 'anchor'];
+        var linkTypes = ['internal', 'modal', 'external', 'email', 'anchor'];
         self.linkModal = new LinkModal($el,
           $.extend(true, {}, self.options, {
             tinypattern: self,
