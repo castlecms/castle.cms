@@ -3,11 +3,4 @@
           i18n:domain="plone">
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
-
-  <record name="castle.crawler_interval">
-        <field type="plone.registry.field.Int">
-            <title>Request Interval</title>
-            <description>To avoid overburdening the crawled site, enter a request interval in seconds</description>
-        </field>
-  </record>
 </registry>
