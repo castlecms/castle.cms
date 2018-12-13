@@ -13,7 +13,7 @@ def upgrade(context, logger=None):
     # Reindex events that have recurrences
     brains = api.content.find(portal_type='Event')
     for brain in brains:
-        obj = brain.getObject() # unfortunate but necessary
+        obj = brain.getObject()  # unfortunate but necessary
         if hasattr(obj, 'recurrence') and obj.recurrence is not None:
             log.info('reindexing recurrence of %s' % brain.Title)
             obj.reindexObject(idxs=['recurrence'])

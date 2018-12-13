@@ -14,6 +14,7 @@ from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
 from plone.event.interfaces import IEvent
 
+
 @indexer(IItem)
 def getRawRelatedItems(obj):
     try:

@@ -51,7 +51,7 @@ class CalendarTile(BaseTile):
                     time_delta = brain.end - brain.start
                     recurring_events = recurrences(brain.start, brain.recurrence)
                     for new_event in recurring_events:
-                        if new_event != brain.start: # skip the actual event
+                        if new_event != brain.start:  # skip the actual event
                             events.append({
                                 'title': brain.Title,
                                 'url': brain.getURL(),
