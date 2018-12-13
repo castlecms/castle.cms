@@ -4,7 +4,8 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add request interval option to crawler
+  [lucid-0]
 
 
 2.3.4 (2018-12-10)
