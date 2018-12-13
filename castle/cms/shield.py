@@ -50,8 +50,11 @@ def protect(req, recheck=False):
         creds = site_plugin.extractCredentials(req)
         anonymous = not site_plugin.authenticateCredentials(creds)
         if anonymous:
-            app_plugin = aq_parent(portal).acl_users.session
-            anonymous = not app_plugin.authenticateCredentials(creds)
+            try:
+                app_plugin = aq_parent(portal).acl_users.session
+                anonymous = not app_plugin.authenticateCredentials(creds)
+            except AttributeError:
+                anonymous = True
     else:
         anonymous = api.user.is_anonymous()
     if protect and anonymous:
