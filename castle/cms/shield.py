@@ -44,19 +44,21 @@ def protect(req, recheck=False):
                 protect |= backend_url.startswith(req.SERVER_URL)
             except AttributeError:
                 pass
-    if recheck:
-        portal = api.portal.get()
-        site_plugin = portal.acl_users.session
-        creds = site_plugin.extractCredentials(req)
-        anonymous = not site_plugin.authenticateCredentials(creds)
+    if protect:
+        if recheck:
+            portal = api.portal.get()
+            site_plugin = portal.acl_users.session
+            creds = site_plugin.extractCredentials(req)
+            anonymous = not site_plugin.authenticateCredentials(creds)
+            if anonymous:
+                try:
+                    app_plugin = aq_parent(portal).acl_users.session
+                    anonymous = not app_plugin.authenticateCredentials(creds)
+                except AttributeError:
+                    anonymous = True
+        else:
+            anonymous = api.user.is_anonymous()
+
         if anonymous:
-            try:
-                app_plugin = aq_parent(portal).acl_users.session
-                anonymous = not app_plugin.authenticateCredentials(creds)
-            except AttributeError:
-                anonymous = True
-    else:
-        anonymous = api.user.is_anonymous()
-    if protect and anonymous:
-        raise Redirect('{}/@@secure-login'.format(
-            api.portal.get().absolute_url()))
+            raise Redirect('{}/@@secure-login'.format(
+                api.portal.get().absolute_url()))
