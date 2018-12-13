@@ -4,7 +4,8 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix alias causing logout at backend urls
+  [lucid-0,vangheem]
 
 
 2.3.4 (2018-12-10)
