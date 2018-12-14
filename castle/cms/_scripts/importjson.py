@@ -368,13 +368,19 @@ def import_object(filepath):
                 for h in review_history:
                     wtool.setStatusOf(workflow_id, obj, h)
                 if len(chain) != 1:
-                    return logger.warn('There should be 1 workflow for %s but'
+                    logger.warn('There should be 1 workflow for %s but'
                                         'there are %i' % (path, len(chain)))
         else:
-            return logger.warn('No review history on {obj}'.format(obj=obj))
+            logger.warn('No review history on {obj}'.format(obj=obj))
 
         fix_html_images(obj)
         obj.reindexObject()
+        try:
+            obj.setModificationDate(data['data']['modification_date'])
+        except Exception:
+            logger.info('Could not set modification date on {obj}'
+                                                            .format(obj=obj))
+        obj.reindexObject(idxs=['modified'])
         return True
 
 
