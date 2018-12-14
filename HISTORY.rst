@@ -13,6 +13,8 @@ Changelog
 - Upgrade collective.celery
   [vangheem]
 
+- Fix: Use ArchiveManager to getContentToArchive
+  [lucid-0]
 
 2.3.4 (2018-12-10)
 ------------------

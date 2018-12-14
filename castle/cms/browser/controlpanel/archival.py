@@ -33,7 +33,8 @@ class Review(BaseView):
         }
 
     def items(self):
-        return [self.dump(i) for i in archival.getContentToArchive(30)]
+        man = archival.ArchiveManager()
+        return [self.dump(i) for i in man.getContentToArchive(30)]
 
     def json_dump(self):
         return json.dumps(self.items())
