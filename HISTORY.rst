@@ -4,8 +4,13 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
+
 - Add request interval option to crawler
   [lucid-0]
+
+- Upgrade collective.celery
+  [vangheem]
+
 
 
 2.3.4 (2018-12-10)
