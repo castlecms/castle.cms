@@ -14,7 +14,7 @@ from six.moves.urllib.parse import unquote
 class FourOhFour(FourOhFourView):
 
     def __call__(self):
-        shield.protect(self.request)
+        shield.protect(self.request, recheck=True)
         if '++' in self.request.URL:
             self.request.response.setStatus(404)
             return self.index()
