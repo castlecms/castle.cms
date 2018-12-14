@@ -39,7 +39,7 @@ setup(
         'Products.CMFPlone>=5.0.10.dev2',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
-        'plone.app.mosaic>=2.0.0.dev18',
+        'plone.app.mosaic>=2.0.0.dev19',
         'plone.app.blocks>=10.0.0',
         'Products.PloneKeywordManager>=2.2.1',
         'plone.schemaeditor>=2.0.18',

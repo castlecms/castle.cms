@@ -4,6 +4,10 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
+- Upgrade plone.app.mosaic to fix protect.js script tag being
+  loaded over and over again in edit mode
+  [vangheem]
+
 - Fix alias causing logout at backend urls
   [lucid-0]
 
