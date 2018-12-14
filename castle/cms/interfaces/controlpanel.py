@@ -572,3 +572,10 @@ class ICrawlerConfiguration(Interface):
         description=u'User agent to use when crawling sites',
         default=u'CastleCMS Crawler 1.0'
     )
+
+    crawler_interval = schema.Int(
+        title=u'Request Interval',
+        description=u'To avoid overburdening the crawled site, enter a request interval in seconds',
+        required=False,
+        default=0,
+    )

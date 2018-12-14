@@ -307,7 +307,11 @@ class Crawler(object):
 
             if not url:
                 continue
-
+            try:
+                interval = self.settings.crawler_interval
+            except Exception:
+                interval = 0
+            time.sleep(interval)
             data = self.crawl_page(url)
             if data is False:
                 crawled_urls.remove(url)
