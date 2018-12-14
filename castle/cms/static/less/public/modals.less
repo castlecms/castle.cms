@@ -15,6 +15,13 @@
                 padding: 0;
                 margin: 0;
             }
+            @media (max-width: @screen-xs-max){
+                > button.close {
+                    right: 5px;
+                    top: -30px;
+                    opacity: 1;
+                }
+            }
         }
         .modal-body {
             padding: 0;
@@ -25,7 +32,7 @@
             }
         }
         .pt-Video,.pt-Image > .modal-body{
-            background-color: black
+            background-color: black;
         }
     }
     .mosaic-grid-row-fullwidth{

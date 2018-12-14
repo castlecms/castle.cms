@@ -4,6 +4,9 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
+- fix popup modal close button to be visible on mobile
+  [vangheem]
+
 - Upgrade plone.app.mosaic to fix protect.js script tag being
   loaded over and over again in edit mode
   [vangheem]
