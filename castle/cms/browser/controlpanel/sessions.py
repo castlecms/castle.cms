@@ -10,8 +10,6 @@ class SessionsView(BrowserView):
     description = "View and control your site's currently logged-in user sessions."
 
     def __call__(self):
-        self.timeout = self.context.acl_users.session.timeout
-
         if self.request.REQUEST_METHOD == 'POST':
             if self.request.form.get('id'):
                 session_id = self.request.form.get('id')
@@ -27,6 +25,7 @@ class SessionsView(BrowserView):
                 except Exception:
                     pass  # handle non-int duration entered
 
+        self.timeout = self.context.acl_users.session.timeout
         self.sessions = get_active_sessions()
 
         return super(SessionsView, self).__call__()
