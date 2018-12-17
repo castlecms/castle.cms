@@ -127,7 +127,12 @@ define([
           formData.push({name: 'selected-year', value: self.state['selected-year']});
         }
 
-        if( self.state.Subject ) {
+        if(self.state.Subject){
+          self.state.Subject.forEach(function(tag){
+            formData.push({name: 'Subject', value: tag});
+          });
+        }
+        if(self.state.searchedTags){
           self.state.searchedTags.forEach(function(tag){
             formData.push({name: 'Subject', value: tag});
           });
