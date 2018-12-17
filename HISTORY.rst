@@ -4,6 +4,18 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
+New:
+
+- Add request interval option to crawler
+  [lucid-0]
+
+
+Fixes:
+
+- Upgrade collective.elasticsearch to 2.0.4 to fix date
+  queries that use `min:max`
+  [vangheem]
+
 - Fix querylisting not filtering by tags anymore
   [vangheem]
 
@@ -17,14 +29,12 @@ Changelog
 - Fix alias causing logout at backend urls
   [lucid-0]
 
-- Add request interval option to crawler
-  [lucid-0]
-
 - Upgrade collective.celery
   [vangheem]
 
 - Fix: Use ArchiveManager to getContentToArchive
   [lucid-0]
+
 
 2.3.4 (2018-12-10)
 ------------------
