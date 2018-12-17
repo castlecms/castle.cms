@@ -34,19 +34,20 @@ class DexterityItem(adapters.DexterityItem):
         """
         moved here just so we can wrap it in exception block more nicely
         """
-        try:
-            primary = IPrimaryFieldInfo(self.context, None)
-            if (INamedField.providedBy(primary.field) and
-                    hasattr(primary.field, 'getSize') and
-                    primary.field.getSize() > 0):
-                self.file = primary.field
-                self.field_name = primary.fieldname
-        except TypeError:
-            pass
 
         if has_image(self.context):
             self.image = self.file = self.context.image
             self.field_name = 'image'
+
+        try:
+            primary = IPrimaryFieldInfo(self.context, None)
+            if (INamedField.providedBy(primary.field) and
+                    hasattr(primary.value, 'getSize') and
+                    primary.value.getSize() > 0):
+                self.file = primary.value
+                self.field_name = primary.fieldname
+        except TypeError:
+            pass
 
     @property
     def file_length(self):
