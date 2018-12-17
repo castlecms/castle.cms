@@ -4,6 +4,9 @@ Changelog
 2.3.5 (unreleased)
 ------------------
 
+- Fix querylisting not filtering by tags anymore
+  [vangheem]
+
 - fix popup modal close button to be visible on mobile
   [vangheem]
 
