@@ -377,10 +377,10 @@ def import_object(filepath):
         obj.reindexObject()
         try:
             obj.setModificationDate(data['data']['modification_date'])
+            obj.reindexObject(idxs=['modified'])
         except Exception:
             logger.info('Could not set modification date on {obj}'
                                                             .format(obj=obj))
-        obj.reindexObject(idxs=['modified'])
         return True
 
 
