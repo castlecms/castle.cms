@@ -6,6 +6,7 @@ from z3c.form.field import Fields
 from zope.schema import Int
 from plone import api
 
+
 class SecurityControlPanelForm(security.SecurityControlPanelForm):
     schema = ISecuritySchema
 
