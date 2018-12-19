@@ -15,7 +15,9 @@ def upgrade(context, logger=None):
     setup.runAllImportStepsFromProfile(PROFILE_ID)
     cookWhenChangingSettings(api.portal.get())
 
-    if backend_url is not None:
+    if isinstance(backend_url, tuple):
+        pass
+    elif isinstance(backend_url, unicode):
         api.portal.set_registry_record('plone.backend_url', (backend_url,))
     else:
         api.portal.set_registry_record('plone.backend_url', ())
