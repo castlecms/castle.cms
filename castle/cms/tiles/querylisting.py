@@ -317,12 +317,14 @@ class IQueryListingTileSchema(model.Schema):
         title=u'Sort on',
         description=u"Sort on this index",
         required=False,
+        default=u'effective'
     )
 
     sort_reversed = schema.Bool(
         title=u'Reversed order',
         description=u'Sort the results in reverse order',
         required=False,
+        default=True
     )
 
     limit = schema.Int(

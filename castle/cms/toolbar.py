@@ -345,11 +345,18 @@ class Toolbar(BrowserView):
                 _type = details.pop('type')
                 details['timeout'] = _type.timeout
                 details['user_unlockable'] = _type.user_unlockable
-            return {
-                'locked': info.is_locked_for_current_user(),
-                'stealable': info.lock_is_stealable(),
-                'details': details
-            }
+            try:
+                return {
+                    'locked': info.is_locked_for_current_user(),
+                    'stealable': info.lock_is_stealable(),
+                    'details': details
+                }
+            except TypeError:
+                return {
+                    'locked': False,
+                    'stealable': True,
+                    'details': {}
+                }
 
     @memoize
     def get_menu_modifiers(self):

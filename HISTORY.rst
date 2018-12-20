@@ -4,7 +4,16 @@ Changelog
 2.3.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Fixes:
+
+- Upgrade collective.elasticsearch to fix sorting issues and negative
+  indexing implementation
+  [vangheem]
+
+Changes:
+
+- Default to reversed sorting and explicitly use effective date sorting
+  for query listing tile.
 
 
 2.3.5 (2018-12-17)
