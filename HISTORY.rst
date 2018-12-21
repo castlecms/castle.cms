@@ -4,7 +4,8 @@ Changelog
 2.3.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add session timeout configuration to Security panel
+  [lucid-0]
 
 
 2.3.6 (2018-12-20)
