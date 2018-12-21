@@ -163,7 +163,6 @@ define([
           url += '&';
         }
         url += $.param(formData);
-        console.log(url);
         self.props.pattern.setAjaxUrl(url);
         $.ajax({
           url: url
