@@ -839,7 +839,8 @@ class ContentBody(BrowserView):
         else:
             feed = SearchFeed(api.portal.get())
             adapter = queryMultiAdapter((self.context, feed), IFeedItem)
-            rendered = adapter.render_content_core().strip()
+            if adapter is not None:
+                rendered = adapter.render_content_core().strip()
         return json.dumps({
             'portal_type': self.context.portal_type,
             'url': self.context.absolute_url(),
