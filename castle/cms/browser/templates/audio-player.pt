@@ -13,9 +13,6 @@ audio {
    max-width:600px;
 }
 </style>
-<audio controls class="mejs__player">
-  <source tal:attributes="src view/context/absolute_url" type="audio/mpeg">
-Your browser does not support the audio element.
-</audio>
+<div data-tile="./@@castle.cms.audiotile"></div>
 </body>
 </html>
