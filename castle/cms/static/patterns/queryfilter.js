@@ -15,7 +15,7 @@ define([
   var trackUrl = function(url){
     var anchor = document.createElement('a');
     anchor.href = url;
-    var trackValue = anchor.pathname + anchor.search
+    var trackValue = anchor.pathname + anchor.search;
     if(window.ga){
       window.ga('send', 'pageview', trackValue);
     }
@@ -23,35 +23,23 @@ define([
       window._paq.push([
         'trackEvent', 'queryfilter', trackValue]);
     }
-  }
+  };
 
   var QueryFilterComponent = R.createClass({
     getInitialState: function(){
       var self = this;
       var subject = [];
       var tags = [];
-      if( self.isTagFilter() ) {
-        subject = self.props.tags.slice();
-      }
       return $.extend({}, true, {
          SearchableText: '',
          Subject: subject,
+         selectedTags: [],
+         singleFilter: false,
          sort_on: '',
          searchedText: '',
-         searchedTags: tags,
          'selected-year': '',
          loading: false
       }, this.props.query);
-    },
-    getTagClass: function(tag) {
-      var self = this;
-      if( self.state.searchedTags.length == 1 ) {
-        if( self.state.searchedTags.indexOf(tag) >= 0 ) {
-          return 'active';
-        }
-      }
-
-      return false;
     },
     getDefaultProps: function(){
       return {
@@ -60,35 +48,72 @@ define([
         query: {}
       };
     },
-    isTagFilter: function() {
-      return this.props.display_type == 'tag-filter';
-    },
     valueChange: function(attr, e){
-      if( this.isTagFilter() ) {
-        this.state.searchedTags = [];
-      }
       this.state[attr] = e.target.value;
+      this.state.singleFilter = false;
       this.forceUpdate();
     },
     tagSelected: function(e){
-      this.state.Subject.push(e.target.value);
-      this.forceUpdate();
+      var self = this;
+      // Subject = the terms being searched for
+      // seletedTags = the tags displayed below the filter
+      // The tags can be enabled/disabled so we need to
+      // keep track of both
+      var subject = self.state.Subject;
+      var tags = self.state.selectedTags;
+
+      subject.push(e.target.value);
+      tags.push(e.target.value);
+
+      self.setState({
+        Subject: subject,
+        selectedTags: tags,
+        singleFilter: false
+      }, self.filterClicked);
+    },
+    getActive: function(type, value) {
+      var self = this;
+      var filter = self.state.singleFilter;
+
+      var filter_types = {'text': 'Title', 'tag': 'Subject'};
+      if( !filter ) {
+        return;
+      }
+
+      var filter_type = filter_types[type];
+
+      if( filter.name != filter_type ) {
+        return;
+      }
+
+      if( filter.value != value ) {
+        return;
+      }
+
+      return 'active';
+
     },
     removeFilter: function(tag, e){
+      var self = this;
+      // The user clicked the X next to a tag,
+      // Remove the tag and re-fetch results
       e.preventDefault();
-      var index = this.state.Subject.indexOf(tag);
+
+      var subject = self.state.Subject;
+      var tags = self.state.selectedTags;
+
+      var index = subject.indexOf(tag);
+      var tag_index = tags.indexOf(tag);
+
       if (index > -1) {
-        this.state.Subject.splice(index, 1);
+        subject.splice(index, 1);
+        tags.splice(tag_index, 1);
       }
-      this.setState({
-        Subject: this.state.Subject
-      });
-    },
-    removeTag: function(tag, e) {
-      e.preventDefault();
-      this.setState({
-        searchedTags: []
-      }, this.fetchResults.bind(this));
+      self.setState({
+        Subject: subject,
+        selectedTags: tags,
+        singleFilter: false
+      }, this.filterClicked);
     },
     clearFilter: function(e){
       var that = this;
@@ -104,12 +129,6 @@ define([
         return false;
       }
     },
-    selectSingleFilter: function(tag, e) {
-      var self = this;
-      self.state.searchedTags = [tag];
-
-      self.filterClicked(e);
-    },
     fetchResults: function() {
       var self = this;
       if(self.props.ajaxResults){
@@ -119,21 +138,20 @@ define([
         if(self.state.sort_on){
           formData.push({name: 'sort_on', value: self.state.sort_on});
         }
-        if(self.state.SearchableText){
-          // actually searching Title here...
-          formData.push({name: 'Title', value: self.state.SearchableText});
-        }
-        if(self.state['selected-year']){
-          formData.push({name: 'selected-year', value: self.state['selected-year']});
-        }
+        if( self.state.singleFilter ) {
+          // We've clicked on a filter bubble, and only want
+          // to search based on that, BUT still want the bubbles to appear
+          formData.push(self.state.singleFilter);
+        }else{
+          if(self.state.SearchableText){
+            // actually searching Title here...
+            formData.push({name: 'Title', value: self.state.SearchableText});
+          }
+          if(self.state['selected-year']){
+            formData.push({name: 'selected-year', value: self.state['selected-year']});
+          }
 
-        if(self.state.Subject){
           self.state.Subject.forEach(function(tag){
-            formData.push({name: 'Subject', value: tag});
-          });
-        }
-        if(self.state.searchedTags){
-          self.state.searchedTags.forEach(function(tag){
             formData.push({name: 'Subject', value: tag});
           });
         }
@@ -175,12 +193,42 @@ define([
 
       this.fetchResults();
     },
+    toggleFilter: function(e){
+      var self = this;
+      var val = e.target.text;
+      var filter = self.state.singleFilter;
+      var classlist = e.target.classList;
+      var name = '';
+
+      if( classlist.contains('filter-tag') ) {
+        name = 'Subject';
+      }else if( classlist.contains('filter-text') ) {
+        name = 'Title';
+      }
+
+      // We're disabling the selected filter
+      if( filter && filter.name == name && filter.value == val ) {
+        self.setState({
+          singleFilter: false
+        }, self.filterClicked);
+      }else{
+
+        // 'singleFilter' imitates the params passed into the formData
+        // array in fetchResults
+        self.setState({
+          singleFilter: {
+            name: name,
+            value: val
+          }
+        }, self.filterClicked);
+      }
+    },
     render: function(){
       var self = this;
       var fields = [];
       var widgetCount = 1;
 
-      if(self.props.tags.length > 0 && !self.isTagFilter()){
+      if(self.props.tags.length > 0){
         widgetCount += 1;
         fields.push(D.div({ className: 'field-wrapper' }, [
           D.label({ htmlFor: 'select-categories' }, 'Filter by '),
@@ -212,41 +260,48 @@ define([
       }
 
       var filters = [];
-      if( self.isTagFilter() ) {
-        filters = this.state.Subject.map(function(tag){
-          return D.li({
-            className: 'filtertag' + (' ' + self.getTagClass(tag) || ''),
-            onClick: self.selectSingleFilter.bind(self, tag)}, [
-            D.a({}, tag),
-            //D.button({ className: 'remove', onClick: self.removeTag.bind(self, tag)}, 'x')
-          ]);
-        });
-      } else {
-        filters = this.state.Subject.map(function(tag){
-          return D.li({}, [
-            tag,
-            D.button({ className: 'remove', onClick: self.removeFilter.bind(self, tag)}, 'x')
-          ]);
-        });
-      }
+
+      filters = this.state.selectedTags.map(function(tag){
+        return D.li({
+          className: self.getActive('tag', tag)
+        }, [
+          D.a({
+            className: 'filter filter-tag',
+            onClick: self.toggleFilter}, tag),
+          D.span({
+            className: 'glyphicon glyphicon-remove-sign',
+            onClick: self.removeFilter.bind(self, tag)
+          })
+        ]);
+      });
 
       if(this.state.searchedText){
-        filters.push(D.li({}, [
-          this.state.searchedText,
-          D.button({ className: 'remove',
-                onClick: function(e){
-                  e.preventDefault();
-                  self.setState({
-                    SearchableText: '',
-                    searchedText: ''
-                  }, function(){
-                    self.filterClicked();
-                  });
-                }}, 'x')
+        filters.push(D.li({
+          className: self.getActive('text', self.state.searchedText)
+        }, [
+          D.a({
+            className: 'filter filter-text',
+            onClick: this.toggleFilter
+          }, this.state.searchedText),
+          D.span({
+            className: 'glyphicon glyphicon-remove-sign',
+            onClick: function(e){
+                e.preventDefault();
+                self.setState({
+                  SearchableText: '',
+                  searchedText: '',
+                  singleFilter: false
+                }, function(){
+                  self.filterClicked();
+                });
+              }})
         ]));
       }
       if(self.state['selected-year']){
-        filters.push(D.li({}, [
+        filters.push(D.li({
+          className: 'filter-year',
+          onClick: self.toggleFilter
+        }, [
           this.state['selected-year'],
           D.button({ className: 'remove',
                 onClick: function(e){
@@ -263,20 +318,12 @@ define([
       fields.push(D.button({ type: 'submit', onClick: this.filterClicked, className: 'pull-right plone-btn plone-btn-default'}, 'Filter'));
       fields.push(D.div({ className: 'clearfix'}));
 
-      var filter_box = [];
-      if( !self.isTagFilter() ) {
-        filter_box = D.div({className: 'filter-fields'}, fields);
-      }
+      var filter_box = D.div({className: 'filter-fields'}, fields);
 
       return D.form({ ref: 'form', className: 'queryfilter-container field-count-' + widgetCount}, [
         filter_box,
         D.div({ className: 'row'}, [
           D.div({className: 'col-md-9 filters'}, [
-            [
-              this.hasFilters() &&
-              !this.isTagFilter() &&
-              D.label({}, 'Active filters:') || '',
-            ],
             D.ul({ className: 'filter-list'}, filters),
             [
               this.hasFilters() &&
