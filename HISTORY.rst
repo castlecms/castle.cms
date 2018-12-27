@@ -4,8 +4,16 @@ Changelog
 2.3.7 (unreleased)
 ------------------
 
+New:
+
 - Add session timeout configuration to Security panel
   [lucid-0]
+
+Fixes:
+
+- Handle error in `@@content-body` when there is no IFeedItem adapter
+  for the current context
+  [vangheem]
 
 
 2.3.6 (2018-12-20)
