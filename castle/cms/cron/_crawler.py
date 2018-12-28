@@ -25,6 +25,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.globalrequest import getRequest
+from castle.cms.utils import clear_object_cache
 
 import gzip
 import requests
@@ -278,6 +279,7 @@ class Crawler(object):
 
         self.data['tracking'][sitemap] = DateTime().ISO8601().decode('utf8')
         transaction.commit()
+        clear_object_cache(self.site)
 
         if sitemap.lower().endswith('.gz'):
             sitemap_content = gzip.GzipFile(fileobj=StringIO(resp.content)).read()

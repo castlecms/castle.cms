@@ -36,7 +36,7 @@ class DexterityItem(adapters.DexterityItem):
         """
 
         if has_image(self.context):
-            self.image = self.file = self.context.image
+            self.image = self.context.image
             self.field_name = 'image'
 
         try:
@@ -61,16 +61,18 @@ class DexterityItem(adapters.DexterityItem):
         return 0
 
     @property
-    def file_url(self):
-        if 'image' in self.file_type:
-            return self.image_url
-        else:
-            return super(DexterityItem, self).file_url
+    def has_image(self):
+        return self.image is not None
 
     @property
     def image_url(self):
         if self.image:
             return '{}/@@images/image'.format(self.base_url)
+
+    @property
+    def image_type(self):
+        if self.image:
+            return self.image.contentType
 
 
 class LayoutAwareItem(DexterityItem):

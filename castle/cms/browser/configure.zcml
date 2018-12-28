@@ -7,6 +7,8 @@
   <include package="Products.CMFEditions" />
 
   <include package=".controlpanel" />
+  <include package=".viewlets" />
+  <include package=".files" />
 
   <class class="OFS.Application.Application">
     <implements interface="..interfaces.ICastleApplication" />
@@ -122,55 +124,6 @@
   />
 
   <browser:page
-    name="audioplayer"
-    for="castle.cms.interfaces.content.IAudio"
-    class=".audioplayer.AudioPlayerView"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    template="templates/audio-player.pt"
-    />
-
-
-  <browser:page
-    name="download"
-    for="*"
-    class=".files.NamedFileDownload"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    name="download"
-    for="plone.app.contenttypes.interfaces.IFile"
-    class=".files.Download"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    name="download-as-png"
-    for="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
-    class=".files.DownloadAsPNG"
-    permission="cmf.ModifyPortalContent"
-    />
-
-  <browser:page
-    name="convert-to-png"
-    for="*"
-    class=".files.ConvertToPNG"
-    permission="cmf.ModifyPortalContent"
-    />
-
-  <browser:page
-    for="plone.namedfile.interfaces.IImageScaleTraversable"
-    name="images"
-    class=".files.CastleImageScaling"
-    allowed_attributes="scale"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
     name="add-clone-type"
     for="plone.app.dexterity.interfaces.ITypesContext"
     template="templates/add-content-type.pt"
@@ -186,55 +139,11 @@
       permission="plone.schemaeditor.ManageSchemata"
       layer="..interfaces.ICastleLayer"
       />
-  <browser:page
-    for="plone.app.contenttypes.interfaces.IImage"
-    name="imageinfo"
-    class=".imageinfo.ImageInfoView"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <!-- icon views -->
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="site-icon.png"
-    class=".icon.IconView"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="manifest.json"
-    class=".icon.ManifestView"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="browserconfig.xml"
-    class=".icon.BrowserConfigView"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="favicon.ico"
-    class=".icon.FaviconView"
-    permission="zope2.View"
-    />
-
 
   <browser:page
     name="quality-check"
     for="*"
     class=".content.QualityCheckContent"
-    permission="zope2.View"
-    />
-
-  <browser:page
-    name="display-file"
-    for="plone.app.contenttypes.interfaces.IFile"
-    class=".files.Download"
     permission="zope2.View"
     />
 
