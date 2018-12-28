@@ -160,5 +160,13 @@
       destination="2305"
       handler=".upgrade_2_3_5.upgrade"
       profile="castle.cms:default"/>
+    
+  <genericsetup:upgradeStep
+      title="Upgrade CastleCMS to 2.3.7"
+      description=""
+      source="*"
+      destination="2307"
+      handler=".upgrade_2_3_7.upgrade"
+      profile="castle.cms:default"/>
 
 </configure>
