@@ -12,9 +12,11 @@
 *** Test Cases ***
 
 Verify Toolbar buttons
+   Given a logged-in site administrator
+   Go to  ${PLONE_URL}
+
    Wait Until Page Contains Element  css=.introjs-skipall
    Click Element  css=.introjs-skipall
-   Given a logged-in site administrator
 
    # Let's just make sure everything is here
    Set Selenium Speed  .05
