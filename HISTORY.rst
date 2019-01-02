@@ -4,7 +4,10 @@ Changelog
 2.3.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Changes:
+
+- Reorganize `castle.cms.browser` module and add robot framework tests
+  [vangheem]
 
 
 2.3.7 (2019-01-02)
@@ -29,9 +32,6 @@ Fixes:
   [vangheem, lucid-0]
 
 Changes:
-
-- Reorganize `castle.cms.browser` module and add robot framework tests
-  [vangheem]
 
 - Registered utility for site content importer to allow add-ons to
   create content types for importing
