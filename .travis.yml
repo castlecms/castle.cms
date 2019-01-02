@@ -6,6 +6,8 @@ matrix:
   include:
     - name: 'Unit Tests'
       env: TEST_SUITE=unit BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
+    - name: 'Test Upgrades'
+      env: TEST_SUITE=upgrades BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Firefox'
       env: TEST_SUITE=robot ROBOT_BROWSER=firefox BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Chrome'
@@ -52,6 +54,9 @@ script:
     flake8 castle/cms;
     ./bin/test -s castle.cms -t \!robot;
     fi
-  - if [ "$TEST_SUITE" != "unit" ]; then
+  - if [ "$TEST_SUITE" == "robot" ]; then
     travis_retry bin/test -s castle.cms -t robot;
+    fi
+  - if [ "$TEST_SUITE" == "upgrades" ]; then
+    python test_upgrades.py;
     fi

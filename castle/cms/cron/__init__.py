@@ -110,3 +110,7 @@ def crawler(argv=sys.argv):
 
 def clean_drafts(argv=sys.argv):
     return run_it('_clean_drafts')
+
+
+def upgrade_sites(argv=sys.argv):
+    return run_it('_upgrade_sites')

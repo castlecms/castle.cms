@@ -1,11 +1,12 @@
+from plone import api
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 
-import logging
-log = logging.getLogger(__name__)
 
-PROFILE_ID = 'profile-castle.cms.upgrades:2_3_8'
+PROFILE_ID = 'profile-castle.cms:2_3_8'
 
 
 def upgrade(context, logger=None):
     setup = getToolByName(context, 'portal_setup')
     setup.runAllImportStepsFromProfile(PROFILE_ID)
+    cookWhenChangingSettings(api.portal.get())

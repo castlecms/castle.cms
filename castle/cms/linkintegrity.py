@@ -64,7 +64,7 @@ def get_content_links(obj):
     except AttributeError:
         pass
 
-    if getattr(obj, 'image'):
+    if getattr(obj, 'image', None):
         if IReferenceNamedImage.providedBy(obj.image):
             sub_obj = uuidToObject(obj.image.reference)
             if sub_obj:

@@ -73,10 +73,10 @@
   <include package=".behaviors" />
   <include package=".caching" />
   <include package=".ordering" />
-  <include package=".upgrades" />
   <include package=".passwordvalidation" />
   <include package=".pwexpiry" />
 
+  <include file="upgrades.zcml" />
   <include file="subscribers.zcml" />
   <include file="patches.zcml" />
   <include file="unconfigure.zcml" />

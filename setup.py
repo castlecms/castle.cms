@@ -123,6 +123,7 @@ setup(
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
       clean-drafts = castle.cms.cron:clean_drafts
+      upgrade-sites = castle.cms.cron:upgrade_sites
       """,
     include_package_data=True,
     zip_safe=False,
