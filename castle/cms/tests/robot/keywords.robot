@@ -48,4 +48,4 @@ Close The Tour Popup
   Patterns Initialized
   Sleep  1
   Run Keyword And Ignore Error    Click Element  css=a.introjs-skipall
-  Sleep   .25
+  Wait Until Page Does Not Contain Element  css=.introjs-overlay
