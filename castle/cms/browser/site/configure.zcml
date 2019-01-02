@@ -1,0 +1,37 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+    for="castle.cms.interfaces.ICastleApplication"
+    name="plone-addsite"
+    class=".addsite.AddCastleSite"
+    permission="zope2.ViewManagementScreens"
+    template="templates/addsite.pt"
+  />
+
+  <browser:page
+    for="castle.cms.interfaces.ICastleApplication"
+    name="plone-overview"
+    class=".addsite.Overview"
+    permission="zope.Public"
+    template="templates/overview.pt"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="set-config"
+    class=".siteconfig.SiteConfiguration"
+    permission="cmf.ManagePortal"
+  />
+
+  <browser:page
+    name="sitemap.xml.gz"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".sitemap.SiteMapView"
+    permission="zope2.Public"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+</configure>

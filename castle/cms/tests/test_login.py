@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
-from zope.component import getMultiAdapter
-from castle.cms import cache
-from castle.cms import constants
-from castle.cms.browser.login import SecureLoginView
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from plone import api
-from plone.app.testing import login
-from plone.app.testing import logout
-from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import TEST_USER_PASSWORD
-from plone.protect.authenticator import createToken
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
-from zope.component import queryUtility
-from castle.cms.interfaces import IAuthenticator
-from castle.cms import security
-from AccessControl import AuthEncoding
-from DateTime import DateTime
-
 import json
-import responses
 import time
 import unittest
+
+import responses
+from AccessControl import AuthEncoding
+from castle.cms import cache
+from castle.cms import constants
+from castle.cms import security
+from castle.cms.browser.security.login import SecureLoginView
+from castle.cms.interfaces import IAuthenticator
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from DateTime import DateTime
+from plone import api
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
+from plone.app.testing import login
+from plone.app.testing import logout
+from plone.protect.authenticator import createToken
+from plone.registry.interfaces import IRegistry
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.component import queryUtility
+
 
 try:
     import argon2

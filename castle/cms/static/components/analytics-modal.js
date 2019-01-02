@@ -437,7 +437,7 @@ define([
       });
     },
     renderTabItem: function(tab, label){
-      return D.a({ href: '#', className: this.state.tab === tab && 'active' || '',
+      return D.a({ href: '#' + tab, className: this.state.tab === tab && 'active' || '',
                    onClick: this.tabClicked.bind(this, tab)}, label);
     },
     renderContent: function(){

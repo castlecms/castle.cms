@@ -1,0 +1,30 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+    name="plone_layout"
+    for="*"
+    permission="zope2.View"
+    class=".LayoutPolicy"
+    layer="castle.cms.interfaces.ICastleLayer"
+    allowed_interface="plone.app.layout.globals.interfaces.ILayoutPolicy"
+    />
+  <browser:page
+    name="layout_view"
+    for="castle.cms.interfaces.IDashboard"
+    class=".LayoutView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="*"
+    name="main_template"
+    class=".main_template.MainTemplate"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+</configure>

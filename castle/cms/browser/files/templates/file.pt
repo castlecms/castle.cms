@@ -24,16 +24,15 @@
       &mdash; <span tal:replace="kb" /> KB</span>
   </p>
 
-  <video tal:condition="view/is_videotype|nothing" controls="controls">
-    <source tal:attributes="src download_url; type content_type"></source>
-    <track kind="subtitles" src="subtitles.srt" srclang="en"
-           tal:condition="subtitles"
-           tal:attributes="src ${context/absolute_url}/@@view/++widget++form.widgets.subtitle_file/@@download" />
-  </video>
+  <div tal:condition="view/is_videotype|nothing" tal:omit-tag="">
+    <div tal:attributes="
+      data-tile string:./@@castle.cms.videotile?video:list=${context/@@uuid}&show_controls=1&autoplay=1;" />
+  </div>
 
-  <audio tal:condition="view/is_audiotype|nothing" controls="controls">
-    <source tal:attributes="src download_url; type content_type"></source>
-  </audio>
+  <div tal:condition="view/is_audiotype|nothing" class="foobar">
+    <div tal:attributes="
+      data-tile string:./@@castle.cms.audiotile?audio_files:list=${context/@@uuid};" />
+  </div>
 
   <div tal:condition="python: content_type.startswith('text') and not view.moved">
     <h2 i18n:translate="heading_file_contents">File contents</h2>

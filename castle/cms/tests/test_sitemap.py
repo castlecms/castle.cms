@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from castle.cms.browser.sitemap import SiteMapView
+import unittest
+
+from castle.cms.browser.site.sitemap import SiteMapView
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-
-import unittest
+from plone.app.testing import login
+from plone.app.testing import setRoles
 
 
 class TestSiteMap(unittest.TestCase):

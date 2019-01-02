@@ -133,3 +133,7 @@ else:
         '''
         test runner throws error if no tests defined in module
         '''
+
+        def test_dummy(self):
+            '''
+            '''
