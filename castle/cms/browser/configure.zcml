@@ -9,119 +9,14 @@
   <include package=".controlpanel" />
   <include package=".viewlets" />
   <include package=".files" />
+  <include package=".content" />
+  <include package=".site" />
+  <include package=".security" />
+  <include package=".layout" />
 
   <class class="OFS.Application.Application">
     <implements interface="..interfaces.ICastleApplication" />
   </class>
-
-  <browser:page
-    for="..interfaces.ICastleApplication"
-    name="plone-addsite"
-    class=".addsite.AddCastleSite"
-    permission="zope2.ViewManagementScreens"
-    template="templates/addsite.pt"
-  />
-
-  <browser:page
-    for="..interfaces.ICastleApplication"
-    name="plone-overview"
-    class=".addsite.Overview"
-    permission="zope.Public"
-    template="templates/overview.pt"
-  />
-
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="set-config"
-    class=".siteconfig.SiteConfiguration"
-    permission="cmf.ManagePortal"
-  />
-
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="content-creator"
-    class=".content.Creator"
-    permission="zope2.View"
-  />
-  <browser:page
-    for="plone.dexterity.interfaces.IDexterityContent"
-    name="page-layout-selector"
-    class=".content.PageLayoutSelector"
-    permission="cmf.ModifyPortalContent"
-  />
-  <browser:page
-    for="plone.dexterity.interfaces.IDexterityContent"
-    name="publish-content"
-    class=".content.PublishContent"
-    permission="cmf.ModifyPortalContent"
-  />
-  <browser:page
-    for="*"
-    name="content-workflow"
-    class=".content.Workflow"
-    permission="zope2.View"
-  />
-  <browser:page
-    for="*"
-    name="content-body"
-    class=".content.ContentBody"
-    permission="zope2.View"
-  />
-
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="verify-token"
-    class=".chat.ChatLogin"
-    permission="zope2.View"
-    layer="castle.cms.interfaces.ICastleLayer"
-  />
-
-  <browser:page
-    name="plone_layout"
-    for="*"
-    permission="zope2.View"
-    class=".layout.LayoutPolicy"
-    layer="..interfaces.ICastleLayer"
-    allowed_interface="plone.app.layout.globals.interfaces.ILayoutPolicy"
-    />
-  <browser:page
-    name="layout_view"
-    for="castle.cms.interfaces.IDashboard"
-    class=".layout.LayoutView"
-    permission="zope2.View"
-    layer="castle.cms.interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    class=".fc.FolderContentsView"
-    name="folder_contents"
-    template="templates/folder_contents.pt"
-    permission="cmf.ListFolderContents"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="locked-out"
-    class=".lockout.LockedOutView"
-    permission="zope2.View"
-    template="templates/locked-out.pt"
-  />
-
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="session-removed"
-    permission="zope2.View"
-    template="templates/session-removed.pt" />
-
-  <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="disabled-user"
-    class=".lockout.DisabledUserView"
-    permission="zope2.View"
-    template="templates/disabled-user.pt"
-  />
 
   <browser:page
     name="add-clone-type"
@@ -141,26 +36,11 @@
       />
 
   <browser:page
-    name="quality-check"
-    for="*"
-    class=".content.QualityCheckContent"
-    permission="zope2.View"
-    />
-
-  <browser:page
     name="castle-utils"
     for="*"
     permission="zope2.View"
     class=".utils.Utils"
     allowed_interface="..interfaces.IUtils"
-    />
-
-  <browser:page
-    for="*"
-    name="main_template"
-    class=".main_template.MainTemplate"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
     />
 
   <browser:page
@@ -211,55 +91,6 @@
     layer="..interfaces.ICastleLayer"
     />
 
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-paste"
-    class=".fc.PasteActionView"
-    permission="cmf.ListFolderContents"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-cut"
-    class=".fc.CutActionView"
-    permission="cmf.ListFolderContents"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-copy"
-    class=".fc.CopyActionView"
-    permission="cmf.ListFolderContents"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-delete"
-    class=".fc.DeleteActionView"
-    permission="cmf.ListFolderContents"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-rename"
-    class=".fc.RenameActionView"
-    permission="cmf.ListFolderContents"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="Products.CMFCore.interfaces._content.IFolderish"
-    name="fc-trash"
-    class=".fc.TrashActionView"
-    permission="cmf.ListFolderContents"
-    />
-  <utility component=".fc.TrashAction"
-           provides="plone.app.content.interfaces.IStructureAction"
-           name="trash" />
-
   <browser:viewletManager
     name="plone.toolbar"
     provides="plone.app.layout.viewlets.interfaces.IToolbar"
@@ -267,42 +98,6 @@
     class=".toolbar.ToolbarViewletManager"
     layer="..interfaces.ICastleLayer"
   />
-
-  <browser:page
-    for="*"
-    name="object_paste"
-    class=".actions.ObjectPasteView"
-    permission="cmf.AddPortalContent"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="*"
-    name="delete_confirmation"
-    class=".actions.DeleteConfirmationForm"
-    permission="zope2.DeleteObjects"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="*"
-    name="folder_rename"
-    class=".actions.RenameForm"
-    permission="cmf.ModifyPortalContent"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="*"
-    name="object_rename"
-    class=".actions.RenameForm"
-    permission="cmf.ModifyPortalContent"
-    layer="..interfaces.ICastleLayer"
-    />
-  <browser:page
-    for="*"
-    name="object_cut"
-    class=".actions.ObjectCutView"
-    permission="zope2.DeleteObjects"
-    layer="..interfaces.ICastleLayer"
-    />
 
   <browser:page
     for="*"
@@ -439,14 +234,6 @@
     layer="..interfaces.ICastleLayer"
     />
 
-  <browser:page
-    name="sitemap.xml.gz"
-    for="plone.app.layout.navigation.interfaces.INavigationRoot"
-    class=".sitemap.SiteMapView"
-    permission="zope2.Public"
-    layer="..interfaces.ICastleLayer"
-    />
-
   <!-- survey -->
   <browser:page
     name="survey"
@@ -500,13 +287,6 @@
     />
 
   <browser:page
-    name="impersonator"
-    for="plone.app.layout.navigation.interfaces.INavigationRoot"
-    class=".impersonator.ImpersonatorView"
-    permission="zope2.View"
-    />
-
-  <browser:page
     name="finished-tour"
     for="plone.app.layout.navigation.interfaces.INavigationRoot"
     class=".tour.FinishView"
@@ -527,28 +307,11 @@
 
   <browser:page
     for="*"
-    name="content-analytics"
-    class=".analytics.AnalyticsView"
-    permission="cmf.ModifyPortalContent"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    for="*"
     name="breadcrumbs_view"
     class=".navigation.PhysicalNavigationBreadcrumbs"
     permission="zope2.View"
     allowed_attributes="breadcrumbs"
     layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    name="file_view"
-    for="plone.app.contenttypes.interfaces.IFile"
-    class=".file.FileView"
-    template="templates/file.pt"
-    layer="..interfaces.ICastleLayer"
-    permission="zope2.View"
     />
 
   <browser:page
@@ -621,37 +384,6 @@
     template="./templates/feed.pt"
     layer="..interfaces.ICastleLayer" />
 
-  <browser:view
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="plonejsi18n"
-    class=".content.i18njs"
-    permission="zope2.View"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    name="secure-login"
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    permission="zope2.View"
-    class=".login.SecureLoginView"
-    template="./templates/secure-login.pt"
-    allowed_attributes="options"
-    layer="..interfaces.ICastleLayer" />
-  <browser:page
-    name="secure-login"
-    for="..interfaces.ICastleApplication"
-    permission="zope.Public"
-    class=".login.SecureLoginView"
-    template="./templates/secure-login.pt"
-    allowed_attributes="options" />
-  <browser:page
-    name="authorize-country-login"
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    permission="zope2.View"
-    class=".login.LoginExceptionApprovalView"
-    template="./templates/login-exception.pt"
-    layer="..interfaces.ICastleLayer" />
-
   <!-- user overrides -->
   <browser:page
     name="member-search"
@@ -663,39 +395,10 @@
     />
 
   <browser:page
-    name="ping-draft"
-    for="*"
-    permission="cmf.ModifyPortalContent"
-    class=".content.PingCurrentDraft"
-    layer="..interfaces.ICastleLayer" />
-
-
-  <browser:page
     name="conversation_view"
     for="plone.dexterity.interfaces.IDexterityContent"
     layer="plone.app.discussion.interfaces.IDiscussionLayer"
     class=".discussion.CastleConversationView"
-    permission="zope2.View"
-    />
-
-  <!--
-    AtD Support
-    Plone's support for ATD with http connection does not work
-  -->
-  <browser:page
-    for="*"
-    name="checkDocument"
-    class=".atd.ATDProxyView"
-    permission="zope2.View"
-    attribute="checkDocument"
-    layer="..interfaces.ICastleLayer"
-    />
-
-  <browser:page
-    name="StatusView"
-    for="*"
-    class = ".controlpanel.status.StatusView"
-    template="templates/status.pt"
     permission="zope2.View"
     />
 

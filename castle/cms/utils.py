@@ -1,3 +1,19 @@
+import hashlib
+import json
+import logging
+import os
+import random
+import re
+import time
+import types
+from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from hashlib import sha256 as sha
+from urllib import unquote
+
+import requests
+import transaction
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -12,17 +28,13 @@ from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.hook import index_batch
 from collective.elasticsearch.interfaces import IElasticSettings
 from DateTime import DateTime
-from datetime import datetime
 from elasticsearch import Elasticsearch
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from hashlib import sha256 as sha
 from html2text import html2text
 from lxml.html import fromstring
 from lxml.html import tostring
 from lxml.html.clean import Cleaner
-from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import CopyError
+from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import eInvalid
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
@@ -34,11 +46,11 @@ from plone.app.querystring.interfaces import IParsedQueryIndexModifier
 from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityEditForm
+from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
 from plone.subrequest import subrequest
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
-from urllib import unquote
 from ZODB.POSException import ConflictError
 from ZODB.POSException import POSKeyError
 from zope.component import getUtilitiesFor
@@ -46,17 +58,6 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.globalrequest import getRequest
 from zope.security.interfaces import IPermission
-
-import hashlib
-import json
-import logging
-import os
-import random
-import re
-import requests
-import time
-import transaction
-import types
 
 
 try:
@@ -847,3 +848,34 @@ def get_upload_fields(registry=None):
                 data[u'for-file-types'] = u'*'
             result.append(data)
     return result
+
+
+def get_chat_info():
+
+    try:
+        frontpage = api.portal.get_registry_record('castle.rocket_chat_front_page')
+        salt = api.portal.get_registry_record('castle.rocket_chat_secret')
+    except api.exc.InvalidParameterError:
+        frontpage = None
+        salt = ''
+
+    if frontpage is None or salt == '':
+        return
+
+    if frontpage[-1] != '/':
+        frontpage = frontpage + '/'
+
+    url = frontpage.replace('http://', 'ws://')
+    url = url + 'websocket'
+
+    current = api.user.get_current()
+    base_url = api.portal.get().absolute_url()
+
+    return {
+        'url': url,
+        'base_url': base_url,
+        'frontpage': frontpage,
+        'token': createToken(salt),
+        'user': getattr(current, 'id', ''),
+        'email': current.getProperty('email')
+    }

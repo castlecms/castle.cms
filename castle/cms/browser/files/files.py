@@ -1,22 +1,27 @@
-from castle.cms.files import aws
-from castle.cms.interfaces import IReferenceNamedImage
+import base64
 from cStringIO import StringIO
 from os import fstat
+
+import zope.publisher.interfaces
+from Acquisition import aq_inner
+from castle.cms.files import aws
+from castle.cms.interfaces import IReferenceNamedImage
 from PIL import Image
 from plone import api
 from plone.app.blob.download import handleRequestRange
 from plone.app.blob.iterators import BlobStreamIterator
 from plone.app.blob.utils import openBlob
+from plone.app.contenttypes.browser import file
 from plone.app.imaging.utils import getAllowedSizes
 from plone.namedfile import browser as namedfile
 from plone.namedfile.interfaces import INamedBlobFile
 from plone.namedfile.scaling import ImageScaling
+from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
+from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
 from webdav.common import rfc1123_date
 from zExceptions import NotFound
-
-import base64
-import zope.publisher.interfaces
+from zope.component import getMultiAdapter
 
 
 class DownloadAsPNG(BrowserView):
@@ -84,7 +89,7 @@ class DownloadBlob(BrowserView):
     file_ext = 'pdf'
 
     def get_data(self):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def __call__(self):
         data = self.get_data()
@@ -164,3 +169,45 @@ class NamedFileDownload(Download):
             return super(NamedFileDownload, self).__call__()
         except AttributeError:
             raise zope.publisher.interfaces.NotFound(self, self.fieldname, self.request)
+
+
+class FileView(file.FileView):
+
+    @property
+    def moved(self):
+        return getattr(self.context.file, 'original_filename', None) is not None
+
+    @property
+    def filename(self):
+        fi = self.context.file
+        return getattr(fi, 'original_filename', fi.filename)
+
+    @property
+    def size(self):
+        fi = self.context.file
+        return getattr(fi, 'original_size', fi.getSize())
+
+    @property
+    def content_type(self):
+        fi = self.context.file
+        return getattr(fi, 'original_content_type', fi.contentType)
+
+    def get_mimetype_icon(self):
+        context = aq_inner(self.context)
+        pstate = getMultiAdapter(
+            (context, self.request),
+            name=u'plone_portal_state'
+        )
+        portal_url = pstate.portal_url()
+        mtr = getToolByName(context, "mimetypes_registry")
+        mime = []
+        if self.content_type:
+            mime.append(mtr.lookup(self.content_type))
+        if self.filename:
+            mime.append(mtr.lookupExtension(self.filename))
+        mime.append(mtr.lookup("application/octet-stream")[0])
+        icon_paths = [m.icon_path for m in mime if hasattr(m, 'icon_path')]
+        if icon_paths:
+            return portal_url + "/" + icon_paths[0]
+
+        return portal_url + "/" + guess_icon_path(mime[0])

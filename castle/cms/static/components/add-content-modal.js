@@ -451,7 +451,7 @@ define([
           label = label += ' ' + this.refs.tab.state.selectedType.title;
         }
       }
-      return D.a({ href: '#', className: className,
+      return D.a({ href: '#' + tabName, className: className,
                    onClick: this.tabClicked.bind(this, tabName)}, label);
     },
 

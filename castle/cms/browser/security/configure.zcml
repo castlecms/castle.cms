@@ -1,0 +1,66 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="locked-out"
+    class=".lockout.LockedOutView"
+    permission="zope2.View"
+    template="templates/locked-out.pt"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="session-removed"
+    permission="zope2.View"
+    template="templates/session-removed.pt" />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="disabled-user"
+    class=".lockout.DisabledUserView"
+    permission="zope2.View"
+    template="templates/disabled-user.pt"
+  />
+
+  <browser:page
+    name="secure-login"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    permission="zope2.View"
+    class=".login.SecureLoginView"
+    template="./templates/secure-login.pt"
+    allowed_attributes="options"
+    layer="castle.cms.interfaces.ICastleLayer" />
+  <browser:page
+    name="secure-login"
+    for="castle.cms.interfaces.ICastleApplication"
+    permission="zope.Public"
+    class=".login.SecureLoginView"
+    template="./templates/secure-login.pt"
+    allowed_attributes="options" />
+  <browser:page
+    name="authorize-country-login"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    permission="zope2.View"
+    class=".login.LoginExceptionApprovalView"
+    template="./templates/login-exception.pt"
+    layer="castle.cms.interfaces.ICastleLayer" />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="verify-token"
+    class=".chat.ChatLogin"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    name="impersonator"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    class=".impersonator.ImpersonatorView"
+    permission="zope2.View"
+    />
+
+</configure>

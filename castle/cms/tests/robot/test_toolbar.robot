@@ -12,11 +12,12 @@
 *** Test Cases ***
 
 Verify Toolbar buttons
+   Wait Until Page Contains Element  css=.introjs-skipall
+   Click Element  css=.introjs-skipall
    Given a logged-in site administrator
 
    # Let's just make sure everything is here
-
-  Set Selenium Speed  .05
+   Set Selenium Speed  .05
 
    Element Should Be Visible  css=li.castle-toolbar-view-page
    Element Should Be Visible  css=li.castle-toolbar-folder_contents
