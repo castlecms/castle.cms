@@ -22,6 +22,12 @@ Fixes:
 - Fix twitter cards
   [vangheem, lucid-0]
 
+Changes:
+
+- Registered utility for site content importer to allow add-ons to
+  create content types for importing
+  [obct537]
+
 
 2.3.6 (2018-12-20)
 ------------------
