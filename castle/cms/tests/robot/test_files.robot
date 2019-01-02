@@ -17,7 +17,13 @@ Test add files
 
    Set Selenium Speed  .1
 
+<<<<<<< HEAD
    Close The Tour Popup
+=======
+   Wait Until Page Contains Element  css=.introjs-skipall
+   Click Element  css=.introjs-skipall
+   Sleep  1
+>>>>>>> reorganize browser module
 
    Element Should Be Visible  css=div.castle-toolbar-container-side
    Click Element   css=.castle-toolbar-add a

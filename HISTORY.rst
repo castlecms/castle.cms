@@ -39,6 +39,9 @@ Fixes:
 
 Changes:
 
+- Reorganize `castle.cms.browser` module and add robot framework tests
+  [vangheem]
+
 - Registered utility for site content importer to allow add-ons to
   create content types for importing
   [obct537]
