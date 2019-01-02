@@ -57,7 +57,7 @@ setup(
         'plone.api',
 
         # castle
-        'castle.theme>=1.0.3',
+        'castle.theme>=1.0.4',
 
         # add-ons
         'collective.documentviewer>=5.0.3.dev0',
