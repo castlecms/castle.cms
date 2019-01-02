@@ -2,6 +2,7 @@
 .installed.cfg
 .Python
 .idea
+.mr.developer.cfg
 *.swp
 *.egg-info/
 *.pyc

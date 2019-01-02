@@ -4,7 +4,9 @@ Changelog
 2.3.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add contentlisting summary view which repeats the container image
+  and displays publication date.
+  [lucid-0]
 
 
 2.3.7 (2019-01-02)

@@ -55,6 +55,7 @@
   <record name="plone.app.standardtiles.listing_views">
     <value purge="false">
       <element key="file_tabular_view">Tabular file view</element>
+      <element key="pubdate_folder_image">Summary view (with pub date and container image)</element>
     </value>
   </record>
 
