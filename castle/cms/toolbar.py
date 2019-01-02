@@ -1,10 +1,14 @@
+import copy
+import json
+import logging
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from castle.cms import caching
-from castle.cms.browser.chat import get_chat_info
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
+from castle.cms.utils import get_chat_info
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.layout.navigation.defaultpage import getDefaultPage
@@ -29,10 +33,6 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
 
-import copy
-import json
-import logging
-
 
 logger = logging.getLogger('castle.cms')
 
@@ -47,7 +47,7 @@ class BaseToolbarModifier(object):
         self.request = request
 
     def __call__(self, result_menu, name, view):
-        raise NotImplemented()
+        raise NotImplementedError()
 
 
 class MenuItem(object):

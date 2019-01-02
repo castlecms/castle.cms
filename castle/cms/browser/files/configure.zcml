@@ -9,6 +9,7 @@
     class=".player.AudioPlayerView"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/player.pt"
     />
 
   <browser:page
@@ -17,6 +18,7 @@
     class=".player.VideoPlayerView"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/player.pt"
     />
 
   <browser:page
@@ -99,6 +101,15 @@
     name="display-file"
     for="plone.app.contenttypes.interfaces.IFile"
     class=".files.Download"
+    permission="zope2.View"
+    />
+  
+  <browser:page
+    name="file_view"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".files.FileView"
+    template="templates/file.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
     permission="zope2.View"
     />
 

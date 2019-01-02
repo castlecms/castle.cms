@@ -7,12 +7,17 @@ import tempfile
 import time
 
 from AccessControl import getSecurityManager
-from Acquisition import aq_base, aq_parent
-from castle.cms import cache, commands, utils
+from Acquisition import aq_base
+from Acquisition import aq_parent
+from castle.cms import cache
+from castle.cms import commands
+from castle.cms import utils
+from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
 from castle.cms.files import duplicates
 from castle.cms.interfaces import ITrashed
-from castle.cms.utils import get_upload_fields, publish_content
+from castle.cms.utils import get_upload_fields
+from castle.cms.utils import publish_content
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
@@ -26,7 +31,8 @@ from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContainer
-from plone.namedfile.file import NamedBlobFile, NamedBlobImage
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 from plone.registry import Record
 from plone.registry import field as registry_field
 from plone.registry.interfaces import IRegistry
@@ -39,14 +45,16 @@ from Products.CMFPlone import utils as ploneutils
 from Products.CMFPlone.browser.syndication.adapters import SearchFeed
 from Products.CMFPlone.interfaces import ISelectableConstrainTypes
 from Products.CMFPlone.interfaces.syndication import IFeedItem
-from Products.DCWorkflow.Expression import StateChangeInfo, createExprContext
+from Products.DCWorkflow.Expression import StateChangeInfo
+from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.Five import BrowserView
 from zope.annotation.interfaces import IAnnotations
-from zope.component import getUtility, queryMultiAdapter
+from zope.component import getUtility
+from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
-from castle.cms.browser.utils import Utils
+
 
 try:
     # Python 2.6-2.7

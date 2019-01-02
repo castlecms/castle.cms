@@ -4,7 +4,10 @@ Changelog
 2.3.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Changes:
+
+- Reorganize `castle.cms.browser` module and add robot framework tests
+  [vangheem]
 
 
 2.3.7 (2019-01-02)

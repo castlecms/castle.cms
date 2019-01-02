@@ -8,4 +8,5 @@ CastleCMS
    intro.rst
    fragments.rst
    development.rst
+   theming.rst
    matomo.rst

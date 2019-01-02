@@ -19,5 +19,6 @@ Basic Castle Functions
    Go to  ${PLONE_URL}
    Sleep  1
 
+   Close The Tour Popup
    Element Should Be Visible  css=div.castle-toolbar-container-side
    Element Should Be Visible  css=div.castle-toolbar-container-top
