@@ -17,9 +17,7 @@ Test add files
 
    Set Selenium Speed  .1
 
-   Wait Until Page Contains Element  css=.introjs-skipall
-   Click Element  css=.introjs-skipall
-   Sleep  1
+   Close The Tour Popup
 
    Element Should Be Visible  css=div.castle-toolbar-container-side
    Click Element   css=.castle-toolbar-add a
@@ -58,21 +56,21 @@ Test add files
 
 
    Go to  ${PLONE_URL}/video-repository/video.mp4/view
-   Page Should Contain  ${PLONE_URL}/video-repository/video.mp4/@@videoplayer
+   Page Should Contain  /video-repository/video.mp4/@@videoplayer
    Page Should Contain Element  css=video
 
    Go to  ${PLONE_URL}/video-repository/video.mp4/@@videoplayer
    Page Should Contain Element  css=video
 
    Go to  ${PLONE_URL}/video-repository/video-1.mp4/view
-   Page Should Contain  ${PLONE_URL}/video-repository/video-1.mp4/@@videoplayer
+   Page Should Contain  /video-repository/video-1.mp4/@@videoplayer
    Page Should Contain Element  css=iframe
 
    Go to  ${PLONE_URL}/video-repository/video-1.mp4/@@videoplayer
    Page Should Contain Element  css=video
 
    Go to  ${PLONE_URL}/audio-repository/audio.mp3/view
-   Page Should Contain  ${PLONE_URL}/video-repository/audio.mp3/@@audioplayer
+   Page Should Contain  /audio-repository/audio.mp3/@@audioplayer
    Page Should Contain Element  css=audio
 
    Go to  ${PLONE_URL}/audio-repository/audio.mp3/@@audioplayer

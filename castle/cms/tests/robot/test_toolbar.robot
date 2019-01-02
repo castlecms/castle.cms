@@ -15,11 +15,7 @@ Verify Toolbar buttons
    Given a logged-in site administrator
    Go to  ${PLONE_URL}
 
-   Wait Until Page Contains Element  css=.introjs-skipall
-   Click Element  css=.introjs-skipall
-
-   # Let's just make sure everything is here
-   Set Selenium Speed  .05
+   Close The Tour Popup
 
    Element Should Be Visible  css=li.castle-toolbar-view-page
    Element Should Be Visible  css=li.castle-toolbar-folder_contents

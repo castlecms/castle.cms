@@ -38,11 +38,14 @@ a folder with a document '${title}'
   ${folder_uid}=  Create content  type=Folder  title=folder
   Create content  type=Document  container=${folder_uid}  title=${title}
 
+
+Patterns Initialized
+  Wait Until Page Contains Element  css=body.patterns-loaded
+
+
 # Some Castle specific stuff
 Close The Tour Popup
-  ${Tour} =   Run Keyword And Return Status   Element Should Be Visible   css=a.introjs-skipall
-  Run Keyword If  ${Tour} == 'PASS'  Clear Tour Popup
+  Patterns Initialized
+  Sleep  1
+  Run Keyword And Ignore Error    Click Element  css=a.introjs-skipall
   Sleep   .25
-
-Clear Tour Popup
-  Click Element   css=a.introjs-skipall
