@@ -47,6 +47,9 @@ install:
   - if [ "$TEST_SUITE" == "unit" ]; then
     pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0;
     fi
+  - if [ "$TEST_SUITE" == "upgrades" ]; then
+    pip install requests;
+    fi
   - buildout -Nc travis.cfg
 
 script:
