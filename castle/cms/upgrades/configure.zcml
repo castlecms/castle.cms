@@ -160,13 +160,29 @@
       destination="2305"
       handler=".upgrade_2_3_5.upgrade"
       profile="castle.cms:default"/>
-    
+
   <genericsetup:upgradeStep
       title="Upgrade CastleCMS to 2.3.7"
       description=""
       source="*"
       destination="2307"
       handler=".upgrade_2_3_7.upgrade"
+      profile="castle.cms:default"/>
+
+  <genericsetup:registerProfile
+      name="2_3_8"
+      title="CastleCMS upgrade to 2.3.8 profile"
+      directory="../profiles/2_3_8"
+      description=""
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <genericsetup:upgradeStep
+      title="Upgrade CastleCMS to 2.3.8"
+      description=""
+      source="*"
+      destination="2308"
+      handler=".upgrade_2_3_8.upgrade"
       profile="castle.cms:default"/>
 
 </configure>

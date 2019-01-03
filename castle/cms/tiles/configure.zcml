@@ -310,7 +310,15 @@
     for="*"
     layer="plone.app.standardtiles.contentlisting.IContentListingTileLayer"
     permission="zope2.View"
-    template="templates/contentlisting_file_tabular_view.pt"
+    template="templates/contentlisting/file_tabular_view.pt"
+    />
+
+  <browser:page
+    name="pubdate_folder_image"
+    for="*"
+    layer="plone.app.standardtiles.contentlisting.IContentListingTileLayer"
+    permission="zope2.View"
+    template="templates/contentlisting/pubdate_folder_image.pt"
     />
 
   <!-- fields -->

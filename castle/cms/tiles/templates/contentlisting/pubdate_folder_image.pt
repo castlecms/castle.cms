@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="plone">
+  <body>
+    <div tal:define="results context;
+                     container python: options['original_context'];
+                     utils context/@@castle-utils;
+                     registry options/original_context/portal_registry;
+                     view_types python: registry.get('plone.types_use_view_action_in_listings', [])"
+         tal:repeat="item results">
+      <tal:block tal:define="item_url python: item.portal_type in view_types and item.getURL() + '/view' or item.getURL();
+                             item_title_or_id item/title_or_id;
+                             item_type item/Type;
+                             item_creator item/Creator;
+                             item_description item/Description;
+                             item_published item/EffectiveDate;
+                             item_start item/start;
+                             item_end item/end;
+                             container_has_image python: utils.has_image(container)">
+        <div class="tileItem visualIEFloatFix">
+          <a href="#"
+             class="summary-image"
+             tal:condition="container_has_image"
+             tal:attributes="href item_url">
+            <img tal:condition="container_has_image"
+                 tal:attributes="src string:${container/absolute_url}/@@images/image/thumb" />
+          </a>
+          <h2 class="tileHeadline"
+              metal:define-macro="listitem">
+            <a href="#"
+               class="summary url"
+               tal:attributes="href item_url"
+               tal:content="item_title_or_id">
+              Item Title
+            </a>
+          </h2>
+          <div class="documentByLine">
+            <tal:event condition="python: item_type == 'Event'">
+              <span tal:condition="python: item_type == 'Event' and item.location"
+                    i18n:translate="">
+                (<span tal:content="string:${item/location}"
+                      class="location"
+                      i18n:name="location">
+                  Oslo
+                </span>, from
+                <abbr class="dtstart pat-moment"
+                      title="${python:item_start.isoformat()}"
+                      data-pat-moment="format:MMMM Do, YYYY h:mm a;"
+                      data-date="${python: item_start.isoformat()}"
+                      i18n:name="start">
+                  ${python: item_start.ctime()}
+                </abbr>
+                to
+                <abbr class="dtend pat-moment"
+                      title="${python:item_end.isoformat()}"
+                      data-date="${python: item_end.isoformat()}"
+                      i18n:name="end">
+                    ${python: item_end.ctime()}
+                </abbr>)
+              </span>
+              <span tal:condition="python: item_type == 'Event' and not item.location"
+                    i18n:translate="">
+                (from
+                <abbr class="dtstart pat-moment"
+                      title="${python:item_start.isoformat()}"
+                      data-pat-moment="format:MMMM Do, YYYY h:mm a;"
+                      data-date="${python: item_start.isoformat()}"
+                      i18n:name="start">
+                  ${python: item_start.ctime()}
+                </abbr>
+                to
+                <abbr class="dtend pat-moment"
+                      title="${python:item_end.isoformat()}"
+                      data-date="${python: item_end.isoformat()}"
+                      i18n:name="end">
+                  ${python: item_end.ctime()}
+                </abbr>)
+              </span>
+            </tal:event>
+            <tal:name tal:condition="item_creator" tal:define="author item_creator">
+              <a href="#"
+                 tal:attributes="href string:author/${author/username|nothing}"
+                 tal:content="author/username|nothing"
+                 tal:omit-tag="not:author">
+                Bob Dobalina
+              </a>
+            </tal:name>
+            &mdash;
+            <span class="documentPublished">
+              <tal:mod i18n:translate="">
+                published
+              </tal:mod>
+              <span class="pat-moment" tal:content="item_published">
+                August 16, 2001 at 23:35:59
+              </span>
+            </span>
+          </div>
+          <p class="tileBody"
+             tal:condition="item_description">
+            <span class="description"
+                  tal:content="item_description">
+              description
+            </span>
+          </p>
+          <p class="tileFooter">
+            <a href=""
+               tal:attributes="href python:item_url"
+               i18n:translate="">
+              Read More&hellip;
+            </a>
+          </p>
+          <div class="visualClear"><!-- --></div>
+        </div>
+      </tal:block>
+    </div>
+  </body>
+</html>
