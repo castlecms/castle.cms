@@ -6,6 +6,8 @@ matrix:
   include:
     - name: 'Unit Tests'
       env: TEST_SUITE=unit BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
+    - name: 'Test Upgrades'
+      env: TEST_SUITE=upgrades BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Firefox'
       env: TEST_SUITE=robot ROBOT_BROWSER=firefox BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Chrome'
@@ -45,6 +47,9 @@ install:
   - if [ "$TEST_SUITE" == "unit" ]; then
     pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0;
     fi
+  - if [ "$TEST_SUITE" == "upgrades" ]; then
+    pip install requests;
+    fi
   - buildout -Nc travis.cfg
 
 script:
@@ -52,6 +57,9 @@ script:
     flake8 castle/cms;
     ./bin/test -s castle.cms -t \!robot;
     fi
-  - if [ "$TEST_SUITE" != "unit" ]; then
+  - if [ "$TEST_SUITE" == "robot" ]; then
     travis_retry bin/test -s castle.cms -t robot;
+    fi
+  - if [ "$TEST_SUITE" == "upgrades" ]; then
+    python test_upgrades.py;
     fi

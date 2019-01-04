@@ -186,5 +186,22 @@
     template="templates/status.pt"
     />
 
+  <configure package="Products.CMFPlone.controlpanel.browser">
+    <browser:page
+      name="prefs_install_products_form"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class="castle.cms.browser.controlpanel.quickinstaller.ManageProductsView"
+      permission="cmf.ManagePortal"
+      template="quickinstaller.pt"
+      layer="castle.cms.interfaces.ICastleLayer"
+      />
+  </configure>
+  <browser:page
+    name="upgrade_products"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".quickinstaller.UpgradeProductsView"
+    permission="cmf.ManagePortal"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
 </configure>

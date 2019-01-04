@@ -5,6 +5,14 @@ Changelog
 ------------------
 
 New:
+
+- Be able to run castle upgrades directly from addon control panel
+  [vangheem]
+
+- Provide new `upgrade-sites` script to automatically run plone/addon
+  upgrades for all sites in an instance
+  [vangheem]
+
 - Add contentlisting summary view which repeats the container image
   and displays publication date.
   [lucid-0]
@@ -13,7 +21,6 @@ Changes:
 
 - Reorganize `castle.cms.browser` module and add robot framework tests
   [vangheem]
-
 
 
 2.3.7 (2019-01-02)

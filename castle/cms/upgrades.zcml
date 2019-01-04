@@ -6,7 +6,7 @@
   <genericsetup:registerProfile
       name="2_0_12"
       title="CastleCMS upgrade to 2.0.12 profile"
-      directory="../profiles/2_0_12"
+      directory="profiles/2_0_12"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -15,13 +15,13 @@
       description=""
       source="*"
       destination="2012"
-      handler=".upgrade_2_0_12.upgrade"
+      handler=".upgrades.upgrade_2_0_12.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_0_16"
       title="CastleCMS upgrade to 2.0.16 profile"
-      directory="../profiles/2_0_16"
+      directory="profiles/2_0_16"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -30,13 +30,13 @@
       description=""
       source="*"
       destination="2016"
-      handler=".upgrade_2_0_16.upgrade"
+      handler=".upgrades.upgrade_2_0_16.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_0_41"
       title="CastleCMS upgrade to 2.0.41 profile"
-      directory="../profiles/2_0_41"
+      directory="profiles/2_0_41"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -45,13 +45,13 @@
       description=""
       source="*"
       destination="2041"
-      handler=".upgrade_2_0_41.upgrade"
+      handler=".upgrades.upgrade_2_0_41.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_1_0"
       title="CastleCMS upgrade to 2.1.0 profile"
-      directory="../profiles/2_1_0"
+      directory="profiles/2_1_0"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -60,13 +60,13 @@
       description=""
       source="*"
       destination="2100"
-      handler=".upgrade_2_1_0.upgrade"
+      handler=".upgrades.upgrade_2_1_0.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_1_1"
       title="CastleCMS upgrade to 2.1.1 profile"
-      directory="../profiles/2_1_1"
+      directory="profiles/2_1_1"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -75,13 +75,13 @@
       description=""
       source="*"
       destination="2101"
-      handler=".upgrade_2_1_1.upgrade"
+      handler=".upgrades.upgrade_2_1_1.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_2_0"
       title="CastleCMS upgrade to 2.2.0 profile"
-      directory="../profiles/2_2_0"
+      directory="profiles/2_2_0"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -90,13 +90,13 @@
       description=""
       source="*"
       destination="2200"
-      handler=".upgrade_2_2_0.upgrade"
+      handler=".upgrades.upgrade_2_2_0.upgrade"
       profile="castle.cms:default" />
 
   <genericsetup:registerProfile
       name="2_3_0"
       title="CastleCMS upgrade to 2.3.0 profile"
-      directory="../profiles/2_3_0"
+      directory="profiles/2_3_0"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -105,13 +105,13 @@
       description=""
       source="*"
       destination="2300"
-      handler=".upgrade_2_3_0.upgrade"
+      handler=".upgrades.upgrade_2_3_0.upgrade"
       profile="castle.cms:default" />
 
   <genericsetup:registerProfile
       name="2_3_1"
       title="CastleCMS upgrade to 2.3.1 profile"
-      directory="../profiles/2_3_1"
+      directory="profiles/2_3_1"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -120,7 +120,7 @@
       description=""
       source="*"
       destination="2301"
-      handler=".upgrade_2_3_1.upgrade"
+      handler=".upgrades.upgrade_2_3_1.upgrade"
       profile="castle.cms:default" />
 
   <genericsetup:upgradeStep
@@ -128,13 +128,13 @@
       description=""
       source="*"
       destination="2302"
-      handler=".upgrade_2_3_2.upgrade"
+      handler=".upgrades.upgrade_2_3_2.upgrade"
       profile="castle.cms:default" />
 
   <genericsetup:registerProfile
       name="2_3_3"
       title="CastleCMS upgrade to 2.3.3 profile"
-      directory="../profiles/2_3_3"
+      directory="profiles/2_3_3"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -143,13 +143,13 @@
       description=""
       source="*"
       destination="2303"
-      handler=".upgrade_2_3_3.upgrade"
+      handler=".upgrades.upgrade_2_3_3.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_3_5"
       title="CastleCMS upgrade to 2.3.5 profile"
-      directory="../profiles/2_3_5"
+      directory="profiles/2_3_5"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -158,7 +158,7 @@
       description=""
       source="*"
       destination="2305"
-      handler=".upgrade_2_3_5.upgrade"
+      handler=".upgrades.upgrade_2_3_5.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:upgradeStep
@@ -166,13 +166,13 @@
       description=""
       source="*"
       destination="2307"
-      handler=".upgrade_2_3_7.upgrade"
+      handler=".upgrades.upgrade_2_3_7.upgrade"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
       name="2_3_8"
       title="CastleCMS upgrade to 2.3.8 profile"
-      directory="../profiles/2_3_8"
+      directory="profiles/2_3_8"
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
@@ -182,7 +182,7 @@
       description=""
       source="*"
       destination="2308"
-      handler=".upgrade_2_3_8.upgrade"
+      handler=".upgrades.upgrade_2_3_8.upgrade"
       profile="castle.cms:default"/>
 
 </configure>

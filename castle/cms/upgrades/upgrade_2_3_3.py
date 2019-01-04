@@ -4,7 +4,7 @@ from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 import logging
 log = logging.getLogger(__name__)
 
-PROFILE_ID = 'profile-castle.cms.upgrades:2_3_3'
+PROFILE_ID = 'profile-castle.cms:2_3_3'
 
 
 def upgrade(context, logger=None):
