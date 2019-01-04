@@ -36,10 +36,11 @@ def upgrade(site):
             print('Running profile upgrades for {}'.format(profile_id))
             ps.upgradeProfile(profile_id)
 
-        if bool(ps.listUpgrades(profile_id)):
+        remaining = ps.listUpgrades(profile_id)
+        if remaining:
             raise Exception(
                 'Running upgrades did not finish all upgrade steps. '
-                'This should not happen.')
+                'This should not happen. \n{}'.format(remaining))
 
     transaction.commit()
 
