@@ -27,7 +27,7 @@ def upgrade(site):
     for profile_id in ps.listProfilesWithUpgrades():
         if profile_id.split(':')[0] in (
                 'Products.CMFPlacefulWorkflow', 'plone.app.iterate',
-                'plone.app.multilingual'):
+                'plone.app.multilingual', 'Products.PloneKeywordManager'):
             continue
         if not profile_id.endswith(':default'):
             continue
