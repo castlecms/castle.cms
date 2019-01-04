@@ -36,6 +36,11 @@ def upgrade(site):
             print('Running profile upgrades for {}'.format(profile_id))
             ps.upgradeProfile(profile_id)
 
+        if bool(ps.listUpgrades(profile_id)):
+            raise Exception(
+                'Running upgrades did not finish all upgrade steps. '
+                'This should not happen.')
+
     transaction.commit()
 
 
