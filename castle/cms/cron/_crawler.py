@@ -57,6 +57,8 @@ CRAWLER_ES_MAPPING = {
     }
 }
 
+MAX_PAGE_SIZE = 500000000
+
 
 class Crawler(object):
 
@@ -112,10 +114,13 @@ class Crawler(object):
 
     def crawl_page(self, url):
         logger.info('Indexing ' + url)
-        resp = requests.get(url, headers={
+        resp = requests.get(url, stream=True, headers={
             'User-Agent': self.settings.crawler_user_agent
         })
-        if resp.status_code == 404 or 'html' not in resp.headers.get('content-type', ''):
+        if resp.status_code == 404 or \
+          'html' not in resp.headers.get('content-type', '') or \
+          int(resp.headers.get('content-length', 0)) \
+              >= MAX_PAGE_SIZE:
             # remove from index
             return False
         dom = html.fromstring(resp.content)

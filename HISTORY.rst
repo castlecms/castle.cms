@@ -22,6 +22,9 @@ Changes:
 - Reorganize `castle.cms.browser` module and add robot framework tests
   [vangheem]
 
+- Stream crawler requests (don't load non-html content)
+  [lucid-0]
+
 
 2.3.7 (2019-01-02)
 ------------------
