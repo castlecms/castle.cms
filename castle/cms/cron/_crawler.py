@@ -119,7 +119,7 @@ class Crawler(object):
         })
         if resp.status_code == 404 or \
           'html' not in resp.headers.get('content-type', '') or \
-          int(resp.headers.get('content-length', MAX_PAGE_SIZE)) \
+          int(resp.headers.get('content-length', 0)) \
               >= MAX_PAGE_SIZE:
             # remove from index
             return False
