@@ -351,7 +351,7 @@ def import_object(filepath):
                 api.content.transition(obj, to_state=data['state'])
             except Exception:
                 logger.error("Error transitioning %s to %s, maybe workflows"
-                                "don't match up" % (obj.id, data['state']))
+                                " don't match up" % (obj.id, data['state']))
                 # pass
                 if stop_if_exception:
                     if pdb_if_exception:

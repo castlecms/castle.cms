@@ -661,8 +661,7 @@ register_import_type('Event', EventType)
 
 def get_import_type(data, path, *args):
     types = getUtilitiesFor(IImportType)
-    _types = [{name, klass} for name, klass in types]
-
+    _types = {name: klass for name, klass in types}
     if data['portal_type'] in _types:
         return _types[data['portal_type']](data, path, *args)
     logger.info('No explicit mapping for type {type}.'
