@@ -1,4 +1,5 @@
 import base64
+import logging
 from cStringIO import StringIO
 from os import fstat
 
@@ -21,7 +22,11 @@ from Products.Five import BrowserView
 from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
 from webdav.common import rfc1123_date
 from zExceptions import NotFound
+from ZODB.POSException import POSKeyError
 from zope.component import getMultiAdapter
+
+
+logger = logging.getLogger('castle.cms')
 
 
 class DownloadAsPNG(BrowserView):
@@ -77,7 +82,11 @@ class Download(namedfile.Download):
 
     def __call__(self):
         if not aws.uploaded(self.context):
-            return self.serve_file()
+            try:
+                return self.serve_file()
+            except (POSKeyError, SystemError):
+                # if there is no blob file, just give out 404
+                raise NotFound
 
         url = aws.get_url(self.context)
         self.request.response.redirect(url)
@@ -92,7 +101,14 @@ class DownloadBlob(BrowserView):
         raise NotImplementedError()
 
     def __call__(self):
-        data = self.get_data()
+        try:
+            data = self.get_data()
+        except IOError:
+            # can be from zeo client blob file weirdness with PIL
+            # ocassionally
+            logger.info('Could not get blob data', exc_info=True)
+            raise NotFound
+
         if data:
             is_blob = False
             if isinstance(data, basestring):

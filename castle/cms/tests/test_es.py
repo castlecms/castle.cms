@@ -1,4 +1,5 @@
 import json
+from castle.cms.tests.utils import get_tile
 import logging
 import os
 import unittest
@@ -127,6 +128,15 @@ if ES_ENABLED:
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
+
+        def test_es_querylisting_unicode_issue(self):
+            tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', {})
+            # should not cause errors...
+            self.request.form.update({
+                'Title': 'ma\xf1on'
+            })
+            self.assertTrue(tile.filter_pattern_config != '{}')
+            tile()
 
 else:
     class TestEmptyES(unittest.TestCase):

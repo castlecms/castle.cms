@@ -19,6 +19,18 @@ New:
 
 Changes:
 
+- Handle scaling errors on favicon view
+  [vangheem]
+
+- Handle errors on non-folderish dexterity items feed setting lookups
+  [vangheem]
+
+- Handle unicode issues with querylisting tile and ES
+  [vangheem]
+
+- Handle potential IOError and POSKeyError on serving files to give 404 now
+  [vangheem]
+
 - Reorganize `castle.cms.browser` module and add robot framework tests
   [vangheem]
 

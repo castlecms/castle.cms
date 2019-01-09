@@ -1,14 +1,20 @@
+import logging
+from cStringIO import StringIO
+
 from castle.cms.browser.files.files import NamedFileDownload
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.utils import site_has_icon
-from cStringIO import StringIO
 from PIL import Image
 from plone import api
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.namedfile.file import NamedImage
 from plone.registry.interfaces import IRegistry
+from zExceptions import NotFound
 from zope.component import getUtility
 from zope.interface import implements
+
+
+logger = logging.getLogger('castle.cms')
 
 
 class IconView(NamedFileDownload):
@@ -92,7 +98,11 @@ class FaviconView(IconView):
     def _getFile(self):
         data = self.get_data()
         if data:
-            data = self.scale_data(data)
+            try:
+                data = self.scale_data(data)
+            except ValueError:
+                logger.info('Error scaling favicon data', exc_info=True)
+                raise NotFound
             return NamedImage(data=data, filename=self.filename)
 
 
