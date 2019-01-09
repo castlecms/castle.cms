@@ -197,6 +197,8 @@
     />
   <adapter factory=".syndication.FeedSettings"
            provides=".syndication.IFeedSettings"/>
+  <adapter factory=".syndication.ItemFeedSettings"
+           provides=".syndication.IFeedSettings"/>
   <adapter factory=".syndication.FolderFeed"
            for="plone.dexterity.interfaces.IDexterityContainer" />
   <adapter factory=".syndication.FolderFeed"

@@ -1,7 +1,10 @@
+import json
+
 from castle.cms.behaviors.location import ILocation
 from castle.cms.widgets import SelectFieldWidget
 from plone import api
 from plone.app.z3cform.layout import wrap_form
+from plone.dexterity.interfaces import IDexterityItem
 from Products.CMFPlone.browser.syndication import adapters
 from Products.CMFPlone.browser.syndication import settings
 from Products.CMFPlone.browser.syndication import views
@@ -18,9 +21,6 @@ from zope.component import getUtility
 from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
-
-
-import json
 
 
 class IFeedSettings(IBaseFeedSettings):
@@ -65,6 +65,25 @@ class FeedSettings(settings.FeedSettings):
             default = IFeedSettings[name].default
 
         return self._metadata.get(name, default)
+
+
+class ItemFeedSettings(settings.FeedSettings):
+    '''
+    Implement basic item feed settings for static values
+    of always being disabled. This prevent any errors
+    if feed setting data is attempted to be looked against
+    a non-folder item
+    '''
+    implements(IFeedSettings)
+    adapts(IDexterityItem)
+
+    enabled = False
+    sort_on = 'effective'
+    sort_reverse = True
+    categories = []
+    feed_types = ()
+    render_body = False
+    max_items = 0
 
 
 class SettingsForm(views.SettingsForm):

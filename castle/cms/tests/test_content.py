@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
-from copy import deepcopy
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
 import json
 import unittest
+from copy import deepcopy
 from io import BytesIO
 
 from castle.cms.browser import content
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
-from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login, logout,
-                               setRoles)
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import logout
+from plone.app.testing import setRoles
+from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
+from Products.CMFPlone.interfaces.syndication import IFeedSettings
 from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 
 
 class TestContent(unittest.TestCase):
@@ -210,6 +214,15 @@ class TestContent(unittest.TestCase):
         self.assertEquals(fileOb.file.data, 'X' * 1024)
         self.assertEquals(fileOb.foobar, 'Some value here')
         return fileOb
+
+    def test_content_should_implement_empty_feed_settings_to_prevent_errors(self):
+        doc = api.content.create(
+            type='Document',
+            id='docblah',
+            container=self.portal)
+        settings = IFeedSettings(doc)
+        # should not cause TypeError
+        self.assertEquals(settings.feed_types, ())
 
 
 class TestContentAccess(unittest.TestCase):

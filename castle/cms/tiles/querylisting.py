@@ -2,10 +2,13 @@ import json
 from urllib import urlencode
 from urlparse import parse_qsl
 
-from castle.cms.tiles.base import BaseTile, DisplayTypeTileMixin
-from castle.cms.tiles.views import BaseTileView, TileViewsSource
+from castle.cms.tiles.base import BaseTile
+from castle.cms.tiles.base import DisplayTypeTileMixin
+from castle.cms.tiles.views import BaseTileView
+from castle.cms.tiles.views import TileViewsSource
 from castle.cms.utils import parse_query_from_data
-from castle.cms.widgets import PreviewSelectFieldWidget, QueryFieldWidget
+from castle.cms.widgets import PreviewSelectFieldWidget
+from castle.cms.widgets import QueryFieldWidget
 from DateTime import DateTime
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
@@ -18,7 +21,8 @@ from unidecode import unidecode
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.interface import implements
-from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 def _list(val):
@@ -201,7 +205,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
                     else:
                         query[attr] = val
                 else:
-                    query[attr] = val[0]
+                    query[attr] = unidecode(val[0])
 
         if query.get('sort_on', '') not in catalog._catalog.indexes:
             query['sort_on'] = 'effective'
