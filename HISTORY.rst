@@ -17,7 +17,7 @@ New:
   and displays publication date.
   [lucid-0]
 
-Changes:
+Fixes:
 
 - Upgrade collective.documentviewer == 5.0.4
   [vangheem]
@@ -34,11 +34,13 @@ Changes:
 - Handle potential IOError and POSKeyError on serving files to give 404 now
   [vangheem]
 
+- Fix crawler memory error by streaming crawler requests(don't load non-html content)
+  [lucid-0]
+
+Changes:
+
 - Reorganize `castle.cms.browser` module and add robot framework tests
   [vangheem]
-
-- Stream crawler requests (don't load non-html content)
-  [lucid-0]
 
 
 2.3.7 (2019-01-02)
