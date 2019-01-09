@@ -19,6 +19,9 @@ New:
 
 Changes:
 
+- Upgrade collective.documentviewer == 5.0.4
+  [vangheem]
+
 - Handle scaling errors on favicon view
   [vangheem]
 
