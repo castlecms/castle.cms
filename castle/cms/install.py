@@ -29,6 +29,7 @@ class HiddenProducts(object):
             'plone.app.mosaic:default',
             'plone.app.drafts:default',
             'plone.app.blocks:default',
+            'plone.app.openid:default'
             ]
 
 
