@@ -60,7 +60,7 @@ setup(
         'castle.theme>=1.0.4',
 
         # add-ons
-        'collective.documentviewer>=5.0.3.dev0',
+        'collective.documentviewer>=5.0.4',
         'collective.elasticsearch>=2.0.5<3',
         'collective.celery>=1.1.4',
 
