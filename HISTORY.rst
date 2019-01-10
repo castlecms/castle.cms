@@ -6,6 +6,10 @@ Changelog
 
 New:
 
+- export-content.py now takes --modifiedsince and --createdsince args
+  e.g. --modifiedsince='2018-10-03 00:00:00'
+  [tkimnguyen]
+
 - Be able to run castle upgrades directly from addon control panel
   [vangheem]
 
