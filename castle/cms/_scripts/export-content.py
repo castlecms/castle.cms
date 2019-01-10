@@ -109,6 +109,8 @@ parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--dir', dest='dir', default='./export')
+parser.add_argument('--modifiedsince', dest='modifiedsince')
+parser.add_argument('--createdsince', dest='createdsince')
 parser.add_argument(
     '--path-filter', dest='path_filter',
     default=None, required=False)
@@ -758,5 +760,14 @@ def run_export(brains):
         for obj, data in export_obj(obj):
             write_export(obj, data)
 
-
-run_export(catalog())
+if args.createdsince:
+    print('exporting items created since %s' % args.createdsince)
+    date_range = {'query': (DateTime(args.createdsince), DateTime('2062-05-08 23:59:59'),), 'range': 'min:max', }
+    query = catalog(created=date_range)
+elif args.modifiedsince:
+    print('exporting items modified since %s' % args.modifiedsince)
+    date_range = {'query': (DateTime(args.modifiedsince), DateTime('2062-05-08 23:59:59'),), 'range': 'min:max', }
+    query = catalog(modified=date_range)
+else:
+    query = catalog()
+run_export(query)
