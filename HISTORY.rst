@@ -6,6 +6,9 @@ Changelog
 
 New:
 
+- split out and improve export/import docs
+  [tkimnguyen]
+
 - export-content.py now takes --modifiedsince and --createdsince args
   e.g. --modifiedsince='2018-10-03 00:00:00'
   [tkimnguyen]
