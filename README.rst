@@ -180,7 +180,7 @@ You are still able to build your own custom transmogrifier pipelines to import/e
 into CastleCMS; however, our scripts work in a lot of cases to get your
 content moved over quickly.
 
-See our `Export/Import documentation <docs/exportimport>`_.
+See our `Export/Import documentation <docs/exportimport.rst>`_.
 
 Tile display types
 ------------------
