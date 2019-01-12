@@ -143,7 +143,7 @@ New:
 - Add import subscribers form for announcements panel
   [CorySanin]
 
-- Add new recurrances indexer
+- Add new recurrences indexer
   [tkimnguyen]
 
 - Calendar tile now renders recurring events
