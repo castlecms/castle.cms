@@ -346,38 +346,38 @@ def import_object(filepath):
         obj.contentLayout = importtype.layout
         importtype.post_creation(obj)
         if not args.skip_transitioning and data['state']:
-            try:
-                print('Transitioning %s to %s' % (obj.id, data['state']))
-                api.content.transition(obj, to_state=data['state'])
-            except Exception:
-                logger.error("Error transitioning %s to %s, maybe workflows"
-                                " don't match up" % (obj.id, data['state']))
-                # pass
-                if stop_if_exception:
-                    if pdb_if_exception:
-                        pdb.set_trace()
-                    raise
+            # transition item only if it needs it
+            state = api.content.get_state(obj=obj)
+            if state != data['state']:
+                try:
+                    print('Transitioning %s to %s' % (obj.id, data['state']))
+                    api.content.transition(obj, to_state=data['state'])
+                except Exception:
+                    logger.error("Error transitioning %s to %s, maybe workflows"
+                                 " don't match up" % (obj.id, data['state']))
+                    # pass
+                    if stop_if_exception:
+                        if pdb_if_exception:
+                            pdb.set_trace()
+                        raise
 
         # set workflow / review history
         if 'review_history' in data:
             review_history = data['review_history']
             wtool = api.portal.get_tool(name='portal_workflow')
-            chain = wtool.getChainFor(obj)
-            if len(chain):
-                workflow_id = chain[0]
-                for h in review_history:
-                    wtool.setStatusOf(workflow_id, obj, h)
-                if len(chain) != 1:
-                    logger.warn('There should be 1 workflow for %s but'
-                                        'there are %i' % (path, len(chain)))
+            # loop over all workflow chains (usually only 1)
+            for workflow_id in wtool.getChainFor(obj):
+                obj.workflow_history[workflow_id] = review_history
         else:
             logger.warn('No review history on {obj}'.format(obj=obj))
 
         fix_html_images(obj)
         obj.reindexObject()
         try:
-            obj.setModificationDate(data['data']['modification_date'])
+            modification_date = data['data']['modification_date']
+            obj.setModificationDate(modification_date)
             obj.reindexObject(idxs=['modified'])
+            logger.info('    set modification date to %s' % modification_date)
         except Exception:
             logger.info('Could not set modification date on {obj}'
                                                             .format(obj=obj))
