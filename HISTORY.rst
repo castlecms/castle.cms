@@ -6,6 +6,11 @@ Changelog
 
 New:
 
+- import fixes: transition item only if it needs it; loop over all workflow
+  chains (usually there is only one); set the workflow history (do not add
+  extraneous entries caused by the import process)
+  [tkimnguyen]
+
 - export-content.py now takes --modifiedsince and --createdsince args
   e.g. --modifiedsince='2018-10-03 00:00:00'
   [tkimnguyen]
