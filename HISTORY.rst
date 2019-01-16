@@ -4,7 +4,21 @@ Changelog
 2.3.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+New:
+
+- Add `--skip-incomplete` option to `upgrade-sites` script to bypass
+  erroring when an profile does not upgrade corrrectly
+  [vangheem]
+
+Fixes:
+
+- Skip auto-upgrading `collective.easyform` in `upgrade-sites` script
+  because it does not correctly define upgrade steps
+  [vangheem]
+
+- Handle errors caused by urls like `pdf/download` which should just
+  be a 404.
+  [vangheem]
 
 
 2.3.8 (2019-01-15)
