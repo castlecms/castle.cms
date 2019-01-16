@@ -147,7 +147,10 @@ def delete_file(uid):
 
 
 def uploaded(obj):
-    annotations = IAnnotations(obj)
+    try:
+        annotations = IAnnotations(obj)
+    except TypeError:
+        return False
     info = annotations.get(STORAGE_KEY, PersistentMapping())
     return 'url' in info
 
