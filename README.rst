@@ -117,12 +117,16 @@ Default plone testing:
   ./bin/test -s castle.cms
 
 To run only robot tests:
+
 .. code-block:: shell
+
   ./bin/test -s castle.cms -t robot
 
 
 Without robot:
+
 .. code-block:: shell
+
   ./bin/test -s castle.cms -t \!robot
 
 If you have errors complaining about warning, make sure the version of selenium 
