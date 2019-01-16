@@ -11,7 +11,8 @@ from StringIO import StringIO
 import OFS
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
-from Acquisition import ImplicitAcquisitionWrapper, aq_parent
+from Acquisition import ImplicitAcquisitionWrapper
+from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
 from DateTime import DateTime
 from lxml.html import fromstring
@@ -25,8 +26,8 @@ from plone.app.blob.utils import openBlob
 from plone.app.textfield import RichText
 from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.tests.base.security import (OmnipotentUser,
-                                                  PermissiveSecurityPolicy)
+from Products.CMFCore.tests.base.security import OmnipotentUser
+from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
 from Products.ZCatalog.Lazy import LazyCat
 from Testing.makerequest import makerequest
 from ZODB.blob import Blob
@@ -36,6 +37,7 @@ from zope.component.hooks import setSite
 from zope.interface import Interface
 from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
+
 
 logger = logging.getLogger(__name__)
 
@@ -760,13 +762,26 @@ def run_export(brains):
         for obj, data in export_obj(obj):
             write_export(obj, data)
 
+
 if args.createdsince:
     print('exporting items created since %s' % args.createdsince)
-    date_range = {'query': (DateTime(args.createdsince), DateTime('2062-05-08 23:59:59'),), 'range': 'min:max', }
+    date_range = {
+        'query': (
+            DateTime(args.createdsince),
+            DateTime('2062-05-08 23:59:59'),
+        ),
+        'range': 'min:max'
+    }
     query = catalog(created=date_range)
 elif args.modifiedsince:
     print('exporting items modified since %s' % args.modifiedsince)
-    date_range = {'query': (DateTime(args.modifiedsince), DateTime('2062-05-08 23:59:59'),), 'range': 'min:max', }
+    date_range = {
+        'query': (
+            DateTime(args.modifiedsince),
+            DateTime('2062-05-08 23:59:59'),
+        ),
+        'range': 'min:max'
+    }
     query = catalog(modified=date_range)
 else:
     query = catalog()

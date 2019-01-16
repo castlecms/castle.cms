@@ -55,6 +55,8 @@ install:
 script:
   - if [ "$TEST_SUITE" == "unit" ]; then
     flake8 castle/cms;
+    fi
+  - if [ "$TEST_SUITE" == "unit" ]; then
     ./bin/test -s castle.cms -t \!robot;
     fi
   - if [ "$TEST_SUITE" == "robot" ]; then

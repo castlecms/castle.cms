@@ -37,4 +37,5 @@ from .registry import site_has_icon  # noqa
 from .security import get_managers  # noqa
 from .security import get_permission_title  # noqa
 from .security import publish_content  # noqa
+from .text import truncate_text  # noqa
 from .text import truncate_text as truncateText  # noqa

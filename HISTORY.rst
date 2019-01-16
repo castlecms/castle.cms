@@ -23,6 +23,10 @@ Changes:
 
 Fixes:
 
+- Provide patch for https://github.com/celery/celery/pull/4839 until
+  it is fixed in a release
+  [vangheem]
+
 - Skip auto-upgrading `collective.easyform` in `upgrade-sites` script
   because it does not correctly define upgrade steps
   [vangheem]
