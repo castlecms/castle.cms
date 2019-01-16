@@ -8,6 +8,7 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:z3c="http://namespaces.zope.org/z3c"
     xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="castle.cms">
 
   <i18n:registerTranslations directory="locales" />
@@ -86,6 +87,7 @@
   <include file="theming.zcml" />
   <include file="meta.zcml" />
 
+  <include zcml:condition="installed collective.easyform" package=".easyform" />
 
   <include package="z3c.unconfigure" file="meta.zcml" />
   <unconfigure>

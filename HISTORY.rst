@@ -6,8 +6,19 @@ Changelog
 
 New:
 
+- Implement new `Query Choice` field for collective.easyform which
+  allows you to specify a query to retrieve values from. In order to use,
+  you need to activate the field in the Easy Form Control panel.
+  [vangheem]
+
 - Add `--skip-incomplete` option to `upgrade-sites` script to bypass
   erroring when an profile does not upgrade corrrectly
+  [vangheem]
+
+Changes:
+
+- Reorganize `castle.cms.utils` module so split into sub-modules. Imports
+  are all still same.
   [vangheem]
 
 Fixes:
