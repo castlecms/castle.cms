@@ -192,4 +192,5 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
 # See https://github.com/celery/celery/pull/4839/
-delattr(AsyncResult, '__del__')
+if hasattr(AsyncResult, '__del__'):
+    delattr(AsyncResult, '__del__')
