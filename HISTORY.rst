@@ -23,6 +23,9 @@ Changes:
 
 Fixes:
 
+- Handle errors in resolving menu items
+  [vangheem]
+
 - Provide patch for https://github.com/celery/celery/pull/4839 until
   it is fixed in a release
   [vangheem]

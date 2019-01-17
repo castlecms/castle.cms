@@ -425,14 +425,24 @@ class Toolbar(BrowserView):
                 obj['icon_class'] = 'icon-%s' % obj['id']
 
             if urlExpr in obj:
-                obj['url'] = obj[urlExpr](self.econtext)
+                try:
+                    obj['url'] = obj[urlExpr](self.econtext)
+                except Exception:
+                    logger.info('Could not render url expression for menu item: {}'.format(
+                        obj['id']), exc_info=True)
+                    continue
                 del obj[urlExpr]
 
             if iconExpr in obj:
                 del obj[iconExpr]
 
             if conditionExpr in obj:
-                if not obj[conditionExpr](self.econtext):
+                try:
+                    if not obj[conditionExpr](self.econtext):
+                        continue
+                except Exception:
+                    logger.info('Could not render condition expression for menu item: {}'.format(
+                        obj['id']), exc_info=True)
                     continue
                 del obj[conditionExpr]
 
