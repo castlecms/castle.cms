@@ -1,5 +1,5 @@
-from apiclient.discovery import build
-from oauth2client.client import SignedJwtAssertionCredentials
+# from apiclient.discovery import build
+# from oauth2client.client import SignedJwtAssertionCredentials
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
