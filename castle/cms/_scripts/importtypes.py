@@ -77,6 +77,7 @@ _types = {}
 def register_import_type(name, klass):
     site_manager.registerUtility(klass, IImportType, name)
 
+
 def is_base64(s):
     if hasattr(s, 'len'):
         return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
@@ -166,7 +167,7 @@ class BaseImportType(object):
             except Exception:
                 try:
                     title = self.field_data[dublin]['title']
-                except:
+                except Exception:
                     pass
 
         try:

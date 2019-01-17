@@ -5,6 +5,7 @@ from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from castle.cms import authentication, cache
 from castle.cms.interfaces import ICastleApplication
+from celery.result import AsyncResult
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
 from OFS.CopySupport import (CopyError, _cb_decode, _cb_encode, eInvalid,
                              eNoData)
@@ -187,3 +188,9 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
             logger.warning(
                 'Connection state error, swallowing', exc_info=True)
     return ticket_data
+
+
+# AsyncResult objects have a memory leak in them in Celery 4.2.1.
+# See https://github.com/celery/celery/pull/4839/
+if hasattr(AsyncResult, '__del__'):
+    delattr(AsyncResult, '__del__')
