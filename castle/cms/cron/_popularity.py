@@ -35,11 +35,11 @@ def get_popularity(site):
     if not es.enabled:
         return
 
-    service = google.get_ga_service()
+    service = google.analytics.get_ga_service()
     if not service:
         return
 
-    profile = google.get_ga_profile(service)
+    profile = google.analytics.get_ga_profile(service)
     if not profile:
         return
 

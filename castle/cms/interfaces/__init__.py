@@ -1,8 +1,8 @@
 # flake8: noqa
 
-from .authentication import IAuthenticator
 from .archive import IArchiveContentTransformer
 from .archive import IArchiveManager
+from .authentication import IAuthenticator
 from .content import IAudio
 from .content import ICastleApplication
 from .content import IDashboard
@@ -10,6 +10,7 @@ from .content import IHasDefaultImage
 from .content import IMedia
 from .content import IReferenceNamedImage
 from .content import ITrashed
+from .content import IUploadedToYoutube
 from .content import IVideo
 from .controlpanel import IAnnouncementData
 from .controlpanel import IAPISettings

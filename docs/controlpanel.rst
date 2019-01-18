@@ -113,3 +113,26 @@ rename and/or merge. All selected keywords will be renamed to the value of the
 Toggling the "Show similar keywords" checkbox, Keyword Manager can group similar
 keywords with each keyword. Be warned that this will produce duplicate entries
 on the page if duplicates are found.
+
+
+Social media integration
+------------------------
+
+The `Social Media Settings` control panel allows you to specify social media
+accounts Castle can integrate with.
+
+In addition to that, you can authenticate Twitter and YouTube accounts to
+allow Castle to perform actions on your behalf.
+
+In order to authenticate against Twitter and YouTube, you must provide provide
+oauth client id and secrets for those services.
+
+The can be configured on the environment with these environment settings:
+
+ - `TWITTER_CLIENT_KEY`
+ - `TWITTER_CLIENT_SECRET`
+ - `GOOGLE_CLIENT_ID`
+ - `GOOGLE_CLIENT_SECRET`
+
+(you can also provide twitter auth key and secret through control panel; however,
+in the future, these will all be environment variables)

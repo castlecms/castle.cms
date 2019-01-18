@@ -173,4 +173,11 @@
     layer="castle.cms.interfaces.ICastleLayer"
     />
 
+  <browser:page
+    for="castle.cms.interfaces.IUploadedToYoutube"
+    name="edit"
+    class=".video.VideoEditForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
 </configure>

@@ -1,10 +1,13 @@
 Changelog
 =========
 
-2.4.2 (unreleased)
+2.5.0 (unreleased)
 ------------------
 
 New:
+
+- Integrate uploading to youtube
+  [lucid-0,vangheem]
 
 - Add `link-report` script and `Broken links` control panel
   [vangheem]

@@ -5,10 +5,12 @@ from tempfile import mkdtemp
 
 from castle.cms.commands import avconv, md5
 from castle.cms.files import aws
+from castle.cms.services.google import youtube
 from collective.celery.utils import getCelery
 from plone.app.blob.utils import openBlob
 from plone.namedfile import NamedBlobImage
 from plone.namedfile.file import NamedBlobFile
+
 
 logger = getLogger(__name__)
 
@@ -20,7 +22,6 @@ def switchFileExt(filename, ext):
 
 def process(context):
     video = context.file
-
     if not video or video.filename == aws.FILENAME:
         return
 
@@ -45,6 +46,15 @@ def process(context):
     if context.image and not convert_it:
         # already an mp4 and already has a screen grab
         return
+
+    if convert_it and youtube.should_upload(context):
+        try:
+            youtube.upload(context, bfilepath, filename=video.filename)
+            # saving hash tells us we do not need to convert anymore...
+            context._file_hash = md5(bfilepath)
+            convert_it = False
+        except Exception:
+            logger.error('Error uploading youtube video', exc_info=True)
 
     tmpdir = mkdtemp()
     tmpfilepath = os.path.join(tmpdir, video.filename)

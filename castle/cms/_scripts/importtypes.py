@@ -187,7 +187,10 @@ class BaseImportType(object):
             description=description,
             **data)
 
-    def post_creation(self, obj, pdb_if_exception=False):
+    def get_post_creation_data(self):
+        pass
+
+    def post_creation(self, obj, pdb_if_exception=False, post_creation_data=None):
         if obj is None:
             return
         field_data = self.field_data

@@ -37,7 +37,9 @@ define([
         url: '',
         workflow_state: null,
         blob: null,  // customized file
-        duplicate: false
+        duplicate: false,
+        readonlyFields: [],
+        youtubeEnabled: $('body').attr('data-youtube-enabled') === 'true'
       };
     },
     componentDidMount: function(){
@@ -102,6 +104,19 @@ define([
     valueChanged: function(attr, widget, e){
       if(widget == 'checkbox'){
         this.state[attr] = e.target.checked;
+        if (attr === 'upload_to_youtube') {
+          if (e.target.checked) {
+            this.state.youtube_url = '';
+            if (this.state.readonlyFields.indexOf('youtube_url') === -1) {
+              this.state.readonlyFields.push('youtube_url')
+            }
+          } else {
+            var idx = this.state.readonlyFields.indexOf('youtube_url');
+            if (idx !== -1) {
+              this.state.readonlyFields.splice(idx);
+            }
+          }
+        }
       }else{
         this.state[attr] = e.target.value;
       }
@@ -244,10 +259,15 @@ define([
 
     createField: function(field){
       var name = field['name'];
+      var readonly = undefined;
+      if (this.state.readonlyFields.indexOf(name) !== -1) {
+        readonly = true;
+      }
+
       var input;
       if(field['widget'] == 'checkbox'){
         input = D.input({
-          id: id, type: 'checkbox', checked: this.state[name],
+          id: id, type: 'checkbox', checked: this.state[name], readOnly: readonly,
           onChange: this.valueChanged.bind(this, name, 'checkbox') })
       }else{
         var nodeType = D.input;
@@ -255,7 +275,7 @@ define([
           nodeType = D.textarea;
         }
         input = nodeType({
-          className: 'form-control', value: this.state[name], id: id,
+          className: 'form-control', value: this.state[name], id: id, readOnly: readonly,
           onChange: this.valueChanged.bind(this, name, 'text')});
       }
 
@@ -293,6 +313,10 @@ define([
             return
           }
         }
+        if (field['name'] === 'upload_to_youtube' && !self.state.youtubeEnabled) {
+          return;
+        }
+
         if(field.widget === 'tags'){
           fields.push(self.createTagsField(field));
         }else{
@@ -435,8 +459,8 @@ define([
     },
 
     approveClicked: function(e){
-      var that = this;
       e.preventDefault();
+      var that = this;
       that.setState({
         state: 'uploading',
         progress: 0

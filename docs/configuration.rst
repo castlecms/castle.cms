@@ -69,6 +69,10 @@ Environment variables
 - CELERY_TASK_ALWAYS_EAGER: useful celery configuration to run tasks inline
 - REDIS_SERVER: redis server host:port configuration
 - LINK_REPORT_DB: db configuration string for link report
+- TWITTER_CLIENT_KEY: twitter oauth client id
+- TWITTER_CLIENT_SECRET: twitter oauth client secret
+- GOOGLE_CLIENT_ID: google oauth client id
+- GOOGLE_CLIENT_SECRET: google oauth client secret
 
 
 Defaults

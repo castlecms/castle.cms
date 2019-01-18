@@ -1,18 +1,20 @@
 # Fork of tweepy twitter stream handling
+import os
+import re
+import ssl
+from threading import Thread
+from time import sleep
+
+import six
+
+import requests
 from plone import api
 from plone.registry.interfaces import IRegistry
 from requests.exceptions import Timeout
 from requests_oauthlib import OAuth1
 from requests_oauthlib import OAuth1Session
-from threading import Thread
-from time import sleep
 from zope.component import getUtility
 from zope.globalrequest import getRequest
-
-import re
-import requests
-import six
-import ssl
 
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
@@ -20,11 +22,15 @@ authorization_url = 'https://api.twitter.com/oauth/authorize'
 access_token_url = 'https://api.twitter.com/oauth/access_token'
 
 
+TWITTER_CLIENT_KEY = os.environ.get('TWITTER_CLIENT_KEY')
+TWITTER_CLIENT_SECRET = os.environ.get('TWITTER_AUTH_SECRET')
+
+
 def get_keys():
     registry = getUtility(IRegistry)
     try:
-        key = registry['plone.twitter_consumer_key']
-        secret = registry['plone.twitter_consumer_secret']
+        key = registry['plone.twitter_consumer_key'] or TWITTER_CLIENT_KEY
+        secret = registry['plone.twitter_consumer_secret'] or TWITTER_CLIENT_SECRET
         return key, secret
     except Exception:
         return None, None
@@ -57,15 +63,17 @@ def authorize():
 
 def get_auth():
     registry = getUtility(IRegistry)
-    check_keys = ('plone.twitter_consumer_key', 'plone.twitter_consumer_secret',
-                  'plone.twitter_oauth_token', 'plone.twitter_oauth_secret')
+    client_id, client_secret = get_keys()
+    if client_id is None or client_secret is None:
+        return None
+    check_keys = ('plone.twitter_oauth_token', 'plone.twitter_oauth_secret')
     for key in check_keys:
         if not registry.get(key, None):
             return None
     try:
         return OAuth1(
-            registry['plone.twitter_consumer_key'].encode('utf8'),
-            client_secret=registry['plone.twitter_consumer_secret'].encode('utf8'),
+            unicode(client_id).encode('utf8'),
+            client_secret=unicode(client_secret).encode('utf8'),
             resource_owner_key=registry['plone.twitter_oauth_token'].encode('utf8'),
             resource_owner_secret=registry['plone.twitter_oauth_secret'].encode('utf8'),
             decoding=None)

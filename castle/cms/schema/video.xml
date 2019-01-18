@@ -20,6 +20,13 @@
       <required>False</required>
       <title>YouTube URL</title>
     </field>
+    <field name="upload_to_youtube"
+           type="zope.schema.Bool"
+           form:ommitted="z3c.form.interfaces.IEdit:true">
+      <description/>
+      <required>False</required>
+      <title>Upload to YouTube</title>
+    </field>
     <field name="transcript" type="plone.app.textfield.RichText">
       <description/>
       <required>False</required>
