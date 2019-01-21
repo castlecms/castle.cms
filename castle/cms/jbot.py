@@ -92,7 +92,6 @@ class Storage(object):
 
     def get_modified(self, filename):
         fi = self.jbot_directory[filename]
-        path = self._get_fs_path()
         if fi.__class__.__name__ == "FilesystemFile":
             return fi.lastModifiedTimestamp
         else:
@@ -216,7 +215,7 @@ class TemplateManagerFactory(object):
 
     def __init__(self):
         self.manager = _TemplateManager()
-    
+
     def __call__(self, layer):
         return self.manager
 
