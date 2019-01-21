@@ -26,6 +26,9 @@ Fixes:
 - Fix duplicate `<head>` tags showing up
   [vangheem]
 
+- Fix jbot theme customizations bleeding across sites
+  [vangheem]
+
 - Upgrade mosaic to fix layout selection styles
   [vangheem]
 

@@ -1,30 +1,32 @@
 # -*- coding: utf-8 -*-
+import logging
+import os
+import sys
+import time
+import traceback
+
+import Globals
 from DateTime import DateTime
+from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.utils import getCurrentTheme
+from plone.registry.interfaces import IRegistry
 from plone.resource.utils import queryResourceDirectory
 from z3c.jbot import interfaces
 from z3c.jbot.manager import find_package
 from zope import interface
 from zope.component import ComponentLookupError
+from zope.component import queryUtility
 from zope.component.hooks import getSite
 from zope.filerepresentation.interfaces import IRawReadFile
 from zope.globalrequest import getRequest
-
-import Globals
-import logging
-import os
-import sys
-import traceback
+from zope.interface import providedBy
 
 
 REQ_CACHE_KEY = 'castle.cms.jbot.storage'
 
 logger = logging.getLogger('castle.cms')
 IGNORE = object()
-
-
-_file_cache = {}
 
 
 class Storage(object):
@@ -36,15 +38,15 @@ class Storage(object):
             directory = queryResourceDirectory(
                 THEME_RESOURCE_NAME, self.theme)
             try:
-                self.themeDirectory = directory['jbot']
+                self.jbot_directory = directory['jbot']
             except Exception:
-                self.themeDirectory = None
+                self.jbot_directory = None
         else:
-            self.themeDirectory = None
+            self.jbot_directory = None
 
     def __contains__(self, name):
-        if self.themeDirectory:
-            if name in self.themeDirectory:
+        if self.jbot_directory is not None:
+            if name in self.jbot_directory:
                 return True
         return False
 
@@ -53,93 +55,98 @@ class Storage(object):
         """
         base_path = '/'.join(Globals.data_dir.split('/')[:-1])
         jbot_dir = os.path.join(base_path, 'jbot')
-        site_id = self.site.getId()
-        if not os.path.exists(jbot_dir):
-            os.makedirs(jbot_dir)
-            logger.info('created missing directory {}'.format(jbot_dir))
-
-        fs_path = os.path.join(jbot_dir, site_id)
+        site_id = '-'.join(self.site.getPhysicalPath()[1:])
+        fs_path = os.path.join(jbot_dir, site_id, self.theme)
         if not os.path.exists(fs_path):
-            os.mkdir(fs_path)
+            os.makedirs(fs_path)
             logger.info('created missing directory {}'.format(fs_path))
         return fs_path
 
-    def getFileFromDirectory(self, directory, filename):  # noqa
-        fi = directory[filename]
+    def get_filepath(self, filename):
         path = self._get_fs_path()
-        filepath = os.path.join(path, filename)
-        if fi.__class__.__name__ == "FilesystemFile":
-            last_modified = fi.lastModifiedTimestamp
-        else:
-            last_modified = fi._p_mtime
-        if not os.path.exists(filepath) or \
-                DateTime(last_modified) > DateTime(os.stat(filepath).st_mtime):
-            tmpfi = open(filepath, 'wb')
+        return os.path.join(path, filename)
+
+    def get_customizations(self):
+        files = {}
+        if self.jbot_directory is not None:
+            for filename in self.jbot_directory.listDirectory():
+                filepath = self.get_filepath(filename)
+                if self.file_modified(filename, filepath):
+                    self.write_customization(filename)
+                files[filename] = {
+                    'modified': self.get_modified(filename),
+                    'filepath': filepath
+                }
+        return files
+
+    def write_customization(self, filename):
+        fi = self.jbot_directory[filename]
+        filepath = self.get_filepath(filename)
+        with open(filepath, 'wb') as tmpfi:
             if fi.__class__.__name__ == "FilesystemFile":
                 data = IRawReadFile(fi).read()
             else:
                 data = str(fi.data)
             tmpfi.write(data)
-            tmpfi.close()
         return filepath
 
-    def get(self, filename, template):
-        # get path to file for template
-        if self.themeDirectory and filename in self.themeDirectory:
-            directory = self.themeDirectory
-        return self.getFileFromDirectory(directory, filename)
+    def get_modified(self, filename):
+        fi = self.jbot_directory[filename]
+        if fi.__class__.__name__ == "FilesystemFile":
+            return fi.lastModifiedTimestamp
+        else:
+            return fi._p_mtime
+
+    def file_modified(self, filename, filepath):
+        return (not os.path.exists(filepath) or
+                DateTime(self.get_modified(filename)) > DateTime(os.stat(filepath).st_mtime))
 
 
-class TemplateManager(object):
+class _TemplateManager(object):
     interface.implements(interfaces.ITemplateManager)
 
-    def __init__(self, name):
-        self.name = name
-        self._req = None
+    def __init__(self):
         self.syspaths = tuple(sys.path)
+        self.templates = {}
+        self.cache = {}
 
-    @property
-    def customized_filenames(self):
-        key = '%s.%s' % (REQ_CACHE_KEY, 'customized_filenames')
-        if key not in self.req.environ:
-            storage = self.storage
-            if storage:
-                files = []
-                if storage.themeDirectory:
-                    files.extend(storage.themeDirectory.listDirectory())
-                self.req.environ[key] = files
+    def get_storage(self):
+        try:
+            return Storage()
+        except ComponentLookupError:
+            return None
+
+    def _get_customizations(self):
+        storage = self.get_storage()
+        if storage is None:
+            return {}
+        else:
+            return storage.get_customizations()
+
+    def get_customizations(self):
+        req = getRequest()
+        key = '{}.customizations'.format(REQ_CACHE_KEY)
+        if key not in req.environ:
+            if api.env.debug_mode():
+                req.environ[key] = self._get_customizations()
             else:
-                self.req.environ[key] = []
-        return self.req.environ[key]
-
-    @property
-    def req(self):
-        if self._req is None:
-            self._req = getRequest()
-        return self._req
-
-    @property
-    def paths(self):
-        key = '%s.%s' % (REQ_CACHE_KEY, 'paths')
-        if key not in self.req.environ:
-            self.req.environ[key] = {}
-        return self.req.environ[key]
-
-    @property
-    def templates(self):
-        key = '%s.%s' % (REQ_CACHE_KEY, 'templates')
-        if key not in self.req.environ:
-            self.req.environ[key] = {}
-        return self.req.environ[key]
-
-    @property
-    def storage(self):
-        if REQ_CACHE_KEY not in self.req.environ:
-            try:
-                self.req.environ[REQ_CACHE_KEY] = Storage()
-            except ComponentLookupError:
-                self.req.environ[REQ_CACHE_KEY] = None
-        return self.req.environ[REQ_CACHE_KEY]
+                # check for value in cache
+                cache_key = providedBy(req)  # layer is cache key
+                if cache_key not in self.cache:
+                    self.cache[cache_key] = {
+                        'when': time.time(),
+                        'value': self._get_customizations()
+                    }
+                else:
+                    registry = queryUtility(IRegistry)
+                    theme_cache_time = getattr(registry, '_theme_cache_mtime', 0)
+                    if theme_cache_time > self.cache[cache_key]['when']:
+                        self.cache[cache_key] = {
+                            'when': time.time(),
+                            'value': self._get_customizations()
+                        }
+                req.environ[key] = self.cache[cache_key]['value']
+        return req.environ[key]
 
     def registerTemplate(self, template, token):  # noqa
         """
@@ -148,86 +155,85 @@ class TemplateManager(object):
         try:
             return self._registerTemplate(template, token)
         except Exception:
-            if 'jbot.error' not in self.req.environ:
+            req = getRequest()
+            if 'jbot.error' not in req.environ:
                 # only log one error per request
-                self.req.environ['jbot.error'] = True
+                req.environ['jbot.error'] = True
                 logger.error(
-                    'collective.jbot error: %s' % traceback.format_exc())
+                    'collective.jbot error: {}'.format(traceback.format_exc()))
 
-    def _registerTemplate(self, template, token):  # noqa
+    def _registerTemplate(self, template, original):  # noqa
         """
         Return True if there has been a change to the override.
-        Due to the nature of this implementation, a multi-site deployment
-        could cause the template setting of resources to be re-set
-        often. This is probably not optimal. And with chamelean I wonder if
-        the compiling is re-done each time also... Eek
         """
-        # assert that the template is not already registered
-        filename = self.templates.get(token)
+        # check if template is ignored, no filename to override
+        filename = self.templates.get(template)
         if filename is IGNORE:
             return
 
-        # if the template filename matches an override, we're done
-        paths = self.paths
-        if paths.get(filename) == template.filename and \
-                os.path.exists(filename):
-            return
-
-        # verify that override has not been unregistered
-        if filename is not None and filename not in paths:
-            template.filename = template._filename
-            del self.templates[token]
-
         customized = False
-        if hasattr(template, '__filename'):
+        if template in self.templates:
             # already customized by us
-            path = find_package(self.syspaths, template._filename)
             customized = True
+            filename = self.templates[template]['filename']
         else:
             # check if an overridable resource
             path = find_package(self.syspaths, template.filename)
             if path is None:
                 # permanently ignore template
-                self.templates[token] = IGNORE
+                self.templates[template] = IGNORE
                 return
+            filename = path.replace(os.path.sep, '.')
 
-        filename = path.replace(os.path.sep, '.')
-        # check again if filename in list of cached paths. Might be diff
-        # object but same filename, we return a customized version here
-        # because one request object corresponds to one site customization
-        if filename in self.paths:
-            if filename != template.filename:
-                if not hasattr(template, '__filename'):
-                    template.__filename = template.filename
-                template.filename = self.paths[filename]
-                return True
+        customizations = self.get_customizations()
+        if filename in customizations:
+            filepath = customizations[filename]['filepath']
+            if template not in self.templates:
+                # not cached, save it
+                self.templates[template] = {
+                    'filename': filename,
+                    'filepath': filepath,
+                    'original': template.filename
+                }
+            else:
+                self.templates[template]['filepath'] = filepath
 
-        if not self.storage:
-            if customized:
-                # revert now...
-                template.filename = template.__filename
-                del template.__filename
+            if template.filename != filepath:
+                # if filename not same as customization, edit and return True
+                template.filename = filepath
                 return True
         else:
-            if filename in self.customized_filenames:
-                filepath = self.storage.get(filename, template)
-                if filepath == template.filename:
-                    # already customized with correct path, ignore
-                    return
-
-                self.paths[filename] = filepath
-
-                # save original filename
-                if not hasattr(template, '__filename'):
-                    template.__filename = template.filename
-
-                # save template, registry and assign path
-                template.filename = filepath
-                self.templates[token] = filename
-
+            if customized and template in self.templates:
+                # revert, we had it customized but it's no longer customizations
+                template.filename = self.templates[template]['original']
+                del self.templates[template]
                 return True
-            else:
-                if customized:
-                    template.filename = template.__filename
-                    del template.__filename
-                    return True
+
+
+class TemplateManagerFactory(object):
+    interface.implements(interfaces.ITemplateManager)
+
+    def __init__(self):
+        self.manager = _TemplateManager()
+
+    def __call__(self, layer):
+        return self.manager
+
+
+TemplateManager = TemplateManagerFactory()
+
+
+def mark_request(site, event):
+    '''
+    Mark request so each site has a unique layer `Provides` object.
+    This allows us to use jbot with themes correctly without
+    needing to fork/patch z3c.jbot(which would be nasty)
+    '''
+    if getattr(site, '_v_unique_jbot_layer', None) is None:
+
+        class IUniqueSiteLayer(interface.Interface):
+            pass
+
+        site._v_unique_jbot_layer = IUniqueSiteLayer
+
+    interface.alsoProvides(event.request, site._v_unique_jbot_layer)
