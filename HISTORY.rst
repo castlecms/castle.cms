@@ -23,6 +23,9 @@ Changes:
 
 Fixes:
 
+- Fix duplicate `<head>` tags showing up
+  [vangheem]
+
 - Upgrade mosaic to fix layout selection styles
   [vangheem]
 

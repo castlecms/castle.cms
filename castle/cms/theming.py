@@ -12,13 +12,13 @@ from urlparse import urljoin
 import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
-from chameleon import PageTemplate, PageTemplateLoader
+from chameleon import PageTemplate
+from chameleon import PageTemplateLoader
 from lxml import etree
-from lxml.html import fromstring, tostring
+from lxml import html
 from plone import api
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
-from plone.app.blocks.utils import replace_with_children
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.policy import ThemingPolicy
@@ -30,8 +30,10 @@ from Products.CMFCore.interfaces import ISiteRoot
 from repoze.xmliter.serializer import XMLSerializer
 from repoze.xmliter.utils import getHTMLSerializer
 from zExceptions import NotFound
-from zope.component import getMultiAdapter, queryMultiAdapter
+from zope.component import getMultiAdapter
+from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -209,8 +211,6 @@ class _Transform(object):
 
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
-        # #
-        # dom.tree = tiles.renderTiles(request, dom.tree)
 
         return dom
 
@@ -221,8 +221,13 @@ class _Transform(object):
         if tile:
             viewlet = tile.get_viewlet(tile.manager, tile.viewlet)
             if viewlet:
+                parent = el.getparent()
+                index = parent.index(el)
                 viewlet.update()
-                replace_with_children(el, fromstring(viewlet.render()))
+                value = etree.fromstring('<head>' + viewlet.render() + '</head>')
+                parent.remove(el)
+                for idx, child in enumerate(value.getchildren()):
+                    parent.insert(index + idx, child)
 
     def add_included_resources(self, dom, portal, request):
         # if theme has js/css drop points instead of using those tiles
@@ -424,14 +429,14 @@ class _Transform(object):
             if len(content) == 0:
                 content = content_xpath(result)
             if len(content) > 0:
-                main_html = tostring(content[0])
+                main_html = html.tostring(content[0])
 
             column1 = column1_xpath(result)
             if len(column1) > 0 and len(column1[0]) > 0:
-                column1_html = tostring(column1[0])
+                column1_html = html.tostring(column1[0])
             column2 = column2_xpath(result)
             if len(column2) > 0 and len(column2[0]) > 0:
-                column2_html = tostring(column2[0])
+                column2_html = html.tostring(column2[0])
         return {
             'main': main_html,
             'left': column1_html,
