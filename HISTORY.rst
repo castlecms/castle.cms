@@ -23,6 +23,8 @@ Changes:
 
 Fixes:
 
+- Fix duplicate `<head>` tags showing up
+  [vangheem]
 
 - Fix jbot theme customizations bleeding across sites
   [vangheem]
