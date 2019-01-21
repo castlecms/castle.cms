@@ -23,7 +23,11 @@ Changes:
 
 Fixes:
 
+
 - Fix jbot theme customizations bleeding across sites
+  [vangheem]
+
+- Upgrade mosaic to fix layout selection styles
   [vangheem]
 
 - Handle errors in resolving menu items
