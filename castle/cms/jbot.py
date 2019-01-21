@@ -128,7 +128,7 @@ class _TemplateManager(object):
         req = getRequest()
         key = '{}.customizations'.format(REQ_CACHE_KEY)
         if key not in req.environ:
-            if api.env.debug_mode() and False:
+            if api.env.debug_mode():
                 req.environ[key] = self._get_customizations()
             else:
                 # check for value in cache
