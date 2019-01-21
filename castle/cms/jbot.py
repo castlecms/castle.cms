@@ -58,7 +58,7 @@ class Storage(object):
         site_id = '-'.join(self.site.getPhysicalPath()[1:])
         fs_path = os.path.join(jbot_dir, site_id, self.theme)
         if not os.path.exists(fs_path):
-            os.mkdir(fs_path)
+            os.makedirs(fs_path)
             logger.info('created missing directory {}'.format(fs_path))
         return fs_path
 
