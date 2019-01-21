@@ -23,6 +23,9 @@ Changes:
 
 Fixes:
 
+- Upgrade mosaic to fix layout selection styles
+  [vangheem]
+
 - Handle errors in resolving menu items
   [vangheem]
 
