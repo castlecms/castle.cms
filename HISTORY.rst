@@ -23,6 +23,9 @@ Changes:
 
 Fixes:
 
+- Fix jbot theme customizations bleeding across sites
+  [vangheem]
+
 - Handle errors in resolving menu items
   [vangheem]
 

@@ -168,12 +168,18 @@
     layer=".interfaces.ICastleLayer"
     />
 
- <adapter
-   for=".interfaces.ICastleLayer"
-   provides="z3c.jbot.interfaces.ITemplateManager"
-   factory=".jbot.TemplateManager"
-   name="theme_manager"
-   />
+  <adapter
+    for=".interfaces.ICastleLayer"
+    provides="z3c.jbot.interfaces.ITemplateManager"
+    factory=".jbot.TemplateManager"
+    name="theme_manager"
+  />
+  
+  <subscriber
+    for="Products.CMFCore.interfaces.ISiteRoot
+         zope.traversing.interfaces.IBeforeTraverseEvent"
+    handler=".jbot.mark_request"
+  />
 
  <adapter
     for=".interfaces.ICastleLayer"
