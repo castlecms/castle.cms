@@ -24,6 +24,10 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
                         'image' in tag.get('itemprop', '') or
                         'image' in tag.get('name', '')):
                     tags.remove(tag)
+                elif tag.get('name') == 'twitter:card':
+                    # change to large summary
+                    tag['content'] = 'summary_large_image'
+
             tags.extend([
                 dict(property="og:image", content=item.image_url),
                 dict(itemprop="image", content=item.image_url),

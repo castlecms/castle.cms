@@ -17,6 +17,9 @@ New:
 
 Changes:
 
+- use `summary_large_image` twitter card instead of `summary`
+  [vangheem]
+
 - Better PDF generation error handling and logging
   [vangheem]
 
