@@ -50,13 +50,18 @@ def create_raw_from_view(context, view_name='pdf', css_files=[]):
     return tostring(xml), css
 
 
+class PDFGenerationError(Exception):
+    pass
+
+
 def create(html, css):
     try:
         registry = getUtility(IRegistry)
         prince_server_url = registry.get(
             'castle.princexml_server_url', 'http://localhost:6543/convert')
         if prince_server_url is None:
-            logger.warn('error converting pdf')
+            logger.warning(
+                'error converting pdf, no princexmlserver defined')
             return
         logger.info('start converting pdf')
         xml = fromstring(html)
@@ -64,6 +69,9 @@ def create(html, css):
         resp = requests.post(
             prince_server_url,
             data={'xml': tostring(xml), 'css': json.dumps(css)})
+        if resp.status_code != 200:
+            raise PDFGenerationError('status: {}, data: {}'.format(
+                resp.status_code, resp.text))
         data = resp.content
         blob = Blob()
         bfile = blob.open('w')
