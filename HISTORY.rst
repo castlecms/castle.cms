@@ -17,6 +17,9 @@ New:
 
 Changes:
 
+- Better PDF generation error handling and logging
+  [vangheem]
+
 - Reorganize `castle.cms.utils` module so split into sub-modules. Imports
   are all still same.
   [vangheem]
