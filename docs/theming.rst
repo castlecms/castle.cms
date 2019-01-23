@@ -60,8 +60,8 @@ Important constructs:
 - `dynamic-grid`: dynamically expand empty grid columns
 
 
-Tiles
------
+Layout tiles
+------------
 
 Tiles are the building block of everything in Castle. Tiles are what render most
 of the content on the page and are also what are dynamically inserted onto a page
@@ -95,3 +95,74 @@ for portlets.
 
 Meta tiles can be placed anywhere in the theme and do not need any specific
 registration or configuration.
+
+
+Theme tiles
+-----------
+
+You can provide custom tiles in your theme as well.
+
+To create a tile, you need 2 files: 1) a `config.json` and 2) a `template.html` file
+to be placed inside a folder
+
+`config.json` is used to define fields and configuration of the tile.
+
+For example, add the file `tiles/mytile/config.json` with the following::
+
+   {
+      "title": "Foobar",
+      "description": "A tile for foobar",
+      "category": "advanced",
+      "weight": 200,
+      "fields": [{
+         "name": "foobar",
+         "title": "Foobar"
+      }]
+   }
+
+WARNING: Your folder name is the "id" of the tile. If you change this,
+you lose the reference of tile and data on the site. If you remove the folder,
+existing tiles of the type will then display as empty.
+
+Then, add your `tiles/mytile/template.html` file::
+
+   <p>Hello World! ${data/foobar|nothing}</p>
+
+Available configuration options:
+
+- `title`: the title of the tile
+- `description`: the description that will show up on the add form
+- `category`: section of menu the tile will show up on. Options are:
+  `structure`, `media`, `social`, `properties`, `advanced`
+- `weight`: weight to be applied to the positioning of the tile in the menu
+- `fields`: array of fields to have included on the add/edit form
+
+
+Available field options:
+
+- `name`: field name used to uniquely identify the value
+- `title`: title of the field
+- `description`: description of the field
+- `type`: field type(see below for available types)
+- `default`: default value for the field
+- `required`: if a value is required or not
+- `widget`: 
+
+
+Available field types:
+
+- `text`:
+- `int`:
+- `float`:
+- `decimal`:
+- `datetime`:
+- `date`:
+- `timedelta`:
+- `time`:
+- `password`:
+- `boolean`:
+- `choice`:
+- `uri`:
+- `dottedname`:
+- `array`:
+

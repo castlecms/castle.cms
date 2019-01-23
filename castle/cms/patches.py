@@ -3,12 +3,17 @@ from time import time
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms import authentication, cache
+from castle.cms import authentication
+from castle.cms import cache
 from castle.cms.interfaces import ICastleApplication
+from castle.cms.tiles.dynamic import get_tile_manager
 from celery.result import AsyncResult
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
-from OFS.CopySupport import (CopyError, _cb_decode, _cb_encode, eInvalid,
-                             eNoData)
+from OFS.CopySupport import CopyError
+from OFS.CopySupport import _cb_decode
+from OFS.CopySupport import _cb_encode
+from OFS.CopySupport import eInvalid
+from OFS.CopySupport import eNoData
 from plone import api
 from plone.keyring.interfaces import IKeyManager
 from plone.registry.interfaces import IRegistry
@@ -16,10 +21,16 @@ from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from Products.CMFPlone.interfaces import ITinyMCESchema
 from ZODB.POSException import ConnectionStateError
-from zope.component import getGlobalSiteManager, getUtility, queryUtility
+from zope.component import getGlobalSiteManager
+from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import implementer
 
+
 logger = logging.getLogger('castle.cms')
+
+
+MOSAIC_CACHE_DURATION = 1 * 60
 
 
 def HideSiteLayoutFields_update(self):
@@ -41,16 +52,36 @@ _rich_text_widget_types = (
 def MosaicRegistry_parseRegistry(self):
     cache_key = '%s-mosaic-registry' % '/'.join(
         api.portal.get().getPhysicalPath()[1:])
-    try:
-        result = cache.get(cache_key)
-    except KeyError:
+    if not api.env.debug_mode():
+        try:
+            return cache.get(cache_key)
+        except KeyError:
+            result = self._old_parseRegistry()
+    else:
         result = self._old_parseRegistry()
-        cache.set(cache_key, result, 60 * 2)  # cache for 2 minutes
+
+    mng = get_tile_manager()
+    for tile in mng.get_tiles():
+        key = 'castle_cms_dynamic_{}'.format(tile['id'])
+        result['plone']['app']['mosaic']['app_tiles'][key] = {
+            'category': tile['category'],
+            'default_value': None,
+            'favorite': False,
+            'label': tile['title'],
+            'name': tile['name'],
+            'tile_type_id': u'castle.cms.dynamic',
+            'read_only': False,
+            'rich_text': False,
+            'settings': True,
+            'tile_type': u'app',
+            'weight': tile['weight']
+        }
 
     registry = getUtility(IRegistry)
     settings = registry.forInterface(
         ITinyMCESchema, prefix="plone", check=False)
     if settings.libraries_spellchecker_choice != 'AtD':
+        cache.set(cache_key, result, MOSAIC_CACHE_DURATION)
         return result
 
     # add atd config to toolbar dynamically
@@ -68,6 +99,7 @@ def MosaicRegistry_parseRegistry(self):
         mos_settings['widget_actions'][widget_type]['actions'].append('toolbar-AtD')  # noqa
     mos_settings['structure_tiles']['text']['available_actions'].append('toolbar-AtD')  # noqa
     mos_settings['app_tiles']['plone_app_standardtiles_rawhtml']['available_actions'].append('toolbar-AtD')  # noqa
+    cache.set(cache_key, result, MOSAIC_CACHE_DURATION)
     return result
 
 
