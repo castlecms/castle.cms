@@ -309,7 +309,8 @@ class TileManager(object):
                 'title': config.get('title', 'Tile'),
                 'description': config.get('description', ''),
                 'name': tile_id,
-                'weight': config.get('weight', 200)
+                'weight': config.get('weight', 200),
+                'hidden': config.get('hidden', False)
             })
         return tiles
 

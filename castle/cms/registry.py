@@ -38,9 +38,19 @@ class CastleMosaicRegistry(MosaicRegistry):
 
         mng = get_tile_manager()
         for tile in mng.get_tiles():
+            if tile.get('hidden'):
+                continue
             key = 'castle_cms_dynamic_{}'.format(tile['id'])
+            category = tile.get('category') or 'advanced'
+            category_id = category.replace(' ', '_').lower()
+            if category_id not in result['plone']['app']['mosaic']['tiles_categories']:
+                result['plone']['app']['mosaic']['tiles_categories'][category_id] = {
+                    'label': category,
+                    'name': category_id,
+                    'weight': 100
+                }
             result['plone']['app']['mosaic']['app_tiles'][key] = {
-                'category': tile['category'],
+                'category': category_id,
                 'default_value': None,
                 'favorite': False,
                 'label': tile['title'],

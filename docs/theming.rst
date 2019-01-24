@@ -145,6 +145,7 @@ Available configuration options:
   `structure`, `media`, `social`, `properties`, `advanced`
 - `weight`: weight to be applied to the positioning of the tile in the menu
 - `fields`: array of fields to have included on the add/edit form
+- `hidden`: if you want to no longer show tile in menu
 
 
 Available field options:
