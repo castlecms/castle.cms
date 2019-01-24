@@ -147,6 +147,11 @@ class DynamicTile(BaseTile):
 
     def render(self):
         mng = get_tile_manager(self.request)
+        if self.data.get('tile_id') is None:
+            logger.info('Can not render tile, no tile_id: {}'.format(
+                self.data
+            ))
+            return '<div></div>'
         template = mng.get_template(self.data['tile_id'])
         site = api.portal.get()
         site_url = site.absolute_url()
