@@ -142,7 +142,8 @@ Available configuration options:
 - `title`: the title of the tile
 - `description`: the description that will show up on the add form
 - `category`: section of menu the tile will show up on. Options are:
-  `structure`, `media`, `social`, `properties`, `advanced`
+  `structure`, `media`, `social`, `properties`, `advanced`.
+  New categories will automatically create new menu section.
 - `weight`: weight to be applied to the positioning of the tile in the menu
 - `fields`: array of fields to have included on the add/edit form
 - `hidden`: if you want to no longer show tile in menu
