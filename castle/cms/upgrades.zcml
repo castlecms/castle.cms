@@ -184,5 +184,13 @@
       destination="2308"
       handler=".upgrades.upgrade_2_3_8.upgrade"
       profile="castle.cms:default"/>
+    
+  <genericsetup:upgradeStep
+      title="Upgrade CastleCMS to 2.4.0"
+      description=""
+      source="*"
+      destination="2400"
+      handler=".upgrades.upgrade_2_4_0.upgrade"
+      profile="castle.cms:default"/>
 
 </configure>
