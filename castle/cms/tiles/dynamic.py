@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
@@ -21,6 +22,7 @@ from zExceptions import NotFound
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.component import queryUtility
 from zope.filerepresentation.interfaces import IRawReadFile
 from zope.globalrequest import getRequest
 from zope.interface import implements
@@ -68,6 +70,7 @@ class IDynamicTileSchema(model.Schema):
     directives.mode(tile_id='hidden')
     tile_id = schema.TextLine(
         title=u'Selected dynamic tile',
+        required=True,
         default=None)
 
 
@@ -79,7 +82,6 @@ class TileManager(object):
     def __init__(self):
         pass
 
-    @forever.memoize
     def get_tile_directory(self):
         theme = getCurrentTheme()
         if theme:
@@ -130,7 +132,7 @@ class TileManager(object):
                     del field[name]
 
             if 'required' not in field:
-                field['required'] = False
+                field['required'] = True
 
             try:
                 field_name = str(field.pop('name'))
@@ -154,6 +156,7 @@ class TileManager(object):
 
     @forever.memoize
     def get_template(self, tile_id):
+        print('load template {}'.format(tile_id))
         tiles_directory = self.get_tile_directory()
         tile_folder = tiles_directory[tile_id]
         fi = tile_folder['template.html']
@@ -187,12 +190,34 @@ class TileManager(object):
         return tiles
 
 
+_cache = {}
+
+
 def get_tile_manager(request=None):
     if request is None:
         request = getRequest()
     cache_key = '{}.manager'.format(CACHE_KEY)
     if cache_key not in request.environ:
-        request.environ[cache_key] = TileManager()
+        if api.env.debug_mode():
+            request.environ[cache_key] = TileManager()
+        else:
+            # check for value in cache
+            theme = getCurrentTheme()
+            item_cache_key = '{}.manager.{}'.format(CACHE_KEY, theme)
+            if item_cache_key not in _cache:
+                _cache[item_cache_key] = {
+                    'when': time.time(),
+                    'value': TileManager()
+                }
+            else:
+                registry = queryUtility(IRegistry)
+                theme_cache_time = getattr(registry, '_theme_cache_mtime', 0)
+                if theme_cache_time > _cache[item_cache_key]['when']:
+                    _cache[item_cache_key] = {
+                        'when': time.time(),
+                        'value': TileManager()
+                    }
+            request.environ[cache_key] = _cache[item_cache_key]['value']
     return request.environ[cache_key]
 
 

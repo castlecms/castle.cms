@@ -145,24 +145,25 @@ Available field options:
 - `description`: description of the field
 - `type`: field type(see below for available types)
 - `default`: default value for the field
-- `required`: if a value is required or not
+- `required`: if a value is required or not. Default to `true`
 - `widget`: 
 
 
 Available field types:
 
-- `text`:
-- `int`:
-- `float`:
-- `decimal`:
-- `datetime`:
-- `date`:
-- `timedelta`:
-- `time`:
-- `password`:
-- `boolean`:
-- `choice`:
-- `uri`:
-- `dottedname`:
-- `array`:
+- `text`
+- `int`
+- `float`
+- `decimal`
+- `datetime`
+- `date`
+- `time`
+- `password`
+- `boolean`
+- `choice`: must provide `"vocabulary": ["one", "two"]`
+- `uri`
+- `dottedname`
+- `array`
 
+NOTE: when making changes to tile configuration in production, you need
+to clear the theme cache in order for the new changes to take affect.

@@ -12,13 +12,6 @@
     original="update"
     replacement=".patches.HideSiteLayoutFields_update"
     />
-  <monkey:patch
-    description=""
-    class="plone.app.mosaic.registry.MosaicRegistry"
-    original="parseRegistry"
-    preserveOriginal="True"
-    replacement=".patches.MosaicRegistry_parseRegistry"
-    />
 
   <monkey:patch
     description="Patch pluggable auth to check for impersonator"

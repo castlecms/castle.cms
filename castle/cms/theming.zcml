@@ -23,4 +23,26 @@
     for=".interfaces.ICastleLayer"
     />
 
+  <include package="z3c.unconfigure" file="meta.zcml" />
+  <unconfigure>
+    <adapter
+      for="* plone.app.mosaic.interfaces.IMosaicLayer"
+      name="plone.app.mosaic.bodyclass"
+      factory="plone.app.mosaic.transform.BodyClass"
+      />
+    <adapter
+      for="* plone.app.mosaic.interfaces.IMosaicLayer"
+      name="plone.app.mosaic.httpheaders"
+      factory="plone.app.mosaic.transform.HTTPHeaders"
+      />
+    <adapter
+      for="* plone.app.mosaic.interfaces.IMosaicLayer"
+      name="plone.app.mosaic.language"
+      factory="plone.app.mosaic.transform.HTMLLanguage"
+      />
+    <adapter factory="plone.app.mosaic.registry.MosaicRegistry" />
+  </unconfigure>
+
+  <adapter factory=".registry.CastleMosaicRegistry" />
+
 </configure>
