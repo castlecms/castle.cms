@@ -177,5 +177,20 @@ Available field types:
 - `resource`: will store reference to content on site
 - `resources`: select more than one content from site
 
+
+Available template globals:
+
+- `context`
+- `request`
+- `view`
+- `data`: configured data for the tile
+- `get_object`: function to get object from reference
+- `utils`: castle utilities
+- `portal_url`
+- `public_url`
+- `site_url`
+- `registry`
+- `portal`
+
 NOTE: when making changes to tile configuration in production, you need
 to clear the theme cache in order for the new changes to take affect.
