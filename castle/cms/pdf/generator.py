@@ -43,9 +43,10 @@ def create_raw_from_view(context, view_name='pdf', css_files=[]):
     public_url = registry.get(
         'plone.public_url', '')
 
-    for anchor in xml.cssselect('a'):
-        if anchor.attrib.get('href', '').startswith(site_url):
-            anchor.attrib['href'] = anchor.attrib['href'].replace(site_url, public_url)
+    if public_url not in ('', None):
+        for anchor in xml.cssselect('a'):
+            if anchor.attrib.get('href', '').startswith(site_url):
+                anchor.attrib['href'] = anchor.attrib['href'].replace(site_url, public_url)
 
     return tostring(xml), css
 
