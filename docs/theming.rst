@@ -117,6 +117,11 @@ For example, add the file `tiles/mytile/config.json` with the following::
       "fields": [{
          "name": "foobar",
          "title": "Foobar"
+      }, {
+         "name": "image",
+         "title": "Image",
+         "type": "image",
+         "required": true
       }]
    }
 
@@ -127,6 +132,10 @@ existing tiles of the type will then display as empty.
 Then, add your `tiles/mytile/template.html` file::
 
    <p>Hello World! ${data/foobar|nothing}</p>
+   <div tal:define="image python: get_object(data.get('image'));">
+      <img tal:condition="nocall: image|nothing" src="${image/absolute_url}/@@images/image/large" />
+   </div>
+
 
 Available configuration options:
 
@@ -164,6 +173,10 @@ Available field types:
 - `uri`
 - `dottedname`
 - `array`
+- `image`: will store a reference to an image
+- `images`: select multiple images
+- `resource`: will store reference to content on site
+- `resources`: select more than one content from site
 
 NOTE: when making changes to tile configuration in production, you need
 to clear the theme cache in order for the new changes to take affect.

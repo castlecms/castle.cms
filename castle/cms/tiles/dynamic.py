@@ -2,6 +2,8 @@ import json
 import logging
 import time
 
+from castle.cms.tiles.base import BaseTile
+from castle.cms.widgets import ImageRelatedItemFieldWidget
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.utils import getCurrentTheme
@@ -10,12 +12,12 @@ from plone.app.tiles.browser import add
 from plone.app.tiles.browser import edit
 from plone.app.tiles.browser import traversal
 from plone.autoform import directives
+from plone.autoform.interfaces import WIDGETS_KEY
 from plone.memoize import forever
 from plone.registry.interfaces import IRegistry
 from plone.resource.utils import queryResourceDirectory
 from plone.supermodel import model
 from plone.supermodel.model import SchemaClass
-from plone.tiles import Tile
 from plone.tiles.interfaces import IPersistentTile
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zExceptions import NotFound
@@ -25,17 +27,125 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.filerepresentation.interfaces import IRawReadFile
 from zope.globalrequest import getRequest
+from zope.interface import Invalid
 from zope.interface import implements
 from zope.schema.vocabulary import SimpleVocabulary
-
+from castle.cms.widgets import RelatedItemFieldWidget, ImageRelatedItemsFieldWidget, RelatedItemsFieldWidget
+from collections import OrderedDict
 
 logger = logging.getLogger('castle.cms')
 
 
-class DynamicTile(Tile):
+CACHE_KEY = 'castle.cms.tiles.dynamic'
+
+
+def ChoiceFieldFactory(**options):
+    if 'vocabulary' not in options:
+        options['vocabulary'] = SimpleVocabulary.fromValues([])
+    else:
+        options['vocabulary'] = SimpleVocabulary.fromValues(options['vocabulary'])
+    return schema.Choice(**options)
+
+
+def ArrayFieldFactory(**options):
+    if 'value_type' not in options:
+        options['value_type'] = schema.TextLine()
+    return schema.List(**options)
+
+
+def validate_image(val):
+    if val and len(val) != 1:
+        raise Invalid("Must select 1 image")
+    if val:
+        utils = getMultiAdapter((api.portal.get(), getRequest()),
+                                name="castle-utils")
+        obj = utils.get_object(val[0])
+        if not obj or obj.portal_type != 'Image':
+            raise Invalid('Must provide image file')
+    return True
+
+
+def validate_content(val):
+    if val and len(val) != 1:
+        raise Invalid("Must select 1 item")
+    return True
+
+
+def ImageFactory(**options):
+    options['constraint'] = validate_image
+    options['value_type'] = schema.Choice(
+        vocabulary='plone.app.vocabularies.Catalog'
+    )
+    return schema.List(**options)
+
+
+def ImagesFactory(**options):
+    options['value_type'] = schema.Choice(
+        vocabulary='plone.app.vocabularies.Catalog'
+    )
+    return schema.List(**options)
+
+
+def ResourceFactory(**options):
+    options['constraint'] = validate_content
+    options['value_type'] = schema.Choice(
+        vocabulary='plone.app.vocabularies.Catalog'
+    )
+    return schema.List(**options)
+
+
+def ResourcesFactory(**options):
+    options['value_type'] = schema.Choice(
+        vocabulary='plone.app.vocabularies.Catalog'
+    )
+    return schema.List(**options)
+
+
+FIELD_TYPE_MAPPING = {
+    'text': schema.TextLine,
+    'int': schema.Int,
+    'float': schema.Float,
+    'decimal': schema.Decimal,
+    'datetime': schema.Datetime,
+    'date': schema.Date,
+    'timedelta': schema.Timedelta,
+    'time': schema.Time,
+    'password': schema.Password,
+    'boolean': schema.Bool,
+    'choice': ChoiceFieldFactory,
+    'uri': schema.URI,
+    'dottedname': schema.DottedName,
+    'array': ArrayFieldFactory,
+    'image': {
+        'factory': ImageFactory,
+        'widget': ImageRelatedItemFieldWidget
+    },
+    'images': {
+        'factory': ImagesFactory,
+        'widget': ImageRelatedItemsFieldWidget
+    },
+    'resources': {
+        'factory': ResourcesFactory,
+        'widget': RelatedItemsFieldWidget
+    },
+    'resource': {
+        'factory': ResourceFactory,
+        'widget': RelatedItemFieldWidget
+    }
+}
+
+
+class DynamicTile(BaseTile):
     implements(IPersistentTile)
 
-    def __call__(self):
+    def get_object(self, val):
+        if isinstance(val, list):
+            if len(val) == 0:
+                return None
+            val = val[0]
+        return self.utils.get_object(val)
+
+    def render(self):
         mng = get_tile_manager(self.request)
         template = mng.get_template(self.data['tile_id'])
         site = api.portal.get()
@@ -47,8 +157,6 @@ class DynamicTile(Tile):
             if not api.user.is_anonymous():
                 site_url = public_url
 
-        utils = getMultiAdapter((self.context, self.request),
-                                name='castle-utils')
         boundNames = {
             'context': self.context,
             'request': self.request,
@@ -58,8 +166,9 @@ class DynamicTile(Tile):
             'site_url': site_url,
             'registry': registry,
             'portal': site,
-            'utils': utils,
-            'data': self.data
+            'utils': self.utils,
+            'data': self.data,
+            'get_object': self.get_object
         }
         zpt = template.__of__(self.context)
         return zpt._exec(boundNames, [], {})
@@ -72,9 +181,6 @@ class IDynamicTileSchema(model.Schema):
         title=u'Selected dynamic tile',
         required=True,
         default=None)
-
-
-CACHE_KEY = 'castle.cms.tiles.dynamic'
 
 
 class TileManager(object):
@@ -116,11 +222,11 @@ class TileManager(object):
 
     @forever.memoize
     def get_tile_fields(self, tile_id):
-        tiles = {}
+        fields = OrderedDict()
         for field in self.get_tile(tile_id)['fields']:
             field = field.copy()
             try:
-                factory = _field_type_mapping[field.pop('type', 'text')]
+                factory = FIELD_TYPE_MAPPING[field.pop('type', 'text')]
             except KeyError:
                 continue
             for name in ('title', 'description'):
@@ -136,27 +242,37 @@ class TileManager(object):
 
             try:
                 field_name = str(field.pop('name'))
-                tiles[field_name] = factory(**field)
+                fields[field_name] = (factory, field)
             except Exception:
                 logger.info('Could not create field on tile {}, with options {}'.format(
                     tile_id, field
                 ), exc_info=True)
-        return tiles
+        return fields
 
     @forever.memoize
     def get_schema(self, tile_id):
-        return SchemaClass(
+        widget_tags = {}
+        fields = OrderedDict()
+        for field_name, (factory, data) in self.get_tile_fields(tile_id).items():
+            if isinstance(factory, dict):
+                if 'widget' in factory:
+                    widget_tags[field_name] = factory['widget']
+                factory = factory['factory']
+            fields[field_name] = factory(**data)
+
+        schema = SchemaClass(
             name=tile_id,
             bases=(IDynamicTileSchema,),
             # we're mimicking plone.supermodel here so let's us
             # same module
             __module__='plone.supermodel.generated',
-            attrs=self.get_tile_fields(tile_id)
+            attrs=fields
         )
+        schema.setTaggedValue(WIDGETS_KEY, widget_tags)
+        return schema
 
     @forever.memoize
     def get_template(self, tile_id):
-        print('load template {}'.format(tile_id))
         tiles_directory = self.get_tile_directory()
         tile_folder = tiles_directory[tile_id]
         fi = tile_folder['template.html']
@@ -219,46 +335,6 @@ def get_tile_manager(request=None):
                     }
             request.environ[cache_key] = _cache[item_cache_key]['value']
     return request.environ[cache_key]
-
-
-def ChoiceFactory(**options):
-    if 'vocabulary' not in options:
-        options['vocabulary'] = SimpleVocabulary.fromValues([])
-    else:
-        options['vocabulary'] = SimpleVocabulary.fromValues(options['vocabulary'])
-    return schema.Choice(**options)
-
-
-def ArrayFactory(**options):
-    if 'value_type' not in options:
-        options['value_type'] = schema.TextLine()
-    return schema.List(**options)
-
-
-def ObjectFactory(**options):
-    if 'value_type' not in options:
-        options['value_type'] = schema.TextLine()
-    if 'key_type' not in options:
-        options['key_type'] = schema.TextLine()
-    return schema.Dict(**options)
-
-
-_field_type_mapping = {
-    'text': schema.TextLine,
-    'int': schema.Int,
-    'float': schema.Float,
-    'decimal': schema.Decimal,
-    'datetime': schema.Datetime,
-    'date': schema.Date,
-    'timedelta': schema.Timedelta,
-    'time': schema.Time,
-    'password': schema.Password,
-    'boolean': schema.Bool,
-    'choice': ChoiceFactory,
-    'uri': schema.URI,
-    'dottedname': schema.DottedName,
-    'array': ArrayFactory,
-}
 
 
 class AddForm(add.DefaultAddForm):
