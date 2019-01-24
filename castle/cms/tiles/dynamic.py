@@ -1,4 +1,5 @@
 import json
+from plone.app.textfield import RichText
 import logging
 import time
 
@@ -47,12 +48,6 @@ def ChoiceFieldFactory(**options):
     return schema.Choice(**options)
 
 
-def ArrayFieldFactory(**options):
-    if 'value_type' not in options:
-        options['value_type'] = schema.TextLine()
-    return schema.List(**options)
-
-
 def validate_image(val):
     if val and len(val) != 1:
         raise Invalid("Must select 1 image")
@@ -71,38 +66,16 @@ def validate_content(val):
     return True
 
 
-def ImageFactory(**options):
-    options['constraint'] = validate_image
-    options['value_type'] = schema.Choice(
-        vocabulary='plone.app.vocabularies.Catalog'
-    )
-    return schema.List(**options)
-
-
-def ImagesFactory(**options):
-    options['value_type'] = schema.Choice(
-        vocabulary='plone.app.vocabularies.Catalog'
-    )
-    return schema.List(**options)
-
-
-def ResourceFactory(**options):
-    options['constraint'] = validate_content
-    options['value_type'] = schema.Choice(
-        vocabulary='plone.app.vocabularies.Catalog'
-    )
-    return schema.List(**options)
-
-
-def ResourcesFactory(**options):
-    options['value_type'] = schema.Choice(
-        vocabulary='plone.app.vocabularies.Catalog'
-    )
-    return schema.List(**options)
-
-
 FIELD_TYPE_MAPPING = {
     'text': schema.TextLine,
+    'richtext': {
+        'factory': RichText,
+        'options': {
+            'default_mime_type': 'text/html',
+            'output_mime_type': 'text/html',
+            'allowed_mime_types': ('text/html',),
+        }
+    },
     'int': schema.Int,
     'float': schema.Float,
     'decimal': schema.Decimal,
@@ -115,22 +88,50 @@ FIELD_TYPE_MAPPING = {
     'choice': ChoiceFieldFactory,
     'uri': schema.URI,
     'dottedname': schema.DottedName,
-    'array': ArrayFieldFactory,
+    'array': {
+        'factory': schema.List,
+        'options': {
+            'value_type': schema.TextLine()
+        }
+    },
     'image': {
-        'factory': ImageFactory,
-        'widget': ImageRelatedItemFieldWidget
+        'factory': schema.List,
+        'widget': ImageRelatedItemFieldWidget,
+        'options': {
+            'constraint': validate_image,
+            'value_type': schema.Choice(
+                vocabulary='plone.app.vocabularies.Catalog'
+            )
+        }
     },
     'images': {
-        'factory': ImagesFactory,
-        'widget': ImageRelatedItemsFieldWidget
+        'factory': schema.List,
+        'widget': ImageRelatedItemsFieldWidget,
+        'options': {
+            'value_type': schema.Choice(
+                vocabulary='plone.app.vocabularies.Catalog'
+            )
+        }
     },
     'resources': {
-        'factory': ResourcesFactory,
-        'widget': RelatedItemsFieldWidget
+        'factory': schema.List,
+        'widget': RelatedItemsFieldWidget,
+        'options': {
+            'constraint': validate_content,
+            'value_type': schema.Choice(
+                vocabulary='plone.app.vocabularies.Catalog'
+            )
+        }
     },
     'resource': {
-        'factory': ResourceFactory,
-        'widget': RelatedItemFieldWidget
+        'factory': schema.List,
+        'widget': RelatedItemFieldWidget,
+        'options': {
+            'constraint': validate_content,
+            'value_type': schema.Choice(
+                vocabulary='plone.app.vocabularies.Catalog'
+            )
+        }
     }
 }
 
@@ -262,6 +263,8 @@ class TileManager(object):
             if isinstance(factory, dict):
                 if 'widget' in factory:
                     widget_tags[field_name] = factory['widget']
+                if 'options' in factory:
+                    data.update(factory['options'])
                 factory = factory['factory']
             fields[field_name] = factory(**data)
 
