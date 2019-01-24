@@ -155,7 +155,6 @@ Available field options:
 - `type`: field type(see below for available types)
 - `default`: default value for the field
 - `required`: if a value is required or not. Default to `true`
-- `widget`: 
 
 
 Available field types:
