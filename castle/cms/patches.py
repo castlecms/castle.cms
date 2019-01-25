@@ -3,21 +3,24 @@ from time import time
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms import authentication, cache
+from castle.cms import authentication
+from castle.cms import cache
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
-from OFS.CopySupport import (CopyError, _cb_decode, _cb_encode, eInvalid,
-                             eNoData)
-from plone import api
+from OFS.CopySupport import CopyError
+from OFS.CopySupport import _cb_decode
+from OFS.CopySupport import _cb_encode
+from OFS.CopySupport import eInvalid
+from OFS.CopySupport import eNoData
 from plone.keyring.interfaces import IKeyManager
-from plone.registry.interfaces import IRegistry
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
-from Products.CMFPlone.interfaces import ITinyMCESchema
 from ZODB.POSException import ConnectionStateError
-from zope.component import getGlobalSiteManager, getUtility, queryUtility
+from zope.component import getGlobalSiteManager
+from zope.component import queryUtility
 from zope.interface import implementer
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -27,48 +30,6 @@ def HideSiteLayoutFields_update(self):
     we don't want to hide these fields
     """
     return
-
-
-_rich_text_widget_types = (
-    'plone_app_z3cform_wysiwyg_widget_WysiwygWidget',
-    'plone_app_z3cform_wysiwyg_widget_WysiwygFieldWidget',
-    'plone_app_widgets_dx_RichTextWidget',
-    'plone_app_z3cform_widget_RichTextFieldWidget',
-
-)
-
-
-def MosaicRegistry_parseRegistry(self):
-    cache_key = '%s-mosaic-registry' % '/'.join(
-        api.portal.get().getPhysicalPath()[1:])
-    try:
-        result = cache.get(cache_key)
-    except KeyError:
-        result = self._old_parseRegistry()
-        cache.set(cache_key, result, 60 * 2)  # cache for 2 minutes
-
-    registry = getUtility(IRegistry)
-    settings = registry.forInterface(
-        ITinyMCESchema, prefix="plone", check=False)
-    if settings.libraries_spellchecker_choice != 'AtD':
-        return result
-
-    # add atd config to toolbar dynamically
-    mos_settings = result['plone']['app']['mosaic']
-    mos_settings['richtext_toolbar']['AtD'] = {
-        'category': u'actions',
-        'name': u'toolbar-AtD',
-        'weight': 0,
-        'favorite': False,
-        'label': u'After the deadline',
-        'action': u'AtD',
-        'icon': False
-    }
-    for widget_type in _rich_text_widget_types:
-        mos_settings['widget_actions'][widget_type]['actions'].append('toolbar-AtD')  # noqa
-    mos_settings['structure_tiles']['text']['available_actions'].append('toolbar-AtD')  # noqa
-    mos_settings['app_tiles']['plone_app_standardtiles_rawhtml']['available_actions'].append('toolbar-AtD')  # noqa
-    return result
 
 
 if not hasattr(ElasticSearchCatalog, 'original_searchResults'):

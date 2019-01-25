@@ -1,4 +1,5 @@
 import base64
+import json
 import re
 import sys
 import unittest
@@ -6,22 +7,27 @@ from cStringIO import StringIO
 
 import transaction
 from castle.cms import install
-from plone.app.testing import (MOCK_MAILHOST_FIXTURE, PLONE_FIXTURE,
-                               FunctionalTesting, IntegrationTesting,
-                               PloneSandboxLayer, applyProfile)
-from plone.app.robotframework import AutoLogin, RemoteLibraryLayer
+from plone.app.robotframework import AutoLogin
+from plone.app.robotframework import RemoteLibraryLayer
+from plone.app.robotframework.content import Content
+from plone.app.robotframework.genericsetup import GenericSetup
+from plone.app.robotframework.i18n import I18N
+from plone.app.robotframework.mailhost import MockMailHost
+from plone.app.robotframework.quickinstaller import QuickInstaller
+from plone.app.robotframework.server import Zope2ServerRemote
+from plone.app.robotframework.users import Users
+from plone.app.testing import MOCK_MAILHOST_FIXTURE
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import FunctionalTesting
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import applyProfile
 # from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.testing import z2
-from plone.app.robotframework.quickinstaller import QuickInstaller
-from plone.app.robotframework.mailhost import MockMailHost
-from plone.app.robotframework.i18n import I18N
-from plone.app.robotframework.genericsetup import GenericSetup
-from plone.app.robotframework.content import Content
-from plone.app.robotframework.users import Users
-from plone.app.robotframework.server import Zope2ServerRemote
 from Products.CMFPlone.resources.browser.combine import combine_bundles
 from zope.configuration import xmlconfig
-from zope.globalrequest import clearRequest, setRequest
+from zope.globalrequest import clearRequest
+from zope.globalrequest import setRequest
 from ZPublisher import HTTPResponse
 
 
@@ -145,7 +151,8 @@ class BaseTest(unittest.TestCase):
         self.request = self.layer['request']
 
     def publish(self, path, basic=None, env=None, extra=None,
-                request_method='GET', stdin=None, handle_errors=True):
+                request_method='GET', content=None, handle_errors=True,
+                username=None, password=None):
         """
         Mostly pulled from Testing.functional
         """
@@ -174,9 +181,17 @@ class BaseTest(unittest.TestCase):
 
         if basic:
             env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring(basic)
+        elif username is not None and password is not None:
+            env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring('{}:{}'.format(
+                username, password
+            ))
 
-        if stdin is None:
-            stdin = StringIO()
+        stdin = StringIO()
+        if content is not None:
+            if type(content) in (list, dict):
+                content = json.dumps(content)
+            stdin.write(content)
+            stdin.seek(0)
 
         outstream = StringIO()
         response = Response(stdout=outstream, stderr=sys.stderr)

@@ -13,6 +13,7 @@
 
   <i18n:registerTranslations directory="locales" />
 
+  <!-- dependencies -->
   <include package="z3c.jbot" />
   <include package="plone.app.mosaic" />
   <include package="Products.PloneKeywordManager" />
@@ -90,17 +91,18 @@
   <include zcml:condition="installed collective.easyform" package=".easyform" />
 
   <include package="z3c.unconfigure" file="meta.zcml" />
+
+  <!-- Cache storage configuration -->
   <unconfigure>
     <utility component="plone.memoize.ram.choose_cache" provides="plone.memoize.interfaces.ICacheChooser" />
   </unconfigure>
-
   <utility component=".cache.get_client" provides="plone.memoize.interfaces.ICacheChooser" />
 
+  <!-- vocabularies -->
   <utility
     component=".vocabularies.LocationsVocabulary"
     name="castle.cms.vocabularies.Locations"
     />
-
   <utility
     component=".vocabularies.EmailCategoryVocabulary"
     name="castle.cms.vocabularies.EmailCategories"
@@ -192,7 +194,6 @@
  <cmf:registerDirectory name="skins" directory="skins" recursive="True" />
 
  <!-- locking overrides to deal with issues where you can not override a lock-->
- <include package="z3c.unconfigure" file="meta.zcml" />
  <unconfigure>
    <adapter factory="plone.locking.lockable.TTWLockable" />
  </unconfigure>

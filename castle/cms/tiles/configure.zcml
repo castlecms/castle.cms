@@ -428,4 +428,61 @@
     factory=".existing.SimpleView"
     />
 
+  <!-- 
+  Dynamic tiles implementation
+  -->
+  <plone:tile
+    name="castle.cms.dynamic"
+    title="Dynamic tile"
+    class=".dynamic.DynamicTile"
+    schema=".dynamic.IDynamicTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
+
+  <adapter
+    for="zope.annotation.interfaces.IAnnotatable
+          castle.cms.interfaces.ICastleLayer
+          plone.tiles.interfaces.ITileType"
+    provides="plone.app.tiles.interfaces.ITileAddView"
+    factory=".dynamic.AddView"
+    name="castle.cms.dynamic"
+    />
+
+  <class class=".dynamic.AddView">
+    <require
+      permission="cmf.ModifyPortalContent"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
+  <configure package="plone.app.tiles.browser">
+    <browser:page
+      name="add-tile"
+      for="zope.annotation.interfaces.IAnnotatable"
+      permission="cmf.ModifyPortalContent"
+      class="castle.cms.tiles.dynamic.AddTileTraversal"
+      layer="castle.cms.interfaces.ICastleLayer"
+      template="add.pt"
+      />
+  </configure>
+
+  <adapter
+    for="zope.annotation.interfaces.IAnnotatable
+         castle.cms.interfaces.ICastleLayer
+         plone.tiles.interfaces.ITileType"
+    provides="plone.app.tiles.interfaces.ITileEditView"
+    factory=".dynamic.EditView"
+    name="castle.cms.dynamic"
+    />
+
+  <class class=".dynamic.EditView">
+    <require
+      permission="cmf.ModifyPortalContent"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
 </configure>

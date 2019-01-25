@@ -1,10 +1,13 @@
 Changelog
 =========
 
-2.3.9 (unreleased)
+2.4.0 (unreleased)
 ------------------
 
 New:
+
+- Implement being able to add tiles from inside your theme folder
+  [vangheem]
 
 - Implement new `Query Choice` field for collective.easyform which
   allows you to specify a query to retrieve values from. In order to use,

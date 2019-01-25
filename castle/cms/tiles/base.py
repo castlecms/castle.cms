@@ -136,8 +136,9 @@ class BaseTile(Tile):
             if hasattr(self.context, 'getPhysicalPath'):
                 path = self.context.getPhysicalPath()
             logger.error(
-                'Error rendering tile on context: %s, data: %s,\n%s' % (
+                'Error rendering tile on context: %s, url: %s, data: %s,\n%s' % (
                     '/'.join(path),
+                    self.request.ACTUAL_URL,
                     repr(self.data),
                     traceback.format_exc()))
             return """<html><body>
