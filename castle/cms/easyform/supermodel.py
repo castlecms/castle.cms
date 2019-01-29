@@ -30,7 +30,7 @@ class QueryChoiceHandler(plone.supermodel.exportimport.ChoiceHandler):
         return super(QueryChoiceHandler, self)._constructField(attributes)
 
     def write(self, field, name, type, elementName='field'):
-        element = super(QueryChoiceHandler, self).write(
+        element = super(plone.supermodel.exportimport.ChoiceHandler, self).write(
             field,
             name,
             type,

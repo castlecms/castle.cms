@@ -4,7 +4,8 @@ Changelog
 2.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix adding Query Choice easyform field
+  [vangheem]
 
 
 2.4.0 (2019-01-28)
