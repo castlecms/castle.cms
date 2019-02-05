@@ -75,13 +75,17 @@ img.save('logo.ico', sizes=icon_sizes)
         scale = None
         if 'scale' in self.request.form:
             try:
-                scale = int(self.request.form['scale'])
+                scale = min(
+                    abs(int(self.request.form['scale'])), 10000)
             except Exception:
                 pass
         data = self.get_data()
         if data:
             if scale is not None:
-                data = self.scale_data(data, scale)
+                if scale in self.allowed_sizes:
+                    data = self.scale_data(data, scale)
+                else:
+                    raise NotFound
             return NamedImage(data=data, filename=self.filename)
 
 
