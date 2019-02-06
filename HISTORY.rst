@@ -4,6 +4,9 @@ Changelog
 2.4.1 (unreleased)
 ------------------
 
+- Fix bugs with getting site icon
+  [vangheem]
+
 - Fix adding Query Choice easyform field
   [vangheem]
 
