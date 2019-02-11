@@ -80,6 +80,8 @@ setup(
         'html2text',
         'pycountry',
         'tendo',
+        'pylru',
+        'sqlalchemy',
 
         # misc
         'z3c.unconfigure',
@@ -125,6 +127,7 @@ setup(
       castle-crawler = castle.cms.cron:crawler
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
+      link-report = castle.cms.cron:link_report
       """,
     include_package_data=True,
     zip_safe=False,

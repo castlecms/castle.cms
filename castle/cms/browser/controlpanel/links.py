@@ -1,0 +1,136 @@
+import csv
+import json
+import os
+from io import BytesIO
+
+import sqlalchemy.exc
+from castle.cms import linkreporter
+from castle.cms.linkreporter import Link
+from castle.cms.linkreporter import Url
+from Products.Five import BrowserView
+
+
+class LinksControlPanel(BrowserView):
+
+    label = 'Link report'
+    description = 'Report on crawled site links'
+
+    page_size = 20
+    _broken_count = None
+    _page = None
+
+    def __call__(self):
+        self.session = linkreporter.get_session()
+        if 'links_of' in self.request.form:
+            links = []
+            for link in self.session.query(Link).filter(
+                    Link.site_id == self.context.getId(),
+                    Link.url_to == self.request.form['links_of']).limit(50):
+                links.append(link.url_from)
+            self.request.response.setHeader('Content-type', 'application/json')
+            return json.dumps(links)
+        elif self.request.form.get('export') == 'true':
+            return self.csv_export()
+        return super(LinksControlPanel, self).__call__()
+
+    @property
+    def configured(self):
+        return os.environ.get('LINK_REPORT_DB', 'sqlite://') != 'sqlite://'
+
+    def csv_export(self):
+        output = BytesIO()
+        writer = csv.writer(output)
+
+        writer.writerow(['URL', 'From URL', 'Status code'])
+        for link, url in self.session.query(Link, Url.url).join(
+                Url, Url.url == Link.url_to).filter(
+                    Link.site_id == self.context.getId(),
+                    ~Url.status_code.in_([-1, 200, 301, 302, 999, 429, 524])
+                ):
+            writer.writerow([
+                link.url_to,
+                link.url_from,
+                link._url_to.status_code
+            ])
+
+        writer.writerow([])
+        writer.writerow([])
+        writer.writerow([])
+
+        for name, value in self.get_summary().items():
+            if name not in ('errors',):
+                writer.writerow([name, value, ''])
+
+        resp = self.request.response
+        resp.setHeader('Content-Disposition', 'attachment; filename=broken-links.csv')
+        resp.setHeader('Content-Type', 'text/csv')
+        output.seek(0)
+        return output.read()
+
+    def get_broken_query(self):
+        return self.session.query(Url, Link.url_to).join(
+            Link, Link.url_to == Url.url).filter(
+                Link.site_id == self.context.getId(),
+                ~Url.status_code.in_([-1, 200, 301, 302, 999, 429, 524])
+            )
+
+    @property
+    def broken_count(self):
+        if self._broken_count is not None:
+            return self._broken_count
+
+        query = self.get_broken_query()
+        try:
+            self._broken_count = query.count()
+        except sqlalchemy.exc.OperationalError as ex:
+            if 'no such table' in ex.message:
+                linkreporter.init()
+                self._broken_count = query.count()
+            raise
+        return self._broken_count
+
+    @property
+    def page(self):
+        try:
+            return int(self.request.form.get('page', '0'))
+        except Exception:
+            return 0
+
+    def get_summary(self):
+        try:
+            return {
+                'links': '{:,}'.format(self.session.query(Link).filter(
+                    Link.site_id == self.context.getId()
+                ).count()),
+                'urls': '{:,}'.format(self.session.query(Url, Link.url_to).join(
+                    Link, Link.url_to == Url.url).filter(
+                        Link.site_id == self.context.getId()
+                    ).distinct(Url.url).count()),
+                'unchecked': '{:,}'.format(self.session.query(Url, Link.url_to).join(
+                    Link, Link.url_to == Url.url).filter(
+                        Link.site_id == self.context.getId(),
+                        Url.status_code == -1,
+                        Url.parse_error == None  # noqa
+                    ).count()),
+                'errors': '{:,}'.format(self.session.query(Url, Link.url_to).join(
+                    Link, Link.url_to == Url.url).filter(
+                        Link.site_id == self.context.getId(),
+                        Url.status_code == -1,
+                        Url.parse_error != None
+                    ).count()),
+                'broken': '{:,}'.format(self.broken_count),
+            }
+        except sqlalchemy.exc.OperationalError as ex:
+            if 'no such table' in ex.message:
+                linkreporter.init()
+                return self.get_summary()
+            raise
+
+    def get_broken(self):
+        offset = self.page * self.page_size
+        items = [u[0] for u in self.get_broken_query().order_by(
+                 Url.last_checked_date.desc()).offset(offset).limit(self.page_size)]
+        return {
+            'items': items,
+            'total': self.broken_count
+        }

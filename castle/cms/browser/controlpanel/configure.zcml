@@ -128,6 +128,15 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  
+  <browser:page
+    name="links-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".links.LinksControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/links.pt"
+    />
 
   <!-- overridding so we can customize styles, remove buttons -->
   <browser:page
