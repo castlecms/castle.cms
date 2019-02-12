@@ -4,7 +4,8 @@ Changelog
 2.4.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix cache invalidation with jbot on production
+  [vangheem]
 
 
 2.4.1 (2019-02-06)
