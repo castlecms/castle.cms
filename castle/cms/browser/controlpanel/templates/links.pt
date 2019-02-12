@@ -6,6 +6,43 @@
       metal:use-macro="context/prefs_main_template/macros/master"
       i18n:domain="plone">
 
+  <metal:javascript fill-slot="javascript_head_slot">
+  <script>
+  $(document).ready(function(){
+
+  var portalUrl = $('body').attr('data-portal-url');
+  var delay=750, setTimeoutConst;
+  $('.broken-links tbody tr').hover(function() {
+    var el = this;
+    setTimeoutConst = setTimeout(function() {
+      var targetUrl = $(el).attr('data-url');
+      var $td = $(el).find('.url');
+      var $result = $td.find('.result');
+      if($result.size() > 0){
+        return;
+      }
+      $.get(portalUrl + '/@@links-controlpanel', {
+        links_of: targetUrl
+      }, function(resp){
+        var result = document.createElement('ul');
+        result.className = 'result';
+        resp.forEach(function(url) {
+          var el = document.createElement('li');
+          el.innerText = url;
+          result.appendChild(el);
+        });
+        $td.append(result);
+      }, 'json');
+    }, delay);
+  }, function() {
+    clearTimeout(setTimeoutConst);
+  });
+
+
+  });
+  </script>
+  </metal:javascript>
+
 <body>
 
 <metal:main metal:fill-slot="prefs_configlet_main">
@@ -78,20 +115,20 @@
           </thead>
           <tbody>
             <tal:broken tal:repeat="broken_item python: broken['items']">
-              <tr data-url="${broken_item/url}">
+              <tr data-url="${broken_item/url_to}">
                 <td class="url">
-                  ${broken_item/url}
+                  ${broken_item/url_to}
                 </td>
                 <td class="pat-moment"
                     data-pat-moment="format:relative"
-                    data-date="${broken_item/last_checked_date/isoformat}Z">${broken_item/last_checked_date/isoformat}</td>
-                <td>${broken_item/status_code}</td>
+                    data-date="${broken_item/_url_to/last_checked_date/isoformat}Z">${broken_item/_url_to/last_checked_date/isoformat}</td>
+                <td>${broken_item/_url_to/status_code}</td>
               </tr>
             </tal:broken>
           </tbody>
         </table>
-        <nav aria-label="Broken urls paging">
-          <ul class="pagination justify-content-center">
+        <div class="pagination-centered listingBar">
+          <ul class="castle-pagination">
             <tal:page tal:repeat="page python: range(min(broken['total'] / view.page_size, 20))">
               <li class="page-item"
                   tal:attributes="class python: view.page == page and 'page-item active' or 'page-item'">
@@ -100,43 +137,7 @@
               </li>
             </tal:page>
           </ul>
-        </nav>
-
-        <script>
-  $(document).ready(function(){
-
-
-  var portalUrl = $('body').attr('data-portal-url');
-  var delay=750, setTimeoutConst;
-  $('.broken-links tbody tr').hover(function() {
-    var el = this;
-    setTimeoutConst = setTimeout(function() {
-      var targetUrl = $(el).attr('data-url');
-      var $td = $(el).find('.url');
-      var $result = $td.find('.result');
-      if($result.size() > 0){
-        return;
-      }
-      $.get(portalUrl + '/@@links-controlpanel', {
-        links_of: targetUrl
-      }, function(resp){
-        var result = document.createElement('ul');
-        result.className = 'result';
-        resp.forEach(function(url) {
-          var el = document.createElement('li');
-          el.innerText = url;
-          result.appendChild(el);
-        });
-        $td.append(result);
-      }, 'json');
-    }, delay);
-  }, function() {
-    clearTimeout(setTimeoutConst);
-  });
-
-
-  });
-        </script>
+        </div>
       </div>
     </div>
 

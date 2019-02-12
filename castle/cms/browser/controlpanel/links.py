@@ -43,7 +43,6 @@ class LinksControlPanel(BrowserView):
         return os.environ.get('LINK_REPORT_DB', 'sqlite://') != 'sqlite://'
 
     def csv_export(self):
-        public_url = self.context.portal_registry['plone.public_url']
         output = BytesIO()
         writer = csv.writer(output)
 
@@ -55,9 +54,6 @@ class LinksControlPanel(BrowserView):
                     Link.site_id == self.context.getId(),
                     Url.last_checked_date > datetime(1985, 1, 1),
                     ~Url.status_code.in_([200, 999, 429, 524]),
-                    or_(
-                        Url.final_url == None,  # noqa
-                        Url.final_url.like("{}%".format(public_url)))
                 ).order_by(Url.url):
 
             if last != link.url_to:
@@ -92,11 +88,11 @@ class LinksControlPanel(BrowserView):
         return output.read()
 
     def get_broken_query(self):
-        return self.session.query(Url, Link.url_to).join(
-            Link, Link.url_to == Url.url).filter(
+        return self.session.query(Link, Url.url).join(
+            Url, Link.url_to == Url.url).filter(
                 Link.site_id == self.context.getId(),
                 ~Url.status_code.in_([-1, 200, 999, 429, 524])
-            )
+        )
 
     @property
     def broken_count(self):
@@ -139,7 +135,7 @@ class LinksControlPanel(BrowserView):
                 'errors': '{:,}'.format(self.session.query(Url, Link.url_to).join(
                     Link, Link.url_to == Url.url).filter(
                         Link.site_id == self.context.getId(),
-                        Url.status_code == -1,
+                        Url.status_code.in_([-2, -200, -599, -301]),
                         Url.parse_error != None
                     ).count()),
                 'broken': '{:,}'.format(self.broken_count),
@@ -152,7 +148,7 @@ class LinksControlPanel(BrowserView):
 
     def get_broken(self):
         offset = self.page * self.page_size
-        items = [u[0] for u in self.get_broken_query().order_by(
+        items = [l[0] for l in self.get_broken_query().order_by(
                  Url.last_checked_date.desc()).offset(offset).limit(self.page_size)]
         return {
             'items': items,

@@ -185,7 +185,7 @@ class Reporter(object):
         if not self.valid:
             return
 
-        for _ in range(int(math.ceil(self.batch_size / 2))):
+        for _ in range(int(math.ceil(self.batch_size / 3))):
             thread = threading.Thread(target=parse_url_worker)
             thread.start()
             self.threads.append(thread)
