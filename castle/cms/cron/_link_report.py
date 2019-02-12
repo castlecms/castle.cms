@@ -12,8 +12,6 @@ def run_link_report(site):
         reporter()
     except KeyboardInterrupt:
         reporter.join()
-    finally:
-        reporter.join()
 
 
 def run(app):

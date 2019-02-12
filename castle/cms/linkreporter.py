@@ -185,7 +185,7 @@ class Reporter(object):
         if not self.valid:
             return
 
-        for _ in range(int(math.ceil(self.batch_size / 4))):
+        for _ in range(int(math.ceil(self.batch_size / 2))):
             thread = threading.Thread(target=parse_url_worker)
             thread.start()
             self.threads.append(thread)
@@ -207,7 +207,7 @@ class Reporter(object):
 
         # attempt to retry errors... just once
         self.session.query(Url).filter(
-            Url.status_code.in_([-1, -2, 400, 403, 401])).update(
+            Url.status_code.in_([-1, -2, 400, 403, 401, 429])).update(
             {'last_checked_date': datetime(1984, 1, 1)},
             synchronize_session=False)
         self.session.expunge_all()
@@ -215,6 +215,13 @@ class Reporter(object):
         while self.running:
             if self.consume() == 0:
                 break
+
+        self.join()
+        while _consumer_queue.qsize() > 0:
+            url, resp = _consumer_queue.get()
+            if url in self.cache:
+                url = self.cache.pop(url)
+                self.check_url(url, resp)
 
     def consume(self):
         urls = self.get_next(self.batch_size)
@@ -226,9 +233,6 @@ class Reporter(object):
         while _worker_queue.qsize() > int(math.ceil(self.batch_size / 4)):
             # let it work while we keep moving
             time.sleep(0.1)
-            # active_threads = len([t for t in self.threads if t.is_alive()])
-            # if active_threads < (self.batch_size / 2):
-            #     print('running: {}'.format(active_threads))
 
         while _consumer_queue.qsize() > 0:
             url, resp = _consumer_queue.get()
@@ -256,12 +260,15 @@ class Reporter(object):
             logger.warning('({}/{}/{}/{}): Processing ({}) {}'.format(
                 self.found, self.queued, self.done, self.error,
                 resp.status_code, url.url))
+            if resp.status_code == 429:
+                # slow it down since we're getting limited...
+                time.sleep(0.2)
             try:
                 override_status_code = None
                 if '/acl_users/' in resp.url or '?came_from=' in resp.url:
                     override_status_code = 403
                 elif resp.status_code == 200:
-                    if (url.url.startswith(self.base) and
+                    if (resp.url.startswith(self.base) and
                             'html' in resp.headers.get('Content-Type', '')):
                         self.parse_response(resp, url.url)
 
@@ -273,7 +280,6 @@ class Reporter(object):
                 resp.close()
 
     def update_url(self, url, resp=None, exception=None, override_status_code=None):
-        # XXX should we handle 429 errors?
         url.last_checked_date = datetime.utcnow()
         final_url = None
         if resp is not None:
@@ -301,7 +307,15 @@ class Reporter(object):
             raise
 
     def parse_response(self, resp, from_url):
+        base = resp.url
         dom = html.fromstring(resp.content)
+        base_tag = dom.cssselect('base')
+        if len(base_tag) > 0:
+            base_tag = base_tag[0]
+            base = base_tag.attrib('href')
+            if not base.startswith('http://') and not base.startswith('https://'):
+                base = urlparse.urljoin(resp.url, base)
+
         for anchor in dom.cssselect('a,img'):
             if 'href' not in anchor.attrib and 'src' not in anchor:
                 continue
@@ -311,7 +325,7 @@ class Reporter(object):
                 continue
             if not url.startswith('http://') and not url.startswith('https://'):
                 # make absolute url
-                url = urlparse.urljoin(from_url, url)
+                url = urlparse.urljoin(base, url)
 
             drop = False
             for ignore in _ignored:
