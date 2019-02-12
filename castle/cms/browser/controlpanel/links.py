@@ -9,6 +9,7 @@ from castle.cms import linkreporter
 from castle.cms.linkreporter import Link
 from castle.cms.linkreporter import Url
 from Products.Five import BrowserView
+from sqlalchemy import or_
 
 
 class LinksControlPanel(BrowserView):
@@ -42,33 +43,38 @@ class LinksControlPanel(BrowserView):
         return os.environ.get('LINK_REPORT_DB', 'sqlite://') != 'sqlite://'
 
     def csv_export(self):
+        public_url = self.context.portal_registry['plone.public_url']
         output = BytesIO()
         writer = csv.writer(output)
 
-        writer.writerow(['URL', 'From URL', 'Status code', 'Checked'])
+        writer.writerow(['URL', 'From URL', 'Status code', 'Checked', 'Redirected url'])
         last = None
         count = 0
         for link, url in self.session.query(Link, Url.url).join(
                 Url, Url.url == Link.url_to).filter(
                     Link.site_id == self.context.getId(),
                     Url.last_checked_date > datetime(1985, 1, 1),
-                    ~Url.status_code.in_([200, 999, 429, 524])
+                    ~Url.status_code.in_([200, 999, 429, 524]),
+                    or_(
+                        Url.final_url == None,  # noqa
+                        Url.final_url.like("{}%".format(public_url)))
                 ).order_by(Url.url):
 
-            if last != url.url:
-                if count > 100:
+            if last != link.url_to:
+                if count > 25:
                     writer.writerow(
-                        [last, '- Truncated {} entries...'.format(count - 100)])
-                last = url.url
+                        [last, '- Truncated {} entries...'.format(count - 25)])
+                last = link.url_to
                 count = 0
             count += 1
-            if count <= 100:
+            if count <= 25:
                 writer.writerow([
                     link.url_to,
                     link.url_from,
                     linkreporter.status_codes_info.get(
                         link._url_to.status_code, link._url_to.status_code),
-                    link._url_to.last_checked_date.isoformat()
+                    link._url_to.last_checked_date.isoformat(),
+                    link._url_from.final_url or ''
                 ])
 
         writer.writerow([])

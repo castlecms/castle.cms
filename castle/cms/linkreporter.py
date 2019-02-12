@@ -74,7 +74,7 @@ class Url(Base):
     content_length = Column(String, nullable=True)
     parse_error = Column(String, nullable=True)
     ssl_verified = Column(Boolean, default=True)
-    final_url = Column(String, nullable=True)
+    final_url = Column(String, nullable=True, index=True)
 
 
 class Link(Base):
@@ -281,7 +281,7 @@ class Reporter(object):
             url.content_type = resp.headers.get('Content-Type')
             url.content_length = resp.headers.get('Content-Length')
             url.parse_error = None
-            if url != resp.url:
+            if url.url != resp.url:
                 final_url = resp.url
         else:
             status_code = _exception_status_codes.get(type(exception), -1)
