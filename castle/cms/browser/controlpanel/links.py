@@ -29,10 +29,13 @@ class LinksControlPanel(BrowserView):
                     Link.url_to == self.request.form['links_of']).limit(50):
                 links.append(link.url_from)
             self.request.response.setHeader('Content-type', 'application/json')
-            return json.dumps(links)
+            resp = json.dumps(links)
         elif self.request.form.get('export') == 'true':
-            return self.csv_export()
-        return super(LinksControlPanel, self).__call__()
+            resp = self.csv_export()
+        else:
+            resp = super(LinksControlPanel, self).__call__()
+        self.session.close()
+        return resp
 
     @property
     def configured(self):
@@ -47,8 +50,9 @@ class LinksControlPanel(BrowserView):
                 Url, Url.url == Link.url_to).filter(
                     Link.site_id == self.context.getId(),
                     Url.last_checked_date > datetime(1985, 1, 1),
-                    ~Url.status_code.in_([200, 301, 302, 999, 429, 524])
+                    ~Url.status_code.in_([200, 999, 429, 524])
                 ).order_by(Url.last_checked_date.desc()):
+
             writer.writerow([
                 link.url_to,
                 link.url_from,
@@ -74,7 +78,7 @@ class LinksControlPanel(BrowserView):
         return self.session.query(Url, Link.url_to).join(
             Link, Link.url_to == Url.url).filter(
                 Link.site_id == self.context.getId(),
-                ~Url.status_code.in_([-1, 200, 301, 302, 999, 429, 524])
+                ~Url.status_code.in_([-1, 200, 999, 429, 524])
             )
 
     @property

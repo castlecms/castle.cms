@@ -55,6 +55,9 @@ _ignored = [
     'http://reddit.com/submit',
     'http://digg.com/submit',
     'http://www.stumbleupon.com/submit',
+    'http://www.linkedin.com/shareArticle',
+    'https://plus.google.com/share',
+    'http://twitter.com/intent'
 ]
 _ignored_views = ['@@search']
 _local = threading.local()
@@ -71,6 +74,7 @@ class Url(Base):
     content_length = Column(String, nullable=True)
     parse_error = Column(String, nullable=True)
     ssl_verified = Column(Boolean, default=True)
+    final_url = Column(String, nullable=True)
 
 
 class Link(Base):
@@ -113,7 +117,7 @@ def parse_url_worker():
         _worker_queue.task_done()
         try:
             resp = requests.get(
-                url, allow_redirects=False, timeout=10,
+                url, allow_redirects=True, timeout=10,
                 stream=True, verify=False, headers={
                     'User-Agent': USER_AGENT
                 })
@@ -124,13 +128,15 @@ def parse_url_worker():
 
 _exception_status_codes = {
     requests.exceptions.ConnectionError: -2,
-    requests.exceptions.ConnectTimeout: -599
+    requests.exceptions.ConnectTimeout: -599,
+    requests.exceptions.TooManyRedirects: -301
 }
 
-_sub_status_codes = {
+status_codes_info = {
     -2: 'Unknown connection error',
     -200: 'nodename nor servname provided, or not known',
-    -599: 'Connection timeout'
+    -599: 'Connection timeout',
+    -301: 'Too many redirects'
 }
 
 
@@ -151,10 +157,6 @@ class Reporter(object):
         self.queued = 0
         self.found = 0
         self.threads = []
-        for _ in range(self.batch_size / 2):
-            thread = threading.Thread(target=parse_url_worker)
-            thread.start()
-            self.threads.append(thread)
         self.cache = {}
 
     def join(self):
@@ -182,6 +184,11 @@ class Reporter(object):
     def __call__(self):
         if not self.valid:
             return
+
+        for _ in range(int(math.ceil(self.batch_size / 4))):
+            thread = threading.Thread(target=parse_url_worker)
+            thread.start()
+            self.threads.append(thread)
 
         try:
             # just make sure db is setup
@@ -216,7 +223,7 @@ class Reporter(object):
             self.cache[url.url] = url
             _worker_queue.put(url.url)
 
-        while _worker_queue.qsize() > math.ceil(self.batch_size / 4):
+        while _worker_queue.qsize() > int(math.ceil(self.batch_size / 4)):
             # let it work while we keep moving
             time.sleep(0.1)
             # active_threads = len([t for t in self.threads if t.is_alive()])
@@ -236,6 +243,10 @@ class Reporter(object):
 
     def check_url(self, url, resp):
         self.done += 1
+        if self.done % 500 == 0:
+            # clear cache every so often
+            self.session.expire_all()
+
         if isinstance(resp, Exception):
             self.error += 1
             logger.error(
@@ -247,14 +258,8 @@ class Reporter(object):
                 resp.status_code, url.url))
             try:
                 override_status_code = None
-                if resp.status_code in (301, 302):
-                    location = resp.headers.get('Location') or ''
-                    if location:
-                        if '/acl_users/' in location or '?came_from=' in location:
-                            override_status_code = 403
-                        else:
-                            self.add_link(
-                                resp.headers.get('Location'), url.url)
+                if '/acl_users/' in resp.url or '?came_from=' in resp.url:
+                    override_status_code = 403
                 elif resp.status_code == 200:
                     if (url.url.startswith(self.base) and
                             'html' in resp.headers.get('Content-Type', '')):
@@ -270,20 +275,24 @@ class Reporter(object):
     def update_url(self, url, resp=None, exception=None, override_status_code=None):
         # XXX should we handle 429 errors?
         url.last_checked_date = datetime.utcnow()
+        final_url = None
         if resp is not None:
             url.status_code = override_status_code or resp.status_code
             url.content_type = resp.headers.get('Content-Type')
             url.content_length = resp.headers.get('Content-Length')
             url.parse_error = None
+            if url != resp.url:
+                final_url = resp.url
         else:
             status_code = _exception_status_codes.get(type(exception), -1)
             if status_code == -2:
-                if _sub_status_codes[-200] in str(exception):
+                if status_codes_info[-200] in str(exception):
                     status_code = -200
             url.status_code = status_code
             url.content_type = None
             url.content_length = None
             url.parse_error = traceback.format_exc(exception)
+        url.final_url = final_url
         try:
             self.session.add(url)
             self.session.commit()
@@ -322,7 +331,7 @@ class Reporter(object):
 
             self.add_link(url, from_url)
 
-    @lrudecorator(10000)
+    @lrudecorator(5000)
     def add_url(self, url):
         error = False
         try:
@@ -350,7 +359,7 @@ class Reporter(object):
                 if error:
                     self.session.rollback()
 
-    @lrudecorator(10000)
+    @lrudecorator(5000)
     def add_link(self, url, from_url):
         if '/acl_users/' in url or '?came_from=' in url:
             # ignore parsing these guys
