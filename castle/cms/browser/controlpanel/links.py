@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+from datetime import datetime
 from io import BytesIO
 
 import sqlalchemy.exc
@@ -41,16 +42,18 @@ class LinksControlPanel(BrowserView):
         output = BytesIO()
         writer = csv.writer(output)
 
-        writer.writerow(['URL', 'From URL', 'Status code'])
+        writer.writerow(['URL', 'From URL', 'Status code', 'Checked'])
         for link, url in self.session.query(Link, Url.url).join(
                 Url, Url.url == Link.url_to).filter(
                     Link.site_id == self.context.getId(),
-                    ~Url.status_code.in_([-1, 200, 301, 302, 999, 429, 524])
-                ):
+                    Url.last_checked_date > datetime(1985, 1, 1),
+                    ~Url.status_code.in_([200, 301, 302, 999, 429, 524])
+                ).order_by(Url.last_checked_date.desc()):
             writer.writerow([
                 link.url_to,
                 link.url_from,
-                link._url_to.status_code
+                link._url_to.status_code,
+                link._url_to.last_checked_date.isoformat()
             ])
 
         writer.writerow([])
