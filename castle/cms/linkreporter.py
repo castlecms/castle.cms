@@ -207,7 +207,7 @@ class Reporter(object):
 
         # attempt to retry errors... just once
         self.session.query(Url).filter(
-            Url.status_code.in_([-1, -2, 403, 401])).update(
+            Url.status_code.in_([-1, -2, 400, 403, 401])).update(
             {'last_checked_date': datetime(1984, 1, 1)},
             synchronize_session=False)
         self.session.expunge_all()
