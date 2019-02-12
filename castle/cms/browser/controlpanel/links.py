@@ -56,7 +56,8 @@ class LinksControlPanel(BrowserView):
             writer.writerow([
                 link.url_to,
                 link.url_from,
-                link._url_to.status_code,
+                linkreporter.status_codes_info.get(
+                    link._url_to.status_code, link._url_to.status_code),
                 link._url_to.last_checked_date.isoformat()
             ])
 
