@@ -118,8 +118,20 @@ def parse_url_worker():
                     'User-Agent': USER_AGENT
                 })
         except Exception as ex:
-            resp = traceback.format_exc(ex)
+            resp = ex
         _consumer_queue.put((url, resp))
+
+
+_exception_status_codes = {
+    requests.exceptions.ConnectionError: -2,
+    requests.exceptions.ConnectTimeout: -599
+}
+
+_sub_status_codes = {
+    -2: 'Unknown connection error',
+    -200: 'nodename nor servname provided, or not known',
+    -599: 'Connection timeout'
+}
 
 
 class Reporter(object):
@@ -187,8 +199,11 @@ class Reporter(object):
                 break
 
         # attempt to retry errors... just once
-        self.session.query(Url).filter(Url.status_code == -1).update(
-            {'last_checked_date': datetime(1984, 1, 1)})
+        self.session.query(Url).filter(
+            Url.status_code.in_([-1, -2, 403, 401])).update(
+            {'last_checked_date': datetime(1984, 1, 1)},
+            synchronize_session=False)
+        self.session.expunge_all()
 
         while self.running:
             if self.consume() == 0:
@@ -221,22 +236,22 @@ class Reporter(object):
 
     def check_url(self, url, resp):
         self.done += 1
-        if isinstance(resp, str):
+        if isinstance(resp, Exception):
             self.error += 1
             logger.error(
                 'Error processing url: {}\n{}'.format(url.url, resp))
             self.update_url(url, None, exception=resp)
         else:
-            logger.warning('({}/{}/{}/{}): Processing {}'.format(
+            logger.warning('({}/{}/{}/{}): Processing ({}) {}'.format(
                 self.found, self.queued, self.done, self.error,
-                url.url))
+                resp.status_code, url.url))
             try:
                 override_status_code = None
                 if resp.status_code in (301, 302):
                     location = resp.headers.get('Location') or ''
                     if location:
                         if '/acl_users/' in location or '?came_from=' in location:
-                            override_status_code = 401
+                            override_status_code = 403
                         else:
                             self.add_link(
                                 resp.headers.get('Location'), url.url)
@@ -261,10 +276,14 @@ class Reporter(object):
             url.content_length = resp.headers.get('Content-Length')
             url.parse_error = None
         else:
-            url.status_code = -1
+            status_code = _exception_status_codes.get(type(exception), -1)
+            if status_code == -2:
+                if _sub_status_codes[-200] in str(exception):
+                    status_code = -200
+            url.status_code = status_code
             url.content_type = None
             url.content_length = None
-            url.parse_error = exception
+            url.parse_error = traceback.format_exc(exception)
         try:
             self.session.add(url)
             self.session.commit()
