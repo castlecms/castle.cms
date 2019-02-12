@@ -63,8 +63,10 @@ class Storage(object):
         return fs_path
 
     def get_filepath(self, filename):
+        modified = self.get_modified(filename)
         path = self._get_fs_path()
-        return os.path.join(path, filename)
+        return os.path.join(path, '{}-{}'.format(
+            int(modified), filename))
 
     def get_customizations(self):
         files = {}
