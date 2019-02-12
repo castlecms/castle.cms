@@ -46,20 +46,30 @@ class LinksControlPanel(BrowserView):
         writer = csv.writer(output)
 
         writer.writerow(['URL', 'From URL', 'Status code', 'Checked'])
+        last = None
+        count = 0
         for link, url in self.session.query(Link, Url.url).join(
                 Url, Url.url == Link.url_to).filter(
                     Link.site_id == self.context.getId(),
                     Url.last_checked_date > datetime(1985, 1, 1),
                     ~Url.status_code.in_([200, 999, 429, 524])
-                ).order_by(Url.last_checked_date.desc()):
+                ).order_by(Url.url):
 
-            writer.writerow([
-                link.url_to,
-                link.url_from,
-                linkreporter.status_codes_info.get(
-                    link._url_to.status_code, link._url_to.status_code),
-                link._url_to.last_checked_date.isoformat()
-            ])
+            if last != url.url:
+                if count > 100:
+                    writer.writerow(
+                        [last, '- Truncated {} entries...'.format(count - 100)])
+                last = url.url
+                count = 0
+            count += 1
+            if count <= 100:
+                writer.writerow([
+                    link.url_to,
+                    link.url_from,
+                    linkreporter.status_codes_info.get(
+                        link._url_to.status_code, link._url_to.status_code),
+                    link._url_to.last_checked_date.isoformat()
+                ])
 
         writer.writerow([])
         writer.writerow([])
