@@ -31,7 +31,7 @@ def upgrade(site):
         if profile_id.split(':')[0] in (
                 'Products.CMFPlacefulWorkflow', 'plone.app.iterate',
                 'plone.app.multilingual', 'Products.PloneKeywordManager',
-                'collective.easyform'):
+                'collective.easyform', 'plone.session'):
             continue
         if not profile_id.endswith(':default'):
             continue
