@@ -9,8 +9,8 @@ define([
   'castle-url/components/utils',
   'mockup-utils',
   'mockup-patterns-relateditems',
-  'castle-url/libs/moxie/bin/js/moxie'
-], function($, Base, R, FocalPointSelector, ImageEditor, cutils, utils, RelatedItems) {
+  'moxie'
+], function($, Base, R, FocalPointSelector, ImageEditor, cutils, utils, RelatedItems, mOxie) {
   "use strict";
 
   var D = R.DOM;
@@ -44,7 +44,7 @@ define([
 
     loadImage: function(asset){
       var that = this;
-      that.state.image = new mOxie.Image();
+      that.state.image = new mOxie.image.Image();
       utils.loading.show();
       that.state.image.onload = function() {
         // make a new image object for the downsize
@@ -64,7 +64,7 @@ define([
         that.props.exists = true;
 
         var blob = that.state.image.getAsBlob();
-        var resizedImg = new mOxie.Image();
+        var resizedImg = new mOxie.image.Image();
         resizedImg.onload = function(){
           resizedImg.onresize = function(){
             utils.loading.hide();
@@ -76,7 +76,11 @@ define([
               previewImage: resizedImg
             });
           };
-          resizedImg.downsize({width: 300});
+          resizedImg.resize({
+            width: 300,
+            type: 'image/png',
+            quality: 100
+          });
         };
         resizedImg.load(blob);
       };
@@ -105,10 +109,10 @@ define([
       ];
 
       var portalUrl = $('body').attr('data-portal-url');
-      mOxie.Env.swf_url = portalUrl + '/++plone++castle/libs/moxie/bin/flash/Moxie.min.swf';
-      mOxie.Env.xap_url = portalUrl + '/++plone++castle/libs/moxie/bin/silverlight/Moxie.min.xap';
+      mOxie.core.utils.Env.swf_url = portalUrl + '/++plone++castle/libs/moxie/bin/flash/Moxie.min.swf';
+      mOxie.core.utils.Env.xap_url = portalUrl + '/++plone++castle/libs/moxie/bin/silverlight/Moxie.min.xap';
 
-      var fileInput = new mOxie.FileInput({
+      var fileInput = new mOxie.file.FileInput({
         browse_button: that.refs.upload_btn.getDOMNode(),
         runtime_order: 'html5,flash,html4',
         multiple: false,
@@ -139,7 +143,7 @@ define([
       fileInput.init(); // initialize
 
       var dropEl = that.refs.droparea.getDOMNode();
-      var fileDrop = new mOxie.FileDrop({
+      var fileDrop = new mOxie.file.FileDrop({
         drop_zone: dropEl,
         accept: accept
       });
@@ -199,8 +203,8 @@ define([
     loadGif: function(image){
       var that = this;
       utils.loading.show();
-      var xhr = new mOxie.XMLHttpRequest();
-      var fd = new mOxie.FormData();
+      var xhr = new mOxie.xhr.XMLHttpRequest();
+      var fd = new mOxie.xhr.FormData();
       xhr.open('post', $('body').attr('data-base-url') + '/@@convert-to-png');
       fd.append('data', image.slice());
       xhr.onload = function() {

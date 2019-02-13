@@ -11,9 +11,9 @@ define([
   'underscore',
   'mockup-patterns-select2',
   'castle-url/components/content-browser',
-  'castle-url/libs/moxie/bin/js/moxie'
+  'moxie'
 ], function($, R, cutils, utils, ImageEditor, FocalPointSelector, _,
-            Select2, ContentBrowserComponent) {
+            Select2, ContentBrowserComponent, mOxie) {
   'use strict';
   var D = R.DOM;
 
@@ -80,7 +80,7 @@ define([
       var that = this;
       var file = that.state.blob || that.props.file;
       var width, height;
-      var img = new mOxie.Image();
+      var img = new mOxie.image.Image();
       img.onload = function() {
         width = img.width;
         height = img.height;
@@ -351,8 +351,8 @@ define([
         return;
       }
       utils.loading.show();
-      var xhr = new mOxie.XMLHttpRequest();
-      var fd = new mOxie.FormData();
+      var xhr = new mOxie.xhr.XMLHttpRequest();
+      var fd = new mOxie.xhr.FormData();
       xhr.open('post', $('body').attr('data-portal-url') + '/@@content-creator');
       xhr.responseType = 'json';
 
@@ -544,10 +544,10 @@ define([
       }
 
       var portalUrl = $('body').attr('data-portal-url');
-      mOxie.Env.swf_url = portalUrl + '/++plone++castle/libs/moxie/bin/flash/Moxie.min.swf';
-      mOxie.Env.xap_url = portalUrl + '/++plone++castle/libs/moxie/bin/silverlight/Moxie.min.xap';
+      mOxie.core.utils.Env.swf_url = portalUrl + '/++plone++castle/libs/moxie/bin/flash/Moxie.min.swf';
+      mOxie.core.utils.Env.xap_url = portalUrl + '/++plone++castle/libs/moxie/bin/silverlight/Moxie.min.xap';
 
-      var fileInput = new mOxie.FileInput({
+      var fileInput = new mOxie.file.FileInput({
         browse_button: that.refs.upload_btn.getDOMNode(),
         runtime_order: 'html5,flash,html4',
         multiple: true,
@@ -565,7 +565,7 @@ define([
       fileInput.init(); // initialize
 
       var dropEl = this.refs.droparea.getDOMNode();
-      var fileDrop = new mOxie.FileDrop({
+      var fileDrop = new mOxie.file.FileDrop({
         drop_zone: dropEl,
         // accept: accept
       });

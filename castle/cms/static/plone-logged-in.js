@@ -21,6 +21,13 @@ if (window.jQuery) {
   } );
 }
 
+/* moxie is using requirejs now but with bundles */
+requirejs.config({
+  bundles: {
+    'castle-url/libs/moxie/bin/js/moxie': ['moxie']
+  }
+});
+
 require([
   'jquery',
   'mockup-patterns-modal',

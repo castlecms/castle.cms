@@ -7,8 +7,8 @@ define([
   'castle-url/libs/react/react.min',
   'castle-url/components/image-focal-point-selector',
   'mockup-utils',
-  'castle-url/libs/moxie/bin/js/moxie'
-], function($, Base, _, R, FocalPointSelector, utils) {
+  'moxie'
+], function($, Base, _, R, FocalPointSelector, utils, mOxie) {
   'use strict';
 
   var D = R.DOM;
@@ -41,7 +41,7 @@ define([
       that.setState({
         loading: true
       });
-      that.state.image = new mOxie.Image();
+      that.state.image = new mOxie.image.Image();
       utils.loading.show();
       that.state.image.onload = function() {
         // make a new image object for the downsize
@@ -58,7 +58,7 @@ define([
         that.props.exists = true;
 
         var blob = that.state.image.getAsBlob();
-        var resizedImg = new mOxie.Image();
+        var resizedImg = new mOxie.image.Image();
         resizedImg.onload = function(){
           resizedImg.onresize = function(){
             utils.loading.hide();
