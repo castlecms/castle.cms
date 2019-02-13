@@ -9,7 +9,6 @@ from castle.cms import linkreporter
 from castle.cms.linkreporter import Link
 from castle.cms.linkreporter import Url
 from Products.Five import BrowserView
-from sqlalchemy import or_
 
 
 class LinksControlPanel(BrowserView):
