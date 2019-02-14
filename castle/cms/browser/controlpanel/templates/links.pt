@@ -61,15 +61,23 @@
       Portal status message
     </div>
 
-    <div id="content-core">
+    <div id="content-core" tal:define="summary view/get_summary">
       <div class="portalMessage warning" tal:condition="not: view/configured">
         <b>WARNING</b>:
         <p>You do not have "LINK_REPORT_DB" environment variable configured.</p>
       </div>
+      <div class="portalMessage warning" tal:condition="not: site/portal_registry/plone.public_url|nothing">
+        <b>WARNING</b>:
+        <p>You must configure your site's public url in order to properly check for broken links.</p>
+      </div>
+      <div class="portalMessage info" tal:condition="python: summary['links'] == '0'">
+        <b>INFO</b>:
+        <p>No links found. Make sure the "link-report" cron job is configured and running.</p>
+      </div>
 
       <div class="links-container" tal:condition="view/configured"
            tal:define="broken view/get_broken">
-        <table class="table" tal:define="summary view/get_summary">
+        <table class="table">
           <thead>
             <tr>
               <th>Status</th>
