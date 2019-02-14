@@ -1,3 +1,4 @@
+from castle.cms import defaults
 from castle.cms.tiles.base import BaseImagesTile
 from castle.cms.tiles.base import DisplayTypeTileMixin
 from castle.cms.tiles.content import IImagesTileSchema
@@ -31,5 +32,5 @@ class IGalleryTileSchema(IImagesTileSchema):
     display_type = schema.Choice(
         title=u"Display Type",
         source=TileViewsSource('gallery'),
-        default='default'
+        default=defaults.get('gallery_tile_displaytype', u'default')
     )

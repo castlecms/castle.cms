@@ -2,6 +2,7 @@ import json
 from urllib import urlencode
 from urlparse import parse_qsl
 
+from castle.cms import defaults
 from castle.cms.tiles.base import BaseTile
 from castle.cms.tiles.base import DisplayTypeTileMixin
 from castle.cms.tiles.views import BaseTileView
@@ -321,7 +322,7 @@ class IQueryListingTileSchema(model.Schema):
         title=u'Sort on',
         description=u"Sort on this index",
         required=False,
-        default=u'effective'
+        default=defaults.get('querylisting_tile_sort_on', u'effective')
     )
 
     sort_reversed = schema.Bool(
@@ -375,5 +376,5 @@ class IQueryListingTileSchema(model.Schema):
     display_type = schema.Choice(
         title=u"Display Type",
         source=TileViewsSource('querylisting'),
-        default='default'
+        default=defaults.get('querylisting_tile_displaytype', u'default')
     )

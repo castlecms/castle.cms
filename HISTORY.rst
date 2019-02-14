@@ -4,7 +4,14 @@ Changelog
 2.4.2 (unreleased)
 ------------------
 
+
 - Add `link-report` script and `Broken links` control panel
+  [vangheem]
+
+- Be able to configure some default settings with environment variables
+  [vangheem]
+
+- Fix cache invalidation with jbot on production
   [vangheem]
 
 

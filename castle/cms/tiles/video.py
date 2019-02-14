@@ -1,3 +1,4 @@
+from castle.cms import defaults
 from castle.cms.tiles.base import ContentTile
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.autoform import directives as form
@@ -105,7 +106,7 @@ class IVideoTileSchema(model.Schema):
     display_type = schema.Choice(
         title=u'Display type',
         required=True,
-        default=u'landscape',
+        default=defaults.get('video_tile_displaytype', u'landscape'),
         vocabulary=SimpleVocabulary([
             SimpleTerm('landscape', 'landscape', u'Landscape'),
             SimpleTerm('square', 'square', u'Square'),
@@ -120,10 +121,10 @@ class IVideoTileSchema(model.Schema):
 
     autoplay = schema.Bool(
         title=u'Autoplay',
-        default=False
+        default=defaults.get('video_tile_autoplay', False, 'bool')
     )
 
     loop = schema.Bool(
         title=u'Loop',
-        default=False
+        default=defaults.get('video_tile_loop', False, 'bool')
     )
