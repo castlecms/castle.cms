@@ -257,7 +257,7 @@ class Reporter(object):
                 'Error processing url: {}\n{}'.format(url.url, resp))
             self.update_url(url, None, exception=resp)
         else:
-            logger.warning('({}/{}/{}/{}): Processing ({}) {}'.format(
+            logger.info('({}/{}/{}/{}): Processing ({}) {}'.format(
                 self.found, self.queued, self.done, self.error,
                 resp.status_code, url.url))
             if resp.status_code == 429:
