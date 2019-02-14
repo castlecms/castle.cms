@@ -41,6 +41,13 @@ Persistent processes that can run continuously(for example with supervisor)
 - ``bin/castle-crawler``: Crawl sites defined in crawler settings
 
 
+Additional commands
+-------------------
+
+- ``bin/reindex-elasticsearch``: Reindex all content in elasticsearch
+- ``bin/upgrade-sites``: Run all available upgrades on all sites
+
+
 Google Analytics API Key File
 -----------------------------
 
@@ -55,8 +62,17 @@ To integrate with Google Analytics reporting, you'll need to get an API key file
 - use email for email you want to access and add it as an authorized user for the account in Google Analytics
 
 
+Environment variables
+---------------------
+
+- BROKER_URL: celery broker url configuration
+- CELERY_TASK_ALWAYS_EAGER: useful celery configuration to run tasks inline
+- REDIS_SERVER: redis server host:port configuration
+- LINK_REPORT_DB: db configuration string for link report
+
+
 Defaults
---------
+~~~~~~~~
 
 Some defaults settings can be overridden with environment variables.
 These are the supported ones:
