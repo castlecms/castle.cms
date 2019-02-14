@@ -9,5 +9,7 @@ CastleCMS
    fragments.rst
    development.rst
    theming.rst
-   matomo.rst
+   composition.rst
    configuration.rst
+   migration.rst
+   matomo.rst
