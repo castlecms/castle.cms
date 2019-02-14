@@ -1,3 +1,4 @@
+from castle.cms import defaults
 from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import FocalPointSelectFieldWidget
 from castle.cms.widgets import ImageRelatedItemFieldWidget
@@ -12,8 +13,8 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
-from zope.interface import implements
 from zope.interface import Invalid
+from zope.interface import implements
 from zope.interface import invariant
 from zope.interface import provider
 from zope.schema.interfaces import IContextSourceBinder
@@ -92,7 +93,7 @@ class IImageTileSchema(model.Schema):
     display_type = schema.Choice(
         title=u'Crop Image Options',
         required=True,
-        default=u'fullwidth',
+        default=defaults.get('image_tile_displaytype', u'fullwidth'),
         vocabulary=SimpleVocabulary([
             SimpleTerm('natural', 'natural', u'Natural (default size, no crop applied)'),
             SimpleTerm('fullwidth',
@@ -111,7 +112,7 @@ class IImageTileSchema(model.Schema):
                     u'This can safely be left at the default.',
         required=True,
         source=image_scales,
-        default=u'large'
+        default=defaults.get('image_tile_scale', u'large')
     )
 
     caption = schema.TextLine(

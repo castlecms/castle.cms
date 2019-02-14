@@ -10,3 +10,4 @@ CastleCMS
    development.rst
    theming.rst
    matomo.rst
+   configuration.rst
