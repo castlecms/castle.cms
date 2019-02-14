@@ -114,3 +114,7 @@ def clean_drafts(argv=sys.argv):
 
 def upgrade_sites(argv=sys.argv):
     return run_it('_upgrade_sites')
+
+
+def link_report(argv=sys.argv):
+    return run_it('_link_report')

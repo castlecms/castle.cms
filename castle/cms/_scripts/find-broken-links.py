@@ -1,5 +1,12 @@
+import argparse
+import datetime
+import logging
+
+import requests
+
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
+from castle.cms.utils import clear_object_cache
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.utils import getLayout
@@ -8,11 +15,6 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from repoze.xmliter.utils import getHTMLSerializer
 from unidecode import unidecode
 from zope.globalrequest import getRequest
-
-import logging
-import requests
-import argparse
-import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -43,8 +45,6 @@ _known_bad = [
 
 
 def find_url(ob, url):
-    if 'tmbc.me' in url:
-        return False
 
     for bad in _known_bad:
         if url.startswith(bad):
@@ -63,7 +63,7 @@ def find_url(ob, url):
             'http://nohost' not in url):
         try:
             print('checking ' + url)
-            resp = requests.get(url)
+            resp = requests.get(url, stream=True, timeout=5)
         except Exception:
             resp = BadResponse()
         return resp.status_code == 200
@@ -89,6 +89,7 @@ def find_broken(site):
     req = getRequest()
     for brain in catalog(object_provides=ILayoutAware.__identifier__):
         ob = brain.getObject()
+        clear_object_cache(ob)
         layout = getLayout(ob)
         dom = getHTMLSerializer(layout)
         tiles.renderTiles(req, dom.tree, ob.absolute_url() + '/layout_view')
@@ -157,4 +158,4 @@ if __name__ == '__main__':
         except Exception:
             logger.error('Encountered error %s' % site, exc_info=True)
     else:
-            logger.error('%s is not a site' % site)
+        logger.error('%s is not a site' % site)

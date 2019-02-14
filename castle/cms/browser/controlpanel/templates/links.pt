@@ -1,0 +1,154 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+  <metal:javascript fill-slot="javascript_head_slot">
+  <script>
+  $(document).ready(function(){
+
+  var portalUrl = $('body').attr('data-portal-url');
+  var delay=750, setTimeoutConst;
+  $('.broken-links tbody tr').hover(function() {
+    var el = this;
+    setTimeoutConst = setTimeout(function() {
+      var targetUrl = $(el).attr('data-url');
+      var $td = $(el).find('.url');
+      var $result = $td.find('.result');
+      if($result.size() > 0){
+        return;
+      }
+      $.get(portalUrl + '/@@links-controlpanel', {
+        links_of: targetUrl
+      }, function(resp){
+        var result = document.createElement('ul');
+        result.className = 'result';
+        resp.forEach(function(url) {
+          var el = document.createElement('li');
+          el.innerText = url;
+          result.appendChild(el);
+        });
+        $td.append(result);
+      }, 'json');
+    }, delay);
+  }, function() {
+    clearTimeout(setTimeoutConst);
+  });
+
+
+  });
+  </script>
+  </metal:javascript>
+
+<body>
+
+<metal:main metal:fill-slot="prefs_configlet_main">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/plone_control_panel"
+       i18n:translate="">
+        Site Setup
+    </a>
+
+
+    <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+    <div id="content-core" tal:define="summary view/get_summary">
+      <div class="portalMessage warning" tal:condition="not: view/configured">
+        <b>WARNING</b>:
+        <p>You do not have "LINK_REPORT_DB" environment variable configured.</p>
+      </div>
+      <div class="portalMessage warning" tal:condition="not: site/portal_registry/plone.public_url|nothing">
+        <b>WARNING</b>:
+        <p>You must configure your site's public url in order to properly check for broken links.</p>
+      </div>
+      <div class="portalMessage info" tal:condition="python: summary['links'] == '0'">
+        <b>INFO</b>:
+        <p>No links found. Make sure the "link-report" cron job is configured and running.</p>
+      </div>
+
+      <div class="links-container" tal:condition="view/configured"
+           tal:define="broken view/get_broken">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Links</th>
+              <td>${summary/links}</td>
+            </tr>
+            <tr>
+              <th>Urls</th>
+              <td>${summary/urls}</td>
+            </tr>
+            <tr>
+              <th>Un-checked</th>
+              <td>${summary/unchecked}</td>
+            </tr>
+            <tr>
+              <th>Errored</th>
+              <td>${summary/errors}</td>
+            </tr>
+            <tr>
+              <th>Broken</th>
+              <td>${summary/broken}</td>
+            </tr>
+          </tbody>
+        </table>
+        <form>
+          <input type="hidden" name="export" value="true" />
+          <button type="submit">Export CSV</button>
+        </form>
+
+        <h2>Broken links</h2>
+        <table class="table broken-links">
+          <thead>
+            <tr>
+              <th>Url</th>
+              <th>Last checked</th>
+              <th>Status code</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tal:broken tal:repeat="broken_item python: broken['items']">
+              <tr data-url="${broken_item/url_to}">
+                <td class="url">
+                  ${broken_item/url_to}
+                </td>
+                <td class="pat-moment"
+                    data-pat-moment="format:relative"
+                    data-date="${broken_item/_url_to/last_checked_date/isoformat}Z">${broken_item/_url_to/last_checked_date/isoformat}</td>
+                <td>${broken_item/_url_to/status_code}</td>
+              </tr>
+            </tal:broken>
+          </tbody>
+        </table>
+        <div class="pagination-centered listingBar">
+          <ul class="castle-pagination">
+            <tal:page tal:repeat="page python: range(min(broken['total'] / view.page_size, 20))">
+              <li class="page-item"
+                  tal:attributes="class python: view.page == page and 'page-item active' or 'page-item'">
+                <a class="page-link" href="${context/absolute_url}/@@links-controlpanel?page=${page}"
+                  tal:content="python: page + 1"></a>
+              </li>
+            </tal:page>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+</metal:main>
+</body>
+</html>

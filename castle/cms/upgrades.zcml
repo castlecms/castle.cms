@@ -193,4 +193,20 @@
       handler=".upgrades.upgrade_2_4_0.upgrade"
       profile="castle.cms:default"/>
 
+  <genericsetup:registerProfile
+    name="2_5_0"
+    title="CastleCMS upgrade to 2.5.0 profile"
+    directory="profiles/2_5_0"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.5.0"
+    description=""
+    source="*"
+    destination="2500"
+    handler=".upgrades.upgrade_2_5_0.upgrade"
+    profile="castle.cms:default"/>
+
 </configure>

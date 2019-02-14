@@ -2,6 +2,15 @@ Development
 ===========
 
 
+Building resources after changes to js
+--------------------------------------
+
+Just regular plone compile resources::
+
+    ./bin/plone-compile-resources --site-id=Castle --bundle=plone
+    ./bin/plone-compile-resources --site-id=Castle --bundle=plone-logged-in
+
+
 Adding external toolbar buttons
 -------------------------------
 
