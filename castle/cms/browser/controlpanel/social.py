@@ -86,10 +86,6 @@ class SocialControlPanel(controlpanel.ControlPanelFormWrapper):
             if not registry.get(key, None):
                 google_auth = False
 
-        # XXX every time you use it, you need to check if the access token
-        # has been refreshed and save the new value to registry!
-        # client = youtube.get_youtube_service()
-        # resp = client.channels().list(mine='true', part='contentDetails').execute()
         return {
             'twitter': {
                 'client': keys[0] is not None and keys[1] is not None,
