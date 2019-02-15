@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<registry>
+
+  <records interface="castle.cms.interfaces.ISocialMediaSchema"
+           prefix="plone" />
+
+  <record interface="castle.cms.interfaces.ICastleSettings"
+          field="file_upload_fields" prefix="castle" purge="False">
+    <value purge="False">
+      <element>
+        <element key="name">upload_to_youtube</element>
+        <element key="label">Upload to YouTube</element>
+        <element key="widget">checkbox</element>
+        <element key="required">False</element>
+        <element key="for-file-types">video</element>
+      </element>
+    </value>
+  </record>
+
+</registry>

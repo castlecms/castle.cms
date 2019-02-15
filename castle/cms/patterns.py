@@ -20,6 +20,7 @@ from Products.CMFPlone.patterns import (PloneSettingsAdapter,
                                         TinyMCESettingsGenerator)
 from zope.component import getUtility
 from zope.interface import implements
+from castle.cms.services.google import youtube
 
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
@@ -61,8 +62,8 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
     def registry(self):
         return getUtility(IRegistry)
 
-    def get_available_slot_tiles(self):
-        cache_key = '%s-slot-tiles' % '/'.join(self.site.getPhysicalPath()[1:])
+    def get_cachable_config_data(self):
+        cache_key = '%s-config-data' % '/'.join(self.site.getPhysicalPath()[1:])
         try:
             return cache.get(cache_key)
         except Exception:
@@ -86,8 +87,14 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
                     'label': tile.title
                 })
             available_tiles[group_name] = group
-        cache.set(cache_key, available_tiles, 600)
-        return available_tiles
+
+        data = {
+            'data-available-slots': json.dumps(available_tiles),
+            'data-youtube-enabled': str(youtube.get_oauth_token() is not None).lower()
+        }
+
+        cache.set(cache_key, data, 600)
+        return data
 
     def tinymce(self):
         if api.user.is_anonymous():
@@ -165,7 +172,6 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         required_fields = [f['name'] for f in upload_fields
                            if f.get('required')]
         data.update({
-            'data-available-slots': json.dumps(self.get_available_slot_tiles()),
             'data-file-upload-fields': json.dumps(upload_fields),
             'data-google-maps-api-key': self.registry.get(
                 'castle.google_maps_api_key', '') or '',
@@ -174,6 +180,8 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             # b/w compat until resources updated
             'data-required-file-upload-fields': json.dumps(required_fields),
         })
+
+        data.update(self.get_cachable_config_data())
 
         show_tour = False
         user = api.user.get_current()

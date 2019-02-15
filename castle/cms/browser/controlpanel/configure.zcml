@@ -47,6 +47,14 @@
     />
 
   <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".social.AuthorizeGoogle"
+    name="google-auth"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
     name="social-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".social.SocialControlPanel"

@@ -32,3 +32,6 @@ report.html
 src/
 zinstance/
 packages/
+pyvenv.cfg
+buildout-copy.cfg
+temp_resources/

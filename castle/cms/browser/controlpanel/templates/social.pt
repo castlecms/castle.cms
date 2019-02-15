@@ -26,20 +26,35 @@
 
 
 
-    <div id="content-core">
+    <div id="content-core" tal:define="auths view/get_auths">
         <div class="portalMessage info"
-             tal:condition="python: view.hasTwitterApp() and view.hasTwitterUserAuth()">
+             tal:condition="python: auths['twitter']['client'] and auths['twitter']['authorized']">
             <strong>Twitter</strong>
             You have a twitter user authorized. You can can
             <a href="${portal_url}/@@twitter-auth">re-authorize</a>
             the same or a different user if you need to.
         </div>
         <div class="portalMessage warning"
-             tal:condition="python: view.hasTwitterApp() and not view.hasTwitterUserAuth()">
+             tal:condition="python: auths['twitter']['client'] and not auths['twitter']['authorized']">
             <strong>Twitter</strong>
             You have a twitter application setup,
             would you like to
             <a href="${portal_url}/@@twitter-auth">authorize your twitter account</a> for this site now?
+        </div>
+
+        <div class="portalMessage info"
+             tal:condition="python: auths['google']['client'] and auths['google']['authorized']">
+            <strong>Google</strong>
+            You have a Google user authorized. You can can
+            <a href="${portal_url}/@@google-auth">re-authorize</a>
+            the same or a different user if you need to.
+        </div>
+        <div class="portalMessage warning"
+             tal:condition="python: auths['google']['client'] and not auths['google']['authorized']">
+            <strong>Google</strong>
+            You have a Google application setup,
+            would you like to
+            <a href="${portal_url}/@@google-auth">authorize your Google account</a> for this site now?
         </div>
 
         <div id="layout-contents">

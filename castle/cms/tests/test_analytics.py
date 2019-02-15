@@ -44,8 +44,8 @@ class TestAnalytics(unittest.TestCase):
 
     @mock.patch('castle.cms.cache.get')
     @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.get_ga_profile')
-    @mock.patch('castle.cms.services.google.get_ga_service')
+    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
+    @mock.patch('castle.cms.services.google.analytics.get_ga_service')
     def test_ga_api_call(self, get_ga_service, get_ga_profile,
                          cache_set, cache_get):
         cache_get.side_effect = KeyError()
@@ -59,7 +59,7 @@ class TestAnalytics(unittest.TestCase):
 
     @mock.patch('castle.cms.cache.get')
     @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.get_ga_profile')
+    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
     def test_get_ga_profile(self, get_ga_profile, cache_set, cache_get):
         cache_get.side_effect = KeyError()
         view = AnalyticsView(self.page, self.request)

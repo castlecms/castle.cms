@@ -290,6 +290,7 @@ def import_object(filepath):
             create = False
 
     creation_data = importtype.get_data()
+    pc_data = importtype.get_post_creation_data()
     creation_data['container'] = folder
 
     aspect = ISelectableConstrainTypes(folder, None)
@@ -298,7 +299,6 @@ def import_object(filepath):
                 [creation_data['type']] != aspect.getImmediatelyAddableTypes()):
             aspect.setConstrainTypesMode(1)
             aspect.setImmediatelyAddableTypes([creation_data['type']])
-
     if create:
         if ignore_uuids and '_plone.uuid' in creation_data:
             del creation_data['_plone.uuid']
@@ -344,7 +344,7 @@ def import_object(filepath):
             storage.add(rpath, "/".join(obj.getPhysicalPath()))
 
         obj.contentLayout = importtype.layout
-        importtype.post_creation(obj)
+        importtype.post_creation(obj, post_creation_data=pc_data)
         if not args.skip_transitioning and data['state']:
             # transition item only if it needs it
             state = api.content.get_state(obj=obj)

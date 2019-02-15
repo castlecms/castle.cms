@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
-from castle.cms.services import twitter
+import json
+
 from castle.cms.interfaces import ISocialMediaSchema
+from castle.cms.services import google
+from castle.cms.services import twitter
+from castle.cms.services.google import youtube
+from oauth2client.client import OAuth2WebServerFlow
 from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.protect.interfaces import IDisableCSRFProtection
@@ -29,6 +34,28 @@ class AuthorizeTwitter(BrowserView):
             self.request.response.redirect(twitter.get_auth_url())
 
 
+class AuthorizeGoogle(BrowserView):
+
+    def __call__(self):
+        client = OAuth2WebServerFlow(
+            client_id=google.GOOGLE_CLIENT_ID,
+            client_secret=google.GOOGLE_CLIENT_SECRET,
+            scope=youtube.SCOPES,
+            redirect_uri='{}/@@google-auth'.format(
+                self.context.absolute_url()))
+        if 'code' in self.request.form:
+            creds = client.step2_exchange(self.request.form['code'])
+            alsoProvides(self.request, IDisableCSRFProtection)
+            registry = getUtility(IRegistry)
+            registry['plone.google_oauth_token'] = json.dumps(
+                creds.token_response).decode('utf-8')
+            self.request.response.redirect('%s/@@social-controlpanel' % (
+                api.portal.get().absolute_url()))
+        else:
+            self.request.response.redirect(
+                client.step1_get_authorize_url())
+
+
 class SocialControlPanelForm(controlpanel.RegistryEditForm):
 
     id = "SocialControlPanel"
@@ -42,6 +69,7 @@ class SocialControlPanelForm(controlpanel.RegistryEditForm):
         self.widgets["twitter_oauth_token"].mode = HIDDEN_MODE
         self.widgets["twitter_oauth_secret"].mode = HIDDEN_MODE
         self.widgets["twitter_screen_name"].mode = HIDDEN_MODE
+        self.widgets["google_oauth_token"].mode = HIDDEN_MODE
 
 
 class SocialControlPanel(controlpanel.ControlPanelFormWrapper):
@@ -49,11 +77,23 @@ class SocialControlPanel(controlpanel.ControlPanelFormWrapper):
 
     index = ViewPageTemplateFile('templates/social.pt')
 
-    def hasTwitterApp(self):
+    def get_auths(self):
         keys = twitter.get_keys()
-        if keys[0] is None or keys[1] is None:
-            return False
-        return True
+        registry = getUtility(IRegistry)
+        google_auth = True
+        check_keys = ('plone.google_oauth_token',)
+        for key in check_keys:
+            if not registry.get(key, None):
+                google_auth = False
 
-    def hasTwitterUserAuth(self):
-        return twitter.get_auth() is not None
+        return {
+            'twitter': {
+                'client': keys[0] is not None and keys[1] is not None,
+                'authorized': twitter.get_auth() is not None
+            },
+            'google': {
+                'client': (google.GOOGLE_CLIENT_ID is not None and
+                           google.GOOGLE_CLIENT_SECRET is not None),
+                'authorized': google_auth
+            }
+        }

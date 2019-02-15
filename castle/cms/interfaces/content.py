@@ -42,3 +42,7 @@ class IHasDefaultImage(Interface):
 
 class IReferenceNamedImage(INamedImage):
     reference = Attribute('')
+
+
+class IUploadedToYoutube(Interface):
+    """Marker interface for videos that have been uploaded to YouTube"""

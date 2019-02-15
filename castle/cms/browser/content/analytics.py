@@ -26,7 +26,7 @@ class AnalyticsView(BrowserView):
         })
 
     def ga_api_call(self, paths):
-        service = google.get_ga_service()
+        service = google.analytics.get_ga_service()
         if not service:
             return
 
@@ -72,7 +72,7 @@ class AnalyticsView(BrowserView):
         except Exception:
             profile = None
         if profile is None:
-            profile = google.get_ga_profile(service)
+            profile = google.analytics.get_ga_profile(service)
             cache.set(cache_key, profile, 60 * 60 * 1)
         return profile
 

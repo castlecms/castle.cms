@@ -78,5 +78,15 @@ require([
     }else{
       $("#formfield-form-widgets-authenticated_users_only").show();
     }
+
+    $('#form-widgets-upload_to_youtube-0').on('change', function(){
+      var ytUrl = document.getElementById('form-widgets-youtube_url');
+      if (this.checked) {
+        ytUrl.setAttribute('readonly', true);
+        ytUrl.value = '';
+      } else {
+        ytUrl.removeAttribute('readonly');
+      }
+    });
   });
 });

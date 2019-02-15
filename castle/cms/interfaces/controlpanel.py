@@ -24,7 +24,7 @@ class ISocialMediaSchema(controlpanel.ISocialMediaSchema):
         default=None,
         required=False)
 
-    twitter_oauth_token = schema.TextLine(
+    twitter_oauth_token = schema.Password(
         title=u'Twitter OAuth token',
         required=False)
 
@@ -63,6 +63,10 @@ class ISocialMediaSchema(controlpanel.ISocialMediaSchema):
         title=u'Github Username',
         required=False
     )
+
+    google_oauth_token = schema.Password(
+        title=u'Google OAuth token',
+        required=False)
 
 
 class ISiteSchema(controlpanel.ISiteSchema):

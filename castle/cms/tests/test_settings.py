@@ -39,7 +39,7 @@ class TestFileUploadFields(unittest.TestCase):
         fields = deepcopy(registry['castle.file_upload_fields'])
         for field in fields:
             field['required'] = unicode(field['required']).lower()
-        self.assertEquals(len(get_upload_fields(registry)), 4)
+        self.assertEquals(len(get_upload_fields(registry)), 5)
         fields.append({
             u'name': u'foobar',
             u'label': u'Foobar',
@@ -48,7 +48,7 @@ class TestFileUploadFields(unittest.TestCase):
             u'for-file-types': u'*'
         })
         registry['castle.file_upload_fields'] = fields
-        self.assertEquals(len(get_upload_fields(registry)), 5)
+        self.assertEquals(len(get_upload_fields(registry)), 6)
 
     def test_handle_bad_field_values(self):
         # requires fields defined
@@ -56,7 +56,7 @@ class TestFileUploadFields(unittest.TestCase):
         fields = deepcopy(registry['castle.file_upload_fields'])
         fields.append({})
         registry['castle.file_upload_fields'] = deepcopy(fields)
-        self.assertEquals(len(get_upload_fields(registry)), 4)
+        self.assertEquals(len(get_upload_fields(registry)), 5)
 
         # auto fill in for missing
         fields.append({
@@ -65,7 +65,7 @@ class TestFileUploadFields(unittest.TestCase):
         registry['castle.file_upload_fields'] = fields
 
         fields = get_upload_fields(registry)
-        self.assertEquals(len(fields), 5)
+        self.assertEquals(len(fields), 6)
         self.assertEquals(fields[-1]['label'], 'Foobar')
         self.assertEquals(fields[-1]['required'], False)
         self.assertEquals(fields[-1]['widget'], 'text')
@@ -77,7 +77,7 @@ class TestFileUploadFields(unittest.TestCase):
         self.assertTrue('data-required-file-upload-fields' in data)
         self.assertEquals(data['data-required-file-upload-fields'], json.dumps([u'title']))
         self.assertEquals(
-            len(json.loads(data['data-file-upload-fields'])), 4)
+            len(json.loads(data['data-file-upload-fields'])), 5)
 
     def test_migrate_settings(self):
         registry = getUtility(IRegistry)
