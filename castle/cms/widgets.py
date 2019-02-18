@@ -386,7 +386,7 @@ class JSONListWidgetDataConverter(NamedDataConverter):
 
     def toFieldValue(self, value):
         fields = json.loads(value)
-        for field in fields:
+        for field in fields or []:
             if 'required' in field and isinstance(field['required'], bool):
                 field['required'] = unicode(field['required']).lower()
         return fields
