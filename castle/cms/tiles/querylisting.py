@@ -305,7 +305,7 @@ class IQueryListingTileSchema(model.Schema):
     title = schema.TextLine(
         title=u'Title',
         description=u'Provide title above listing',
-        required=False,
+        required=True,
         default=None
     )
 
