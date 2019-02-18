@@ -4,7 +4,8 @@ Changelog
 2.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed Querylisting so the title is required since it is a h2. This is good for accessibility. I also put a classname in the h2 tag so the end themer can hide from visual but not screen readers
+  [RobZoneNet]
 
 
 2.5.0 (2019-02-15)
