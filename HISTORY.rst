@@ -4,7 +4,8 @@ Changelog
 2.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added video icon and event hover icon for the add modal
+  [robzonenet]
 
 
 2.5.0 (2019-02-15)
