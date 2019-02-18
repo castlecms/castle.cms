@@ -4,7 +4,11 @@ Changelog
 2.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Fixes:
+
+- Implement IAnnotations for IResourceDirectory to prevent errors
+  previewing theme through the editor.
+  [vangheem]
 
 
 2.5.0 (2019-02-15)
