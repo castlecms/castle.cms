@@ -5,9 +5,10 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="castle.cms.layouts">
 
-  <adapter factory=".globalTileDataContext" />
-  <adapter factory=".metaTileDataContext" />
-  <adapter factory=".versionTileDataContext" />
+  <adapter factory=".GlobalTileDataContext" />
+  <adapter factory=".MetaTileDataContext" />
+  <adapter factory=".VersionTileDataContext" />
+  <adapter factory=".ResourceDirectoryAnnotations" />
 
   <include package="plone.app.tiles" />
 

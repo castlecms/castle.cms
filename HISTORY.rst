@@ -6,6 +6,10 @@ Changelog
 
 Fixes:
 
+- Implement IAnnotations for IResourceDirectory to prevent errors
+  previewing theme through the editor.
+  [vangheem]
+
 - Fixed Querylisting so the title is required since it is a h2. This is good for accessibility. I also put a classname in the h2 tag so the end themer can hide from visual but not screen readers
   [RobZoneNet]
 
