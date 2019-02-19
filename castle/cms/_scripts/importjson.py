@@ -160,6 +160,8 @@ def recursive_create_path(path):
                             container=folder)
                         bdata = ILayoutAware(folder)
                         bdata.contentLayout = '++contentlayout++castle/folder-query.html'
+                        if not args.skip_transitioning:
+                            api.content.transition(folder, to_state='published')
     return folder
 
 
