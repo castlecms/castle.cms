@@ -1,4 +1,4 @@
-import json
+import json, os
 from base64 import b64decode
 
 import z3c.form.browser.textarea
@@ -771,6 +771,8 @@ class NamedFileDataConverter(NamedDataConverter):
         extracted = self.widget.extract()
         if isinstance(extracted, TmpFile):
             info = extracted.info
+            if not os.path.exists(info['tmp_file']):
+                return
             fi = open(info['tmp_file'], 'r')
             filename = ploneutils.safe_unicode(info['name'])
             annotations = IAnnotations(self.widget.context)
@@ -791,7 +793,7 @@ class UploadNamedFileWidget(NamedFileWidget):
         return json.dumps({
             'field_name': self.name,
             'tmp_field_id': self.get_tmp_field_id(),
-            'uid': IUUID(self.context)
+            'uid': IUUID(self.context, None)
         })
 
     @property
