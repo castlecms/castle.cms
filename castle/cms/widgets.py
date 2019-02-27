@@ -1,4 +1,5 @@
 import json
+import os
 from base64 import b64decode
 
 import z3c.form.browser.textarea
@@ -7,8 +8,9 @@ import z3c.form.widget
 from Acquisition import aq_parent
 from castle.cms import utils
 from castle.cms.behaviors.leadimage import IRequiredLeadImage
-from castle.cms.interfaces import (ICastleLayer, IReCaptchaWidget,
-                                   IReferenceNamedImage)
+from castle.cms.interfaces import ICastleLayer
+from castle.cms.interfaces import IReCaptchaWidget
+from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.tiles.views import getTileViews
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.uuid.utils import uuidToObject
@@ -17,17 +19,17 @@ from plone.app.widgets.base import TextareaWidget as BaseTextareaWidget
 from plone.app.z3cform.widget import AjaxSelectWidget as pz3c_AjaxSelectWidget
 from plone.app.z3cform.widget import BaseWidget
 from plone.app.z3cform.widget import QueryStringWidget as BaseQueryStringWidget
-from plone.app.z3cform.widget import \
-    RelatedItemsWidget as BaseRelatedItemsWidget  # noqa
+from plone.app.z3cform.widget import RelatedItemsWidget as BaseRelatedItemsWidget  # noqa
 from plone.app.z3cform.widget import SelectWidget as pz3c_SelectWidget
 from plone.formwidget.namedfile.converter import NamedDataConverter
-from plone.formwidget.namedfile.interfaces import (INamedFileWidget,
-                                                   INamedImageWidget)
+from plone.formwidget.namedfile.interfaces import INamedFileWidget
+from plone.formwidget.namedfile.interfaces import INamedImageWidget
 from plone.formwidget.namedfile.widget import NamedFileWidget
-from plone.formwidget.namedfile.widget import \
-    NamedImageWidget as BaseNamedImageWidget  # noqa
-from plone.namedfile.file import NamedBlobFile, NamedBlobImage
-from plone.namedfile.interfaces import INamedFileField, INamedImageField
+from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget  # noqa
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
+from plone.namedfile.interfaces import INamedFileField
+from plone.namedfile.interfaces import INamedImageField
 from plone.namedfile.utils import safe_basename
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
@@ -35,13 +37,20 @@ from Products.CMFPlone import utils as ploneutils
 from z3c.form.browser import text
 from z3c.form.browser.checkbox import SingleCheckBoxWidget
 from z3c.form.browser.select import SelectWidget as z3cform_SelectWidget
-from z3c.form.interfaces import NOVALUE, IFieldWidget, ITextWidget
+from z3c.form.interfaces import NOVALUE
+from z3c.form.interfaces import IFieldWidget
+from z3c.form.interfaces import ITextWidget
 from z3c.form.util import getSpecification
 from zope.annotation.interfaces import IAnnotations
-from zope.component import adapter, adapts, getUtility
-from zope.interface import (alsoProvides, implementer, implements,
-                            implementsOnly)
-from zope.schema.interfaces import IField, IList
+from zope.component import adapter
+from zope.component import adapts
+from zope.component import getUtility
+from zope.interface import alsoProvides
+from zope.interface import implementer
+from zope.interface import implements
+from zope.interface import implementsOnly
+from zope.schema.interfaces import IField
+from zope.schema.interfaces import IList
 from ZPublisher.HTTPRequest import FileUpload
 
 
@@ -771,6 +780,8 @@ class NamedFileDataConverter(NamedDataConverter):
         extracted = self.widget.extract()
         if isinstance(extracted, TmpFile):
             info = extracted.info
+            if not os.path.exists(info['tmp_file']):
+                return
             fi = open(info['tmp_file'], 'r')
             filename = ploneutils.safe_unicode(info['name'])
             annotations = IAnnotations(self.widget.context)
@@ -791,7 +802,7 @@ class UploadNamedFileWidget(NamedFileWidget):
         return json.dumps({
             'field_name': self.name,
             'tmp_field_id': self.get_tmp_field_id(),
-            'uid': IUUID(self.context)
+            'uid': IUUID(self.context, None)
         })
 
     @property
