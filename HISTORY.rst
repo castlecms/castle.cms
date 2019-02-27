@@ -16,6 +16,9 @@ Fixes:
 - Added video icon and event hover icon for the add modal
   [robzonenet]
 
+- Bug fix to UploadNamedFileWidget
+  [vangheem]
+
 
 2.5.0 (2019-02-15)
 ------------------
