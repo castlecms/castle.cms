@@ -46,7 +46,7 @@ define([
     },
     render: function(){
       var qa = R.createElement(QualityCheck, {
-        delay: false, onFinished: this.onChecked, ref: 'qa' });
+        delay: true, onFinished: this.onChecked, ref: 'qa' });
       var toggleText = 'Show Quality Check';
       if(this.state.open){
         toggleText = 'Hide Quality Check';
