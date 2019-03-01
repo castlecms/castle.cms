@@ -4,7 +4,10 @@ Changelog
 2.5.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Fixes:
+
+- enable quality check delay
+  [lucid-0]
 
 
 2.5.1 (2019-02-27)
