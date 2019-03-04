@@ -74,6 +74,11 @@ class AddCastleSite(AddPloneSite):
             acl_users = site.acl_users
             acl_users.manage_delObjects(['credentials_basic_auth'])
 
+            cookie_auth = acl_users.credentials_cookie_auth
+            # this is relative to [site]/acl_users/credentials_basic_auth
+            # otherwise, doing /login on a site would redirect to [root]/@@secure-login
+            cookie_auth.login_path = u'../../@@secure-login'
+
             return json.dumps({
                 'success': True,
                 'url': url
