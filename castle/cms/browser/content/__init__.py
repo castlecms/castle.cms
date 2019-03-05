@@ -378,7 +378,8 @@ class Creator(BrowserView):
         newid = chooser.chooseName(chooser_name, folder.aq_parent)
 
         # strip metadata from file
-        if type_ in ('Image', 'File') and exiftool is not None:
+        if (type_ in ('Image', 'File', 'Video', 'Audio') and
+                exiftool is not None and 'tmp_file' in info):
             try:
                 exiftool(info['tmp_file'])
             except Exception:
