@@ -86,7 +86,6 @@ class MetaDataTile(Tile):
                 subject = []
 
             tags = {
-                'description': context.Description(),
                 'keywords': ','.join(subject),
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),

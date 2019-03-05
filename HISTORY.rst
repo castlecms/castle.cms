@@ -4,7 +4,8 @@ Changelog
 2.5.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove duplicate description head metadata tags
+  [vangheem]
 
 
 2.5.2 (2019-03-01)
