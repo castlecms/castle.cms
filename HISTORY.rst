@@ -4,6 +4,9 @@ Changelog
 2.5.3 (unreleased)
 ------------------
 
+- Run exiftool on Audio and Video types as well
+  [vangheem]
+
 - Fix redirect url for logging into site
   [vangheem]
   
