@@ -6,6 +6,9 @@ Changelog
 
 - Fix redirect url for logging into site
   [vangheem]
+  
+- Remove duplicate description head metadata tags
+  [vangheem]
 
 
 2.5.2 (2019-03-01)
