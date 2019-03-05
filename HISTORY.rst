@@ -4,6 +4,9 @@ Changelog
 2.5.3 (unreleased)
 ------------------
 
+- Fix redirect url for logging into site
+  [vangheem]
+  
 - Remove duplicate description head metadata tags
   [vangheem]
 
