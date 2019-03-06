@@ -1,6 +1,6 @@
 from castle.cms import cache
 from castle.cms import social
-from castle.cms.services import google
+from castle.cms.services.google import analytics
 from plone import api
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
@@ -26,7 +26,7 @@ class AnalyticsView(BrowserView):
         })
 
     def ga_api_call(self, paths):
-        service = google.analytics.get_ga_service()
+        service = analytics.get_ga_service()
         if not service:
             return
 
@@ -72,7 +72,7 @@ class AnalyticsView(BrowserView):
         except Exception:
             profile = None
         if profile is None:
-            profile = google.analytics.get_ga_profile(service)
+            profile = analytics.get_ga_profile(service)
             cache.set(cache_key, profile, 60 * 60 * 1)
         return profile
 
