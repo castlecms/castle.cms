@@ -2,7 +2,8 @@
 import json
 
 from castle.cms.interfaces import ISocialMediaSchema
-from castle.cms.services import google
+from castle.cms.services.google import GOOGLE_CLIENT_ID
+from castle.cms.services.google import GOOGLE_CLIENT_SECRET
 from castle.cms.services import twitter
 from castle.cms.services.google import youtube
 from oauth2client.client import OAuth2WebServerFlow
@@ -38,8 +39,8 @@ class AuthorizeGoogle(BrowserView):
 
     def __call__(self):
         client = OAuth2WebServerFlow(
-            client_id=google.GOOGLE_CLIENT_ID,
-            client_secret=google.GOOGLE_CLIENT_SECRET,
+            client_id=GOOGLE_CLIENT_ID,
+            client_secret=GOOGLE_CLIENT_SECRET,
             scope=youtube.SCOPES,
             redirect_uri='{}/@@google-auth'.format(
                 self.context.absolute_url()))
@@ -92,8 +93,8 @@ class SocialControlPanel(controlpanel.ControlPanelFormWrapper):
                 'authorized': twitter.get_auth() is not None
             },
             'google': {
-                'client': (google.GOOGLE_CLIENT_ID is not None and
-                           google.GOOGLE_CLIENT_SECRET is not None),
+                'client': (GOOGLE_CLIENT_ID is not None and
+                           GOOGLE_CLIENT_SECRET is not None),
                 'authorized': google_auth
             }
         }
