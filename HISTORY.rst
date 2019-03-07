@@ -4,6 +4,9 @@ Changelog
 2.5.3 (unreleased)
 ------------------
 
+- Show published date in search results
+  [vangheem]
+
 - Run exiftool on Audio and Video types as well
   [vangheem]
 
