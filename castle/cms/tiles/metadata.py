@@ -12,6 +12,7 @@ from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
+from castle.cms.behaviors.search import ISearch
 
 import json
 
@@ -80,17 +81,14 @@ class MetaDataTile(Tile):
                     context = context[get_default_page(context)]
                 except AttributeError:
                     pass
-            try:
-                subject = context.Subject()
-            except Exception:
-                subject = []
 
             tags = {
-                'keywords': ','.join(subject),
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'CastleCMS 1.0'
+                'generator': 'CastleCMS 2.0',
+                "distribution": "Global",
+                "robots": "index,follow"
             }
             ldata = ILocation(context, None)
             if ldata is not None:
@@ -99,6 +97,16 @@ class MetaDataTile(Tile):
                     if type(location) in (list, tuple, set):
                         location = location[0]
                     tags['location'] = location
+
+            search = ISearch(context, None)
+            if search is not None:
+                if search.robot_configuration:
+                    config = search.robot_configuration[:]
+                    if 'index' not in config:
+                        config.append('noindex')
+                    if 'follow' not in config:
+                        config.append('nofollow')
+                    tags['robots'] = ','.join(config)
 
             return ''.join([u'<meta name="{}" content="{}">'.format(name, value)
                             for name, value in tags.items()])
