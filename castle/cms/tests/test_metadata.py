@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
+import unittest
+
 from castle.cms.behaviors.location import ILocation
 from castle.cms.behaviors.search import ISearch
-from castle.cms.tiles.metadata import MetaDataTile
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.tiles.metadata import MetaDataTile
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-
-import unittest
+from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
 
 
 class TestMetadata(unittest.TestCase):
