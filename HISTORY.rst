@@ -18,6 +18,10 @@ Changes:
 - Show published date in search results
   [vangheem]
 
+- Show transcript in video view
+  [lucid-0]
+
+
 Fixes:
 
 - Run exiftool on Audio and Video types as well
