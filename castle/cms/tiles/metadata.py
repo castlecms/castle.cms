@@ -1,10 +1,13 @@
+import json
+
 from castle.cms.behaviors.location import ILocation
+from castle.cms.behaviors.search import ISearch
 from castle.cms.interfaces import ILDData
 from castle.cms.utils import site_has_icon
 from plone.app.layout.globals.interfaces import IViewView
-from Products.CMFPlone.defaultpage import get_default_page
 from plone.tiles import Tile
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFPlone.defaultpage import get_default_page
 from Products.CMFPlone.log import logger
 from unidecode import unidecode
 from zope.component import getMultiAdapter
@@ -13,14 +16,11 @@ from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
 
-import json
-
 
 head_viewlets = {
     'plone.htmlhead.title': 'plone.htmlhead',
     'plone.links.author': 'plone.htmlhead.links',
     'plone.links.RSS': 'plone.htmlhead.links',
-    'plone.links.canonical_url': 'plone.htmlhead.links',
     'plone.htmlhead.dublincore': 'plone.htmlhead',
     'plone.htmlhead.socialtags': 'plone.htmlhead'
 }
@@ -80,17 +80,14 @@ class MetaDataTile(Tile):
                     context = context[get_default_page(context)]
                 except AttributeError:
                     pass
-            try:
-                subject = context.Subject()
-            except Exception:
-                subject = []
 
             tags = {
-                'keywords': ','.join(subject),
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'CastleCMS 1.0'
+                'generator': 'CastleCMS 2.0',
+                "distribution": "Global",
+                "robots": "index,follow"
             }
             ldata = ILocation(context, None)
             if ldata is not None:
@@ -99,6 +96,16 @@ class MetaDataTile(Tile):
                     if type(location) in (list, tuple, set):
                         location = location[0]
                     tags['location'] = location
+
+            search = ISearch(context, None)
+            if search is not None:
+                if search.robot_configuration:
+                    config = search.robot_configuration[:]
+                    if 'index' not in config:
+                        config.append('noindex')
+                    if 'follow' not in config:
+                        config.append('nofollow')
+                    tags['robots'] = ','.join(config)
 
             return ''.join([u'<meta name="{}" content="{}">'.format(name, value)
                             for name, value in tags.items()])
@@ -118,12 +125,24 @@ class MetaDataTile(Tile):
               url=self.root_url
               )
 
+    def get_canonical_url(self):
+        context_state = getMultiAdapter(
+            (self.context, self.request), name=u'plone_context_state')
+        canonical_object = context_state.canonical_object()
+        if self.context != canonical_object:
+            can_state = getMultiAdapter(
+                (canonical_object, self.request), name=u'plone_context_state')
+            url = can_state.view_url()
+        else:
+            url = context_state.view_url()
+        return u'    <link rel="canonical" href="%s" />' % url
+
     def __call__(self):
         portal_state = getMultiAdapter((self.context, self.request),
                                        name=u'plone_portal_state')
         self.root_url = portal_state.navigation_root_url()
 
-        result = u''
+        result = self.get_canonical_url()
         alsoProvides(self, IViewView)
         for name, manager_name in head_viewlets.items():
             manager = queryMultiAdapter(

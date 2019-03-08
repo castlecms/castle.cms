@@ -4,8 +4,21 @@ Changelog
 2.5.3 (unreleased)
 ------------------
 
+New:
+
+- Be able to specify robots meta tag configuration for content
+  [vangheem]
+
+- Add `distribution=Global` meta tag
+  [vangheem]
+
+
+Changes:
+
 - Show published date in search results
   [vangheem]
+
+Fixes:
 
 - Run exiftool on Audio and Video types as well
   [vangheem]
@@ -13,7 +26,10 @@ Changelog
 - Fix redirect url for logging into site
   [vangheem]
   
-- Remove duplicate description head metadata tags
+- Remove duplicate description head metadata tag
+  [vangheem]
+
+- Remove duplicate keywords head metadata tag
   [vangheem]
 
 
