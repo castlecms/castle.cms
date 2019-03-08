@@ -21,7 +21,6 @@ head_viewlets = {
     'plone.htmlhead.title': 'plone.htmlhead',
     'plone.links.author': 'plone.htmlhead.links',
     'plone.links.RSS': 'plone.htmlhead.links',
-    'plone.links.canonical_url': 'plone.htmlhead.links',
     'plone.htmlhead.dublincore': 'plone.htmlhead',
     'plone.htmlhead.socialtags': 'plone.htmlhead'
 }
@@ -126,12 +125,24 @@ class MetaDataTile(Tile):
               url=self.root_url
               )
 
+    def get_canonical_url(self):
+        context_state = getMultiAdapter(
+            (self.context, self.request), name=u'plone_context_state')
+        canonical_object = context_state.canonical_object()
+        if self.context != canonical_object:
+            can_state = getMultiAdapter(
+                (canonical_object, self.request), name=u'plone_context_state')
+            url = can_state.view_url()
+        else:
+            url = context_state.view_url()
+        return u'    <link rel="canonical" href="%s" />' % url
+
     def __call__(self):
         portal_state = getMultiAdapter((self.context, self.request),
                                        name=u'plone_portal_state')
         self.root_url = portal_state.navigation_root_url()
 
-        result = u''
+        result = self.get_canonical_url()
         alsoProvides(self, IViewView)
         for name, manager_name in head_viewlets.items():
             manager = queryMultiAdapter(
