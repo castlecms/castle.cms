@@ -52,7 +52,8 @@ require([
         searchType: this.props.searchType || 'all',
         showMore: false,
         showAdditionalSites: false,
-        searchSite: this.props.searchSite || false
+        searchSite: this.props.searchSite || false,
+        loading: false
       };
     },
 
@@ -83,6 +84,9 @@ require([
 
     load: function(){
       var that = this;
+      that.setState({
+        loading: true
+      });
       utils.loading.show();
       var state = {
         SearchableText: that.state.SearchableText,
@@ -117,7 +121,8 @@ require([
           count: data.count,
           page: data.page,
           error: false,
-          suggestions: data.suggestions || []
+          suggestions: data.suggestions || [],
+          loading: false
         }, function(){
           $('html, body').animate({
             scrollTop: 0
@@ -145,6 +150,9 @@ require([
         });
       }).always(function(){
         utils.loading.hide();
+        that.setState({
+          loading: false
+        });
       });
     },
 
@@ -214,7 +222,6 @@ require([
     },
 
     renderResult: function(item){
-      var modified = moment(item.modified);
       var ct = '';
       if(item.contentType){
         var mainType = item.contentType.split('/')[0];
@@ -252,9 +259,13 @@ require([
         target = '_blank';
       }
 
+      var modified = moment(item.modified);
+      var effective = moment(item.effective);
       var dateNode = '';
-      if(modified.isValid()){
-        dateNode = D.span({ className: 'result-modified' }, modified.fromNow());
+      if(effective.isValid()){
+        dateNode = D.span({ className: 'result-modified' }, 'Published: ' + effective.format('MMM Do YYYY'));
+      } else if(modified.isValid()){
+        dateNode = D.span({ className: 'result-modified' }, 'Last modified ' + modified.fromNow());
       }
       return D.li({}, [
         D.span({ className: "result-title" }, [
@@ -263,7 +274,7 @@ require([
         ]),
         D.span({ className: 'result-url'}, item.base_url),
         dateNode,
-        D.span({ className: "result-description" }, item.Description),
+        D.span({ className: "result-description" }, item.Description || item.Title),
         download
       ]);
     },
@@ -271,7 +282,11 @@ require([
     renderResults: function(){
       var that = this;
       if(that.state.count === 0){
-        return D.div({ className: 'search-empty-results'}, D.p({}, 'No results found'));
+        if (that.state.loading) {
+          return D.div({ className: 'search-empty-results'}, D.p({}, 'Searching…'));
+        } else {
+          return D.div({ className: 'search-empty-results'}, D.p({}, 'No results found'));
+        }
       }
       var results = [];
       that.state.results.forEach(function(item){
@@ -416,6 +431,7 @@ require([
           additional
         ]));
       }
+
       return D.div({ className: 'search-options'}, [
         D.ul({}, options)
       ]);
@@ -483,16 +499,10 @@ require([
   };
 
   $(window).on('click', function(){
-    if(component.state.showMore){
-      component.setState({
-        showMore: false
-      });
-    }
-    if(component.state.showAdditionalSites){
-      component.setState({
-        showAdditionalSites: false
-      });
-    }
+    component.setState({
+      showMore: false,
+      showAdditionalSites: false
+    });
   });
 
 });
