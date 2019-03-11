@@ -164,15 +164,17 @@ define([
           survey_url+="?token="+invite_data.token;
         }
       }
-      var invite_html = '<div class="survey-invite"> \
-                          <img src="'+survey_data.logo+'">\
-                          <br>\
-                          <div class="survey-api-title">'+title+'</div>\
-                          <div class="survey-api-desc">'+desc+'</div>\
-                          <br>\
-                          <form action="'+survey_url+'"><input id="survey-button" type="submit" value="Take Survey"/></form>\
-                          <br>\
-                        </div>';
+      var invite_html = '<div class="survey-invite">';
+      if (survey_data.showLogo) {
+        invite_html += '<img src="'+survey_data.logo+'">';
+      }
+      invite_html += '<br>\
+                        <div class="survey-api-title">'+title+'</div>\
+                        <div class="survey-api-desc">'+desc+'</div>\
+                        <br>\
+                        <form class="survey-form" action="'+survey_url+'"><input id="survey-button" type="submit" value="Take Survey"/></form>\
+                        <br>\
+                      </div>';
       var disclaimer_html = '<div class="survey-disclaimer">'+disclaimer+'</div>';
       if (survey_data.display.toLowerCase() == 'modal') {
         var modal = new Modal(survey_tile, {loadLinksWithinModal: true});

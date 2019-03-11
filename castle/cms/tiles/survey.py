@@ -23,6 +23,7 @@ class SurveyTile(BaseTile):
             'rule': self.data.get('rule', 'always'),
             'cookie': self.data.get('use_cookie', 'show_once'),
             'display': self.data.get('display', 'here'),
+            'showLogo': self.data.get('show_logo', False),
             'duration': self.data.get('duration', 20),
             'count': self.data.get('page_count', 5),
             'logo': getSiteLogo()
@@ -101,4 +102,10 @@ class ISurveyTileSchema(Interface):
             SimpleTerm(u'modal', u'modal', u'As a Modal overlaying the page.'),
             SimpleTerm(u'here', u'here', u'In the location this tile is placed.')
         ])
+    )
+
+    show_logo = schema.Bool(
+        title=u'Show site logo in survey invite',
+        required=False,
+        default=False
     )
