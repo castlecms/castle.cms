@@ -21,7 +21,6 @@ from Persistence.mapping import PersistentMapping as PM1  # noqa
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
-from plone.dexterity.fti import DexterityFTI
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
 from plone.app.textfield import RichText
@@ -751,7 +750,7 @@ def run_export(brains):
     types = type_tool.listContentTypes()
     for type_name in types:
         fti = type_tool[type_name]
-        if fti.__class__ == DexterityFTI:
+        if fti.meta_type == 'Dexterity FTI':
             export_types[type_name] = {
                 'klass': fti.klass,
                 'model_source': fti.model_source,
