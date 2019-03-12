@@ -442,11 +442,12 @@ def import_types(path):
             type_tool = site['portal_types']
             existing_types = type_tool.listContentTypes()
             if type['id'] not in existing_types:
+                type['icon_expr'] = 'string:${portal_url}/document_icon.png'
                 fti = DexterityFTI(type['id'])
                 fti.manage_changeProperties(type)
                 type_tool._setObject(fti.id, fti)
                 count += 1
-                print('Added {type} to site'.format(fti.id))
+                print('Added {type} to site'.format(type=fti.id))
     return count
 
 

@@ -763,7 +763,6 @@ def run_export(brains):
     types_file = open(types_path, 'w')
     types_file.write(json.dumps(export_types))
 
-
     size = len(brains)
     for idx, brain in enumerate(brains):
         path = brain.getPath()
