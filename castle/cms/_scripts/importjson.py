@@ -5,6 +5,7 @@ from lxml.html import fromstring
 from lxml.html import tostring
 from OFS.interfaces import IFolder
 from plone import api
+from plone.dexterity.fti import DexterityFTI
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.textfield.value import RichTextValue
@@ -396,7 +397,7 @@ def import_content(path, count=0):
             # folder object exists in export,but errored or was skipped
             return count
     for filename in os.listdir(path):
-        if filename in ('.DS_Store', '__folder__'):
+        if filename in ('.DS_Store', '__folder__', '__types__'):
             continue
         filepath = os.path.join(path, filename)
         if os.path.isdir(filepath):
@@ -425,6 +426,27 @@ def import_content(path, count=0):
     return count
 
 
+def import_types(path):
+    types_file = os.path.join(path, '__types__')
+    if os.path.exists(types_file):
+        fi = open(types_file)
+        file_read = fi.read()
+        fi.close()
+        try:
+            types_data = mjson.loads(file_read)
+        except Exception:
+            logger.error('Could not import custom types.')
+            return
+        for type in types_data:
+            type_tool = site['portal_types']
+            existing_types = type_tool.listContentTypes()
+            if type['id'] not in existing_types:
+                fti = DexterityFTI(type['id'])
+                fti.manage_changeProperties(type)
+                type_tool._setObject(fti.id, fti)
+                print('Added {type} to site'.format(fti.id))
+
+
 def read_pass(path):
     for filename in sorted(os.listdir(path)):
         if filename in ('.DS_Store', '__folder__'):
@@ -447,6 +469,8 @@ if __name__ == '__main__':
         print('------------------------------')
         print('Importing with overwrite enabled')
         print('------------------------------')
+    count = import_types(args.export_directory)
+    print('Imported {count} custom types'.format(count=count))
     count = import_content(args.export_directory)
     print('Created {count} Content Items'.format(count=count))
     transaction.commit()
