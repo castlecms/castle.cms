@@ -441,10 +441,15 @@ def import_types(path):
         for type in types_data:
             type_tool = site['portal_types']
             existing_types = type_tool.listContentTypes()
-            if type['id'] not in existing_types:
-                type['icon_expr'] = 'string:${portal_url}/document_icon.png'
-                fti = DexterityFTI(type['id'])
-                fti.manage_changeProperties(type)
+            type_data = types_data[type]
+            if type_data['id'] not in existing_types:
+                type_data['id'] = type_data['id'].encode('utf8')
+                type_data['title'] = type_data['title'].encode('utf8')
+                if type_data['description']:
+                    type_data['description'] = type_data['description'].encode('utf8')
+                type_data['icon_expr'] = 'string:${portal_url}/document_icon.png'
+                fti = DexterityFTI(type_data['id'])
+                fti.manage_changeProperties(**type_data)
                 type_tool._setObject(fti.id, fti)
                 count += 1
                 print('Added {type} to site'.format(type=fti.id))

@@ -21,6 +21,7 @@ from Persistence.mapping import PersistentMapping as PM1  # noqa
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
+from plone.dexterity.fti import DexterityFTI
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
 from plone.app.textfield import RichText
@@ -748,17 +749,18 @@ def run_export(brains):
     export_types = {}
     type_tool = site['portal_types']
     types = type_tool.listContentTypes()
-    for type in types:
-        fti = type_tool[type]
-        export_types[type] = {
-            'klass': fti.klass,
-            'model_source': fti.model_source,
-            'model_file': fti.model_file,
-            'id': fti.id,
-            'title': fti.title,
-            'description': fti.description,
-            'filter_content_types': fti.filter_content_types
-        }
+    for type_name in types:
+        fti = type_tool[type_name]
+        if fti.__class__ == DexterityFTI:
+            export_types[type_name] = {
+                'klass': fti.klass,
+                'model_source': fti.model_source,
+                'model_file': fti.model_file,
+                'id': fti.id,
+                'title': fti.title,
+                'description': fti.description,
+                'filter_content_types': fti.filter_content_types
+            }
     types_path = os.path.join(export_folder, '__types__')
     types_file = open(types_path, 'w')
     types_file.write(json.dumps(export_types))
