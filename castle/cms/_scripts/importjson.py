@@ -428,6 +428,7 @@ def import_content(path, count=0):
 
 def import_types(path):
     types_file = os.path.join(path, '__types__')
+    count = 0
     if os.path.exists(types_file):
         fi = open(types_file)
         file_read = fi.read()
@@ -444,7 +445,9 @@ def import_types(path):
                 fti = DexterityFTI(type['id'])
                 fti.manage_changeProperties(type)
                 type_tool._setObject(fti.id, fti)
+                count += 1
                 print('Added {type} to site'.format(fti.id))
+    return count
 
 
 def read_pass(path):

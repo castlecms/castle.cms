@@ -756,7 +756,8 @@ def run_export(brains):
             'model_file': fti.model_file,
             'id': fti.id,
             'title': fti.title,
-            'description': fti.description
+            'description': fti.description,
+            'filter_content_types': fti.filter_content_types
         }
     types_path = os.path.join(export_folder, '__types__')
     types_file = open(types_path, 'w')
