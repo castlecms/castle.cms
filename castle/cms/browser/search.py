@@ -148,7 +148,12 @@ _valid_params = [
     'SearchableText',
     'portal_type',
     'Subject',
-    'Subject:list'
+    'Subject:list',
+    'modified',
+    'created',
+    'effective',
+    'sort_on',
+    'sort_order'
 ]
 
 

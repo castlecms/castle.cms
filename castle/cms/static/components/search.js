@@ -36,6 +36,19 @@ require([
     'text/csv': 'Spreadsheet'
   };
   var DownloadableContentTypes = ['File', 'Video', 'Audio', 'Image', 'ExcelFile'];
+  var SortOptions = [
+    ['', 'Relevance'],
+    ['effective', 'Publication Date'],
+    ['modified', 'Modification Date'],
+  ];
+
+  var getSortLabel = function(v) {
+    for(var i=0; i<SortOptions.length; i++) {
+      if (SortOptions[i][0] == v) {
+        return SortOptions[i][1];
+      }
+    }
+  }
 
   var SearchResult = R.createClass({
     render: function(){
@@ -98,6 +111,50 @@ require([
     }
   });
 
+  var SearchOption = R.createClass({
+    getDefaultProps() {
+      return {
+        show: false,
+        parent: null,
+        type: null,
+        options: [],
+        label: null,
+        onClick: function(){}
+      }
+    },
+
+    render() {
+      var that = this;
+      var additional = '';
+      if(that.props.show === that.props.type){
+        var items = that.props.options.map(function(item){
+          return D.li({}, D.a({ href: '#', onClick: function(e){
+            e.preventDefault();
+            that.props.parent.setState({
+              show: null
+            });
+            that.props.onClick(item[0])
+          }}, item[1]));
+        });
+        additional = D.ul({
+          className: 'search-additional-sites-listing search-menu-dropdown'}, items);
+      }
+      return D.li({
+          className: 'search-additional-sites search-menu-dropdown-container' }, [
+        D.a({ href: '#',
+              className: 'search-additional-sites-btn more-btn',
+              onClick: function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          that.props.parent.setState({
+            show: that.props.parent.state.show === that.props.type ? null : that.props.type
+          });
+        }}, that.props.label),
+        additional
+      ]);
+    }
+  });
+
   var SearchComponent = R.createClass({
 
     getInitialState: function(){
@@ -112,7 +169,8 @@ require([
         searchType: this.props.searchType || 'all',
         show: null,
         searchSite: this.props.searchSite || false,
-        loading: false
+        loading: false,
+        sort_on: ''
       };
     },
 
@@ -150,7 +208,9 @@ require([
       var state = {
         SearchableText: that.state.SearchableText,
         pageSize: that.state.pageSize,
-        page: that.state.page
+        page: that.state.page,
+        sort_on: that.state.sort_on,
+        sort_order: 'descending'
       };
       if(that.state.searchType !== 'all'){
         var type = that.getSearchType(that.state.searchType);
@@ -393,44 +453,48 @@ require([
       }
 
       if(that.props.additionalSites.length > 0){
-        var additional = '';
-        if(that.state.show === 'additionalSites'){
-          var sites = [D.li({}, D.a({ href: '#', onClick: function(e){
-            e.preventDefault();
+        var current = this.props.currentSiteLabel || 'current site'
+        var items = [[current,current]].concat(that.props.additionalSites.map(function(v){
+          return [v, v];
+        }));
+        options.push(R.createElement(SearchOption, {
+          show: that.state.show,
+          type: 'additionalSites',
+          options: items,
+          parent: that,
+          label: 'Search: ' + (that.state.searchSite || this.props.currentSiteLabel || 'current site'),
+          onClick: function(val) {
+            var searchType = that.state.searchType;
+            var searchSite = false;
+            if (val === current) {
+              searchType = 'all';
+            } else {
+              searchSite = val
+            }
             that.setState({
-              searchSite: false,
-              show: null,
-              page: 1
+              searchSite: searchSite,
+              page: 1,
+              searchSite: searchType
             }, function(){
               that.load();
             });
-          }}, this.props.currentSiteLabel || 'current site'))];
-          that.props.additionalSites.forEach(function(domain){
-            sites.push(D.li({}, D.a({ href: '#', onClick: function(e){
-              e.preventDefault();
-              that.setState({
-                searchSite: domain,
-                show: null,
-                page: 1,
-                searchType: 'all'
-              }, function(){
-                that.load();
-              });
-            }}, domain)));
-          });
-          additional = D.ul({ className: 'search-additional-sites-listing search-menu-dropdown'}, sites);
-        }
-        options.push(D.li({ className: 'search-additional-sites search-menu-dropdown-container' }, [
-          D.a({ href: '#', className: 'search-additional-sites-btn more-btn', onClick: function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            that.setState({
-              show: that.state.show === 'additionalSites' ? null : 'additionalSites'
-            });
-          }}, 'Search: ' + (that.state.searchSite || this.props.currentSiteLabel || 'current site')),
-          additional
-        ]));
+          }
+        }));
       }
+      options.push(R.createElement(SearchOption, {
+        show: that.state.show,
+        type: 'publication',
+        parent: that,
+        options: SortOptions,
+        label: 'Sort: ' + getSortLabel(that.state.sort_on),
+        onClick: function(val) {
+          that.setState({
+            sort_on: val
+          }, function(){
+            that.load();
+          });
+        }
+      }));
 
       return D.div({ className: 'search-options'}, [
         D.ul({}, options)
