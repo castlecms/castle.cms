@@ -4,7 +4,8 @@ Changelog
 2.5.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Provide date search options
+  [vangheem]
 
 
 2.5.3 (2019-03-08)
