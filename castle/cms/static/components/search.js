@@ -495,6 +495,27 @@ require([
           });
         }
       }));
+      options.push(R.createElement(SearchOption, {
+        show: that.state.show,
+        type: 'date',
+        parent: that,
+        options: [
+          ['', 'All'],
+          ['2019', '2019'],
+          ['2018', '2018'],
+          ['2017', '2017'],
+          ['2016', '2016'],
+          ['2015', '2015'],
+        ],
+        label: 'Date: ' + (that.state.date || 'All'),
+        onClick: function(val) {
+          that.setState({
+            date: val
+          }, function(){
+            that.load();
+          });
+        }
+      }));
 
       return D.div({ className: 'search-options'}, [
         D.ul({}, options)
