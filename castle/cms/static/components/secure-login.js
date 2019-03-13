@@ -311,7 +311,7 @@ require([
         D.p({ className: 'auth-description' }, help),
         that.renderUsername(that.login),
         D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'code' + that.state.counter}, 'Password'),
+          D.label({ htmlFor: 'password' + that.state.counter}, 'Password'),
           D.input({type: 'password', value: that.state.password,
                    className: 'form-control password', id: 'password' + that.state.counter,
                    placeholder:'Enter password',
