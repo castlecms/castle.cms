@@ -172,7 +172,9 @@ define([
                         <div class="survey-api-title">'+title+'</div>\
                         <div class="survey-api-desc">'+desc+'</div>\
                         <br>\
-                        <form class="survey-form" action="'+survey_url+'"><input id="survey-button" type="submit" value="Take Survey"/></form>\
+                          <a href="'+survey_url+'">\
+                            <button class="plone-btn plone-btn-primary" id="survey-button" type="button">Take Survey</button>\
+                          </a>\
                         <br>\
                       </div>';
       var disclaimer_html = '<div class="survey-disclaimer">'+disclaimer+'</div>';
@@ -186,9 +188,11 @@ define([
         $('.plone-modal-close').css({
           "position": "relative",
           "top": "-15px"
-        })
+        });
         $('.plone-modal-body').append(invite_html);
-        $('.plone-modal-footer').append(disclaimer_html);
+        $('.plone-modal-footer').css({
+          "text-align": "center"
+        }).append(disclaimer_html);
       } else {
         survey_tile.hide();
         survey_tile.append(invite_html); //Show the survey invite in the .pat-survey div
