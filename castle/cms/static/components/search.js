@@ -42,14 +42,6 @@ require([
     ['modified', 'Modification Date'],
   ];
 
-  var getSortLabel = function(v) {
-    for(var i=0; i<SortOptions.length; i++) {
-      if (SortOptions[i][0] == v) {
-        return SortOptions[i][1];
-      }
-    }
-  }
-
   var SearchResult = R.createClass({
     render: function(){
       var item = this.props;
@@ -119,6 +111,8 @@ require([
         type: null,
         options: [],
         label: null,
+        labelPrefix: null,
+        value: '',
         onClick: function(){}
       }
     },
@@ -139,6 +133,15 @@ require([
         additional = D.ul({
           className: 'search-additional-sites-listing search-menu-dropdown'}, items);
       }
+      var label = that.props.label;
+      if (label == null) {
+        for(var i=0; i<that.props.options.length; i++) {
+          if (that.props.options[i][0] == that.props.value) {
+            label = that.props.labelPrefix + that.props.options[i][1];
+            break;
+          }
+        }
+      }
       return D.li({
           className: 'search-additional-sites search-menu-dropdown-container' }, [
         D.a({ href: '#',
@@ -149,7 +152,7 @@ require([
           that.props.parent.setState({
             show: that.props.parent.state.show === that.props.type ? null : that.props.type
           });
-        }}, that.props.label),
+        }}, label),
         additional
       ]);
     }
@@ -210,7 +213,8 @@ require([
         pageSize: that.state.pageSize,
         page: that.state.page,
         sort_on: that.state.sort_on,
-        sort_order: 'descending'
+        sort_order: 'descending',
+        'selected-year': that.state.date || ''
       };
       if(that.state.searchType !== 'all'){
         var type = that.getSearchType(that.state.searchType);
@@ -486,7 +490,8 @@ require([
         type: 'publication',
         parent: that,
         options: SortOptions,
-        label: 'Sort: ' + getSortLabel(that.state.sort_on),
+        labelPrefix: 'Sort: ',
+        value: that.state.sort_on,
         onClick: function(val) {
           that.setState({
             sort_on: val
@@ -499,18 +504,25 @@ require([
         show: that.state.show,
         type: 'date',
         parent: that,
+        value: that.state.date,
         options: [
-          ['', 'All'],
-          ['2019', '2019'],
-          ['2018', '2018'],
-          ['2017', '2017'],
-          ['2016', '2016'],
-          ['2015', '2015'],
+          ['', 'Any'],
+          [moment().subtract(1, 'days').format('YYYY-MM-DD'), 'Yesterday'],
+          [moment().subtract(2, 'days').format('YYYY-MM-DD'), 'Last 2 Days'],
+          [moment().subtract(7, 'days').format('YYYY-MM-DD'), 'Last Week'],
+          [moment().subtract(30, 'days').format('YYYY-MM-DD'), 'Last Month'],
+          [moment().subtract(60, 'days').format('YYYY-MM-DD'), 'Last 2 Months'],
+          [moment().subtract(365, 'days').format('YYYY-MM-DD'), 'Last Year'],
         ],
-        label: 'Date: ' + (that.state.date || 'All'),
+        labelPrefix: 'When: ',
         onClick: function(val) {
+          var sort_on = that.state.sort_on;
+          if (!sort_on) {
+            sort_on = 'effective';
+          }
           that.setState({
-            date: val
+            date: val,
+            sort_on: sort_on
           }, function(){
             that.load();
           });

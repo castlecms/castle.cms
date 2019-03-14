@@ -12,6 +12,7 @@ from urlparse import urljoin
 from urlparse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+import dateutil.parser
 
 import datetime
 import json
@@ -149,9 +150,7 @@ _valid_params = [
     'portal_type',
     'Subject',
     'Subject:list',
-    'modified',
-    'created',
-    'effective',
+    'selected-year',
     'sort_on',
     'sort_order'
 ]
@@ -169,6 +168,21 @@ class SearchAjax(BrowserView):
                 query[name] = self.request.form[name]
             elif self.request.form.get(name + '[]'):
                 query[name] = self.request.form[name + '[]']
+
+        if query.get('selected-year'):
+            if not query.get('sort_on'):
+                sort_on = query['sort_on'] = 'effective'
+            else:
+                sort_on = query['sort_on']
+            try:
+                date = dateutil.parser.parse(query.pop('selected-year'))
+                start = DateTime(date)
+                query[sort_on] = {
+                    'query': start,
+                    'range': 'min'
+                }
+            except (KeyError, AttributeError, ValueError, TypeError):
+                pass
 
         try:
             page_size = int(self.request.form.get('pageSize'))
