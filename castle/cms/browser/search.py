@@ -172,7 +172,7 @@ class SearchAjax(BrowserView):
                 query[real_name] = self.request.form[name + '[]']
 
         if query.get('after'):
-            if not query.get('sort_on'):
+            if query.get('sort_on') not in ('effective', 'modified', 'created'):
                 sort_on = query['sort_on'] = 'effective'
             else:
                 sort_on = query['sort_on']
