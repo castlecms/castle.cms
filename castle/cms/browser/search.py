@@ -133,7 +133,6 @@ _search_attributes = [
     'Title',
     'Description',
     'Subject',
-    'Subject:list',
     'contentType',
     'created',
     'modified',
@@ -150,7 +149,7 @@ _valid_params = [
     'portal_type',
     'Subject',
     'Subject:list',
-    'selected-year',
+    'after',
     'sort_on',
     'sort_order'
 ]
@@ -164,18 +163,21 @@ class SearchAjax(BrowserView):
 
         query = {}
         for name in _valid_params:
+            real_name = name
+            if real_name.endswith(':list'):
+                real_name = real_name[:-len(':list')]
             if self.request.form.get(name):
-                query[name] = self.request.form[name]
+                query[real_name] = self.request.form[name]
             elif self.request.form.get(name + '[]'):
-                query[name] = self.request.form[name + '[]']
+                query[real_name] = self.request.form[name + '[]']
 
-        if query.get('selected-year'):
+        if query.get('after'):
             if not query.get('sort_on'):
                 sort_on = query['sort_on'] = 'effective'
             else:
                 sort_on = query['sort_on']
             try:
-                date = dateutil.parser.parse(query.pop('selected-year'))
+                date = dateutil.parser.parse(query.pop('after'))
                 start = DateTime(date)
                 query[sort_on] = {
                     'query': start,
@@ -322,13 +324,14 @@ class SearchAjax(BrowserView):
                         "field": "SearchableText"
                     }
                 }
-            }
+            },
+            'sort': sort
         }
 
         query_params = {
             'from_': start,
             'size': size,
-            'fields': ','.join(_search_attributes) + ',path.path',
+            'fields': ','.join(_search_attributes) + ',path.path'
         }
 
         return es.connection.search(index=es.index_name,

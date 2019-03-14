@@ -214,7 +214,7 @@ require([
         page: that.state.page,
         sort_on: that.state.sort_on,
         sort_order: 'descending',
-        'selected-year': that.state.date || ''
+        after: that.state.date || ''
       };
       if(that.state.searchType !== 'all'){
         var type = that.getSearchType(that.state.searchType);
@@ -458,7 +458,7 @@ require([
 
       if(that.props.additionalSites.length > 0){
         var current = this.props.currentSiteLabel || 'current site'
-        var items = [[current,current]].concat(that.props.additionalSites.map(function(v){
+        var items = [['', current]].concat(that.props.additionalSites.map(function(v){
           return [v, v];
         }));
         options.push(R.createElement(SearchOption, {
@@ -466,7 +466,8 @@ require([
           type: 'additionalSites',
           options: items,
           parent: that,
-          label: 'Search: ' + (that.state.searchSite || this.props.currentSiteLabel || 'current site'),
+          labelPrefix: 'Search: ',
+          value: that.state.searchSite,
           onClick: function(val) {
             var searchType = that.state.searchType;
             var searchSite = false;
@@ -478,7 +479,7 @@ require([
             that.setState({
               searchSite: searchSite,
               page: 1,
-              searchSite: searchType
+              searchType: searchType
             }, function(){
               that.load();
             });
@@ -506,7 +507,7 @@ require([
         parent: that,
         value: that.state.date,
         options: [
-          ['', 'Any'],
+          ['', 'Any Time'],
           [moment().subtract(1, 'days').format('YYYY-MM-DD'), 'Yesterday'],
           [moment().subtract(2, 'days').format('YYYY-MM-DD'), 'Last 2 Days'],
           [moment().subtract(7, 'days').format('YYYY-MM-DD'), 'Last Week'],
