@@ -7,10 +7,12 @@
     <link href="${portal_url|nothing}/++plone++castle/less/misc/secure-login.css?v=4"
           rel="stylesheet" type="text/css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>${python: utils.get_registry_value('plone.site_title')} Login</title>
+    <title tal:condition="not: view/auth/is_zope_root">${python: utils.get_registry_value('plone.site_title')} Login</title>
+    <title tal:condition="view/auth/is_zope_root">Root authentication</title>
   </head>
   <body
-      tal:define="site_login python: hasattr(context,'portal_registry');
+      tal:define="utils context/@@castle-utils;
+                  site_login python: hasattr(context,'portal_registry');
                   portreg python: context.portal_registry if site_login else {'plone.backend_url':[],'plone.only_allow_login_to_backend_urls':False};
                   backend_urls python:portreg['plone.backend_url'] or [];
                   only_allow_login_to_backend_urls python:portreg.get('plone.only_allow_login_to_backend_urls');
