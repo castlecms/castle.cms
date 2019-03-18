@@ -91,5 +91,11 @@
     for=".interfaces.ITrashed
          Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
     handler=".subscribers.on_trash_transitioned" />
+  
+  <!-- initialization -->
+  <subscriber
+    for="castle.cms.interfaces.ICastleApplication
+         .events.IAppInitializedEvent"
+    handler=".authentication.install_acl_users" />
 
 </configure>
