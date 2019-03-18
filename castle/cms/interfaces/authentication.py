@@ -26,3 +26,6 @@ class IAuthenticator(Interface):
 
     def get_supported_auth_schemes():
         pass
+
+    def get_options():
+        pass

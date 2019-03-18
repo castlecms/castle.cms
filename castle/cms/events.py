@@ -15,3 +15,14 @@ class MetaTileEvent(ObjectEvent):
 @implementer(IMetaTileEditedEvent)
 class MetaTileEditedEvent(MetaTileEvent):
     pass
+
+
+class IAppInitializedEvent(IObjectEvent):
+    pass
+
+
+@implementer(IAppInitializedEvent)
+class AppInitializedEvent(ObjectEvent):
+    def __init__(self, object, commit):
+        super(AppInitializedEvent, self).__init__(object)
+        self.commit = commit

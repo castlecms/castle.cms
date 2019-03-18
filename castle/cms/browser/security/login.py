@@ -11,12 +11,10 @@ from plone import api
 from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PasswordResetTool.PasswordResetTool import (ExpiredRequestError,
                                                           InvalidRequestError)
-from ZODB.POSException import ConnectionStateError
 from zope.component import getMultiAdapter, getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
@@ -422,46 +420,7 @@ The user requesting this access logged this information:
             return api.portal.get_tool(name)
 
     def options(self):
-        site_url = success_url = self.context.absolute_url()
-        if ISiteRoot.providedBy(self.context):
-            success_url += '/@@dashboard'
-        if 'came_from' in self.request.form:
-            came_from = self.request.form['came_from']
-            try:
-                url_tool = api.portal.get_tool('portal_url')
-            except api.exc.CannotGetPortalError:
-                url_tool = None
-            if (came_from.startswith(site_url) and (
-                    not url_tool or url_tool.isURLInPortal(came_from))):
-                success_url = came_from
-
-        data = {
-            'supportedAuthSchemes': self.authenticator.get_supported_auth_schemes(),
-            'twoFactorEnabled': self.authenticator.two_factor_enabled,
-            'apiEndpoint': '{}/@@secure-login'.format(site_url),
-            'successUrl': success_url
-        }
-        try:
-            data['authenticator'] = createToken()
-        except ConnectionStateError:
-            # zope root related issue here...
-            pass
-
-        username = None
-        pwreset = self.request.form.get('pwreset') == 'true'
-        if pwreset:
-            try:
-                user = api.user.get(self.request.form.get('userid'))
-                username = user.getUserName()
-                data.update({
-                    'passwordReset': pwreset,
-                    'username': username,
-                    'code': self.request.form.get('code'),
-                    'userid': self.request.form.get('userid')
-                })
-            except Exception:
-                pwreset = False
-        return json.dumps(data)
+        return json.dumps(self.auth.get_options())
 
 
 class LoginExceptionApprovalView(BrowserView):

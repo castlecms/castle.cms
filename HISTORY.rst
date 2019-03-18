@@ -4,6 +4,9 @@ Changelog
 2.5.4 (unreleased)
 ------------------
 
+- Be able to provide oauth providers for `@@secure-login`
+  [vangheem]
+
 - Make the secure login accessible
   [RobZoneNet]
 

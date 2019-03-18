@@ -125,3 +125,40 @@ body.secure-login-template {
 		margin-left: -((@login-width - 40px) * 5);
 	}
 }
+
+
+.castle-secure-login-login-provider {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  > li {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    
+    a {
+      display: block;
+      color: white;
+      margin: 2px;
+      padding: 5px;
+      border: 1px solid #dedede;
+      border-radius: 4px;
+      box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.15);
+      background-color: #72abd5;
+
+      &:hover {
+        text-decoration: none;
+        border-color: #2e6da4;
+        background-color: #337ab7;
+      }
+    }
+
+    img {
+      max-width: 20px;
+      max-height: 20px;
+      padding-right: 5px;
+    }
+  }
+}
