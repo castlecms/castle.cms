@@ -38,7 +38,7 @@ before_install:
 
 install:
   - mkdir -p {eggs,downloads}
-  - wget https://launchpad.net/plone/5.1/5.1.4/+download/Plone-5.1.4-UnifiedInstaller.tgz
+  - wget https://launchpad.net/plone/5.2/5.2rc1/+download/Plone-5.2rc1-UnifiedInstaller.tgz
   - tar -zxvf Plone-*.tgz > /dev/null
   - tar -xvjf Plone-*/packages/buildout-cache.tar.bz2 > /dev/null
   - cp -rf buildout-cache/eggs/* eggs/

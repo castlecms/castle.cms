@@ -19,14 +19,14 @@ Welcome to the main CastleCMS package!
 WORKING ON THIS BRANCH!!!
 =========================
 
-This branch is highly experimental branch to make castle work with Python 3.6+ and Plone 5.2
+This branch is highly experimental branch to make castle work with Python 3.7+ and Plone 5.2
 
 To get started:
 
 .. code-block:: shell
     python -m venv env
     env/bin/pip install -r requirements.txt
-    env/bin/buildout -c develop.cfg
+    env/bin/buildout
 
 To Run:
 
