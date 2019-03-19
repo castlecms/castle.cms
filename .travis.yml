@@ -50,7 +50,7 @@ install:
   - if [ "$TEST_SUITE" == "upgrades" ]; then
     pip install requests;
     fi
-  - buildout -N
+  - buildout -Nc travis.cfg
 
 script:
   - if [ "$TEST_SUITE" == "unit" ]; then
