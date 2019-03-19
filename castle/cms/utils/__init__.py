@@ -25,6 +25,7 @@ from .misc import get_random_string  # noqa
 from .misc import json_dumps  # noqa
 from .misc import make_random_key  # noqa
 from .misc import normalize_url  # noqa
+from .misc import open_blob  # noqa
 from .misc import retriable  # noqa
 from .misc import strings_differ  # noqa
 from .query import parse_query_from_data  # noqa
@@ -37,5 +38,4 @@ from .registry import site_has_icon  # noqa
 from .security import get_managers  # noqa
 from .security import get_permission_title  # noqa
 from .security import publish_content  # noqa
-from .text import truncate_text  # noqa
 from .text import truncate_text as truncateText  # noqa

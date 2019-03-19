@@ -7,7 +7,7 @@ from setuptools import find_packages
 
 
 def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+    return open(os.path.join(os.path.dirname(__file__), *rnames), 'r').read()
 
 
 setup(
@@ -37,18 +37,12 @@ setup(
     namespace_packages=['castle'],
     install_requires=[
         # plone packages
-        'Products.CMFPlone>=5.0.10.dev2',
-        'mockup>=2.4.2.dev1',
+        'Products.CMFPlone>=5.2.0.dev0',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
         'plone.app.blocks>=10.0.0',
         'Products.PloneKeywordManager>=2.2.1',
-        'plone.schemaeditor>=2.0.18',
-        'plone.namedfile>=3.0.10',
-        'plone.folder>=1.0.12',
-        'AccessControl>=3.0.14',
         'z3c.relationfield>=0.7.1.dev0',
-        'Products.ZCatalog>=3.0.3dev2',
         'plone.app.standardtiles>=2.0.0.dev0',
 
         'Products.CMFPlacefulWorkflow',
@@ -56,6 +50,7 @@ setup(
         'plone.app.dexterity',
         'plone.app.iterate',
         'plone.api',
+        'plone.app.drafts>=1.1.3',
 
         # castle
         'castle.theme>=1.0.4',
@@ -86,8 +81,7 @@ setup(
 
         # misc
         'z3c.unconfigure',
-        'z3c.jbot',
-        'plone.app.blocks>=10.0.0',
+        'z3c.jbot'
     ],
     extras_require={
         'test': [

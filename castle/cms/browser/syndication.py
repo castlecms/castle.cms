@@ -67,6 +67,8 @@ class FeedSettings(settings.FeedSettings):
         return self._metadata.get(name, default)
 
 
+@implementer(IFeedSettings)
+@adapter(IDexterityItem)
 class ItemFeedSettings(settings.FeedSettings):
     '''
     Implement basic item feed settings for static values
@@ -74,8 +76,6 @@ class ItemFeedSettings(settings.FeedSettings):
     if feed setting data is attempted to be looked against
     a non-folder item
     '''
-    implements(IFeedSettings)
-    adapts(IDexterityItem)
 
     enabled = False
     sort_on = 'effective'

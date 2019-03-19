@@ -8,9 +8,9 @@ def get(name, default, _type='unicode'):
         value = os.environ[env_name]
     else:
         value = default
-    if _type == 'unicode':
-        if not isinstance(value, unicode):
-            value = unicode(value)
+    if _type in ('unicode', 'str'):
+        if not isinstance(value, str):
+            value = str(value)
     elif _type == 'bool':
         if not isinstance(value, bool):
             value = value.lower() in ('t', 'true', '1', 'on')

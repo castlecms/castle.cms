@@ -1,7 +1,9 @@
 import logging
 import os
 import types
-from urllib import unquote
+from urllib.parse import unquote
+
+import six
 
 import transaction
 from Acquisition import aq_base
@@ -13,7 +15,6 @@ from castle.cms.interfaces import IHasDefaultImage
 from castle.cms.interfaces import IReferenceNamedImage
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
-from OFS.CopySupport import eInvalid
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contentlisting.interfaces import IContentListingObject
@@ -30,8 +31,8 @@ logger = logging.getLogger('castle.cms')
 def get_paste_data(req):
     try:
         op, mdatas = _cb_decode(req['__cp'])
-    except Exception:
-        raise CopyError(eInvalid)
+    except Exception as e:
+        six.raise_from(CopyError('Clipboard Error'), e)
 
     try:
         if mdatas[0][0].startswith('cache:'):

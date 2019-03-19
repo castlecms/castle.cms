@@ -140,3 +140,11 @@ def _customhandler(obj):
 
 def json_dumps(data):
     return json.dumps(data, default=_customhandler)
+
+
+def open_blob(blob, mode='r'):
+    try:
+        return blob.open(mode)
+    except IOError:
+        blob._p_deactivate()
+        return blob.open(mode)
