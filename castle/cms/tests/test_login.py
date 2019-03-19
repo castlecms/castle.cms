@@ -555,7 +555,6 @@ if argon2 is not None:
             self.assertTrue(scheme.validate(encrypted, 'foobar'))
 
         def test_argon_is_used_by_default(self):
-            import pdb; pdb.set_trace()
             encrypted = AuthEncoding.pw_encrypt('foobar')
             self.assertTrue(b'{argon2}' in encrypted)
             self.assertTrue(AuthEncoding.pw_validate(encrypted, 'foobar'))
