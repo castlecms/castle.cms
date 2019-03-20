@@ -118,7 +118,7 @@
   <property name="title"></property>
   <object name="view-page" meta_type="CMF Action">
    <property name="title">View Page</property>
-   <property name="description">View this current content item the way a website visitor would see it. This button is most useful if you need to return from the Manage Content view.</property>
+   <property name="description">Go back to public view of page.</property>
    <property name="url_expr">string:${object/absolute_url}/view</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -129,7 +129,7 @@
   </object>
   <object name="folder_contents" meta_type="CMF Action">
    <property name="title">Manage Content</property>
-   <property name="description">Shows you the contents of the current folder, lets you navigate to any part of your site and perform operations on one or more content items.</property>
+   <property name="description">Batch organize and navigate site content.</property>
    <property
       name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/folder_contents</property>
    <property name="link_target"></property>
@@ -167,7 +167,7 @@
   </object>
   <object name="edit" meta_type="CMF Action">
    <property name="title">Edit</property>
-   <property name="description">Edit the content of this current item</property>
+   <property name="description">Edit the content of this current item.</property>
    <property name="url_expr">string:${object/absolute_url}/edit</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -179,7 +179,7 @@
   </object>
   <object name="state" meta_type="CMF Action">
    <property name="title">State</property>
-   <property name="description">Shows you the workflow state of the current item. CastleCMS uses workflow to let you indicate whether a content item is private, under review, or published. You click on the State button to change the workflow state of the item, if you have the permissions to do so.</property>
+   <property name="description">Manage the current publication state of this page.</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -191,7 +191,7 @@
   </object>
   <object name="design" meta_type="CMF Action">
    <property name="title">Design</property>
-   <property name="description">Lets you set the design to be applied to the current item and to all items inside the current folder. You use designs to give different appearances to different parts of your site.</property>
+   <property name="description">Change the appearance of the current page and folder.</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -214,7 +214,7 @@
   </object>
   <object name="cut" meta_type="CMF Action">
    <property name="title">Cut</property>
-   <property name="description">Cut this file to paste it elsewhere</property>
+   <property name="description">Cut this file to paste it elsewhere.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@object_cut</property>
    <property name="link_target"></property>
@@ -229,7 +229,7 @@
   </object>
   <object name="copy" meta_type="CMF Action">
    <property name="title">Copy</property>
-   <property name="description">Copy or Move this item</property>
+   <property name="description">Copy or Move this item.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@object_copy</property>
    <property name="link_target"></property>
@@ -244,7 +244,7 @@
   </object>
   <object name="paste" meta_type="CMF Action">
    <property name="title">Paste</property>
-   <property name="description">Paste a file that has been copied or cut</property>
+   <property name="description">Paste a file that has been copied or cut.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@object_paste</property>
    <property name="link_target"></property>
@@ -259,7 +259,7 @@
   </object>
   <object name="delete" meta_type="CMF Action">
    <property name="title">Delete</property>
-   <property name="description">Delete or move this item to a recycle bin</property>
+   <property name="description">Delete or move this item to a recycle bin.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@delete_confirmation</property>
    <property name="link_target"></property>
@@ -274,7 +274,7 @@
   </object>
   <object name="rename" meta_type="CMF Action">
    <property name="title">Rename</property>
-   <property name="description">Rename this item</property>
+   <property name="description">Rename this item.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@object_rename</property>
    <property name="link_target"></property>
@@ -312,7 +312,7 @@
   </object>
   <object name="history" meta_type="CMF Action">
    <property name="title">History</property>
-   <property name="description">Shows the version history of the current item: who created or edited it, when, and what they did, including version comparisons and the ability to revert to a particular version.</property>
+   <property name="description">View edit and workflow state history of this page.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@historyview</property>
    <property name="link_target"></property>
@@ -340,7 +340,7 @@
   </object>
   <object name="aliases" meta_type="CMF Action">
    <property name="title">Aliases</property>
-   <property name="description">Displays any aliases you’re created for the current item. For example, you might want a page at one URL to be available at other locations on your site.</property>
+   <property name="description">View and update all urls that redirect to this page.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@manage-aliases</property>
    <property name="link_target"></property>
@@ -353,7 +353,7 @@
   </object>
   <object name="syndication" meta_type="CMF Action">
    <property name="title">Syndication</property>
-   <property name="description">Displays settings that make the current item or folder available to other websites and remote software in formats such as RSS, Atom, and iTunes. For example, you might want to enable syndication in your website’s News folder so that blogs could repost your news </property>
+   <property name="description">Control how you publish your content with RSS/Atom/iTunes.</property>
    <property
       name="url_expr">string:${folder/absolute_url}/@@synPropertiesForm</property>
    <property name="link_target"></property>
@@ -366,7 +366,7 @@
   </object>
   <object name="analytics" meta_type="CMF Action">
    <property name="title">Analytics</property>
-   <property name="description">This displays the current and historical Google Analytics and social media page views and other measures for the current item.</property>
+   <property name="description">Review analytic statistics for this page.</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -376,7 +376,7 @@
   </object>
   <object name="preview" meta_type="CMF Action">
    <property name="title">Preview</property>
-   <property name="description">Preview your content item in full size, tablet, phablet, and phone sizes</property>
+   <property name="description">Preview this page in different browser sizes.</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -386,7 +386,7 @@
   </object>
   <object name="invalidate" meta_type="CMF Action">
    <property name="title">Invalidate Cache</property>
-   <property name="description">Clear cache for a fresh copy of this item to be shown to the public</property>
+   <property name="description">Clear proxy servers and/or cloudflare cache.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@castle-purge</property>
    <property name="link_target"></property>
@@ -411,7 +411,7 @@
   </object>
   <object name="slots" meta_type="CMF Action">
    <property name="title">Slots</property>
-   <property name="description">Lets you view and control the tiles and fragments that appear in 'slots' around the current item’s view. For example, you can add a news tile in the left edge slot so that your website visitors always see the latest news item you’ve published. </property>
+   <property name="description">Manage content in parts of the page from the Theme.</property>
    <property name="url_expr"></property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -428,7 +428,7 @@
   <property name="title"></property>
   <object name="dashboard" meta_type="CMF Action">
    <property name="title">Dashboard</property>
-   <property name="description">See what’s changed or been added recently to the site, and you can immediately begin adding new content or managing site content.</property>
+   <property name="description">View and manage your dashboard.</property>
    <property name="url_expr">string:${portal_url}/@@dashboard</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -450,7 +450,7 @@
   </object>
   <object name="preferences" meta_type="CMF Action">
    <property name="title">Preferences</property>
-   <property name="description">Your personal settings</property>
+   <property name="description">Your personal settings.</property>
    <property
       name="url_expr">string:${portal_url}/@@personal-preferences</property>
    <property name="link_target"></property>
@@ -461,7 +461,7 @@
   </object>
   <object name="activity_log" meta_type="CMF Action">
    <property name="title">Activity Log</property>
-   <property name="description">A list of everything you did on the site</property>
+   <property name="description">A list of everything you did on the site.</property>
    <property name="url_expr">string:${portal_url}/@@activity-report</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -471,7 +471,7 @@
   </object>
   <object name="logout" meta_type="CMF Action">
    <property name="title">Log Out</property>
-   <property name="description">Log out of the site</property>
+   <property name="description">Log out of the site.</property>
    <property name="url_expr">string:${portal_url}/logout</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -497,7 +497,7 @@
   </object>
   <object name="impersonate" meta_type="CMF Action">
    <property name="title">View As...</property>
-   <property name="description">This displays a dialog box that lets you view the content item as an anonymous (not logged-in) website visitor or as another CastleCMS user.</property>
+   <property name="description">View the page as another user.</property>
    <property name="url_expr">string:${portal_url}/@@impersonator</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -507,7 +507,7 @@
   </object>
   <object name="recycle" meta_type="CMF Action">
    <property name="title">Recycle Bin</property>
-   <property name="description">Recover deleted items from the recycle bin</property>
+   <property name="description">Recover deleted items from the recycle bin.</property>
    <property name="url_expr">string:${portal_url}/@@trash</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -519,7 +519,7 @@
   </object>
   <object name="review" meta_type="CMF Action">
    <property name="title">Review Archives</property>
-   <property name="description">CastleCMS integrates with Amazon Simple Storage Service (S3) so you can optionally configure it to move large files automatically off your server and onto your S3 bucket, while still appearing to serve the files as if they were on your website.</property>
+   <property name="description">Review content that will be archived to static storage.</property>
    <property name="url_expr">string:${portal_url}/@@archival-review</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
@@ -531,7 +531,7 @@
   </object>
   <object name="tour" meta_type="CMF Action">
    <property name="title">Tour CastleCMS</property>
-   <property name="description">Launches the CastleCMS tour</property>
+   <property name="description">Launches the CastleCMS tour.</property>
    <property name="url_expr">string:${portal_url}/@@retour</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
