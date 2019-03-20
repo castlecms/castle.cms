@@ -105,7 +105,7 @@ class Search(BrowserView):
                         continue
                     additional_sites.append(site_name)
             except TransportError:
-                return []
+                pass
 
         parsed = urlparse(get_public_url())
 
