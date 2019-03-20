@@ -221,9 +221,8 @@ def fix_html_images(obj):
 
 
 def import_object(filepath):
-    fi = open(filepath)
-    file_read = fi.read()
-    fi.close()
+    with open(filepath, 'r') as fi:
+        file_read = fi.read()
     try:
         data = mjson.loads(file_read)
     except Exception:

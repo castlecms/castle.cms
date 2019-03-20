@@ -7,8 +7,12 @@ from castle.cms.patterns import CastleSettingsAdapter
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.upgrades import upgrade_2_2_0
 from castle.cms.utils import get_upload_fields
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.registry.field import List
+from plone.registry.field import TextLine
 from plone.registry.interfaces import IRegistry
 from plone.registry.record import Record
 from zope.component import getUtility
@@ -27,7 +31,7 @@ class TestFileUploadFields(unittest.TestCase):
     def test_fallback_to_default_settings_until_upgrade_done(self):
         registry = getUtility(IRegistry)
         del registry.records['castle.file_upload_fields']
-        record = Record(List(), [u'title', u'description'])
+        record = Record(List(value_type=TextLine()), [u'title', u'description'])
         registry.records['castle.required_file_upload_fields'] = record
         fields = get_upload_fields(registry)
         self.assertTrue(fields[0]['required'])
@@ -38,7 +42,7 @@ class TestFileUploadFields(unittest.TestCase):
         registry = getUtility(IRegistry)
         fields = deepcopy(registry['castle.file_upload_fields'])
         for field in fields:
-            field['required'] = unicode(field['required']).lower()
+            field['required'] = str(field['required']).lower()
         self.assertEquals(len(get_upload_fields(registry)), 5)
         fields.append({
             u'name': u'foobar',
@@ -82,7 +86,7 @@ class TestFileUploadFields(unittest.TestCase):
     def test_migrate_settings(self):
         registry = getUtility(IRegistry)
         del registry.records['castle.file_upload_fields']
-        record = Record(List(), [u'title'])
+        record = Record(List(value_type=TextLine()), [u'title'])
         registry.records['castle.required_file_upload_fields'] = record
 
         self.assertIn('castle.required_file_upload_fields', registry.records._fields)

@@ -193,4 +193,4 @@ if argon2 is not None:
 
     registerScheme('argon2', Argon2Scheme())
     # we patch this to be default because plone doesn't provide a param
-    pw_encrypt.func_defaults = ('argon2',)
+    pw_encrypt.__defaults__ = ('argon2',)

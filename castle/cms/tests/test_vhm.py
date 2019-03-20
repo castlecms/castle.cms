@@ -35,15 +35,6 @@ class TestVHM(unittest.TestCase):
         self.assertEqual(self.app.folder.doc.absolute_url(),
                          'http://www.foobar.com/folder/doc')
 
-    def test_url_with_scheme_header(self):
-        req = self.app.REQUEST
-        req.environ['HTTP_X_SCHEME'] = 'https'
-        self.traverse('/folder/doc')
-        self.assertEqual(self.app.REQUEST['ACTUAL_URL'],
-                         'https://foo/folder/doc')
-        self.assertEqual(self.app.folder.doc.absolute_url(),
-                         'https://foo/folder/doc')
-
     def test_url_with_scheme_and_host_header(self):
         req = self.app.REQUEST
         req.environ['HTTP_X_SCHEME'] = 'https'

@@ -3,6 +3,7 @@ import re
 from lxml.html import fromstring
 from lxml.html import tostring
 from lxml.html.clean import Cleaner
+from unidecode import unidecode
 
 
 _truncate_cleaner = Cleaner(
@@ -17,13 +18,14 @@ def truncate_text(text, max_words=30, more_link=None, clean=False):
     adapted from Django
     """
 
-    if not isinstance(text, basestring):
+    if not isinstance(text, bytes):
+        text = unidecode(text)
+
+    if not isinstance(text, str):
         return ''
 
     if clean:
         try:
-            if not isinstance(text, unicode):
-                text = text.decode('utf8')
             xml = fromstring(text)
             _truncate_cleaner(xml)
             # also remove empty tags...

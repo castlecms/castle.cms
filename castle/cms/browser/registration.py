@@ -3,6 +3,7 @@ from castle.cms.utils import get_email_from_address
 from castle.cms.utils import send_email
 from castle.cms.utils import verify_recaptcha
 from castle.cms.widgets import ReCaptchaFieldWidget
+from plone import api
 from plone.app.users.browser.register import RegistrationForm as BaseRegistrationForm
 from plone.app.users.schema import checkEmailAddress
 from plone.autoform.form import AutoExtensibleForm
@@ -56,7 +57,6 @@ class EmailConfirmation(AutoExtensibleForm, form.Form):
         registry = queryUtility(IRegistry)
         self.has_captcha = registry.get('castle.recaptcha_private_key') is not None
         portal_membership = getToolByName(self.context, 'portal_membership')
-        self.isAnon = portal_membership.isAnonymousUser()
 
     def send_mail(self, email, item):
         url = '%s/@@register?confirmed_email=%s&confirmed_code=%s' % (
@@ -77,7 +77,7 @@ If that does not work, copy and paste this urls into your web browser: %s
 
     def updateFields(self):
         super(EmailConfirmation, self).updateFields()
-        if self.has_captcha and self.isAnon:
+        if self.has_captcha and api.user.is_anonymous():
             self.fields['captcha'].widgetFactory = ReCaptchaFieldWidget
         else:
             self.fields['captcha'].mode = interfaces.HIDDEN_MODE

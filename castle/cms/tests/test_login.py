@@ -478,7 +478,7 @@ class TestPwexpiry(unittest.TestCase):
         })
         api.portal.set_registry_record(
             name='plone.pwexpiry_whitelisted_users',
-            value=[editableUser.getId().decode('utf-8')]
+            value=[editableUser.getId()]
         )
         self.request.form.update({
             'apiMethod': 'login',

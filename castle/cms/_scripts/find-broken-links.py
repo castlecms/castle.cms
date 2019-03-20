@@ -144,9 +144,8 @@ def find_broken(site):
 
     now = datetime.datetime.now()
     filename = 'broken-links-{}.txt'.format(now.isoformat())
-    fi = open(filename, 'w')
-    fi.write('\n'.join(broken))
-    fi.close()
+    with open(filename, 'w') as fi:
+        fi.write('\n'.join(broken))
 
 
 if __name__ == '__main__':

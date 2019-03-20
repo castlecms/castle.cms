@@ -1,9 +1,4 @@
-import base64
-import json
 import re
-import sys
-import unittest
-from io import StringIO
 
 import transaction
 from castle.cms import install
@@ -22,6 +17,7 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
+from plone.app.testing.bbb import PloneTestCase
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
 from zope.configuration import xmlconfig
@@ -59,9 +55,9 @@ class CastleLayer(PloneSandboxLayer):
         applyProfile(portal, 'plone.app.mosaic:default')
         applyProfile(portal, 'castle.cms:default')
         portal.portal_workflow.setDefaultChain('simple_publication_workflow')
-
         install.tiles(portal, portal.REQUEST)
         combine_bundles(portal)
+        transaction.commit()
 
         # Clear globalrequest
         clearRequest()
@@ -142,68 +138,10 @@ class ResponseWrapper:
         return self.cookies.get(name)
 
 
-class BaseTest(unittest.TestCase):
-    layer = CASTLE_PLONE_INTEGRATION_TESTING
+class BaseTest(PloneTestCase):
+    layer = CASTLE_PLONE_FUNCTIONAL_TESTING
 
     def setUp(self):
+        super().setUp()
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-
-    def publish(self, path, basic=None, env=None, extra=None,
-                request_method='GET', content=None, handle_errors=True,
-                username=None, password=None):
-        """
-        Mostly pulled from Testing.functional
-        """
-        from ZPublisher.Request import Request
-        from ZPublisher.Response import Response
-        from ZPublisher.Publish import publish_module
-
-        transaction.commit()
-
-        if env is None:
-            env = {}
-        if extra is None:
-            extra = {}
-
-        env['SERVER_NAME'] = self.request['SERVER_NAME']
-        env['SERVER_PORT'] = self.request['SERVER_PORT']
-        env['REQUEST_METHOD'] = request_method
-
-        p = path.split('?')
-        if len(p) == 1:
-            env['PATH_INFO'] = p[0]
-        elif len(p) == 2:
-            [env['PATH_INFO'], env['QUERY_STRING']] = p
-        else:
-            raise TypeError('')
-
-        if basic:
-            env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring(basic)
-        elif username is not None and password is not None:
-            env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring('{}:{}'.format(
-                username, password
-            ))
-
-        stdin = StringIO()
-        if content is not None:
-            if type(content) in (list, dict):
-                content = json.dumps(content)
-            stdin.write(content)
-            stdin.seek(0)
-
-        outstream = StringIO()
-        response = Response(stdout=outstream, stderr=sys.stderr)
-        request = Request(stdin, env, response)
-        if extra:
-            # Needed on Plone 3 when adding things to the path in a querystring
-            # is not enough.
-            for key, value in extra.items():
-                request[key] = value
-
-        publish_module('Zope2',
-                       debug=not handle_errors,
-                       request=request,
-                       response=response)
-
-        return ResponseWrapper(response, outstream, path)

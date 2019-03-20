@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-from castle.cms import subscribe
-from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm  # noqa
-from castle.cms.browser.subscribe import SubscribeForm
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.browser.controlpanel.announcements import ImportSubscribersForm, reg_key
-from plone.app.testing import logout
-from plone.registry.interfaces import IRegistry
-from plone import api
-from zope.component import queryUtility
+import unittest
 
 import responses
 import transaction
-import unittest
+from castle.cms import subscribe
+from castle.cms.browser.controlpanel.announcements import ImportSubscribersForm
+from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm  # noqa
+from castle.cms.browser.controlpanel.announcements import reg_key
+from castle.cms.browser.subscribe import SubscribeForm
+from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from plone import api
+from plone.app.testing import logout
+from plone.registry.interfaces import IRegistry
+from zope.component import queryUtility
 
 
 class TestSubscribe(unittest.TestCase):
@@ -61,7 +63,7 @@ class TestSubscribe(unittest.TestCase):
 
 class TestSubscribeForm(unittest.TestCase):
 
-    layer = CASTLE_PLONE_INTEGRATION_TESTING
+    layer = CASTLE_PLONE_FUNCTIONAL_TESTING
 
     def setUp(self):
         self.portal = self.layer['portal']

@@ -100,7 +100,7 @@ class TestArchival(unittest.TestCase):
             'foobar': 'barfoo'
         }
 
-        self.assertEqual('<html><body><div>barfoo</div></body></html>',
+        self.assertEqual(b'<html><body><div>barfoo</div></body></html>',
                          storage.apply_replacements('<html><body><div>foobar</div>'
                                                     '</body></html>'))
 
@@ -113,7 +113,7 @@ class TestArchival(unittest.TestCase):
             '.foobar': 'barfoo'
         }
 
-        self.assertEqual('<html><body><div class="foobar">barfoo</div></body></html>',
+        self.assertEqual(b'<html><body><div class="foobar">barfoo</div></body></html>',
                          storage.apply_replacements('<html><body><div class="foobar"></div>'
                                                     '</body></html>'))
 
@@ -125,4 +125,4 @@ class TestArchival(unittest.TestCase):
             '<html><body><div class="foo">foo</div></body></html>',
             'http://foobar.com')
 
-        self.assertTrue('>bar<' in result)
+        self.assertTrue(b'>bar<' in result)

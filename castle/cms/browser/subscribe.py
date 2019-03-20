@@ -109,13 +109,6 @@ class SubscribeForm(BaseForm):
     sent = False
     subscribed = False
 
-    def __init__(self, context, request):
-        super(SubscribeForm, self).__init__(context, request)
-        registry = queryUtility(IRegistry)
-        self.has_captcha = registry.get('castle.recaptcha_private_key') not in (None, '')
-        self.has_texting = registry.get('castle.plivio_auth_id') not in (None, '')
-        self.isAnon = None
-
     def send_mail(self, email, item):
         registry = getUtility(IRegistry)
         site_settings = registry.forInterface(ISiteSchema,
@@ -137,13 +130,19 @@ If that does not work, copy and paste this url into your web browser: %s
             [email], "Email Confirmation for subscription(%s)" % site_settings.site_title,
             html=html, text=text)
 
-    def updateFields(self):
-        super(SubscribeForm, self).updateFields()
-        if self.isAnon is None:
-            portal_membership = getToolByName(self.context, 'portal_membership')
-            self.isAnon = portal_membership.isAnonymousUser()
+    @property
+    def has_captcha(self):
+        registry = queryUtility(IRegistry)
+        return registry.get('castle.recaptcha_private_key') not in (None, '')
+    
+    @property
+    def has_texting(self):
+        registry = queryUtility(IRegistry)
+        return registry.get('castle.plivio_auth_id') not in (None, '')
 
-        if self.has_captcha and self.isAnon:
+    def updateFields(self):
+        super().updateFields()
+        if self.has_captcha and api.user.is_anonymous():
             self.fields['captcha'].widgetFactory = ReCaptchaFieldWidget
         else:
             self.fields['captcha'].mode = interfaces.HIDDEN_MODE
@@ -154,7 +153,7 @@ If that does not work, copy and paste this url into your web browser: %s
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
-        if self.has_captcha and self.isAnon:
+        if self.has_captcha and api.user.is_anonymous():
             if not verify_recaptcha(self.request):
                 notify(
                     ActionErrorOccurred(
@@ -195,8 +194,6 @@ If that does not work, copy and paste this url into your web browser: %s
         registry = queryUtility(IRegistry)
         self.subscriptions_enabled = registry.get(
             'plone.enable_notification_subscriptions', False)
-        portal_membership = getToolByName(self.context, 'portal_membership')
-        self.isAnon = portal_membership.isAnonymousUser()
 
         if not self.has_captcha or not self.subscriptions_enabled:
             api.portal.show_message(

@@ -6,7 +6,7 @@ from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.widgets import LeadImageFocalNamedImageFieldWidget
 from plone import api
-from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+from plone.app.contenttypes.behaviors.leadimage import ILeadImageBehavior as ILeadImage
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login

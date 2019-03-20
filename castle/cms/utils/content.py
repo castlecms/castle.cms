@@ -146,9 +146,8 @@ def get_data_from_url(url, portal=None, site_url=None):
             except Exception:
                 pass
         if file_path and os.path.exists(file_path):
-            fi = open(file_path)
-            data = fi.read()
-            fi.close()
+            with open(file_path, 'rb') as fi:
+                data = fi.read()
             ct = 'image/' + file_path.split('.')[-1].lower()
         else:
             resp = subrequest(unquote(url))

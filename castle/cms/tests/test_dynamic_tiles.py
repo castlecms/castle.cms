@@ -74,7 +74,7 @@ class TestDynamicTiles(unittest.TestCase):
         self.assertEqual(len(mng.get_tile_fields('foobartile')), 1)
 
         iface = mng.get_schema('foobartile')
-        self.assertEqual(iface.names(), ['foobar'])
+        self.assertEqual([i for i in iface.names()], ['foobar'])
 
     def test_all_fields(self):
         fields = []

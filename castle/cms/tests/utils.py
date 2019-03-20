@@ -181,7 +181,7 @@ def add_tag(selenium, tagtoadd):
 def get_tile(request, context, name, data):
     tile = getMultiAdapter((context, request), name=name)
 
-    for key in data.iterkeys():
+    for key in data.keys():
         tile.data[key] = data[key]
 
     return tile

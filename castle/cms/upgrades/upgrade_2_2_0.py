@@ -24,25 +24,25 @@ def upgrade(context, logger=None):
             u'name': u'title',
             u'label': u'Title',
             u'widget': u'text',
-            u'required': unicode('title' in required_upload_fields).lower(),
+            u'required': str('title' in required_upload_fields).lower(),
             u'for-file-types': u'*'
         }, {
             u'name': u'description',
             u'label': u'Summary',
             u'widget': u'textarea',
-            u'required': unicode('description' in required_upload_fields).lower(),
+            u'required': str('description' in required_upload_fields).lower(),
             u'for-file-types': u'*'
         }, {
             u'name': u'tags',
             u'label': u'Tags',
             u'widget': u'tags',
-            u'required': unicode('tags' in required_upload_fields).lower(),
+            u'required': str('tags' in required_upload_fields).lower(),
             u'for-file-types': u'*'
         }, {
             u'name': u'youtube_url',
             u'label': u'Youtube URL',
             u'widget': u'text',
-            u'required': unicode('youtube_url' in required_upload_fields).lower(),
+            u'required': str('youtube_url' in required_upload_fields).lower(),
             u'for-file-types': u'video'
         }]
         if 'castle.required_file_upload_fields' in registry.records._fields:

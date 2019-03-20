@@ -28,7 +28,8 @@ class TestSiteIcon(unittest.TestCase):
 
     def test_get_site_icon_does_not_raise_overflow_error(self):
         registry = getUtility(IRegistry)
-        registry['plone.site_icon'] = b64encode_file('foobar.gif', bimage)
+        registry['plone.site_icon'] = b64encode_file(
+            'foobar.gif', bimage).decode('utf-8')
         view = IconView(self.portal, self.request)
         self.request.form.update({
             'scale': '-3284239847329'
@@ -37,7 +38,8 @@ class TestSiteIcon(unittest.TestCase):
 
     def test_get_site_icon_raises_404(self):
         registry = getUtility(IRegistry)
-        registry['plone.site_icon'] = b64encode_file('foobar.gif', bimage)
+        registry['plone.site_icon'] = b64encode_file(
+            'foobar.gif', bimage).decode('utf-8')
         view = IconView(self.portal, self.request)
         self.request.form.update({
             'scale': '555'
@@ -46,7 +48,8 @@ class TestSiteIcon(unittest.TestCase):
 
     def test_get_site_icon(self):
         registry = getUtility(IRegistry)
-        registry['plone.site_icon'] = b64encode_file('foobar.gif', bimage)
+        registry['plone.site_icon'] = b64encode_file(
+            'foobar.gif', bimage).decode('utf-8')
         view = IconView(self.portal, self.request)
         self.request.form.update({
             'scale': '180'

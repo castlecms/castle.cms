@@ -19,9 +19,8 @@ site = app[args.site_id]  # noqa
 setSite(site)
 
 
-fi = open(args.file)
-items = json.loads(fi.read())
-fi.close()
+with open(args.file, 'r') as fi:
+    json.loads(fi.read())
 
 
 storage = archival.Storage(site, UrlOpener=archival.RequestsUrlOpener)

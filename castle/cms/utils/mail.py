@@ -17,7 +17,7 @@ def get_email_from_address():
 
 
 def send_email(recipients=None, subject=None, html='', text='', sender=None):
-    if isinstance(recipients, basestring):
+    if isinstance(recipients, str):
         recipients = [recipients]
 
     cleaned_recipients = []

@@ -132,7 +132,7 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
 
             filters = [f for _, f in getAdapters((self.context, self.request), IFilter)]
             html = apply_filters(filters, html)
-            html = html.replace(self.context.absolute_url(), public_url.encode('utf8'))
+            html = html.replace(self.context.absolute_url(), public_url)
 
             send_email.delay(list(set(addresses)), data['subject'], html=html, sender=sender)
             self.request.response.redirect('%s/@@announcements-controlpanel' % (
@@ -186,7 +186,7 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
 
             filters = [f for _, f in getAdapters((self.context, self.request), IFilter)]
             html = apply_filters(filters, html)
-            html = html.replace(self.context.absolute_url(), public_url.encode('utf8'))
+            html = html.replace(self.context.absolute_url(), public_url)
 
             categories = set()
             if 'form.widgets.send_to_categories' in self.request.form:

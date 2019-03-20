@@ -46,12 +46,11 @@ class FileCacheFactory(object):
                     'mtime': 0
                 }
             else:
-                fi = open(filepath)
-                cache[filepath] = {
-                    'template': ZopePageTemplate(name, text=fi.read()),
-                    'mtime': 0
-                }
-                fi.close()
+                with open(filepath, 'r') as fi:
+                    cache[filepath] = {
+                        'template': ZopePageTemplate(name, text=fi.read()),
+                        'mtime': 0
+                    }
         return cache[filepath]['template']
 
 
@@ -75,12 +74,11 @@ class FileChangedCacheFactory(FileCacheFactory):
                     'mtime': 9999999999
                 }
             else:
-                fi = open(filepath)
-                cache[filepath] = {
-                    'template': ZopePageTemplate(name, fi.read()),
-                    'mtime': os.path.getmtime(filepath)
-                }
-                fi.close()
+                with open(filepath, 'r') as fi:
+                    cache[filepath] = {
+                        'template': ZopePageTemplate(name, fi.read()),
+                        'mtime': os.path.getmtime(filepath)
+                    }
         return cache[filepath]['template']
 
 

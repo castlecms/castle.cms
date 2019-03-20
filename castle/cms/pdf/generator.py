@@ -91,8 +91,7 @@ def screenshot(blob):
 
     blob = Blob()
     bfile = blob.open('w')
-    sfi = open(filepath, 'rb')
-    bfile.write(sfi.read())
+    with open(filepath, 'rb') as sfi:
+        bfile.write(sfi.read())
     bfile.close()
-    sfi.close()
     return blob

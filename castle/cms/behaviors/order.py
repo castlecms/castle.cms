@@ -63,8 +63,8 @@ class FolderOrder(object):
         self.context = context
 
     def _set_folder_order(self, value):
-        if isinstance(value, unicode):
-            value = value.encode('utf8')
+        if isinstance(value, bytes):
+            value = value.decode('utf8')
         self.context._ordering = value
 
     def _get_folder_order(self):

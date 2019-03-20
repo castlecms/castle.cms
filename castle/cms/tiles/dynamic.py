@@ -17,6 +17,7 @@ from plone.app.tiles.browser import add
 from plone.app.tiles.browser import edit
 from plone.app.tiles.browser import traversal
 from plone.autoform import directives
+from unidecode import unidecode
 from plone.autoform.interfaces import WIDGETS_KEY
 from plone.memoize import forever
 from plone.registry.interfaces import IRegistry
@@ -210,7 +211,9 @@ class TileManager(object):
         if fi.__class__.__name__ == "FilesystemFile":
             data = IRawReadFile(fi).read()
         else:
-            data = str(fi.data)
+            data = fi.data
+        if isinstance(data, bytes):
+            data = data.decode('utf-8')
         return data
 
     def read_tile_config(self, directory):

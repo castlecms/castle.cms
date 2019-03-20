@@ -70,8 +70,8 @@ class TestTheming(unittest.TestCase):
     def test_apply(self):
         transform = theming.getTransform(self.portal, self.request)
         result = transform(self.request, MINIMAL_RESULT, context=self.portal)
-        self.assertTrue('<div>foobar</div>' in ''.join(result))
-        self.assertTrue('data-pat-structure' in ''.join(result))
+        self.assertTrue(b'<div>foobar</div>' in b''.join(result))
+        self.assertTrue(b'data-pat-structure' in b''.join(result))
 
     def test_use_default_layout_in_registry(self):
         transform = theming.getTransform(self.portal, self.request)
@@ -89,9 +89,9 @@ class TestTheming(unittest.TestCase):
     def test_apply_does_not_transform_inner_content(self):
         transform = theming.getTransform(self.portal, self.request)
         self.request.environ['X-CASTLE-LAYOUT'] = MINIMAL_LAYOUT
-        result = ''.join(transform(self.request, getHTMLSerializer(['''
+        result = b''.join(transform(self.request, getHTMLSerializer(['''
 <div id="content">
 <a href="foo/bar" />
 </div>''']), context=self.portal))
-        self.assertTrue('++theme++castle.theme/foo/bar' not in result)
-        self.assertTrue('http://nohost/plone/foo/bar' in result)
+        self.assertTrue(b'++theme++castle.theme/foo/bar' not in result)
+        self.assertTrue(b'http://nohost/plone/foo/bar' in result)

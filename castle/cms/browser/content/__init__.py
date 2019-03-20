@@ -49,6 +49,7 @@ from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.Five import BrowserView
+from unidecode import unidecode
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -305,13 +306,13 @@ class Creator(BrowserView):
                     if info['field_name'].startswith('tmp_'):
                         self.add_tmp_upload(obj, info)
                     else:
-                        fi = open(info['tmp_file'], 'r')
-                        filename = ploneutils.safe_unicode(info['name'])
-                        if 'Image' in type_:
-                            blob = NamedBlobImage(data=fi, filename=filename)
-                        else:
-                            blob = NamedBlobFile(data=fi, filename=filename)
-                        setattr(obj, info['field_name'], blob)
+                        with open(info['tmp_file'], 'rb') as fi:
+                            filename = ploneutils.safe_unicode(info['name'])
+                            if 'Image' in type_:
+                                blob = NamedBlobImage(data=fi, filename=filename)
+                            else:
+                                blob = NamedBlobFile(data=fi, filename=filename)
+                            setattr(obj, info['field_name'], blob)
                     success = True
                 except Exception:
                     # could not update content
@@ -372,7 +373,7 @@ class Creator(BrowserView):
 
     def create_object(self, folder, type_, info):
         filename = info['name']
-        name = filename.decode("utf8")
+        name = unidecode(filename)
         chooser = INameChooser(folder)
         chooser_name = name.lower().replace('aq_', '')
         newid = chooser.chooseName(chooser_name, folder.aq_parent)
@@ -385,7 +386,7 @@ class Creator(BrowserView):
             except Exception:
                 logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
-        fi = open(info['tmp_file'], 'r')
+        fi = open(info['tmp_file'], 'rb')
         try:
             # Try to determine which kind of NamedBlob we need
             # This will suffice for standard p.a.contenttypes File/Image

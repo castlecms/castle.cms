@@ -90,7 +90,7 @@ class TestContent(unittest.TestCase):
             'chunk': '1',
             'chunkSize': 1024,
             'totalSize': 1024 * 5,
-            'file': BytesIO('X' * 1024),
+            'file': BytesIO(b'X' * 1024),
             'name': 'foobar.bin'
         })
         cc = content.Creator(self.portal, self.request)
@@ -105,7 +105,7 @@ class TestContent(unittest.TestCase):
             self.request.form.update({
                 'action': 'chunk-upload',
                 'chunk': str(idx + 2),
-                'file': BytesIO('X' * 1024)
+                'file': BytesIO(b'X' * 1024)
             })
             cc = content.Creator(self.portal, self.request)
             data = json.loads(cc())
@@ -115,7 +115,7 @@ class TestContent(unittest.TestCase):
         self.assertTrue('url' in data)
 
         fileOb = api.content.get(path='/file-repository/foobar.bin')
-        self.assertEquals(fileOb.file.data, 'X' * 1024 * 5)
+        self.assertEquals(fileOb.file.data, b'X' * 1024 * 5)
         return fileOb
 
     def test_update_upload(self):
@@ -125,7 +125,7 @@ class TestContent(unittest.TestCase):
             'chunk': '1',
             'chunkSize': 1024,
             'totalSize': 1024,
-            'file': BytesIO('U' * 1024),
+            'file': BytesIO(b'U' * 1024),
             'name': 'foobar2.bin',
             'content': IUUID(fileOb),
             'field': 'file'
@@ -135,7 +135,7 @@ class TestContent(unittest.TestCase):
         self.assertTrue(data['valid'])
         self.assertTrue('url' in data)
         fileOb = api.content.get(path='/file-repository/foobar.bin')
-        self.assertEquals(fileOb.file.data, 'U' * 1024)
+        self.assertEquals(fileOb.file.data, b'U' * 1024)
 
     def test_tmp_upload(self):
         fileOb = self.test_upload()
@@ -144,7 +144,7 @@ class TestContent(unittest.TestCase):
             'chunk': '1',
             'chunkSize': 1024,
             'totalSize': 1024,
-            'file': BytesIO('T' * 1024),
+            'file': BytesIO(b'T' * 1024),
             'name': 'foobar2.bin',
             'content': IUUID(fileOb),
             'field': 'tmp_blarg'
@@ -156,7 +156,7 @@ class TestContent(unittest.TestCase):
         fileOb = api.content.get(path='/file-repository/foobar.bin')
 
         # should not change!
-        self.assertEquals(fileOb.file.data, 'X' * 1024 * 5)
+        self.assertEquals(fileOb.file.data, b'X' * 1024 * 5)
 
         # tmp file should be uploaded
         annotations = IAnnotations(fileOb)
@@ -187,7 +187,7 @@ class TestContent(unittest.TestCase):
         registry = getUtility(IRegistry)
         fields = deepcopy(registry['castle.file_upload_fields'])
         for f in fields:
-            f['required'] = unicode(f['required']).lower()
+            f['required'] = str(f['required']).lower()
         fields.append({
             u'name': u'foobar',
             u'label': u'Foobar',
@@ -202,7 +202,7 @@ class TestContent(unittest.TestCase):
             'chunk': '1',
             'chunkSize': 1024,
             'totalSize': 1024,
-            'file': BytesIO('X' * 1024),
+            'file': BytesIO(b'X' * 1024),
             'name': 'foobar.bin',
             'title': 'Foobar',
             'foobar': 'Some value here'
@@ -211,7 +211,7 @@ class TestContent(unittest.TestCase):
         cc()
 
         fileOb = api.content.get(path='/file-repository/foobar.bin')
-        self.assertEquals(fileOb.file.data, 'X' * 1024)
+        self.assertEquals(fileOb.file.data, b'X' * 1024)
         self.assertEquals(fileOb.foobar, 'Some value here')
         return fileOb
 
@@ -256,13 +256,13 @@ class TestContentAccess(unittest.TestCase):
             'chunk': '1',
             'chunkSize': 1024,
             'totalSize': 1024,
-            'file': BytesIO('X' * 1024),
+            'file': BytesIO(b'X' * 1024),
             'name': 'foobar.bin'
         })
         cc = content.Creator(self.portal, self.request)
         data = json.loads(cc())
         fileOb = api.content.get(path='/file-repository/foobar.bin')
-        self.assertEquals(fileOb.file.data, 'X' * 1024)
+        self.assertEquals(fileOb.file.data, b'X' * 1024)
 
         # and publish the sucker
         api.content.transition(fileOb, 'publish')
@@ -272,7 +272,7 @@ class TestContentAccess(unittest.TestCase):
 
         self.request.form.update({
             'action': 'chunk-upload',
-            'file': BytesIO('U' * 1024),
+            'file': BytesIO(b'U' * 1024),
             'name': 'foobar2.bin',
             'content': IUUID(fileOb),
             'field': 'file'

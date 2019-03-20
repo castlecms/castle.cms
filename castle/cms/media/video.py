@@ -77,11 +77,10 @@ def process(context):
                     logger.info('Could not get md5', exc_info=True)
             if not getCelery().conf.task_always_eager:
                 context._p_jar.sync()
-            fi = open(output_filepath)
-            namedblob = NamedBlobFile(
-                fi, filename=switchFileExt(video.filename, 'mp4'))
-            context.file = namedblob
-            fi.close()
+            with open(output_filepath, 'rb') as fi:
+                namedblob = NamedBlobFile(
+                    fi, filename=switchFileExt(video.filename, 'mp4'))
+                context.file = namedblob
 
     if not context.image:
         # try and grab one from video
@@ -89,9 +88,8 @@ def process(context):
         try:
             avconv.grab_frame(tmpfilepath, output_filepath)
             if os.path.exists(output_filepath):
-                fi = open(output_filepath)
-                context.image = NamedBlobImage(fi, filename=u'screengrab.png')
-                fi.close()
+                with open(output_filepath, 'rb') as fi:
+                    context.image = NamedBlobImage(fi, filename=u'screengrab.png')
         except Exception:
             logger.warning(
                 'error getting thumbnail from video', exc_info=True)

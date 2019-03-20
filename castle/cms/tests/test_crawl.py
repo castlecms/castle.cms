@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from castle.cms.cron._crawler import Crawler
 from castle.cms.interfaces import ICrawlerConfiguration
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
 from collective.elasticsearch.es import ElasticSearchCatalog
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -13,7 +13,7 @@ import unittest
 
 class TestCrawl(unittest.TestCase):
 
-    layer = CASTLE_PLONE_INTEGRATION_TESTING
+    layer = CASTLE_PLONE_FUNCTIONAL_TESTING
 
     def setUp(self):
         self.portal = self.layer['portal']
