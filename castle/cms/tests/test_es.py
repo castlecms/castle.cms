@@ -10,7 +10,7 @@ import transaction
 from castle.cms.browser.search import SearchAjax
 from collective.elasticsearch.es import ElasticSearchCatalog
 from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
 from collective.elasticsearch.interfaces import IElasticSettings
 from plone import api
 from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login,
@@ -43,7 +43,7 @@ if 'ES_HOST' in os.environ:
 if ES_ENABLED:
     class TestES(unittest.TestCase):
 
-        layer = CASTLE_PLONE_INTEGRATION_TESTING
+        layer = CASTLE_PLONE_FUNCTIONAL_TESTING
 
         def setUp(self):
             self.portal = self.layer['portal']
