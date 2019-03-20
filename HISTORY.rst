@@ -8,6 +8,9 @@ Changelog
   [vangheem]
 - Make the secure login accessible
   [RobZoneNet]
+- Add in tooltips for the main toolbars
+  [RobZoneNet]
+
 
 
 2.5.3 (2019-03-08)
