@@ -43,18 +43,19 @@ install:
   # - tar -xvjf Plone-*/packages/buildout-cache.tar.bz2 > /dev/null
   # - cp -rf buildout-cache/eggs/* eggs/
   # - cp -rf buildout-cache/downloads/* downloads/
-  - pip install -r requirements.txt
+  - python -m venv .
+  - bin/pip install -r requirements.txt
   - if [ "$TEST_SUITE" == "unit" ]; then
-    pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0;
+    bin/pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0;
     fi
   - if [ "$TEST_SUITE" == "upgrades" ]; then
-    pip install requests;
+    bin/pip install requests;
     fi
-  - buildout -c travis.cfg
+  - bin/buildout -c travis.cfg
 
 script:
   - if [ "$TEST_SUITE" == "unit" ]; then
-    flake8 castle/cms;
+    bin/flake8 castle/cms;
     fi
   - if [ "$TEST_SUITE" == "unit" ]; then
     ./bin/test -s castle.cms -t \!robot;
@@ -63,5 +64,5 @@ script:
     travis_retry bin/test -s castle.cms -t robot;
     fi
   - if [ "$TEST_SUITE" == "upgrades" ]; then
-    python test_upgrades.py;
+    bin/python test_upgrades.py;
     fi
