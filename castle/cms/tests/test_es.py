@@ -1,24 +1,28 @@
 import json
-from castle.cms.tests.utils import get_tile
 import logging
 import os
+import time
 import unittest
 
 import requests
 
 import transaction
 from castle.cms.browser.search import SearchAjax
-from collective.elasticsearch.es import ElasticSearchCatalog
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
+from castle.cms.tests.utils import get_tile
+from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.interfaces import IElasticSettings
 from plone import api
-from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login,
-                               setRoles)
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +119,7 @@ if ES_ENABLED:
                 'portal_type': 'Folder'
             })
             view = SearchAjax(self.portal, self.request)
+            time.sleep(1)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
             self.assertEquals(result['results'][0]['path'], '/esfolder1')
@@ -125,6 +130,7 @@ if ES_ENABLED:
                 'Subject': 'foobar'
             })
             view = SearchAjax(self.portal, self.request)
+            time.sleep(1)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
