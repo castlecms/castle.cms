@@ -4,6 +4,8 @@ Changelog
 2.5.4 (unreleased)
 ------------------
 
+- Provide date search options
+  [vangheem]
 - Make the secure login accessible
   [RobZoneNet]
 
