@@ -6,6 +6,8 @@ Changelog
 
 - Provide date search options
   [vangheem]
+- Make the secure login accessible
+  [RobZoneNet]
 
 
 2.5.3 (2019-03-08)
@@ -36,7 +38,7 @@ Fixes:
 
 - Fix redirect url for logging into site
   [vangheem]
-  
+
 - Remove duplicate description head metadata tag
   [vangheem]
 
