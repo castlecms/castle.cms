@@ -25,7 +25,7 @@ class FragmentTile(Tile):
             self.index = getFragment(self.context, self.request,
                                      self.data['name'])
         except KeyError:
-            logger.error(u"Theme fragment '{0:s}' was not found.".format(
+            logger.error("Theme fragment '{}' was not found.".format(
                 self.data['name']
             ))
             self.index = lambda: u''
