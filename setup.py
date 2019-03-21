@@ -51,6 +51,7 @@ setup(
         'plone.app.iterate',
         'plone.api',
         'plone.app.drafts>=1.1.3',
+        'zope.globalrequest',
 
         # castle
         'castle.theme>=1.0.4',
@@ -89,7 +90,10 @@ setup(
             'responses',
             'mock',
             'argon2_cffi',
-            'plone.app.robotframework'
+            'plone.app.robotframework>0.9.16',
+            'robotframework-debuglibrary',
+            'plone.app.testing',
+            'zope.testing',
         ],
         'development': [
             'zest.releaser',

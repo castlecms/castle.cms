@@ -1,7 +1,11 @@
 *** Settings ***
 
+Resource  plone/app/robotframework/selenium.robot
 Resource  plone/app/robotframework/variables.robot
+Resource  plone/app/robotframework/keywords.robot
 
+Library  plone.app.robotframework.Zope2Server
+Library  OperatingSystem
 Library  Remote  ${PLONE_URL}/RobotRemote
 
 *** Variables ***

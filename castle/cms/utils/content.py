@@ -259,7 +259,7 @@ def get_folder_contents(folder, **query):
 def get_context_from_request(request):
     published = request.get('PUBLISHED')
     if isinstance(published, types.MethodType):
-        return published.im_self
+        return published.__self__
     return aq_parent(published)
 
 

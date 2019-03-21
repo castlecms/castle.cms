@@ -1,6 +1,12 @@
-from lxml.html import tostring
-from lxml.html import fromstring
+import warnings
+
 from castle.cms.archival import BaseArchivalTransformer
+from lxml.html import fromstring
+from lxml.html import tostring
+
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=ResourceWarning)
 
 
 class ExampleArchivalTransformer(BaseArchivalTransformer):

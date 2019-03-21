@@ -38,7 +38,6 @@
     </style>
   </head>
   <body tal:define="utils context/@@castle-utils|nothing;" class="secure-login-template">
-
     <div id="visual-wrapper">
       <div class="castle-login-header">
         <div class="row">
