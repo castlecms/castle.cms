@@ -82,9 +82,10 @@ class Download(namedfile.Download):
         if not INamedBlobFile.providedBy(file):
             return super(Download, self).__call__()
 
-        request_range = handleRequestRange(
-            self.context, file.getSize(), self.request, self.request.response)
-        return BlobStreamIterator(file._blob, **request_range)
+        # XXX FIX ME!!!
+        # request_range = handleRequestRange(
+        #     self.context, file.getSize(), self.request, self.request.response)
+        # return BlobStreamIterator(file._blob, **request_range)
 
     def __call__(self):
         if not aws.uploaded(self.context):
@@ -136,10 +137,11 @@ class DownloadBlob(BrowserView):
 
             if is_blob:
                 resp.setHeader('Accept-Ranges', 'bytes')
-                range = handleRequestRange(
-                    self.context, length, self.request,
-                    self.request.response)
-                return BlobStreamIterator(data, **range)
+                # XXX FIX ME!!!
+                # range = handleRequestRange(
+                #     self.context, length, self.request,
+                #     self.request.response)
+                # return BlobStreamIterator(data, **range)
             else:
                 return data
         else:

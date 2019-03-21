@@ -10,7 +10,6 @@ from plone.autoform.form import AutoExtensibleForm
 from plone.registry.interfaces import IRegistry
 from plone.z3cform.fieldsets import utils as z3cform_utils
 from plone.z3cform.fieldsets.utils import move
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -52,12 +51,6 @@ class EmailConfirmation(AutoExtensibleForm, form.Form):
     template = ViewPageTemplateFile('templates/confirm-email.pt')
     sent = False
 
-    def __init__(self, context, request):
-        super(EmailConfirmation, self).__init__(context, request)
-        registry = queryUtility(IRegistry)
-        self.has_captcha = registry.get('castle.recaptcha_private_key') is not None
-        portal_membership = getToolByName(self.context, 'portal_membership')
-
     def send_mail(self, email, item):
         url = '%s/@@register?confirmed_email=%s&confirmed_code=%s' % (
             self.context.absolute_url(), email, item['code'])
@@ -77,7 +70,9 @@ If that does not work, copy and paste this urls into your web browser: %s
 
     def updateFields(self):
         super(EmailConfirmation, self).updateFields()
-        if self.has_captcha and api.user.is_anonymous():
+        registry = queryUtility(IRegistry)
+        has_captcha = registry.get('castle.recaptcha_private_key') is not None
+        if has_captcha and api.user.is_anonymous():
             self.fields['captcha'].widgetFactory = ReCaptchaFieldWidget
         else:
             self.fields['captcha'].mode = interfaces.HIDDEN_MODE

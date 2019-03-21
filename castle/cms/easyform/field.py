@@ -23,6 +23,12 @@ from zope.schema.vocabulary import SimpleVocabulary
 _ = MessageFactory('castle.cms')
 
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
+
 class IQueryChoice(IChoice):
     query = schema.List(
         title=u'Query',

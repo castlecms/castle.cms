@@ -101,7 +101,7 @@ def decode_file_data(data):
 
 
 def to_unicode(s):
-    if not isinstance(s, unicode):
+    if isinstance(s, bytes):
         s = s.decode('utf8')
     return s
 

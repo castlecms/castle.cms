@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 
-import transaction
 from castle.cms.testing import BaseTest
 from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.tests.test_image import zptlogo

@@ -20,7 +20,7 @@ setSite(site)
 
 
 with open(args.file, 'r') as fi:
-    json.loads(fi.read())
+    items = json.loads(fi.read())
 
 
 storage = archival.Storage(site, UrlOpener=archival.RequestsUrlOpener)

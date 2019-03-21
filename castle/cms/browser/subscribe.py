@@ -9,7 +9,6 @@ from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.directives import widget
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import ISiteSchema
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -134,7 +133,7 @@ If that does not work, copy and paste this url into your web browser: %s
     def has_captcha(self):
         registry = queryUtility(IRegistry)
         return registry.get('castle.recaptcha_private_key') not in (None, '')
-    
+
     @property
     def has_texting(self):
         registry = queryUtility(IRegistry)

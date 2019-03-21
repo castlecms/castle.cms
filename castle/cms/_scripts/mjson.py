@@ -21,6 +21,10 @@ from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
 
+try:
+    basestring
+except NameError:
+    basestring = str
 
 try:
     from plone.app.blob.field import BlobWrapper
@@ -126,7 +130,7 @@ class BlobSerializer(BaseTypeSerializer):
 
     @classmethod
     def _serialize(kls, obj):
-        blobfi = openBlob(obj)
+        blobfi = obj.open('r')
         data = blobfi.read()
         blobfi.close()
         return {'data': base64.b64encode(data)}

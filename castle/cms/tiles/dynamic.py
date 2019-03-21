@@ -17,7 +17,6 @@ from plone.app.tiles.browser import add
 from plone.app.tiles.browser import edit
 from plone.app.tiles.browser import traversal
 from plone.autoform import directives
-from unidecode import unidecode
 from plone.autoform.interfaces import WIDGETS_KEY
 from plone.memoize import forever
 from plone.registry.interfaces import IRegistry

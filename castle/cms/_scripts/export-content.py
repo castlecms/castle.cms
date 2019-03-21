@@ -107,6 +107,11 @@ try:
 except ImportError:
     BlobWrapper = None
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
 
 parser = argparse.ArgumentParser(
     description='...')
@@ -253,7 +258,7 @@ class BlobSerializer(BaseTypeSerializer):
 
     @classmethod
     def _serialize(cls, obj):
-        blobfi = openBlob(obj)
+        blobfi = obj.open('r')
         data = blobfi.read()
         blobfi.close()
         return {'data': base64.b64encode(data)}

@@ -17,7 +17,7 @@ def upgrade(context, logger=None):
 
     if isinstance(backend_url, tuple):
         pass
-    elif isinstance(backend_url, unicode):
+    elif isinstance(backend_url, str):
         api.portal.set_registry_record('plone.backend_url', (backend_url,))
     else:
         api.portal.set_registry_record('plone.backend_url', ())
