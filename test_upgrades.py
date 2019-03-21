@@ -32,35 +32,36 @@ SCRIPTS_DIR = os.path.join(dir_path, 'castle', 'cms', '_scripts')
 CREATE_SITE_SCRIPT = os.path.join(SCRIPTS_DIR, 'create-site.py')
 
 TEST_VERSIONS = {
-    '2.0.45': {
-        'registry': {
-            'plone.backend_url': 'foobar.com'
-        },
-        'packages': {
-            # 'Products.CMFPlone': '5.0.8',
-            # 'mockup': '2.4.1',
-            # 'plone.app.upgrade': '2.0.4'
-        }
-    },
-    '2.1.0': {
-        'packages': {
-            # 'Products.CMFPlone': '5.0.8',
-            # 'plone.app.upgrade': '2.0.4',
-            # 'mockup': '2.4.1',
-        }
-    },
-    '2.2.0': {
-        'packages': {
-            # 'Products.CMFPlone': '5.0.8',
-            # 'plone.app.upgrade': '2.0.4'
-        }
-    },
-    '2.3.0': {
-        'packages': {
-            # 'Products.CMFPlone': '5.0.8',
-            # 'plone.app.upgrade': '2.0.4'
-        }
-    }
+    # we can not support tests from python 2 variants
+    # '2.0.45': {
+    #     'registry': {
+    #         'plone.backend_url': 'foobar.com'
+    #     },
+    #     'packages': {
+    #         'Products.CMFPlone': '5.0.8',
+    #         'mockup': '2.4.1',
+    #         'plone.app.upgrade': '2.0.4'
+    #     }
+    # },
+    # '2.1.0': {
+    #     'packages': {
+    #         'Products.CMFPlone': '5.0.8',
+    #         'plone.app.upgrade': '2.0.4',
+    #         'mockup': '2.4.1',
+    #     }
+    # },
+    # '2.2.0': {
+    #     'packages': {
+    #         'Products.CMFPlone': '5.0.8',
+    #         'plone.app.upgrade': '2.0.4'
+    #     }
+    # },
+    # '2.3.0': {
+    #     'packages': {
+    #         'Products.CMFPlone': '5.0.8',
+    #         'plone.app.upgrade': '2.0.4'
+    #     }
+    # }
 }
 PKG_EXTRA = '-py2.7.egg'
 
