@@ -69,7 +69,7 @@ class HistoryVersionView(DiffView):
         getId = history.getVersionId
 
         # Count backwards from most recent to least recent
-        for i in xrange(history.getLength(countPurged=False) - 1, -1, -1):
+        for i in range(history.getLength(countPurged=False) - 1, -1, -1):
             version_id = getId(i, countPurged=False)
             data = retrieve(i, countPurged=False)
             meta = data["metadata"]["sys_metadata"]
