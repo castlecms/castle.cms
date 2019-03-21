@@ -37,28 +37,28 @@ TEST_VERSIONS = {
             'plone.backend_url': 'foobar.com'
         },
         'packages': {
-            'Products.CMFPlone': '5.0.8',
-            'mockup': '2.4.1',
-            'plone.app.upgrade': '2.0.4'
+            # 'Products.CMFPlone': '5.0.8',
+            # 'mockup': '2.4.1',
+            # 'plone.app.upgrade': '2.0.4'
         }
     },
     '2.1.0': {
         'packages': {
-            'Products.CMFPlone': '5.0.8',
-            'plone.app.upgrade': '2.0.4',
-            'mockup': '2.4.1',
+            # 'Products.CMFPlone': '5.0.8',
+            # 'plone.app.upgrade': '2.0.4',
+            # 'mockup': '2.4.1',
         }
     },
     '2.2.0': {
         'packages': {
-            'Products.CMFPlone': '5.0.8',
-            'plone.app.upgrade': '2.0.4'
+            # 'Products.CMFPlone': '5.0.8',
+            # 'plone.app.upgrade': '2.0.4'
         }
     },
     '2.3.0': {
         'packages': {
-            'Products.CMFPlone': '5.0.8',
-            'plone.app.upgrade': '2.0.4'
+            # 'Products.CMFPlone': '5.0.8',
+            # 'plone.app.upgrade': '2.0.4'
         }
     }
 }
