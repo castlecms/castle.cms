@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import time
 import unittest
 
 import requests
@@ -119,7 +118,6 @@ if ES_ENABLED:
                 'portal_type': 'Folder'
             })
             view = SearchAjax(self.portal, self.request)
-            time.sleep(1)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
             self.assertEquals(result['results'][0]['path'], '/esfolder1')
@@ -130,7 +128,6 @@ if ES_ENABLED:
                 'Subject': 'foobar'
             })
             view = SearchAjax(self.portal, self.request)
-            time.sleep(1)
             result = json.loads(view())
             self.assertEquals(result['count'], 1)
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
