@@ -32,4 +32,4 @@ class FragmentTile(Tile):
 
     def __call__(self):
         self.update()
-        return '<html><body>{}</body></html>'.format(self.index())
+        return '<html><body>{0:s}</body></html>'.format(self.index())
