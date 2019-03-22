@@ -1,7 +1,6 @@
 import logging
 import os
 import types
-from urllib.parse import unquote
 
 import six
 
@@ -23,6 +22,11 @@ from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityEditForm
 from plone.subrequest import subrequest
 from ZODB.POSException import POSKeyError
+
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
 
 
 logger = logging.getLogger('castle.cms')

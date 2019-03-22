@@ -13,7 +13,6 @@ from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
-from urllib.parse import urlparse
 from zExceptions import Redirect
 from zope.component import adapter
 from zope.component.hooks import getSite
@@ -24,6 +23,10 @@ from ZPublisher.interfaces import IPubBeforeCommit
 import binascii
 import logging
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 try:
     import argon2

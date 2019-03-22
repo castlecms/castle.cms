@@ -1,23 +1,30 @@
 import hashlib
 import logging
 import re
-from urllib.parse import urljoin, urlparse
 
 import requests
 
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
-from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager
+from castle.cms.interfaces import IArchiveContentTransformer
+from castle.cms.interfaces import IArchiveManager
 from castle.cms.utils import normalize_url
 from DateTime import DateTime
-from lxml.html import fromstring, tostring
+from lxml.html import fromstring
+from lxml.html import tostring
 from plone import api
 from plone.subrequest import subrequest
 from plone.uuid.interfaces import IUUID
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
 from zope.interface import implementer
+
+
+try:
+    from urllib.parse import urljoin, urlparse
+except ImportError:
+    from urlparse import urljoin, urlparse
 
 logger = logging.getLogger('castle.cms')
 

@@ -7,7 +7,6 @@
 import json
 import logging
 import re
-from urllib.parse import urljoin
 
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
@@ -33,6 +32,11 @@ from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
 
 logger = logging.getLogger('castle.cms')
 

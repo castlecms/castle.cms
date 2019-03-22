@@ -2,6 +2,12 @@
 import os
 
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
+
 def get(name, default, _type='unicode'):
     env_name = 'DEFAULT_{}'.format(name.upper())
     if env_name in os.environ:
@@ -9,8 +15,8 @@ def get(name, default, _type='unicode'):
     else:
         value = default
     if _type in ('unicode', 'str'):
-        if not isinstance(value, str):
-            value = str(value)
+        if not isinstance(value, unicode):
+            value = unicode(value)
     elif _type == 'bool':
         if not isinstance(value, bool):
             value = value.lower() in ('t', 'true', '1', 'on')

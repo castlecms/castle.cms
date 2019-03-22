@@ -1,3 +1,7 @@
+import datetime
+import json
+
+import Missing
 from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.utils import get_public_url
 from collective.elasticsearch.es import ElasticSearchCatalog
@@ -8,14 +12,14 @@ from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.Five import BrowserView
-from urllib.parse import urljoin
-from urllib.parse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 
-import datetime
-import json
-import Missing
+
+try:
+    from urllib.parse import urljoin, urlparse
+except ImportError:
+    from urlparse import urljoin, urlparse
 
 
 def custom_json_handler(obj):

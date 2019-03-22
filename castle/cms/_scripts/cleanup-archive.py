@@ -1,6 +1,11 @@
 # remove bad archives
 # cleanup archive ES entries
 # rewrite archive links,images to reference base url
+import argparse
+
+import requests
+
+import transaction
 from castle.cms import archival
 from castle.cms.cron._crawler import Crawler
 from castle.cms.cron.utils import login_as_admin
@@ -11,13 +16,14 @@ from lxml.html import fromstring
 from lxml.html import tostring
 from plone import api
 from plone.registry.interfaces import IRegistry
-from urllib.parse import urlparse
 from zope.component import getUtility
 from zope.component.hooks import setSite
 
-import argparse
-import requests
-import transaction
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 parser = argparse.ArgumentParser(

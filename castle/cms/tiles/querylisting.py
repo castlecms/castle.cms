@@ -1,6 +1,4 @@
 import json
-from urllib.parse import parse_qsl
-from urllib.parse import urlencode
 
 from castle.cms import defaults
 from castle.cms.tiles.base import BaseTile
@@ -24,6 +22,14 @@ from zope import schema
 from zope.interface import implementer
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+
+try:
+    from urllib.parse import parse_qsl
+    from urllib.parse import urlencode
+except ImportError:
+    from urlparse import parse_qsl
+    from urllib import urlencode
 
 
 def _list(val):

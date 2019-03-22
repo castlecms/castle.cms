@@ -27,8 +27,6 @@ from Products.CMFPlone.utils import getSiteLogo
 from Products.Five import BrowserView
 from Products.ZCatalog.interfaces import ICatalogBrain
 from unidecode import unidecode
-from urllib.parse import parse_qs
-from urllib.parse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -38,6 +36,12 @@ from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
 
 import json
+
+try:
+    from urllib.parse import urlparse
+    from urllib.parse import parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
 
 
 def _one(val):

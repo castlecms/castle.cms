@@ -9,6 +9,12 @@ from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
 
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
+
 def create_term(val, label):
     return SimpleVocabulary.createTerm(val, val, label)
 
@@ -370,7 +376,7 @@ class IAPISettings(Interface):
         title=u'Rocket.Chat secret',
         description=u'Text string used to salt Rocket.Chat authentication tokens',
         required=False,
-        default=str(django_random.get_random_string(64))
+        default=unicode(django_random.get_random_string(64))
     )
 
     matomo_base_url = schema.URI(

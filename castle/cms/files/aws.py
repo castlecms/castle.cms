@@ -4,7 +4,6 @@ import math
 import urllib
 from datetime import datetime
 from time import time
-from urllib.parse import urlparse
 
 from boto.s3.connection import ProtocolIndependentOrdinaryCallingFormat
 from boto.s3.connection import S3Connection
@@ -16,6 +15,11 @@ from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 logger = logging.getLogger('castle.cms')
 

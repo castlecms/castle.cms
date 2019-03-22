@@ -20,7 +20,6 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.CMFPlone.log import logger
 from io import StringIO
 from tendo import singleton
-from urllib.parse import urlparse
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -32,6 +31,11 @@ import requests
 import sys
 import time
 import transaction
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 CRAWLER_ES_MAPPING = {

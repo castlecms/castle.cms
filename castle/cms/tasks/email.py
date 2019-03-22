@@ -3,8 +3,13 @@ from castle.cms import utils
 from castle.cms.browser.utils import Utils
 from collective.celery import task
 from plone import api
-from urllib.parse import urlencode
 from zope.globalrequest import getRequest
+
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 
 @task.as_admin()

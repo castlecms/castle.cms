@@ -1,19 +1,24 @@
-from plone.memoize.view import memoize
+import json
+import logging
+import traceback
+
+from castle.cms.tiles.views import getTileView
 from castle.cms.utils import parse_query_from_data
+from plone.memoize.view import memoize
 from plone.memoize.view import memoize_contextless
 from plone.tiles import Tile
 from plone.tiles.interfaces import IPersistentTile
 from Products.CMFCore.utils import getToolByName
-from urllib.parse import quote_plus
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.interface import implementer
 from zope.security import checkPermission
-from castle.cms.tiles.views import getTileView
 
-import json
-import logging
-import traceback
+
+try:
+    from urllib.parse import quote_plus
+except ImportError:
+    from urllib import quote_plus
 
 
 logger = logging.getLogger('castle.cms')
