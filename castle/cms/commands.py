@@ -49,6 +49,8 @@ class BaseSubProcess(object):
                                    stderr=subprocess.PIPE,
                                    close_fds=self.close_fds)
         output, error = process.communicate()
+        output = output.decode('utf8')
+        error = error.decode('utf8')
         process.stdout.close()
         process.stderr.close()
         if process.returncode != 0:
@@ -58,7 +60,7 @@ finished with return code
 %i
 and output:
 %s
-%s""" % (cmdformatted, process.returncode, output, error.decode('utf8'))
+%s""" % (cmdformatted, process.returncode, output, error)
             logger.info(error)
             raise Exception(error)
         logger.info("Finished Running Command %s" % cmdformatted)
