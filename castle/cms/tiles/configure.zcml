@@ -9,6 +9,7 @@
   <adapter factory=".MetaTileDataContext" />
   <adapter factory=".VersionTileDataContext" />
   <adapter factory=".ResourceDirectoryAnnotations" />
+  <adapter factory=".TileDataStorage" />
 
   <include package="plone.app.tiles" />
 
