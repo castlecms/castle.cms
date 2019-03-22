@@ -56,7 +56,7 @@ Test add files
 
 
    Go to  ${PLONE_URL}/video-repository/video.mp4/view
-   ${content}  Get Element Attribute   xpath=//meta[@name="twitter:player"]@content
+   ${content}  Get Element Attribute   css=[name="twitter:player"]  content
    Should Contain  ${content}  /video-repository/video.mp4/@@videoplayer
    Page Should Contain Element  css=video
 
@@ -64,7 +64,7 @@ Test add files
    Page Should Contain Element  css=video
 
    Go to  ${PLONE_URL}/video-repository/video-1.mp4/view
-   ${content}  Get Element Attribute   xpath=//meta[@name="twitter:player"]@content
+   ${content}  Get Element Attribute   css=[name="twitter:player"]  content
    Should Contain  ${content}  /video-repository/video-1.mp4/@@videoplayer
    Page Should Contain Element  css=iframe
 
@@ -72,7 +72,7 @@ Test add files
    Page Should Contain Element  css=iframe
 
    Go to  ${PLONE_URL}/audio-repository/audio.mp3/view
-   ${content}  Get Element Attribute   xpath=//meta[@name="twitter:player"]@content
+   ${content}  Get Element Attribute   css=[name="twitter:player"]  content
    Should Contain  ${content}  /audio-repository/audio.mp3/@@audioplayer
    Page Should Contain Element  css=audio
 
