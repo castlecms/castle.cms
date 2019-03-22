@@ -65,7 +65,8 @@ def ResourceDirectoryAnnotations(context):
 @adapter(Interface, ICastleLayer, ITile)
 def TileDataStorage(context, request, tile):
     if (tile.request.get('X-Tile-Persistent') or
-            getattr(request, 'tile_persistent', False)):
+            getattr(request, 'tile_persistent', False) or
+            IPersistentTile.providedBy(tile)):
         return defaultPersistentTileDataStorage(context, request, tile)
     else:
         return IAnnotations(tile.request, tile.request.form)
