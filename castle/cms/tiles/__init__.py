@@ -19,7 +19,7 @@ from zope.interface import classImplements
 from zope.interface import implementer
 
 
-# make ContentListing persistent
+# make ContentListing and HTML persistent
 classImplements(ContentListingTile, IPersistentTile)
 classImplements(HTMLTile, IPersistentTile)
 
