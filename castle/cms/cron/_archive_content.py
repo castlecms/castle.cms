@@ -55,7 +55,7 @@ def archive(site):
             login_as_admin(app)  # noqa
 
             if new_url:
-                logger.warn('imported %s -> %s' % (ob.absolute_url(), new_url))
+                logger.warning('imported %s -> %s' % (ob.absolute_url(), new_url))
                 # XXX might need to re-architect... might get conflict errors with how slow
                 # archiving takes...
                 api.content.delete(ob)

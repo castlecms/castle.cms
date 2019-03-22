@@ -69,7 +69,7 @@ def onUserLogsIn(event):
             site = getSite()
             raise Redirect('%s/@@disabled-user' % site.absolute_url())
     except api.exc.UserNotFoundError:
-        log.warn('could not find logged in user {}'.format(repr(event.object)))
+        log.warning('could not find logged in user {}'.format(repr(event.object)))
 
 
 @adapter(IPubAfterTraversal)

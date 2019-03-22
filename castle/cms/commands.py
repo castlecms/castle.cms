@@ -121,8 +121,8 @@ except IOError:
         avconv = FfmpegProcess()
     except IOError:
         avconv = None
-        logger.warn('ffmpeg/avconc not installed. castle.cms will not '
-                    'be able to convert video')
+        logger.warning('ffmpeg/avconc not installed. castle.cms will not '
+                       'be able to convert video')
 
 
 class ExifToolProcess(BaseSubProcess):
@@ -142,7 +142,8 @@ try:
     exiftool = ExifToolProcess()
 except IOError:
     exiftool = None
-    logger.warn('exiftool not installed. castle.cms will not be able to strip metadata')  # noqa
+    logger.warning(
+        'exiftool not installed. castle.cms will not be able to strip metadata')  # noqa
 
 
 class MD5SubProcess(BaseSubProcess):

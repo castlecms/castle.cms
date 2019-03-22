@@ -32,7 +32,7 @@ def process(context):
         bfilepath = opened.name
         opened.close()
     except IOError:
-        logger.warn('error opening blob file')
+        logger.warning('error opening blob file')
         return
 
     # by default, assume all non-mp4 videos need to be converted

@@ -34,7 +34,7 @@ def paste_error_handle(where, op, mdatas):
 <p>Please contact your administrator.</p>""" % (
                     name, where.lstrip('/')))
         except Exception:
-            logger.warn('Could not send status email ', exc_info=True)
+            logger.warning('Could not send status email ', exc_info=True)
 
 
 @retriable(on_retry_exhausted=paste_error_handle)
@@ -98,7 +98,7 @@ def _paste_items(where, op, mdatas):
     <p>The site has finished pasting items into /%s folder.</p>""" % (
                     name, where.lstrip('/')))
         except Exception:
-            logger.warn('Could not send status email ', exc_info=True)
+            logger.warning('Could not send status email ', exc_info=True)
 
 
 @task()
@@ -124,7 +124,7 @@ def delete_error_handle(where, op, mdatas):
 <p>Please contact your administrator.</p>""" % (
                     name, where.lstrip('/')))
         except Exception:
-            logger.warn('Could not send status email ', exc_info=True)
+            logger.warning('Could not send status email ', exc_info=True)
 
 
 @retriable(on_retry_exhausted=delete_error_handle)
@@ -209,7 +209,7 @@ def _delete_items(uids):
 {2}
 """.format(name, deleted_html, errors_html))
         except Exception:
-            logger.warn('Could not send status email ', exc_info=True)
+            logger.warning('Could not send status email ', exc_info=True)
 
 
 @task()

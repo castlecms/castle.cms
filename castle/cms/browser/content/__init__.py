@@ -384,7 +384,7 @@ class Creator(BrowserView):
             try:
                 exiftool(info['tmp_file'])
             except Exception:
-                logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+                logger.warning('Could not strip metadata from file: %s' % info['tmp_file'])
 
         fi = open(info['tmp_file'], 'rb')
         try:

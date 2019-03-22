@@ -137,7 +137,8 @@ def recursive_create_path(path):
                 try:
                     ob = folder[part]
                     if not IFolder.providedBy(ob):
-                        logger.warn('Existing object in traversal path is not folderish. Removing it.')
+                        logger.warning(
+                            'Existing object in traversal path is not folderish. Removing it.')
                         api.content.delete(ob)
                         raise KeyError()
                     else:
@@ -260,8 +261,8 @@ def import_object(filepath):
                 skipped = True
     if skipped:
         if os.path.isdir(filepath) and len(os.listdir(filepath)):
-            logger.warn('{path} contains additional content that will be '
-                        'skipped.'.format(path=filepath))
+            logger.warning('{path} contains additional content that will be '
+                           'skipped.'.format(path=filepath))
         return
 
     original_path = filepath[len(args.export_directory):]
@@ -273,7 +274,7 @@ def import_object(filepath):
 
     folder = recursive_create_path('/'.join(path.split('/')[:-1]))
     if folder is None:
-        logger.warn('Skipped {} because of creation error'.format(filepath))
+        logger.warning('Skipped {} because of creation error'.format(filepath))
         return
     _id = path.split('/')[-1]
 
@@ -310,7 +311,7 @@ def import_object(filepath):
                                         ' create anyway.'.format(path=path))
             return
         elif (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None):
-            logger.warn('Skipping {path}, content with its UUID already exists.'
+            logger.warning('Skipping {path}, content with its UUID already exists.'
                                         'Use --ignore-uuids to create anyway.'
                                                             .format(path=path))
             return
@@ -370,7 +371,7 @@ def import_object(filepath):
             for workflow_id in wtool.getChainFor(obj):
                 obj.workflow_history[workflow_id] = review_history
         else:
-            logger.warn('No review history on {obj}'.format(obj=obj))
+            logger.warning('No review history on {obj}'.format(obj=obj))
 
         fix_html_images(obj)
         obj.reindexObject()

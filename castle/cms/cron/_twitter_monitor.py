@@ -94,7 +94,7 @@ class StreamListener(twitter.StreamListener):
         try:
             parse_line(self.site, self.public_url, raw_data)
         except Exception:
-            logger.warn('error parsing tweet', exc_info=True)
+            logger.warning('error parsing tweet', exc_info=True)
 
 
 def attempt_twitter_on_site(site):

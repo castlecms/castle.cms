@@ -158,7 +158,7 @@ class MetaDataTile(Tile):
                     viewlet.update()
                     result += viewlet.render()
                 except Exception:
-                    logger.warn('Error rendering head viewlet %s' % name, exc_info=True)
+                    logger.warning('Error rendering head viewlet %s' % name, exc_info=True)
         result += unidecode(self.get_basic_tags())
         result += unidecode(self.get_navigation_links())
         result += unidecode(self.get_ld_data())

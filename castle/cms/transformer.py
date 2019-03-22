@@ -32,7 +32,7 @@ def requestEnd(event):
         period = 0
 
     if period > 5.0:
-        logger.warn('SLOW REQUEST(%i): %s' % (int(period), req.ACTUAL_URL))
+        logger.warning('SLOW REQUEST(%i): %s' % (int(period), req.ACTUAL_URL))
 
     log_request(req)
 

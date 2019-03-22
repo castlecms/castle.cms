@@ -252,8 +252,8 @@ def retrieve(site):
             get_social_counts(site, obj, site_url, count_types, count)
             logger.info('retrieved social stats for: %s' % path)
         except Exception:
-            logger.warn('error getting social count totals for: %s' % path,
-                        exc_info=True)
+            logger.warning('error getting social count totals for: %s' % path,
+                           exc_info=True)
         time.sleep(2)
 
 

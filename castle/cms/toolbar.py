@@ -94,7 +94,7 @@ class MenuItem(object):
                 if not self.condition(self):
                     return False
             except Exception:
-                logger.warn(
+                logger.warning(
                     'Error running condition check for toolbar item %s' % self._id,  # noqa
                     exc_info=True)
                 return False

@@ -82,7 +82,7 @@ def youtube_video_edited(obj):
             bfilepath = opened.name
             opened.close()
         except IOError:
-            logger.warn('error opening blob file')
+            logger.warning('error opening blob file')
             return
 
         # we can only edit if file has NOT changed

@@ -73,7 +73,7 @@ class MetaTile(Tile):
         try:
             return self.index()
         except Exception:
-            logger.warn('Error rendering meta tile', exc_info=True)
+            logger.warning('Error rendering meta tile', exc_info=True)
             return ''
 
 
