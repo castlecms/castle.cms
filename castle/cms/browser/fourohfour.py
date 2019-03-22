@@ -14,13 +14,13 @@ from six.moves.urllib.parse import unquote
 class FourOhFour(FourOhFourView):
 
     def __call__(self):
+        self.notfound = self.context
+        self.context = api.portal.get()
         shield.protect(self.request, recheck=True)
         if '++' in self.request.URL:
             self.request.response.setStatus(404)
             return self.index()
 
-        self.notfound = self.context
-        self.context = api.portal.get()
         archive_storage = archival.Storage(self.context)
         site_url = self.context.absolute_url()
         path = self.request.ACTUAL_URL[len(site_url):].rstrip('/')
