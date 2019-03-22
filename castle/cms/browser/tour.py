@@ -6,7 +6,7 @@ import json
 class FinishView(BrowserView):
 
     def __call__(self):
-        # XXX this should be an ajax view
+        # WARN: this should be an ajax view
 
         if api.user.is_anonymous():
             return self.request.response.redirect(self.context.absolute_url())

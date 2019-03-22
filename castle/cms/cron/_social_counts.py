@@ -209,7 +209,7 @@ def get_social_counts(site, obj, site_url, count_types, count=0):
     if not _count_diff(existing, counts):
         return
 
-    # XXX check if value different first before transaction!
+    # WARN: check if value different first before transaction!
     existing.update(counts)
     annotations[COUNT_ANNOTATION_KEY] = existing
 

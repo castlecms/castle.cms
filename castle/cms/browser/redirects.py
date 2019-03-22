@@ -98,8 +98,8 @@ def absolutize_path(path, context=None, is_alias=True):
                 err = _(u"You don't have the permission to set an alias from the location you provided.")  # noqa
             else:
                 pass
-                # XXX check if there is an existing alias
-                # XXX check whether there is an object
+                # WARN: check if there is an existing alias
+                # WARN: check whether there is an object
     return path, err
 
 
@@ -132,8 +132,8 @@ class RedirectsView(BrowserView):
                 errors['redirection'] = err
                 status.addStatusMessage(err, type='error')
             else:
-                # XXX check if there is an existing alias
-                # XXX check whether there is an object
+                # WARN: check if there is an existing alias
+                # WARN: check whether there is an object
                 del form['redirection']
                 storage.add(redirection, "/".join(self.context.getPhysicalPath()))
                 status.addStatusMessage(_(u"Alias added."), type='info')

@@ -183,7 +183,7 @@ class Worker(threading.Thread):
 
                 try:
                     self.producer.purgeSync(urls, purger)
-                    # XXX check valid response
+                    # WARN: check valid response
                 except Exception:
                     logger.exception('Failed to purge %s', ','.join(urls))
         except Exception:  # FIXME: blind except

@@ -49,7 +49,7 @@ class NavigationTile(BaseTile):
     @property
     def query(self):
         parsed = parse_query_from_data(self.data, self.context)
-        # XXX we're forcing location queries to be depth of 1
+        # WARN: we're forcing location queries to be depth of 1
         if 'path' in parsed:
             parsed['path']['depth'] = 1
         return parsed

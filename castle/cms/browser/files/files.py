@@ -14,6 +14,8 @@ from plone.app.contenttypes.browser import file
 from plone.namedfile import browser as namedfile
 from plone.namedfile.interfaces import INamedBlobFile
 from plone.namedfile.scaling import ImageScaling
+from plone.namedfile.utils import set_headers
+from plone.namedfile.utils import stream_data
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import getAllowedSizes
 from Products.Five import BrowserView
@@ -21,6 +23,7 @@ from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
 from zExceptions import NotFound
 from ZODB.POSException import POSKeyError
 from zope.component import getMultiAdapter
+from ZPublisher.Iterators import filestream_iterator
 
 
 logger = logging.getLogger('castle.cms')
@@ -29,10 +32,6 @@ try:
     from webdav.common import rfc1123_date
 except ImportError:
     from App.Common import rfc1123_date
-
-# XXX needs port
-# from plone.app.blob.download import handleRequestRange
-# from plone.app.blob.iterators import BlobStreamIterator
 
 
 class DownloadAsPNG(BrowserView):
@@ -82,10 +81,8 @@ class Download(namedfile.Download):
         if not INamedBlobFile.providedBy(file):
             return super(Download, self).__call__()
 
-        # XXX FIX ME!!!
-        # request_range = handleRequestRange(
-        #     self.context, file.getSize(), self.request, self.request.response)
-        # return BlobStreamIterator(file._blob, **request_range)
+        set_headers(file, self.request.response)
+        return stream_data(file)
 
     def __call__(self):
         if not aws.uploaded(self.context):
@@ -136,12 +133,7 @@ class DownloadBlob(BrowserView):
             resp.setHeader('Content-Type', self.content_type)
 
             if is_blob:
-                resp.setHeader('Accept-Ranges', 'bytes')
-                # XXX FIX ME!!!
-                # range = handleRequestRange(
-                #     self.context, length, self.request,
-                #     self.request.response)
-                # return BlobStreamIterator(data, **range)
+                return filestream_iterator(data.committed(), 'rb')
             else:
                 return data
         else:

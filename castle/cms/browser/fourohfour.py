@@ -43,7 +43,7 @@ class FourOhFour(FourOhFourView):
             except Exception:
                 pass
         if new_url:
-            # XXX need to force redirect this way since normal redirect
+            # WARN: need to force redirect this way since normal redirect
             # gets overridden with 404
             if self.request.environ.get('QUERY_STRING'):
                 new_url += '?' + self.request.environ['QUERY_STRING']

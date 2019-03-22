@@ -29,7 +29,7 @@ class ReversedOrdering(DefaultOrdering):
         raise ValueError('No object with id "{0:s}" exists.'.format(obj_id))
 
     def _pos(self, create=False):
-        # XXX bbb here so super class has something to use
+        # WARN: bbb here so super class has something to use
         # I don't understand why we store the order separate
         # from the list of ids when the list of ids is also ordered
         return {}

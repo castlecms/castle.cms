@@ -56,7 +56,7 @@ def archive(site):
 
             if new_url:
                 logger.warning('imported %s -> %s' % (ob.absolute_url(), new_url))
-                # XXX might need to re-architect... might get conflict errors with how slow
+                # WARN: might need to re-architect... might get conflict errors with how slow
                 # archiving takes...
                 api.content.delete(ob)
                 transaction.commit()

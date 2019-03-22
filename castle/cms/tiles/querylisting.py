@@ -150,7 +150,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
     def get_query(self):
         parsed = parse_query_from_data(self.data, self.context)
-        # XXX we're forcing location queries to be depth of 1
+        # WARN: we're forcing location queries to be depth of 1
         if 'path' in parsed and 'depth' not in parsed['path']:
             parsed['path']['depth'] = 1
         if 'sort_on' not in parsed:

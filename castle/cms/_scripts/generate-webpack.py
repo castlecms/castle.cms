@@ -160,7 +160,7 @@ with open(os.path.join(SCRIPT_DIR, 'templates/webpack.config.js')) as fi:
             'bundles_keys': jdump(bundles_config.keys()),
             'common': 'common',
 
-            # XXX not currently used
+            # Warning: not currently used
             'less_globals': jdump(less_config),
             'output': jdump({
                 "pathinfo": True,

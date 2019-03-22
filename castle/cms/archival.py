@@ -501,7 +501,7 @@ class Storage(object):
 
                 req = getRequest()
 
-                # XXX a bit weird, we need to virtualhostmonster it for transform...
+                # Warning: a bit weird, we need to virtualhostmonster it for transform...
                 site_path = '/'.join(self.site.getPhysicalPath())
                 public_url = api.portal.get_registry_record('plone.public_url')
                 vhm_base = _get_vhm_base_url(public_url, site_path)

@@ -445,7 +445,7 @@ class IContentSettings(Interface):
         )
     )
 
-    # XXX Should also make slot_tiles editable here
+    # WARN: Should also make slot_tiles editable here
     # but will require a custom widget
 
 

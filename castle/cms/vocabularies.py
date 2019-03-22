@@ -1,8 +1,14 @@
+import json
+
+import requests
+
 import pycountry
 from Acquisition import aq_parent
-from castle.cms.fragments.interfaces import IFragmentsDirectory
 from castle.cms.browser.survey import ICastleSurvey
+from castle.cms.fragments.interfaces import IFragmentsDirectory
 from plone import api
+from plone.app.content.browser import vocabulary
+from plone.app.tiles.browser.edit import AcquirableDictionary
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from zope.component import getAllUtilitiesRegisteredFor
@@ -15,22 +21,12 @@ from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from plone.app.tiles.browser.edit import AcquirableDictionary
-from plone.app.content.browser import vocabulary
-import requests
-import json
 
-# XXX needs updating in 5.1
-try:
-    vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
-    vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
-    vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
-    vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
-except KeyError:
-    vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
-    vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
-    vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
-    vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
+
+vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
+vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
+vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
+vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
 

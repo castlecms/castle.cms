@@ -31,7 +31,7 @@ EMAIL_BODY_ITEM = """
 
 
 def check_site(site):
-    # XXX will store when last check was so we always only look back
+    # WARN: will store when last check was so we always only look back
     # to previous check time
     setSite(site)
     catalog = api.portal.get_tool('portal_catalog')

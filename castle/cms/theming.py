@@ -617,7 +617,7 @@ def transformIterable(self, result, encoding):
 
     try:
         if isPloneTheme(settings):
-            # XXX old style theme
+            # WARN: old style theme
             # manual render tiles, then do theme transform
             result.tree = tiles.renderTiles(self.request, result.tree)
             result = self._old_transformIterable(result, encoding)
@@ -632,7 +632,7 @@ def transformIterable(self, result, encoding):
         # classic way and we need to do replacements.
         # check for #visual-portal-wrapper to make sure we need
         # transform this response
-        # XXX WARNING: THIS IS NECESSARY
+        # WARNING: THIS IS NECESSARY
         wrapper = wrapper_xpath(result.tree)
         if len(wrapper) == 0:
             return None

@@ -136,7 +136,7 @@ class TestSubscribeForm(unittest.TestCase):
 
     @responses.activate
     def _test_category_match(self):
-        # XXX fix test(isolation issues)
+        # WARN: fix test(isolation issues)
         subscribe.register('foo@bar.com', {'categories': [u'A']})
         subscriber = subscribe.get('foo@bar.com')
         subscribe.confirm('foo@bar.com', subscriber['code'])

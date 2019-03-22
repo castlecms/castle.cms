@@ -42,7 +42,7 @@ class MetaTileManager(BrowserView):
         elif self.request.get('action') == 'mode':
             self.change_mode()
         elif self.request.get('action') == 'copymeta':
-            # XXX disabling working copy support
+            # WARN: disabling working copy support
             return self.copy_meta()
         elif self.request.get('action') == 'savecopy':
             return self.save_copy()
@@ -51,7 +51,7 @@ class MetaTileManager(BrowserView):
         return self.info()
 
     def copy_meta(self):
-        # XXX disable working copy support
+        # WARN: disable working copy support
         return json.dumps({
             'newId': self.request.get('metaId'),
             'success': True,
@@ -117,7 +117,7 @@ class MetaTileManager(BrowserView):
         })
 
     def save_copy(self):
-        # XXX disable working copy support
+        # WARN: disable working copy support
         return json.dumps({
             'success': True
         })
@@ -209,7 +209,7 @@ class MetaTileManager(BrowserView):
         return 'copy-{}'.format(user.getId())
 
     def get_working_copy_meta_id(self):
-        # XXX disabling locking support
+        # WARN: disabling locking support
         _id = self.request.get('metaId')
         return _id
         return '{}-{}'.format(_id, self.get_working_copy_key())
