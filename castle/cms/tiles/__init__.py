@@ -5,6 +5,7 @@ from castle.cms.interfaces import IMetaTile
 from castle.cms.interfaces import IVersionViewLayer
 from plone import api
 from plone.app.standardtiles.contentlisting import ContentListingTile
+from plone.app.standardtiles.raw import HTMLTile
 from plone.resource.interfaces import IResourceDirectory
 from plone.tiles.data import defaultPersistentTileDataStorage
 from plone.tiles.interfaces import IPersistentTile
@@ -20,6 +21,7 @@ from zope.interface import implementer
 
 # make ContentListing persistent
 classImplements(ContentListingTile, IPersistentTile)
+classImplements(HTMLTile, IPersistentTile)
 
 
 @implementer(ITileDataContext)
