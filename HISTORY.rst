@@ -1,14 +1,39 @@
 Changelog
 =========
 
-2.5.4 (unreleased)
+2.5.6 (unreleased)
 ------------------
 
 - Be able to provide oauth providers for `@@secure-login`
   [vangheem]
 
+
+2.5.5 (2019-03-25)
+------------------
+
+- Add missing upgrade step
+  [vangheem,RobZoneNet]
+
+- Add blank coverimage.pt fragment so we don't get errors on
+  themes that don't implement it
+  [RobZoneNet]
+
+
+2.5.4 (2019-03-25)
+------------------
+
+- Handle ES error when getting search options
+  [vangheem]
+
+- Provide date search options
+  [vangheem]
+
 - Make the secure login accessible
   [RobZoneNet]
+
+- Add in tooltips for the main toolbars
+  [RobZoneNet]
+
 
 
 2.5.3 (2019-03-08)

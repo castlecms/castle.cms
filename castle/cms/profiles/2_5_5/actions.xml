@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<object name="portal_actions" meta_type="Plone Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <object name="toolbar_menu" meta_type="CMF Action Category">
+  <object name="view-page" meta_type="CMF Action">
+   <property name="description">Go back to public view of page.</property>
+  </object>
+  <object name="folder_contents" meta_type="CMF Action">
+   <property name="description">Batch organize and navigate site content.</property>
+  </object>
+  <object name="add" meta_type="CMF Action">
+   <property name="description">Add content (pages, folders, news items, and so on) in the current folder.</property>
+  </object>
+  <object name="edit" meta_type="CMF Action">
+   <property name="description">Edit the content of this current item.</property>
+  </object>
+  <object name="state" meta_type="CMF Action">
+   <property name="description">Manage the current publication state of this page.</property>
+  </object>
+  <object name="design" meta_type="CMF Action">
+   <property name="description">Change the appearance of the current page and folder.</property>
+  </object>
+  <object name="cut" meta_type="CMF Action">
+   <property name="description">Cut this file to paste it elsewhere.</property>
+  </object>
+  <object name="copy" meta_type="CMF Action">
+   <property name="description">Copy or Move this item.</property>
+  </object>
+  <object name="paste" meta_type="CMF Action">
+   <property name="description">Paste a file that has been copied or cut.</property>
+  </object>
+  <object name="delete" meta_type="CMF Action">
+   <property name="description">Delete or move this item to a recycle bin.</property>
+  </object>
+  <object name="rename" meta_type="CMF Action">
+   <property name="description">Rename this item.</property>
+  </object>
+  <object name="sharing" meta_type="CMF Action">
+   <property name="description">Grant permissions on the current item to other users or groups of users. The permissions you can grant are for editing, viewing, or reviewing the current item for publication, and for being able to add more items to the current folder.</property>
+  </object>
+  <object name="history" meta_type="CMF Action">
+   <property name="description">View edit and workflow state history of this page.</property>
+  </object>
+  <object name="rules" meta_type="CMF Action">
+   <property name="description">Shows the version history of the current item: who created or edited it, when, and what they did, including version comparisons and the ability to revert to a particular version.</property>
+  </object>
+  <object name="aliases" meta_type="CMF Action">
+   <property name="description">View and update all urls that redirect to this page.</property>
+  </object>
+  <object name="syndication" meta_type="CMF Action">
+   <property name="description">Control how you publish your content with RSS/Atom/iTunes.</property>
+  </object>
+  <object name="analytics" meta_type="CMF Action">
+   <property name="description">Review analytic statistics for this page.</property>
+  </object>
+  <object name="preview" meta_type="CMF Action">
+   <property name="description">Preview this page in different browser sizes.</property>
+  </object>
+  <object name="invalidate" meta_type="CMF Action">
+   <property name="description">Clear proxy servers and/or cloudflare cache.</property>
+  </object>
+  <object name="slots" meta_type="CMF Action">
+   <property name="description">Manage content in parts of the page from the Theme.</property>
+  </object>
+ </object>
+ <object name="user_menu" meta_type="CMF Action Category">
+  <object name="dashboard" meta_type="CMF Action">
+   <property name="description">View and manage your dashboard.</property>
+  </object>
+  <object name="preferences" meta_type="CMF Action">
+   <property name="description">Your personal settings.</property>
+  </object>
+  <object name="activity_log" meta_type="CMF Action">
+   <property name="description">A list of everything you did on the site.</property>
+  </object>
+  <object name="logout" meta_type="CMF Action">
+   <property name="description">Log out of the site.</property>
+  </object>
+ </object>
+ <object name="management_menu" meta_type="CMF Action Category">
+  <object name="site_setup" meta_type="CMF Action">
+   <property name="description">Configuration area for Castle and add-on Products.</property>
+  </object>
+  <object name="impersonate" meta_type="CMF Action">
+   <property name="description">View the page as another user.</property>
+  </object>
+  <object name="recycle" meta_type="CMF Action">
+   <property name="description">Recover deleted items from the recycle bin.</property>
+  </object>
+  <object name="review" meta_type="CMF Action">
+   <property name="description">Review content that will be archived to static storage.</property>
+  </object>
+  <object name="tour" meta_type="CMF Action">
+   <property name="description">Launches the CastleCMS tour.</property>
+  </object>
+ </object>
+</object>

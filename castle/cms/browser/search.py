@@ -12,6 +12,7 @@ from urlparse import urljoin
 from urlparse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+import dateutil.parser
 
 import datetime
 import json
@@ -104,7 +105,7 @@ class Search(BrowserView):
                         continue
                     additional_sites.append(site_name)
             except TransportError:
-                return []
+                pass
 
         parsed = urlparse(get_public_url())
 
@@ -132,7 +133,6 @@ _search_attributes = [
     'Title',
     'Description',
     'Subject',
-    'Subject:list',
     'contentType',
     'created',
     'modified',
@@ -148,7 +148,10 @@ _valid_params = [
     'SearchableText',
     'portal_type',
     'Subject',
-    'Subject:list'
+    'Subject:list',
+    'after',
+    'sort_on',
+    'sort_order'
 ]
 
 
@@ -160,10 +163,28 @@ class SearchAjax(BrowserView):
 
         query = {}
         for name in _valid_params:
+            real_name = name
+            if real_name.endswith(':list'):
+                real_name = real_name[:-len(':list')]
             if self.request.form.get(name):
-                query[name] = self.request.form[name]
+                query[real_name] = self.request.form[name]
             elif self.request.form.get(name + '[]'):
-                query[name] = self.request.form[name + '[]']
+                query[real_name] = self.request.form[name + '[]']
+
+        if query.get('after'):
+            if query.get('sort_on') not in ('effective', 'modified', 'created'):
+                sort_on = query['sort_on'] = 'effective'
+            else:
+                sort_on = query['sort_on']
+            try:
+                date = dateutil.parser.parse(query.pop('after'))
+                start = DateTime(date)
+                query[sort_on] = {
+                    'query': start,
+                    'range': 'min'
+                }
+            except (KeyError, AttributeError, ValueError, TypeError):
+                pass
 
         try:
             page_size = int(self.request.form.get('pageSize'))
@@ -303,13 +324,14 @@ class SearchAjax(BrowserView):
                         "field": "SearchableText"
                     }
                 }
-            }
+            },
+            'sort': sort
         }
 
         query_params = {
             'from_': start,
             'size': size,
-            'fields': ','.join(_search_attributes) + ',path.path',
+            'fields': ','.join(_search_attributes) + ',path.path'
         }
 
         return es.connection.search(index=es.index_name,

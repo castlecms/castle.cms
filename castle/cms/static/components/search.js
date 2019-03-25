@@ -22,23 +22,143 @@ require([
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
-
   var D = R.DOM;
+  var ContentTypeTranslations = {
+    'application/pdf': 'PDF',
+    'image': 'Image',
+    'video': 'Video',
+    'audio': 'Audio',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Spreadsheet',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Doc',
+    'application/vnd.ms-powerpoint': 'Presentation',
+    'application/msword': 'Doc',
+    'application/vnd.ms-excel': 'Spreadsheet',
+    'text/csv': 'Spreadsheet'
+  };
+  var DownloadableContentTypes = ['File', 'Video', 'Audio', 'Image', 'ExcelFile'];
+  var SortOptions = [
+    ['', 'Relevance'],
+    ['effective', 'Publication Date'],
+    ['modified', 'Modification Date'],
+  ];
+
+  var SearchResult = R.createClass({
+    render: function(){
+      var item = this.props;
+      var ct = '';
+      if(item.contentType){
+        var mainType = item.contentType.split('/')[0];
+        var ctname;
+        if(ContentTypeTranslations[item.contentType]){
+          ctname = ContentTypeTranslations[item.contentType];
+        }else if(ContentTypeTranslations[mainType]){
+          ctname = ContentTypeTranslations[item.contentType];
+        }else if(item.portal_type === 'File'){
+          ctname = 'File';
+        }
+        if(ctname){
+          ct = D.span({ className: 'result-contentType'}, '[' + ctname + ']');
+        }
+      }else if(item.portal_type === 'ExcelFile'){
+        ct = D.span({ className: 'result-contentType'}, '[Spreadsheet]');
+      }
+      var download = '';
+      if(DownloadableContentTypes.indexOf(item.portal_type) !== -1){
+        var url = item.base_url;
+        if(url.substring(url.length - 5) === 'view'){
+          url = url.substring(0, url.length - 5);
+        }
+        if(item.portal_type === 'ExcelFile'){
+          url += '/output.xls';
+        }
+        download = D.span({ className: 'result-download' }, [
+          '[',
+          D.a({ href: url, target: '_blank'}, 'Download'),
+          ']'
+        ]);
+      }
+      var target = '_self';
+      if(item.searchSite){
+        target = '_blank';
+      }
+
+      var modified = moment(item.modified);
+      var effective = moment(item.effective);
+      var dateNode = '';
+      if(effective.isValid()){
+        dateNode = D.span({ className: 'result-modified' }, 'Published: ' + effective.format('MMM Do YYYY'));
+      } else if(modified.isValid()){
+        dateNode = D.span({ className: 'result-modified' }, 'Last modified ' + modified.fromNow());
+      }
+      return D.li({}, [
+        D.span({ className: "result-title" }, [
+          ct,
+          D.a({ href: item.url, target: target, className: "state-" + item.review_state }, item.Title)
+        ]),
+        D.span({ className: 'result-url'}, item.base_url),
+        dateNode,
+        D.span({ className: "result-description" }, item.Description || item.Title),
+        download
+      ]);
+    }
+  });
+
+  var SearchOption = R.createClass({
+    getDefaultProps() {
+      return {
+        show: false,
+        parent: null,
+        type: null,
+        options: [],
+        label: null,
+        labelPrefix: null,
+        value: '',
+        onClick: function(){}
+      }
+    },
+
+    render() {
+      var that = this;
+      var additional = '';
+      if(that.props.show === that.props.type){
+        var items = that.props.options.map(function(item){
+          return D.li({}, D.a({ href: '#', onClick: function(e){
+            e.preventDefault();
+            that.props.parent.setState({
+              show: null
+            });
+            that.props.onClick(item[0])
+          }}, item[1]));
+        });
+        additional = D.ul({
+          className: 'search-additional-sites-listing search-menu-dropdown'}, items);
+      }
+      var label = that.props.label;
+      if (label == null) {
+        for(var i=0; i<that.props.options.length; i++) {
+          if (that.props.options[i][0] == that.props.value) {
+            label = that.props.labelPrefix + that.props.options[i][1];
+            break;
+          }
+        }
+      }
+      return D.li({
+          className: 'search-additional-sites search-menu-dropdown-container' }, [
+        D.a({ href: '#',
+              className: 'search-additional-sites-btn more-btn',
+              onClick: function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          that.props.parent.setState({
+            show: that.props.parent.state.show === that.props.type ? null : that.props.type
+          });
+        }}, label),
+        additional
+      ]);
+    }
+  });
 
   var SearchComponent = R.createClass({
-    contentTypeTranslations: {
-      'application/pdf': 'PDF',
-      'image': 'Image',
-      'video': 'Video',
-      'audio': 'Audio',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Spreadsheet',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Doc',
-      'application/vnd.ms-powerpoint': 'Presentation',
-      'application/msword': 'Doc',
-      'application/vnd.ms-excel': 'Spreadsheet',
-      'text/csv': 'Spreadsheet'
-    },
-    downloadableContentTypes: ['File', 'Video', 'Audio', 'Image', 'ExcelFile'],
 
     getInitialState: function(){
       return {
@@ -50,10 +170,10 @@ require([
         page: this.props.page || 1,
         suggestions: [],
         searchType: this.props.searchType || 'all',
-        showMore: false,
-        showAdditionalSites: false,
+        show: null,
         searchSite: this.props.searchSite || false,
-        loading: false
+        loading: false,
+        sort_on: ''
       };
     },
 
@@ -91,7 +211,10 @@ require([
       var state = {
         SearchableText: that.state.SearchableText,
         pageSize: that.state.pageSize,
-        page: that.state.page
+        page: that.state.page,
+        sort_on: that.state.sort_on,
+        sort_order: 'descending',
+        after: that.state.date || ''
       };
       if(that.state.searchType !== 'all'){
         var type = that.getSearchType(that.state.searchType);
@@ -221,64 +344,6 @@ require([
       ]);
     },
 
-    renderResult: function(item){
-      var ct = '';
-      if(item.contentType){
-        var mainType = item.contentType.split('/')[0];
-        var ctname;
-        if(this.contentTypeTranslations[item.contentType]){
-          ctname = this.contentTypeTranslations[item.contentType];
-        }else if(this.contentTypeTranslations[mainType]){
-          ctname = this.contentTypeTranslations[item.contentType];
-        }else if(item.portal_type === 'File'){
-          ctname = 'File';
-        }
-        if(ctname){
-          ct = D.span({ className: 'result-contentType'}, '[' + ctname + ']');
-        }
-      }else if(item.portal_type === 'ExcelFile'){
-        ct = D.span({ className: 'result-contentType'}, '[Spreadsheet]');
-      }
-      var download = '';
-      if(this.downloadableContentTypes.indexOf(item.portal_type) !== -1){
-        var url = item.base_url;
-        if(url.substring(url.length - 5) === 'view'){
-          url = url.substring(0, url.length - 5);
-        }
-        if(item.portal_type === 'ExcelFile'){
-          url += '/output.xls';
-        }
-        download = D.span({ className: 'result-download' }, [
-          '[',
-          D.a({ href: url, target: '_blank'}, 'Download'),
-          ']'
-        ]);
-      }
-      var target = '_self';
-      if(this.state.searchSite){
-        target = '_blank';
-      }
-
-      var modified = moment(item.modified);
-      var effective = moment(item.effective);
-      var dateNode = '';
-      if(effective.isValid()){
-        dateNode = D.span({ className: 'result-modified' }, 'Published: ' + effective.format('MMM Do YYYY'));
-      } else if(modified.isValid()){
-        dateNode = D.span({ className: 'result-modified' }, 'Last modified ' + modified.fromNow());
-      }
-      return D.li({}, [
-        D.span({ className: "result-title" }, [
-          ct,
-          D.a({ href: item.url, target: target, className: "state-" + item.review_state }, item.Title)
-        ]),
-        D.span({ className: 'result-url'}, item.base_url),
-        dateNode,
-        D.span({ className: "result-description" }, item.Description || item.Title),
-        download
-      ]);
-    },
-
     renderResults: function(){
       var that = this;
       if(that.state.count === 0){
@@ -290,7 +355,8 @@ require([
       }
       var results = [];
       that.state.results.forEach(function(item){
-        results.push(that.renderResult(item));
+        item.searchSite = that.state.searchSite;
+        results.push(R.createElement(SearchResult, item));
       });
       return D.div({ id: "search-results-wrapper" }, [
         D.div({ id: "search-results-bar" }, [
@@ -339,7 +405,7 @@ require([
           e.preventDefault();
           that.setState({
             searchType: type.id,
-            showMore: false,
+            show: null,
             page: 1
           }, function(){
             that.load();
@@ -367,7 +433,7 @@ require([
               options.push(that.renderSeachType(option));
             }
           });
-          if(that.state.showMore){
+          if(that.state.show === 'more'){
             var moreTypes = [];
             that.props.searchTypes.slice(3).forEach(function(option){
               if(option.id !== that.state.searchType){
@@ -382,8 +448,7 @@ require([
               e.preventDefault();
               e.stopPropagation();
               that.setState({
-                showMore: !that.state.showMore,
-                showAdditionalSites: false
+                show: that.state.show === 'more' ? null : 'more'
               });
             }}, 'More'),
             more
@@ -392,45 +457,78 @@ require([
       }
 
       if(that.props.additionalSites.length > 0){
-        var additional = '';
-        if(that.state.showAdditionalSites){
-          var sites = [D.li({}, D.a({ href: '#', onClick: function(e){
-            e.preventDefault();
+        var current = this.props.currentSiteLabel || 'current site'
+        var items = [['', current]].concat(that.props.additionalSites.map(function(v){
+          return [v, v];
+        }));
+        options.push(R.createElement(SearchOption, {
+          show: that.state.show,
+          type: 'additionalSites',
+          options: items,
+          parent: that,
+          labelPrefix: 'Search: ',
+          value: that.state.searchSite,
+          onClick: function(val) {
+            var searchType = that.state.searchType;
+            var searchSite = false;
+            if (val === current) {
+              searchType = 'all';
+            } else {
+              searchSite = val
+            }
             that.setState({
-              searchSite: false,
-              showAdditionalSites: false,
-              page: 1
+              searchSite: searchSite,
+              page: 1,
+              searchType: searchType
             }, function(){
               that.load();
             });
-          }}, this.props.currentSiteLabel || 'current site'))];
-          that.props.additionalSites.forEach(function(domain){
-            sites.push(D.li({}, D.a({ href: '#', onClick: function(e){
-              e.preventDefault();
-              that.setState({
-                searchSite: domain,
-                showAdditionalSites: false,
-                page: 1,
-                searchType: 'all'
-              }, function(){
-                that.load();
-              });
-            }}, domain)));
-          });
-          additional = D.ul({ className: 'search-additional-sites-listing search-menu-dropdown'}, sites);
-        }
-        options.push(D.li({ className: 'search-additional-sites search-menu-dropdown-container' }, [
-          D.a({ href: '#', className: 'search-additional-sites-btn more-btn', onClick: function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            that.setState({
-              showAdditionalSites: !that.state.showAdditionalSites,
-              showMore: false
-            });
-          }}, 'Search: ' + (that.state.searchSite || this.props.currentSiteLabel || 'current site')),
-          additional
-        ]));
+          }
+        }));
       }
+      options.push(R.createElement(SearchOption, {
+        show: that.state.show,
+        type: 'publication',
+        parent: that,
+        options: SortOptions,
+        labelPrefix: 'Sort: ',
+        value: that.state.sort_on,
+        onClick: function(val) {
+          that.setState({
+            sort_on: val
+          }, function(){
+            that.load();
+          });
+        }
+      }));
+      options.push(R.createElement(SearchOption, {
+        show: that.state.show,
+        type: 'date',
+        parent: that,
+        value: that.state.date,
+        options: [
+          ['', 'Any Time'],
+          [moment().subtract(1, 'days').format('YYYY-MM-DD'), 'Yesterday'],
+          [moment().subtract(2, 'days').format('YYYY-MM-DD'), 'Last 2 Days'],
+          [moment().subtract(7, 'days').format('YYYY-MM-DD'), 'Last Week'],
+          [moment().subtract(30, 'days').format('YYYY-MM-DD'), 'Last Month'],
+          [moment().subtract(60, 'days').format('YYYY-MM-DD'), 'Last 2 Months'],
+          [moment().subtract(365, 'days').format('YYYY-MM-DD'), 'Last Year'],
+        ],
+        labelPrefix: 'When: ',
+        onClick: function(val) {
+          var sort_on = that.state.sort_on;
+          if (!sort_on) {
+            sort_on = 'effective';
+          }
+          that.setState({
+            date: val,
+            sort_on: sort_on
+          }, function(){
+            that.load();
+          });
+        }
+      }));
 
       return D.div({ className: 'search-options'}, [
         D.ul({}, options)
@@ -480,16 +578,17 @@ require([
   }catch(e){}
 
   var el = document.getElementById('searchComponent');
-  var component = R.render(R.createElement(SearchComponent, cutils.extend(JSON.parse(el.getAttribute('data-search')), {
-    SearchableText: getParameterByName('SearchableText') || '',
-    Subject: Subject,
-    'Subject:list': Subjectlist,
-    searchUrl: el.getAttribute('data-search-url'),
-    searchType: searchType,
-    page: page,
-    searchSite: searchSite,
-    path: path
-  })), el);
+  var component = R.render(R.createElement(
+    SearchComponent, cutils.extend(JSON.parse(el.getAttribute('data-search')), {
+      SearchableText: getParameterByName('SearchableText') || '',
+      Subject: Subject,
+      'Subject:list': Subjectlist,
+      searchUrl: el.getAttribute('data-search-url'),
+      searchType: searchType,
+      page: page,
+      searchSite: searchSite,
+      path: path
+    })), el);
 
   window.onpopstate = function(e){
     if(e.state){
@@ -500,8 +599,7 @@ require([
 
   $(window).on('click', function(){
     component.setState({
-      showMore: false,
-      showAdditionalSites: false
+      show: null
     });
   });
 
