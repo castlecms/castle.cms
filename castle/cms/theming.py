@@ -37,6 +37,10 @@ try:
     from urllib.parse import urljoin
 except ImportError:
     from urlparse import urljoin
+try:
+    unicode
+except NameError:
+    unicode = str
 
 logger = logging.getLogger('castle.cms')
 
@@ -106,7 +110,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
         try:
             if isinstance(filename, bytes):
                 filename = filename.decode('utf-8')
-            result = str(self.folder.readFile(filename), 'utf8')
+            result = unicode(self.folder.readFile(filename), 'utf8')
             self.file_cache[filename] = result
             return result
         except (NotFound, IOError):
@@ -170,7 +174,7 @@ class _Transform(object):
         portal_url = portal.absolute_url()
 
         raw = False
-        if isinstance(result, str):
+        if isinstance(result, unicode):
             raw = True
         else:
             self.rewrite(result, context.absolute_url() + '/')
