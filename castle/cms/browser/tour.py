@@ -24,7 +24,8 @@ class FinishView(BrowserView):
             viewed = []
         viewed.append(self.request.form.get('tour'))
         viewed = list(set(viewed))
-        user.setMemberProperties(mapping={'tours_viewed': viewed})
+        if hasattr(user, 'setMemberProperties'):
+            user.setMemberProperties(mapping={'tours_viewed': viewed})
         return json.dumps({
             'success': True
         })
