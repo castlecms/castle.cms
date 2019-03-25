@@ -4,6 +4,9 @@ Changelog
 2.5.4 (unreleased)
 ------------------
 
+- Handle ES error when getting search options
+  [vangheem]
+
 - Provide date search options
   [vangheem]
 - Make the secure login accessible
