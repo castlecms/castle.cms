@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.5 (unreleased)
+2.5.5 (2019-03-25)
 ------------------
 
 - Add missing upgrade step
