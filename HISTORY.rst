@@ -4,7 +4,12 @@ Changelog
 2.5.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add missing upgrade step
+  [vangheem,RobZoneNet]
+
+- Add blank coverimage.pt fragment so we don't get errors on
+  themes that don't implement it
+  [RobZoneNet]
 
 
 2.5.4 (2019-03-25)
@@ -15,8 +20,10 @@ Changelog
 
 - Provide date search options
   [vangheem]
+
 - Make the secure login accessible
   [RobZoneNet]
+
 - Add in tooltips for the main toolbars
   [RobZoneNet]
 
