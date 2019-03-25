@@ -11,6 +11,15 @@ Read this before you start!!!
 
 - https://zope.readthedocs.io/en/latest/ZODB-migration.html
 
+Current blockers
+----------------
+
+- https://github.com/plone/Products.CMFPlone/issues/2575
+- https://github.com/plone/Products.CMFPlone/issues/2525
+
+(XXX Not all types of objects are currently migrated)
+(XXX until a solution is done, we can not do a complete py 2 -> 3 migration)
+
 
 Recommended steps...
 --------------------
@@ -21,9 +30,8 @@ Recommended steps...
 - run: `bin/zodbupdate --pack --convert-py3 --file path/to/Data.fs`
 - copy/paste the zodb/blobstorage to new env with py 3/castle cms 3
 - run server
-- go to /manage -> portal_setup
-    - delete all indexes
-    - delete all metadata
+- go to /manage -> portal_setup -> Import
+    - Run `CastleCMS upgrade from python 2 to python 3`
 
 
 
