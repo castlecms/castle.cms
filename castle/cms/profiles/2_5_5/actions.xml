@@ -61,6 +61,7 @@
   </object>
   <object name="slots" meta_type="CMF Action">
    <property name="description">Manage content in parts of the page from the Theme.</property>
+  </object>
  </object>
  <object name="user_menu" meta_type="CMF Action Category">
   <object name="dashboard" meta_type="CMF Action">
@@ -74,6 +75,7 @@
   </object>
   <object name="logout" meta_type="CMF Action">
    <property name="description">Log out of the site.</property>
+  </object>
  </object>
  <object name="management_menu" meta_type="CMF Action Category">
   <object name="site_setup" meta_type="CMF Action">
