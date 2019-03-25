@@ -128,6 +128,9 @@ setup(
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
+
+      [zodbupdate.decode]
+      decodes = castle.cms:zodbupdate_decode_dict
       """,
     include_package_data=True,
     zip_safe=False,
