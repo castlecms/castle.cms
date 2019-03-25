@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.4 (unreleased)
+2.5.4 (2019-03-25)
 ------------------
 
 - Handle ES error when getting search options
