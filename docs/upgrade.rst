@@ -8,8 +8,9 @@ Recommended way...
 ------------------
 
 - copy zodb to environment with py 2.7 + castle.cms 3.x
-- migrate zodb
-- move to py 3 env
+- run: `bin/zodb-py3migrate-analyze path/to/Data.fs`
+- run: `bin/zodbupdate --pack --convert-py3 --file path/to/Data.fs`
+- copy/paste the zodb/blobstorage to new env with py 3/castle cms 3
 
 
 References
@@ -22,4 +23,5 @@ Where things might break
 ------------------------
 
 - Python scripts stored in ZODB that are not Python 3 compat
+    - needs to be fixed ahead of time!!!
 - The above also applies to page templates with embedded py code
