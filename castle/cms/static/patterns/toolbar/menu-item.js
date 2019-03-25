@@ -19,6 +19,12 @@ define([
         showIcon: true
       };
     },
+    getInitialState: function(){
+      return {
+        hovered: false,
+        focussed: false
+      }
+    },
     onClick: undefined,
     getLabel: function(){
       return this.props.item.title;
@@ -43,11 +49,48 @@ define([
         icon = D.span({ className: item.icon_class, 'aria-hidden': true });
       }
       return D.li(
-        { className: className},
-        D.a({ href: item.url, onClick: this.onClick, ref: 'a'}, [
-          icon,
-          this.getLabel()
-        ]));
+        { className: className}, [
+          D.span({ className: 'simpletooltip_container'}, [
+            D.a({ href: item.url, onClick: this.onClick,
+                  ref: 'a', className: 'js-simple-tooltip',
+                  onFocus: function(){
+                    this.setState({
+                      focussed: true
+                    });
+                  }.bind(this),
+                  onMouseEnter: function(){
+                    this.setState({
+                      hovered: true
+                    });
+                  }.bind(this),
+                  onBlur: function(){
+                    this.setState({
+                      focussed: false
+                    });
+                  }.bind(this),
+                  onMouseLeave: function(){
+                    this.setState({
+                      hovered: false
+                    });
+                  }.bind(this),
+                  onKeyDown: function(){
+                    if (event.keyCode == 27) { // esc
+                      this.setState({
+                        focussed: false
+                      });
+                    }
+                  }.bind(this),
+                  'aria-describedby': 'label_simpletooltip_' + this.props.item.id}, [
+            icon,
+            this.getLabel()
+          ]),
+          D.span({ className: 'js-simpletooltip simpletooltip',
+                   id: 'label_simpletooltip_' + this.props.item.id,
+                   'aria-hidden': !this.state.focussed && !this.state.hovered,
+                   'role': 'tooltip'},
+            this.props.item.description)
+          ])
+      ]);
     }
   };
   return MenuItemBase;

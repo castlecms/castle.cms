@@ -1,8 +1,20 @@
 Changelog
 =========
 
-2.5.4 (unreleased)
+3.0.0 (unreleased)
 ------------------
+
+- Upgrade to Plone 5.2
+  [vangheem]
+
+- Make Python 3.6+ compatible
+  [vangheem]
+
+- provide tooltips
+  [RobZoneNet]
+
+- Provide empty coverimage fragment
+  [RobZoneNet]
 
 - Make the secure login accessible
   [RobZoneNet]

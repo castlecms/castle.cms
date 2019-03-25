@@ -1,0 +1,1 @@
+<tal:block tal:condition="nothing">This is a place holder so that switching themes don't break</tal:block>
