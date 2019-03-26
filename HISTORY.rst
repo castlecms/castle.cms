@@ -4,6 +4,9 @@ Changelog
 2.5.6 (unreleased)
 ------------------
 
+- Some nudges for the tooltip alignment
+  [RobZoneNet]
+
 - Do not delay on quality check
   [vangheem]
 
