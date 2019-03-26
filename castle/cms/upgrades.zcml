@@ -224,5 +224,13 @@
     destination="2505"
     handler=".upgrades.upgrade_2_5_5.upgrade"
     profile="castle.cms:default"/>
+  
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.5.6"
+    description=""
+    source="*"
+    destination="2506"
+    handler=".upgrades.cook_js_resources"
+    profile="castle.cms:default"/>
 
 </configure>
