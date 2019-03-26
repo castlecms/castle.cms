@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.6 (unreleased)
+2.5.6 (2019-03-26)
 ------------------
 
 - Some nudges for the tooltip alignment
