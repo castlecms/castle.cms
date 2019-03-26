@@ -7,6 +7,9 @@ Changelog
 - Do not delay on quality check
   [vangheem]
 
+- Fix quality check closing error box after load
+  [vangheem]
+
 
 2.5.5 (2019-03-25)
 ------------------
