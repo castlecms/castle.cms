@@ -151,7 +151,7 @@ define([
       }
 
       return {
-        delay: true,
+        delay: false,
         onFinished: function(){},
         checks: checks
       };

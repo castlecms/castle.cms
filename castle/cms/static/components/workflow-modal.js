@@ -32,9 +32,14 @@ define([
         var valid = this.refs.qa.isValid();
         this.setState({
           checked: true,
-          open: !valid,
           valid: valid
         });
+        if (!valid && !this.state.open) {
+          // open automatically only if not already open and error
+          this.setState({
+            open: true
+          });
+        }
         this.props.onQACheck(valid);
       }
     },
@@ -46,7 +51,7 @@ define([
     },
     render: function(){
       var qa = R.createElement(QualityCheck, {
-        delay: true, onFinished: this.onChecked, ref: 'qa' });
+        delay: false, onFinished: this.onChecked, ref: 'qa' });
       var toggleText = 'Show Quality Check';
       if(this.state.open){
         toggleText = 'Hide Quality Check';
