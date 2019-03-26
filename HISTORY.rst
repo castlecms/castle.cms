@@ -4,7 +4,8 @@ Changelog
 2.5.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Some nudges for the tooltip alignment
+  [RobZoneNet]
 
 
 2.5.5 (2019-03-25)
