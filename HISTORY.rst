@@ -4,6 +4,8 @@ Changelog
 3.0.0 (unreleased)
 ------------------
 
+New:
+
 - Upgrade to Plone 5.2
   [vangheem]
 
@@ -12,6 +14,11 @@ Changelog
 
 - provide tooltips
   [RobZoneNet]
+
+- Be able to provide oauth providers for `@@secure-login`
+  [vangheem]
+
+Fixes:
 
 - Provide empty coverimage fragment
   [RobZoneNet]
