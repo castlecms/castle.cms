@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='2.5.7',
+    version='2.5.8.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
