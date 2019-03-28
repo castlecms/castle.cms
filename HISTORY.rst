@@ -4,7 +4,8 @@ Changelog
 2.5.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- use registry values in itunes feed
+  [lucid-0]
 
 
 2.5.6 (2019-03-26)
