@@ -184,7 +184,7 @@
       destination="2308"
       handler=".upgrades.upgrade_2_3_8.upgrade"
       profile="castle.cms:default"/>
-    
+
   <genericsetup:upgradeStep
       title="Upgrade CastleCMS to 2.4.0"
       description=""
@@ -208,7 +208,7 @@
     destination="2500"
     handler=".upgrades.upgrade_2_5_0.upgrade"
     profile="castle.cms:default"/>
-  
+
   <genericsetup:registerProfile
     name="2_5_5"
     title="CastleCMS upgrade to 2.5.5 profile"
@@ -224,13 +224,29 @@
     destination="2505"
     handler=".upgrades.upgrade_2_5_5.upgrade"
     profile="castle.cms:default"/>
-  
+
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.6"
     description=""
     source="*"
     destination="2506"
     handler=".upgrades.cook_js_resources"
+    profile="castle.cms:default"/>
+
+  <genericsetup:registerProfile
+    name="2_5_7"
+    title="CastleCMS upgrade to 2.5.7 profile"
+    directory="profiles/2_5_7"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.5.7"
+    description=""
+    source="*"
+    destination="2507"
+    handler=".upgrades.upgrade_2_5_7.upgrade"
     profile="castle.cms:default"/>
 
 </configure>

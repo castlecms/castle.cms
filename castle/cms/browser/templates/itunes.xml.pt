@@ -6,6 +6,9 @@
      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
      xmlns:tal="http://xml.zope.org/namespaces/tal"
      tal:define="feed view/feed;
+                 utils context/@@castle-utils|nothing;
+                 author_override python: utils.get_registry_value('castle.feed_author_override') or None;
+                 email_override python: utils.get_registry_value('castle.feed_email_override') or None;
                  settings nocall:feed/settings|nothing;
                  categories settings/categories">
     <channel>
@@ -19,11 +22,20 @@
         <language tal:content="feed/language" />
         <copyright tal:content="feed/rights" />
         <itunes:subtitle tal:content="feed/description" />
-        <itunes:author tal:condition="feed/show_about" tal:content="feed/author_name" />
-        <itunes:owner tal:condition="feed/show_about">
-            <itunes:name tal:content="feed/author_name" />
-            <itunes:email tal:content="feed/author_email" />
-        </itunes:owner>
+        <tal:block tal:condition="not:author_override">
+          <itunes:author tal:condition="feed/show_about" tal:content="feed/author_name" />
+          <itunes:owner tal:condition="feed/show_about">
+              <itunes:name tal:content="feed/author_name" />
+              <itunes:email tal:content="feed/author_email" />
+          </itunes:owner>
+        </tal:block>
+        <tal:block tal:condition="author_override">
+          <itunes:author  tal:content="author_override" />
+          <itunes:owner>
+              <itunes:name tal:content="author_override" />
+              <itunes:email tal:condition="email_override" tal:content="email_override" />
+          </itunes:owner>
+        </tal:block>
         <itunes:summary tal:content="feed/description" />
         <description tal:content="feed/description" />
         <image>
