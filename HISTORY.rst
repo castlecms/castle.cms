@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.7 (unreleased)
+2.5.7 (2019-03-28)
 ------------------
 
 - use registry values in itunes feed
