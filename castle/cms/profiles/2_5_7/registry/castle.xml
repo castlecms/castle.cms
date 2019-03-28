@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <record name="castle.feed_author_override">
+    <field type="plone.registry.field.TextLine">
+      <title>Feed Author Override</title>
+      <required>False</required>
+    </field>
+  </record>
+  <record name="castle.feed_email_override">
+    <field type="plone.registry.field.TextLine">
+      <title>Feed Email Override</title>
+      <required>False</required>
+    </field>
+  </record>
+</registry>
