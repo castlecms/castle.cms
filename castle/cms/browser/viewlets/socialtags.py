@@ -1,3 +1,4 @@
+from plone import api
 from plone.memoize.view import memoize
 from castle.cms.browser.syndication import FolderFeed
 from plone.app.layout.viewlets.social import SocialTagsViewlet as BaseSocialTagsViewlet
@@ -13,10 +14,16 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
         tags = super(SocialTagsViewlet, self)._get_tags()
 
         site = getSite()
+        site_title = api.portal.get_registry_record('plone.site_title')
         feed = FolderFeed(site)
         item = queryMultiAdapter((self.context, feed), IFeedItem, default=None)
         if item is None:
             item = DexterityItem(self.context, feed)
+
+        for tag in tags:
+            if (tag.get('property', '') == 'og:title' or
+                    tag.get('name', '') == 'twitter:title'):
+                tag['content'] = '{} | {}'.format(tag['content'], site_title)
 
         if item.has_image:
             for tag in tags[:]:
