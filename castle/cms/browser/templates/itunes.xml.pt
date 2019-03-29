@@ -47,8 +47,13 @@
         <itunes:explicit>no</itunes:explicit>
         <item tal:repeat="item feed/items">
             <title tal:content="item/title" />
-            <itunes:author tal:condition="feed/show_about"
-                           tal:content="item/author_name|nothing"></itunes:author>
+            <tal:block tal:condition="not:author_override">
+              <itunes:author tal:condition="feed/show_about"
+                             tal:content="item/author_name|nothing"></itunes:author>
+            </tal:block>
+            <tal:block tal:condition="author_override">
+              <itunes:author  tal:content="author_override" />
+            </tal:block>
             <itunes:summary tal:content="item/description" />
             <tal:con tal:condition="item/has_enclosure">
                 <enclosure tal:attributes="url item/file_url;

@@ -4,7 +4,8 @@ Changelog
 2.5.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add site title to social meta tags
+  [lucid-0]
 
 
 2.5.7 (2019-03-28)
