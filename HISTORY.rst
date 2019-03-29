@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.8 (unreleased)
+2.5.8 (2019-03-29)
 ------------------
 
 - Add site title to social meta tags
