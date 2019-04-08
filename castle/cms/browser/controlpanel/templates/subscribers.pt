@@ -15,7 +15,7 @@
        i18n:translate="">
         Site Setup
     </a>
-    <div tal:content="python: view.get_page(1)">
+    <div class="pat-subscribers" data-pat-subscribers="${view/get_data}">
     </div>
 
 </metal:main>

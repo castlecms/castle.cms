@@ -99,7 +99,7 @@ def all():
 def get_page(page_num):
     per_page = 50
     start = (page_num - 1) * per_page
-    end = start + per_page
+    end = start + per_page + 1  # exclusive end limit
     storage = SubscriptionStorage()
     return storage._data.items()[start:end]
 
