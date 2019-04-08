@@ -95,6 +95,15 @@
     />
 
   <browser:page
+    name="manage-subscribers"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    template="templates/subscribers.pt"
+    class=".announcements.ManageSubscribers"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
     name="audit-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".audit.AuditView"
@@ -136,7 +145,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     />
-  
+
   <browser:page
     name="links-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
