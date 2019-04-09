@@ -557,6 +557,12 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
 
 class ManageSubscribers(BrowserView):
 
+    def __call__(self):
+        if self.request.REQUEST_METHOD == 'POST':
+            pass  # handle delete/add/confirm actions from UI here.
+
+        return super(ManageSubscribers, self).__call__()
+
     def get_page(self, page):
         subscribers = []
         for email, subscriber in subscribe.get_page(page):
