@@ -559,25 +559,57 @@ class ManageSubscribers(BrowserView):
 
     def __call__(self):
         if self.request.REQUEST_METHOD == 'POST':
-            pass  # handle delete/add/confirm actions from UI here.
-
+            subscribers = subscribe.SubscriptionStorage()
+            error_msg = None
+            try:
+                if 'action' not in self.request.form:
+                    error_msg = "Action not specified"
+                elif 'email' not in self.request.form:
+                    error_msg = "No email address specified"
+                else:
+                    if self.request.form['action'] == 'delete':
+                        email = self.request.form['email']
+                        subscribers.remove(email)
+                    elif self.request.form['action'] == 'add':
+                        email = self.request.form['email']
+                        subscribers.add(email)
+                    #  elif self.request.form['action'] == 'resend':
+                        # resend confirmation email with new code
+            except Exception:
+                error_msg = 'An unknown error occured'
+            if error_msg:
+                return json.dumps({
+                    'error': error_msg
+                })
+            else:
+                return 'ok'
+        if 'page' in self.request.form:
+            try:
+                page = int(self.request.form['page'])
+                self.request.response.setHeader("Content-type", "application/json")
+                return json.dumps(self.get_page(page))
+            except Exception:
+                return {}
         return super(ManageSubscribers, self).__call__()
 
     def get_page(self, page):
         subscribers = []
         for email, subscriber in subscribe.get_page(page):
             subscribers.append({
-                subscriber['email'],
-                subscriber['confirmed'],
-                subscriber['created']
+                'email': subscriber['email'],
+                'confirmed': subscriber['confirmed'],
+                'created': subscriber['created']
             })
         return subscribers
 
     def get_data(self):
+        subscribers = subscribe.SubscriptionStorage()
         try:
             page_num = self.request.form['page']
         except Exception:
             page_num = 1
+        subscriber_count = len(subscribers._data)
         return json.dumps({
-            'pageNum': page_num
+            'pageNum': page_num,
+            'subscriberCount': subscriber_count
         })
