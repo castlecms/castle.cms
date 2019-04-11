@@ -3,8 +3,9 @@
 define([
   'jquery',
   'mockup-patterns-base',
-  'castle-url/libs/react/react.min',
-], function($, Base, R) {
+  'castle-url/libs/react/react',
+  'castle-url/components/snackbar'
+], function($, Base, R, Snackbar) {
   'use strict';
   var D = R.DOM;
 
@@ -29,7 +30,16 @@ define([
       this.getPage(1);
     },
     render: function(){
-      var content = [this.renderResults()];
+      var content = [
+        D.div({
+          id: "snackbar"
+        }, 'User Deleted!'),
+        this.renderResults()
+      ];
+      var snackbar = document.getElementById("snackbar");
+      if (snackbar) {
+        this.state.snackbar = R.render(R.createElement(Snackbar),snackbar);
+      }
       if (this.state.subscriberCount > this.state.perPage) {
           content.push(this.renderPaging());
       }
@@ -130,13 +140,14 @@ define([
     },
     deleteSubscriber: function(){
       event.preventDefault();
-      var subscriberIndex = praseInt(event.target.target);
+
+      var subscriberIndex = parseInt(event.target.target);
       var that = this;
       var url = this.props.portaUrl + '/manage-subscribers?action=delete&email=' + subscriberIndex
       $.ajax({
         url: url,
         success: function(result){
-          //Show message that user has been deleted
+          that.state.snackbar.showText('User Deleted!');
           that.getPage(that.state.page);
         },
         error: function(){
