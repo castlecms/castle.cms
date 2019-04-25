@@ -715,11 +715,6 @@ def export_dexterity_obj(obj):
 
 
 def export_obj(obj):
-    try:
-        interval = int(args.interval)
-        time.sleep(interval)
-    except Exception:
-        pass
     if IDexterityContent.providedBy(obj):
         print("--> Dexterity: %s" % obj.Title())
         func = export_dexterity_obj
@@ -754,6 +749,11 @@ def write_export(obj, data):
 def run_export(brains):
     size = len(brains)
     for idx, brain in enumerate(brains):
+        try:
+            interval = int(args.interval)
+            time.sleep(interval)
+        except Exception:
+            pass
         path = brain.getPath()
         if (args.path_filter and
                 not fnmatch(path, args.path_filter)):
