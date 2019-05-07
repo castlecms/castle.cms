@@ -7,6 +7,15 @@ Changelog
 - Be able to provide oauth providers for `@@secure-login`
   [vangheem]
 
+- Add Audio Transcript to file template
+  [lucid-0]
+
+- Survey Invite optional logo, styling update
+  [lucid-0]
+
+- Fix RichText import when exporting from old Plone
+  [lucid-0]
+
 
 2.5.8 (2019-03-29)
 ------------------
