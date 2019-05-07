@@ -248,9 +248,11 @@ class Toolbar(BrowserView):
         return data
 
     def get_user_info(self):
+        email = self.user.getProperty('email')
         return {
             'id': self.user.getUserName(),
-            'name': self.user.getProperty('fullname') or self.user.getUserName(),  # noqa
+            'email': email,
+            'name': self.user.getProperty('fullname') or email or self.user.getUserName(),  # noqa
             'last_login_time': self._toIso(self.user.getProperty('last_login_time'))  # noqa
         }
 

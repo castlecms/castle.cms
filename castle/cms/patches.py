@@ -3,8 +3,8 @@ from time import time
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms import authentication
 from castle.cms import cache
+from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
@@ -19,6 +19,7 @@ from plone.transformchain.interfaces import ITransform
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
+from zope.event import notify
 from zope.interface import implementer
 
 
@@ -105,7 +106,7 @@ class NoopTransform(object):
 def AppInitializer_initialize(self):
     self._old_initialize()
     app = self.app[0]
-    authentication.install_acl_users(app, self.commit)
+    notify(AppInitializedEvent(app, self.commit))
 
 
 def SessionPlugin_validateTicket(self, ticket, now=None):

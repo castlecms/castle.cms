@@ -45,7 +45,8 @@ require([
           id: 'email',
           label: 'Email'
         }],
-        twoFactorEnabled: false
+        twoFactorEnabled: false,
+        additionalProviders: []
       };
     },
 
@@ -206,6 +207,24 @@ require([
       }
     },
 
+    renderAdditionalLoginProviders: function(){
+      var that = this;
+      var additional = [];
+      if (that.props.additionalProviders.length > 0) {
+        additional.push(D.hr());
+        var providers = [];
+        that.props.additionalProviders.forEach(function(provider) {
+          providers.push(D.li({}, D.a({ href: provider.url }, [
+            D.img({ src: provider.logo }),
+            provider.label,
+          ])));
+        });
+        additional.push(D.ul(
+          { className: C('login-provider') }, providers))
+      }
+      return additional;
+    },
+
     renderAuthSelector: function(){
       var that = this;
       if(that.props.supportedAuthSchemes.length <= 1){
@@ -220,7 +239,7 @@ require([
             onClick: that.authTypeSelected.bind(that, scheme)
           }, scheme.label)));
         })
-      ]);
+      ].concat(that.renderAdditionalLoginProviders()));
     },
 
     renderUsername: function(submissionFunction){
@@ -260,7 +279,7 @@ require([
                      onClick: that.sendAuthCode }, 'Send authorization code via ' + authType.label.toLowerCase()),
         ]),
         message
-      ]);
+      ].concat(that.renderAdditionalLoginProviders()));
     },
 
     renderCodeAuthView: function(message){
@@ -291,7 +310,7 @@ require([
                      onClick: that.authorizeCode }, 'Authorize code'),
         ]),
         message
-      ]);
+      ].concat(that.renderAdditionalLoginProviders()));
     },
 
     renderPasswordForm: function(message){
@@ -323,7 +342,7 @@ require([
                      onClick: that.login, disabled: disabled }, 'Login'),
         ]),
         message
-      ]);
+      ].concat(that.renderAdditionalLoginProviders()));
     },
 
     pwChangeValueChanged: function(name, e){
@@ -462,7 +481,6 @@ require([
           that.state.message
         ]);
       }
-
       var forms = [
         that.renderInitialView(message),
         that.renderCodeAuthView(message),

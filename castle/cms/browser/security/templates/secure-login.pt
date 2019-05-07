@@ -40,9 +40,6 @@
             You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.
         </p>
       </div>
-
-
-
     </div>
 
     <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/requirejs/require.js"></script>

@@ -4,7 +4,8 @@ Changelog
 2.5.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Be able to provide oauth providers for `@@secure-login`
+  [vangheem]
 
 
 2.5.8 (2019-03-29)
