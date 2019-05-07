@@ -30,7 +30,6 @@ from zope.component import getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.Five import BrowserView
-from castle.cms import subscribe
 
 reg_key = 'castle.subscriber_categories'
 
