@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.9 (unreleased)
+2.5.9 (2019-05-07)
 ------------------
 
 - Be able to provide oauth providers for `@@secure-login`
