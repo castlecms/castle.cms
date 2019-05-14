@@ -28,39 +28,38 @@ setSite(site)
 
 def process_PDFs():
     cat = site.portal_catalog
-    filebrains = cat(portal_type='File')
+    filebrains = cat(portal_type='File', contentType='application/pdf')
     print('Processing {} PDFs'.format(len(filebrains)))
     count = 0
     for brain in filebrains:
-        if brain.contentType == 'application/pdf':
-            obj = brain.getObject()
-            blob = obj.file.open('r')
-            tmp_dir = tempfile.mkdtemp()
-            filepath = os.path.join(tmp_dir, obj.file.filename)
-            file = open(filepath, 'wb')
-            file.write(blob.read())
-            file.close()
-            blob.close()
-            try:
-                gs_pdf(filepath)
-            except Exception:
-                logger.warn('Could not strip additional metadata with gs {}'.format(filepath))  # noqa
-            try:
-                exiftool(filepath)
-            except Exception:
-                logger.warn('Could not strip metadata with exiftool {}'.format(filepath))
-            try:
-                qpdf(filepath)
-            except Exception:
-                logger.warn('Could not strip additional metadata with qpdf {}'.format(filepath))  # noqa
-            file = open(filepath, 'rb')
-            obj.file = NamedBlobFile(file, filename=obj.file.filename)
-            file.close()
-            shutil.rmtree(tmp_dir)
-            count += 1
-            if count % 50 == 0:
-                print('Processed {} PDFs'.format(count))
-                transaction.commit()
+        obj = brain.getObject()
+        blob = obj.file.open('r')
+        tmp_dir = tempfile.mkdtemp()
+        filepath = os.path.join(tmp_dir, obj.file.filename)
+        file = open(filepath, 'wb')
+        file.write(blob.read())
+        file.close()
+        blob.close()
+        try:
+            gs_pdf(filepath)
+        except Exception:
+            logger.warn('Could not strip additional metadata with gs {}'.format(filepath))  # noqa
+        try:
+            exiftool(filepath)
+        except Exception:
+            logger.warn('Could not strip metadata with exiftool {}'.format(filepath))
+        try:
+            qpdf(filepath)
+        except Exception:
+            logger.warn('Could not strip additional metadata with qpdf {}'.format(filepath))  # noqa
+        file = open(filepath, 'rb')
+        obj.file = NamedBlobFile(file, filename=obj.file.filename)
+        file.close()
+        shutil.rmtree(tmp_dir)
+        count += 1
+        if count % 50 == 0:
+            print('Processed {} PDFs'.format(count))
+            transaction.commit()
     transaction.commit()
     print('Done.')
 
