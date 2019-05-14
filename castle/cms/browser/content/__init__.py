@@ -6,6 +6,7 @@ import shutil
 import tempfile
 import time
 
+from mimetypes import guess_type
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
@@ -378,24 +379,26 @@ class Creator(BrowserView):
         chooser = INameChooser(folder)
         chooser_name = name.lower().replace('aq_', '')
         newid = chooser.chooseName(chooser_name, folder.aq_parent)
-
         # strip metadata from file
         if (type_ in ('Image', 'File', 'Video', 'Audio') and
                 exiftool is not None and 'tmp_file' in info):
-            try:
-                if info['name'][-3:].lower() == 'pdf':
+            is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
+            if is_pdf:
+                try:
                     gs_pdf(info['tmp_file'])
-            except Exception:
-                logger.warn('Could not strip additional metadata with gs {}'.format(info['tmp_file']))  # noqa
+                except Exception:
+                    logger.warn('Could not strip additional metadata with gs {}'.format(info['tmp_file']))  # noqa
+
             try:
                 exiftool(info['tmp_file'])
             except Exception:
                 logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
-            try:
-                if info['name'][-3:].lower() == 'pdf':
+
+            if is_pdf:
+                try:
                     qpdf(info['tmp_file'])
-            except Exception:
-                logger.warn('Could not strip additional metadata with qpdf {}'.format(info['tmp_file']))  # noqa
+                except Exception:
+                    logger.warn('Could not strip additional metadata with qpdf {}'.format(info['tmp_file']))  # noqa
 
         fi = open(info['tmp_file'], 'r')
         try:
