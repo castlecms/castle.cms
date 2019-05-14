@@ -182,8 +182,8 @@ class GhostScriptPDFProcess(BaseSubProcess):
                '-sDEVICE=pdfwrite',
                filepath
                ]
-        shutil.copy(outfile, filepath)
         self._run_command(cmd)
+        shutil.copy(outfile, filepath)
 
 
 try:

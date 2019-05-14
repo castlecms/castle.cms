@@ -383,7 +383,7 @@ class Creator(BrowserView):
         if (type_ in ('Image', 'File', 'Video', 'Audio') and
                 exiftool is not None and 'tmp_file' in info):
             is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
-            if is_pdf:
+            if is_pdf and gs_pdf is not None:
                 try:
                     gs_pdf(info['tmp_file'])
                 except Exception:
@@ -394,7 +394,7 @@ class Creator(BrowserView):
             except Exception:
                 logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
-            if is_pdf:
+            if is_pdf and qpdf is not None:
                 try:
                     qpdf(info['tmp_file'])
                 except Exception:
