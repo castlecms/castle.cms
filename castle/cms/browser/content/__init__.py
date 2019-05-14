@@ -14,6 +14,8 @@ from castle.cms import commands
 from castle.cms import utils
 from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
+from castle.cms.commands import qpdf
+from castle.cms.commands import gs_pdf
 from castle.cms.files import duplicates
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import get_upload_fields
@@ -381,9 +383,19 @@ class Creator(BrowserView):
         if (type_ in ('Image', 'File', 'Video', 'Audio') and
                 exiftool is not None and 'tmp_file' in info):
             try:
+                if info['name'][-3:].lower() == 'pdf':
+                    gs_pdf(info['tmp_file'])
+            except Exception:
+                logger.warn('Could not strip additional metadata with gs {}'.format(info['tmp_file']))  # noqa
+            try:
                 exiftool(info['tmp_file'])
             except Exception:
                 logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+            try:
+                if info['name'][-3:].lower() == 'pdf':
+                    qpdf(info['tmp_file'])
+            except Exception:
+                logger.warn('Could not strip additional metadata with qpdf {}'.format(info['tmp_file']))  # noqa
 
         fi = open(info['tmp_file'], 'r')
         try:
