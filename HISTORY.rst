@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.10 (unreleased)
+2.5.10 (2019-05-14)
 -------------------
 
 - Improve PDF Metadata stripping
