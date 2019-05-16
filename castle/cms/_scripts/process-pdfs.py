@@ -35,7 +35,7 @@ def process_PDFs():
         obj = brain.getObject()
         blob = obj.file.open('r')
         tmp_dir = tempfile.mkdtemp()
-        filepath = os.path.join(tmp_dir, obj.file.filename)
+        filepath = os.path.join(tmp_dir, obj.file.filename).encode('utf-8').strip()
         file = open(filepath, 'wb')
         file.write(blob.read())
         file.close()
@@ -43,15 +43,15 @@ def process_PDFs():
         try:
             gs_pdf(filepath)
         except Exception:
-            logger.warn('Could not strip additional metadata with gs {}'.format(filepath))  # noqa
+            logger.warn(u'Could not strip additional metadata with gs {}'.format(filepath), exc_info=True)  # noqa
         try:
             exiftool(filepath)
         except Exception:
-            logger.warn('Could not strip metadata with exiftool {}'.format(filepath))
+            logger.warn(u'Could not strip metadata with exiftool {}'.format(filepath), exc_info=True)  # noqa
         try:
             qpdf(filepath)
         except Exception:
-            logger.warn('Could not strip additional metadata with qpdf {}'.format(filepath))  # noqa
+            logger.warn(u'Could not strip additional metadata with qpdf {}'.format(filepath), exc_info=True)  # noqa
         file = open(filepath, 'rb')
         obj.file = NamedBlobFile(file, filename=obj.file.filename)
         file.close()
