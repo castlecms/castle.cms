@@ -10,6 +10,7 @@ from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
 from castle.cms.commands import gs_pdf
 from plone.namedfile.file import NamedBlobFile
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
 # PDFs uploaded to CastleCMS 2.5.9 or earlier might have unwanted metadata
 # Run this to reprocess them
@@ -19,14 +20,12 @@ logger = logging.getLogger('castle.cms')
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--site-id', dest='site_id', default='Castle')
+parser.add_argument('--all-sites', dest='all_sites', default=False)
 
 args, _ = parser.parse_known_args()
 
-site = app[args.site_id]  # noqa
-setSite(site)
 
-
-def process_PDFs():
+def process_PDFs(site):
     cat = site.portal_catalog
     filebrains = cat(portal_type='File', contentType='application/pdf')
     print('Processing {} PDFs'.format(len(filebrains)))
@@ -40,29 +39,48 @@ def process_PDFs():
         file.write(blob.read())
         file.close()
         blob.close()
+        exception = False
         try:
             gs_pdf(filepath)
         except Exception:
             logger.warn(u'Could not strip additional metadata with gs {}'.format(filepath), exc_info=True)  # noqa
-        try:
-            exiftool(filepath)
-        except Exception:
-            logger.warn(u'Could not strip metadata with exiftool {}'.format(filepath), exc_info=True)  # noqa
-        try:
-            qpdf(filepath)
-        except Exception:
-            logger.warn(u'Could not strip additional metadata with qpdf {}'.format(filepath), exc_info=True)  # noqa
-        file = open(filepath, 'rb')
-        obj.file = NamedBlobFile(file, filename=obj.file.filename)
-        file.close()
+            exception = True
+        if not exception:
+            try:
+                exiftool(filepath)
+            except Exception:
+                logger.warn(u'Could not strip metadata with exiftool {}'.format(filepath), exc_info=True)  # noqa
+                exception = True
+        if not exception:
+            try:
+                qpdf(filepath)
+            except Exception:
+                logger.warn(u'Could not strip additional metadata with qpdf {}'.format(filepath), exc_info=True)  # noqa
+                exception = True
+        if not exception:
+            file = open(filepath, 'rb')
+            obj.file = NamedBlobFile(file, filename=obj.file.filename)
+            file.close()
+            count += 1
+            if count % 50 == 0:
+                print('Processed {} PDFs'.format(count))
+                transaction.commit()
+        else:
+            logger.warn('{sitepath} will not be modified because an exception occured.'.format(sitepath=brain.getURL()))  # noqa
         shutil.rmtree(tmp_dir)
-        count += 1
-        if count % 50 == 0:
-            print('Processed {} PDFs'.format(count))
-            transaction.commit()
     transaction.commit()
     print('Done.')
 
 
 if __name__ == '__main__':
-    process_PDFs()
+    if args.all_sites:
+        for oid in app.objectIds():  # noqa
+            site = app[oid]  # noqa
+            if IPloneSiteRoot.providedBy(site):
+                print('Processing site: {}'.format(oid))
+                setSite(site)
+                process_PDFs(site)
+    else:
+        site = app[args.site_id]  # noqa
+        setSite(site)
+        process_PDFs(site)
