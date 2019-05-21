@@ -4,7 +4,11 @@ Changelog
 2.5.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Update pdf reprocess script
+  [lucid-0]
+
+- Show field descriptions to anon again
+  [lucid-0]
 
 
 2.5.10 (2019-05-14)
