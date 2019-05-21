@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.11 (unreleased)
+2.5.11 (2019-05-21)
 -------------------
 
 - Update pdf reprocess script
