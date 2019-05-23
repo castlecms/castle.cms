@@ -14,6 +14,7 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
         tags = super(SocialTagsViewlet, self)._get_tags()
 
         site = getSite()
+        add_site_title = api.portal.get_registry_record('plone.social_site_title', default=True)
         site_title = api.portal.get_registry_record('plone.site_title', default=None)
         feed = FolderFeed(site)
         item = queryMultiAdapter((self.context, feed), IFeedItem, default=None)
@@ -21,8 +22,8 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
             item = DexterityItem(self.context, feed)
 
         for tag in tags:
-            if site_title and (tag.get('property', '') == 'og:title' or
-                                    tag.get('name', '') == 'twitter:title'):
+            if add_site_title and site_title and (tag.get('property', '') == 'og:title' or
+                                                    tag.get('name', '') == 'twitter:title'):
                 tag['content'] = '{} | {}'.format(tag['content'], site_title)
 
             if item.has_image:
