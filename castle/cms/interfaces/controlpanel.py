@@ -14,6 +14,13 @@ def create_term(val, label):
 
 
 class ISocialMediaSchema(controlpanel.ISocialMediaSchema):
+    social_site_title = schema.Bool(
+        title=u'Include site title in social media metatags',
+        description=u'When sharing content to social media, should the '
+                    u'title from Site controlpanel be included',
+        default=True,
+        required=True)
+
     twitter_consumer_key = schema.TextLine(
         title=u'Twitter consumer key',
         default=None,
