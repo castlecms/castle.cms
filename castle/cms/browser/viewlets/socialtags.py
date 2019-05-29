@@ -23,7 +23,7 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
         for tag in tags:
             if site_title and (tag.get('property', '') == 'og:title' or
                                     tag.get('name', '') == 'twitter:title'):
-                tag['content'] = '{} | {}'.format(tag['content'], site_title)
+                tag['content'] = u'{} | {}'.format(tag['content'], site_title)
 
             if item.has_image:
                 if ('image' in tag.get('property', '') or
