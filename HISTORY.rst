@@ -4,7 +4,7 @@ Changelog
 2.5.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- unicode fix
 
 
 2.5.11 (2019-05-21)
