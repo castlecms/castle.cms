@@ -5,6 +5,7 @@ from lxml.html import fromstring
 from lxml.html import tostring
 from OFS.interfaces import IFolder
 from plone import api
+from plone.dexterity.fti import DexterityFTI
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.textfield.value import RichTextValue
@@ -396,7 +397,7 @@ def import_content(path, count=0):
             # folder object exists in export,but errored or was skipped
             return count
     for filename in os.listdir(path):
-        if filename in ('.DS_Store', '__folder__'):
+        if filename in ('.DS_Store', '__folder__', '__types__'):
             continue
         filepath = os.path.join(path, filename)
         if os.path.isdir(filepath):
@@ -425,6 +426,36 @@ def import_content(path, count=0):
     return count
 
 
+def import_types(path):
+    types_file = os.path.join(path, '__types__')
+    count = 0
+    if os.path.exists(types_file):
+        fi = open(types_file)
+        file_read = fi.read()
+        fi.close()
+        try:
+            types_data = mjson.loads(file_read)
+        except Exception:
+            logger.error('Could not import custom types.')
+            return
+        for type in types_data:
+            type_tool = site['portal_types']
+            existing_types = type_tool.listContentTypes()
+            type_data = types_data[type]
+            if type_data['id'] not in existing_types:
+                type_data['id'] = type_data['id'].encode('utf8')
+                type_data['title'] = type_data['title'].encode('utf8')
+                if type_data['description']:
+                    type_data['description'] = type_data['description'].encode('utf8')
+                type_data['icon_expr'] = 'string:${portal_url}/document_icon.png'
+                fti = DexterityFTI(type_data['id'])
+                fti.manage_changeProperties(**type_data)
+                type_tool._setObject(fti.id, fti)
+                count += 1
+                print('Added {type} to site'.format(type=fti.id))
+    return count
+
+
 def read_pass(path):
     for filename in sorted(os.listdir(path)):
         if filename in ('.DS_Store', '__folder__'):
@@ -447,6 +478,8 @@ if __name__ == '__main__':
         print('------------------------------')
         print('Importing with overwrite enabled')
         print('------------------------------')
+    count = import_types(args.export_directory)
+    print('Imported {count} custom types'.format(count=count))
     count = import_content(args.export_directory)
     print('Created {count} Content Items'.format(count=count))
     transaction.commit()

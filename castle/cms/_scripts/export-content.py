@@ -747,6 +747,26 @@ def write_export(obj, data):
 
 
 def run_export(brains):
+    #  export custom types first
+    export_types = {}
+    type_tool = site['portal_types']
+    types = type_tool.listContentTypes()
+    for type_name in types:
+        fti = type_tool[type_name]
+        if fti.meta_type == 'Dexterity FTI':
+            export_types[type_name] = {
+                'klass': fti.klass,
+                'model_source': fti.model_source,
+                'model_file': fti.model_file,
+                'id': fti.id,
+                'title': fti.title,
+                'description': fti.description,
+                'filter_content_types': fti.filter_content_types
+            }
+    types_path = os.path.join(export_folder, '__types__')
+    types_file = open(types_path, 'w')
+    types_file.write(json.dumps(export_types))
+
     size = len(brains)
     for idx, brain in enumerate(brains):
         try:
