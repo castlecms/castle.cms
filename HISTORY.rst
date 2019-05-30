@@ -4,7 +4,7 @@ Changelog
 2.5.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- add preliminary support for category subscriber emails to be used in content rules
 
 
 2.5.12 (2019-05-28)

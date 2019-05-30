@@ -1,5 +1,4 @@
 from castle.cms import subscribe
-import logging
 from plone.stringinterp import _
 from plone.stringinterp.adapters import BaseSubstitution
 from plone.stringinterp.dollarReplace import LazyDict
