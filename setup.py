@@ -50,6 +50,7 @@ setup(
         'z3c.relationfield>=0.7.1.dev0',
         'Products.ZCatalog>=3.0.3dev2',
         'plone.app.standardtiles>=2.0.0.dev0',
+        'plone.stringinterp>=1.3.1',
 
         'Products.CMFPlacefulWorkflow',
         'plone.app.caching',
