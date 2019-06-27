@@ -4,7 +4,7 @@ Changelog
 2.5.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix og:image tag duplication issue
 
 
 2.5.12 (2019-05-28)
