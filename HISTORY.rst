@@ -4,7 +4,7 @@ Changelog
 2.5.14 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix search.js for ie 10/11
 
 
 2.5.13 (2019-06-27)
