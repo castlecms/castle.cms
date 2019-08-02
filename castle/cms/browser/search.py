@@ -173,11 +173,6 @@ class SearchAjax(BrowserView):
             if real_name.endswith(':list'):
                 real_name = real_name[:-len(':list')]
             if self.request.form.get(name):
-<<<<<<< HEAD
-                query[name] = self.request.form[name].lower()
-            elif self.request.form.get(name + '[]'):
-                query[name] = self.request.form[name + '[]'].lower()
-=======
                 query[real_name] = self.request.form[name]
             elif self.request.form.get(name + '[]'):
                 query[real_name] = self.request.form[name + '[]']
@@ -196,7 +191,6 @@ class SearchAjax(BrowserView):
                 }
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
->>>>>>> e4dacd63a501b6a50ff7fbad1c344fbc2b2c4d25
 
         try:
             page_size = int(self.request.form.get('pageSize'))
@@ -339,10 +333,6 @@ class SearchAjax(BrowserView):
             'stored_fields': ','.join(_search_attributes) + ',path.path',
             'from_': start,
             'size': size,
-<<<<<<< HEAD
-=======
-            'fields': ','.join(_search_attributes) + ',path.path'
->>>>>>> e4dacd63a501b6a50ff7fbad1c344fbc2b2c4d25
         }
 
         return es.connection.search(index=index_name,
