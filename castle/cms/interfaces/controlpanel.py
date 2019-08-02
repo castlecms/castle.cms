@@ -24,7 +24,7 @@ class ISocialMediaSchema(controlpanel.ISocialMediaSchema):
         default=None,
         required=False)
 
-    twitter_oauth_token = schema.TextLine(
+    twitter_oauth_token = schema.Password(
         title=u'Twitter OAuth token',
         required=False)
 
@@ -63,6 +63,10 @@ class ISocialMediaSchema(controlpanel.ISocialMediaSchema):
         title=u'Github Username',
         required=False
     )
+
+    google_oauth_token = schema.Password(
+        title=u'Google OAuth token',
+        required=False)
 
 
 class ISiteSchema(controlpanel.ISiteSchema):
@@ -369,6 +373,26 @@ class IAPISettings(Interface):
         default=unicode(django_random.get_random_string(64))
     )
 
+    matomo_base_url = schema.URI(
+        title=u'Matomo instance base URL',
+        description=u'used to query social media share outlinks via Matomo API, '
+                    'e.g. https://castlecms.innocraft.cloud',
+        default=None,
+        required=False)
+
+    matomo_token_auth = schema.TextLine(
+        title=u'Matomo authentication token',
+        description=u'from your Matomo account settings, under Platform > API, User Authentication.',
+        default=u'',
+        required=False)
+
+    matomo_site_id = schema.TextLine(
+        title=u'Matomo Site ID',
+        description=u'from your Matomo account settings, under Websites > Manage.',
+        default=u'1',
+        required=False
+    )
+
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
@@ -551,4 +575,11 @@ class ICrawlerConfiguration(Interface):
         title=u'User Agent',
         description=u'User agent to use when crawling sites',
         default=u'CastleCMS Crawler 1.0'
+    )
+
+    crawler_interval = schema.Int(
+        title=u'Request Interval',
+        description=u'To avoid overburdening the crawled site, enter a request interval in seconds',
+        required=False,
+        default=0,
     )

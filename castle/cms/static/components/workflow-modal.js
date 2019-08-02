@@ -32,9 +32,14 @@ define([
         var valid = this.refs.qa.isValid();
         this.setState({
           checked: true,
-          open: !valid,
           valid: valid
         });
+        if (!valid && !this.state.open) {
+          // open automatically only if not already open and error
+          this.setState({
+            open: true
+          });
+        }
         this.props.onQACheck(valid);
       }
     },

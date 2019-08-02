@@ -5,11 +5,14 @@ from tempfile import mkdtemp
 
 from castle.cms.commands import avconv, md5
 from castle.cms.files import aws
+from castle.cms.services.google import youtube
+from collective.celery.utils import getCelery
 from plone.app.blob.utils import openBlob
 from plone.namedfile import NamedBlobImage
 from plone.namedfile.file import NamedBlobFile
 
-logger = getLogger('wildcard.media')
+
+logger = getLogger(__name__)
 
 
 def switchFileExt(filename, ext):
@@ -19,7 +22,6 @@ def switchFileExt(filename, ext):
 
 def process(context):
     video = context.file
-
     if not video or video.filename == aws.FILENAME:
         return
 
@@ -45,6 +47,15 @@ def process(context):
         # already an mp4 and already has a screen grab
         return
 
+    if convert_it and youtube.should_upload(context):
+        try:
+            youtube.upload(context, bfilepath, filename=video.filename)
+            # saving hash tells us we do not need to convert anymore...
+            context._file_hash = md5(bfilepath)
+            convert_it = False
+        except Exception:
+            logger.error('Error uploading youtube video', exc_info=True)
+
     tmpdir = mkdtemp()
     tmpfilepath = os.path.join(tmpdir, video.filename)
     copyfile(bfilepath, tmpfilepath)
@@ -54,15 +65,16 @@ def process(context):
         try:
             avconv.convert(tmpfilepath, output_filepath)
         except Exception:
-            pass
+            logger.info('Could not convert video', exc_info=True)
         if (os.path.exists(output_filepath) and
                 os.path.getsize(output_filepath) > 0):
             if md5 is not None:
                 try:
                     context._file_hash = md5(output_filepath)
                 except Exception:
-                    pass
-            context._p_jar.sync()
+                    logger.info('Could not get md5', exc_info=True)
+            if not getCelery().conf.task_always_eager:
+                context._p_jar.sync()
             fi = open(output_filepath)
             namedblob = NamedBlobFile(
                 fi, filename=switchFileExt(video.filename, 'mp4'))
@@ -79,5 +91,6 @@ def process(context):
                 context.image = NamedBlobImage(fi, filename=u'screengrab.png')
                 fi.close()
         except Exception:
-            logger.warn('error getting thumbnail from video')
+            logger.warning(
+                'error getting thumbnail from video', exc_info=True)
     rmtree(tmpdir)

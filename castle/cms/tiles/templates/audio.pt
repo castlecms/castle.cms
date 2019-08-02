@@ -4,18 +4,6 @@
        tal:define="desc audio/overview/output|audio/Description|string:;
                    effective audio/effective|nothing;
                    url audio/absolute_url|nothing;">
-   <div tal:condition="view/get_twitter_user">
-       <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-       <meta name="twitter:card" content="player" />
-       <meta name="twitter:site" content="${python: '@' + view.get_twitter_user()}" />
-       <meta name="twitter:player:width" content="480" />
-       <meta name="twitter:player:height" content="32" />
-       <meta name="twitter:title" content="${audio/Title}" />
-       <meta name="twitter:description" content="${desc}" />
-       <meta name="twitter:player" content="${python: view.get_https_url(audio)}/@@audioplayer" />
-       <meta name="twitter:player:stream" content="${python: view.get_https_url(audio)}/@@download" />
-       <meta name="twitter:player:stream:content_type" content="${python: view.get_content_type(audio)}" />
-   </div>
     <h3 tal:condition="python: 'title' in df"><a href="${url}">${audio/Title}</a></h3>
     <audio class="pat-audio" controls preload="none"
            style="width: ${python: view.data.get('width', '100%')}">

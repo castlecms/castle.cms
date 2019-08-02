@@ -25,6 +25,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.globalrequest import getRequest
+from castle.cms.utils import clear_object_cache
 
 import gzip
 import requests
@@ -55,6 +56,8 @@ CRAWLER_ES_MAPPING = {
         'store': False
     }
 }
+
+MAX_PAGE_SIZE = 500000000
 
 
 class Crawler(object):
@@ -112,14 +115,13 @@ class Crawler(object):
 
     def crawl_page(self, url):
         logger.info('Indexing ' + url)
-        try:
-            resp = requests.get(url, headers={
-                'User-Agent': self.settings.crawler_user_agent
-            })
-        except Exception:
-            # unable to access the page, remove for now
-            return False
-        if resp.status_code == 404 or 'html' not in resp.headers.get('content-type', ''):
+        resp = requests.get(url, stream=True, headers={
+            'User-Agent': self.settings.crawler_user_agent
+        })
+        if resp.status_code == 404 or \
+          'html' not in resp.headers.get('content-type', '') or \
+          int(resp.headers.get('content-length', 0)) \
+              >= MAX_PAGE_SIZE:
             # remove from index
             return False
         try:
@@ -283,6 +285,7 @@ class Crawler(object):
 
         self.data['tracking'][sitemap] = DateTime().ISO8601().decode('utf8')
         transaction.commit()
+        clear_object_cache(self.site)
 
         if sitemap.lower().endswith('.gz'):
             sitemap_content = gzip.GzipFile(fileobj=StringIO(resp.content)).read()
@@ -312,7 +315,11 @@ class Crawler(object):
 
             if not url:
                 continue
-
+            try:
+                interval = self.settings.crawler_interval
+            except Exception:
+                interval = 0
+            time.sleep(interval)
             data = self.crawl_page(url)
             if data is False:
                 crawled_urls.remove(url)

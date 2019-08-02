@@ -1,3 +1,5 @@
+import time
+
 from Acquisition import aq_parent
 from castle.cms import cache
 from castle.cms.interfaces import IAuthenticator
@@ -10,22 +12,22 @@ from OFS.interfaces import IItem
 from plone import api
 from plone.keyring.interfaces import IKeyManager
 from plone.keyring.keymanager import KeyManager
+from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
 from plone.session.plugins.session import manage_addSessionPlugin
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.setuphandlers import activatePluginInterfaces
 from Products.PlonePAS.setuphandlers import migrate_root_uf
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
+from ZODB.POSException import ConnectionStateError
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
+from zope.interface import Interface
 from zope.interface import implementer
-from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-from ZODB.POSException import ConnectionStateError
-
-import time
 
 
 class AuthenticationException(Exception):
@@ -49,7 +51,7 @@ class AuthenticationPasswordResetWindowExpired(AuthenticationException):
 
 
 @implementer(IAuthenticator)
-@adapter(IItem, IDefaultBrowserLayer)
+@adapter(IItem, Interface)
 class Authenticator(object):
 
     def __init__(self, context, request):
@@ -240,8 +242,52 @@ class Authenticator(object):
         })
         member.setSecurityProfile(password=new_password)
 
+    def get_options(self):
+        site_url = success_url = self.context.absolute_url()
+        if ISiteRoot.providedBy(self.context):
+            success_url += '/@@dashboard'
+        if 'came_from' in self.request.form:
+            came_from = self.request.form['came_from']
+            try:
+                url_tool = api.portal.get_tool('portal_url')
+            except api.exc.CannotGetPortalError:
+                url_tool = None
+            if (came_from.startswith(site_url) and (
+                    not url_tool or url_tool.isURLInPortal(came_from))):
+                success_url = came_from
 
-def install_acl_users(app, logger=None):
+        data = {
+            'supportedAuthSchemes': self.get_supported_auth_schemes(),
+            'twoFactorEnabled': self.two_factor_enabled,
+            'apiEndpoint': '{}/@@secure-login'.format(site_url),
+            'successUrl': success_url,
+            'additionalProviders': []
+        }
+        try:
+            data['authenticator'] = createToken()
+        except ConnectionStateError:
+            # zope root related issue here...
+            pass
+
+        username = None
+        pwreset = self.request.form.get('pwreset') == 'true'
+        if pwreset:
+            try:
+                user = api.user.get(self.request.form.get('userid'))
+                username = user.getUserName()
+                data.update({
+                    'passwordReset': pwreset,
+                    'username': username,
+                    'code': self.request.form.get('code'),
+                    'userid': self.request.form.get('userid')
+                })
+            except Exception:
+                pass
+        return data
+
+
+def install_acl_users(app, event):
+    logger = event.commit
     uf = app.acl_users
     found = uf.objectIds(['Plone Session Plugin'])
     if not found:

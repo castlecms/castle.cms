@@ -384,10 +384,22 @@ define([
       var search = this.refs.search;
       if(search.state.selected !== -1){
         var data = search.state.results[search.state.selected];
+        var state = null;
+        var city = null;
+        for (var i=0;i<data['address_components'].length;i++){
+          var component = data['address_components'][i];
+          if (component['types'].indexOf('administrative_area_level_1') >= 0){
+            state = component['short_name'];
+          } else if (component['types'].indexOf('locality') >= 0) {
+            city = component['long_name'];
+          }
+        }
         this.props.parent.set({
           formatted: data.formatted_address,
           lat: (data.geometry.location.lat && data.geometry.location.lat()) || data.geometry.location.G,
-          lng: (data.geometry.location.lng && data.geometry.location.lng()) || data.geometry.location.K
+          lng: (data.geometry.location.lng && data.geometry.location.lng()) || data.geometry.location.K,
+          city: city,
+          state: state
         });
         this.hide();
       }else{

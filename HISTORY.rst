@@ -1,8 +1,526 @@
 Changelog
 =========
 
-2.2.0 (unreleased)
+2.5.15 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+2.5.14 (2019-07-18)
+-------------------
+
+- fix search.js for ie 10/11
+
+
+2.5.13 (2019-06-27)
+-------------------
+
+- fix og:image tag duplication issue
+
+
+2.5.12 (2019-05-28)
+-------------------
+
+- unicode fix
+
+
+2.5.11 (2019-05-21)
+-------------------
+
+- Update pdf reprocess script
+  [lucid-0]
+
+- Show field descriptions to anon again
+  [lucid-0]
+
+
+2.5.10 (2019-05-14)
+-------------------
+
+- Improve PDF Metadata stripping
+
+
+2.5.9 (2019-05-07)
 ------------------
+
+- Be able to provide oauth providers for `@@secure-login`
+  [vangheem]
+
+- Add Audio Transcript to file template
+  [lucid-0]
+
+- Survey Invite optional logo, styling update
+  [lucid-0]
+
+- Fix RichText import when exporting from old Plone
+  [lucid-0]
+
+
+2.5.8 (2019-03-29)
+------------------
+
+- Add site title to social meta tags
+  [lucid-0]
+
+
+2.5.7 (2019-03-28)
+------------------
+
+- use registry values in itunes feed
+  [lucid-0]
+
+
+2.5.6 (2019-03-26)
+------------------
+
+- Some nudges for the tooltip alignment
+  [RobZoneNet]
+
+- Do not delay on quality check
+  [vangheem]
+
+- Fix quality check closing error box after load
+  [vangheem]
+
+
+2.5.5 (2019-03-25)
+------------------
+
+- Add missing upgrade step
+  [vangheem,RobZoneNet]
+
+- Add blank coverimage.pt fragment so we don't get errors on
+  themes that don't implement it
+  [RobZoneNet]
+
+
+2.5.4 (2019-03-25)
+------------------
+
+- Handle ES error when getting search options
+  [vangheem]
+
+- Provide date search options
+  [vangheem]
+
+- Make the secure login accessible
+  [RobZoneNet]
+
+- Add in tooltips for the main toolbars
+  [RobZoneNet]
+
+
+
+2.5.3 (2019-03-08)
+------------------
+
+New:
+
+- Be able to specify robots meta tag configuration for content
+  [vangheem]
+
+- Add `distribution=Global` meta tag
+  [vangheem]
+
+
+Changes:
+
+- Show published date in search results
+  [vangheem]
+
+- Show transcript in video view
+  [lucid-0]
+
+
+Fixes:
+
+- Run exiftool on Audio and Video types as well
+  [vangheem]
+
+- Fix redirect url for logging into site
+  [vangheem]
+
+- Remove duplicate description head metadata tag
+  [vangheem]
+
+- Remove duplicate keywords head metadata tag
+  [vangheem]
+
+
+2.5.2 (2019-03-01)
+------------------
+
+Fixes:
+
+- enable quality check delay
+  [lucid-0]
+
+
+2.5.1 (2019-02-27)
+------------------
+
+Fixes:
+
+- Implement IAnnotations for IResourceDirectory to prevent errors
+  previewing theme through the editor.
+  [vangheem]
+
+- Fixed Querylisting so the title is required since it is a h2. This is good for accessibility. I also put a classname in the h2 tag so the end themer can hide from visual but not screen readers
+  [RobZoneNet]
+
+- Added video icon and event hover icon for the add modal
+  [robzonenet]
+
+- Bug fix to UploadNamedFileWidget
+  [vangheem]
+
+
+2.5.0 (2019-02-15)
+------------------
+
+New:
+
+- Integrate uploading to youtube
+  [lucid-0,vangheem]
+
+- Add `link-report` script and `Broken links` control panel
+  [vangheem]
+
+- Be able to configure some default settings with environment variables
+  [vangheem]
+
+Fixes:
+
+- Fix cache invalidation with jbot on production
+  [vangheem]
+
+
+2.4.1 (2019-02-06)
+------------------
+
+- Fix bugs with getting site icon
+  [vangheem]
+
+- Fix adding Query Choice easyform field
+  [vangheem]
+
+
+2.4.0 (2019-01-28)
+------------------
+
+New:
+
+- Implement being able to add tiles from inside your theme folder
+  [vangheem]
+
+- Implement new `Query Choice` field for collective.easyform which
+  allows you to specify a query to retrieve values from. In order to use,
+  you need to activate the field in the Easy Form Control panel.
+  [vangheem]
+
+- Add `--skip-incomplete` option to `upgrade-sites` script to bypass
+  erroring when an profile does not upgrade corrrectly
+  [vangheem]
+
+Changes:
+
+- use `summary_large_image` twitter card instead of `summary`
+  [vangheem]
+
+- Better PDF generation error handling and logging
+  [vangheem]
+
+- Reorganize `castle.cms.utils` module so split into sub-modules. Imports
+  are all still same.
+  [vangheem]
+
+Fixes:
+
+- Fix duplicate `<head>` tags showing up
+  [vangheem]
+
+- Fix jbot theme customizations bleeding across sites
+  [vangheem]
+
+- Upgrade mosaic to fix layout selection styles
+  [vangheem]
+
+- Handle errors in resolving menu items
+  [vangheem]
+
+- Provide patch for https://github.com/celery/celery/pull/4839 until
+  it is fixed in a release
+  [vangheem]
+
+- Skip auto-upgrading `collective.easyform` in `upgrade-sites` script
+  because it does not correctly define upgrade steps
+  [vangheem]
+
+- Handle errors caused by urls like `pdf/download` which should just
+  be a 404.
+  [vangheem]
+
+
+2.3.8 (2019-01-15)
+------------------
+
+New:
+
+- import fixes: transition item only if it needs it; loop over all workflow
+  chains (usually there is only one); set the workflow history (do not add
+  extraneous entries caused by the import process)
+  [tkimnguyen]
+
+- export-content.py now takes --modifiedsince and --createdsince args
+  e.g. --modifiedsince='2018-10-03 00:00:00'
+  [tkimnguyen]
+
+- Be able to run castle upgrades directly from addon control panel
+  [vangheem]
+
+- Provide new `upgrade-sites` script to automatically run plone/addon
+  upgrades for all sites in an instance
+  [vangheem]
+
+- Add contentlisting summary view which repeats the container image
+  and displays publication date.
+  [lucid-0]
+
+Fixes:
+
+- Upgrade collective.documentviewer == 5.0.4
+  [vangheem]
+
+- Handle scaling errors on favicon view
+  [vangheem]
+
+- Handle errors on non-folderish dexterity items feed setting lookups
+  [vangheem]
+
+- Handle unicode issues with querylisting tile and ES
+  [vangheem]
+
+- Handle potential IOError and POSKeyError on serving files to give 404 now
+  [vangheem]
+
+- Fix crawler memory error by streaming crawler requests(don't load non-html content)
+  [lucid-0]
+
+Changes:
+
+- Reorganize `castle.cms.browser` module and add robot framework tests
+  [vangheem]
+
+
+2.3.7 (2019-01-02)
+------------------
+
+New:
+
+- Add session timeout configuration to Security panel
+  [lucid-0]
+
+- Add audio/video twitter cards
+  [vangheem, lucid-0]
+
+
+Fixes:
+
+- Handle error in `@@content-body` when there is no IFeedItem adapter
+  for the current context
+  [vangheem]
+
+- Fix twitter cards
+  [vangheem, lucid-0]
+
+Changes:
+
+- Registered utility for site content importer to allow add-ons to
+  create content types for importing
+  [obct537]
+
+
+2.3.6 (2018-12-20)
+------------------
+
+Fixes:
+
+- Upgrade collective.elasticsearch to fix sorting issues and negative
+  indexing implementation
+  [vangheem]
+
+Changes:
+
+- Default to reversed sorting and explicitly use effective date sorting
+  for query listing tile.
+
+
+2.3.5 (2018-12-17)
+------------------
+
+New:
+
+- Add request interval option to crawler
+  [lucid-0]
+
+
+Fixes:
+
+- Upgrade collective.elasticsearch to 2.0.4 to fix date
+  queries that use `min:max`
+  [vangheem]
+
+- Fix querylisting not filtering by tags anymore
+  [vangheem]
+
+- fix popup modal close button to be visible on mobile
+  [vangheem]
+
+- Upgrade plone.app.mosaic to fix protect.js script tag being
+  loaded over and over again in edit mode
+  [vangheem]
+
+- Fix alias causing logout at backend urls
+  [lucid-0]
+
+- Upgrade collective.celery
+  [vangheem]
+
+- Fix: Use ArchiveManager to getContentToArchive
+  [lucid-0]
+
+
+2.3.4 (2018-12-10)
+------------------
+
+- Fix upgrade of `castle.slot_tiles` when it's been set to None
+  [vangheem]
+
+
+2.3.3 (2018-12-10)
+------------------
+
+New:
+
+- Implement new modal link
+  [vangheem]
+
+- Add import subscribers form for announcements panel
+  [CorySanin]
+
+- Add new recurrences indexer
+  [tkimnguyen]
+
+- Calendar tile now renders recurring events
+  [obct537]
+
+Fixes:
+
+- Handle error when image tile referenced image is not found
+  [vangheem]
+
+- Fix use of celery with always eager setting and some tasks
+  [vangheem]
+
+- Work with ffmpeg as well as avconv
+  [vangheem]
+
+- Make content listing tile persistent. This fixes issues with saving
+  data to content listing tile.
+  [vangheem]
+
+
+2.3.2 (2018-12-04)
+------------------
+
+Fixes:
+
+- Fix reindexing causing `last_modified_by` index to get overwritten
+  [lucid-0,vangheem]
+
+- Fix 2.0.41 upgrade step that cleared `slot_tiles` setting and
+  attempt to fix missing `slot_tiles` on sites that have been
+  upgraded since.
+  [vangheem]
+
+
+2.3.1 (2018-12-04)
+------------------
+
+New:
+
+- Upgrade to latest collective.elasticsearch.
+  New versions include,
+  `collective.celery=1.1.2`,
+  `collective.elasticsearch=2.0.2`,
+  `celery=4.2.1`,
+  `billiard = 3.5.0.4`,
+  `kombu = 4.2.1`,
+  `redis = 2.10.5`
+
+Fixes:
+
+- Fix z-index issue with recurrence modal for events
+  [robzonenet]
+
+- Fix import Folder to not customize layout when text is empty
+  [vangheem]
+
+- Fixed broken update step
+  [obct537]
+
+
+2.3.0 (2018-11-27)
+------------------
+
+New:
+
+- Add Mamoto support (CastleCMS API control panel settings, Twitter & Facebook share counting and Analytics display);
+  remove EOL'd Facebook and LinkedIn API social counts
+  [tkimnguyen]
+
+Fixes:
+
+- Fixed registry upgrade blanking out the plone.backend_url recored
+  [obct537]
+
+- Do not error when upgrade hasn't been run for only allow backend urls
+  [vangheem]
+
+- Handle incorrectly configured backend url/sheild settings
+  [vangheem]
+
+
+2.2.2 (2018-11-26)
+------------------
+
+- fix mosaic build js/css
+
+
+2.2.1 (2018-11-21)
+------------------
+
+- Upgrade CMFPlone to fix meta bundle ordering
+  [vangheem]
+
+- Do not redirect to `/not-found`, just directly render not found template
+  [vangheem]
+
+- Adding basic Robot testing setup
+  [obct537]
+
+- Make recaptcha work with embeddable content tiles
+  [lucid-0]
+
+- Since the carousel is behind aria-hidden, the whole thing is wisely skipped by screen readers. But still it is a requirement to not leave anchor tags empty  https://www.w3.org/TR/UNDERSTANDING-WCAG20/navigation-mechanisms-refs.html see 2.4.4 and https://www.w3.org/TR/2016/NOTE-WCAG20-TECHS-20161007/G91.
+  [RobZoneNet]
+
+2.2.0 (2018-11-15)
+------------------
+
+- Accessibility colorblindness changes for editing buttons. The default bootstrap colors are mostly not accessible.  Changed colors for things like notifications numbers, information messages, and some other buttons.
+  [RobZoneNet]
 
 - Handle potentially weird ConnectionStateError on login
   [vangheem]
@@ -22,7 +540,7 @@ Changelog
   dashboard search button due to failing colorblindness tests
   [RobZoneNet]
 
-- Clarified the add -- upload modal 
+- Clarified the add -- upload modal
   [RobZoneNet]
 
 - do not attempt to publish item is already published content with `@@publish-content` view.

@@ -1,6 +1,6 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
-from castle.cms.services import google
+from castle.cms.services.google import analytics
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import retriable
 from collective.elasticsearch.es import ElasticSearchCatalog
@@ -35,11 +35,11 @@ def get_popularity(site):
     if not es.enabled:
         return
 
-    service = google.get_ga_service()
+    service = analytics.get_ga_service()
     if not service:
         return
 
-    profile = google.get_ga_profile(service)
+    profile = analytics.get_ga_profile(service)
     if not profile:
         return
 

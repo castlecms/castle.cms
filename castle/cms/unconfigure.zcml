@@ -9,31 +9,6 @@
 
   <include package="z3c.unconfigure" file="meta.zcml" />
   <unconfigure>
-    <adapter
-      for="* plone.app.mosaic.interfaces.IMosaicLayer"
-      name="plone.app.mosaic.bodyclass"
-      factory="plone.app.mosaic.transform.BodyClass"
-      />
-    <adapter
-      for="* plone.app.mosaic.interfaces.IMosaicLayer"
-      name="plone.app.mosaic.httpheaders"
-      factory="plone.app.mosaic.transform.HTTPHeaders"
-      />
-    <adapter
-      for="* plone.app.mosaic.interfaces.IMosaicLayer"
-      name="plone.app.mosaic.language"
-      factory="plone.app.mosaic.transform.HTMLLanguage"
-      />
-
-<!-- Requires latest mosaic
-    <adapter
-      zcml:condition="installed plone.app.mosaic.transform.PatternSettings"
-      for="* plone.app.mosaic.interfaces.IMosaicLayer"
-      name="plone.app.mosaic.patternsettings"
-      factory="plone.app.mosaic.transform.PatternSettings"
-      />
--->
-
     <!-- override linkintegrity modified event handlers -->
     <subscriber
       for="plone.app.relationfield.interfaces.IDexterityHasRelations

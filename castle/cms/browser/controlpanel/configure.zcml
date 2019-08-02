@@ -47,6 +47,14 @@
     />
 
   <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".social.AuthorizeGoogle"
+    name="google-auth"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
     name="social-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".social.SocialControlPanel"
@@ -82,6 +90,15 @@
     name="announcements-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".announcements.AnnouncementsControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="manage-subscribers"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    template="templates/subscribers.pt"
+    class=".announcements.ManageSubscribers"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     />
@@ -127,6 +144,15 @@
     class=".survey.SurveyControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="links-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".links.LinksControlPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/links.pt"
     />
 
   <!-- overridding so we can customize styles, remove buttons -->
@@ -186,5 +212,22 @@
     template="templates/status.pt"
     />
 
+  <configure package="Products.CMFPlone.controlpanel.browser">
+    <browser:page
+      name="prefs_install_products_form"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class="castle.cms.browser.controlpanel.quickinstaller.ManageProductsView"
+      permission="cmf.ManagePortal"
+      template="quickinstaller.pt"
+      layer="castle.cms.interfaces.ICastleLayer"
+      />
+  </configure>
+  <browser:page
+    name="upgrade_products"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".quickinstaller.UpgradeProductsView"
+    permission="cmf.ManagePortal"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
 </configure>

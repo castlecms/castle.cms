@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core"
+    tal:define="content_type view/content_type|string:;
+                download_url string:${context/absolute_url}/@@download/file/${view/filename|nothing};
+                subtitles nocall: context/subtitle_file|nothing;">
+  <p>
+    <a tal:attributes="href download_url">
+      <img tal:attributes="src view/get_mimetype_icon|nothing;
+                           alt content_type;" border="0" />
+      <tal:name tal:content="view/filename|nothing" >Filename</tal:name>
+    </a>
+    <span class="discreet"
+        tal:define="size view/size|python:0;
+                    kb python:size/1024">
+      &mdash; <span tal:replace="kb" /> KB</span>
+  </p>
+
+  <div tal:condition="view/is_videotype|nothing" tal:omit-tag="">
+    <div tal:attributes="
+      data-tile string:./@@castle.cms.videotile?video:list=${context/@@uuid}&show_controls=1&autoplay=1;" />
+      <div class="transcript" tal:condition="context/transcript|nothing">
+        <hr />
+        <h3>Video Transcript</h3>
+        <div tal:replace="structure context/transcript/output|nothing" />
+      </div>
+  </div>
+
+  <div tal:condition="view/is_audiotype|nothing" class="foobar">
+    <div tal:attributes="
+      data-tile string:./@@castle.cms.audiotile?audio_files:list=${context/@@uuid};" />
+      <div class="transcript" tal:condition="context/transcript|nothing">
+        <hr />
+        <h2>Audio Transcript</h2>
+        <div tal:replace="structure context/transcript/output|nothing" />
+      </div>
+  </div>
+
+  <div tal:condition="python: content_type.startswith('text') and not view.moved">
+    <h3 i18n:translate="heading_file_contents">File contents</h3>
+    <pre tal:content="context/file/data|nothing" />
+  </div>
+
+</metal:block>
+</metal:content-core>
+
+</body>
+</html>

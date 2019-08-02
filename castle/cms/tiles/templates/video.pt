@@ -10,7 +10,7 @@
                         url video/absolute_url|nothing;">
 
     <h3 tal:condition="python: 'title' in df and video"><a href="${url}">${video/Title}</a></h3>
-    <p class="video-inner" tal:condition="python: not tile_youtube_url and video">
+    <div class="video-inner" tal:condition="python: not tile_youtube_url and video">
       <div class="video-inner-container ${python: youtube_url and 'youtube' or ''}"
         tal:define="content_type video/file/contentType|nothing;
                     download_url string:${video/absolute_url}/@@download/file/${video/file/filename|nothing};
@@ -31,7 +31,7 @@
                 title="${video/Title}"
                 src="${python: view.tweak_video_url(youtube_url)}" allowfullscreen=""></iframe>
       </div>
-    </p>
+    </div>
     <div class="video-inner-container youtube" tal:condition="python: tile_youtube_url and not video">
       <iframe src="${python: view.tweak_video_url(tile_youtube_url)}"
               title="${tile_youtube_url}"

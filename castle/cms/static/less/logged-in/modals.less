@@ -1,5 +1,4 @@
 
-
 // ADD Content Modal
 #add-modal-react-container {
   .modal-dialog {
@@ -215,7 +214,6 @@
 /* From the UI, we want to hide certain types in most
    cases. Types to hide are:
     - audio
-    - video
     - image
     - file
     - collection */
@@ -223,7 +221,6 @@
       .contenttype-audio-container,
       .contenttype-file-container,
       .contenttype-image-container,
-      .contenttype-video-container,
       .contenttype-collection-container {
         display: none;
       }
@@ -348,6 +345,27 @@ a.btn.btn-default.drop-link {
   font-size: 1em;
   font-family: 'Open Sans',Arial,sans-serif;
 }
+
+
+#form-buttons-Move {
+  background-color: @btn-warning-bg;
+  border-color: @btn-warning-border;
+  color: @btn-warning-color;
+  &:hover{
+        background-color: darken(@btn-primary-bg, 20%);
+    }
+}
+
+#form-buttons-Delete {
+  background-color: @btn-danger-bg;
+  border-color: @btn-danger-border;
+  color: @btn-danger-color;
+  &:hover{
+        background-color: darken(@btn-danger-bg, 20%);
+    }
+}
+
+
 @media( min-width:768px ){
   #quality-content-modal .modal-dialog{
     width:50%;
@@ -361,3 +379,5 @@ a.btn.btn-default.drop-link {
     max-width:70%;
   }
 }
+
+.riform { z-index: 1; }

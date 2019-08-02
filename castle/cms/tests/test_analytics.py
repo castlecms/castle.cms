@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-from castle.cms.browser.analytics import AnalyticsView
+import json
+import unittest
+
+import mock
+from castle.cms.browser.content.analytics import AnalyticsView
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from zope.annotation.interfaces import IAnnotations
-
-import json
-import mock
-import unittest
 
 
 class TestAnalytics(unittest.TestCase):
@@ -44,8 +44,8 @@ class TestAnalytics(unittest.TestCase):
 
     @mock.patch('castle.cms.cache.get')
     @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.get_ga_profile')
-    @mock.patch('castle.cms.services.google.get_ga_service')
+    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
+    @mock.patch('castle.cms.services.google.analytics.get_ga_service')
     def test_ga_api_call(self, get_ga_service, get_ga_profile,
                          cache_set, cache_get):
         cache_get.side_effect = KeyError()
@@ -59,7 +59,7 @@ class TestAnalytics(unittest.TestCase):
 
     @mock.patch('castle.cms.cache.get')
     @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.get_ga_profile')
+    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
     def test_get_ga_profile(self, get_ga_profile, cache_set, cache_get):
         cache_get.side_effect = KeyError()
         view = AnalyticsView(self.page, self.request)

@@ -1,0 +1,35 @@
+<ul class="dt-tagged filter-listing"
+    tal:define="results view/tile/results;
+                utils view/tile/utils;
+                df view/tile/display_fields;">
+  <tal:item tal:repeat="item python: results['items']">
+  <li tal:define="url python: utils.get_object_url(item);
+                  effective item/effective|nothing;
+                  start item/start|nothing;
+                  end item/end|nothing;
+                  tag python: view.tile.get_tag(item);
+                  desc item/Description"
+      class="portal-type-${python: utils.normalize(item.portal_type)}">
+
+    <p class="castle-tag"><span class="${tag/className}">${tag/title}</span></p>
+    <h3 class="title"><a href="${url}">${item/Title}</a></h3>
+    <p class="pat-moment date"
+       tal:content="python: utils.format_date(effective, 'notime')"
+       tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+    <p tal:condition="python: 'eventstartend' in df and start and end">
+        <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
+        to
+        <span class="pat-moment date"
+                 tal:condition="python: start.date() == end.date()"
+                 tal:content="python: utils.format_date(end, 'nodate')"></span>
+        <span class="pat-moment date"
+                 tal:condition="python: start.date() <> end.date()"
+                 tal:content="python: utils.format_date(end)"></span>
+    </p>
+     <p class="description" tal:condition="python: 'description' in df">
+       <a href="${url}">${desc}</a>
+     </p>
+    <p class="read-more"><a href="${url}" class="button">Read More</a></p>
+  </li>
+  </tal:item>
+</ul>

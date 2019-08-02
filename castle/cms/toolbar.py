@@ -1,10 +1,14 @@
+import copy
+import json
+import logging
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from castle.cms import caching
-from castle.cms.browser.chat import get_chat_info
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
+from castle.cms.utils import get_chat_info
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.layout.navigation.defaultpage import getDefaultPage
@@ -29,10 +33,6 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
 
-import copy
-import json
-import logging
-
 
 logger = logging.getLogger('castle.cms')
 
@@ -47,7 +47,7 @@ class BaseToolbarModifier(object):
         self.request = request
 
     def __call__(self, result_menu, name, view):
-        raise NotImplemented()
+        raise NotImplementedError()
 
 
 class MenuItem(object):
@@ -248,9 +248,11 @@ class Toolbar(BrowserView):
         return data
 
     def get_user_info(self):
+        email = self.user.getProperty('email')
         return {
             'id': self.user.getUserName(),
-            'name': self.user.getProperty('fullname') or self.user.getUserName(),  # noqa
+            'email': email,
+            'name': self.user.getProperty('fullname') or email or self.user.getUserName(),  # noqa
             'last_login_time': self._toIso(self.user.getProperty('last_login_time'))  # noqa
         }
 
@@ -345,11 +347,18 @@ class Toolbar(BrowserView):
                 _type = details.pop('type')
                 details['timeout'] = _type.timeout
                 details['user_unlockable'] = _type.user_unlockable
-            return {
-                'locked': info.is_locked_for_current_user(),
-                'stealable': info.lock_is_stealable(),
-                'details': details
-            }
+            try:
+                return {
+                    'locked': info.is_locked_for_current_user(),
+                    'stealable': info.lock_is_stealable(),
+                    'details': details
+                }
+            except TypeError:
+                return {
+                    'locked': False,
+                    'stealable': True,
+                    'details': {}
+                }
 
     @memoize
     def get_menu_modifiers(self):
@@ -418,14 +427,24 @@ class Toolbar(BrowserView):
                 obj['icon_class'] = 'icon-%s' % obj['id']
 
             if urlExpr in obj:
-                obj['url'] = obj[urlExpr](self.econtext)
+                try:
+                    obj['url'] = obj[urlExpr](self.econtext)
+                except Exception:
+                    logger.info('Could not render url expression for menu item: {}'.format(
+                        obj['id']), exc_info=True)
+                    continue
                 del obj[urlExpr]
 
             if iconExpr in obj:
                 del obj[iconExpr]
 
             if conditionExpr in obj:
-                if not obj[conditionExpr](self.econtext):
+                try:
+                    if not obj[conditionExpr](self.econtext):
+                        continue
+                except Exception:
+                    logger.info('Could not render condition expression for menu item: {}'.format(
+                        obj['id']), exc_info=True)
                     continue
                 del obj[conditionExpr]
 

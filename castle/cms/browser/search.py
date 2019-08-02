@@ -13,6 +13,7 @@ from urlparse import urljoin
 from urlparse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+import dateutil.parser
 
 import datetime
 import json
@@ -138,8 +139,6 @@ _search_attributes = [
     'Title',
     'Description',
     'Subject',
-    'Subject:list',
-    'path',
     'contentType',
     'created',
     'modified',
@@ -150,12 +149,15 @@ _search_attributes = [
     'review_state',
     'path.path'
 ]
+
 _valid_params = [
     'SearchableText',
     'portal_type',
     'Subject',
     'Subject:list',
-    'path'
+    'after',
+    'sort_on',
+    'sort_order'
 ]
 
 
@@ -167,10 +169,34 @@ class SearchAjax(BrowserView):
 
         query = {}
         for name in _valid_params:
+            real_name = name
+            if real_name.endswith(':list'):
+                real_name = real_name[:-len(':list')]
             if self.request.form.get(name):
+<<<<<<< HEAD
                 query[name] = self.request.form[name].lower()
             elif self.request.form.get(name + '[]'):
                 query[name] = self.request.form[name + '[]'].lower()
+=======
+                query[real_name] = self.request.form[name]
+            elif self.request.form.get(name + '[]'):
+                query[real_name] = self.request.form[name + '[]']
+
+        if query.get('after'):
+            if query.get('sort_on') not in ('effective', 'modified', 'created'):
+                sort_on = query['sort_on'] = 'effective'
+            else:
+                sort_on = query['sort_on']
+            try:
+                date = dateutil.parser.parse(query.pop('after'))
+                start = DateTime(date)
+                query[sort_on] = {
+                    'query': start,
+                    'range': 'min'
+                }
+            except (KeyError, AttributeError, ValueError, TypeError):
+                pass
+>>>>>>> e4dacd63a501b6a50ff7fbad1c344fbc2b2c4d25
 
         try:
             page_size = int(self.request.form.get('pageSize'))
@@ -305,13 +331,18 @@ class SearchAjax(BrowserView):
                         "field": "SearchableText"
                     }
                 }
-            }
+            },
+            'sort': sort
         }
 
         query_params = {
             'stored_fields': ','.join(_search_attributes) + ',path.path',
             'from_': start,
             'size': size,
+<<<<<<< HEAD
+=======
+            'fields': ','.join(_search_attributes) + ',path.path'
+>>>>>>> e4dacd63a501b6a50ff7fbad1c344fbc2b2c4d25
         }
 
         return es.connection.search(index=index_name,

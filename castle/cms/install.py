@@ -20,21 +20,16 @@ class HiddenProducts(object):
 
     def getNonInstallableProfiles(self):
         return [
-            'castle.theme:default',
             'plone.formwidget.querystring:default',
             'plone.session:default',
             'plone.app.multilingual:default',
             'Products.ATContentTypes:default',
             'Products.PloneKeywordManager:default',
             'archetypes.multilingual:default',
-            'plone.app.standardtiles:default',
-            'plone.app.tiles:default',
             'plone.app.mosaic:default',
             'plone.app.drafts:default',
             'plone.app.blocks:default',
-            'collective.documentviewer:default',
-            'collective.elasticsearch:default',
-            'castle.cms:default',
+            'plone.app.openid:default'
             ]
 
 

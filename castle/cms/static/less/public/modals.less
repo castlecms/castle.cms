@@ -1,0 +1,43 @@
+.castle-link-modal-wrapper{
+    .modal-dialog {
+        margin: 150px auto;
+
+        .modal-content {
+            > button.close {
+                top: -25px;
+                position: absolute;
+                right: -25px;
+                background-color: black;
+                border-radius: 24px;
+                width: 28px;
+                height: 28px;
+                color: white;
+                padding: 0;
+                margin: 0;
+            }
+            @media (max-width: @screen-xs-max){
+                > button.close {
+                    right: 5px;
+                    top: -30px;
+                    opacity: 1;
+                }
+            }
+        }
+        .modal-body {
+            padding: 0;
+            min-height: 50px;
+            
+            > img, .pat-video {
+                max-width: 100%;
+            }
+        }
+        .pt-Video,.pt-Image > .modal-body{
+            background-color: black;
+        }
+    }
+    .mosaic-grid-row-fullwidth{
+        margin-left: 0px;
+        margin-right: 0px;
+        overflow-y: hidden;
+    }
+}

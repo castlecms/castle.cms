@@ -181,7 +181,7 @@ define([
         return D.p({}, 'Loading data...');
       }
       if(!this.state.data){
-        return D.p({}, 'No data could be retrieved. This is likely due because you have not configured Google Analytics API support');
+        return D.p({}, 'No data could be retrieved. Google Analytics API support may not be configured.');
       }
       var cdata = [['Count', this.translate(this.state.metrics)]];
       _.each(this.state.data.rows, function(result){
@@ -399,6 +399,11 @@ define([
 
 
   var AnalyticsModalComponent = cutils.Class([Modal], {
+    dataMappings: {
+      pinterest: 'Pinterest',
+      twitter_matomo: 'Twitter (Matomo)',
+      facebook_matomo: 'Facebook (Matomo)'
+    },
     getInitialState: function(){
       return {
         social: null,
@@ -407,13 +412,32 @@ define([
         loading: false
       };
     },
+    componentDidMount: function(){
+      Modal.componentDidMount.call(this);
+      var that = this;
+      utils.loading.show();
+      $.ajax({
+        url: $('body').attr('data-base-url') + '/@@content-analytics',
+        data: {
+          api: 'social'
+        }
+      }).done(function(data){
+        that.setState({
+          social: data.data
+        });
+      }).fail(function(){
+        alert('failed to load analytic data');
+      }).always(function(){
+        utils.loading.hide();
+      });
+    },
     tabClicked: function(tab){
       this.setState({
         tab: tab
       });
     },
     renderTabItem: function(tab, label){
-      return D.a({ href: '#', className: this.state.tab === tab && 'active' || '',
+      return D.a({ href: '#' + tab, className: this.state.tab === tab && 'active' || '',
                    onClick: this.tabClicked.bind(this, tab)}, label);
     },
     renderContent: function(){
@@ -471,28 +495,32 @@ define([
       });
     },
     renderSocialTab: function(){
+      var that = this;
       if(this.state.social === null){
-        return D.p({ className: 'discreet' }, 'No social data gathered');
+        return D.p(
+          { className: 'discreet' },
+          'No social data found (Make sure social count monitoring is configured)');
       }
       var extra = '';
       var data = this.state.social;
       var cdata= [
-        ['Platform', 'Shares'],
-        ['Facebook', data.facebook],
-        ['Linked In', data.linkedin],
-        ['Pinterest', data.pinterest]
+        ['Platform', 'Shares']
       ];
+      Object.keys(this.dataMappings).forEach(function(dataKey){
+        if(data[dataKey]){
+          cdata.push([that.dataMappings[dataKey], data[dataKey]]);
+        }
+      });
 
       if(data.twitter){
         cdata.push(['Twitter', data.twitter]);
         extra = D.p(
           { className: 'discreet'},
-          'Twitter data is not a total ever shared but a total aggregated by CastleCMS from ' +
-          'Twitter\'s streaming API service.');
-      }else{
+          'Twitter shares as reported via Twitter\'s streaming API');
+      }else if(!data.twitter_matomo){
         extra = D.p(
           { className: 'discreet'},
-          'Twitter data not available. Make sure it is configured correctly.');
+          'Twitter API keys may not be set (Make sure twitter monitoring is configured)');
       }
 
       cdata = google.visualization.arrayToDataTable(cdata);

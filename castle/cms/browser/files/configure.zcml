@@ -1,0 +1,116 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+    name="audioplayer"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".player.AudioPlayerView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/player.pt"
+    />
+
+  <browser:page
+    name="videoplayer"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".player.VideoPlayerView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/player.pt"
+    />
+
+  <browser:page
+    name="download"
+    for="*"
+    class=".files.NamedFileDownload"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="download"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".files.Download"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="download-as-png"
+    for="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
+    class=".files.DownloadAsPNG"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    name="convert-to-png"
+    for="*"
+    class=".files.ConvertToPNG"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    for="plone.namedfile.interfaces.IImageScaleTraversable"
+    name="images"
+    class=".files.CastleImageScaling"
+    allowed_attributes="scale"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="plone.app.contenttypes.interfaces.IImage"
+    name="imageinfo"
+    class=".imageinfo.ImageInfoView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <!-- icon views -->
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="site-icon.png"
+    class=".icon.IconView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="favicon.ico"
+    class=".icon.FaviconView"
+    permission="zope2.View"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="manifest.json"
+    class=".icon.ManifestView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="browserconfig.xml"
+    class=".icon.BrowserConfigView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="display-file"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".files.Download"
+    permission="zope2.View"
+    />
+  
+  <browser:page
+    name="file_view"
+    for="plone.app.contenttypes.interfaces.IFile"
+    class=".files.FileView"
+    template="templates/file.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+    permission="zope2.View"
+    />
+
+</configure>

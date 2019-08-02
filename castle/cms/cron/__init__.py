@@ -40,8 +40,22 @@ def script_runner(script, argv=sys.argv):
 
 
 def run_it(module):
+    cwd = os.getcwd()
+    conf_path = None
+    lookup_paths = [
+        '/opt/plone/parts/client1/etc/zope.conf',
+        os.path.join(cwd, 'parts/instance/etc/zope.conf'),
+        os.path.join(cwd, 'parts/client1/etc/zope.conf'),
+    ]
+    for path in lookup_paths:
+        if os.path.exists(path):
+            conf_path = path
+            break
+    if conf_path is None:
+        raise Exception('Could not find zope.conf in {}'.format(lookup_paths))
+
     from Zope2 import configure
-    configure('/opt/plone/parts/client1/etc/zope.conf')
+    configure(conf_path)
     import Zope2
     app = Zope2.app()
     from Testing.ZopeTestCase.utils import makerequest
@@ -96,3 +110,11 @@ def crawler(argv=sys.argv):
 
 def clean_drafts(argv=sys.argv):
     return run_it('_clean_drafts')
+
+
+def upgrade_sites(argv=sys.argv):
+    return run_it('_upgrade_sites')
+
+
+def link_report(argv=sys.argv):
+    return run_it('_link_report')

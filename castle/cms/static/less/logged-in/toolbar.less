@@ -87,7 +87,7 @@
         border-left: 5px solid transparent;
         padding: 7px 0 7px 5px;
 
-        &:hover {
+        &:hover, &:focus {
           text-decoration: none;
           color: @toolbar-link-hover-color;
           background:darken(#f5f5f5, 3%);
@@ -322,16 +322,28 @@
 .castle-toolbar-unread-message-count {
   width: 25px;
   height: 25px;
-  background-color: #d34800;
-  border-radius: 13px;
+  background-color: @brand-warning;
+  border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
-  color: white;
-  border: 1px solid #8f3100;
+  color: @btn-warning-color;
+  border: 1px solid @btn-warning-border;
+  font-weight: bold;
 }
 
 .castle-toolbar-container-top .castle-toolbar-buttons .castle-btn-dropdown-messagesopened > ul{
   width: 450px;
+}
+
+.plone-btn-warning {
+  background-color: @brand-warning;
+  color: @btn-warning-color;
+  border: 1px solid @btn-warning-border;
+}
+
+.alert.status.alert-error, .portalMessage.alert-error, .alert.status.error, .portalMessage.error,
+.alert.status.alert-success, .portalMessage.alert-success, .alert.status.info, .portalMessage.info {
+  color: #444 !important;
 }
 
 // // TEST
@@ -378,4 +390,155 @@ body.castle-toolbar-active.no-roles{
 .castle-toolbar-container-top .castle-btn-dropdown-cog button span, .castle-toolbar-container-top .castle-btn-dropdown-cogopened button span {
   position: absolute;
   left: -999em;
+}
+
+// Simple tooltip CSS
+.simpletooltip[aria-hidden="true"],
+.minimalist-simpletooltip[aria-hidden="true"],
+.minimalist-left-simpletooltip[aria-hidden="true"] {
+display: none;
+opacity: 0.9;
+visibility: hidden;
+}
+/* position relative for containers */
+.simpletooltip_container,
+.minimalist-simpletooltip_container,
+.minimalist-left-simpletooltip_container {
+position: relative;
+display: inline;
+display: block;
+}
+
+/* tooltip styles */
+.simpletooltip,
+.minimalist-simpletooltip,
+.minimalist-left-simpletooltip {
+position: absolute;
+display: inline-block;
+z-index: 666;
+min-width: 33.5em;
+border-radius: .5em;
+background: rgba( 0, 0, 0, .9 );
+color: #eee;
+padding: .75em;
+text-align: left;
+line-height: 1.3;
+}
+.simpletooltip,
+.minimalist-simpletooltip {
+right: auto;
+left: 100%;
+margin-left: .5em;
+opacity: 1;
+visibility: visible;
+animation: fade 2s;
+transition: opacity 100ms ease-in-out, visibility 100ms ease-in-out;
+}
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+    40% {
+        opacity: 0;
+    }
+    90% {
+        opacity: 0.95;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.castle-toolbar-container-side  .simpletooltip,
+.castle-toolbar-container-side  .minimalist-simpletooltip {
+right: auto;
+left: 196px;
+top: -5px;
+margin-left: .5em;
+min-height: 3.2em;
+}
+.castle-btn-dropdown {
+  .simpletooltip {
+    right: 172px;
+    left: auto;
+    top: -5px;
+    margin-left: .5em;
+    min-height: 3.2em;
+    max-width: 300px;
+    white-space: normal;
+  }
+  .castle-toolbar-item:first-child .simpletooltip {
+    top: 4px;
+  }
+  // arrow for left side
+  .simpletooltip::before {
+    border-left: 10px solid rgba( 0, 0, 0, .9 );
+    border-right: inherit;
+    right: 0;
+    left: inherit;
+    margin-top: -9px;
+    margin-right: -10px;
+  }
+  .castle-toolbar-item:first-child .simpletooltip::before {
+    margin-top: -14px;
+  }
+}
+.minimalist-left-simpletooltip {
+right: 100%;
+left: auto;
+margin-right: .5em;
+}
+/* used pseudo-element to make arrows */
+.simpletooltip::before,
+.minimalist-simpletooltip::before,
+.minimalist-left-simpletooltip::before {
+content: '';
+speak: none;
+position: absolute;
+z-index: 667;
+}
+.simpletooltip::before,
+.minimalist-simpletooltip::before {
+border: 10px solid transparent;
+border-right: 10px solid rgba( 0, 0, 0, .9 );
+left: 0;
+top: 21px;
+width: 0;
+height: 0;
+margin-top: -9px;
+margin-left: -20px;
+}
+.minimalist-left-simpletooltip::before {
+top: .5em;
+right: -10px;
+margin-right: -10px;
+border: 10px solid transparent;
+border-left: 10px solid rgba( 0, 0, 0, .9 )
+}
+
+li.castle-toolbar-item.castle-toolbar-view-page .simpletooltip {
+  top: 4px;
+  &::before {
+    top: 17px;
+  }
+}
+
+// Don't show if description is empty
+.js-simpletooltip:empty {
+  display: none;
+}
+
+@media (max-width: 44.375em) {
+
+  .simpletooltip,
+  .minimalist-simpletooltip,
+  .minimalist-left-simpletooltip  {
+    min-width: 120px;
+  }
+
+  .simpletooltip::before,
+  .minimalist-simpletooltip::before,
+  .minimalist-left-simpletooltip::before  {
+    top: 42px;
+  }
+
 }

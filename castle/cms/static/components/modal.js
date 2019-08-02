@@ -121,7 +121,9 @@ define([
       });
 
       $el.on('hidden.bs.modal', function(e){
-        self.props.onHidden(e, self);
+        if(self.props.onHidden){
+          self.props.onHidden(e, self);
+        }
         var $el = $(self.getDOMNode());
         if($('.castle-modal-wrapper,.plone-modal-wrapper').size() === 0){
           // otherwise, modals stick around...

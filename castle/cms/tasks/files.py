@@ -1,13 +1,21 @@
+import logging
+
+import transaction
+from castle.cms.commands import md5
 from castle.cms.files import aws
 from castle.cms.media import video
+from castle.cms.services.google import youtube
 from castle.cms.utils import retriable
 from collective.celery import task
+from plone import api
+from plone.app.blob.utils import openBlob
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 
-import transaction
+
+logger = logging.getLogger(__name__)
 
 
 def _clean_aws(obj):
@@ -62,3 +70,42 @@ def workflow_updated(obj):
 @task()
 def aws_file_deleted(uid):
     aws.delete_file(uid)
+
+
+@task()
+def youtube_video_edited(obj):
+    videofi = obj.file
+
+    if videofi is not None and videofi.filename != aws.FILENAME:
+        try:
+            opened = openBlob(videofi._blob)
+            bfilepath = opened.name
+            opened.close()
+        except IOError:
+            logger.warn('error opening blob file')
+            return
+
+        # we can only edit if file has NOT changed
+        # otherwise, it will be reuploaded and original deleted
+        if md5 is not None:
+            old_hash = getattr(obj, '_file_hash', None)
+            if old_hash is not None:
+                current_hash = md5(bfilepath)
+                if old_hash != current_hash:
+                    # dive out, we don't want to edit
+                    return
+
+    youtube.edit(obj)
+
+
+@task()
+def youtube_video_deleted(youtube_id):
+    youtube.delete(youtube_id)
+
+
+@task()
+def youtube_video_state_changed(obj):
+    if api.content.get_state(obj=obj, default='Unknown') == 'published':
+        youtube.publish(obj)
+    else:
+        youtube.unlist(obj)

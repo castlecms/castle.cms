@@ -35,6 +35,7 @@
   <adapter name="contentType" factory=".indexers.getContentTypeImage" />
   <adapter name="contentType" factory=".indexers.getContentTypeContent" />
   <adapter name="trashed" factory=".indexers.trashed" />
+  <adapter name="recurrence" factory=".indexers.recurrence" />
   <adapter name="last_modified_by" factory=".indexers.last_modified_by" />
   <adapter name="image_info" factory=".indexers.image_info" />
 

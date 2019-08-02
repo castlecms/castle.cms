@@ -96,6 +96,13 @@
         <element key="for-file-types">*</element>
       </element>
       <element>
+        <element key="name">upload_to_youtube</element>
+        <element key="label">Upload to YouTube</element>
+        <element key="widget">checkbox</element>
+        <element key="required">False</element>
+        <element key="for-file-types">video</element>
+      </element>
+      <element>
         <element key="name">youtube_url</element>
         <element key="label">Youtube URL</element>
         <element key="widget">text</element>

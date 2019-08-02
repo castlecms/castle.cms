@@ -1,26 +1,34 @@
-from castle.cms import install
+import base64
+import json
+import re
+import sys
+import unittest
 from cStringIO import StringIO
-from plone.app.robotframework.testing import PloneRobotFixture
-from plone.app.testing import applyProfile
-from plone.app.testing import FunctionalTesting
-from plone.app.testing import IntegrationTesting
+
+import transaction
+from castle.cms import install
+from plone.app.robotframework import AutoLogin
+from plone.app.robotframework import RemoteLibraryLayer
+from plone.app.robotframework.content import Content
+from plone.app.robotframework.genericsetup import GenericSetup
+from plone.app.robotframework.i18n import I18N
+from plone.app.robotframework.mailhost import MockMailHost
+from plone.app.robotframework.quickinstaller import QuickInstaller
+from plone.app.robotframework.server import Zope2ServerRemote
+from plone.app.robotframework.users import Users
 from plone.app.testing import MOCK_MAILHOST_FIXTURE
 from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import FunctionalTesting
+from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import applyProfile
+# from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from zope.configuration import xmlconfig
 from zope.globalrequest import clearRequest
 from zope.globalrequest import setRequest
 from ZPublisher import HTTPResponse
-
-import base64
-import os
-import re
-import sys
-import transaction
-import unittest
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -60,34 +68,6 @@ class CastleLayer(PloneSandboxLayer):
         clearRequest()
 
 
-class SeleniumCastleLayer(CastleLayer):
-    defaultBases = (z2.ZSERVER_FIXTURE, PLONE_FIXTURE)
-
-    def testSetUp(self):
-        # Start up Selenium
-        driver = os.environ.get('SELENIUM_DRIVER', '').lower() or 'firefox'
-        webdriver = __import__(
-            'selenium.webdriver.%s.webdriver' % driver, fromlist=['WebDriver'])
-        args = [arg.strip() for arg in
-                os.environ.get('SELENIUM_ARGS', '').split()
-                if arg.strip()]
-        kwargs = {}
-        if 'FIREFOX_BINARY' in os.environ:
-            log_fi = open('/opt/plone/selenium.log', 'w')
-            kwargs['firefox_binary'] = FirefoxBinary(
-                os.environ['FIREFOX_BINARY'],
-                log_file=log_fi)
-        self['selenium'] = webdriver.WebDriver(*args, **kwargs)
-
-    def testTearDown(self):
-        self['selenium'].quit()
-        del self['selenium']
-
-
-class CastleRobotLayer(PloneRobotFixture):
-    pass
-
-
 CASTLE_FIXTURE = CastleLayer()
 CASTLE_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
@@ -96,17 +76,27 @@ CASTLE_PLONE_INTEGRATION_TESTING = IntegrationTesting(
     bases=(CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
     name="CastleTesting:Integration")
 
-CASTLE_ROBOT_FIXTURE = CastleRobotLayer()
-CASTLE_ROBOT_TESTING = FunctionalTesting(
-    bases=(CASTLE_ROBOT_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE,
-           z2.ZSERVER_FIXTURE),
-    name="CastleTesting:Robot"
+
+CASTLE_BUNDLE_FIXTURE = RemoteLibraryLayer(
+    bases=(PLONE_FIXTURE,),
+    libraries=(
+        AutoLogin,
+        QuickInstaller,
+        GenericSetup,
+        Content,
+        Users,
+        I18N,
+        MockMailHost,
+        Zope2ServerRemote,
+    ),
+    name="CastleBundleRobot:RobotRemote",
 )
 
-SELENIUM_FIXTURE = SeleniumCastleLayer()
-SELENIUM_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(SELENIUM_FIXTURE, CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
-    name="SeleniumTesting:Functional")
+
+CASTLE_ROBOT_TESTING = RemoteLibraryLayer(
+    bases=(CASTLE_FIXTURE, z2.ZSERVER_FIXTURE, CASTLE_BUNDLE_FIXTURE),
+    name="CastleTesting:Robot"
+)
 
 
 class ResponseWrapper:
@@ -161,7 +151,8 @@ class BaseTest(unittest.TestCase):
         self.request = self.layer['request']
 
     def publish(self, path, basic=None, env=None, extra=None,
-                request_method='GET', stdin=None, handle_errors=True):
+                request_method='GET', content=None, handle_errors=True,
+                username=None, password=None):
         """
         Mostly pulled from Testing.functional
         """
@@ -190,9 +181,17 @@ class BaseTest(unittest.TestCase):
 
         if basic:
             env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring(basic)
+        elif username is not None and password is not None:
+            env['HTTP_AUTHORIZATION'] = "Basic %s" % base64.encodestring('{}:{}'.format(
+                username, password
+            ))
 
-        if stdin is None:
-            stdin = StringIO()
+        stdin = StringIO()
+        if content is not None:
+            if type(content) in (list, dict):
+                content = json.dumps(content)
+            stdin.write(content)
+            stdin.seek(0)
 
         outstream = StringIO()
         response = Response(stdout=outstream, stderr=sys.stderr)

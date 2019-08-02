@@ -25,7 +25,7 @@ except ImportError:
         pass
 
 
-def onFileEdit(obj, event):
+def on_file_edit(obj, event):
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
@@ -36,28 +36,28 @@ def onFileEdit(obj, event):
         pass
 
 
-def onFileDelete(obj, event):
+def on_file_delete(obj, event):
     try:
         tasks.aws_file_deleted.delay(IUUID(obj))
     except CannotGetPortalError:
         pass
 
 
-def onFileStateChanged(obj, event):
+def on_file_state_changed(obj, event):
     try:
         tasks.workflow_updated.delay(obj)
     except CannotGetPortalError:
         pass
 
 
-def onContentCreated(obj, event):
+def on_content_created(obj, event):
     if obj.portal_type == 'Dashboard':
         return
     metadata = IPublication(obj, None)
     if metadata is not None:
         if metadata.effective is None:
             metadata.effective = localized_now(obj)
-    _touchContributors(obj)
+    _touch_contributors(obj)
 
     if obj.portal_type == 'Collection':
         # enable syndication on type by default
@@ -91,7 +91,7 @@ def onContentCreated(obj, event):
     obj.reindexObject()
 
 
-def onContentModified(obj, event):
+def on_content_modified(obj, event):
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
@@ -101,28 +101,28 @@ def onContentModified(obj, event):
         tasks.scan_links.delay('/'.join(obj.getPhysicalPath()))
     except CannotGetPortalError:
         pass
-    _touchContributors(obj)
+    _touch_contributors(obj)
 
 
-def onEditFinished(obj, event):
+def on_edit_finished(obj, event):
     """
     on forms submission of done editing page...
     """
     check_lead_image(obj, request=getRequest())
 
 
-def onObjectEvent(obj, event):
+def on_object_event(obj, event):
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
     audit.event(obj, event)
 
 
-def onPASEvent(event):
+def on_pas_event(event):
     audit.event(event)
 
 
-def _touchContributors(obj):
+def _touch_contributors(obj):
     ownership = IOwnership(obj, None)
     if ownership is not None:
         # current user id
@@ -130,14 +130,46 @@ def _touchContributors(obj):
             user_id = api.user.get_current().getId()
             if (user_id not in ownership.creators and
                     user_id not in ownership.contributors):
-                ownership.contributors = ownership.contributors + (user_id.decode('utf8'),)  # noqa
+                ownership.contributors = ownership.contributors + (
+                    user_id.decode('utf8'),)
         except Exception:
             pass
 
 
-def onTrashTransitioned(obj, event):
+def on_trash_transitioned(obj, event):
     api.portal.show_message(
         'You are not allowed to transition an item in the recycling bin.',
         request=getRequest(), type='error')
     raise WorkflowException(
         'You are not allowed to transition an item in the recycling bin.')
+
+
+def on_youtube_video_edit(obj, event):
+    if IRelationBrokenEvent.providedBy(event):
+        # these trigger too much!
+        return
+
+    value = getattr(obj, '_youtube_video_id', None)
+    if value:
+        try:
+            tasks.youtube_video_edited.delay(obj)
+        except CannotGetPortalError:
+            pass
+
+
+def on_youtube_video_delete(obj, event):
+    value = getattr(obj, '_youtube_video_id', None)
+    if value:
+        try:
+            tasks.youtube_video_deleted.delay(value)
+        except CannotGetPortalError:
+            pass
+
+
+def on_youtube_video_state_changed(obj, event):
+    value = getattr(obj, '_youtube_video_id', None)
+    if value:
+        try:
+            tasks.youtube_video_state_changed.delay(obj)
+        except CannotGetPortalError:
+            pass

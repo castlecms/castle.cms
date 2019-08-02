@@ -8,10 +8,12 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:z3c="http://namespaces.zope.org/z3c"
     xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="castle.cms">
 
   <i18n:registerTranslations directory="locales" />
 
+  <!-- dependencies -->
   <include package="z3c.jbot" />
   <include package="plone.app.mosaic" />
   <include package="Products.PloneKeywordManager" />
@@ -22,7 +24,6 @@
   <include package="collective.documentviewer" />
   <include package="castle.theme" />
   <include package="collective.elasticsearch" />
-  <include package=".pwexpiry" />
 
   <!-- uncomment to do profile code
     <include package="collective.profiler" />
@@ -74,8 +75,10 @@
   <include package=".behaviors" />
   <include package=".caching" />
   <include package=".ordering" />
-  <include package=".upgrades" />
+  <include package=".passwordvalidation" />
+  <include package=".pwexpiry" />
 
+  <include file="upgrades.zcml" />
   <include file="subscribers.zcml" />
   <include file="patches.zcml" />
   <include file="unconfigure.zcml" />
@@ -85,19 +88,21 @@
   <include file="theming.zcml" />
   <include file="meta.zcml" />
 
+  <include zcml:condition="installed collective.easyform" package=".easyform" />
 
   <include package="z3c.unconfigure" file="meta.zcml" />
+
+  <!-- Cache storage configuration -->
   <unconfigure>
     <utility component="plone.memoize.ram.choose_cache" provides="plone.memoize.interfaces.ICacheChooser" />
   </unconfigure>
-
   <utility component=".cache.get_client" provides="plone.memoize.interfaces.ICacheChooser" />
 
+  <!-- vocabularies -->
   <utility
     component=".vocabularies.LocationsVocabulary"
     name="castle.cms.vocabularies.Locations"
     />
-
   <utility
     component=".vocabularies.EmailCategoryVocabulary"
     name="castle.cms.vocabularies.EmailCategories"
@@ -165,12 +170,18 @@
     layer=".interfaces.ICastleLayer"
     />
 
- <adapter
-   for=".interfaces.ICastleLayer"
-   provides="z3c.jbot.interfaces.ITemplateManager"
-   factory=".jbot.TemplateManager"
-   name="theme_manager"
-   />
+  <adapter
+    for=".interfaces.ICastleLayer"
+    provides="z3c.jbot.interfaces.ITemplateManager"
+    factory=".jbot.TemplateManager"
+    name="theme_manager"
+  />
+  
+  <subscriber
+    for="Products.CMFCore.interfaces.ISiteRoot
+         zope.traversing.interfaces.IBeforeTraverseEvent"
+    handler=".jbot.mark_request"
+  />
 
  <adapter
     for=".interfaces.ICastleLayer"
@@ -183,7 +194,6 @@
  <cmf:registerDirectory name="skins" directory="skins" recursive="True" />
 
  <!-- locking overrides to deal with issues where you can not override a lock-->
- <include package="z3c.unconfigure" file="meta.zcml" />
  <unconfigure>
    <adapter factory="plone.locking.lockable.TTWLockable" />
  </unconfigure>

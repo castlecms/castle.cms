@@ -27,6 +27,7 @@ REMOVE_INDEXES = [
 METADATA = [
     'hasImage',
     'contentType',
+    'recurrence',
     'last_modified_by',
     'image_info',
     'navigation_label'
@@ -127,5 +128,5 @@ def castle(context):
     portal_password_reset.setExpirationTimeout(6)
 
     # update default session duration
-    site.acl_users.session.timeout = 1 * 60 * 60  # 1 hr
+    site.acl_users.session.timeout = 1 * 60 * 15  # 15 min
     site.acl_users.session.refresh_interval = 5 * 60  # 5 minutes

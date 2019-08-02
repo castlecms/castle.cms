@@ -25,57 +25,77 @@
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-    handler=".subscribers.onFileEdit" />
+    handler=".subscribers.on_file_edit" />
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
          zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler=".subscribers.onFileEdit" />
+    handler=".subscribers.on_file_edit" />
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
          zope.lifecycleevent.interfaces.IObjectCopiedEvent"
-    handler=".subscribers.onFileEdit" />
+    handler=".subscribers.on_file_edit" />
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
          Products.DCWorkflow.interfaces.IAfterTransitionEvent"
-    handler=".subscribers.onFileStateChanged" />
+    handler=".subscribers.on_file_state_changed" />
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
          zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-    handler=".subscribers.onFileDelete" />
+    handler=".subscribers.on_file_delete" />
+
+  <!-- youtube integration -->
+  <subscriber
+    for="castle.cms.interfaces.IUploadedToYoutube
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.on_youtube_video_edit" />
+  <subscriber
+    for="castle.cms.interfaces.IUploadedToYoutube
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".subscribers.on_youtube_video_state_changed" />
+  <subscriber
+    for="castle.cms.interfaces.IUploadedToYoutube
+         zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+    handler=".subscribers.on_youtube_video_delete" />
 
   <!-- all dexterity content handling -->
   <subscriber
     for="plone.dexterity.interfaces.IDexterityContent
          zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler=".subscribers.onContentCreated" />
+    handler=".subscribers.on_content_created" />
   <subscriber
     for="plone.dexterity.interfaces.IDexterityContent
          zope.lifecycleevent.interfaces.IObjectCopiedEvent"
-    handler=".subscribers.onContentModified" />
+    handler=".subscribers.on_content_modified" />
   <subscriber
     for="plone.dexterity.interfaces.IDexterityContent
          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-    handler=".subscribers.onContentModified" />
+    handler=".subscribers.on_content_modified" />
   <subscriber
     for="plone.dexterity.interfaces.IDexterityContent
          plone.dexterity.interfaces.IEditFinishedEvent"
-    handler=".subscribers.onEditFinished" />
+    handler=".subscribers.on_edit_finished" />
 
 
   <!-- basic object events for auditing purposes -->
   <subscriber
     for="plone.dexterity.interfaces.IDexterityContent
          zope.component.interfaces.IObjectEvent"
-    handler=".subscribers.onObjectEvent" />
+    handler=".subscribers.on_object_event" />
   <subscriber
       for="Products.PluggableAuthService.interfaces.events.IPASEvent"
-      handler=".subscribers.onPASEvent"
+      handler=".subscribers.on_pas_event"
       />
 
   <!-- trash related events -->
   <subscriber
     for=".interfaces.ITrashed
          Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
-    handler=".subscribers.onTrashTransitioned" />
+    handler=".subscribers.on_trash_transitioned" />
+  
+  <!-- initialization -->
+  <subscriber
+    for="castle.cms.interfaces.ICastleApplication
+         .events.IAppInitializedEvent"
+    handler=".authentication.install_acl_users" />
 
 </configure>

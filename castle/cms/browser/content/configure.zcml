@@ -1,0 +1,183 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="content-creator"
+    class=".Creator"
+    permission="zope2.View"
+  />
+  <browser:page
+    for="plone.dexterity.interfaces.IDexterityContent"
+    name="page-layout-selector"
+    class=".PageLayoutSelector"
+    permission="cmf.ModifyPortalContent"
+  />
+  <browser:page
+    for="plone.dexterity.interfaces.IDexterityContent"
+    name="publish-content"
+    class=".PublishContent"
+    permission="cmf.ModifyPortalContent"
+  />
+  <browser:page
+    for="*"
+    name="content-workflow"
+    class=".Workflow"
+    permission="zope2.View"
+  />
+  <browser:page
+    for="*"
+    name="content-body"
+    class=".ContentBody"
+    permission="zope2.View"
+  />
+
+  <browser:page
+    name="quality-check"
+    for="*"
+    class=".QualityCheckContent"
+    permission="zope2.View"
+    />
+
+  <browser:view
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="plonejsi18n"
+    class=".i18njs"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    name="ping-draft"
+    for="*"
+    permission="cmf.ModifyPortalContent"
+    class=".PingCurrentDraft"
+    layer="castle.cms.interfaces.ICastleLayer" />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    class=".fc.FolderContentsView"
+    name="folder_contents"
+    template="templates/folder_contents.pt"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-paste"
+    class=".fc.PasteActionView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-cut"
+    class=".fc.CutActionView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-copy"
+    class=".fc.CopyActionView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-delete"
+    class=".fc.DeleteActionView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-rename"
+    class=".fc.RenameActionView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="fc-trash"
+    class=".fc.TrashActionView"
+    permission="cmf.ListFolderContents"
+    />
+
+  <utility component=".fc.TrashAction"
+           provides="plone.app.content.interfaces.IStructureAction"
+           name="trash" />
+
+
+  <browser:page
+    for="*"
+    name="object_paste"
+    class=".actions.ObjectPasteView"
+    permission="cmf.AddPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="delete_confirmation"
+    class=".actions.DeleteConfirmationForm"
+    permission="zope2.DeleteObjects"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="folder_rename"
+    class=".actions.RenameForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="object_rename"
+    class=".actions.RenameForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="object_cut"
+    class=".actions.ObjectCutView"
+    permission="zope2.DeleteObjects"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  
+  <browser:page
+    for="*"
+    name="content-analytics"
+    class=".analytics.AnalyticsView"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <!--
+    AtD Support
+    Plone's support for ATD with http connection does not work
+  -->
+  <browser:page
+    for="*"
+    name="checkDocument"
+    class=".atd.ATDProxyView"
+    permission="zope2.View"
+    attribute="checkDocument"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="castle.cms.interfaces.IUploadedToYoutube"
+    name="edit"
+    class=".video.VideoEditForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
+</configure>

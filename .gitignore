@@ -2,6 +2,7 @@
 .installed.cfg
 .Python
 .idea
+.mr.developer.cfg
 *.swp
 *.egg-info/
 *.pyc
@@ -28,3 +29,9 @@ Gruntfile.js
 log.html
 node_modules/
 report.html
+src/
+zinstance/
+packages/
+pyvenv.cfg
+buildout-copy.cfg
+temp_resources/

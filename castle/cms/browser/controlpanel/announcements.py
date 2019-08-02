@@ -7,8 +7,7 @@ from castle.cms.interfaces import IAnnouncementData
 from castle.cms.tasks import send_email
 from castle.cms.tasks import send_email_to_subscribers
 from castle.cms.widgets import AjaxSelectFieldWidget
-from castle.cms.widgets import SelectFieldWidget
-from castle.cms.widgets import TinyMCETextFieldWidget
+from castle.cms.widgets import SelectFieldWidget, TinyMCETextFieldWidget
 from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.app.textfield import RichText
@@ -19,15 +18,18 @@ from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
 from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
+from z3c.form.browser.file import FileWidget
 from z3c.form.interfaces import WidgetActionExecutionError
 from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from Products.Five import BrowserView
 
 reg_key = 'castle.subscriber_categories'
 
@@ -255,7 +257,7 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
             responsebody = ','.join(fields)
             categories = set()
             if 'form.widgets.export_categories' in self.request.form:
-                if data['export_categories'] != u'':
+                if data['export_categories'] not in (None, ''):
                     categories = set(data['export_categories'])
             check_categories = (categories is not None and len(categories) != 0)
             for subscriber in subscribe.all():
@@ -273,6 +275,62 @@ class ExportSubscribersForm(AutoExtensibleForm, form.Form):
                         row.append(str(subscriber.get(key)))
                 responsebody += '\n' + ','.join(row)
             response.setBody(responsebody, lock=True)
+
+
+class IImportSubscribersForm(model.Schema):
+    directives.widget('csv_upload', FileWidget)
+    csv_upload = schema.ASCII(
+        title=u"Import subscribers",
+        description=u"Upload CSV file to import",
+        required=False
+    )
+
+
+class ImportSubscribersForm(AutoExtensibleForm, form.Form):
+    schema = IImportSubscribersForm
+
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Import', name='import')
+    def handle_export(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            lines = data['csv_upload'].split('\n')
+            columns = lines[0].split(',')
+            categoryindex = columns.index('categories')
+            emailindex = columns.index('email')
+            for line in lines[1:]:
+                cols = line.split(',')
+                if len(cols) <= 1:
+                    continue
+                subscriber = {
+                    'categories': map(safe_unicode, cols[categoryindex].strip('"').split(';')),
+                    'email': cols[emailindex]
+                }
+                match = subscribe.get_subscriber(subscriber['email'])
+                if match is not None:
+                    for cat in subscriber['categories']:
+                        if cat not in match['categories']:
+                            match['categories'].append(cat)
+                else:
+                    for index, col in enumerate(cols):
+                        if(index == categoryindex):
+                            continue
+                        if col == '':
+                            subscriber[columns[index]] = None
+                        elif col == 'True' or col == 'False':
+                            subscriber[columns[index]] = col == 'True'
+                        else:
+                            try:
+                                subscriber[columns[index]] = float(col)
+                            except ValueError:
+                                subscriber[columns[index]] = col
+                    subscribe.register(subscriber['email'], subscriber)
+                allcategories = api.portal.get_registry_record(reg_key)
+                for cat in subscriber['categories']:
+                    if cat not in allcategories:
+                        allcategories.append(cat)
+                api.portal.set_registry_record(reg_key, allcategories)
 
 
 class IMergeCategoriesForm(model.Schema):
@@ -303,7 +361,7 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
             categories = set()
             newname = u''
             if 'form.widgets.rename_merge_categories' in self.request.form:
-                if data['rename_merge_categories'] != u'':
+                if data['rename_merge_categories'] not in (None, ''):
                     categories = set(data['rename_merge_categories'])
             if 'form.widgets.new_category_name' in self.request.form:
                 newname = data['new_category_name'].split(';')[0]
@@ -361,7 +419,7 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'form.widgets.delete_categories' in self.request.form:
-                if data['delete_categories'] != u'':
+                if data['delete_categories'] not in (None, ''):
                     categories = set(data['delete_categories'])
             force_delete = 'form.widgets.force_delete' in self.request.form
             if len(categories) > 0:
@@ -414,7 +472,7 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
             allcategories = api.portal.get_registry_record(reg_key)
             categories = set()
             if 'add_categories' in data:
-                if data['add_categories'] != u'':
+                if data['add_categories'] not in (None, ''):
                     categories = set(data['add_categories'].split(';'))
             if len(categories) > 0:
                 badcategories = []
@@ -447,10 +505,10 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_subscribers_form = SendEmailSubscribersForm(aq_inner(context), request)
         self.text_subscribers_form = SendTextForm(aq_inner(context), request)
         self.export_subscribers_form = ExportSubscribersForm(aq_inner(context), request)
+        self.import_subscribers_form = ImportSubscribersForm(aq_inner(context), request)
         self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
         self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
         self.add_category_form = AddCategoryForm(aq_inner(context), request)
-        self.get_sub_count()
 
     def get_sub_count(self):
         self.categories = api.portal.get_registry_record(reg_key)
@@ -487,8 +545,22 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.email_subscribers_form.update()
         self.text_subscribers_form.update()
         self.export_subscribers_form.update()
+        self.import_subscribers_form.update()
         self.merge_categories_form.update()
         self.delete_categories_form.update()
         self.add_category_form.update()
+        self.get_sub_count()
         self.update_terms()
         return super(AnnouncementsControlPanel, self).__call__()
+
+
+class ManageSubscribers(BrowserView):
+    def get_page(self, page):
+        subscribers = []
+        for email, subscriber in subscribe.get_page(page):
+            subscribers.append({
+                subscriber['email'],
+                subscriber['confirmed'],
+                subscriber['created']
+            })
+        return subscribers

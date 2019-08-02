@@ -2,10 +2,14 @@ import json
 from urllib import urlencode
 from urlparse import parse_qsl
 
-from castle.cms.tiles.base import BaseTile, DisplayTypeTileMixin
-from castle.cms.tiles.views import BaseTileView, TileViewsSource
+from castle.cms import defaults
+from castle.cms.tiles.base import BaseTile
+from castle.cms.tiles.base import DisplayTypeTileMixin
+from castle.cms.tiles.views import BaseTileView
+from castle.cms.tiles.views import TileViewsSource
 from castle.cms.utils import parse_query_from_data
-from castle.cms.widgets import PreviewSelectFieldWidget, QueryFieldWidget
+from castle.cms.widgets import PreviewSelectFieldWidget
+from castle.cms.widgets import QueryFieldWidget
 from DateTime import DateTime
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
@@ -18,7 +22,8 @@ from unidecode import unidecode
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.interface import implements
-from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 def _list(val):
@@ -89,6 +94,14 @@ class TaggedView(BaseTileView):
     preview = '++plone++castle/images/previews/querylisting/tagged.png'
     order = 5
     index = ViewPageTemplateFile('templates/querylisting/tagged.pt')
+    tile_name = 'querylisting'
+
+
+class TagFilterView(BaseTileView):
+    name = 'tag-filter'
+    preview = '++plone++castle/images/previews/querylisting/tag-filter.png'
+    order = 5
+    index = ViewPageTemplateFile('templates/querylisting/tagfilter.pt')
     tile_name = 'querylisting'
 
 
@@ -193,7 +206,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
                     else:
                         query[attr] = val
                 else:
-                    query[attr] = val[0]
+                    query[attr] = unidecode(val[0])
 
         if query.get('sort_on', '') not in catalog._catalog.indexes:
             query['sort_on'] = 'effective'
@@ -268,6 +281,8 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
                 isinstance(config['query']['Subject'], basestring)):
             config['query']['Subject'] = [config['query']['Subject']]
 
+        config['display_type'] = self.data.get('display_type', None)
+
         out = '{}'
         try:
             config['ajaxResults'] = {
@@ -307,12 +322,14 @@ class IQueryListingTileSchema(model.Schema):
         title=u'Sort on',
         description=u"Sort on this index",
         required=False,
+        default=defaults.get('querylisting_tile_sort_on', u'effective')
     )
 
     sort_reversed = schema.Bool(
         title=u'Reversed order',
         description=u'Sort the results in reverse order',
         required=False,
+        default=True
     )
 
     limit = schema.Int(
@@ -359,5 +376,5 @@ class IQueryListingTileSchema(model.Schema):
     display_type = schema.Choice(
         title=u"Display Type",
         source=TileViewsSource('querylisting'),
-        default='default'
+        default=defaults.get('querylisting_tile_displaytype', u'default')
     )

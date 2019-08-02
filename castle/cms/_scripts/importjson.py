@@ -160,6 +160,8 @@ def recursive_create_path(path):
                             container=folder)
                         bdata = ILayoutAware(folder)
                         bdata.contentLayout = '++contentlayout++castle/folder-query.html'
+                        if not args.skip_transitioning:
+                            api.content.transition(folder, to_state='published')
     return folder
 
 
@@ -290,6 +292,7 @@ def import_object(filepath):
             create = False
 
     creation_data = importtype.get_data()
+    pc_data = importtype.get_post_creation_data()
     creation_data['container'] = folder
 
     aspect = ISelectableConstrainTypes(folder, None)
@@ -298,7 +301,6 @@ def import_object(filepath):
                 [creation_data['type']] != aspect.getImmediatelyAddableTypes()):
             aspect.setConstrainTypesMode(1)
             aspect.setImmediatelyAddableTypes([creation_data['type']])
-
     if create:
         if ignore_uuids and '_plone.uuid' in creation_data:
             del creation_data['_plone.uuid']
@@ -344,37 +346,43 @@ def import_object(filepath):
             storage.add(rpath, "/".join(obj.getPhysicalPath()))
 
         obj.contentLayout = importtype.layout
-        importtype.post_creation(obj)
+        importtype.post_creation(obj, post_creation_data=pc_data)
         if not args.skip_transitioning and data['state']:
-            try:
-                print('Transitioning %s to %s' % (obj.id, data['state']))
-                api.content.transition(obj, to_state=data['state'])
-            except Exception:
-                logger.error("Error transitioning %s to %s, maybe workflows"
-                                "don't match up" % (obj.id, data['state']))
-                # pass
-                if stop_if_exception:
-                    if pdb_if_exception:
-                        pdb.set_trace()
-                    raise
+            # transition item only if it needs it
+            state = api.content.get_state(obj=obj)
+            if state != data['state']:
+                try:
+                    print('Transitioning %s to %s' % (obj.id, data['state']))
+                    api.content.transition(obj, to_state=data['state'])
+                except Exception:
+                    logger.error("Error transitioning %s to %s, maybe workflows"
+                                 " don't match up" % (obj.id, data['state']))
+                    # pass
+                    if stop_if_exception:
+                        if pdb_if_exception:
+                            pdb.set_trace()
+                        raise
 
         # set workflow / review history
         if 'review_history' in data:
             review_history = data['review_history']
             wtool = api.portal.get_tool(name='portal_workflow')
-            chain = wtool.getChainFor(obj)
-            if len(chain):
-                workflow_id = chain[0]
-                for h in review_history:
-                    wtool.setStatusOf(workflow_id, obj, h)
-                if len(chain) != 1:
-                    return logger.warn('There should be 1 workflow for %s but'
-                                        'there are %i' % (path, len(chain)))
+            # loop over all workflow chains (usually only 1)
+            for workflow_id in wtool.getChainFor(obj):
+                obj.workflow_history[workflow_id] = review_history
         else:
-            return logger.warn('No review history on {obj}'.format(obj=obj))
+            logger.warn('No review history on {obj}'.format(obj=obj))
 
         fix_html_images(obj)
         obj.reindexObject()
+        try:
+            modification_date = data['data']['modification_date']
+            obj.setModificationDate(modification_date)
+            obj.reindexObject(idxs=['modified'])
+            logger.info('    set modification date to %s' % modification_date)
+        except Exception:
+            logger.info('Could not set modification date on {obj}'
+                                                            .format(obj=obj))
         return True
 
 

@@ -17,7 +17,7 @@ define([
       position: 'right'
     }, {
       element: document.querySelector('.castle-toolbar-edit'),
-      intro: 'Click the Edit button to edit the current page or change its propertings and settings.',
+      intro: 'Click the Edit button to edit the current page or change its properties and settings.',
       position: 'right',
       valid: function(){
         return $('.castle-toolbar-edit').length > 0;

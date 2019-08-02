@@ -2,6 +2,15 @@ Development
 ===========
 
 
+Building resources after changes to js
+--------------------------------------
+
+Just regular plone compile resources::
+
+    ./bin/plone-compile-resources --site-id=Castle --bundle=plone
+    ./bin/plone-compile-resources --site-id=Castle --bundle=plone-logged-in
+
+
 Adding external toolbar buttons
 -------------------------------
 
@@ -25,3 +34,16 @@ resemble the following:
 2) Add an entry in the actions.xml profile file, just like in Plone. However, if your button
    will be adding a modal functionality (not redirecting the browser to another page),
    omit the 'url_expr' value.
+
+
+Testing upgrades
+----------------
+
+CastleCMS now has integration tests for upgrades between versions of CastleCMS.
+
+To add additional tests between specific version tests, review the `test_upgrades.py`
+file. Specifically, the variable `TEST_VERSIONS` provides the definition of what
+tests will be run.
+
+Also notable is the ability to set registry data for the installed site. This is
+useful when running you have upgrades that modify the registry.

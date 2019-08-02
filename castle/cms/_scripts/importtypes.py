@@ -13,14 +13,23 @@ from plone.event.utils import pydt
 from plone.namedfile.file import NamedBlobFile, NamedBlobImage
 from StringIO import StringIO
 
+from zope.interface import Interface
+from zope.component import getUtilitiesFor, getGlobalSiteManager
+
 import logging
 import base64
 import OFS
 import re
 import pdb
 
-
 logger = logging.getLogger('castle.cms')
+
+site_manager = getGlobalSiteManager()
+
+
+class IImportType(Interface):
+    pass
+
 
 FOLDER_DEFAULT_PAGE_LAYOUT = u"""
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -66,7 +75,7 @@ _types = {}
 
 
 def register_import_type(name, klass):
-    _types[name] = klass
+    site_manager.registerUtility(klass, IImportType, name)
 
 
 def is_base64(s):
@@ -156,7 +165,10 @@ class BaseImportType(object):
             try:
                 title = self.field_data['plone.app.content.interfaces.INameFromTitle']['title']
             except Exception:
-                title = self.field_data[dublin]['title']
+                try:
+                    title = self.field_data[dublin]['title']
+                except Exception:
+                    pass
 
         try:
             description = self.field_data['description']
@@ -175,7 +187,10 @@ class BaseImportType(object):
             description=description,
             **data)
 
-    def post_creation(self, obj, pdb_if_exception=False):
+    def get_post_creation_data(self):
+        pass
+
+    def post_creation(self, obj, pdb_if_exception=False, post_creation_data=None):
         if obj is None:
             return
         field_data = self.field_data
@@ -300,7 +315,7 @@ class BaseImportType(object):
 
         bdata = ILayoutAware(obj, None)
         if bdata:
-            if self.data['portal_type'] == 'Folder' and 'text' in self.field_data:
+            if self.data['portal_type'] == 'Folder' and (self.field_data.get('text') or '').strip():
                 bdata.content = FOLDER_DEFAULT_PAGE_LAYOUT % self.field_data['text']
                 # need to explicitly reset contentLayout value because this data
                 # could be overwritten
@@ -424,7 +439,6 @@ register_import_type('PressRoom', FolderType)
 
 
 class NewsItemType(BaseImportType):
-
     layout = '++contentlayout++castle/news_item.html'
 
     def __init__(self, data, path, *args):
@@ -650,6 +664,8 @@ register_import_type('Event', EventType)
 
 
 def get_import_type(data, path, *args):
+    types = getUtilitiesFor(IImportType)
+    _types = {name: klass for name, klass in types}
     if data['portal_type'] in _types:
         return _types[data['portal_type']](data, path, *args)
     logger.info('No explicit mapping for type {type}.'

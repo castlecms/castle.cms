@@ -12,13 +12,13 @@ from urlparse import urljoin
 import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
-from chameleon import PageTemplate, PageTemplateLoader
+from chameleon import PageTemplate
+from chameleon import PageTemplateLoader
 from lxml import etree
-from lxml.html import fromstring, tostring
+from lxml import html
 from plone import api
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
-from plone.app.blocks.utils import replace_with_children
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.policy import ThemingPolicy
@@ -30,8 +30,10 @@ from Products.CMFCore.interfaces import ISiteRoot
 from repoze.xmliter.serializer import XMLSerializer
 from repoze.xmliter.utils import getHTMLSerializer
 from zExceptions import NotFound
-from zope.component import getMultiAdapter, queryMultiAdapter
+from zope.component import getMultiAdapter
+from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -209,8 +211,6 @@ class _Transform(object):
 
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
-        # #
-        # dom.tree = tiles.renderTiles(request, dom.tree)
 
         return dom
 
@@ -221,8 +221,13 @@ class _Transform(object):
         if tile:
             viewlet = tile.get_viewlet(tile.manager, tile.viewlet)
             if viewlet:
+                parent = el.getparent()
+                index = parent.index(el)
                 viewlet.update()
-                replace_with_children(el, fromstring(viewlet.render()))
+                value = etree.fromstring('<head>' + viewlet.render() + '</head>')
+                parent.remove(el)
+                for idx, child in enumerate(value.getchildren()):
+                    parent.insert(index + idx, child)
 
     def add_included_resources(self, dom, portal, request):
         # if theme has js/css drop points instead of using those tiles
@@ -240,7 +245,9 @@ class _Transform(object):
             self.name, template_cache=self.template_cache)
 
     def get_raw_layout(self, context, loader=None):
-        """not compiled"""
+        '''
+        Get raw layout and do not compile with chemeleon
+        '''
         if loader is None:
             loader = self.get_loader()
         layout_name = self.get_layout_name(context)
@@ -255,6 +262,9 @@ class _Transform(object):
                     pass
 
     def get_layout_name(self, context, default_layout='index.html'):
+        '''
+        Get currently selected layout name for the context
+        '''
         adapted = ILayoutAware(context, None)
         selected = None
         if adapted is not None:
@@ -281,6 +291,9 @@ class _Transform(object):
 
     def get_layout(self, context, default_layout='index.html',
                    request=None, loader=None):
+        '''
+        Get currently selected layout for the context
+        '''
         if loader is None:
             loader = self.get_loader()
         if request is not None and 'X-CASTLE-LAYOUT' in request.environ:
@@ -304,6 +317,9 @@ class _Transform(object):
 
     def add_body_classes(self, original_context, context, request,
                          tree, result, raw=False):
+        '''
+        Dynamically add useful body classes for theming and JS.
+        '''
         body_classes = ''
         if raw:
             # this is a content layout likely
@@ -354,6 +370,9 @@ class _Transform(object):
                     body.attrib.update(plone_view.patterns_settings())
 
     def rewrite(self, dom, base_url):
+        '''
+        Rewrite layout urls to be full public paths
+        '''
         if hasattr(dom, 'tree'):
             tree = dom.tree
         else:
@@ -410,14 +429,14 @@ class _Transform(object):
             if len(content) == 0:
                 content = content_xpath(result)
             if len(content) > 0:
-                main_html = tostring(content[0])
+                main_html = html.tostring(content[0])
 
             column1 = column1_xpath(result)
             if len(column1) > 0 and len(column1[0]) > 0:
-                column1_html = tostring(column1[0])
+                column1_html = html.tostring(column1[0])
             column2 = column2_xpath(result)
             if len(column2) > 0 and len(column2[0]) > 0:
-                column2_html = tostring(column2[0])
+                column2_html = html.tostring(column2[0])
         return {
             'main': main_html,
             'left': column1_html,
@@ -425,6 +444,17 @@ class _Transform(object):
         }
 
     def dynamic_grid(self, dom):
+        '''
+        If there is a attribute in the layout file of `dynamic-grid`,
+        this function will look into the content of that layout
+        and see if any of the columns are actually empty of content.
+
+        If they are empty, they are removed and the sibling columns
+        are resized to fill the full size of content.
+
+        Additionally, the `data-grid` attribute is set so later
+        column rendering can use the configured grid transform correctly.
+        '''
         for container in dynamic_grid_xpath(dom):
             found = []
             classes = []
@@ -490,8 +520,11 @@ def getTransform(context, request):
     return transform
 
 
-def renderWithTheme(context, request, content):
+def renderWithTheme(context, request, content='<div />'):
     """
+    Render content against a theme. `content` should be
+    html that is transformed into the theming engine.
+
     Also, this disables further theme transform since presumably
     this is already done.
     """
@@ -504,6 +537,14 @@ def renderWithTheme(context, request, content):
 
 
 class Policy(ThemingPolicy):
+    '''
+    Customized theming policy to override plone so we do not use
+    diazo.
+
+    Diazo is an extra layer of theming that we don't need to deal
+    with since we have tiles and layouts.
+    '''
+
     def getCurrentTheme(self):
         """The name of the current theme."""
         if OVERRIDE_ENVIRON_KEY in self.request.environ:
@@ -555,7 +596,10 @@ def isPloneTheme(settings):
 
 
 def transformIterable(self, result, encoding):
-    """Apply the transform if required
+    """
+    Apply our customize transform that attempts to provide
+    b/w compatibility with diazo if user still tries to use
+    a diazo powered theme.
     """
     if self.request.response.getHeader('X-Theme-Applied'):
         return
@@ -611,3 +655,16 @@ def transformIterable(self, result, encoding):
         if not(DevelopmentMode):
             raise
     return result
+
+
+def renderLayout(context, request, layout):
+    '''
+    Render layout directly instead of allowing the
+    engine to use the current layout in a context.
+
+    This is useful when you want to use the tile engine
+    but do not want to use the theme layout to render
+    the full page of a site.
+    '''
+    request.environ['X-CASTLE-LAYOUT'] = layout
+    return renderWithTheme(context, request)

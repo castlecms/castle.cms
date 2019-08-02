@@ -1,5 +1,6 @@
-from castle.cms.tiles.base import DisplayTypeTileMixin
+from castle.cms import defaults
 from castle.cms.tiles.base import ContentTile
+from castle.cms.tiles.base import DisplayTypeTileMixin
 from castle.cms.tiles.content import IContentTileSchema
 from castle.cms.tiles.views import BaseTileView
 from castle.cms.tiles.views import TileViewsSource
@@ -38,6 +39,17 @@ class SimpleView(BaseTileView):
     order = 1
     index = ViewPageTemplateFile('templates/existing/simple.pt')
     tile_name = DISPLAY_TYPE_KEY
+
+    @property
+    def has_recaptcha(self):
+        try:
+            if 'collective.easyform.fields.ReCaptcha' in \
+                    self.tile.content.fields_model:
+                return True
+            else:
+                return False
+        except Exception:
+            return False
 
 
 class ExistingTile(ContentTile, DisplayTypeTileMixin):
@@ -95,7 +107,7 @@ class IExistingTileSchema(IContentTileSchema):
         title=u'Image display type',
         description=u'Does not apply to all display types',
         required=True,
-        default=u'landscape',
+        default=defaults.get('existing_tile_image_displaytype', u'landscape'),
         vocabulary=SimpleVocabulary([
             SimpleTerm('landscape', 'landscape', u'Landscape'),
             SimpleTerm('portrait', 'portrait', u'Portrait'),
@@ -103,22 +115,12 @@ class IExistingTileSchema(IContentTileSchema):
         ])
     )
 
-    display_type = schema.Choice(
-        title=u"Display Type",
-        vocabulary=SimpleVocabulary([
-            SimpleTerm('basic', 'basic', u'Basic'),
-            SimpleTerm('simple', 'simple', u'Simple'),
-            SimpleTerm('backgroundimage', 'backgroundimage', u'Background Image')
-        ]),
-        default='basic'
-    )
-
     form.widget('display_type', PreviewSelectFieldWidget,
                 tile_name=DISPLAY_TYPE_KEY)
     display_type = schema.Choice(
         title=u"Display Type",
         source=TileViewsSource(DISPLAY_TYPE_KEY),
-        default='default'
+        default=defaults.get('existing_tile_displaytype', u'default')
     )
 
     form.widget(override_focal_point=FocalPointSelectFieldWidget)

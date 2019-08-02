@@ -2,6 +2,7 @@ import argparse
 import base64
 import errno
 import logging
+import time
 import os
 import re
 from datetime import datetime
@@ -11,7 +12,8 @@ from StringIO import StringIO
 import OFS
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
-from Acquisition import ImplicitAcquisitionWrapper, aq_parent
+from Acquisition import ImplicitAcquisitionWrapper
+from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
 from DateTime import DateTime
 from lxml.html import fromstring
@@ -22,11 +24,10 @@ from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
-from plone.app.textfield import RichText
 from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.tests.base.security import (OmnipotentUser,
-                                                  PermissiveSecurityPolicy)
+from Products.CMFCore.tests.base.security import OmnipotentUser
+from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
 from Products.ZCatalog.Lazy import LazyCat
 from Testing.makerequest import makerequest
 from ZODB.blob import Blob
@@ -36,6 +37,7 @@ from zope.component.hooks import setSite
 from zope.interface import Interface
 from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
+
 
 logger = logging.getLogger(__name__)
 
@@ -98,8 +100,10 @@ except ImportError:
     NamedBlobImage = object()
 
 try:
+    from plone.app.textfield import RichText
     from plone.app.textfield.value import RichTextValue
 except ImportError:
+    RichText = None
     RichTextValue = None
 
 
@@ -109,6 +113,9 @@ parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--dir', dest='dir', default='./export')
+parser.add_argument('--interval', dest='interval', default=0)
+parser.add_argument('--modifiedsince', dest='modifiedsince')
+parser.add_argument('--createdsince', dest='createdsince')
 parser.add_argument(
     '--path-filter', dest='path_filter',
     default=None, required=False)
@@ -742,6 +749,11 @@ def write_export(obj, data):
 def run_export(brains):
     size = len(brains)
     for idx, brain in enumerate(brains):
+        try:
+            interval = int(args.interval)
+            time.sleep(interval)
+        except Exception:
+            pass
         path = brain.getPath()
         if (args.path_filter and
                 not fnmatch(path, args.path_filter)):
@@ -759,4 +771,26 @@ def run_export(brains):
             write_export(obj, data)
 
 
-run_export(catalog())
+if args.createdsince:
+    print('exporting items created since %s' % args.createdsince)
+    date_range = {
+        'query': (
+            DateTime(args.createdsince),
+            DateTime('2062-05-08 23:59:59'),
+        ),
+        'range': 'min:max'
+    }
+    query = catalog(created=date_range)
+elif args.modifiedsince:
+    print('exporting items modified since %s' % args.modifiedsince)
+    date_range = {
+        'query': (
+            DateTime(args.modifiedsince),
+            DateTime('2062-05-08 23:59:59'),
+        ),
+        'range': 'min:max'
+    }
+    query = catalog(modified=date_range)
+else:
+    query = catalog()
+run_export(query)

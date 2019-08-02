@@ -4,7 +4,7 @@ from plone import api
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import queryUtility
-
+from Acquisition import aq_parent
 
 SHIELD = constants.SHIELD
 
@@ -14,7 +14,7 @@ _blacklisted_meta_types = (
     'DirectoryViewSurrogate', 'KSS Registry', 'Filesystem Directory View')
 
 
-def protect(req):
+def protect(req, recheck=False):
     published = req.PARENTS[0]
     mt = getattr(
         getattr(published, 'aq_base', None),
@@ -39,8 +39,26 @@ def protect(req):
         backend_urls = (registry and
                         registry.get('plone.backend_url', SHIELD.NONE) or
                         [])
-        for backend_url in backend_urls:
-            protect |= backend_url.startswith(req.SERVER_URL)
-    if protect and api.user.is_anonymous():
-        raise Redirect('{}/@@secure-login'.format(
-            api.portal.get().absolute_url()))
+        for backend_url in backend_urls or []:
+            try:
+                protect |= backend_url.startswith(req.SERVER_URL)
+            except AttributeError:
+                pass
+    if protect:
+        if recheck:
+            portal = api.portal.get()
+            site_plugin = portal.acl_users.session
+            creds = site_plugin.extractCredentials(req)
+            anonymous = not site_plugin.authenticateCredentials(creds)
+            if anonymous:
+                try:
+                    app_plugin = aq_parent(portal).acl_users.session
+                    anonymous = not app_plugin.authenticateCredentials(creds)
+                except AttributeError:
+                    anonymous = True
+        else:
+            anonymous = api.user.is_anonymous()
+
+        if anonymous:
+            raise Redirect('{}/@@secure-login'.format(
+                api.portal.get().absolute_url()))

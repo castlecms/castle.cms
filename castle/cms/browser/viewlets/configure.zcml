@@ -1,0 +1,28 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:five="http://namespaces.zope.org/five">
+
+  <configure package="plone.app.layout.viewlets">
+    <!-- Render the social media metadata -->
+    <browser:viewlet
+      name="plone.htmlhead.socialtags"
+      manager="plone.app.layout.viewlets.interfaces.IHtmlHead"
+      class="castle.cms.browser.viewlets.socialtags.SocialTagsViewlet"
+      permission="zope2.View"
+      layer="castle.cms.interfaces.ICastleLayer"
+      template="social_tags.pt"
+      />
+
+    <!-- Render the social media body tags -->
+    <browser:viewlet
+      name="plone.abovecontenttitle.socialtags"
+      manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"
+      class="castle.cms.browser.viewlets.socialtags.SocialTagsViewlet"
+      permission="zope2.View"
+      layer="castle.cms.interfaces.ICastleLayer"
+      template="social_tags_body.pt"
+      />
+  </configure>
+
+</configure>

@@ -2,7 +2,6 @@ from castle.cms import archival
 from castle.cms import shield
 from castle.cms.files import aws
 from plone import api
-from Products.Five import BrowserView
 from zExceptions import Redirect
 from zope.component import queryUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
@@ -15,6 +14,11 @@ from six.moves.urllib.parse import unquote
 class FourOhFour(FourOhFourView):
 
     def __call__(self):
+        shield.protect(self.request, recheck=True)
+        if '++' in self.request.URL:
+            self.request.response.setStatus(404)
+            return self.index()
+
         self.notfound = self.context
         self.context = api.portal.get()
         archive_storage = archival.Storage(self.context)
@@ -47,7 +51,8 @@ class FourOhFour(FourOhFourView):
 
         self.attempt_redirect()
 
-        raise Redirect('{}/not-found'.format(api.portal.get().absolute_url()))
+        self.request.response.setStatus(404)
+        return self.index()
 
     def attempt_redirect(self):
         url = self._url()
@@ -108,11 +113,3 @@ class FourOhFour(FourOhFourView):
             url += "?" + query_string
         raise Redirect(url)
         return True
-
-
-class NotFoundView(BrowserView):
-
-    def __call__(self):
-        shield.protect(self.request)
-        self.request.response.setStatus(404)
-        return self.index()
