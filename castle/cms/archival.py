@@ -14,6 +14,7 @@ from urlparse import urlparse
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
 from zope.interface import implements
+from boto.exception import S3ResponseError
 
 import hashlib
 import logging
@@ -385,7 +386,10 @@ class Storage(object):
         key.set_contents_from_string(content, headers={
             'Content-Type': content_type
         }, replace=True)
-        key.make_public()
+        try:
+            key.make_public()
+        except S3ResponseError:
+            logger.warn('Missing private canned url for bucket')
         return url
 
     def move_resource(self, url, keep_ext=False):
@@ -437,7 +441,10 @@ class Storage(object):
                 'Content-Type': resp['headers']['content-type'],
                 'Content-Disposition': resp['headers'].get('content-disposition')
             }, replace=True)
-            key.make_public()
+            try:
+                key.make_public()
+            except S3ResponseError:
+                logger.warn('Missing private canned url for bucket')
 
         return new_url
 

@@ -14,11 +14,14 @@ from plone.registry.interfaces import IRegistry
 from urlparse import urlparse
 from zope.component import getUtility
 from zope.component.hooks import setSite
+from boto.exception import S3ResponseError
 
 import argparse
 import requests
 import transaction
+import logging
 
+logger = logging.getLogger('castle.cms')
 
 parser = argparse.ArgumentParser(
     description='...')
@@ -96,7 +99,10 @@ if __name__ == '__main__':
             key.set_contents_from_string(html, headers={
                 'Content-Type': 'text/html; charset=utf-8'
             }, replace=True)
-            key.make_public()
+            try:
+                key.make_public()
+            except S3ResponseError:
+                logger.warn('Missing private canned url for bucket')
     app._p_jar.sync()  # noqa
     print('%i needing to be deleted' % len(toremove))
     for uid, content_path in toremove.items():

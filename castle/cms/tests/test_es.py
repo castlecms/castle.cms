@@ -32,7 +32,7 @@ if 'ES_HOST' in os.environ:
         resp = requests.get(url)
         data = resp.json()
         version = data['version']['number']
-        if version in ('2.3.2', '2.3.3', '2.3.5'):
+        if version in ('7.3.0'):
             ES_ENABLED = True
         else:
             logger.warning('Unsupported ES version: {}'.format(version))

@@ -126,15 +126,14 @@ es_doc_type = 'entry'
 
 def _create_index(es, index_name):
     mapping = {'properties': {
-        'type': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'name': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'summary': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'user': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'request_uri': {'store': False, 'type': 'string',
-                        'index': 'not_analyzed'},
+        'type': {'store': False, 'type': 'text', 'index': False},
+        'name': {'store': False, 'type': 'text', 'index': False},
+        'summary': {'store': False, 'type': 'text', 'index': False},
+        'user': {'store': False, 'type': 'text', 'index': False, 'analyzer': 'keyword'},
+        'request_uri': {'store': False, 'type': 'text', 'index': False},
         'date': {'store': False, 'type': 'date'},
-        'object': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'path': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'object': {'store': False, 'type': 'text', 'index': False},
+        'path': {'store': False, 'type': 'text', 'index': False},
     }}
     if not es.indices.exists(index_name):
         es.indices.create(index_name)

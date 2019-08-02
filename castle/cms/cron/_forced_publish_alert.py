@@ -52,15 +52,10 @@ def check_site(site):
         {'range': {'date': {'gt': last_checked.ISO8601()}}}
     ]
 
-    if len(filters) > 1:
-        qfilter = {'and': filters}
-    else:
-        qfilter = filters[0]
     query = {
-        "query": {
-            'filtered': {
-                'filter': qfilter,
-                'query': {'match_all': {}}
+        'query': {
+            'bool': {
+                'filter': filters
             }
         }
     }
@@ -95,7 +90,8 @@ def check_site(site):
                         not r.get('comments', '').startswith('OVERRIDE:')):
                     continue
                 if r['time'] < last_checked:
-                    # just quit now, we're getting to older history that we don't care about
+                    # quit now,
+                    # getting to older history that we don't care about
                     break
                 forced.append({
                     'ob': ob,

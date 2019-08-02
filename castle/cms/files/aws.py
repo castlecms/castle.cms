@@ -15,6 +15,7 @@ from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from boto.exception import S3ResponseError
 
 
 logger = logging.getLogger('castle.cms')
@@ -41,9 +42,23 @@ def get_bucket(s3_bucket=None):
 
     endpoint = registry.get('castle.aws_s3_host_endpoint', None)
     if endpoint:
-        s3_conn = S3Connection(
-            s3_id, s3_key, host=endpoint,
-            calling_format=ProtocolIndependentOrdinaryCallingFormat())
+        parsed_endpoint = urlparse(endpoint)
+        if parsed_endpoint.scheme == 'https':
+            is_secure = True
+        else:
+            is_secure = False
+        host = parsed_endpoint.netloc
+        if ':' in host:
+            host = host.split(':')[0]
+        if parsed_endpoint.port:
+            s3_conn = S3Connection(
+                s3_id, s3_key, host=host, port=parsed_endpoint.port,
+                is_secure=is_secure,
+                calling_format=ProtocolIndependentOrdinaryCallingFormat())
+        else:
+            s3_conn = S3Connection(
+                s3_id, s3_key, host=host, is_secure=is_secure,
+                calling_format=ProtocolIndependentOrdinaryCallingFormat())
     else:
         s3_conn = S3Connection(s3_id, s3_key)
 
@@ -116,7 +131,10 @@ def set_permission(obj):
     annotations = IAnnotations(obj)
     info = annotations.get(STORAGE_KEY, PersistentMapping())
     if public:
-        key.make_public()
+        try:
+            key.make_public()
+        except S3ResponseError:
+            logger.warn('Missing private canned url for bucket')
         expires_in = 0
         url = 'https://{host}/{bucket}/{key}'.format(
             host=s3_conn.server_name(),
