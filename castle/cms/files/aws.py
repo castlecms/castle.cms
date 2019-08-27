@@ -4,10 +4,13 @@ import math
 import urllib
 from datetime import datetime
 from time import time
+from urllib.parse import quote_plus
 from urlparse import urlparse
 
-from boto.s3.connection import (ProtocolIndependentOrdinaryCallingFormat,
-                                S3Connection)
+#from boto.s3.connection import (ProtocolIndependentOrdinaryCallingFormat,
+#                                S3Connection)
+import botocore
+import boto3
 from collective.celery.utils import getCelery
 from persistent.mapping import PersistentMapping
 from plone.namedfile.file import NamedBlobFile
@@ -39,52 +42,63 @@ def get_bucket(s3_bucket=None):
     if not s3_id or not s3_key or not s3_bucket:
         return None, None
 
+    s3args = {
+        'aws_access_key_id': s3_id,
+        'aws_secret_access_key': s3_key,
+    }
+
     endpoint = registry.get('castle.aws_s3_host_endpoint', None)
     if endpoint:
-        s3_conn = S3Connection(
-            s3_id, s3_key, host=endpoint,
-            calling_format=ProtocolIndependentOrdinaryCallingFormat())
-    else:
-        s3_conn = S3Connection(s3_id, s3_key)
+        s3args['endpoint_url'] = endpoint
 
-    return s3_conn, s3_conn.get_bucket(s3_bucket)
+    s3 = boto3.resource('s3', **s3args)
+    bucket = None
+    try:
+        s3.meta.client.head_bucket(Bucket=s3_bucket)
+        bucket = s3.Bucket(s3_bucket)
+    except botocore.exceptions.ClientError as e:
+        bucket = None
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            logger.warning('bucket {name} not found'.format(name=s3_bucket))
+        else:
+            logger.error('error querying for bucket {name} (code {code})'.format(
+                name=s3_bucket,
+                code=error_code,
+                log_exc=True))
+
+    return s3, bucket
 
 
+# move a file from castle to aws
 def move_file(obj):
     _, bucket = get_bucket()
     if bucket is None:
         return
 
+    # META DATA
     uid = IUUID(obj)
     if not uid:
         logger.info('Could not get uid of object')
         return
-
     key = KEY_PREFIX + uid
     filename = obj.file.filename
     if not isinstance(filename, unicode):
         filename = unicode(filename, 'utf-8', errors="ignore")
     filename = urllib.quote(filename.encode("utf8"))
     disposition = "attachment; filename*=UTF-8''%s" % filename
-
     size = obj.file.getSize()
-    chunk_count = int(math.ceil(size / float(CHUNK_SIZE)))
     content_type = obj.file.contentType
-    mp = bucket.initiate_multipart_upload(key, metadata={
-        'Content-Type': content_type,
-        'Content-Disposition': disposition
-    })
+    extraargs = {
+        'ContentType': content_type,
+        'ContentDisposition': disposition,
+    }
 
-    blob_fi = obj.file._blob.open('r')
+    # Upload to AWS
+    blob_fi = obj.file._blob.open('rb')
+    bucket.upload_fileobj(blob_fi, key, ExtraArgs=**extraargs)
 
-    for i in range(chunk_count):
-        chunk = blob_fi.read(CHUNK_SIZE)
-        fp = io.BytesIO(chunk)
-        mp.upload_part_from_file(fp, part_num=i + 1)
-
-    mp.complete_upload()
-    blob_fi.close()
-
+    # Delete data from ZODB, but leave a reference
     if not getCelery().conf.task_always_eager:
         obj._p_jar.sync()
     obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
@@ -96,15 +110,26 @@ def move_file(obj):
 
 
 def set_permission(obj):
-    s3_conn, bucket = get_bucket()
+    s3, bucket = get_bucket()
     if bucket is None:
         return
+
     uid = IUUID(obj)
-    key_name = KEY_PREFIX + uid
-    key = bucket.get_key(key_name)
-    if key is None:
+    key = KEY_PREFIX + uid
+
+    # check if object is in aws
+    s3_obj = bucket.Object(key)
+    try:
+        s3_obj.load()  # does HEAD request
+    except botocore.exceptions.ClientError as e:
+        logger.error(
+            'error reading object {key} in bucket {name}'.format(
+                key=key,
+                name=bucket.name),
+            log_exc=True)
         return
 
+    # is the object public?
     perms = obj.rolesOfPermission("View")
     public = False
     for perm in perms:
@@ -113,20 +138,30 @@ def set_permission(obj):
                 public = True
                 break
 
+    # set aws public/private and get url
+    object_acl = s3_obj.Acl()
+    if public:
+        object_acl.put(ACL='public-read')
+        expires_in = 0
+        # a public URL is not fetchable with no expiration, apparently
+        url = 'https://{host}/{bucket}/{key}'.format(
+            host=s3.meta.endpoint_url,
+            bucket=bucket.name,
+            key=quote_plus(key))  # quote_plus usage means a safer url
+    else:
+        object_acl.put(ACL='private')
+        expires_in = EXPIRES_IN
+        params = {
+            'Bucket': bucket.name,
+            'Key': key,
+        }
+        url = s3.generate_presigned_url(
+            'get_object',
+            Params=params,
+            ExpiresIn=expires_in)
+
     annotations = IAnnotations(obj)
     info = annotations.get(STORAGE_KEY, PersistentMapping())
-    if public:
-        key.make_public()
-        expires_in = 0
-        url = 'https://{host}/{bucket}/{key}'.format(
-            host=s3_conn.server_name(),
-            bucket=bucket.name,
-            key=key_name)
-    else:
-        key.set_canned_acl('private')
-        url = key.generate_url(EXPIRES_IN)
-        expires_in = EXPIRES_IN
-
     info.update({
         'url': url,
         'expires_in': expires_in,

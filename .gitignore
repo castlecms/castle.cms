@@ -35,3 +35,4 @@ packages/
 pyvenv.cfg
 buildout-copy.cfg
 temp_resources/
+env
