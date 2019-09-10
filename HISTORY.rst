@@ -10,14 +10,116 @@ Changelog
 - Make Python 3.6+ compatible
   [vangheem]
 
-- provide tooltips
+
+2.5.15 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+2.5.14 (2019-07-18)
+-------------------
+
+- fix search.js for ie 10/11
+
+
+2.5.13 (2019-06-27)
+-------------------
+
+- fix og:image tag duplication issue
+
+
+2.5.12 (2019-05-28)
+-------------------
+
+- unicode fix
+
+
+2.5.11 (2019-05-21)
+-------------------
+
+- Update pdf reprocess script
+  [lucid-0]
+
+- Show field descriptions to anon again
+  [lucid-0]
+
+
+2.5.10 (2019-05-14)
+-------------------
+
+- Improve PDF Metadata stripping
+
+
+2.5.9 (2019-05-07)
+------------------
+
+- Be able to provide oauth providers for `@@secure-login`
+  [vangheem]
+
+- Add Audio Transcript to file template
+  [lucid-0]
+
+- Survey Invite optional logo, styling update
+  [lucid-0]
+
+- Fix RichText import when exporting from old Plone
+  [lucid-0]
+
+
+2.5.8 (2019-03-29)
+------------------
+
+- Add site title to social meta tags
+  [lucid-0]
+
+
+2.5.7 (2019-03-28)
+------------------
+
+- use registry values in itunes feed
+  [lucid-0]
+
+
+2.5.6 (2019-03-26)
+------------------
+
+- Some nudges for the tooltip alignment
   [RobZoneNet]
 
-- Provide empty coverimage fragment
+- Do not delay on quality check
+  [vangheem]
+
+- Fix quality check closing error box after load
+  [vangheem]
+
+
+2.5.5 (2019-03-25)
+------------------
+
+- Add missing upgrade step
+  [vangheem,RobZoneNet]
+
+- Add blank coverimage.pt fragment so we don't get errors on
+  themes that don't implement it
   [RobZoneNet]
+
+
+2.5.4 (2019-03-25)
+------------------
+
+- Handle ES error when getting search options
+  [vangheem]
+
+- Provide date search options
+  [vangheem]
 
 - Make the secure login accessible
   [RobZoneNet]
+
+- Add in tooltips for the main toolbars
+  [RobZoneNet]
+
 
 
 2.5.3 (2019-03-08)

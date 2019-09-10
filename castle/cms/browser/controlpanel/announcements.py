@@ -29,6 +29,7 @@ from zope.component import getAdapters
 from zope.component import getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from Products.Five import BrowserView
 
 reg_key = 'castle.subscriber_categories'
 
@@ -551,3 +552,15 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.get_sub_count()
         self.update_terms()
         return super(AnnouncementsControlPanel, self).__call__()
+
+
+class ManageSubscribers(BrowserView):
+    def get_page(self, page):
+        subscribers = []
+        for email, subscriber in subscribe.get_page(page):
+            subscribers.append({
+                subscriber['email'],
+                subscriber['confirmed'],
+                subscriber['created']
+            })
+        return subscribers

@@ -134,7 +134,7 @@ class ExifToolProcess(BaseSubProcess):
         bin_name = 'exiftool'
 
     def __call__(self, filepath):
-        cmd = [self.binary, '-all=', filepath]
+        cmd = [self.binary, '-all:all=', filepath]
         self._run_command(cmd)
 
 
@@ -144,6 +144,56 @@ except IOError:
     exiftool = None
     logger.warning(
         'exiftool not installed. castle.cms will not be able to strip metadata')  # noqa
+
+
+class QpdfProcess(BaseSubProcess):
+    """
+    """
+    if os.name == 'nt':
+        bin_name = 'qpdf.exe'
+    else:
+        bin_name = 'qpdf'
+
+    def __call__(self, filepath):
+        outfile = '{}-processed.pdf'.format(filepath[:-4])
+        cmd = [self.binary, '--linearize', filepath, outfile]
+        self._run_command(cmd)
+        shutil.copy(outfile, filepath)
+
+
+try:
+    qpdf = QpdfProcess()
+except IOError:
+    qpdf = None
+    logger.warn('qpdf not installed.  Some metadata might remain in PDF files.') # noqa
+
+
+class GhostScriptPDFProcess(BaseSubProcess):
+    """
+    """
+    if os.name == "nt":
+        bin_name = 'gs.exe'
+    else:
+        bin_name = 'gs'
+
+    def __call__(self, filepath):
+        outfile = '{}-clean.pdf'.format(filepath[:-4])
+        cmd = [self.binary,
+               '-q',
+               '-o',
+               outfile,
+               '-sDEVICE=pdfwrite',
+               filepath
+               ]
+        self._run_command(cmd)
+        shutil.copy(outfile, filepath)
+
+
+try:
+    gs_pdf = GhostScriptPDFProcess()
+except IOError:
+    gs_pdf = None
+    logger.warn('gs not installed. Some metadata might remain in PDF files.')
 
 
 class MD5SubProcess(BaseSubProcess):

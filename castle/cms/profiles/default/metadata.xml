@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <metadata>
-  <version>2500</version>
+  <version>2506</version>
   <dependencies>
     <dependency>profile-plone.app.querystring:default</dependency>
     <dependency>profile-plone.app.mosaic:default</dependency>

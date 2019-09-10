@@ -37,6 +37,11 @@
   <div tal:condition="view/is_audiotype|nothing" class="foobar">
     <div tal:attributes="
       data-tile string:./@@castle.cms.audiotile?audio_files:list=${context/@@uuid};" />
+      <div class="transcript" tal:condition="context/transcript|nothing">
+        <hr />
+        <h2>Audio Transcript</h2>
+        <div tal:replace="structure context/transcript/output|nothing" />
+      </div>
   </div>
 
   <div tal:condition="python: content_type.startswith('text') and not view.moved">

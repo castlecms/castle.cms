@@ -2,6 +2,7 @@ import argparse
 import base64
 import errno
 import logging
+import time
 import os
 import re
 from datetime import datetime
@@ -22,6 +23,8 @@ from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
 from plone.app.textfield import RichText
+from plone.app.blob.field import BlobWrapper
+from plone.app.blob.utils import openBlob
 from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.security import OmnipotentUser
@@ -98,8 +101,10 @@ except ImportError:
     NamedBlobImage = object()
 
 try:
+    from plone.app.textfield import RichText
     from plone.app.textfield.value import RichTextValue
 except ImportError:
+    RichText = None
     RichTextValue = None
 
 try:
@@ -119,6 +124,7 @@ parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--dir', dest='dir', default='./export')
+parser.add_argument('--interval', dest='interval', default=0)
 parser.add_argument('--modifiedsince', dest='modifiedsince')
 parser.add_argument('--createdsince', dest='createdsince')
 parser.add_argument(
@@ -754,6 +760,11 @@ def write_export(obj, data):
 def run_export(brains):
     size = len(brains)
     for idx, brain in enumerate(brains):
+        try:
+            interval = int(args.interval)
+            time.sleep(interval)
+        except Exception:
+            pass
         path = brain.getPath()
         if (args.path_filter and
                 not fnmatch(path, args.path_filter)):
