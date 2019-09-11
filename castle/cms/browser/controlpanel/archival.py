@@ -1,5 +1,4 @@
 from AccessControl import Unauthorized
-from boto.s3.prefix import Prefix
 from castle.cms import archival
 from castle.cms.files import aws
 from DateTime import DateTime
@@ -9,10 +8,13 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 
 import json
+import logger
+
+
+logger = logging.getLogger('castle.cms')
 
 
 class BaseView(BrowserView):
-
     @property
     def enabled(self):
         return (api.portal.get_registry_record('castle.archival_enabled') and
@@ -23,7 +25,6 @@ class BaseView(BrowserView):
 
 
 class Review(BaseView):
-
     def dump(self, item):
         return {
             'title': item.Title,
@@ -54,7 +55,7 @@ class AWSApi(object):
         self.site = site
         self.request = request
         bucket_name = api.portal.get_registry_record('castle.aws_s3_bucket_name')
-        self.s3_conn, self.bucket = aws.get_bucket(bucket_name)
+        self.s3, self.bucket = aws.get_bucket(bucket_name)
         self.archive_storage = archival.Storage(site)
 
     def __call__(self):
@@ -72,7 +73,7 @@ class AWSApi(object):
 
     def get(self):
         key_name = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
-        key = self.bucket.get_key(key_name)
+        key = self.bucket.get_object(Key=key_name)
         if 'html' not in key.content_type:
             raise Exception('Must be html...')
         return {
@@ -94,16 +95,22 @@ class AWSApi(object):
                 # this is a folder, delete everything in it
                 base_path = archival.CONTENT_KEY_PREFIX + path
                 base_path = base_path.replace('//', '/').rstrip('/') + '/'
-                for key in self.bucket.list(base_path):
-                    if isinstance(key, Prefix):
-                        continue
-                    todelete.append(key.name)
+                for key in self.bucket.objects.filter(prefix=base_path):
                     self.delete_archive(key.name[len(archival.CONTENT_KEY_PREFIX):])
+                    todelete.append(dict(Key=key.name))
             else:
                 self.delete_archive(path)
-                todelete.append(archival.CONTENT_KEY_PREFIX + path)
+                todelete.append(dict(Key=archival.CONTENT_KEY_PREFIX + path))
 
-        self.bucket.delete_keys(todelete)
+        # delete_objects maxes out at 1000 keys according to documentation
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Bucket.delete_objects
+        if len(todelete) > 1000:
+            i = 0
+            while i < len(todelete):
+                self.bucket.delete_objects(Delete=dict(Objects=todelete[i:i+1000]
+                i += 1000
+        else:
+            self.bucket.delete_objects(Delete=dict(Objects=todelete))
 
     def delete(self):
         path = self.request.form.get('path')
@@ -113,9 +120,16 @@ class AWSApi(object):
         if not authenticator.verify():
             raise Unauthorized
 
-        key = self.bucket.get_key(key_name)
-        if key:
-            self.bucket.delete_key(key_name)
+        try:
+            key = self.bucket.get_object(Key=key_name)
+            key.delete()
+        except botocore.exceptions.ClientError:
+            logger.error(
+                'error deleting object {key} in bucket {name}'.format(
+                    key=key_name,
+                    name=bucket.name),
+                log_exc=True)
+
         self.delete_archive(path)
 
     def delete_archive(self, path):
@@ -137,24 +151,31 @@ class AWSApi(object):
             raise Unauthorized
 
         content = self.request.form.get('value')
-        key = self.bucket.get_key(key_name)
-        key.set_contents_from_string(content, headers={
-            'Content-Type': 'text/html; charset=utf-8'
-        }, replace=True)
-        key.make_public()
+        try:
+            key = self.bucket.get_object(Key=key_name)
+            key.put(
+                ACL='public-read',
+                Body=content,
+                ContentType="text/html; charset=utf-8")
+        except botocore.exceptions.ClientError:
+            logger.error(
+                'error saving object {key} in bucket {name}'.format(
+                    key=key_name,
+                    name=bucket.name),
+                log_exc=True)
 
     def list(self):
         result = []
         base_path = archival.CONTENT_KEY_PREFIX + self.request.form.get('path', '')
         base_path = base_path.replace('//', '/').rstrip('/') + '/'
-        for key in self.bucket.list(base_path, '/'):
+        for key in self.bucket.objects.filter(prefix=base_path):
             path = key.name[len(archival.CONTENT_KEY_PREFIX):]
             result.append({
                 'path': path,
                 'id': path.rstrip('/').split('/')[-1],
-                'is_folder': isinstance(key, Prefix),
-                'url': 'https://{host}/{bucket}/{key}'.format(
-                    host=self.s3_conn.server_name(),
+                'is_folder': False,
+                'url': '{endpoint_url}/{bucket}/{key}'.format(
+                    endpoint_url=self.s3.meta.endpoint_url,
                     bucket=self.bucket.name,
                     key=archival.CONTENT_KEY_PREFIX + path)
             })

@@ -1,14 +1,11 @@
-import io
+from future.standard_library import install_aliases
+install_aliases()
+
 import logging
-import math
-import urllib
 from datetime import datetime
 from time import time
-from urllib.parse import quote_plus
-from urlparse import urlparse
+from urllib.parse import urlparse, quote, quote_plus
 
-#from boto.s3.connection import (ProtocolIndependentOrdinaryCallingFormat,
-#                                S3Connection)
 import botocore
 import boto3
 from collective.celery.utils import getCelery
@@ -85,7 +82,7 @@ def move_file(obj):
     filename = obj.file.filename
     if not isinstance(filename, unicode):
         filename = unicode(filename, 'utf-8', errors="ignore")
-    filename = urllib.quote(filename.encode("utf8"))
+    filename = quote(filename.encode("utf8"))
     disposition = "attachment; filename*=UTF-8''%s" % filename
     size = obj.file.getSize()
     content_type = obj.file.contentType
@@ -96,7 +93,7 @@ def move_file(obj):
 
     # Upload to AWS
     blob_fi = obj.file._blob.open('rb')
-    bucket.upload_fileobj(blob_fi, key, ExtraArgs=**extraargs)
+    bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 
     # Delete data from ZODB, but leave a reference
     if not getCelery().conf.task_always_eager:
@@ -121,7 +118,7 @@ def set_permission(obj):
     s3_obj = bucket.Object(key)
     try:
         s3_obj.load()  # does HEAD request
-    except botocore.exceptions.ClientError as e:
+    except botocore.exceptions.ClientError:
         logger.error(
             'error reading object {key} in bucket {name}'.format(
                 key=key,
@@ -144,8 +141,8 @@ def set_permission(obj):
         object_acl.put(ACL='public-read')
         expires_in = 0
         # a public URL is not fetchable with no expiration, apparently
-        url = 'https://{host}/{bucket}/{key}'.format(
-            host=s3.meta.endpoint_url,
+        url = '{endpoint_url}/{bucket}/{key}'.format(
+            endpoint_url=s3.meta.endpoint_url,
             bucket=bucket.name,
             key=quote_plus(key))  # quote_plus usage means a safer url
     else:
@@ -176,9 +173,15 @@ def delete_file(uid):
         return
 
     key_name = KEY_PREFIX + uid
-    key = bucket.get_key(key_name)
-    if key:
-        bucket.delete_key(key_name)
+    try:
+        key = bucket.Object(key_name)
+        key.delete()
+    except botocore.exceptions.ClientError:
+        logger.error(
+            'error deleting object {key} in bucket {name}'.format(
+                key=key,
+                name=bucket.name),
+            log_exc=True)
 
 
 def uploaded(obj):
@@ -188,16 +191,6 @@ def uploaded(obj):
         return False
     info = annotations.get(STORAGE_KEY, PersistentMapping())
     return 'url' in info
-
-
-def _one(val):
-    """Wonky, values returning tuple sometimes?"""
-    if type(val) in (tuple, list, set):
-        if len(val) > 0:
-            val = val[0]
-        else:
-            return
-    return val
 
 
 def swap_url(url, registry=None, base_url=None):
@@ -216,7 +209,18 @@ def swap_url(url, registry=None, base_url=None):
         url = '{}/{}'.format(base_url.strip('/'), '/'.join(parsed_url.path.split('/')[2:]))
         if parsed_url.query:
             url += '?' + parsed_url.query
+
     return url
+
+
+def _one(val):
+    """Wonky, values returning tuple sometimes?"""
+    if type(val) in (tuple, list, set):
+        if len(val) > 0:
+            val = val[0]
+        else:
+            return
+    return val
 
 
 def get_url(obj):
@@ -229,16 +233,26 @@ def get_url(obj):
         expires = datetime.fromtimestamp(generated_on + info['expires_in'])
         if datetime.utcnow() > expires:
             # need a new url
-            _, bucket = get_bucket()
-            uid = IUUID(obj)
-            key = bucket.get_key(KEY_PREFIX + uid)
-            url = key.generate_url(EXPIRES_IN)
-            info.update({
-                'url': url,
-                'generated_on': time(),
-                'expires_in': EXPIRES_IN
-            })
-            annotations[STORAGE_KEY] = info
+            s3, bucket = get_bucket()
+            if bucket is not None:
+                uid = IUUID(obj)
+                key = KEY_PREFIX + uid
+                params = {
+                    'Bucket': bucket.name,
+                    'Key': key,
+                }
+                url = s3.generate_presigned_url(
+                    'get_object',
+                    Params=params,
+                    ExpiresIn=EXPIRES_IN)
+
+                info.update({
+                    'url': url,
+                    'generated_on': time(),
+                    'expires_in': EXPIRES_IN
+                })
+                annotations[STORAGE_KEY] = info
+
     url = _one(info['url'])
     if not url.startswith('http'):
         url = 'https:' + url
