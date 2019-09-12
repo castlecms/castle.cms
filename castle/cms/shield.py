@@ -15,6 +15,11 @@ _blacklisted_meta_types = (
 
 
 def protect(req, recheck=False):
+    url = req.getURL()
+    login_url = '{}/@@secure-login'.format(api.portal.get().absolute_url())
+    if '@@secure-login' in url.lower() and url != login_url:
+        raise Redirect(login_url)
+
     published = req.PARENTS[0]
     mt = getattr(
         getattr(published, 'aq_base', None),
@@ -64,5 +69,4 @@ def protect(req, recheck=False):
             anonymous = api.user.is_anonymous()
 
         if anonymous:
-            raise Redirect('{}/@@secure-login'.format(
-                api.portal.get().absolute_url()))
+            raise Redirect(login_url)
