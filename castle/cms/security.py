@@ -84,7 +84,7 @@ def afterTraversal(event):
     robot_view = shield.protect(request)
 
     resp = request.response
-    
+
     if robot_view:
         resp.setBody(robot_view, lock=True)
         resp.setHeader('X-Robots-Tag', 'noindex')
