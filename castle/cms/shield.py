@@ -45,6 +45,10 @@ def protect(req, recheck=False):
             except AttributeError:
                 pass
     if protect:
+        if req.getURL().lower().endswith("robots.txt"):
+            return """User-agent: *
+                      Disallow: /"""
+
         if recheck:
             portal = api.portal.get()
             site_plugin = portal.acl_users.session
