@@ -1,4 +1,5 @@
 from AccessControl import Unauthorized
+import botocore
 from castle.cms import archival
 from castle.cms.files import aws
 from DateTime import DateTime
@@ -8,7 +9,7 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 
 import json
-import logger
+import logging
 
 
 logger = logging.getLogger('castle.cms')
@@ -107,7 +108,7 @@ class AWSApi(object):
         if len(todelete) > 1000:
             i = 0
             while i < len(todelete):
-                self.bucket.delete_objects(Delete=dict(Objects=todelete[i:i+1000]
+                self.bucket.delete_objects(Delete=dict(Objects=todelete[i:i+1000]))
                 i += 1000
         else:
             self.bucket.delete_objects(Delete=dict(Objects=todelete))
