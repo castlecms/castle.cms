@@ -68,7 +68,7 @@ def get_bucket(s3_bucket=None):
 
 
 # move a file from castle to aws
-def move_file(obj):
+def move_file(obj, disable_set_permission=False):
     _, bucket = get_bucket()
     if bucket is None:
         return
@@ -92,7 +92,7 @@ def move_file(obj):
     }
 
     # Upload to AWS
-    blob_fi = obj.file._blob.open('rb')
+    blob_fi = obj.file._blob.open('r')
     bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 
     # Delete data from ZODB, but leave a reference
@@ -103,7 +103,11 @@ def move_file(obj):
     obj.file.original_content_type = content_type
     obj.file.original_size = size
 
-    set_permission(obj)
+    # this if statement is primarily for testing purposes -- IE
+    # fake S3 services (like 'minio') do not implement ObjectACL, which
+    # this requires
+    if not disable_set_permission:
+        set_permission(obj)
 
 
 def set_permission(obj):

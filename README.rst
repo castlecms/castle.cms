@@ -110,20 +110,21 @@ Optional Dependencies
 Running tests
 =============
 
-Default plone testing:
+*Default plone testing:*
 
 .. code-block:: shell
 
   ./bin/test -s castle.cms
 
-To run only robot tests:
+
+*To run only robot tests:*
 
 .. code-block:: shell
 
   ./bin/test -s castle.cms -t robot
 
 
-Without robot:
+*Without robot:*
 
 .. code-block:: shell
 
@@ -131,6 +132,20 @@ Without robot:
 
 If you have errors complaining about warning, make sure the version of selenium 
 you're using works with the version of Firefox you have installed (see above)
+
+
+*Test AWS integration (and other file operations), using minio:*
+
+.. code-block:: shell
+
+  $ docker run --name=minio_castle_test -p 9000:9000 -it -e "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE" -e "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" minio/minio server /data
+  $ open http://localhost:9000
+  $ # login with the access and secret key, and then add a 'castletest' bucket
+  $ ENABLE_AWS_TEST_WITH_MINIO="yes" ./bin/test -s castle.cms -t \!robot castle.cms.tests.test_files
+  $ docker rm -f minio_castle_test
+
+Note the environment variable -- without it, it is assumed that the minio
+instance at localhost:9000 is not running and will skip over the tests.
 
 
 Running local dependencies with docker
