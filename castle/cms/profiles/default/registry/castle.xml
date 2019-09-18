@@ -61,6 +61,7 @@
         <element>plone.app.standardtiles.contentlisting</element>
         <element>castle.cms.navigation</element>
         <element>castle.cms.search</element>
+        <element>castle.cms.stickyfooter</element>
       </element>
     </value>
   </record>
