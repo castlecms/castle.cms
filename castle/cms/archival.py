@@ -1,3 +1,6 @@
+from future.standard_library import install_aliases
+install_aliases()
+
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
@@ -9,8 +12,7 @@ from lxml.html import tostring
 from plone import api
 from plone.subrequest import subrequest
 from plone.uuid.interfaces import IUUID
-from urlparse import urljoin
-from urlparse import urlparse
+from urllib.parse import urlparse, urljoin, quote_plus
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
 from zope.interface import implements
@@ -377,10 +379,10 @@ class Storage(object):
             content = self.apply_replacements(content)
         content_path = content_path.lstrip('/')
         content_path = CONTENT_KEY_PREFIX + content_path
-        url = 'https://{host}/{bucket}/{key}'.format(
-            host=self.s3_conn.server_name(),
+        url = '{endpoint_url}/{bucket}/{key}'.format(
+            endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path)
+            key=quote_plus(content_path))
         key = self.bucket.new_key(content_path)
         key.set_contents_from_string(content, headers={
             'Content-Type': content_type
@@ -425,10 +427,10 @@ class Storage(object):
         if keep_ext and '.' in url:
             ext = url.split('.')[-1]
             content_path += '.' + ext
-        new_url = 'https://{host}/{bucket}/{key}'.format(
-            host=self.s3_conn.server_name(),
+        new_url = '{endpoint_url}/{bucket}/{key}'.format(
+            endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path)
+            key=quote_plus(content_path))
 
         # first check if already moved
         if self.bucket.get_key(content_path) is None:
