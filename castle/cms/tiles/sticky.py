@@ -3,10 +3,18 @@ from zope.interface import Interface
 from plone.autoform import directives as form
 from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import RelatedItemFieldWidget
+from plone.app.uuid.utils import uuidToCatalogBrain
 
 
 class StickyFooterTile(BaseTile):
-    pass
+    @property
+    def internal_link_url(self):
+        if self.data.get('internal_link'):
+            try:
+                brain = uuidToCatalogBrain(self.data.internal_link[0])
+                return brain.getURL()
+            except Exception:
+                pass
 
 
 class IStickyFooterTileSchema(Interface):
@@ -18,7 +26,7 @@ class IStickyFooterTileSchema(Interface):
         default=u"",
     )
 
-    description = schema.TextLine(
+    button_text = schema.TextLine(
         title=u"Footer button text",
         required=False,
         default=u"Subscribe",
