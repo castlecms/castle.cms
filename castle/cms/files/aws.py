@@ -68,7 +68,7 @@ def get_bucket(s3_bucket=None):
 
 
 # move a file from castle to aws
-def move_file(obj, disable_set_permission=False):
+def move_file(obj):
     _, bucket = get_bucket()
     if bucket is None:
         return
@@ -92,6 +92,8 @@ def move_file(obj, disable_set_permission=False):
     }
 
     # Upload to AWS
+    # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
+    #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
     blob_fi = obj.file._blob.open('r')
     bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 
@@ -103,11 +105,7 @@ def move_file(obj, disable_set_permission=False):
     obj.file.original_content_type = content_type
     obj.file.original_size = size
 
-    # this if statement is primarily for testing purposes -- IE
-    # fake S3 services (like 'minio') do not implement ObjectACL, which
-    # this requires
-    if not disable_set_permission:
-        set_permission(obj)
+    set_permission(obj)
 
 
 def set_permission(obj):
@@ -146,7 +144,7 @@ def set_permission(obj):
         expires_in = 0
         # a public URL is not fetchable with no expiration, apparently
         url = '{endpoint_url}/{bucket}/{key}'.format(
-            endpoint_url=s3.meta.endpoint_url,
+            endpoint_url=s3.meta.client.meta.endpoint_url,
             bucket=bucket.name,
             key=quote_plus(key))  # quote_plus usage means a safer url
     else:
@@ -156,7 +154,7 @@ def set_permission(obj):
             'Bucket': bucket.name,
             'Key': key,
         }
-        url = s3.generate_presigned_url(
+        url = s3_obj.meta.client.generate_presigned_url(
             'get_object',
             Params=params,
             ExpiresIn=expires_in)
@@ -171,6 +169,9 @@ def set_permission(obj):
     annotations[STORAGE_KEY] = info
 
 
+# TODO: determine if the file obj in plone should also be deleted
+# at this time, or document why it isn't, maybe. Content is all
+# moved to aws anyway.
 def delete_file(uid):
     _, bucket = get_bucket()
     if bucket is None:
@@ -245,7 +246,7 @@ def get_url(obj):
                     'Bucket': bucket.name,
                     'Key': key,
                 }
-                url = s3.generate_presigned_url(
+                url = s3.meta.client.generate_presigned_url(
                     'get_object',
                     Params=params,
                     ExpiresIn=EXPIRES_IN)

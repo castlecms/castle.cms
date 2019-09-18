@@ -93,7 +93,8 @@ setup(
             'responses',
             'mock',
             'argon2_cffi',
-            'plone.app.robotframework'
+            'plone.app.robotframework',
+            'moto',
         ],
         'development': [
             'zest.releaser',
