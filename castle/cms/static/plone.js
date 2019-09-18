@@ -51,6 +51,7 @@ require([
   'castle-url/patterns/existing',
   'castle-url/patterns/survey',
   'castle-url/patterns/modallink',
+  'castle-url/patterns/sticky'
 ], function($, registry, Base, Modal) {
   'use strict';
 

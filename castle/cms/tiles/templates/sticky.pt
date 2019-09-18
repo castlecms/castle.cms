@@ -1,3 +1,24 @@
-<div class="sticky-footer">
-  test footer tile
+<div class="pat-sticky"/>
+<div class="sticky-footer alert alert-dismissible fade show footer" role="alert">
+  <div>
+    <p class="footer-block">
+      <span class="email-alerts-text"><i class="material-icons">email</i>Email Alerts</span>
+      <span class="email-alerts-seperator"> | </span>
+      <span class="email-alerts-description">test</span>
+      <span class="subscribe-button"><a class="btn btn-primary" href="#" role="button">Subscribe</a></span>
+      <span class="no-thanks-button"><a href="#" data-dismiss="alert" aria-label="Close">No Thanks</a></span>
+    </p>
+    <button
+      type="button"
+      class="close"
+      data-dismiss="alert"
+      aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
 </div>
+
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
