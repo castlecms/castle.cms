@@ -4,7 +4,8 @@ Changelog
 2.5.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- add sticky footer tile
+  [lucid-0]
 
 
 2.5.14 (2019-07-18)
