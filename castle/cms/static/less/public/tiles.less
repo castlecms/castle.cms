@@ -697,3 +697,79 @@ nav#category {
 div.mejs-poster.mejs-layer {
   background-color: #000000;
 }
+
+// Sticky Footer
+
+.sticky-footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -0.125rem 0.1875rem 0 rgba(0, 0, 0, 0.08);
+  background-color: #f5f5f5;
+  margin-bottom: 0;
+  z-index: 3;
+  display: none;
+  padding: 7px 10px;
+}
+
+.footer-block {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.email-alerts-text {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0px;
+  font-size: 14px;
+}
+
+.email-alerts-description {
+  margin-right: 15px;
+  margin-bottom: 10px;
+  display: block;
+  font-size: 14px;
+}
+
+.email-alerts-seperator {
+  display: none;
+}
+
+.subscribe-button {
+  margin-right: 10px;
+}
+
+.subscribe-button .btn {
+  font-size: 14px;
+}
+
+.no-thanks-button {
+  font-size: 14px;
+}
+
+.material-icons {
+  vertical-align: middle;
+  font-size: 22px;
+}
+
+@media (min-width: 768px) {
+  .footer-block {
+  }
+  .sticky-footer {
+    padding: 10px 15px;
+  }
+  .email-alerts-text {
+    display: contents;
+    margin-bottom: 0;
+  }
+  .email-alerts-description {
+    display: contents;
+  }
+  .email-alerts-seperator {
+    display: contents;
+  }
+  .subscribe-button {
+    margin-left: 15px;
+  }
+}
