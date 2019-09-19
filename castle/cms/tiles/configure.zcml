@@ -246,6 +246,18 @@
     permission="zope2.View"
     />
 
+  <plone:tile
+    name="castle.cms.googletagmanager"
+    title="Google Tag Manager"
+    class=".gtm.GoogleTagManagerTile"
+    schema=".gtm.GoogleTagManagerTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/gtm.pt"
+    />
+
   <!-- overrides -->
   <plone:tile
     name="plone.app.standardtiles.discussion"
@@ -429,7 +441,7 @@
     factory=".existing.SimpleView"
     />
 
-  <!-- 
+  <!--
   Dynamic tiles implementation
   -->
   <plone:tile
