@@ -2,10 +2,14 @@
 from lxml.html import fromstring
 import unittest
 
+import boto3
+import botocore
 from DateTime import DateTime
 from castle.cms import archival
+from castle.cms.files import aws
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.interfaces import IArchiveManager
+from moto import mock_s3
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -13,19 +17,18 @@ from plone.app.testing import login
 from plone.app.testing import setRoles
 
 
-class TestArchival(unittest.TestCase):
-
+class TestArchiveManager(unittest.TestCase):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
 
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        login(self.portal, TEST_USER_NAME)
+        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
         man = archival.ArchiveManager()
         self.archive_manager = IArchiveManager(man)
 
     def test_get_archival_items(self):
-        login(self.portal, TEST_USER_NAME)
-        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
         foobar = api.content.create(
             type='Document',
             id='foobar1',
@@ -41,8 +44,6 @@ class TestArchival(unittest.TestCase):
         self.assertEqual(len(self.archive_manager.getContentToArchive()), 1)
 
     def test_get_archival_items_pays_attention_to_types(self):
-        login(self.portal, TEST_USER_NAME)
-        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
         foobar = api.content.create(
             type='Document',
             id='foobar1',
@@ -56,6 +57,14 @@ class TestArchival(unittest.TestCase):
             'castle.archival_types_to_archive', ['News Item'])
 
         self.assertEqual(len(self.archive_manager.getContentToArchive()), 0)
+
+
+class TestFlashScriptResourceMover(unittest.TestCase):
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
 
     def test_flash_resource_mover_gets_els(self):
         dom = fromstring('''<html>
@@ -91,9 +100,55 @@ class TestArchival(unittest.TestCase):
         mover.modify(els[0], "https://www.foobar.com/foobar/avatars/avatars_2.swf")
         self.assertTrue("https://www.foobar.com/foobar/avatars/avatars_2'" in els[0].text)
 
-    def test_archive_replacement_text(self):
+
+class TestStorage(unittest.TestCase):
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.test_access_key = u'AKIAIOSFODNN7EXAMPLE'
+        self.test_secret_key = u'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+        self.test_bucket_name = u'castletest'
+        # possibly useful to set under some condition...
+        #self.test_bucket_endpoint = u'http://localhost:9000/'
+        self.test_base_url = u'https://localhost.localdomain/'  # used for test swap
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
         login(self.portal, TEST_USER_NAME)
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
+        api.portal.set_registry_record('castle.aws_s3_key', self.test_access_key)
+        api.portal.set_registry_record('castle.aws_s3_secret', self.test_secret_key)
+        api.portal.set_registry_record('castle.aws_s3_bucket_name', self.test_bucket_name)
+        # possibly useful to set under some condition...
+        #api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
+        api.portal.set_registry_record('castle.aws_s3_base_url', self.test_base_url)
+
+    @mock_s3
+    def test_move_to_aws(self):
+        # this is creating a bucket in the moto/mock s3 service
+        s3conn = boto3.resource('s3')
+        s3conn.create_bucket(Bucket='castletest')
+        s3, bucket = aws.get_bucket("castletest")
+
+        storage = archival.Storage(self.portal)
+        content = "this is a test"
+        content_path = "a/test/path/for/this/test.html"
+        content_type = "text/html; charset=utf-8"
+
+        # the key should not be there before we run through this
+        self.assertRaises(botocore.exceptions.ClientError, lambda: bucket.Object(content_path).load())
+
+        storage.move_to_aws(content, content_path, content_type)
+
+        try:
+            bucket.Object(archival.CONTENT_KEY_PREFIX + content_path).load()
+        except botocore.exceptions.ClientError:
+            self.fail("object does not exist after move")
+
+    @mock_s3
+    def test_move_resource(self):
+        pass
+
+    def test_archive_replacement_text(self):
         storage = archival.Storage(self.portal)
 
         storage.replacements = {
@@ -105,8 +160,6 @@ class TestArchival(unittest.TestCase):
                                                     '</body></html>'))
 
     def test_archive_replacement_selector(self):
-        login(self.portal, TEST_USER_NAME)
-        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
         storage = archival.Storage(self.portal)
 
         storage.replacements = {
@@ -118,11 +171,11 @@ class TestArchival(unittest.TestCase):
                                                     '</body></html>'))
 
     def test_archive_transformers(self):
-        login(self.portal, TEST_USER_NAME)
-        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
         storage = archival.Storage(self.portal)
         result = storage.transform_content(
             '<html><body><div class="foo">foo</div></body></html>',
             'http://foobar.com')
 
         self.assertTrue('>bar<' in result)
+
+

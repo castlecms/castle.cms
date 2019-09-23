@@ -1,6 +1,7 @@
 from future.standard_library import install_aliases
 install_aliases()
 
+import botocore
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
@@ -21,6 +22,7 @@ import hashlib
 import logging
 import re
 import requests
+import StringIO
 
 
 logger = logging.getLogger('castle.cms')
@@ -347,7 +349,7 @@ class Storage(object):
     def _initialize_s3(self):
         bucket_name = api.portal.get_registry_record(
             'castle.aws_s3_bucket_name')
-        self._s3_conn, self._bucket = aws.get_bucket(bucket_name)
+        self._s3_conn, self._bucket = aws.get_bucket(s3_bucket=bucket_name)
 
     def apply_replacements(self, content):
         # first pass is for straight text
@@ -373,7 +375,7 @@ class Storage(object):
         return tostring(dom)
 
     def move_to_aws(self, content, content_path,
-                    content_type='text/html; charset=utf-8', replace=True):
+                    content_type='text/html; charset=utf-8'):
         # perform replacements
         if 'html' in content_type and self.replacements:
             content = self.apply_replacements(content)
@@ -383,11 +385,18 @@ class Storage(object):
             endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
             key=quote_plus(content_path))
-        key = self.bucket.new_key(content_path)
-        key.set_contents_from_string(content, headers={
-            'Content-Type': content_type
-        }, replace=True)
-        key.make_public()
+
+        # create/update
+        extraargs = {
+            'ContentType': content_type,
+        }
+        contentio = StringIO.StringIO(content)
+        self.bucket.upload_fileobj(contentio, content_path, ExtraArgs=extraargs)
+        # make public
+        s3_obj = self.bucket.Object(content_path)
+        object_acl = s3_obj.Acl()
+        object_acl.put(ACL='public-read')
+
         return url
 
     def move_resource(self, url, keep_ext=False):
@@ -432,14 +441,23 @@ class Storage(object):
             bucket=self.bucket.name,
             key=quote_plus(content_path))
 
-        # first check if already moved
-        if self.bucket.get_key(content_path) is None:
-            key = self.bucket.new_key(content_path)
-            key.set_contents_from_string(fidata, headers={
-                'Content-Type': resp['headers']['content-type'],
+        try:
+            # does a head request for a single key, will throw an error
+            # if not found (or elsewise)
+            self.bucket.Object(content_path).load()
+        except botocore.exceptions.ClientError:
+            # the object hasn't been pushed to s3 yet, so do that
+            # create/update
+            extraargs = {
+                'ContentType': resp['headers']['content-type'],
                 'Content-Disposition': resp['headers'].get('content-disposition')
-            }, replace=True)
-            key.make_public()
+            }
+            contentio = StringIO.StringIO(fidata)
+            self.bucket.upload_fileobj(contentio, content_path, ExtraArgs=extraargs)
+            # make public
+            s3_obj = self.bucket.Object(content_path)
+            object_acl = s3_obj.Acl()
+            object_acl.put(ACL='public-read')
 
         return new_url
 
