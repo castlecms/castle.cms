@@ -64,7 +64,7 @@ Layout tiles
 ------------
 
 Tiles are the building block of everything in Castle. Tiles are what render most
-of the content on the page and are also what are dynamically inserted onto a page
+of the content on the page and are also dynamically inserted onto a page
 inside of content and with meta tiles.
 
 Common layout tiles:
@@ -72,8 +72,8 @@ Common layout tiles:
 - `@@castle.cms.metadata`: current context metadata
 - `@@plone.app.standardtiles.toolbar`: editing toolbar
 - `@@fragment`: render registered fragment. Example: `${portal_url}/@@fragment?name=mainlinks`
-- `@@castle.cms.meta/meta-[name]`: Meta tiles are froups of tiles like what
-   are portlets in old-school Plone. You can add as many as you want.
+- `@@castle.cms.meta/meta-[name]`: Meta tiles are groups of tiles, like
+   portlets in old-school Plone. You can add as many as you want.
    Example: `${context_url}/@@castle.cms.meta/meta-left`
 - `@@plone.app.standardtiles.global_statusmessage`: render status messages
 - `@@plone.app.standardtiles.lockinfo`: render lock info
