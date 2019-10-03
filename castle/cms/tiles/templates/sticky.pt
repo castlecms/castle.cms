@@ -1,8 +1,8 @@
+<div class="pat-sticky"/>
 <div class="sticky-footer alert alert-dismissible footer" role="alert">
   <div>
     <p class="footer-block">
-      <span class="email-alerts-text"><i class="material-icons">email</i>Email Alerts</span>
-      <span class="email-alerts-seperator"> | </span>
+      <span class="email-alerts-text"><i class="material-icons">email</i></span>
       <span class="email-alerts-description">${view/data/description}</span>
       <span tal:condition="python: view.data.get('internal_link', None)" class="subscribe-button">
         <a class="plone-btn plone-btn-primary" href="${view/data/internal_link}" role="button">${view/data/button_text}</a>
