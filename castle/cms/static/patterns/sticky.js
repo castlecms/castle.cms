@@ -12,7 +12,7 @@ define([
     parser: 'mockup',
     defaults: {},
     init: function() {
-      window.addEventListener("load", event => {
+      window.addEventListener("load", function(event) {
         $(".sticky-footer").show();
         $(".sticky-footer")
           .css({ bottom: "-100px" })
