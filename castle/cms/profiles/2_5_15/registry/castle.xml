@@ -8,13 +8,15 @@
       </element>
     </value>
   </record>
-  <record name="castle.gtm_id">
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gtm_id" prefix="castle" purge="False">
     <field type="plone.registry.field.TextLine">
       <title>Google Tag Manager Container ID</title>
       <required>False</required>
     </field>
   </record>
-  <record name="castle.gtm_enabled">
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gtm_id" prefix="castle" purge="False">
     <field type="plone.registry.field.Boolean">
       <title>Enable Google Tag Manager Throughout Site</title>
       <required>False</required>
