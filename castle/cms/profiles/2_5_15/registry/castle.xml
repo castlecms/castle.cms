@@ -15,7 +15,7 @@
     </field>
   </record>
   <record name="castle.gtm_enabled">
-    <field type="plone.registry.field.TextLine">
+    <field type="plone.registry.field.Boolean">
       <title>Enable Google Tag Manager Throughout Site</title>
       <required>False</required>
     </field>
