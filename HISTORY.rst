@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.15 (unreleased)
+2.5.15 (2019-10-07)
 -------------------
 
 - add sticky footer tile
