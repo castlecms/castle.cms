@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.16 (unreleased)
+2.5.16 (2019-10-07)
 -------------------
 
 - Fix upgrade step
