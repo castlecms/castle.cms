@@ -7,6 +7,14 @@ Changelog
 - add sticky footer tile
   [lucid-0]
 
+- integrate Google Tag Manager
+  [lucid-0]
+
+- Redirect to /@@secure-login if it's in request path
+  [lucid-0]
+
+- Serve strict robots.txt to backend URL
+  [lucid-0, Chue Her]
 
 2.5.14 (2019-07-18)
 -------------------
