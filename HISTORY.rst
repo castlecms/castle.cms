@@ -4,8 +4,8 @@ Changelog
 2.5.16 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Fix upgrade step
+  [lucid-0]
 
 2.5.15 (2019-10-07)
 -------------------
