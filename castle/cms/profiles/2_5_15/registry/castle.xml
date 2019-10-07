@@ -16,7 +16,7 @@
     </field>
   </record>
   <record interface="castle.cms.interfaces.IAPISettings"
-          field="gtm_id" prefix="castle" purge="False">
+          field="gtm_enabled" prefix="castle" purge="False">
     <field type="plone.registry.field.Bool">
       <title>Enable Google Tag Manager Throughout Site</title>
       <required>False</required>
