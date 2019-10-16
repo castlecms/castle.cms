@@ -258,6 +258,18 @@
     template="templates/gtm.pt"
     />
 
+  <plone:tile
+    name="castle.cms.stickyfooter"
+    title="Sticky Footer"
+    class=".sticky.StickyFooterTile"
+    schema=".sticky.IStickyFooterTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/sticky.pt"
+    />
+
   <!-- overrides -->
   <plone:tile
     name="plone.app.standardtiles.discussion"
