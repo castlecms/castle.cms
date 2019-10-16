@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+from future.standard_library import install_aliases
+install_aliases()
+
 from lxml.html import fromstring
 import unittest
+from urllib.parse import unquote_plus
 
 import boto3
 import botocore
@@ -122,6 +126,8 @@ class TestStorage(unittest.TestCase):
         #api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
         api.portal.set_registry_record('castle.aws_s3_base_url', self.test_base_url)
 
+        #api.portal.set_registry_record('plone.public_url', u'http://nohost/')
+
     @mock_s3
     def test_move_to_aws(self):
         # this is creating a bucket in the moto/mock s3 service
@@ -146,7 +152,47 @@ class TestStorage(unittest.TestCase):
 
     @mock_s3
     def test_move_resource(self):
-        pass
+        # this is creating a bucket in the moto/mock s3 service
+        s3conn = boto3.resource('s3')
+        s3conn.create_bucket(Bucket='castletest')
+        s3, bucket = aws.get_bucket("castletest")
+
+        storage = archival.Storage(self.portal)
+
+        testcontent = 'this is some content'
+        moveresource = api.content.create(
+            type='Document',
+            id='moveresource',
+            container=self.portal)
+        moveresource.content = testcontent
+        api.content.transition(moveresource, 'publish')
+        vpath = "/moveresource"
+        url = self.portal.absolute_url() + vpath
+
+        new_url = storage.move_resource(url, use_vhm=False)
+
+        self.assertIsNotNone(new_url)
+
+        try:
+            # trim off 'https://s3.amazonaws.com/castletest/'
+            # and then convert the path back from the url escaped version
+            content_path = unquote_plus(new_url[36:])
+            bucket.Object(content_path).load()
+        except botocore.exceptions.ClientError:
+            self.fail("object does not exist after move")
+
+        # move by url of content again
+        new_url2 = storage.move_resource(url, use_vhm=False)
+        self.assertEqual(new_url, new_url2)
+
+        # test for existence of content in aws still
+        try:
+            # trim off 'https://s3.amazonaws.com/castletest/'
+            # and then convert the path back from the url escaped version
+            content_path = unquote_plus(new_url[36:])
+            bucket.Object(content_path).load()
+        except botocore.exceptions.ClientError:
+            self.fail("object does not exist after move")
 
     def test_archive_replacement_text(self):
         storage = archival.Storage(self.portal)

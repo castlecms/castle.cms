@@ -260,7 +260,7 @@ class SubrequestUrlOpener(object):
             self.public_url = self.site.absolute_url()
         self.vhm_base = _get_vhm_base_url(self.public_url, self.site_path)
 
-    def __call__(self, url):
+    def __call__(self, url, use_vhm=True):
         url = normalize_url(url)
         if not url:
             return
@@ -280,9 +280,12 @@ class SubrequestUrlOpener(object):
             # can always be from site root
             url = self.public_url + '/++plone++' + url.rsplit('++plone++', 1)[-1]  # noqa
 
-        parsed = urlparse(url)
-        vhm_path = self.vhm_base + parsed.path
-        resp = subrequest(vhm_path)
+        if use_vhm:
+            parsed = urlparse(url)
+            vhm_path = self.vhm_base + parsed.path
+            resp = subrequest(vhm_path)
+        else:
+            resp = subrequest(url)
         if resp.getStatus() == 404:
             return
 
@@ -399,13 +402,13 @@ class Storage(object):
 
         return url
 
-    def move_resource(self, url, keep_ext=False):
+    def move_resource(self, url, keep_ext=False, use_vhm=True):
         if 'data:' in url:
             return
         if url in self.errors:
             print('skipping because of error %s' % url)
             return
-        resp = self.url_opener(url)
+        resp = self.url_opener(url, use_vhm=use_vhm)
         if resp is None:
             self.errors.append(url)
             return
@@ -450,8 +453,10 @@ class Storage(object):
             # create/update
             extraargs = {
                 'ContentType': resp['headers']['content-type'],
-                'Content-Disposition': resp['headers'].get('content-disposition')
             }
+            contentdisp = resp['headers'].get('content-disposition', None)
+            if contentdisp is not None:
+                extraargs['ContentDisposition'] = contentdisp
             contentio = StringIO.StringIO(fidata)
             self.bucket.upload_fileobj(contentio, content_path, ExtraArgs=extraargs)
             # make public
