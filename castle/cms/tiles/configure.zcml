@@ -453,9 +453,7 @@
     factory=".existing.SimpleView"
     />
 
-  <!--
-  Dynamic tiles implementation
-  -->
+  <!-- Dynamic tiles implementation -->
   <plone:tile
     name="castle.cms.dynamic"
     title="Dynamic tile"
