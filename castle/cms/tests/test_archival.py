@@ -223,5 +223,3 @@ class TestStorage(unittest.TestCase):
             'http://foobar.com')
 
         self.assertTrue('>bar<' in result)
-
-
