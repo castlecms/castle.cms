@@ -21,7 +21,7 @@ class TestCleanupArchive(unittest.TestCase):
         self.test_secret_key = u'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
         self.test_bucket_name = u'castletest'
         # possibly useful to set under some condition...
-        #self.test_bucket_endpoint = u'http://localhost:9000/'
+        # self.test_bucket_endpoint = u'http://localhost:9000/'
         self.test_base_url = u'https://localhost.localdomain/'  # used for test swap
         self.portal = self.layer['portal']
         self.request = self.layer['request']
@@ -31,7 +31,7 @@ class TestCleanupArchive(unittest.TestCase):
         api.portal.set_registry_record('castle.aws_s3_secret', self.test_secret_key)
         api.portal.set_registry_record('castle.aws_s3_bucket_name', self.test_bucket_name)
         # possibly useful to set under some condition...
-        #api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
+        # api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
         api.portal.set_registry_record('castle.aws_s3_base_url', self.test_base_url)
 
     def tearDown(self):
@@ -42,5 +42,9 @@ class TestCleanupArchive(unittest.TestCase):
         site = api.portal.get()
         storage = archival.Storage(site)
         parsed_endpoint = urlparse(storage.s3_conn.meta.client.meta.endpoint_url)
-        self.assertFalse(is_s3_url("http://localhost:9000/{}/{}".format(self.test_bucket_name, self.test_access_key), parsed_endpoint))
-        self.assertTrue(is_s3_url("https://s3.amazonaws.com/{}/{}".format(self.test_bucket_name, self.test_access_key), parsed_endpoint))
+
+        urlstr = "http://localhost:9000/{}/{}".format(self.test_bucket_name, self.test_access_key)
+        self.assertFalse(is_s3_url(urlstr, parsed_endpoint))
+
+        urlstr = "https://s3.amazonaws.com/{}/{}".format(self.test_bucket_name, self.test_access_key)
+        self.assertTrue(is_s3_url(urlstr, parsed_endpoint))

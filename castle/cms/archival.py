@@ -1,5 +1,7 @@
+# for compat with python3, specifically the urllib.parse includes
+# noqa because these need to precede other imports
 from future.standard_library import install_aliases
-install_aliases()
+install_aliases()  # noqa
 
 import botocore
 from BTrees.OOBTree import OOBTree

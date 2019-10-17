@@ -79,7 +79,7 @@ class TestAWS(unittest.TestCase):
         self.test_secret_key = u'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
         self.test_bucket_name = u'castletest'
         # possibly useful to set under some condition...
-        #self.test_bucket_endpoint = u'http://localhost:9000/'
+        # self.test_bucket_endpoint = u'http://localhost:9000/'
         self.test_base_url = u'https://localhost.localdomain/'  # used for test swap
         self.portal = self.layer['portal']
         self.request = self.layer['request']
@@ -89,7 +89,7 @@ class TestAWS(unittest.TestCase):
         api.portal.set_registry_record('castle.aws_s3_secret', self.test_secret_key)
         api.portal.set_registry_record('castle.aws_s3_bucket_name', self.test_bucket_name)
         # possibly useful to set under some condition...
-        #api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
+        # api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
         api.portal.set_registry_record('castle.aws_s3_base_url', self.test_base_url)
 
     def tearDown(self):

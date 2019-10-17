@@ -1,5 +1,7 @@
+# for compat with python3, specifically the urllib.parse includes
+# noqa because these need to precede other imports
 from future.standard_library import install_aliases
-install_aliases()
+install_aliases()  # noqa
 
 import logging
 from datetime import datetime
@@ -94,6 +96,9 @@ def move_file(obj):
     # Upload to AWS
     # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
     #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
+    # note: upload_fileobj() does a multipart upload, which is why
+    #   chunked uploading is no longer performed explicitly
+    #   see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_fileobj  # noqa
     blob_fi = obj.file._blob.open('r')
     bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 

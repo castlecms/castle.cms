@@ -108,7 +108,9 @@ class AWSApi(object):
         if len(todelete) > 1000:
             i = 0
             while i < len(todelete):
-                self.bucket.delete_objects(Delete=dict(Objects=todelete[i:i+1000]))
+                n = i + 1000
+                self.bucket.delete_objects(
+                    Delete=dict(Objects=todelete[i:n]))
                 i += 1000
         else:
             self.bucket.delete_objects(Delete=dict(Objects=todelete))
@@ -128,7 +130,7 @@ class AWSApi(object):
             logger.error(
                 'error deleting object {key} in bucket {name}'.format(
                     key=key_name,
-                    name=bucket.name),
+                    name=self.bucket.name),
                 log_exc=True)
 
         self.delete_archive(path)
@@ -162,7 +164,7 @@ class AWSApi(object):
             logger.error(
                 'error saving object {key} in bucket {name}'.format(
                     key=key_name,
-                    name=bucket.name),
+                    name=self.bucket.name),
                 log_exc=True)
 
     def list(self):
