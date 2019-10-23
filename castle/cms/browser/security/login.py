@@ -66,7 +66,8 @@ class SecureLoginView(BrowserView):
             self.auth.authenticate(
                 username=self.username,
                 password=self.request.form.get('password'),
-                country=self.get_country_header())
+                country=self.get_country_header(),
+                login=False)
             return json.dumps({
                 'success': False,
                 'message': 'Error authenticating request',
@@ -115,7 +116,6 @@ The user requesting this access logged this information:
 <li><b>Name</b>: {name}</li>
 <li><b>Country</b>: {country}</li>
 <li><b>IP</b>: {ip}</li>
-<li><b>User agent</b>: {user_agent}</li>
 </ul>
 
 <p>The user has 12 hours between after authorization has been giving to login
@@ -483,7 +483,6 @@ User and location information:
 <li><b>Name</b>: {name}</li>
 <li><b>Country</b>: {country}</li>
 <li><b>IP</b>: {ip}</li>
-<li><b>User agent</b>: {user_agent}</li>
 </ul>
 
 <p>You have 12 hours to use this granted login exception.</p>
