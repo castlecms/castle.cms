@@ -44,6 +44,8 @@ class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
     def updateFields(self):
         super(AnnouncementsControlPanelForm, self).updateFields()
         self.fields['site_announcement'].widgetFactory = TinyMCETextFieldWidget
+        self.fields['site_disclaimer'].widgetFactory = TinyMCETextFieldWidget
+
 
 
 class ISendEmailUsersForm(model.Schema):
@@ -564,3 +566,4 @@ class ManageSubscribers(BrowserView):
                 subscriber['created']
             })
         return subscribers
+    

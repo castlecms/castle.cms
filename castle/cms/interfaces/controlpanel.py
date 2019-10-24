@@ -203,6 +203,18 @@ class IAnnouncementData(Interface):
         required=False
     )
 
+    show_disclaimer = schema.Bool(
+        title=u'Show disclaimer for first time a user visits a site',
+        default=False,
+        required=False)
+
+    site_disclaimer = schema.Text(
+        title=u"Disclaimer",
+        default=u'<p><strong>Disclaimer</strong> '
+                u'<em>You are seeing this because this is your first time visiting the page.</em></p>',
+        required=False
+    )
+
     directives.omitted('subscriber_categories')
     subscriber_categories = schema.List(
         title=u'Subscription Categories',

@@ -105,7 +105,51 @@ $(document).ready(function(){
       }
     });
   });
+  
+  // method to get the cookie's name
+  function getCookie(key) {
+    const regexp = new RegExp(`.*${key}=([^;]*)`);
+    const result = regexp.exec(document.cookie);
+    if(result) {
+      return result [1];
+    }
+  }
 
+  // create cookie with name and set document.cookie
+  var disclaimerCookie = "disclaimer_name=firstVisit";
+  document.cookie = disclaimerCookie;
+
+  // deletes the cookie for testing purposes
+  //document.cookie = "disclaimer_name=firstVisit ; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+
+  // get the cookie's name
+  var getCookieName = getCookie('disclaimer_name');
+
+  // check if cookie exists and will display first time visit message
+  if (getCookieName != "firstVisit") {
+    document.cookie = disclaimerCookie;
+
+    $.ajax({
+      type: "GET",
+      url: $('body').attr('data-base-url') + '/disclaimer',
+    }).done(function(res) {
+
+       if (res.enabled) {
+         // create divs
+         $("<div id='disclaimerOverlay'><div id='disclaimerDiv'>" + res.msg + "</div></div>").appendTo('body');
+         // create close button
+         $("<a id='closeButton' href='javascript:void(0);'>Close</a>").appendTo('#disclaimerDiv');
+         // close div functionality
+         document.getElementById("closeButton").addEventListener("click", function(e) {
+          document.getElementById("disclaimerOverlay").style.display = "none";
+         });
+         // display div
+         document.getElementById("disclaimerOverlay").style.display = "block";
+
+       }
+    });
+  }
+  
 });
 
 

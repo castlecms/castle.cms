@@ -404,4 +404,12 @@
     permission="zope2.View"
     />
 
+    <browser:page
+    name="disclaimer"
+    class=".announcement.firstVisitMessage"
+    permission="zope2.View"
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    layer="..interfaces.ICastleLayer"
+    />
+
 </configure>
