@@ -54,9 +54,24 @@ class AuthenticationPasswordResetWindowExpired(AuthenticationException):
 @adapter(IItem, Interface)
 class Authenticator(object):
 
+    REQUESTING_AUTH_CODE = 'requesting-auth-code'
+    AUTH_CODE_SENT = 'auth-code-sent'
+    CHECK_CREDENTIALS = 'check-credentials'
+    COUNTRY_BLOCKED = 'country-blocked'
+    REQUESTING_COUNTRY_EXCEPTION = 'requesting-country-exception'
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
+
+        self.valid_flow_states = [
+            self.REQUESTING_AUTH_CODE,
+            self.AUTH_CODE_SENT,
+            self.CHECK_CREDENTIALS,
+            self.COUNTRY_BLOCKED,
+            self.REQUESTING_COUNTRY_EXCEPTION,
+        ]
+
         try:
             self.registry = getUtility(IRegistry)
             self.two_factor_enabled = self.registry.get(
@@ -87,6 +102,39 @@ class Authenticator(object):
                     'label': 'SMS'
                 })
         return auth_schemes
+
+    def get_secure_flow_key(self, username=None):
+        if username:
+            return '{username}-secure-flow-state'.format(username=username)
+
+    def set_secure_flow_state(self, username=None, state=REQUESTING_AUTH_CODE):
+        if not username or state not in self.valid_flow_states:
+            return False
+
+        cache_key = self.get_secure_flow_key(username)
+        new_state = {
+            'state': state,
+            'timestamp': time.time()
+        }
+        cache.set(cache_key, new_state)
+        return True
+
+    def get_secure_flow_state(self, username=None):
+        if username:
+            key = self.get_secure_flow_key(username)
+            state = cache.get(key)
+            if not state:
+                cache_key = self.get_secure_flow_key(username)
+                if self.two_factor_enabled:
+                    initial_state = self.REQUESTING_AUTH_CODE
+                else:
+                    initial_state = self.CHECK_CREDENTIALS
+                state = {
+                    'state': initial_state,
+                    'timestamp': time.time()
+                }
+                cache.set(cache_key, state)
+            return state
 
     def authorize_2factor(self, username, code, offset=0):
         try:

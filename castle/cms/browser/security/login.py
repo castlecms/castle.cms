@@ -11,7 +11,6 @@ from plone import api
 from plone.protect.authenticator import createToken
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
-from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PasswordResetTool.PasswordResetTool import (ExpiredRequestError,
                                                           InvalidRequestError)
@@ -30,22 +29,21 @@ class SecureLoginView(BrowserView):
             (context, request), IAuthenticator)
 
     def __call__(self):
-        api_method = self.request.form.get('apiMethod')
-        if api_method:
+        self.username = self.request.form.get('username', None)
+        if self.username:
+            state = self.auth.get_secure_flow_state(self.username)
             self.request.response.setHeader('Content-type', 'application/json')
 
-        if api_method == 'send_authorization':
+        if state == self.auth.REQUESTING_AUTH_CODE:
             return self.send_authorization()
-        if api_method == 'authorize_code':
+        if state == self.auth.AUTH_CODE_SENT:
             return self.authorize_code()
-        if api_method == 'login':
+        if state == self.auth.CHECK_CREDENTIALS:
             return self.login()
-        if api_method == 'set_password':
-            return self.set_password()
-        if api_method == 'request_country_exception':
+        if state == self.auth.REQUESTING_COUNTRY_EXCEPTION:
             return self.request_country_exception()
-        if api_method == 'reset_password':
-            return self.reset_password()
+        # if state == 'reset_password':
+        #    return self.reset_password()
 
         self.request.response.setHeader('X-Theme-Applied', True)
         return self.index()
@@ -130,47 +128,6 @@ The user requesting this access logged this information:
             'success': True,
             'message': 'Successfully requested country exception.',
             'messageType': 'info'
-        })
-
-    def set_password(self):
-        # 1. Authenticate user
-        authorized, user = self.auth.authenticate(
-            username=self.username,
-            password=self.request.form.get('existing_password'),
-            country=self.get_country_header(),
-            login=False)
-
-        if not user or not authorized:
-            return json.dumps({
-                'success': False,
-                'message': 'Existing credentials did not match'
-            })
-
-        # 2. Set password
-        newpw = self.request.form.get('new_password')
-
-        registration = getToolByName(self.context, 'portal_registration')
-        err_str = registration.testPasswordValidity(newpw)
-
-        if err_str is not None:
-            return json.dumps({
-                'success': False,
-                'message': translate(err_str)
-            })
-
-        mtool = api.portal.get_tool('portal_membership')
-        member = mtool.getMemberById(user.getId())
-
-        self.auth.change_password(member, newpw)
-
-        self.auth.authenticate(
-            username=self.username,
-            password=newpw,
-            country=self.get_country_header(),
-            login=True)
-
-        return json.dumps({
-            'success': True
         })
 
     '''
@@ -280,7 +237,7 @@ The user requesting this access logged this information:
         except authentication.AuthenticationMaxedLoginAttempts:
             return json.dumps({
                 'success': False,
-                'message': 'You have reached the have number of login attempts '
+                'message': 'You have reached the max number of login attempts '
                            'for a period.'
             })
         except authentication.AuthenticationUserDisabled:
@@ -305,6 +262,8 @@ The user requesting this access logged this information:
     def authorize_code(self):
         code = self.request.form.get('code')
         if self.authenticator.authorize_2factor(self.username, code):
+            self.auth.set_secure_flow_state(self.username,
+                                            self.auth.CHECK_CREDENTIALS)
             return json.dumps({
                 'success': True,
                 'message': 'Authorization code verified.'
@@ -321,6 +280,8 @@ The user requesting this access logged this information:
             self.send_auth_email()
         elif auth_type == 'sms':
             self.send_auth_text()
+        self.auth.set_secure_flow_state(self.username,
+                                        self.auth.AUTH_CODE_SENT)
         return json.dumps({
             'success': True,
             'message': 'Authorization code sent to provided username if '

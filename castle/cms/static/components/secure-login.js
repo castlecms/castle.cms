@@ -7,7 +7,7 @@ require([
 
   var D = R.DOM;
 
-  var C = function(name){
+  var getClass = function(name){
     // generate namespaced classes
     return 'castle-secure-login-' + name;
   };
@@ -220,7 +220,7 @@ require([
           ])));
         });
         additional.push(D.ul(
-          { className: C('login-provider') }, providers))
+          { className: getClass('login-provider') }, providers))
       }
       return additional;
     },
@@ -266,15 +266,15 @@ require([
     renderInitialView: function(message){
       var that = this;
       var authType = that.getAuthScheme(that.state.authType);
-      return D.div({className: C('form-' + STATES.NO_WHERE)}, [
+      return D.div({className: getClass('form-' + STATES.NO_WHERE)}, [
         D.h2({ className: 'auth-title' }, 'Login with Two-Factor Authorization'),
         D.p({ className: 'auth-description' },
               'Before you can login with your password, we need you to verify ' +
               'who you are by sending you an authorization code.'),
         that.renderUsername(that.sendAuthCode),
         that.renderAuthSelector(),
-        D.div({ className: C('buttons')}, [
-          D.button({ className: C('send-auth-button') + ' btn btn-default',
+        D.div({ className: getClass('buttons')}, [
+          D.button({ className: getClass('send-auth-button') + ' btn btn-default',
                      disabled: that.state.username.length === 0,
                      onClick: that.sendAuthCode }, 'Send authorization code via ' + authType.label.toLowerCase()),
         ]),
@@ -284,7 +284,7 @@ require([
 
     renderCodeAuthView: function(message){
       var that = this;
-      return D.div({className: C('form-' + STATES.CODE_SENT)}, [
+      return D.div({className: getClass('form-' + STATES.CODE_SENT)}, [
         D.h2({ className: 'auth-title' }, 'Login with Two-Factor Authorization'),
         D.p({ className: 'auth-description' },
               'Now please verify the authorization code we sent you.'),
@@ -296,8 +296,8 @@ require([
                    onChange: that.valueChanged.bind(that, 'code'),
                    onKeyUp: that.checkEnterHit.bind(that, that.authorizeCode)})
         ]),
-        D.div({ className: C('buttons')}, [
-          D.button({ className: C('resend-button') + ' btn btn-default',
+        D.div({ className: getClass('buttons')}, [
+          D.button({ className: getClass('resend-button') + ' btn btn-default',
                      onClick: function(e){
                        e.preventDefault();
                        that.setState({
@@ -306,7 +306,7 @@ require([
                          password: ''
                        });
                      } }, 'Re-send code'),
-          D.button({ className: C('send-auth-button') + ' btn btn-primary',
+          D.button({ className: getClass('send-auth-button') + ' btn btn-primary',
                      onClick: that.authorizeCode }, 'Authorize code'),
         ]),
         message
@@ -325,7 +325,7 @@ require([
       if(!that.props.twoFactorEnabled){
         help = 'Login with username and password';
       }
-      return D.div({className: C('form-' + STATES.CODE_AUTHORIZED)}, [
+      return D.div({className: getClass('form-' + STATES.CODE_AUTHORIZED)}, [
         D.h2({ className: 'auth-title' }, 'Login'),
         D.p({ className: 'auth-description' }, help),
         that.renderUsername(that.login),
@@ -337,8 +337,8 @@ require([
                    onKeyUp: that.checkEnterHit.bind(that, that.login),
                    onChange: that.valueChanged.bind(that, 'password')})
         ]),
-        D.div({ className: C('buttons')}, [
-          D.button({ className: C('login-button') + ' btn btn-primary',
+        D.div({ className: getClass('buttons')}, [
+          D.button({ className: getClass('login-button') + ' btn btn-primary',
                      onClick: that.login, disabled: disabled }, 'Login'),
         ]),
         message
@@ -376,7 +376,7 @@ require([
       if(disabled){
         onKeyUp = function(){};
       }
-      return D.div({className: C('form-' + STATES.RESET_PASSWORD) + ' ' + C('form-' + STATES.CHANGE_PASSWORD)}, [
+      return D.div({className: getClass('form-' + STATES.RESET_PASSWORD) + ' ' + getClass('form-' + STATES.CHANGE_PASSWORD)}, [
         D.h2({ className: 'auth-title' }, 'Change password'),
         D.p({ className: 'auth-description' }, help),
         D.div({ className: 'form-group'}, [
@@ -407,8 +407,8 @@ require([
                    onChange: that.pwChangeValueChanged.bind(that, 'new_password2'),
                    disabled: that.state.state !== STATES.CHANGE_PASSWORD})
         ]),
-        D.div({ className: C('buttons')}, [
-          D.button({ className: C('login-button') + ' btn btn-primary',
+        D.div({ className: getClass('buttons')}, [
+          D.button({ className: getClass('login-button') + ' btn btn-primary',
                      disabled: disabled,
                      onClick: that.set_password }, 'Change password'),
         ]),
@@ -425,11 +425,11 @@ require([
                  'able to login again. Your temporary allowed access from ' +
                  'your current location only works for the current computer, ' +
                  'browser and location you are accessing the site from.';
-      return D.div({className: C('form-' + STATES.COUNTRY_BLOCKED)}, [
+      return D.div({className: getClass('form-' + STATES.COUNTRY_BLOCKED)}, [
         D.h2({ className: 'auth-title' }, 'Request access from blocked country'),
         D.p({ className: 'auth-description' }, help),
-        D.div({ className: C('buttons')}, [
-          D.button({ className: C('login-button') + ' btn btn-primary',
+        D.div({ className: getClass('buttons')}, [
+          D.button({ className: getClass('login-button') + ' btn btn-primary',
                      onClick: that.request_country_exception,
                      disabled: that.state.state !== STATES.COUNTRY_BLOCKED
                    }, 'Request access'),
@@ -442,7 +442,7 @@ require([
       var help = 'You have requested a block exception. Administrators will ' +
                  'review your reqeust. Once you are approved, you will receive ' +
                  'an email letting you know that you are allowed to login again.';
-      return D.div({className: C('form-' + STATES.COUNTRY_BLOCK_REQUESTED)}, [
+      return D.div({className: getClass('form-' + STATES.COUNTRY_BLOCK_REQUESTED)}, [
         D.h2({ className: 'auth-title' }, 'Requested access from blocked country'),
         D.p({ className: 'auth-description' }, help),
         message
@@ -459,7 +459,7 @@ require([
 
     update: function(){
       var $container = $(this.refs.container.getDOMNode());
-      var $selectedForm = $('.' + C('form-' + this.state.state));
+      var $selectedForm = $('.' + getClass('form-' + this.state.state));
 
       setTimeout(function(){
         $container.height($selectedForm.height() + 20);
@@ -490,8 +490,8 @@ require([
         that.renderCountryBlockedRequested(message)
       ];
 
-      return D.div({ className: C('container'), ref: 'container'}, [
-        D.div({ className: C('forms-container') + ' ' + that.state.state,
+      return D.div({ className: getClass('container'), ref: 'container'}, [
+        D.div({ className: getClass('forms-container') + ' ' + that.state.state,
                 ref: 'formContainer'}, forms)
       ]);
     }
@@ -535,7 +535,7 @@ require([
       } else if(that.state.new_password1.length < 7){
         disabled = true;
       }
-      return D.div({className: C('form-' + STATES.RESET_PASSWORD)}, [
+      return D.div({className: getClass('form-' + STATES.RESET_PASSWORD)}, [
         D.h2({ className: 'auth-title' }, 'Change password'),
         D.p({ className: 'auth-description' }, help),
         D.div({ className: 'form-group'}, [
@@ -552,8 +552,8 @@ require([
                    placeholder:'Confirm new password',
                    onChange: that.pwResetValueChanged.bind(that, 'new_password2')})
         ]),
-        D.div({ className: C('buttons')}, [
-          D.button({ className: C('login-button') + ' btn btn-primary',
+        D.div({ className: getClass('buttons')}, [
+          D.button({ className: getClass('login-button') + ' btn btn-primary',
                      disabled: disabled,
                      onClick: that.set_password }, 'Change password'),
         ]),
@@ -619,8 +619,8 @@ require([
         that.renderView(message)
       ];
 
-      return D.div({ className: C('container'), ref: 'container'}, [
-        D.div({ className: C('forms-container') + ' ' + that.state.state,
+      return D.div({ className: getClass('container'), ref: 'container'}, [
+        D.div({ className: getClass('forms-container') + ' ' + that.state.state,
                 ref: 'formContainer'}, forms)
       ]);
     }
