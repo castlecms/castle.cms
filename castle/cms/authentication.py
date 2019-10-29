@@ -64,6 +64,8 @@ class Authenticator(object):
         self.context = context
         self.request = request
 
+        self.session_id = self.request.cookies.get('castle_session_id', None)
+
         self.valid_flow_states = [
             self.REQUESTING_AUTH_CODE,
             self.AUTH_CODE_SENT,
@@ -76,6 +78,8 @@ class Authenticator(object):
             self.registry = getUtility(IRegistry)
             self.two_factor_enabled = self.registry.get(
                 'plone.two_factor_enabled', False)
+            self.expire = self.registry.get(
+                'plone.auth_step_timeout', 120)
         except ComponentLookupError:
             self.registry = None
             self.two_factor_enabled = False
@@ -105,7 +109,8 @@ class Authenticator(object):
 
     def get_secure_flow_key(self, username=None):
         if username:
-            return '{username}-secure-flow-state'.format(username=username)
+            return '{id}-{name}-secure-state'.format(id=self.session_id,
+                                                     name=username)
 
     def set_secure_flow_state(self, username=None, state=REQUESTING_AUTH_CODE):
         if not username or state not in self.valid_flow_states:
@@ -116,25 +121,14 @@ class Authenticator(object):
             'state': state,
             'timestamp': time.time()
         }
-        cache.set(cache_key, new_state)
+        cache.set(cache_key, new_state, expire=self.expire)
         return True
 
     def get_secure_flow_state(self, username=None):
         if username:
             key = self.get_secure_flow_key(username)
-            state = cache.get(key)
-            if not state:
-                cache_key = self.get_secure_flow_key(username)
-                if self.two_factor_enabled:
-                    initial_state = self.REQUESTING_AUTH_CODE
-                else:
-                    initial_state = self.CHECK_CREDENTIALS
-                state = {
-                    'state': initial_state,
-                    'timestamp': time.time()
-                }
-                cache.set(cache_key, state)
-            return state
+            state = cache.get(key)  # may be None
+        return state
 
     def authorize_2factor(self, username, code, offset=0):
         try:
@@ -282,13 +276,13 @@ class Authenticator(object):
 
         return data
 
-    def change_password(self, member, new_password):
-        user = api.user.get(member.getId())
-        user.setMemberProperties(mapping={
-            'reset_password_required': False,
-            'reset_password_time': time.time()
-        })
-        member.setSecurityProfile(password=new_password)
+    # def change_password(self, member, new_password):
+        # user = api.user.get(member.getId())
+        # user.setMemberProperties(mapping={
+        #     'reset_password_required': False,
+        #    'reset_password_time': time.time()
+        # })
+        # member.setSecurityProfile(password=new_password)
 
     def get_options(self):
         site_url = success_url = self.context.absolute_url()

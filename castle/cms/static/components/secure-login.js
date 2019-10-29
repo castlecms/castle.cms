@@ -13,10 +13,10 @@ require([
   };
 
   var STATES = {
-    NO_WHERE: 'request-auth-code',
+    REQUEST_AUTH_CODE: 'request-auth-code',
     CODE_SENT: 'auth-code-sent',
     CODE_AUTHORIZED: 'code-authorized',
-    CHANGE_PASSWORD: 'change-password',
+    CHECK_CREDENTIALS: 'check-credentials',
     COUNTRY_BLOCKED: 'country-blocked',
     COUNTRY_BLOCK_REQUESTED: 'country-block-requested',
     RESET_PASSWORD: 'reset-password',
@@ -24,6 +24,11 @@ require([
 
   var SecureLoginComponent = R.createClass({
     getInitialState: function(){
+      if (this.props.twoFactorEnabled){
+        var initialState = STATES.REQUEST_AUTH_CODE;
+      } else {
+        var initialState = STATES.CHECK_CREDENTIALS;
+      }
       return {
         username: '',
         code: '',
@@ -31,11 +36,12 @@ require([
         new_password1: '',
         new_password2: '',
         authType: 'email',
-        state: this.props.twoFactorEnabled && STATES.NO_WHERE || STATES.CODE_AUTHORIZED,
+        state: initialState
         message: null,
         messageType: 'info',
         authenticator: '',
-        counter: 0
+        counter: 0,
+        options: options
       };
     },
 
@@ -46,7 +52,7 @@ require([
           label: 'Email'
         }],
         twoFactorEnabled: false,
-        additionalProviders: []
+        additionalProviders: [],
       };
     },
 
@@ -104,31 +110,31 @@ require([
       });
     },
 
-    sendAuthCode: function(e){
-      var that = this;
-      e.preventDefault();
-      that.api({
-        authType: that.state.authType,
-        apiMethod: 'send_authorization'
-      }, function(){
-        that.setState({
-          state: STATES.CODE_SENT
-        });
-      });
-    },
-
-    authorizeCode: function(e){
-      var that = this;
-      e.preventDefault();
-      that.api({
-        code: that.state.code,
-        apiMethod: 'authorize_code'
-      }, function(){
-        that.setState({
-          state: STATES.CODE_AUTHORIZED
-        });
-      });
-    },
+    // sendAuthCode: function(e){
+    //   var that = this;
+    //   e.preventDefault();
+    //   that.api({
+    //     authType: that.state.authType,
+    //     apiMethod: 'send_authorization'
+    //   }, function(){
+    //     that.setState({
+    //       state: STATES.CODE_SENT
+    //     });
+    //   });
+    // },
+    //
+    // authorizeCode: function(e){
+    //   var that = this;
+    //   e.preventDefault();
+    //   that.api({
+    //     code: that.state.code,
+    //     apiMethod: 'authorize_code'
+    //   }, function(){
+    //     that.setState({
+    //       state: STATES.CODE_AUTHORIZED
+    //     });
+    //   });
+    // },
 
     login: function(e){
       var that = this;
@@ -248,7 +254,7 @@ require([
       // for calculating ids
       that.state.counter += 1;
 
-      var disabled = that.props.twoFactorEnabled && that.state.state !== STATES.NO_WHERE;
+      var disabled = that.props.twoFactorEnabled && that.state.state !== STATES.REQUEST_AUTH_CODE;
       if(that.state.state === STATES.RESET_PASSWORD){
         disabled = true;
       }
@@ -263,10 +269,10 @@ require([
       ]);
     },
 
-    renderInitialView: function(message){
+    renderTwoFactorView: function(message){
       var that = this;
       var authType = that.getAuthScheme(that.state.authType);
-      return D.div({className: getClass('form-' + STATES.NO_WHERE)}, [
+      return D.div({className: getClass('form-' + STATES.REQUEST_AUTH_CODE)}, [
         D.h2({ className: 'auth-title' }, 'Login with Two-Factor Authorization'),
         D.p({ className: 'auth-description' },
               'Before you can login with your password, we need you to verify ' +
@@ -301,7 +307,7 @@ require([
                      onClick: function(e){
                        e.preventDefault();
                        that.setState({
-                         state: STATES.NO_WHERE,
+                         state: STATES.REQUEST_AUTH_CODE,
                          code: '',
                          password: ''
                        });
@@ -438,7 +444,7 @@ require([
       ]);
     },
 
-    renderCountryBlockedRequested: function(message){
+    renderCountryExceptionRequested: function(message){
       var help = 'You have requested a block exception. Administrators will ' +
                  'review your reqeust. Once you are approved, you will receive ' +
                  'an email letting you know that you are allowed to login again.';
@@ -482,12 +488,12 @@ require([
         ]);
       }
       var forms = [
-        that.renderInitialView(message),
+        that.renderTwoFactorView(message),
         that.renderCodeAuthView(message),
         that.renderPasswordForm(message),
         that.renderChangeForm(message),
         that.renderCountryBlockedForm(message),
-        that.renderCountryBlockedRequested(message)
+        that.renderCountryExceptionRequested(message)
       ];
 
       return D.div({ className: getClass('container'), ref: 'container'}, [
@@ -507,6 +513,7 @@ require([
         messageType: 'info'
       };
     },
+
     pwResetValueChanged: function(name, e){
       var that = this;
       that.state[name] = e.target.value;
@@ -522,6 +529,7 @@ require([
       }
       that.forceUpdate();
     },
+
     renderView: function(message){
       var that = this;
       that.state.counter += 1;
@@ -560,6 +568,7 @@ require([
         message
       ]);
     },
+
     set_password: function(e){
       var that = this;
       e.preventDefault();
@@ -604,6 +613,7 @@ require([
         });
       });
     },
+
     render: function(){
       var that = this;
 
@@ -628,10 +638,10 @@ require([
 
   var el = document.getElementById('secure-login');
   var options = JSON.parse(el.getAttribute('data-options'));
-
-  if(options.passwordReset){
-    R.render(R.createElement(PasswordResetComponent, options), el);
-  }else{
-    R.render(R.createElement(SecureLoginComponent, options), el);
-  }
+  //if(options.passwordReset){
+  //  R.render(R.createElement(PasswordResetComponent, options), el);
+  //}else{
+  // ^ this will either be one of the existing component forms, or a different file entirely
+  R.render(R.createElement(SecureLoginComponent, options), el);
+  //}
 });

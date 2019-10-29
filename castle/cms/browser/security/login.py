@@ -27,21 +27,38 @@ class SecureLoginView(BrowserView):
         super(SecureLoginView, self).__init__(context, request)
         self.auth = self.authenticator = getMultiAdapter(
             (context, request), IAuthenticator)
+        self.state_map = {
+            self.auth.REQUESTING_AUTH_CODE: self.send_authorization,
+            self.auth.AUTH_CODE_SENT: self.authorize_code,
+            self.auth.CHECK_CREDENTIALS: self.login,
+            self.auth.REQUESTING_COUNTRY_EXCEPTION: self.request_country_exception
+        }
+        self.state = None
 
     def __call__(self):
         self.username = self.request.form.get('username', None)
         if self.username:
             state = self.auth.get_secure_flow_state(self.username)
-            self.request.response.setHeader('Content-type', 'application/json')
+            if not state:
+                if self.two_factor_enabled:
+                    initial_state = self.REQUESTING_AUTH_CODE
+                else:
+                    initial_state = self.CHECK_CREDENTIALS
+                state = {
+                    'state': initial_state,
+                    'timestamp': time.time()
+                }
+                self.auth.set_secure_flow_state(self.username, state)
+            else:
+                self.request.response.setHeader('Content-type', 'application/json')
+                if state in self.state_map:
+                    return self.state_map[state]()
+                else:
+                    self.request.response.setStatus(403)
+                    return json.dumps({
+                        'reason': 'Something went wrong.  Try again later.'
+                    })  # this shouldn't happen, state will expire.
 
-        if state == self.auth.REQUESTING_AUTH_CODE:
-            return self.send_authorization()
-        if state == self.auth.AUTH_CODE_SENT:
-            return self.authorize_code()
-        if state == self.auth.CHECK_CREDENTIALS:
-            return self.login()
-        if state == self.auth.REQUESTING_COUNTRY_EXCEPTION:
-            return self.request_country_exception()
         # if state == 'reset_password':
         #    return self.reset_password()
 
@@ -173,13 +190,13 @@ The user requesting this access logged this information:
 
     def login(self):
         # double check auth code first
-        code = self.request.form.get('code')
-        if (self.auth.two_factor_enabled and not
-                self.auth.authorize_2factor(self.username, code, 5 * 60)):
-            return json.dumps({
-                'success': False,
-                'message': 'Login failed for username and password.'
-            })
+        if self.auth.two_factor_enabled:
+            code = self.request.form.get('code')
+            if not self.auth.authorize_2factor(self.username, code, 5 * 60):
+                return json.dumps({
+                    'success': False,
+                    'message': 'Login failed for username and password.'
+                })
 
         try:
             if hasattr(self.context, 'portal_registry'):
