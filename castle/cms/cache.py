@@ -104,6 +104,7 @@ def get(name):
 
 def set(name, value, expire=None):
     client = get_client()
+    import pdb; pdb.set_trace()
     client[name] = value
     if expire and isinstance(client, RedisAdapter):
         try:

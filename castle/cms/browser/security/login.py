@@ -29,28 +29,22 @@ class SecureLoginView(BrowserView):
             (context, request), IAuthenticator)
         self.state_map = {
             self.auth.REQUESTING_AUTH_CODE: self.send_authorization,
-            self.auth.AUTH_CODE_SENT: self.authorize_code,
             self.auth.CHECK_CREDENTIALS: self.login,
             self.auth.REQUESTING_COUNTRY_EXCEPTION: self.request_country_exception
         }
-        self.state = None
 
     def __call__(self):
-        self.username = self.request.form.get('username', None)
         if self.username:
             state = self.auth.get_secure_flow_state(self.username)
             if not state:
-                if self.two_factor_enabled:
-                    initial_state = self.REQUESTING_AUTH_CODE
+                if self.auth.two_factor_enabled:
+                    initial_state = self.auth.REQUESTING_AUTH_CODE
                 else:
-                    initial_state = self.CHECK_CREDENTIALS
-                state = {
-                    'state': initial_state,
-                    'timestamp': time.time()
-                }
-                self.auth.set_secure_flow_state(self.username, state)
+                    initial_state = self.auth.CHECK_CREDENTIALS
+                self.auth.set_secure_flow_state(self.username, initial_state)
             else:
                 self.request.response.setHeader('Content-type', 'application/json')
+                import pdb; pdb.set_trace()
                 if state in self.state_map:
                     return self.state_map[state]()
                 else:
@@ -67,7 +61,7 @@ class SecureLoginView(BrowserView):
 
     @property
     def username(self):
-        return self.request.form.get('username')
+        return self.request.form.get('username', None)
 
     def get_country_header(self):
         return (
@@ -171,7 +165,7 @@ The user requesting this access logged this information:
                     )
 
                     '''
-                    depending how you intepret the setting, it might make
+                    depending how you interpret the setting, it might make
                     more sense to check if it's <= 0 instead.
                     Leaving as strictly LT for now.
                     '''
@@ -189,68 +183,38 @@ The user requesting this access logged this information:
         return False
 
     def login(self):
-        # double check auth code first
+        # check auth code first
         if self.auth.two_factor_enabled:
             code = self.request.form.get('code')
             if not self.auth.authorize_2factor(self.username, code, 5 * 60):
                 return json.dumps({
                     'success': False,
-                    'message': 'Login failed for username and password.'
+                    'message': 'Two Factor is enabled, code not authorized.'
+                })
+
+        if hasattr(self.context, 'portal_registry'):
+            backend_urls = self.context.portal_registry['plone.backend_url']
+            only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']  # noqa
+            portal_url = api.portal.get().absolute_url()
+            bad_domain = only_allow_login_to_backend_urls and \
+                         len(backend_urls) > 0 and \
+                         portal_url.rstrip('/') not in backend_urls and \
+                         portal_url.rstrip('/') + '/' not in backend_urls
+            if bad_domain:
+                return json.dumps({
+                    'success': False,
+                    'message': translate(_(
+                        u'description_bad_login_domain',
+                        default=u'You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.'  # noqa
+                    ))
                 })
 
         try:
-            if hasattr(self.context, 'portal_registry'):
-                backend_urls = self.context.portal_registry['plone.backend_url']
-                only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']  # noqa
-                portal_url = api.portal.get().absolute_url()
-                bad_domain = only_allow_login_to_backend_urls and \
-                             len(backend_urls) > 0 and \
-                             portal_url.rstrip('/') not in backend_urls and \
-                             portal_url.rstrip('/') + '/' not in backend_urls
-                if bad_domain:
-                    return json.dumps({
-                        'success': False,
-                        'message': translate(_(
-                            u'description_bad_login_domain',
-                            default=u'You are attempting to log into this site from the wrong domain; contact your site administrator for assistance.'  # noqa
-                        ))
-                    })
             authorized, user = self.auth.authenticate(
                 username=self.username,
                 password=self.request.form.get('password'),
                 country=self.get_country_header(),
-                login=False)
-            if authorized:
-                reset_password = user.getProperty(
-                    'reset_password_required', False)
-
-                if not self.auth.is_zope_root:
-                    reset_password = reset_password | self.pwexpiry(user)
-
-                resp = {
-                    'success': True,
-                    'resetpassword': reset_password
-                }
-                if reset_password:
-                    resp['message'] = 'Your password has expired.'
-                else:
-                    authorized, user = self.auth.authenticate(
-                        username=self.username,
-                        password=self.request.form.get('password'),
-                        country=self.get_country_header(),
-                        login=True)
-                try:
-                    with api.env.adopt_user(user=user):
-                        resp['authenticator'] = createToken()
-                        return json.dumps(resp)
-                except Exception:
-                    resp['authenticator'] = createToken()
-                    return json.dumps(resp)
-            else:
-                return json.dumps({
-                    'success': False,
-                    'message': 'Login failed for username and password.'
-                })
+                login=True)
         except authentication.AuthenticationMaxedLoginAttempts:
             return json.dumps({
                 'success': False,
@@ -264,7 +228,7 @@ The user requesting this access logged this information:
             })
         except authentication.AuthenticationCountryBlocked:
             return json.dumps({
-                'success': True,
+                'success': False,
                 'countryBlocked': True,
                 'message': 'User login blocked. The country you are logging '
                            'in from is blocked.'
@@ -276,14 +240,43 @@ The user requesting this access logged this information:
                            'fullfilled in required time period.'
             })
 
+        if authorized:
+            pw_expired = user.getProperty(
+                'reset_password_required', False)
+
+            if not self.auth.is_zope_root:
+                pw_expired = pw_expired | self.pwexpiry(user)
+
+            resp = {
+                'success': True,
+                'resetpassword': pw_expired
+            }
+            if pw_expired:
+                resp['message'] = 'Your password has expired. Change it within 24 hours, or this account will be locked.'  # noqa
+
+            try:
+                with api.env.adopt_user(user=user):
+                    resp['authenticator'] = createToken()
+                    return json.dumps(resp)
+            except Exception:
+                resp['authenticator'] = createToken()
+                return json.dumps(resp)
+        else:
+            return json.dumps({
+                'success': False,
+                'message': 'Login failed.'
+            })
+
     def authorize_code(self):
         code = self.request.form.get('code')
         if self.authenticator.authorize_2factor(self.username, code):
+            new_state = self.auth.CHECK_CREDENTIALS
             self.auth.set_secure_flow_state(self.username,
-                                            self.auth.CHECK_CREDENTIALS)
+                                            new_state)
             return json.dumps({
                 'success': True,
-                'message': 'Authorization code verified.'
+                'message': 'Authorization code verified.',
+                'state': new_state
             })
         else:
             return json.dumps({
@@ -297,12 +290,14 @@ The user requesting this access logged this information:
             self.send_auth_email()
         elif auth_type == 'sms':
             self.send_auth_text()
+        new_state = self.auth.CHECK_CREDENTIALS
         self.auth.set_secure_flow_state(self.username,
-                                        self.auth.AUTH_CODE_SENT)
+                                        new_state)
         return json.dumps({
             'success': True,
             'message': 'Authorization code sent to provided username if '
-                       'username exists.'
+                       'username exists.',
+            'state': new_state
         })
 
     def send_auth_email(self):

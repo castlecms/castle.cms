@@ -68,7 +68,6 @@ class Authenticator(object):
 
         self.valid_flow_states = [
             self.REQUESTING_AUTH_CODE,
-            self.AUTH_CODE_SENT,
             self.CHECK_CREDENTIALS,
             self.COUNTRY_BLOCKED,
             self.REQUESTING_COUNTRY_EXCEPTION,
@@ -83,6 +82,7 @@ class Authenticator(object):
         except ComponentLookupError:
             self.registry = None
             self.two_factor_enabled = False
+            self.expire = 120
 
     @property
     def is_zope_root(self):
@@ -112,7 +112,7 @@ class Authenticator(object):
             return '{id}-{name}-secure-state'.format(id=self.session_id,
                                                      name=username)
 
-    def set_secure_flow_state(self, username=None, state=REQUESTING_AUTH_CODE):
+    def set_secure_flow_state(self, username=None, state=None):
         if not username or state not in self.valid_flow_states:
             return False
 
@@ -127,7 +127,11 @@ class Authenticator(object):
     def get_secure_flow_state(self, username=None):
         if username:
             key = self.get_secure_flow_key(username)
-            state = cache.get(key)  # may be None
+            try:
+                state_with_timestamp = cache.get(key)
+                state = state_with_timestamp['state']
+            except KeyError:
+                state = None
         return state
 
     def authorize_2factor(self, username, code, offset=0):

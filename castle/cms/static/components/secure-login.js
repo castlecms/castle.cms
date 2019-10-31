@@ -14,8 +14,6 @@ require([
 
   var STATES = {
     REQUEST_AUTH_CODE: 'request-auth-code',
-    CODE_SENT: 'auth-code-sent',
-    CODE_AUTHORIZED: 'code-authorized',
     CHECK_CREDENTIALS: 'check-credentials',
     COUNTRY_BLOCKED: 'country-blocked',
     COUNTRY_BLOCK_REQUESTED: 'country-block-requested',
@@ -36,12 +34,11 @@ require([
         new_password1: '',
         new_password2: '',
         authType: 'email',
-        state: initialState
+        state: initialState,
         message: null,
         messageType: 'info',
         authenticator: '',
         counter: 0,
-        options: options
       };
     },
 
@@ -149,7 +146,6 @@ require([
             state: STATES.COUNTRY_BLOCKED
           });
         } else if(data.resetpassword){
-          // need to show reset password form now
           that.setState({
               state: STATES.CHANGE_PASSWORD,
               message: 'Login successful.',
@@ -167,26 +163,6 @@ require([
             window.location = that.props.successUrl;
           });
         }
-      });
-    },
-
-    set_password: function(e){
-      var that = this;
-      e.preventDefault();
-      that.api({
-        username: that.state.username,
-        existing_password: that.state.existing_password,
-        new_password: that.state.new_password1,
-        _authenticator: that.state.authenticator,
-        apiMethod: 'set_password'
-      }, function(){
-        // continue to site
-        that.setState({
-          message: 'Password changed.',
-          messageType: 'info'
-        }, function(){
-          window.location = that.props.successUrl;
-        });
       });
     },
 
@@ -269,57 +245,47 @@ require([
       ]);
     },
 
+    renderCodeAuthField: function(){
+      var resend_auth = function(event) {
+        e.preventDefault();
+        that.setState({
+          state: STATES.REQUEST_AUTH_CODE,
+          code: '',
+          password: ''
+        });
+      }
+      return D.div({ className: 'form-group'}, [
+        D.label({ htmlFor: 'code' },'Authorization code'),
+        D.input({type: 'text', value: that.state.code,
+                 className: 'form-control', id: 'code', placeholder:'Enter code',
+                 onChange: that.valueChanged.bind(that, 'code')
+               }),
+        D.button({ className: getClass('resend-button') + ' btn btn-default',
+                   onClick: resend_auth }, 'Resend Code')
+                 ])
+    },
+
     renderTwoFactorView: function(message){
       var that = this;
       var authType = that.getAuthScheme(that.state.authType);
       return D.div({className: getClass('form-' + STATES.REQUEST_AUTH_CODE)}, [
-        D.h2({ className: 'auth-title' }, 'Login with Two-Factor Authorization'),
-        D.p({ className: 'auth-description' },
-              'Before you can login with your password, we need you to verify ' +
-              'who you are by sending you an authorization code.'),
-        that.renderUsername(that.sendAuthCode),
-        that.renderAuthSelector(),
-        D.div({ className: getClass('buttons')}, [
-          D.button({ className: getClass('send-auth-button') + ' btn btn-default',
-                     disabled: that.state.username.length === 0,
-                     onClick: that.sendAuthCode }, 'Send authorization code via ' + authType.label.toLowerCase()),
-        ]),
-        message
-      ].concat(that.renderAdditionalLoginProviders()));
+                      D.h2({ className: 'auth-title' }, 'Login with Two-Factor Authorization'),
+                      D.p({ className: 'auth-description' },
+                            'Before you can login with your password, we need you to verify ' +
+                            'who you are by sending you an authorization code.'),
+                      that.renderUsername(that.sendAuthCode),
+                      that.renderAuthSelector(),
+                      D.div({ className: getClass('buttons')},
+                        D.button({ className: getClass('send-auth-button') + ' btn btn-default',
+                                   disabled: that.state.username.length === 0,
+                                   onClick: that.sendAuthCode }, 'Send authorization code via ' + authType.label.toLowerCase()),
+                      ),
+                      message,
+                      that.renderAdditionalLoginProviders()
+      ]);
     },
 
-    renderCodeAuthView: function(message){
-      var that = this;
-      return D.div({className: getClass('form-' + STATES.CODE_SENT)}, [
-        D.h2({ className: 'auth-title' }, 'Login with Two-Factor Authorization'),
-        D.p({ className: 'auth-description' },
-              'Now please verify the authorization code we sent you.'),
-        that.renderUsername(that.authorizeCode),
-        D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'code' }, 'Authorization code'),
-          D.input({type: 'text', value: that.state.code,
-                   className: 'form-control', id: 'code', placeholder:'Enter code',
-                   onChange: that.valueChanged.bind(that, 'code'),
-                   onKeyUp: that.checkEnterHit.bind(that, that.authorizeCode)})
-        ]),
-        D.div({ className: getClass('buttons')}, [
-          D.button({ className: getClass('resend-button') + ' btn btn-default',
-                     onClick: function(e){
-                       e.preventDefault();
-                       that.setState({
-                         state: STATES.REQUEST_AUTH_CODE,
-                         code: '',
-                         password: ''
-                       });
-                     } }, 'Re-send code'),
-          D.button({ className: getClass('send-auth-button') + ' btn btn-primary',
-                     onClick: that.authorizeCode }, 'Authorize code'),
-        ]),
-        message
-      ].concat(that.renderAdditionalLoginProviders()));
-    },
-
-    renderPasswordForm: function(message){
+    renderCheckCredentials: function(message){
       var that = this;
       that.state.counter += 1;
       var disabled = false;
@@ -327,13 +293,16 @@ require([
         disabled = true;
       }
 
-      var help = 'Now please login with your username and password.';
+      var help = 'Login with your username, password, and Two-Factor Code.';
       if(!that.props.twoFactorEnabled){
         help = 'Login with username and password';
       }
-      return D.div({className: getClass('form-' + STATES.CODE_AUTHORIZED)}, [
-        D.h2({ className: 'auth-title' }, 'Login'),
-        D.p({ className: 'auth-description' }, help),
+
+      var buttonDiv = D.div({ className: getClass('buttons')}, [
+                        D.button({ className: getClass('login-button') + ' btn btn-primary',
+                                    onClick: that.login, disabled: disabled }, 'Login'),]);
+
+      var credentialFields = [
         that.renderUsername(that.login),
         D.div({ className: 'form-group'}, [
           D.label({ htmlFor: 'password' + that.state.counter}, 'Password'),
@@ -343,83 +312,18 @@ require([
                    onKeyUp: that.checkEnterHit.bind(that, that.login),
                    onChange: that.valueChanged.bind(that, 'password')})
         ]),
-        D.div({ className: getClass('buttons')}, [
-          D.button({ className: getClass('login-button') + ' btn btn-primary',
-                     onClick: that.login, disabled: disabled }, 'Login'),
-        ]),
-        message
-      ].concat(that.renderAdditionalLoginProviders()));
-    },
+      ]
+      if (that.props.twoFactorEnabled){
+        credentialFields.push(that.renderCodeAuthField());
+      }
+      credentialFields.push(buttonDiv);
+      credentialFields.push(message);
+      credentialFields.push(that.renderAdditionalLoginProviders())
 
-    pwChangeValueChanged: function(name, e){
-      var that = this;
-      that.state[name] = e.target.value;
-      if(that.state.new_password1 !== that.state.new_password2){
-        that.state.messageType = 'warning';
-        that.state.message = 'Passwords do not match.';
-      } else if(that.state.new_password1.length < 7){
-        that.state.messageType = 'warning';
-        that.state.message = 'Password needs to be at least 8 characters.';
-      } else {
-        that.state.messageType = 'info';
-        that.state.message = 'Valid password.';
-      }
-      that.forceUpdate();
-    },
-
-    renderChangeForm: function(message){
-      var that = this;
-      that.state.counter += 1;
-      var help = 'Your password needs to be changed. ' +
-                 'Passwords must match and be at least 8 characters long.';
-      var disabled = false;
-      if(that.state.new_password1 !== that.state.new_password2){
-        disabled = true;
-      } else if(that.state.new_password1.length < 7){
-        disabled = true;
-      }
-      var onKeyUp = that.checkEnterHit.bind(that, that.set_password);
-      if(disabled){
-        onKeyUp = function(){};
-      }
-      return D.div({className: getClass('form-' + STATES.RESET_PASSWORD) + ' ' + getClass('form-' + STATES.CHANGE_PASSWORD)}, [
-        D.h2({ className: 'auth-title' }, 'Change password'),
-        D.p({ className: 'auth-description' }, help),
-        D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'username1' + that.state.counter}, 'Username'),
-          D.input({type: 'text', value: that.state.username, disabled: true,
-                   className: 'form-control', id: 'username1' + that.state.counter})
-        ]),
-        D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'password1' + that.state.counter}, 'Existing password'),
-          D.input({type: 'password', value: that.state.password1,
-                   disabled: that.state.state !== STATES.CHANGE_PASSWORD,
-                   onChange: that.pwChangeValueChanged.bind(that, 'existing_password'),
-                   className: 'form-control', id: 'password1' + that.state.counter})
-        ]),
-        D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'password2' + that.state.counter }, 'New password'),
-          D.input({type: 'password', value: that.state.new_password1,
-                   className: 'form-control password2', id: 'password2' + that.state.counter,
-                   placeholder:'Enter new password', onKeyUp: onKeyUp,
-                   onChange: that.pwChangeValueChanged.bind(that, 'new_password1'),
-                   disabled: that.state.state !== STATES.CHANGE_PASSWORD})
-        ]),
-        D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'password3' + that.state.counter }, 'Confirm new password'),
-          D.input({type: 'password', value: that.state.new_password2,
-                   className: 'form-control password3', id: 'password3' + that.state.counter,
-                   placeholder:'Confirm new password', onKeyUp: onKeyUp,
-                   onChange: that.pwChangeValueChanged.bind(that, 'new_password2'),
-                   disabled: that.state.state !== STATES.CHANGE_PASSWORD})
-        ]),
-        D.div({ className: getClass('buttons')}, [
-          D.button({ className: getClass('login-button') + ' btn btn-primary',
-                     disabled: disabled,
-                     onClick: that.set_password }, 'Change password'),
-        ]),
-        message
-      ]);
+      var credentialForm = D.div({className: getClass('form-' + STATES.CHECK_CREDENTIALS)}, [
+        D.h2({ className: 'auth-title' }, 'Login'),
+        D.p({ className: 'auth-description' }, help)].concat(credentialFields));
+      return credentialForm;
     },
 
     renderCountryBlockedForm: function(message){
@@ -489,9 +393,7 @@ require([
       }
       var forms = [
         that.renderTwoFactorView(message),
-        that.renderCodeAuthView(message),
-        that.renderPasswordForm(message),
-        that.renderChangeForm(message),
+        that.renderCheckCredentials(message),
         that.renderCountryBlockedForm(message),
         that.renderCountryExceptionRequested(message)
       ];
@@ -586,7 +488,6 @@ require([
       }).done(function(data){
         var messageType = 'info';
         if(data.success){
-          // we're good!
           that.setState({
             message: 'Password successfully changed. You may now login',
             messageType: 'info'
