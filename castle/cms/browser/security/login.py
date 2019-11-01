@@ -34,24 +34,22 @@ class SecureLoginView(BrowserView):
         }
 
     def __call__(self):
-        if self.username:
-            state = self.auth.get_secure_flow_state(self.username)
-            if not state:
-                if self.auth.two_factor_enabled:
-                    initial_state = self.auth.REQUESTING_AUTH_CODE
-                else:
-                    initial_state = self.auth.CHECK_CREDENTIALS
-                self.auth.set_secure_flow_state(self.username, initial_state)
+        state = self.auth.get_secure_flow_state()
+        if not state:
+            if self.auth.two_factor_enabled:
+                initial_state = self.auth.REQUESTING_AUTH_CODE
             else:
-                self.request.response.setHeader('Content-type', 'application/json')
-                import pdb; pdb.set_trace()
-                if state in self.state_map:
-                    return self.state_map[state]()
-                else:
-                    self.request.response.setStatus(403)
-                    return json.dumps({
-                        'reason': 'Something went wrong.  Try again later.'
-                    })  # this shouldn't happen, state will expire.
+                initial_state = self.auth.CHECK_CREDENTIALS
+            self.auth.set_secure_flow_state(initial_state)
+        else:
+            self.request.response.setHeader('Content-type', 'application/json')
+            if state in self.state_map:
+                return self.state_map[state]()
+            else:
+                self.request.response.setStatus(403)
+                return json.dumps({
+                    'reason': 'Something went wrong.  Try again later.'
+                })  # this shouldn't happen, state will expire.
 
         # if state == 'reset_password':
         #    return self.reset_password()
@@ -183,7 +181,11 @@ The user requesting this access logged this information:
         return False
 
     def login(self):
-        # check auth code first
+        if not self.username:
+            self.request.response.setHeader('X-Theme-Applied', True)
+            self.request.response.setHeader('Content-type', 'text/html')
+            return self.index()
+
         if self.auth.two_factor_enabled:
             code = self.request.form.get('code')
             if not self.auth.authorize_2factor(self.username, code, 5 * 60):
@@ -241,6 +243,8 @@ The user requesting this access logged this information:
             })
 
         if authorized:
+            self.auth.expire_secure_flow_state()
+            
             pw_expired = user.getProperty(
                 'reset_password_required', False)
 
@@ -271,8 +275,7 @@ The user requesting this access logged this information:
         code = self.request.form.get('code')
         if self.authenticator.authorize_2factor(self.username, code):
             new_state = self.auth.CHECK_CREDENTIALS
-            self.auth.set_secure_flow_state(self.username,
-                                            new_state)
+            self.auth.set_secure_flow_state(new_state)
             return json.dumps({
                 'success': True,
                 'message': 'Authorization code verified.',
@@ -291,8 +294,7 @@ The user requesting this access logged this information:
         elif auth_type == 'sms':
             self.send_auth_text()
         new_state = self.auth.CHECK_CREDENTIALS
-        self.auth.set_secure_flow_state(self.username,
-                                        new_state)
+        self.auth.set_secure_flow_state(new_state)
         return json.dumps({
             'success': True,
             'message': 'Authorization code sent to provided username if '

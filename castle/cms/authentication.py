@@ -107,16 +107,14 @@ class Authenticator(object):
                 })
         return auth_schemes
 
-    def get_secure_flow_key(self, username=None):
-        if username:
-            return '{id}-{name}-secure-state'.format(id=self.session_id,
-                                                     name=username)
+    def get_secure_flow_key(self):
+        return '{id}-secure-state'.format(id=self.session_id)
 
-    def set_secure_flow_state(self, username=None, state=None):
-        if not username or state not in self.valid_flow_states:
+    def set_secure_flow_state(self, state=None):
+        if state not in self.valid_flow_states:
             return False
 
-        cache_key = self.get_secure_flow_key(username)
+        cache_key = self.get_secure_flow_key()
         new_state = {
             'state': state,
             'timestamp': time.time()
@@ -124,15 +122,22 @@ class Authenticator(object):
         cache.set(cache_key, new_state, expire=self.expire)
         return True
 
-    def get_secure_flow_state(self, username=None):
-        if username:
-            key = self.get_secure_flow_key(username)
-            try:
-                state_with_timestamp = cache.get(key)
-                state = state_with_timestamp['state']
-            except KeyError:
-                state = None
+    def get_secure_flow_state(self):
+        key = self.get_secure_flow_key()
+        try:
+            state_with_timestamp = cache.get(key)
+            state = state_with_timestamp['state']
+        except KeyError:
+            state = None
+
         return state
+
+    def expire_secure_flow_state(self):
+        key = self.get_secure_flow_key()
+        try:
+            cache.delete(key)
+        except Exception:
+            pass
 
     def authorize_2factor(self, username, code, offset=0):
         try:
