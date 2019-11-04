@@ -45,8 +45,25 @@ div#disclaimerOverlay {
   left: 500px;
 }
 
+/* slide down animation */
+div#disclaimerOverlay div {
+  animation: 2s slide-down;
+  margin-top: 0%;
+}
+
+@keyframes slide-down {
+  from {
+    margin-top: -100%;
+  }
+
+  to {
+    margin-top: 0%;
+  }
+}
+
 /* first time visit disclaimer */
 div#disclaimerDiv {
+  overflow: hidden;
   position: absolute;
   visibility: visible;
   padding: 10px;

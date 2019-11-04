@@ -3,7 +3,7 @@ from Products.Five import BrowserView
 from zope.component import getUtility
 import json
 
-class firstVisitMessage(BrowserView):
+class FirstVisitMessage(BrowserView):
     def __call__(self):
         registry = getUtility(IRegistry)
         displayMsg = registry.get("castle.show_disclaimer")

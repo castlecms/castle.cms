@@ -47,7 +47,6 @@ class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
         self.fields['site_disclaimer'].widgetFactory = TinyMCETextFieldWidget
 
 
-
 class ISendEmailUsersForm(model.Schema):
     subject = schema.ASCIILine(
         title=u'Subject')
@@ -566,4 +565,3 @@ class ManageSubscribers(BrowserView):
                 subscriber['created']
             })
         return subscribers
-    

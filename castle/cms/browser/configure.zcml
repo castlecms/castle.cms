@@ -406,7 +406,7 @@
 
     <browser:page
     name="disclaimer"
-    class=".announcement.firstVisitMessage"
+    class=".announcement.FirstVisitMessage"
     permission="zope2.View"
     for="plone.app.layout.navigation.interfaces.INavigationRoot"
     layer="..interfaces.ICastleLayer"

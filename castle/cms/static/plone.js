@@ -116,7 +116,7 @@ $(document).ready(function(){
   }
 
   // create cookie with name and set document.cookie
-  var disclaimerCookie = "disclaimer_name=firstVisit";
+  var disclaimerCookie = "disclaimer_name=firstVisit ; expires=Tue, 01 Jan 2030 00:00:01 GMT";
   document.cookie = disclaimerCookie;
 
   // deletes the cookie for testing purposes
