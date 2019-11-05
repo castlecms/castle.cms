@@ -320,20 +320,6 @@ class Authenticator(object):
             # zope root related issue here...
             pass
 
-        username = None
-        pwreset = self.request.form.get('pwreset') == 'true'
-        if pwreset:
-            try:
-                user = api.user.get(self.request.form.get('userid'))
-                username = user.getUserName()
-                data.update({
-                    'passwordReset': pwreset,
-                    'username': username,
-                    'code': self.request.form.get('code'),
-                    'userid': self.request.form.get('userid')
-                })
-            except Exception:
-                pass
         return data
 
 

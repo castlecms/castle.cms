@@ -43,6 +43,15 @@
     allowed_attributes="options" />
 
   <browser:page
+    name="password-reset"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    permission="zope2.View"
+    class=".passwordreset.PasswordResetView"
+    template="./templates/passwordreset.pt"
+    allowed_attributes="options"
+    layer="castle.cms.interfaces.ICastleLayer" />
+
+  <browser:page
     name="account-utils"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     permission="zope2.View"

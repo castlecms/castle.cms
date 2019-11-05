@@ -9,15 +9,12 @@ from castle.cms.utils import get_managers, send_email, strings_differ
 from DateTime import DateTime
 from plone import api
 from plone.protect.authenticator import createToken
-from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
-from Products.PasswordResetTool.PasswordResetTool import (ExpiredRequestError,
-                                                          InvalidRequestError)
 from zope.component import getMultiAdapter, getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
-from zope.interface import alsoProvides, implements
+from zope.interface import implements
 
 
 class SecureLoginView(BrowserView):
@@ -34,6 +31,7 @@ class SecureLoginView(BrowserView):
         }
 
     def __call__(self):
+
         state = self.auth.get_secure_flow_state()
         if not state:
             if self.auth.two_factor_enabled:
@@ -50,9 +48,6 @@ class SecureLoginView(BrowserView):
                 return json.dumps({
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
-
-        # if state == 'reset_password':
-        #    return self.reset_password()
 
         self.request.response.setHeader('X-Theme-Applied', True)
         return self.index()
@@ -181,6 +176,8 @@ The user requesting this access logged this information:
         return False
 
     def login(self):
+        logged_in = False
+
         if not self.username:
             self.request.response.setHeader('X-Theme-Applied', True)
             self.request.response.setHeader('Content-type', 'text/html')
@@ -216,7 +213,7 @@ The user requesting this access logged this information:
                 username=self.username,
                 password=self.request.form.get('password'),
                 country=self.get_country_header(),
-                login=True)
+                login=False)
         except authentication.AuthenticationMaxedLoginAttempts:
             return json.dumps({
                 'success': False,
@@ -242,22 +239,31 @@ The user requesting this access logged this information:
                            'fullfilled in required time period.'
             })
 
-        if authorized:
-            self.auth.expire_secure_flow_state()
-            
+
+        if not self.auth.is_zope_root:
             pw_expired = user.getProperty(
                 'reset_password_required', False)
+            if pw_expired:
+                resp = {
+                    'success': False,
+                    'message': 'Your password has expired. Change it within 24 hours, or this account will be locked.',  # noqa
+                    'changePasswordRequired': True,
+                    'changePasswordUrl': api.portal.get().absolute_url() + '/@@change-password',
+                }
+                return json.dumps(resp)
 
-            if not self.auth.is_zope_root:
-                pw_expired = pw_expired | self.pwexpiry(user)
-
+        if authorized:
+            logged_in, user = self.auth.authenticate(
+                username=self.username,
+                password=self.request.form.get('password'),
+                country=self.get_country_header(),
+                login=True)
             resp = {
                 'success': True,
-                'resetpassword': pw_expired
             }
-            if pw_expired:
-                resp['message'] = 'Your password has expired. Change it within 24 hours, or this account will be locked.'  # noqa
+            self.auth.expire_secure_flow_state()
 
+        if logged_in:
             try:
                 with api.env.adopt_user(user=user):
                     resp['authenticator'] = createToken()
@@ -265,11 +271,11 @@ The user requesting this access logged this information:
             except Exception:
                 resp['authenticator'] = createToken()
                 return json.dumps(resp)
-        else:
-            return json.dumps({
-                'success': False,
-                'message': 'Login failed.'
-            })
+
+        return json.dumps({
+            'success': False,
+            'message': 'Login failed.'
+        })
 
     def authorize_code(self):
         code = self.request.form.get('code')
@@ -348,39 +354,6 @@ The user requesting this access logged this information:
             site_settings.site_title, code)
 
         return texting.send(text_message, phone)
-
-    def reset_password(self):
-        pw_tool = api.portal.get_tool('portal_password_reset')
-        registration = api.portal.get_tool('portal_registration')
-        userid = self.request.form.get('userid')
-        randomstring = self.request.form.get('code')
-        password = self.request.form.get('password')
-
-        err_str = registration.testPasswordValidity(password)
-        if err_str is not None:
-            return json.dumps({
-                'success': False,
-                'message': translate(err_str)
-            })
-
-        alsoProvides(self.request, IDisableCSRFProtection)
-        try:
-            pw_tool.resetPassword(userid, randomstring, password)
-        except ExpiredRequestError:
-            return json.dumps({
-                'success': False,
-                'message': 'Password reset request has expired'
-            })
-        except (InvalidRequestError, RuntimeError):
-            return json.dumps({
-                'success': False,
-                'message': 'Password reset request is invalid'
-            })
-
-        return json.dumps({
-            'success': True,
-            'message': 'Password reset successfully'
-        })
 
     def get_registry(self):
         try:
