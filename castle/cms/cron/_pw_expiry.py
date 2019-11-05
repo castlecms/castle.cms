@@ -3,6 +3,7 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from plone import api
 from .utils import setup_site
 from castle.cms.pwexpiry.utils import days_since_event
+from castle.cms.pwexpiry.utils import send_notification_email
 from DateTime import DateTime
 import time
 
@@ -28,7 +29,6 @@ def update_password_expiry(site):
             if not whitelisted:
                 password_date = user.getProperty('password_date', None)
                 current_time = DateTime()
-                editableUser = api.user.get(username=user.getId())
 
                 if password_date:
                     since_last_pw_reset = days_since_event(
@@ -36,20 +36,18 @@ def update_password_expiry(site):
                         current_time.asdatetime()
                     )
 
-                    '''
-                    depending how you interpret the setting, it might make
-                    more sense to check if it's <= 0 instead.
-                    Leaving as strictly LT for now.
-                    '''
-                    if validity_period - since_last_pw_reset < 0:
+                    remaining_days = validity_period - since_last_pw_reset
+                    if remaining_days < 0:
                         # Password has expired
-                        editableUser.setMemberProperties({
+                        user.setMemberProperties({
                             'reset_password_required': True,
                             'reset_password_time': time.time()
                         })
-                        return True
+                        continue
+                    if remaining_days < 2:
+                        send_notification_email(user, remaining_days)
                 else:
-                    editableUser.setMemberProperties({
+                    user.setMemberProperties({
                         'password_date': current_time
                     })
 
