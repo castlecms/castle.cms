@@ -51,12 +51,13 @@
     allowed_attributes="options"
     layer="castle.cms.interfaces.ICastleLayer" />
 
+
   <browser:page
-    name="account-utils"
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    permission="zope2.View"
-    class=".utils.AccountUtilsView"
-    layer="castle.cms.interfaces.ICastleLayer" />
+      name="change-password"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      class=".changepassword.ChangePassword"
+      permission="cmf.SetOwnPassword"
+      layer="castle.cms.interfaces.ICastleLayer" />
 
   <browser:page
     name="authorize-country-login"

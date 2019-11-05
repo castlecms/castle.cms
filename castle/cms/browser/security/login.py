@@ -4,9 +4,8 @@ import time
 from castle.cms import _, authentication, cache, texting
 from castle.cms.interfaces import (IAuthenticator, ISecureLoginAllowedView,
                                    ISiteSchema)
-from castle.cms.pwexpiry.utils import days_since_event
+from castle.cms.pwexpiry.utils import login_check_expiry
 from castle.cms.utils import get_managers, send_email, strings_differ
-from DateTime import DateTime
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
@@ -134,46 +133,6 @@ The user requesting this access logged this information:
             'messageType': 'info'
         })
 
-    '''
-    this function is here since the current
-    login form doesn't use PAS for validation.
-    '''
-    def pwexpiry(self, user):
-        pwexpiry_enabled = api.portal.get_registry_record('plone.pwexpiry_enabled', default=False)
-        validity_period = api.portal.get_registry_record('plone.pwexpiry_validity_period', default=0)
-        if pwexpiry_enabled and validity_period > 0:
-            whitelist = api.portal.get_registry_record('plone.pwexpiry_whitelisted_users', default=[])
-            whitelisted = whitelist and user.getId() in whitelist
-            if not whitelisted:
-                password_date = user.getProperty(
-                    'password_date',
-                    '2000/01/01'
-                )
-                current_time = DateTime()
-                editableUser = api.user.get(username=user.getId())
-                if password_date.strftime('%Y/%m/%d') != '2000/01/01':
-                    since_last_pw_reset = days_since_event(
-                        password_date.asdatetime(),
-                        current_time.asdatetime()
-                    )
-
-                    '''
-                    depending how you interpret the setting, it might make
-                    more sense to check if it's <= 0 instead.
-                    Leaving as strictly LT for now.
-                    '''
-                    if validity_period - since_last_pw_reset < 0:
-                        # Password has expired
-                        editableUser.setMemberProperties({
-                            'reset_password_required': True,
-                            'reset_password_time': time.time()
-                        })
-                        return True
-                else:
-                    editableUser.setMemberProperties({
-                        'password_date': current_time
-                    })
-        return False
 
     def login(self):
         logged_in = False
@@ -239,8 +198,7 @@ The user requesting this access logged this information:
                            'fullfilled in required time period.'
             })
 
-
-        if not self.auth.is_zope_root:
+        if not self.auth.is_zope_root and user:
             pw_expired = user.getProperty(
                 'reset_password_required', False)
             if pw_expired:

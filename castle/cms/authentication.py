@@ -285,14 +285,6 @@ class Authenticator(object):
 
         return data
 
-    # def change_password(self, member, new_password):
-        # user = api.user.get(member.getId())
-        # user.setMemberProperties(mapping={
-        #     'reset_password_required': False,
-        #    'reset_password_time': time.time()
-        # })
-        # member.setSecurityProfile(password=new_password)
-
     def get_options(self):
         site_url = success_url = self.context.absolute_url()
         if ISiteRoot.providedBy(self.context):
