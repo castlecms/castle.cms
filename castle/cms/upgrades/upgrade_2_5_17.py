@@ -1,7 +1,7 @@
-from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from castle.cms.cron._pw_expiry import update_password_expiry
 from castle.cms.cron.utils import setup_site
 from plone import api
+
 
 def upgrade(context, logger=None):
     setup_site(context)

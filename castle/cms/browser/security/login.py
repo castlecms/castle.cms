@@ -4,7 +4,6 @@ import time
 from castle.cms import _, authentication, cache, texting
 from castle.cms.interfaces import (IAuthenticator, ISecureLoginAllowedView,
                                    ISiteSchema)
-from castle.cms.pwexpiry.utils import login_check_expiry
 from castle.cms.utils import get_managers, send_email, strings_differ
 from plone import api
 from plone.protect.authenticator import createToken
