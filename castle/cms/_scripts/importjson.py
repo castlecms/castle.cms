@@ -346,7 +346,7 @@ class CastleImporter(object):
                 folder = self.import_object(this_folder, container)
             else:
                 id = path.split('/')[-1:][0]
-                folder = self.create_plain_folder(self, id, container)
+                folder = self.create_plain_folder(id, container)
             container = folder
         folders = []
         objects = []
