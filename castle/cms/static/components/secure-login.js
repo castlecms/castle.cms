@@ -149,7 +149,7 @@ require([
       }, function(data){
         if(data.success){
           that.setState({
-            state: STATES.COUNTRY_BLOCK_REQUESTED
+            state: STATES.COUNTRY_BLOCK_REQUESTED,
             message: data.message
           });
         }
