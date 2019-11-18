@@ -22,10 +22,10 @@ class PasswordResetView(BrowserView):
             (context, request), IAuthenticator)
 
     def __call__(self):
-        if self.request.method == 'POST':
+        if self.request.REQUEST_METHOD == 'POST':
             self.reset_password()
         else:
-            return super(PasswordResetView, self).__call__()
+            return self.index()
 
     def reset_password(self):
         pw_tool = api.portal.get_tool('portal_password_reset')

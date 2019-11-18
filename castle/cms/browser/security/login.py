@@ -25,7 +25,7 @@ class SecureLoginView(BrowserView):
         self.state_map = {
             self.auth.REQUESTING_AUTH_CODE: self.send_authorization,
             self.auth.CHECK_CREDENTIALS: self.login,
-            self.auth.REQUESTING_COUNTRY_EXCEPTION: self.request_country_exception
+            self.auth.COUNTRY_BLOCKED: self.country_blocked
         }
 
     def __call__(self):
@@ -59,26 +59,36 @@ class SecureLoginView(BrowserView):
             self.request.get_header('Cf-Ipcountry') or
             self.request.get_header('Country'))
 
-    def request_country_exception(self):
-        # re-check login...
-        # verify we get to country block again
-        try:
-            self.auth.authenticate(
-                username=self.username,
-                password=self.request.form.get('password'),
-                country=self.get_country_header(),
-                login=False)
-            return json.dumps({
-                'success': False,
-                'message': 'Error authenticating request',
-                'messageType': 'error'
-            })
-        except authentication.AuthenticationCountryBlocked:
-            pass
+    def country_blocked(self):
+        if self.request.form.get('apiMethod', None) == 'request_country_exception':
+            user = api.user.get(username=self.username)
+            cache_key = self.auth.get_country_exception_cache_key(user.getId)
+            try:
+                request_data = cache.get(cache_key)
+            except KeyError:
+                request_data = None
 
+            if not request_data:
+                self.request_country_exception()
+            else:
+                if request_data.get('granted', False):
+                    self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
+                    return json.dumps({
+                        'success': True,
+                        'messsage': 'Your request has already been granted, try logging in again.'
+                                    ' Requests expire 12 hours after issue.'
+                    })
+                else:
+                    return json.dumps({
+                        'success': True,
+                        'message': 'Your request has been issued, but not yet granted.'
+                                   ' Requests expire 12 hours after issue.'
+                    })
+
+    def request_country_exception(self):
         req_country = self.get_country_header()
         user = api.user.get(username=self.username)
-        data = self.auth.issue_country_exception(user, req_country)
+        data = self.auth.issue_country_exception_request(user, req_country)
 
         email_subject = "Country block exception request(Site: %s)" % (
             api.portal.get_registry_record('plone.site_title'))
@@ -132,7 +142,6 @@ The user requesting this access logged this information:
             'messageType': 'info'
         })
 
-
     def login(self):
         logged_in = False
 
@@ -167,11 +176,11 @@ The user requesting this access logged this information:
                 })
 
         try:
-            authorized, user = self.auth.authenticate(
+            logged_in, user = self.auth.authenticate(
                 username=self.username,
                 password=self.request.form.get('password'),
                 country=self.get_country_header(),
-                login=False)
+                login=True)
         except authentication.AuthenticationMaxedLoginAttempts:
             return json.dumps({
                 'success': False,
@@ -184,6 +193,7 @@ The user requesting this access logged this information:
                 'message': 'User is disabled.'
             })
         except authentication.AuthenticationCountryBlocked:
+            self.auth.set_secure_flow_state(self.auth.COUNTRY_BLOCKED)
             return json.dumps({
                 'success': False,
                 'countryBlocked': True,
@@ -202,25 +212,17 @@ The user requesting this access logged this information:
                 'reset_password_required', False)
             if pw_expired:
                 resp = {
-                    'success': False,
+                    'success': True,
                     'message': 'Your password has expired. Change it within 24 hours, or this account will be locked.',  # noqa
                     'changePasswordRequired': True,
                     'changePasswordUrl': api.portal.get().absolute_url() + '/@@change-password',
                 }
                 return json.dumps(resp)
 
-        if authorized:
-            logged_in, user = self.auth.authenticate(
-                username=self.username,
-                password=self.request.form.get('password'),
-                country=self.get_country_header(),
-                login=True)
+        if logged_in:
             resp = {
                 'success': True,
             }
-            self.auth.expire_secure_flow_state()
-
-        if logged_in:
             try:
                 with api.env.adopt_user(user=user):
                     resp['authenticator'] = createToken()

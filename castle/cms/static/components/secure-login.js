@@ -122,13 +122,18 @@ require([
             state: STATES.COUNTRY_BLOCKED
           });
         } else {
-          // continue to site
-          that.setState({
-            message: 'Login successful.',
-            messageType: 'info'
-          }, function(){
+          if(data.success){
+            that.setState({
+              message: 'Login successful.',
+              messageType: 'info'
+            });
             window.location = that.props.successUrl;
-          });
+          } else {
+            that.setState({
+              message: data.message,
+              messageType: 'danger'
+            })
+          }
         }
       });
     },
@@ -145,6 +150,7 @@ require([
         if(data.success){
           that.setState({
             state: STATES.COUNTRY_BLOCK_REQUESTED
+            message: data.message
           });
         }
       });

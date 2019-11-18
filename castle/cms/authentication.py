@@ -55,10 +55,8 @@ class AuthenticationPasswordResetWindowExpired(AuthenticationException):
 class Authenticator(object):
 
     REQUESTING_AUTH_CODE = 'requesting-auth-code'
-    AUTH_CODE_SENT = 'auth-code-sent'
     CHECK_CREDENTIALS = 'check-credentials'
     COUNTRY_BLOCKED = 'country-blocked'
-    REQUESTING_COUNTRY_EXCEPTION = 'requesting-country-exception'
 
     def __init__(self, context, request):
         self.context = context
@@ -70,7 +68,6 @@ class Authenticator(object):
             self.REQUESTING_AUTH_CODE,
             self.CHECK_CREDENTIALS,
             self.COUNTRY_BLOCKED,
-            self.REQUESTING_COUNTRY_EXCEPTION,
         ]
 
         try:
@@ -140,6 +137,9 @@ class Authenticator(object):
             pass
 
     def authorize_2factor(self, username, code, offset=0):
+        if not code:
+            return False
+
         try:
             value = cache.get(self.get_2factor_code_key(username))
         except Exception:
@@ -266,7 +266,7 @@ class Authenticator(object):
             userid
         )
 
-    def issue_country_exception(self, user, country):
+    def issue_country_exception_request(self, user, country):
         # capture information about the request
         data = {
             'referrer': self.request.get_header('REFERER'),
@@ -298,6 +298,8 @@ class Authenticator(object):
             if (came_from.startswith(site_url) and (
                     not url_tool or url_tool.isURLInPortal(came_from))):
                 success_url = came_from
+            if 'login' in success_url or 'logged_out' in success_url:
+                success_url = site_url + '/@@dashboard'
 
         data = {
             'supportedAuthSchemes': self.get_supported_auth_schemes(),

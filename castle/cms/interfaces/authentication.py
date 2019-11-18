@@ -18,7 +18,7 @@ class IAuthenticator(Interface):
     def change_password(member, new_password):
         pass
 
-    def issue_country_exception(user, country):
+    def issue_country_exception_request(user, country):
         pass
 
     def login(user):
