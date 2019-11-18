@@ -9,7 +9,7 @@ from castle.cms import cache
 from castle.cms import constants
 from castle.cms import security
 from castle.cms.browser.security.login import SecureLoginView
-from castle.cms.browser.security.passwordreset import PasswordResetView
+# from castle.cms.browser.security.passwordreset import PasswordResetView
 from castle.cms.interfaces import IAuthenticator
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.cron._pw_expiry import update_password_expiry
@@ -17,7 +17,7 @@ from DateTime import DateTime
 from plone import api
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import login
+# from plone.app.testing import login
 from plone.app.testing import logout
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
