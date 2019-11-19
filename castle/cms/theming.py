@@ -147,7 +147,7 @@ class _Transform(object):
         self.template_cache = {}
 
     def __call__(self, request, result, context=None):
-        #pdb.set_trace()
+        pdb.set_trace()
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -409,15 +409,15 @@ class _Transform(object):
             if div_string.find("/", div_string.find("@@"), div_string.find("?")) == -1 or div_string.find("/?") != -1:                
                 if div_string.find("name", div_string.find("?")) == -1:
                     
-                    self.add_name(node)
+                    self.castle_add_name(node)
                     
         return tree
         
-    def add_name(self, node, user_string = "default"):
+    def castle_add_name(self, node, user_string = "default"):
         """
         Adds the name in the element.  And checks the name to ensure that it doesn't conflict with other elements in other pages.
         """
-        #pdb.set_trace()
+        pdb.set_trace()
         if hasattr(node, 'tree'):
             return check_name(node)
         else:
@@ -443,6 +443,7 @@ class _Transform(object):
         #Now to add the string to the div_string and overwrite the node
         index = div_string.find("?")
         div_string = div_string[:index] + name_string + div_string[index:]
+        node.remove('data-tile')
         node.set('data-tile', div_string)
         return node
         
