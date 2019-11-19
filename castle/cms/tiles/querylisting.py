@@ -25,7 +25,6 @@ from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
-
 def _list(val):
     if type(val) not in (list, set, tuple):
         val = [val]
