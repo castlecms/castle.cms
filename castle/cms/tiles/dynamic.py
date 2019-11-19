@@ -409,21 +409,29 @@ class EditForm(edit.DefaultEditForm):
 
     @property
     def label(self):
-        mng = get_tile_manager(self.request)
+        pdb.set_trace()
+        mng = get_tile_manager(self.request)        
         tile = mng.get_tile(self.tile_id)
         return 'Edit ' + tile.get('title', 'Tile')
 
     @property
     def description(self):
+        pdb.set_trace()
         mng = get_tile_manager(self.request)
         tile = mng.get_tile(self.tile_id)
         return tile.get('description', '')
 
     @property
     def schema(self):
+        pdb.set_trace()
         mng = get_tile_manager(self.request)
         data = self.getContent()
         return mng.get_schema(data['tile_id'])
+
+    #Sometimes the tile doesn't have a id.  So we assign a new one to the tile.
+    #def update_id(self):
+        
+        
 
 
 class EditView(edit.DefaultEditView):

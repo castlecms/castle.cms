@@ -22,6 +22,7 @@ from zope.component import getUtility
 from zope.interface import implements
 from castle.cms.services.google import youtube
 
+import pdb
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
 
@@ -75,9 +76,10 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
                 'Structure': ['plone.app.standardtiles.rawhtml']
             }
 
+        
         # otherwise, you're editing the value in the DB!!!!
         available_tiles = available_tiles.copy()
-
+        
         for group_name, tile_ids in available_tiles.items():
             group = []
             for tile_id in tile_ids:
