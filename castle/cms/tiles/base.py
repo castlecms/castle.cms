@@ -14,7 +14,6 @@ from castle.cms.tiles.views import getTileView
 import json
 import logging
 import traceback
-import pdb
 
 logger = logging.getLogger('castle.cms')
 
@@ -113,7 +112,6 @@ class BaseTile(Tile):
         return url
 
     def __call__(self):
-       # pdb.set_trace()
         self.request.response.setHeader('X-Theme-Disabled', '1')
         try:
             res = self.render()

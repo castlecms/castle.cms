@@ -22,7 +22,6 @@ from zope.component import getUtility
 from zope.interface import implements
 from castle.cms.services.google import youtube
 
-import pdb
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
 
