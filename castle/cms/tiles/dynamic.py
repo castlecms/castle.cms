@@ -409,21 +409,21 @@ class EditForm(edit.DefaultEditForm):
 
     @property
     def label(self):
-        pdb.set_trace()
+        
         mng = get_tile_manager(self.request)        
         tile = mng.get_tile(self.tile_id)
         return 'Edit ' + tile.get('title', 'Tile')
 
     @property
     def description(self):
-        pdb.set_trace()
+        
         mng = get_tile_manager(self.request)
         tile = mng.get_tile(self.tile_id)
         return tile.get('description', '')
 
     @property
     def schema(self):
-        pdb.set_trace()
+        
         mng = get_tile_manager(self.request)
         data = self.getContent()
         return mng.get_schema(data['tile_id'])
