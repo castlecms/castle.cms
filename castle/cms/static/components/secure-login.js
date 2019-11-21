@@ -384,12 +384,14 @@ require([
           that.state.message
         ]);
       }
-      var forms = [
-        that.renderTwoFactorView(message),
-        that.renderCheckCredentials(message),
-        that.renderCountryBlockedForm(message),
-        that.renderCountryExceptionRequested(message)
-      ];
+      var forms = [];
+      if (that.state.twoFactorEnabled){
+        forms.push(that.renderTwoFactorView(message));
+      }
+      forms.push(that.renderCheckCredentials(message));
+      forms.push(that.renderCountryBlockedForm(message));
+      forms.push(that.renderCountryExceptionRequested(message));
+
       return D.div({ className: getClass('container'), ref: 'container'}, [
         D.div({ className: getClass('forms-container') + ' ' + that.state.state,
                 ref: 'formContainer'}, forms)
