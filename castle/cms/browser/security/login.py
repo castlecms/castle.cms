@@ -151,6 +151,12 @@ The user requesting this access logged this information:
             return self.index()
 
         if self.auth.two_factor_enabled:
+            if self.request.form.get('apiMethod', None) == 'resendAuth':
+                self.auth.set_secure_flow_state(self.auth.REQUESTING_AUTH_CODE)
+                return json.dumps({
+                    'success': True,
+                    'message': 'You may request another auth code.'
+                })
             code = self.request.form.get('code')
             if not self.auth.authorize_2factor(self.username, code, 5 * 60):
                 return json.dumps({
@@ -220,6 +226,7 @@ The user requesting this access logged this information:
                 return json.dumps(resp)
 
         if logged_in:
+            self.auth.expire_secure_flow_state()
             resp = {
                 'success': True,
             }
@@ -262,8 +269,7 @@ The user requesting this access logged this information:
         self.auth.set_secure_flow_state(new_state)
         return json.dumps({
             'success': True,
-            'message': 'Authorization code sent to provided username if '
-                       'username exists.',
+            'message': 'Authorization code sent to provided username.',
             'state': new_state
         })
 

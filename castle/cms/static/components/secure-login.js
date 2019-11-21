@@ -98,6 +98,18 @@ require([
       }
     },
 
+    sendAuthCode: function(){
+        var that = this;
+        var authSent = function(data){
+          that.setState({
+            state: STATES.CHECK_CREDENTIALS,
+            message: data.message,
+            messageType: 'info'
+          })
+        }
+        this.api({}, authSent);
+    },
+
     valueChanged: function(attr, e){
       var state = {};
       state[attr] = e.target.value;
@@ -216,12 +228,20 @@ require([
     },
 
     renderCodeAuthField: function(){
+      var that = this;
       var resend_auth = function(event) {
-        e.preventDefault();
-        that.setState({
-          state: STATES.REQUEST_AUTH_CODE,
-          code: '',
-          password: ''
+        event.preventDefault();
+        that.api({'apiMethod':'resendAuth'},
+        function(data){
+          if(data.success){
+            that.setState({
+              state: STATES.REQUEST_AUTH_CODE,
+              message: data.message,
+              messageType: 'info',
+              code: '',
+              password: ''
+            });
+          }
         });
       }
       return D.div({ className: 'form-group'}, [
@@ -346,7 +366,10 @@ require([
       }, 500);
 
       if(this.state.state !== this.state.last_state){
-        $('input:visible:first', $selectedForm).focus();
+        var $oldForm = $('.' + getClass('form-' + this.state.last_state));
+        $oldForm.hide();
+        $selectedForm.show();
+        $selectedForm.focus();
       }
       this.state.last_state = this.state.state;
     },
@@ -367,7 +390,6 @@ require([
         that.renderCountryBlockedForm(message),
         that.renderCountryExceptionRequested(message)
       ];
-
       return D.div({ className: getClass('container'), ref: 'container'}, [
         D.div({ className: getClass('forms-container') + ' ' + that.state.state,
                 ref: 'formContainer'}, forms)

@@ -81,6 +81,9 @@ class Authenticator(object):
             self.two_factor_enabled = False
             self.expire = 120
 
+        if self.is_zope_root:
+            self.two_factor_enabled = False
+
     @property
     def is_zope_root(self):
         return ICastleApplication.providedBy(self.context)
