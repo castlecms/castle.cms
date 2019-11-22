@@ -75,7 +75,12 @@ require([
                 window.location = data.changePasswordUrl;
               }, 1500);
           }
+          var newState = that.state.state;
+          if(data.state){
+            newState = data.state;
+          }
           that.setState({
+            state: newState,
             message: data.message,
             messageType: messageType
           });
@@ -232,17 +237,17 @@ require([
       var resend_auth = function(event) {
         event.preventDefault();
         that.api({'apiMethod':'resendAuth'},
-        function(data){
-          if(data.success){
-            that.setState({
-              state: STATES.REQUEST_AUTH_CODE,
-              message: data.message,
-              messageType: 'info',
-              code: '',
-              password: ''
-            });
-          }
-        });
+          function(data){
+            if(data.success){
+              that.setState({
+                state: STATES.REQUEST_AUTH_CODE,
+                message: data.message,
+                messageType: 'info',
+                code: '',
+                password: ''
+              });
+            }
+          });
       }
       return D.div({ className: 'form-group'}, [
         D.label({ htmlFor: 'code' },'Authorization code'),
