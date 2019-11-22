@@ -72,21 +72,26 @@ class Authenticator(object):
 
         try:
             self.registry = getUtility(IRegistry)
-            self.two_factor_enabled = self.registry.get(
-                'plone.two_factor_enabled', False)
-            self.expire = self.registry.get(
-                'plone.auth_step_timeout', 120)
         except ComponentLookupError:
             self.registry = None
-            self.two_factor_enabled = False
-            self.expire = 120
-
-        if self.is_zope_root:
-            self.two_factor_enabled = False
 
     @property
     def is_zope_root(self):
         return ICastleApplication.providedBy(self.context)
+
+    @property
+    def two_factor_enabled(self):
+        enabled = False
+        if not self.is_zope_root and self.registry:
+            enabled = self.registry.get('plone.two_factor_enabled', False)
+        return enabled
+
+    @property
+    def expire(self):
+        expire = 120
+        if not self.is_zope_root and self.registry:
+            expire = self.registry.get('plone.auth_step_timeout', 120)
+        return expire
 
     def get_tool(self, name):
         if self.is_zope_root:

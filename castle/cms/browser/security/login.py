@@ -29,7 +29,6 @@ class SecureLoginView(BrowserView):
         }
 
     def __call__(self):
-
         state = self.auth.get_secure_flow_state()
         if not state:
             if self.auth.two_factor_enabled:
@@ -39,6 +38,9 @@ class SecureLoginView(BrowserView):
             self.auth.set_secure_flow_state(initial_state)
         else:
             self.request.response.setHeader('Content-type', 'application/json')
+            if not self.auth.two_factor_enabled and state == self.auth.REQUESTING_AUTH_CODE:
+                state = self.auth.CHECK_CREDENTIALS
+                self.auth.set_secure_flow_state(state)
             if state in self.state_map:
                 return self.state_map[state]()
             else:

@@ -385,7 +385,7 @@ require([
         ]);
       }
       var forms = [];
-      if (that.state.twoFactorEnabled){
+      if (that.props.twoFactorEnabled){
         forms.push(that.renderTwoFactorView(message));
       }
       forms.push(that.renderCheckCredentials(message));
