@@ -1,5 +1,9 @@
 /* global define */
 
+$(document).ready(function() {
+  document.getElementById("formfield-form-widgets-ILeadImage-image").firstElementChild.firstElementChild.innerText = "When in use, click edit button on the lead image tile area";
+});
+
 define([
   'jquery',
   'pat-base',
