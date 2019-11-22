@@ -112,7 +112,9 @@ require([
             messageType: 'info'
           })
         }
-        this.api({}, authSent);
+        that.api({
+          authType: that.state.authType
+        }, authSent);
     },
 
     valueChanged: function(attr, e){
