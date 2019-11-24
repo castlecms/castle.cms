@@ -5,6 +5,13 @@ require([
 ], function($, R, utils){
   'use strict';
 
+  var D = R.DOM;
+
+  var getClass = function(name){
+    // generate namespaced classes
+    return 'castle-secure-login-' + name;
+  };
+
   var PasswordResetComponent = R.createClass({
     getInitialState: function(){
       return {

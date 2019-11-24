@@ -23,7 +23,8 @@ class PasswordResetView(BrowserView):
 
     def __call__(self):
         if self.request.REQUEST_METHOD == 'POST':
-            self.reset_password()
+            self.request.response.setHeader('Content-type', 'application/json')
+            return self.reset_password()
         else:
             return self.index()
 
@@ -64,7 +65,7 @@ class PasswordResetView(BrowserView):
         data = {
             'code': self.request.form.get('code'),
             'userid': self.request.form.get('userid'),
-            'apiEndpoint': self.context.absolute_url(),
+            'apiEndpoint': self.context.absolute_url() + '/@@password-reset',
             'successUrl': api.portal.get().absolute_url() + '/@@secure-login'
         }
         return json.dumps(data)
