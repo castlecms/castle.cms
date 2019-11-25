@@ -409,7 +409,7 @@ class EditForm(edit.DefaultEditForm):
 
     @property
     def label(self):
-        mng = get_tile_manager(self.request)        
+        mng = get_tile_manager(self.request)
         tile = mng.get_tile(self.tile_id)
         return 'Edit ' + tile.get('title', 'Tile')
 
