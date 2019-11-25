@@ -342,11 +342,18 @@ class CastleImporter(object):
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
         if path is not args.export_directory:
-            if os.path.exists(this_folder):
-                folder = self.import_object(this_folder, container)
-            else:
-                id = path.split('/')[-1:][0]
-                folder = self.create_plain_folder(self, id, container)
+            folder = None
+            id = path.split('/')[-1:][0]
+            if container and id in container.objectIds():
+                if args.overwrite:
+                    api.content.delete(container[id])
+                else:
+                    folder = container[id]
+            if not folder:
+                if os.path.exists(this_folder):
+                    folder = self.import_object(this_folder, container)
+                else:
+                    folder = self.create_plain_folder(id, container)
             container = folder
         folders = []
         objects = []
