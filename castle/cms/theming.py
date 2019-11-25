@@ -33,7 +33,6 @@ from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
-from castle.cms.utils.misc import get_random_string
 
 logger = logging.getLogger('castle.cms')
 
@@ -145,7 +144,6 @@ class _Transform(object):
         self.template_cache = {}
 
     def __call__(self, request, result, context=None):
-        
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -202,15 +200,11 @@ class _Transform(object):
 
         
         dom = getHTMLSerializer([layout])
-        
-       # self.check_name(dom)
         self.rewrite_urls(dom, theme_base_url)
         if not raw:
             # old style things...
             self.bbb(dom.tree, result)
-        #
         dom.tree = tiles.renderTiles(request, dom.tree)
-        #
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
 

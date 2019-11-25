@@ -6,11 +6,12 @@ from castle.cms import theming
 from plone import api
 from plone.app.theming.utils import getTheme
 from plone.app.theming.interfaces import MANIFEST_FORMAT
-
+import pdb
 
 class ThemeMapper(BaseThemeMapper):
 
     def getFrame(self):
+        pdb.set_trace()
         theme_name = self.context.__name__
         theme = None
         if self.context.isFile(MANIFEST_FILENAME):

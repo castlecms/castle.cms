@@ -74,11 +74,9 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             available_tiles = {
                 'Structure': ['plone.app.standardtiles.rawhtml']
             }
-
         
-        # otherwise, you're editing the value in the DB!!!!
+        #otherwise, you're editing the value in the DB!!!!
         available_tiles = available_tiles.copy()
-        
         for group_name, tile_ids in available_tiles.items():
             group = []
             for tile_id in tile_ids:
