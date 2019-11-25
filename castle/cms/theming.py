@@ -34,6 +34,7 @@ from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 
+
 logger = logging.getLogger('castle.cms')
 
 OVERRIDE_ENVIRON_KEY = 'castle.override.theme'
@@ -52,7 +53,6 @@ column2_xpath = etree.XPath('//*[@id="portal-column-two"]')
 jsslot_xpath = etree.XPath('//*[@id="javascript_head_slot"]')
 styleslot_xpath = etree.XPath('//*[@id="style_slot"]')
 dynamic_grid_xpath = etree.XPath('//*[@dynamic-grid]')
-data_tile_xpath = etree.XPath('/html/body//div[@class="mosaic-tile-content"]//div[@data-tile]')
 LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 
@@ -170,7 +170,7 @@ class _Transform(object):
         if isinstance(result, basestring):
             raw = True
         else:
-            self.rewrite_urls(result, context.absolute_url() + '/')
+            self.rewrite(result, context.absolute_url() + '/')
             result = result.tree
 
         theme_base_url = '%s/++%s++%s/index.html' % (
@@ -199,11 +199,13 @@ class _Transform(object):
         )
 
         dom = getHTMLSerializer([layout])
-        self.rewrite_urls(dom, theme_base_url)
+        self.rewrite(dom, theme_base_url)
         if not raw:
             # old style things...
             self.bbb(dom.tree, result)
+
         dom.tree = tiles.renderTiles(request, dom.tree)
+
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
 
@@ -367,7 +369,7 @@ class _Transform(object):
                 if plone_view:
                     body.attrib.update(plone_view.patterns_settings())
 
-    def rewrite_urls(self, dom, base_url):
+    def rewrite(self, dom, base_url):
         '''
         Rewrite layout urls to be full public paths
         '''

@@ -1,4 +1,3 @@
-
 from castle.cms import social
 from castle.cms.tiles.base import BaseTile
 from plone.autoform import directives as form
