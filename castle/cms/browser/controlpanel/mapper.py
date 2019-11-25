@@ -8,6 +8,7 @@ from plone.app.theming.utils import getTheme
 from plone.app.theming.interfaces import MANIFEST_FORMAT
 import pdb
 
+
 class ThemeMapper(BaseThemeMapper):
 
     def getFrame(self):

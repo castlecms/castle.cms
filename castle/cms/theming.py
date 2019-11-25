@@ -198,7 +198,6 @@ class _Transform(object):
             utils=utils
         )
 
-        
         dom = getHTMLSerializer([layout])
         self.rewrite_urls(dom, theme_base_url)
         if not raw:
@@ -387,7 +386,7 @@ class _Transform(object):
                 url = join(base_url, url)
                 node.set('src', url)
         return tree
-            
+
     def bbb(self, dom, result):
         """
         old style page template, do some bbb things here.
