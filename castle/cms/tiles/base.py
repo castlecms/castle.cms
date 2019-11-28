@@ -10,7 +10,7 @@ from zope.component.hooks import getSite
 from zope.interface import implements
 from zope.security import checkPermission
 from castle.cms.tiles.views import getTileView
-import pdb
+
 import json
 import logging
 import traceback
@@ -147,7 +147,6 @@ class BaseTile(Tile):
 </p></body></html>"""
 
     def render(self):
-        pdb.bt()
         return self.index()
 
 
