@@ -11,8 +11,6 @@ from zope.schema.vocabulary import SimpleVocabulary
 class SharingTile(BaseTile):
 
     def render(self):
-        import pdb
-        pdb.set_trace()
         return self.index()
 
     @property

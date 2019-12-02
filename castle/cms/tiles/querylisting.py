@@ -256,7 +256,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             )
         else:
             url = ''
-                
+
         params = {}
         form = self.get_form()
         for attr in self.query_attrs:
@@ -292,7 +292,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             config['ajaxResults'] = {
                 'url': self.this_url,
                 'selector': '#query-results-%s' % self.id or ''
-            } 
+            }
 
             out = json.dumps(config)
         except UnicodeDecodeError:
