@@ -39,8 +39,7 @@ logger = logging.getLogger('castle.cms')
 
 OVERRIDE_ENVIRON_KEY = 'castle.override.theme'
 wrapper_xpath = etree.XPath('//*[@id="visual-portal-wrapper"]')
-href_xpath = etree.XPath('//*[@href]')
-src_xpath = etree.XPath('//*[@src]')
+src_href_xpath = etree.XPath('//*[@src or @href]')
 js_insert_xpath = etree.XPath('//link[@data-include-js]')
 css_insert_xpath = etree.XPath('//link[@data-include-css]')
 script_xpath = etree.XPath('//script')
@@ -150,7 +149,7 @@ class _Transform(object):
         original_context = context
         if context is None or IResourceDirectory.providedBy(context):
             original_context = context = portal
-
+            
         try:
             context_url = context.absolute_url()
         except AttributeError:
@@ -160,7 +159,7 @@ class _Transform(object):
             except Exception:
                 context = aq_parent(context)
             context_url = context.absolute_url()
-
+        
         if (not ISiteRoot.providedBy(context) and
                 not IDexterityContent.providedBy(context)):
             context = aq_parent(context)
@@ -170,7 +169,7 @@ class _Transform(object):
         if isinstance(result, basestring):
             raw = True
         else:
-            self.rewrite(result, context.absolute_url() + '/')
+            self.rewrite(result, context_url + '/')
             result = result.tree
 
         theme_base_url = '%s/++%s++%s/index.html' % (
@@ -373,20 +372,18 @@ class _Transform(object):
         '''
         Rewrite layout urls to be full public paths
         '''
+        
         if hasattr(dom, 'tree'):
             tree = dom.tree
         else:
             tree = dom
-        for node in href_xpath(tree):
-            url = node.get('href')
-            if url:
-                url = join(base_url, url)
-                node.set('href', url)
-        for node in src_xpath(tree):
-            url = node.get('src')
-            if url:
-                url = join(base_url, url)
-                node.set('src', url)
+
+        for node in src_href_xpath(tree):
+            if node.get('href'):
+                node.set('href', join(base_url, node.get('href')))
+            elif node.get('src'):
+                node.set('src', join(base_url, node.get('src')))
+        
         return tree
 
     def bbb(self, dom, result):
@@ -484,6 +481,7 @@ class _Transform(object):
                 container.attrib.get('class', ''),
                 ' '.join(classes)
             )
+
 
 
 def getTransform(context, request):
