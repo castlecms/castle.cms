@@ -1,11 +1,32 @@
 Changelog
 =========
 
-2.5.15 (unreleased)
+2.5.17 (unreleased)
 -------------------
 
 - Nothing changed yet.
 
+
+2.5.16 (2019-10-07)
+-------------------
+
+- Fix upgrade step
+  [lucid-0]
+
+2.5.15 (2019-10-07)
+-------------------
+
+- add sticky footer tile
+  [lucid-0]
+
+- integrate Google Tag Manager
+  [lucid-0]
+
+- Redirect to /@@secure-login if it's in request path
+  [lucid-0]
+
+- Serve strict robots.txt to backend URL
+  [lucid-0, Chue Her]
 
 2.5.14 (2019-07-18)
 -------------------

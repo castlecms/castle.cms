@@ -294,6 +294,17 @@ class IAPISettings(Interface):
         description=u'for use with gathering content statistics',
         required=False)
 
+    gtm_id = schema.TextLine(
+        title=u'Google Tag Manager Container ID',
+        description=u'Provided by Google',
+        required=False
+    )
+
+    gtm_enabled = schema.Bool(
+        title=u'Enable Google Tag Manager Throughout Site',
+        default=False
+    )
+
     recaptcha_public_key = schema.TextLine(
         title=u'Recaptcha 3 Public Key',
         required=False)

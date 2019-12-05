@@ -1,0 +1,28 @@
+<div class="pat-sticky"/>
+<div class="sticky-footer alert alert-dismissible footer" role="alert">
+  <div>
+    <p class="footer-block">
+      <span class="email-alerts-text"><i class="material-icons">email</i></span>
+      <span class="email-alerts-description">${view/data/description}</span>
+      <span tal:condition="python: view.data.get('internal_link', None)" class="subscribe-button">
+        <a class="plone-btn plone-btn-primary" href="${view/data/internal_link}" role="button">${view/data/button_text}</a>
+      </span>
+      <span tal:condition="python: not view.data.get('internal_link', None)" class="subscribe-button">
+        <a class="plone-btn plone-btn-primary" href="${view/data/external_link}" role="button">${view/data/button_text}</a>
+      </span>
+      <span class="no-thanks-button"><a href="#" data-dismiss="alert" aria-label="Close">No Thanks</a></span>
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </p>
+  </div>
+</div>
+
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>

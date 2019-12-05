@@ -83,6 +83,7 @@
       <element>castle.cms.documentviewer</element>
       <element>castle.cms.existing</element>
       <element>castle.cms.survey</element>
+      <element>castle.cms.stickyfooter</element>
     </value>
   </record>
 
@@ -176,6 +177,20 @@
            interface="plone.app.mosaic.interfaces.ITile">
     <value key="name">castle.cms.subscription</value>
     <value key="label">Subscribe</value>
+    <value key="category">advanced</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">20</value>
+  </records>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_sticky_footer"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.stickyfooter</value>
+    <value key="label">Sticky Footer</value>
     <value key="category">advanced</value>
     <value key="tile_type">app</value>
     <value key="default_value"></value>
