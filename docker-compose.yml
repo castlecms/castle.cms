@@ -1,0 +1,20 @@
+
+version: '3'
+services:
+    redis:
+        image: "redis:alpine"
+        ports:
+            - 6379:6379
+    elasticsearch:
+        image: "elasticsearch:2.4-alpine"
+        ports:
+          - 9200:9200
+    etherpad:
+        image: "etherpad/etherpad"
+        ports:
+          - 9001:9001
+    mail:
+        image: "mailhog/mailhog"
+        ports:
+          - 1025:1025
+          - 8025:8025
