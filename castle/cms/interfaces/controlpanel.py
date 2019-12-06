@@ -134,6 +134,12 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    auth_step_timeout = schema.Int(
+        title=u'(Seconds) This amount of inactivity will reset the login process',
+        description=u'Between each step, the allowed time is reset to this amount',
+        default=120,
+    )
+
     restrict_logins_to_countries = schema.Tuple(
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
