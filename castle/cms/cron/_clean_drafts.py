@@ -31,7 +31,7 @@ def clean(site):
 
 
 def run(app):
-    singleton.SingleInstance('cleanusers')
+    singleton.SingleInstance('cleandrafts')
 
     user = app.acl_users.getUser('admin')  # noqa
     newSecurityManager(None, user.__of__(app.acl_users))  # noqa
