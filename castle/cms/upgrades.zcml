@@ -265,4 +265,12 @@
     handler=".upgrades.upgrade_2_5_15.upgrade"
     profile="castle.cms:default"/>
 
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.5.17"
+    description=""
+    source="*"
+    destination="2517"
+    handler=".upgrades.upgrade_2_5_17.upgrade"
+    profile="castle.cms:default"/>
+
 </configure>

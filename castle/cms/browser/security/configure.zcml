@@ -33,6 +33,7 @@
     template="./templates/secure-login.pt"
     allowed_attributes="options"
     layer="castle.cms.interfaces.ICastleLayer" />
+
   <browser:page
     name="secure-login"
     for="castle.cms.interfaces.ICastleApplication"
@@ -40,6 +41,24 @@
     class=".login.SecureLoginView"
     template="./templates/secure-login.pt"
     allowed_attributes="options" />
+
+  <browser:page
+    name="password-reset"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    permission="zope2.View"
+    class=".passwordreset.PasswordResetView"
+    template="./templates/passwordreset.pt"
+    allowed_attributes="options"
+    layer="castle.cms.interfaces.ICastleLayer" />
+
+
+  <browser:page
+      name="change-password"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      class=".changepassword.ChangePassword"
+      permission="cmf.SetOwnPassword"
+      layer="castle.cms.interfaces.ICastleLayer" />
+
   <browser:page
     name="authorize-country-login"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
