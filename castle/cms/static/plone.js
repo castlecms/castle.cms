@@ -107,6 +107,34 @@ $(document).ready(function(){
     });
   });
 
+
+  var cookieKey = '__castle_fv__'
+  var firstVisitCookie = $.cookie(cookieKey);
+
+  // check if cookie exists and will display first time visit message
+  if (firstVisitCookie !== "acknowledged") {
+    $.cookie(cookieKey, 'shown');
+    $.ajax({
+      type: "GET",
+      url: PORTAL_URL + '/disclaimer',
+    }).done(function(res) {
+        debugger;
+       if (res.enabled) {
+         // create divs
+         $("<div id='disclaimerOverlay'><div id='disclaimerDiv'>" + res.msg + "</div></div>").appendTo('body');
+         // create close button
+         $("<a id='closeButton' href='javascript:void(0);'>Close</a>").appendTo('#disclaimerDiv');
+         // close div functionality
+         document.getElementById("closeButton").addEventListener("click", function(e) {
+          document.getElementById("disclaimerOverlay").style.display = "none";
+          $.cookie(cookieKey, 'acknowledged');
+         });
+         // display div
+         document.getElementById("disclaimerOverlay").style.display = "block";
+       }
+    });
+  }
+
 });
 
 
