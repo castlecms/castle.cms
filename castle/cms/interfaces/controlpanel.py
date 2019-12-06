@@ -210,14 +210,15 @@ class IAnnouncementData(Interface):
     )
 
     show_disclaimer = schema.Bool(
-        title=u'Show disclaimer for first time a user visits a site',
+        title=u'Show disclaimer for first time a user visits a site. '
+              u'To comply with ePrivacy Directive, use this feature to notify about cookie use.',
         default=False,
         required=False)
 
     site_disclaimer = schema.Text(
         title=u"Disclaimer",
         default=u'<p><strong>Disclaimer</strong> '
-                u'<em>You are seeing this because this is your first time visiting the page.</em></p>',
+                u'<em>You are seeing this because this is your first time visiting the site.</em></p>',
         required=False
     )
 

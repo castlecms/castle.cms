@@ -106,35 +106,19 @@ $(document).ready(function(){
       }
     });
   });
-  
-  // method to get the cookie's name
-  function getCookie(key) {
-    const regexp = new RegExp(`.*${key}=([^;]*)`);
-    const result = regexp.exec(document.cookie);
-    if(result) {
-      return result [1];
-    }
-  }
 
-  // create cookie with name and set document.cookie
-  var disclaimerCookie = "disclaimer_name=firstVisit ; expires=Tue, 01 Jan 2030 00:00:01 GMT";
-  document.cookie = disclaimerCookie;
 
-  // deletes the cookie for testing purposes
-  //document.cookie = "disclaimer_name=firstVisit ; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-
-  // get the cookie's name
-  var getCookieName = getCookie('disclaimer_name');
+  var cookieKey = '__castle_fv__'
+  var firstVisitCookie = $.cookie(cookieKey);
 
   // check if cookie exists and will display first time visit message
-  if (getCookieName != "firstVisit") {
-    document.cookie = disclaimerCookie;
-
+  if (firstVisitCookie !== "acknowledged") {
+    $.cookie(cookieKey, 'shown');
     $.ajax({
       type: "GET",
-      url: $('body').attr('data-base-url') + '/disclaimer',
+      url: PORTAL_URL + '/disclaimer',
     }).done(function(res) {
-
+        debugger;
        if (res.enabled) {
          // create divs
          $("<div id='disclaimerOverlay'><div id='disclaimerDiv'>" + res.msg + "</div></div>").appendTo('body');
@@ -143,14 +127,14 @@ $(document).ready(function(){
          // close div functionality
          document.getElementById("closeButton").addEventListener("click", function(e) {
           document.getElementById("disclaimerOverlay").style.display = "none";
+          $.cookie(cookieKey, 'acknowledged');
          });
          // display div
          document.getElementById("disclaimerOverlay").style.display = "block";
-
        }
     });
   }
-  
+
 });
 
 
