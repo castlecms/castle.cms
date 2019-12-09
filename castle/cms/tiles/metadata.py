@@ -137,6 +137,7 @@ class MetaDataTile(Tile):
             url = context_state.view_url()
         return u'    <link rel="canonical" href="%s" />' % url
 
+    # Optimize this
     def __call__(self):
         portal_state = getMultiAdapter((self.context, self.request),
                                        name=u'plone_portal_state')

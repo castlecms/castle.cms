@@ -69,6 +69,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
             self.folder = None
         super(PageTemplateLoader, self).__init__(*args, **kwargs)
 
+    #Optimize this function
     def load(self, filename, backup='index.html'):
         """Load and return a template file.
 
@@ -143,6 +144,9 @@ class _Transform(object):
         self.template_cache = {}
 
     def __call__(self, request, result, context=None):
+        import pdb; pdb.set_trace()
+        import cProfile; pr = cProfile.Profile()
+        pr.enable()
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -180,7 +184,7 @@ class _Transform(object):
         content = self.get_fill_content(result, raw)
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
-
+        # Optimize this
         layout = self.get_layout(context, request=request)
         layout = layout(
             portal_url=portal_url,
@@ -202,15 +206,18 @@ class _Transform(object):
         if not raw:
             # old style things...
             self.bbb(dom.tree, result)
-
+        # Optimize this
         dom.tree = tiles.renderTiles(request, dom.tree)
 
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
 
+        # Optimize this
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
-
+        pr.disable()
+        pr.print_stats("cumtime")
+        pdb.set_trace()
         return dom
 
     def add_viewlet_tile(self, portal, request, el, name):
@@ -288,11 +295,13 @@ class _Transform(object):
                 selected = default_layout
         return selected
 
+    # Optimize this function
     def get_layout(self, context, default_layout='index.html',
                    request=None, loader=None):
         '''
         Get currently selected layout for the context
         '''
+        import pdb; pdb.set_trace()
         if loader is None:
             loader = self.get_loader()
         if request is not None and 'X-CASTLE-LAYOUT' in request.environ:
@@ -592,7 +601,7 @@ def isPloneTheme(settings):
             settings.rules not in (None, '_', '') and
             settings.rules.endswith('.xml'))
 
-
+#Optimize this function and the subfunction calls
 def transformIterable(self, result, encoding):
     """
     Apply our customize transform that attempts to provide

@@ -113,6 +113,7 @@ class BaseTile(Tile):
         return url
 
     def __call__(self):
+        import pdb; pdb.set_trace()
         self.request.response.setHeader('X-Theme-Disabled', '1')
         try:
             res = self.render()
