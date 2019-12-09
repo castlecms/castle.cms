@@ -36,3 +36,7 @@ pyvenv.cfg
 buildout-copy.cfg
 temp_resources/
 dump.rdb
+Makefile
+package.json
+watch-run.py
+watchable-grunt.js
