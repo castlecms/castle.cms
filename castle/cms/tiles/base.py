@@ -15,7 +15,6 @@ import json
 import logging
 import traceback
 
-
 logger = logging.getLogger('castle.cms')
 
 
@@ -112,8 +111,8 @@ class BaseTile(Tile):
             url += '?' + qs
         return url
 
+    #Optimize this
     def __call__(self):
-        import pdb; pdb.set_trace()
         self.request.response.setHeader('X-Theme-Disabled', '1')
         try:
             res = self.render()
@@ -131,7 +130,7 @@ class BaseTile(Tile):
             else:
                 if self.wrap:
                     res = '<div class="castle-tile-wrapper">%s</div>' % res
-            return '<html><body>' + res + '</body></html>'
+            return '<html><body>%s</body></html>' % res
         except Exception:
             path = ['']
             if hasattr(self.context, 'getPhysicalPath'):

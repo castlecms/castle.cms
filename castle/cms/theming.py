@@ -34,6 +34,9 @@ from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 
+import threading
+
+_local_cache = threading.local()
 
 logger = logging.getLogger('castle.cms')
 
@@ -89,7 +92,12 @@ class ThemeTemplateLoader(PageTemplateLoader):
                 return self.template_cache[filename]
             data = self.read_file(filename)
 
-        template = PageTemplate(data)
+        if hasattr(_local_cache, "PageTemplate"):
+            LocalPageTemplate = _local_cache.PageTemplate
+            template = LocalPageTemplate(data)
+        else:
+            template = PageTemplate(data)
+            _local_cache.PageTemplate = PageTemplate
         self.template_cache[filename] = template
         return template
 
@@ -110,7 +118,10 @@ class ThemeTemplateLoader(PageTemplateLoader):
             raise KeyError
 
     def load_raw(self, raw):
-        return PageTemplate(raw)
+        if hasattr(_local_cache, "PageTemplate"):
+            return _local_cache.PageTemplate(raw)
+        else:
+            return PageTemplate(raw)
 
 
 def join(base, url):
@@ -144,9 +155,6 @@ class _Transform(object):
         self.template_cache = {}
 
     def __call__(self, request, result, context=None):
-        import pdb; pdb.set_trace()
-        import cProfile; pr = cProfile.Profile()
-        pr.enable()
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -215,9 +223,7 @@ class _Transform(object):
         # Optimize this
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
-        pr.disable()
-        pr.print_stats("cumtime")
-        pdb.set_trace()
+
         return dom
 
     def add_viewlet_tile(self, portal, request, el, name):
@@ -301,7 +307,6 @@ class _Transform(object):
         '''
         Get currently selected layout for the context
         '''
-        import pdb; pdb.set_trace()
         if loader is None:
             loader = self.get_loader()
         if request is not None and 'X-CASTLE-LAYOUT' in request.environ:

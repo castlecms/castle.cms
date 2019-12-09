@@ -67,7 +67,6 @@ class DexterityFieldTile(BaseDexterityFieldTile):
             super(DexterityFieldTile, self).__init__(context, request)
     # Optimize here
     def __call__(self):
-        import pdb; pdb.set_trace()
         if self.field and self.isVisible:
             renderer = queryUtility(IFieldTileRenderer, self.field + '-renderer')
             if renderer:

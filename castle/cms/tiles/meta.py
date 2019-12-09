@@ -70,7 +70,6 @@ class MetaTile(Tile):
         return result
 
     def __call__(self):
-        import pdb; pdb.set_trace()
         try:
             return self.index()
         except Exception:
