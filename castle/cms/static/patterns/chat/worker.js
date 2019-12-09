@@ -1,4 +1,4 @@
-importScripts('../../asteroid.js');
+importScripts('../../libs/asteroid.js');
 
 var conn = null;
 var port = null;
