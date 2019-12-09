@@ -72,7 +72,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
             self.folder = None
         super(PageTemplateLoader, self).__init__(*args, **kwargs)
 
-    #Optimize this function
+    # Optimize this function
     def load(self, filename, backup='index.html'):
         """Load and return a template file.
 

@@ -7,10 +7,15 @@ from zope.interface import Interface
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
+import threading
+
+_local_cache = threading.local()
 
 class SharingTile(BaseTile):
 
     def render(self):
+        if hasattr(_local_cache, "PageTemplate"):
+            PageTemplate = _local_cache.PageTemplate
         return self.index()
 
     @property
