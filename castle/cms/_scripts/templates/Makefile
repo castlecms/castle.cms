@@ -1,11 +1,8 @@
-
-
 less-plone:
 	grunt --gruntfile=watchable-grunt.js less-plone
 
 less-plone-logged-in:
 	grunt --gruntfile=watchable-grunt.js less-plone-logged-in
-
 
 js-plone:
 	grunt --gruntfile=watchable-grunt.js js-plone
@@ -13,12 +10,11 @@ js-plone:
 js-plone-logged-in:
 	grunt --gruntfile=watchable-grunt.js js-plone-logged-in
 
-js-plone-build:
+js-plone-min:
 	grunt --gruntfile=watchable-grunt.js js-plone-build
 
-js-plone-logged-in-build:
+js-plone-logged-in-min:
 	grunt --gruntfile=watchable-grunt.js js-plone-logged-in-build
-
 
 watch-less-plone:
 	python watch-run.py --command="grunt --gruntfile=watchable-grunt.js less-plone" --dirs /opt/plone/src/castle.cms/castle/cms/static/less
