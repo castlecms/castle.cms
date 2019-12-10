@@ -21,6 +21,8 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
 
 class TestArchiveManager(unittest.TestCase):
@@ -114,8 +116,7 @@ class TestStorage(unittest.TestCase):
         self.test_access_key = u'AKIAIOSFODNN7EXAMPLE'
         self.test_secret_key = u'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
         self.test_bucket_name = u'castletest'
-        # possibly useful to set under some condition...
-        # self.test_bucket_endpoint = u'http://localhost:9000/'
+        self.test_bucket_endpoint = u'https://s3.amazonaws.com'
         self.test_base_url = u'https://localhost.localdomain/'  # used for test swap
         self.portal = self.layer['portal']
         self.request = self.layer['request']
@@ -124,14 +125,13 @@ class TestStorage(unittest.TestCase):
         api.portal.set_registry_record('castle.aws_s3_key', self.test_access_key)
         api.portal.set_registry_record('castle.aws_s3_secret', self.test_secret_key)
         api.portal.set_registry_record('castle.aws_s3_bucket_name', self.test_bucket_name)
-        # possibly useful to set under some condition...
-        # api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
+        api.portal.set_registry_record('castle.aws_s3_host_endpoint', self.test_bucket_endpoint)
         api.portal.set_registry_record('castle.aws_s3_base_url', self.test_base_url)
 
     @mock_s3
     def test_move_to_aws(self):
         # this is creating a bucket in the moto/mock s3 service
-        s3conn = boto3.resource('s3')
+        s3conn = boto3.resource('s3', endpoint_url=self.test_bucket_endpoint)
         s3conn.create_bucket(Bucket='castletest')
         s3, bucket = aws.get_bucket("castletest")
 
@@ -153,7 +153,7 @@ class TestStorage(unittest.TestCase):
     @mock_s3
     def test_move_resource(self):
         # this is creating a bucket in the moto/mock s3 service
-        s3conn = boto3.resource('s3')
+        s3conn = boto3.resource('s3', endpoint_url=self.test_bucket_endpoint)
         s3conn.create_bucket(Bucket='castletest')
         s3, bucket = aws.get_bucket("castletest")
 
@@ -174,9 +174,10 @@ class TestStorage(unittest.TestCase):
         self.assertIsNotNone(new_url)
 
         try:
-            # trim off 'https://s3.amazonaws.com/castletest/'
+            # trim off, e.g., 'https://s3.amazonaws.com/bucketname'
             # and then convert the path back from the url escaped version
-            content_path = unquote_plus(new_url[36:])
+            droppart = "{}/{}/".format(self.test_bucket_endpoint, self.test_bucket_name)
+            content_path = unquote_plus(new_url[len(droppart):])
             bucket.Object(content_path).load()
         except botocore.exceptions.ClientError:
             self.fail("object does not exist after move")
@@ -189,7 +190,8 @@ class TestStorage(unittest.TestCase):
         try:
             # trim off 'https://s3.amazonaws.com/castletest/'
             # and then convert the path back from the url escaped version
-            content_path = unquote_plus(new_url[36:])
+            droppart = "{}/{}/".format(self.test_bucket_endpoint, self.test_bucket_name)
+            content_path = unquote_plus(new_url[len(droppart):])
             bucket.Object(content_path).load()
         except botocore.exceptions.ClientError:
             self.fail("object does not exist after move")

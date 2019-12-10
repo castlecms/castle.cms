@@ -5,6 +5,7 @@ install_aliases()  # noqa
 
 import logging
 from datetime import datetime
+import StringIO
 from time import time
 from urllib.parse import urlparse, quote, quote_plus
 
@@ -268,3 +269,35 @@ def get_url(obj):
         url = 'https:' + url
 
     return swap_url(url)
+
+
+def create_or_update(bucket, key, content_type, data, content_disposition=None, make_public=True):
+    extraargs = {
+        'ContentType': content_type,
+    }
+    if content_disposition is not None:
+        extraargs['ContentDisposition'] = content_disposition
+    contentio = StringIO.StringIO(data)
+    bucket.upload_fileobj(contentio, key, ExtraArgs=extraargs)
+    if make_public:
+        s3_obj = bucket.Object(key)
+        object_acl = s3_obj.Acl()
+        object_acl.put(ACL='public-read')
+
+
+def create_if_not_exists(bucket, key, content_type, data, content_disposition=None, make_public=True):
+    try:
+        # does a head request for a single key, will throw an error
+        # if not found (or elsewise)
+        bucket.Object(key).load()
+    except botocore.exceptions.ClientError:
+        # the object hasn't been pushed to s3 yet, so do that
+        # create/update
+        create_or_update(
+            bucket,
+            key,
+            content_type,
+            data,
+            content_disposition=content_disposition,
+            make_public=make_public)
+        

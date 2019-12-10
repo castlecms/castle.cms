@@ -3,7 +3,6 @@
 from future.standard_library import install_aliases
 install_aliases()  # noqa
 
-import botocore
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
@@ -390,16 +389,11 @@ class Storage(object):
             bucket=self.bucket.name,
             key=quote_plus(content_path))
 
-        # create/update
-        extraargs = {
-            'ContentType': content_type,
-        }
-        contentio = StringIO.StringIO(content)
-        self.bucket.upload_fileobj(contentio, content_path, ExtraArgs=extraargs)
-        # make public
-        s3_obj = self.bucket.Object(content_path)
-        object_acl = s3_obj.Acl()
-        object_acl.put(ACL='public-read')
+        aws.create_or_update(
+            self.bucket,
+            content_path,
+            content_type,
+            content)
 
         return url
 
@@ -445,25 +439,12 @@ class Storage(object):
             bucket=self.bucket.name,
             key=quote_plus(content_path))
 
-        try:
-            # does a head request for a single key, will throw an error
-            # if not found (or elsewise)
-            self.bucket.Object(content_path).load()
-        except botocore.exceptions.ClientError:
-            # the object hasn't been pushed to s3 yet, so do that
-            # create/update
-            extraargs = {
-                'ContentType': resp['headers']['content-type'],
-            }
-            contentdisp = resp['headers'].get('content-disposition', None)
-            if contentdisp is not None:
-                extraargs['ContentDisposition'] = contentdisp
-            contentio = StringIO.StringIO(fidata)
-            self.bucket.upload_fileobj(contentio, content_path, ExtraArgs=extraargs)
-            # make public
-            s3_obj = self.bucket.Object(content_path)
-            object_acl = s3_obj.Acl()
-            object_acl.put(ACL='public-read')
+        aws.create_if_not_exists(
+            self.bucket,
+            content_path,
+            resp['headers']['content-type'],
+            fidata,
+            content_disposition=resp['headers'].get('content-disposition', None))
 
         return new_url
 
