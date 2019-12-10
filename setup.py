@@ -37,7 +37,7 @@ setup(
     namespace_packages=['castle'],
     install_requires=[
         # plone packages
-        'Products.CMFPlone>=5.0.10.dev2',
+        'Products.CMFPlone>=5.0.10',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
