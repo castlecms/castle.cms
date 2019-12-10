@@ -208,7 +208,6 @@ def _get_vhm_base_url(public_url, site_path):
 
 
 class RequestsUrlOpener(object):
-
     def __init__(self, migrator):
         self.migrator = migrator
         self.site = migrator.site
@@ -422,7 +421,7 @@ class Storage(object):
         if 'text' in resp['headers'].get('content-type', '').lower():
             for sub_url in RE_CSS_URL.findall(fidata) + RE_CSS_IMPORTS.findall(fidata):
                 resource_url = sub_url
-                if not sub_url.startswith('http'):
+                if not sub_url.startswith('http') and not sub_url.startswith('data:'):
                     resource_url = urljoin(url, sub_url)
                 if resource_url not in self.resources:
                     moved_url = self.move_resource(resource_url)

@@ -21,7 +21,7 @@ logger = logging.getLogger('castle.cms')
 
 
 @retriable(sync=True)
-def archive(site):
+def archive(site, app):
     setup_site(site)
 
     if (not api.portal.get_registry_record('castle.archival_enabled') or
@@ -63,7 +63,7 @@ def archive(site):
             else:
                 logger.error('error importing %s' % ob.absolute_url())
         except Exception:
-            logger.error('Error archiving %s' % brain.getPath(), exc_info=True)
+            logger.error('Error archiving (%s) at (%s)' % (brain.getPath(), brain.getURL()), exc_info=True)
 
     content_to_archive = archive_manager.getContentToArchive(7)
     if len(content_to_archive) == 0:
@@ -115,7 +115,7 @@ def run(app):
         obj = app[oid]  # noqa
         if IPloneSiteRoot.providedBy(obj):
             try:
-                archive(obj)
+                archive(obj, app)
             except Exception:
                 logger.error('Could not archive %s' % oid, exc_info=True)
 
