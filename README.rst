@@ -94,6 +94,8 @@ Development setup on macOS
 7. ``bin/buildout``
 8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg``
 9. Browse to http://localhost:8080/
+10. Once you have created a site in the development instance, run init-dev script to populate templates,
+``bin/instance run castle/cms/_scripts/init-dev.py``
 
 
 Optional Dependencies
@@ -130,21 +132,24 @@ Running tests
 
   ./bin/test -s castle.cms -t \!robot
 
-If you have errors complaining about warning, make sure the version of selenium 
+If you have errors complaining about warning, make sure the version of selenium
 you're using works with the version of Firefox you have installed (see above)
 
 
 Running local dependencies with docker
 --------------------------------------
 
+    $ docker-compose up
+
+    or, just the essentials:
     $ docker run -p 6379:6379 redis
-    $ docker run -p 9200:9200 elasticsearch:2.3.5
+    $ docker run -p 9200:9200 elasticsearch:2.4-alpine
 
 
 Forks/Custom releases
 ---------------------
 
-Castle maintains forks and custom releases of packages ocassionally. Here is the
+Castle maintains forks and custom releases of packages occasionally. Here is the
 status and reasoning for our forks:
 
 - plone.app.blocks: https://github.com/castlecms/plone.app.blocks
