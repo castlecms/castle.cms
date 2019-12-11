@@ -12,7 +12,8 @@ INDEXES = {
     "contentType": "KeywordIndex",
     "location": "KeywordIndex",
     "hasImage": "BooleanIndex",
-    "trashed": "BooleanIndex"
+    "trashed": "BooleanIndex",
+    "has_private_parents": "BooleanIndex",
 }
 
 REMOVE_INDEXES = [
@@ -30,7 +31,8 @@ METADATA = [
     'recurrence',
     'last_modified_by',
     'image_info',
-    'navigation_label'
+    'navigation_label',
+    'has_private_parents'
 ]
 
 REMOVE_METADATA = [
