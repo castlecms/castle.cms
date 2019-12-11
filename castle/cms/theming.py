@@ -72,7 +72,6 @@ class ThemeTemplateLoader(PageTemplateLoader):
             self.folder = None
         super(PageTemplateLoader, self).__init__(*args, **kwargs)
 
-    # Optimize this function
     def load(self, filename, backup='index.html'):
         """Load and return a template file.
 
@@ -92,17 +91,42 @@ class ThemeTemplateLoader(PageTemplateLoader):
                 return self.template_cache[filename]
             data = self.read_file(filename)
 
+        template = self.previous_template_file_cache(filename, data)
+        if template:
+            return template
+        # Helps to ensure that the PageTemplate object is in local memory
         if hasattr(_local_cache, "PageTemplate"):
             LocalPageTemplate = _local_cache.PageTemplate
             template = LocalPageTemplate(data)
         else:
             template = PageTemplate(data)
             _local_cache.PageTemplate = PageTemplate
+        
+
+        template = PageTemplate(data)
         self.template_cache[filename] = template
+        _local_cache.PreviousRespondedTemplate.append([filename, data, template])
         return template
 
     __getitem__ = load
 
+    def previous_template_file_cache(self, filename, data):
+        """
+        If we have read and create the template before in this thread, send the thread cache as a result.
+        It is a list of lists with the inner list of [0] = filename, [1] = data, [2] = template.
+        If we have seen the file before and it hasn't been modified since then we return the response otherwise we delete
+        the inner list and return a none.
+        """
+        if hasattr(_local_cache, "PreviousRespondedTemplate"):
+            response = _local_cache.PreviousRespondedTemplate
+            for innerlist in response:
+                if innerlist[0] == filename and innerlist[1] == data:
+                    return innerlist[2]
+        else:
+            _local_cache.PreviousRespondedTemplate = []
+
+        return None
+    
     def read_file(self, filename):
         if self.folder is None:
             return
@@ -192,7 +216,7 @@ class _Transform(object):
         content = self.get_fill_content(result, raw)
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
-        # Optimize this
+        
         layout = self.get_layout(context, request=request)
         layout = layout(
             portal_url=portal_url,
@@ -214,13 +238,13 @@ class _Transform(object):
         if not raw:
             # old style things...
             self.bbb(dom.tree, result)
-        # Optimize this
+
         dom.tree = tiles.renderTiles(request, dom.tree)
 
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
 
-        # Optimize this
+
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
 
@@ -497,11 +521,10 @@ class _Transform(object):
             )
 
 
-
 def getTransform(context, request):
     DevelopmentMode = Globals.DevelopmentMode
     policy = theming_policy(request)
-
+    
     # Obtain settings. Do nothing if not found
     settings = policy.getSettings()
 
@@ -528,7 +551,6 @@ def getTransform(context, request):
 
         if not DevelopmentMode:
             cache.updateTransform(transform)
-
     return transform
 
 
@@ -666,6 +688,7 @@ def transformIterable(self, result, encoding):
     except etree.LxmlError:
         if not(DevelopmentMode):
             raise
+
     return result
 
 

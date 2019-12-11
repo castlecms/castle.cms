@@ -1,6 +1,7 @@
 from zope.component import getAllUtilitiesRegisteredFor
 from castle.cms.fragments.interfaces import IFragmentsDirectory
 
+import time
 import threading
 
 _local_cache = threading.local()
@@ -20,68 +21,70 @@ def getFragment(context, request, name):
 class _getFragment(object):
     
     def __init__(self):
-        self._transaction_history = {
-            "context" : '',
-            "request" : '',
-            "name"    : '',
-            "utils"   : [],
-            "result"  : '',    
-        }
+        """
+        The init creates the dictionary of dictionaries so that we can use multiple fragments that came before this.  
+        It should also automatically delete any dictionary that is older than 10 - 20 minutes.
+        """
+        self._transaction_history = [{
+            "context"        : '',
+            "request"        : '',
+            "name"           : '',
+            "utils"          : [],
+            "result"         : '',
+            "creation_time"  : time.time(),
+        }]
+        self._p_changed = True
 
 
     def __call__(self, context, request, name):
         utils = getAllUtilitiesRegisteredFor(IFragmentsDirectory)
         utils.sort(key=lambda u: u.order)
         
-        if not False in map(lambda x: True if x[0] == self._transaction_history.get(x[1]) else False,
-                            [[context, "context"], [request, "request"], [name, "name"]]):  
-
-            if not False in map(lambda x, y: True if x == self._transaction_history.get("utils")[y] else False,
-                                utils, range(utils.length())):
-
-                return self._transaction_history.get("result")
-
-            
-            
-        self.reset_transaction_history()
-        self.reinitialize_object_internal_database(context, request, name, utils)
-        
+        for transactions in self._transaction_history:
+            # Helps to delete dictionaries that are older than 10 minutes
+            if transactions.get("creation_time") - time.time() < 6000:                        
+                """ Going from in to out, lambda creates a mini function with a list of two variables, 
+                x[0] is the received variables, and x[1] is the cached variables.  
+                The map creates a list of trues and falses and 
+                if there is a false in the list it will automatically skip this."""
+                if not False in map(lambda x: True if x[0] == transactions.get(x[1]) else False,
+                                [[context, "context"], [request, "request"], [name, "name"]]):  
+                    """ Again going from in to out, 
+                    since utils is a list we check the inner list, 
+                    with x being the receiver, and y being the cached utils."""
+                    if not False in map(lambda x, y: True if x == transactions.get("utils")[y] else False,
+                                    utils, range(utils.len())):
+                    
+                        return self._transaction_history.get("result")
+            else:
+                self._transaction_history.remove(transactions)
+                self._p_changed = True
 
         for util in reversed(utils):
-            result = self.utility_get(util)
+            result = self.utility_get(context, request, name, util)
             if not result == 0:
-                self._transaction_history["result"] = result
+                self.add_dictionary(context, request, name, utils, result)
                 return result
     
-        try:
-            return util_result_list[0]
-        except:
-            raise KeyError(name)
+        raise KeyError(name)
 
-    def reset_transaction_history(self):
-        self._transaction_history.clear()
-        self._transaction_history = {
-            "context" : '',
-            "request" : '',
-            "name"    : '',
-            "utils"   : [],
-            "result"  : '',    
-        }
+    def add_dictionary(self, context, request, name, utils, result):
+        self._transaction_history.append({
+            "context"       : context,
+            "request"       : request,
+            "name"          : name,
+            "utils"         : utils,
+            "result"        : result,
+            "creation_time" : time.time()
+            })
+        self._p_changed = True
 
-    def reinitialize_object_internal_database(self, context, request, name, utils):
-        self._transaction_history["context"] = context
-        self._transaction_history["request"] = request
-        self._transaction_history["name"] = name
-        self._transaction_history["utils"] = utils
-        
-    def utility_get(self, util):
-        if util.layer is not None:
-            if not util.layer.providedBy(request):
+    def utility_get(self, context, request, name, utils):
+        if utils.layer is not None:
+            if not utils.layer.providedBy(request):
                 return 0
         try:
-            return util.get(self._transaction_history["context"],
-                            self._transaction_history["request"],
-                            self._transaction_history["name"])
+            return utils.get(context, request, name)
         except KeyError:
             return 0
         

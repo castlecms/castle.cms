@@ -12,17 +12,14 @@ from zope.interface import Invalid
 from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-import threading
 
-_local_cache = threading.local()
+
 
 
 class VideoTile(ContentTile):
     default_display_fields = ()
 
     def render(self):
-        if hasattr(_local_cache, "PageTemplate"):
-            PageTemplate = _local_cache.PageTemplate
         return self.index()
 
     def get_video(self):
