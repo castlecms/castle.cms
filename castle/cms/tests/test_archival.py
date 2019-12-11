@@ -21,8 +21,6 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
 
 
 class TestArchiveManager(unittest.TestCase):

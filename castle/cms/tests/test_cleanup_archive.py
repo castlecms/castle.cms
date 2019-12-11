@@ -7,9 +7,7 @@ from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone.registry.interfaces import IRegistry
 from moto import mock_s3
-from zope.component import getUtility
 
 import unittest
 from urlparse import urlparse

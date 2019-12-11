@@ -23,7 +23,6 @@ import hashlib
 import logging
 import re
 import requests
-import StringIO
 
 
 logger = logging.getLogger('castle.cms')
