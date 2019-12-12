@@ -112,20 +112,21 @@ Optional Dependencies
 Running tests
 =============
 
-Default plone testing:
+*Default plone testing:*
 
 .. code-block:: shell
 
   ./bin/test -s castle.cms
 
-To run only robot tests:
+
+*To run only robot tests:*
 
 .. code-block:: shell
 
   ./bin/test -s castle.cms -t robot
 
 
-Without robot:
+*Without robot:*
 
 .. code-block:: shell
 
