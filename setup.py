@@ -66,7 +66,7 @@ setup(
         'collective.celery>=1.1.4',
 
         # python
-        'boto>=2.38.0<3',
+        'boto3>=1.9.222',
         'google-api-python-client>=1.4.2<2',
         'redis>=2.10.3<3',
         'requests>=2.7.0<3',
@@ -93,7 +93,8 @@ setup(
             'responses',
             'mock',
             'argon2_cffi',
-            'plone.app.robotframework'
+            'plone.app.robotframework',
+            'moto',
         ],
         'development': [
             'zest.releaser',

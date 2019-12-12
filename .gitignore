@@ -35,6 +35,7 @@ packages/
 pyvenv.cfg
 buildout-copy.cfg
 temp_resources/
+env
 dump.rdb
 /Makefile
 /package.json

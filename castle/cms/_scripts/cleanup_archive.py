@@ -26,7 +26,13 @@ parser.add_argument('--site-id', dest='site_id', default='Plone')
 args, _ = parser.parse_known_args()
 
 
+def is_s3_url(elurl, parsed_endpoint):
+    parsed = urlparse(elurl)
+    return parsed.netloc == parsed_endpoint.netloc
+
+
 def fix_urls(storage, dom):
+    parsed_endpoint = urlparse(storage.s3_conn.meta.client.meta.endpoint_url)
     for Mover in storage.Movers:
         mover = Mover(dom)
         for el in mover.get_elements():
@@ -34,8 +40,7 @@ def fix_urls(storage, dom):
             if url is None:
                 continue
             # check that the url is an s3 url
-            parsed = urlparse(url)
-            if parsed.netloc != storage.s3_conn.server_name():
+            if not is_s3_url(url, parsed_endpoint):
                 continue
 
             original = None

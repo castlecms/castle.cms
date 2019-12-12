@@ -1,3 +1,8 @@
+# for compat with python3, specifically the urllib.parse includes
+# noqa because these need to precede other imports
+from future.standard_library import install_aliases
+install_aliases()  # noqa
+
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
 from castle.cms.files import aws
@@ -9,8 +14,7 @@ from lxml.html import tostring
 from plone import api
 from plone.subrequest import subrequest
 from plone.uuid.interfaces import IUUID
-from urlparse import urljoin
-from urlparse import urlparse
+from urllib.parse import urlparse, urljoin, quote_plus
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
 from zope.interface import implements
@@ -202,7 +206,6 @@ def _get_vhm_base_url(public_url, site_path):
 
 
 class RequestsUrlOpener(object):
-
     def __init__(self, migrator):
         self.migrator = migrator
         self.site = migrator.site
@@ -256,7 +259,7 @@ class SubrequestUrlOpener(object):
             self.public_url = self.site.absolute_url()
         self.vhm_base = _get_vhm_base_url(self.public_url, self.site_path)
 
-    def __call__(self, url):
+    def __call__(self, url, use_vhm=True):
         url = normalize_url(url)
         if not url:
             return
@@ -276,9 +279,12 @@ class SubrequestUrlOpener(object):
             # can always be from site root
             url = self.public_url + '/++plone++' + url.rsplit('++plone++', 1)[-1]  # noqa
 
-        parsed = urlparse(url)
-        vhm_path = self.vhm_base + parsed.path
-        resp = subrequest(vhm_path)
+        if use_vhm:
+            parsed = urlparse(url)
+            vhm_path = self.vhm_base + parsed.path
+            resp = subrequest(vhm_path)
+        else:
+            resp = subrequest(url)
         if resp.getStatus() == 404:
             return
 
@@ -345,7 +351,7 @@ class Storage(object):
     def _initialize_s3(self):
         bucket_name = api.portal.get_registry_record(
             'castle.aws_s3_bucket_name')
-        self._s3_conn, self._bucket = aws.get_bucket(bucket_name)
+        self._s3_conn, self._bucket = aws.get_bucket(s3_bucket=bucket_name)
 
     def apply_replacements(self, content):
         # first pass is for straight text
@@ -371,30 +377,32 @@ class Storage(object):
         return tostring(dom)
 
     def move_to_aws(self, content, content_path,
-                    content_type='text/html; charset=utf-8', replace=True):
+                    content_type='text/html; charset=utf-8'):
         # perform replacements
         if 'html' in content_type and self.replacements:
             content = self.apply_replacements(content)
         content_path = content_path.lstrip('/')
         content_path = CONTENT_KEY_PREFIX + content_path
-        url = 'https://{host}/{bucket}/{key}'.format(
-            host=self.s3_conn.server_name(),
+        url = '{endpoint_url}/{bucket}/{key}'.format(
+            endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path)
-        key = self.bucket.new_key(content_path)
-        key.set_contents_from_string(content, headers={
-            'Content-Type': content_type
-        }, replace=True)
-        key.make_public()
+            key=quote_plus(content_path))
+
+        aws.create_or_update(
+            self.bucket,
+            content_path,
+            content_type,
+            content)
+
         return url
 
-    def move_resource(self, url, keep_ext=False):
+    def move_resource(self, url, keep_ext=False, use_vhm=True):
         if 'data:' in url:
             return
         if url in self.errors:
             print('skipping because of error %s' % url)
             return
-        resp = self.url_opener(url)
+        resp = self.url_opener(url, use_vhm=use_vhm)
         if resp is None:
             self.errors.append(url)
             return
@@ -406,7 +414,7 @@ class Storage(object):
         if 'text' in resp['headers'].get('content-type', '').lower():
             for sub_url in RE_CSS_URL.findall(fidata) + RE_CSS_IMPORTS.findall(fidata):
                 resource_url = sub_url
-                if not sub_url.startswith('http'):
+                if not sub_url.startswith('http') and not sub_url.startswith('data:'):
                     resource_url = urljoin(url, sub_url)
                 if resource_url not in self.resources:
                     moved_url = self.move_resource(resource_url)
@@ -425,19 +433,17 @@ class Storage(object):
         if keep_ext and '.' in url:
             ext = url.split('.')[-1]
             content_path += '.' + ext
-        new_url = 'https://{host}/{bucket}/{key}'.format(
-            host=self.s3_conn.server_name(),
+        new_url = '{endpoint_url}/{bucket}/{key}'.format(
+            endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path)
+            key=quote_plus(content_path))
 
-        # first check if already moved
-        if self.bucket.get_key(content_path) is None:
-            key = self.bucket.new_key(content_path)
-            key.set_contents_from_string(fidata, headers={
-                'Content-Type': resp['headers']['content-type'],
-                'Content-Disposition': resp['headers'].get('content-disposition')
-            }, replace=True)
-            key.make_public()
+        aws.create_if_not_exists(
+            self.bucket,
+            content_path,
+            resp['headers']['content-type'],
+            fidata,
+            content_disposition=resp['headers'].get('content-disposition', None))
 
         return new_url
 
