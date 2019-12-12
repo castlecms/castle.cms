@@ -134,6 +134,12 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    auth_step_timeout = schema.Int(
+        title=u'(Seconds) This amount of inactivity will reset the login process',
+        description=u'Between each step, the allowed time is reset to this amount',
+        default=120,
+    )
+
     restrict_logins_to_countries = schema.Tuple(
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
@@ -200,6 +206,19 @@ class IAnnouncementData(Interface):
         title=u"Site announcement",
         default=u'<p><strong>Breaking News:</strong> '
                 u'<em>Replace this text with your own site announcement</em></p>',
+        required=False
+    )
+
+    show_disclaimer = schema.Bool(
+        title=u'Show disclaimer for first time a user visits a site. '
+              u'To comply with ePrivacy Directive, use this feature to notify about cookie use.',
+        default=False,
+        required=False)
+
+    site_disclaimer = schema.Text(
+        title=u"Disclaimer",
+        default=u'<p><strong>Disclaimer</strong> '
+                u'<em>You are seeing this because this is your first time visiting the site.</em></p>',
         required=False
     )
 
@@ -281,6 +300,17 @@ class IAPISettings(Interface):
         title=u'Google Analytics ID',
         description=u'for use with gathering content statistics',
         required=False)
+
+    gtm_id = schema.TextLine(
+        title=u'Google Tag Manager Container ID',
+        description=u'Provided by Google',
+        required=False
+    )
+
+    gtm_enabled = schema.Bool(
+        title=u'Enable Google Tag Manager Throughout Site',
+        default=False
+    )
 
     recaptcha_public_key = schema.TextLine(
         title=u'Recaptcha 3 Public Key',

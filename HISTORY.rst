@@ -1,10 +1,43 @@
 Changelog
 =========
 
-2.5.13 (unreleased)
+2.5.17 (unreleased)
 -------------------
 
 - add preliminary support for category subscriber emails to be used in content rules
+
+
+2.5.16 (2019-10-07)
+-------------------
+
+- Fix upgrade step
+  [lucid-0]
+
+2.5.15 (2019-10-07)
+-------------------
+
+- add sticky footer tile
+  [lucid-0]
+
+- integrate Google Tag Manager
+  [lucid-0]
+
+- Redirect to /@@secure-login if it's in request path
+  [lucid-0]
+
+- Serve strict robots.txt to backend URL
+  [lucid-0, Chue Her]
+
+2.5.14 (2019-07-18)
+-------------------
+
+- fix search.js for ie 10/11
+
+
+2.5.13 (2019-06-27)
+-------------------
+
+- fix og:image tag duplication issue
 
 
 2.5.12 (2019-05-28)

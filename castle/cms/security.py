@@ -81,9 +81,13 @@ def afterTraversal(event):
     if not ICastleLayer.providedBy(request):
         return
 
-    shield.protect(request)
+    robot_view = shield.protect(request)
 
     resp = request.response
+
+    if robot_view:
+        resp.setBody(robot_view, lock=True)
+        resp.setHeader('X-Robots-Tag', 'noindex')
 
     context = get_context_from_request(request)
     cache_tags = set([

@@ -104,7 +104,7 @@ require([
   });
 
   var SearchOption = R.createClass({
-    getDefaultProps() {
+    getDefaultProps: function() {
       return {
         show: false,
         parent: null,
@@ -113,11 +113,11 @@ require([
         label: null,
         labelPrefix: null,
         value: '',
-        onClick: function(){}
+        onClick: function(e){}
       }
     },
 
-    render() {
+    render: function() {
       var that = this;
       var additional = '';
       if(that.props.show === that.props.type){

@@ -26,28 +26,7 @@ class AnalyticsView(BrowserView):
         })
 
     def ga_api_call(self, paths):
-        service = analytics.get_ga_service()
-        if not service:
-            return
-
-        profile = self.get_ga_profile(service)
-        if not profile:
-            return
-
         params = json.loads(self.request.get('params'))
-
-        if self.request.get('type') == 'realtime':
-            ga = service.data().realtime()
-            if not params.pop('global', False):
-                # need to restrict by filters
-                path_query = ','.join(['rt:pagePath==%s' % p for p in paths])
-                params['filters'] = path_query
-        else:
-            if not params.pop('global', False):
-                # need to restrict by filters
-                path_query = ','.join(['ga:pagePath==%s' % p for p in paths])
-                params['filters'] = path_query
-            ga = service.data().ga()
 
         cache_key = '-'.join(api.portal.get().getPhysicalPath()[1:])
         for key, value in params.items():
@@ -57,12 +36,38 @@ class AnalyticsView(BrowserView):
             result = cache.get(cache_key)
         except Exception:
             result = None
+
         if result is None:
+            service = analytics.get_ga_service()
+            if not service:
+                return {'error': 'Could not get GA Service'}
+
+            profile = self.get_ga_profile(service)
+            if not profile:
+                return {'error': 'Could not get GA Profile'}
+
+            if self.request.get('type') == 'realtime':
+                ga = service.data().realtime()
+                if not params.pop('global', False):
+                    # need to restrict by filters
+                    path_query = ','.join(['rt:pagePath==%s' % p for p in paths])
+                    params['filters'] = path_query
+            else:
+                if not params.pop('global', False):
+                    # need to restrict by filters
+                    path_query = ','.join(['ga:pagePath==%s' % p for p in paths])
+                    params['filters'] = path_query
+                ga = service.data().ga()
+
             query = ga.get(ids='ga:' + profile, **params)
             result = query.execute()
-            cache_duration = self.request.get('cache_duration')
-            if cache_duration:
-                cache.set(cache_key, result, int(cache_duration))
+            if result:
+                cache_duration = self.request.get('cache_duration')
+                if cache_duration:
+                    cache.set(cache_key, result, int(cache_duration))
+            else:
+                result = {'error': 'GA query execution yielded no result.'}
+
         return result
 
     def get_ga_profile(self, service):
