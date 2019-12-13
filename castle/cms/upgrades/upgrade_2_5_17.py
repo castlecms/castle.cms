@@ -52,3 +52,6 @@ def upgrade(context, logger=None):
     transaction.commit()
 
     update_password_expiry(api.portal.get())
+
+    for id in context.objectIds():
+        context[id].reindexObject(idxs=['has_private_parents'])
