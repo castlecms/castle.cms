@@ -20,6 +20,7 @@ from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from ZPublisher.interfaces import IPubAfterTraversal
 from ZPublisher.interfaces import IPubBeforeCommit
+from zExceptions import NotFound
 
 import binascii
 import logging
@@ -90,6 +91,14 @@ def afterTraversal(event):
         resp.setHeader('X-Robots-Tag', 'noindex')
 
     context = get_context_from_request(request)
+
+    # make sure content in private folders remains private
+    if api.user.is_anonymous():
+        if hasattr(context, 'UID'):
+            brain = api.portal.get_tool('portal_catalog')(UID=context.UID())[0]
+            if getattr(brain, 'has_private_parents', False):
+                raise NotFound
+
     cache_tags = set([
         getattr(context, 'portal_type', '').lower().replace(' ', '-'),
         getattr(context, 'meta_type', '').lower().replace(' ', '-'),
