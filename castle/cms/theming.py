@@ -8,10 +8,12 @@ import json
 import logging
 import re
 from urlparse import urljoin
+import time
 
 import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
+from castle.cms.interfaces.theming import ICastleCmsThemeTemplateLoader
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -32,11 +34,12 @@ from repoze.xmliter.utils import getHTMLSerializer
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
+from zope.component import queryUtility
+from zope.component import getUtility
+from zope.component import getGlobalSiteManager
 from zope.interface import alsoProvides
+from zope.interface import implements
 
-import threading
-
-_local_cache = threading.local()
 
 logger = logging.getLogger('castle.cms')
 
@@ -59,12 +62,18 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 
 class ThemeTemplateLoader(PageTemplateLoader):
-
-    def __init__(self, theme, template_cache=None, *args, **kwargs):
+    implements(ICastleCmsThemeTemplateLoader)
+    def __init__(self, theme, *args, **kwargs):
         self.file_cache = {}
-        if template_cache is None:
-            template_cache = {}
-        self.template_cache = template_cache
+
+        self.previous_templates = [
+            {
+                "filename" : '',
+                "data" : '',
+                "template" : '',
+                "creation_time" : time.time()
+            }]
+        
         self.theme = theme
         try:
             self.folder = queryResourceDirectory(THEME_RESOURCE_NAME, theme)
@@ -78,54 +87,46 @@ class ThemeTemplateLoader(PageTemplateLoader):
         The format parameter determines will parse the file. Valid
         options are `xml` and `text`.
         """
-        if filename in self.template_cache:
-            return self.template_cache[filename]
-
+        
         try:
             data = self.read_file(filename)
         except Exception:
             data = None
         if not data:
             filename = backup
-            if filename in self.template_cache:
-                return self.template_cache[filename]
             data = self.read_file(filename)
 
         template = self.previous_template_file_cache(filename, data)
         if template:
             return template
-        # Helps to ensure that the PageTemplate object is in local memory
-        if hasattr(_local_cache, "PageTemplate"):
-            LocalPageTemplate = _local_cache.PageTemplate
-            template = LocalPageTemplate(data)
-        else:
-            template = PageTemplate(data)
-            _local_cache.PageTemplate = PageTemplate
         
-
         template = PageTemplate(data)
-        self.template_cache[filename] = template
-        _local_cache.PreviousRespondedTemplate.append([filename, data, template])
+
+        self.add_template_file_cache(filename, data, template)
+        
         return template
 
     __getitem__ = load
 
     def previous_template_file_cache(self, filename, data):
-        """
-        If we have read and create the template before in this thread, send the thread cache as a result.
-        It is a list of lists with the inner list of [0] = filename, [1] = data, [2] = template.
-        If we have seen the file before and it hasn't been modified since then we return the response otherwise we delete
-        the inner list and return a none.
-        """
-        if hasattr(_local_cache, "PreviousRespondedTemplate"):
-            response = _local_cache.PreviousRespondedTemplate
-            for innerlist in response:
-                if innerlist[0] == filename and innerlist[1] == data:
-                    return innerlist[2]
-        else:
-            _local_cache.PreviousRespondedTemplate = []
+        for template in self.previous_templates:
+            if template.get("creation_time") - time.time() < 600 or not filename == '':
+                if filename == template.get("filename") and data == template.get("data"):
+                    return template.get("template")
+                if filename == template.get("filename") and not data == template.get("data"):
+                    self.previous_templates.remove(template)
+            else:
+                self.previous_templates.remove(template)
 
         return None
+
+    def add_template_file_cache(self, filename, data, template):
+        self.previous_templates.append({ 
+            "filename" : filename,
+            "data" : data,
+            "template" : template,
+            "creation_time" : time.time()
+        })
     
     def read_file(self, filename):
         if self.folder is None:
@@ -142,10 +143,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
             raise KeyError
 
     def load_raw(self, raw):
-        if hasattr(_local_cache, "PageTemplate"):
-            return _local_cache.PageTemplate(raw)
-        else:
-            return PageTemplate(raw)
+        return PageTemplate(raw)
 
 
 def join(base, url):
@@ -176,7 +174,7 @@ class _Transform(object):
     def __init__(self, name):
         # provide backup theme in case missing
         self.name = name or 'castle.theme'
-        self.template_cache = {}
+
 
     def __call__(self, request, result, context=None):
         if '++plone++' in request.ACTUAL_URL:
@@ -212,7 +210,7 @@ class _Transform(object):
             portal_url,
             THEME_RESOURCE_NAME,
             self.name)
-
+        
         content = self.get_fill_content(result, raw)
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
@@ -277,8 +275,12 @@ class _Transform(object):
                                   'plone.app.standardtiles.stylesheets')
 
     def get_loader(self):
-        return ThemeTemplateLoader(
-            self.name, template_cache=self.template_cache)
+        if queryUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader"):
+            return getUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader")
+        else:
+            themetemplateloader = ThemeTemplateLoader(self.name)
+            getGlobalSiteManager().registerUtility(themetemplateloader, ICastleCmsThemeTemplateLoader, name="ThemeTemplateLoader")
+            return getUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader")
 
     def get_raw_layout(self, context, loader=None):
         '''
@@ -325,7 +327,7 @@ class _Transform(object):
                 selected = default_layout
         return selected
 
-    # Optimize this function
+    
     def get_layout(self, context, default_layout='index.html',
                    request=None, loader=None):
         '''
@@ -628,7 +630,7 @@ def isPloneTheme(settings):
             settings.rules not in (None, '_', '') and
             settings.rules.endswith('.xml'))
 
-#Optimize this function and the subfunction calls
+
 def transformIterable(self, result, encoding):
     """
     Apply our customize transform that attempts to provide

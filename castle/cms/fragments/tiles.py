@@ -29,7 +29,7 @@ class FragmentTile(Tile):
                 self.data['name']
             ))
             self.index = lambda: u''
-    # Optimize this
+
     def __call__(self):
         self.update()
         return u'<html><body>{0:s}</body></html>'.format(self.index())

@@ -3,6 +3,7 @@
 from .archive import IArchiveContentTransformer
 from .archive import IArchiveManager
 from .authentication import IAuthenticator
+from .cache import ICastleCmsgetFragment
 from .content import IAudio
 from .content import ICastleApplication
 from .content import IDashboard
@@ -26,6 +27,7 @@ from .controlpanel import ISocialMediaSchema
 from .layers import ICastleLayer
 from .layers import IVersionViewLayer
 from .metadata import ILDData
+from .theming import ICastleCmsThemeTemplateLoader
 from .tiles import IFieldTileRenderer
 from .tiles import IGlobalTile
 from .tiles import IMetaTile
