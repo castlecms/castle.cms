@@ -9,6 +9,7 @@ import logging
 import re
 from urlparse import urljoin
 import time
+import os
 
 import Globals
 from Acquisition import aq_parent
@@ -132,7 +133,8 @@ class ThemeTemplateLoader(PageTemplateLoader):
         if self.folder is None:
             return
         if filename in self.file_cache:
-            return self.file_cache[filename]
+            if self.file_cache[filename].st_mtime == filename.st_mtime:
+                return self.file_cache[filename]
         try:
             if isinstance(filename, unicode):
                 filename = filename.encode('utf8')
