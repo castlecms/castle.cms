@@ -9,7 +9,6 @@ import logging
 import re
 from urlparse import urljoin
 import time
-import os
 
 import Globals
 from Acquisition import aq_parent
@@ -64,17 +63,18 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 class ThemeTemplateLoader(PageTemplateLoader):
     implements(ICastleCmsThemeTemplateLoader)
+
     def __init__(self, theme, *args, **kwargs):
         self.file_cache = {}
 
         self.previous_templates = [
             {
-                "filename" : '',
-                "data" : '',
-                "template" : '',
-                "creation_time" : time.time()
+                "filename": '',
+                "data": '',
+                "template": '',
+                "creation_time": time.time()
             }]
-        
+
         self.theme = theme
         try:
             self.folder = queryResourceDirectory(THEME_RESOURCE_NAME, theme)
@@ -88,7 +88,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
         The format parameter determines will parse the file. Valid
         options are `xml` and `text`.
         """
-        
+
         try:
             data = self.read_file(filename)
         except Exception:
@@ -100,11 +100,11 @@ class ThemeTemplateLoader(PageTemplateLoader):
         template = self.previous_template_file_cache(filename, data)
         if template:
             return template
-        
+
         template = PageTemplate(data)
 
         self.add_template_file_cache(filename, data, template)
-        
+
         return template
 
     __getitem__ = load
@@ -122,13 +122,13 @@ class ThemeTemplateLoader(PageTemplateLoader):
         return None
 
     def add_template_file_cache(self, filename, data, template):
-        self.previous_templates.append({ 
-            "filename" : filename,
-            "data" : data,
-            "template" : template,
-            "creation_time" : time.time()
+        self.previous_templates.append({
+            "filename": filename,
+            "data": data,
+            "template": template,
+            "creation_time": time.time()
         })
-    
+
     def read_file(self, filename):
         if self.folder is None:
             return
@@ -177,7 +177,6 @@ class _Transform(object):
         # provide backup theme in case missing
         self.name = name or 'castle.theme'
 
-
     def __call__(self, request, result, context=None):
         if '++plone++' in request.ACTUAL_URL:
             return
@@ -185,7 +184,7 @@ class _Transform(object):
         original_context = context
         if context is None or IResourceDirectory.providedBy(context):
             original_context = context = portal
-            
+
         try:
             context_url = context.absolute_url()
         except AttributeError:
@@ -195,7 +194,7 @@ class _Transform(object):
             except Exception:
                 context = aq_parent(context)
             context_url = context.absolute_url()
-        
+
         if (not ISiteRoot.providedBy(context) and
                 not IDexterityContent.providedBy(context)):
             context = aq_parent(context)
@@ -212,11 +211,11 @@ class _Transform(object):
             portal_url,
             THEME_RESOURCE_NAME,
             self.name)
-        
+
         content = self.get_fill_content(result, raw)
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
-        
+
         layout = self.get_layout(context, request=request)
         layout = layout(
             portal_url=portal_url,
@@ -243,7 +242,6 @@ class _Transform(object):
 
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
-
 
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
@@ -281,7 +279,8 @@ class _Transform(object):
             return getUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader")
         else:
             themetemplateloader = ThemeTemplateLoader(self.name)
-            getGlobalSiteManager().registerUtility(themetemplateloader, ICastleCmsThemeTemplateLoader, name="ThemeTemplateLoader")
+            getGlobalSiteManager().registerUtility(themetemplateloader, ICastleCmsThemeTemplateLoader,
+                                                   name="ThemeTemplateLoader")
             return getUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader")
 
     def get_raw_layout(self, context, loader=None):
@@ -329,7 +328,6 @@ class _Transform(object):
                 selected = default_layout
         return selected
 
-    
     def get_layout(self, context, default_layout='index.html',
                    request=None, loader=None):
         '''
@@ -414,7 +412,7 @@ class _Transform(object):
         '''
         Rewrite layout urls to be full public paths
         '''
-        
+
         if hasattr(dom, 'tree'):
             tree = dom.tree
         else:
@@ -425,7 +423,7 @@ class _Transform(object):
                 node.set('href', join(base_url, node.get('href')))
             elif node.get('src'):
                 node.set('src', join(base_url, node.get('src')))
-        
+
         return tree
 
     def bbb(self, dom, result):
@@ -528,7 +526,7 @@ class _Transform(object):
 def getTransform(context, request):
     DevelopmentMode = Globals.DevelopmentMode
     policy = theming_policy(request)
-    
+
     # Obtain settings. Do nothing if not found
     settings = policy.getSettings()
 
