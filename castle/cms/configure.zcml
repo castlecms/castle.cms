@@ -176,7 +176,7 @@
     factory=".jbot.TemplateManager"
     name="theme_manager"
   />
-  
+
   <subscriber
     for="Products.CMFCore.interfaces.ISiteRoot
          zope.traversing.interfaces.IBeforeTraverseEvent"
@@ -200,5 +200,9 @@
  <adapter factory=".locking.TTWLockable" />
 
  <adapter factory=".authentication.Authenticator" />
+
+ <adapter
+       factory=".traverser.IsolatedSiteTraverser"
+       provides="zope.publisher.interfaces.IPublishTraverse"/>
 
 </configure>
