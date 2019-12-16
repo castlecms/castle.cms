@@ -4,7 +4,26 @@ Changelog
 2.5.17 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- add preliminary support for category subscriber emails to be used in content rules
+  [zombified]
+
+- upgrade to boto3 library
+  [zombified]
+
+- add first visit / disclaimer message options
+  [cmher]
+
+- move authentication flow to backend
+  [lucid-0]
+
+- fix news item tiles without names, catch querylisting url error
+  [alphaomega325]
+
+- improve loading and error message for google analytics
+  [lucid-0]
+
+- add index and logic to hide published items contained in private folders
+  [lucid-0]
 
 
 2.5.16 (2019-10-07)

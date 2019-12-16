@@ -38,3 +38,9 @@ temp_resources/
 *~
 /lib64/
 lib64
+env
+dump.rdb
+/Makefile
+/package.json
+/watch-run.py
+/watchable-grunt.js

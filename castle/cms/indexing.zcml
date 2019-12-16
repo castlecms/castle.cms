@@ -31,6 +31,7 @@
   <adapter name="getRawRelatedItems" factory=".indexers.getRawRelatedItems" />
   <adapter name="location" factory=".indexers.getLocation" />
   <adapter name="hasImage" factory=".indexers.hasImage" />
+  <adapter name="has_private_parents" factory=".indexers.has_private_parents" />
   <adapter name="contentType" factory=".indexers.getContentTypeFile" />
   <adapter name="contentType" factory=".indexers.getContentTypeImage" />
   <adapter name="contentType" factory=".indexers.getContentTypeContent" />

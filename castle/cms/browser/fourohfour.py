@@ -1,14 +1,20 @@
-from castle.cms import archival
-from castle.cms import shield
-from castle.cms.files import aws
+import logging
+
 from plone import api
+from plone.app.redirector.browser import FourOhFourView
+from plone.app.redirector.interfaces import IRedirectionStorage
 from zExceptions import Redirect
 from zope.component import queryUtility
-from plone.app.redirector.interfaces import IRedirectionStorage
-from plone.app.redirector.browser import FourOhFourView
 from six.moves import urllib
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import unquote
+
+from castle.cms import archival
+from castle.cms import shield
+from castle.cms.files import aws
+
+
+logger = logging.getLogger('castle.cms')
 
 
 class FourOhFour(FourOhFourView):
@@ -17,7 +23,11 @@ class FourOhFour(FourOhFourView):
         shield.protect(self.request, recheck=True)
         if '++' in self.request.URL:
             self.request.response.setStatus(404)
-            return self.index()
+            try:
+                return self.index()
+            except Exception:
+                logger.error("failed to render 404 template, had to return simple response", exc_info=True)
+                return "not found"
 
         self.notfound = self.context
         self.context = api.portal.get()

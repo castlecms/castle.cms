@@ -203,6 +203,15 @@
     layer="castle.cms.interfaces.ICastleLayer"
     />
 
+    <browser:page
+      name="usergroup-groupdetails"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class="Products.CMFPlone.controlpanel.browser.usergroups_groupdetails.GroupDetailsControlPanel"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      template="templates/usergroups_groupdetails.pt"
+      layer="castle.cms.interfaces.ICastleLayer"
+      />
+
   <browser:page
     name="status-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
