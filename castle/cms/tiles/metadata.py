@@ -137,7 +137,6 @@ class MetaDataTile(Tile):
             url = context_state.view_url()
         return u'    <link rel="canonical" href="%s" />' % url
 
-    
     def __call__(self):
         portal_state = getMultiAdapter((self.context, self.request),
                                        name=u'plone_portal_state')
@@ -147,7 +146,6 @@ class MetaDataTile(Tile):
 
         alsoProvides(self, IViewView)
 
-        parent = self
         # map is a for loop but is faster and is inherently paralleled in executing the render
         result += "".join(map(self.render, head_viewlets.items()))
         result += unidecode(self.get_basic_tags())
@@ -176,4 +174,3 @@ class MetaDataTile(Tile):
                 logger.warn('Error rendering head viewlet %s' % name, exc_info=True)
                 result = ''
         return result
-        

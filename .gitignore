@@ -37,3 +37,4 @@ buildout-copy.cfg
 temp_resources/
 *~
 /lib64/
+lib64

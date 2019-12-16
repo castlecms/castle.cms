@@ -8,7 +8,6 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-
 class SharingTile(BaseTile):
 
     def render(self):

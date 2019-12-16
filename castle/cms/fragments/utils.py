@@ -42,29 +42,33 @@ class _getFragment(object):
             # Helps to delete dictionaries that are older than 10 minutes
             if transactions.get("creation_time") - time.time() < 600 or not name == '':
                 """
-                Going from in to out, lambda creates a mini function with a list of two variables,
-                x[0] is the received variables, and x[1] is the cached variables.
-                The map creates a list of trues and falses and
-                if there is a false in the list it will automatically skip this.
+                Checks the transactions name, request and context against the received,
+                if not found, move to the next one.
                 """
-                if not False in map(lambda x: True if x[0] == transactions.get(x[1]) else False,
-                                [[context, "context"], [request, "request"], [name, "name"]]):
+                if transactions['name'] == name and transactions['request'] == request \
+                   and transactions['context'] == context:
                     """
-                    Again going from in to out,
+                    Going from in to out,
                     since utils is a list we check the inner list,
                     with x being the receiver, and y being the cached utils.
+                    And if there is any that is false,
+                    it will select true resulting in deleting the dictionary,
+                    otherwise it will send the result.
                     """
-                    if not False in map(lambda x, y: True if x == transactions.get("utils")[y] else False,
+                    if False in map(lambda x, y: True if x == transactions.get("utils")[y] else False,
                                     utils, range(utils.len())):
 
-                        return self._transaction_history.get("result")
-
-                    else:
                         """
                         If we get different utilities, it means that the utilities has been updated,
                         henceforth delete the transaction.
                         """
+
                         self._transaction_history.remove(transactions)
+
+                    else:
+
+                        return transactions['result']
+
             else:
                 self._transaction_history.remove(transactions)
 

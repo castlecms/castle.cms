@@ -15,8 +15,6 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-
-
 class VideoTile(ContentTile):
     default_display_fields = ()
 
@@ -26,7 +24,7 @@ class VideoTile(ContentTile):
 
     def _render(self):
         return self.index()
-    
+
     def get_video(self):
         video = self.data.get('video')
         if not video:
