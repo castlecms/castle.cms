@@ -26,7 +26,7 @@ from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.policy import ThemingPolicy
 from plone.app.theming.utils import theming_policy
 from plone.dexterity.interfaces import IDexterityContent
-from plone.protect.authenticator import createToken
+from plone.protect.utils import addTokenToUrl
 from plone.resource.interfaces import IResourceDirectory
 from plone.resource.utils import queryResourceDirectory
 from Products.CMFCore.interfaces import ISiteRoot
@@ -246,25 +246,30 @@ class _Transform(object):
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
 
-        self.authenticate(context, request, generate = True)
-        
+        self.authenticate(context, request, generate=True)
+
         return dom
 
-    def authenticate(context, request, generate = False):
+    def authenticate(self, context, request, generate=False):
         '''
         Automatically checks the authentication token if it exists.
         If the token doesn't exist, automatically generates the token if generate is true.
         '''
         authenticator = getMultiAdapter((context, request), name=u"authenticator")
         verify = authenticator.verify()
-        token = None
-        
+
         if generate and not verify:
-            token = createToken()
+            url = addTokenToUrl(request.getURL(), req=request)
+            request.set('URL', url)
+            # addtoken to url only add _auth_token in environ.
+            # Need to check and manually add it in to a _authenticator variable.
+            if not hasattr(request, '_authenticator'):
+                request.set('_authenticator', request.environ.get('_auth_token'))
+            authenticator = getMultiAdapter((context, request), name=u"authenticator")
             verify = authenticator.verify()
 
-        return verify, token
-        
+        return verify
+
     def add_viewlet_tile(self, portal, request, el, name):
         tile = queryMultiAdapter(
             (portal, request), name=name)

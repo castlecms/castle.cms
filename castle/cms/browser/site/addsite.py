@@ -30,7 +30,6 @@ if get_site_container is None:
 class AddCastleSite(AddPloneSite):
 
     def buildSite(self, form):
-        import pdb; pdb.set_trace()
         # CSRF protect. DO NOT use auto CSRF protection for adding a site
         alsoProvides(self.request, IDisableCSRFProtection)
         self.request.response.setHeader('Content-type', 'application/json')
