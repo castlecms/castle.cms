@@ -145,6 +145,8 @@ except IOError:
 
 class QpdfProcess(BaseSubProcess):
     """
+    This is ued to both strip metadata in pdf files.
+    And to strip a page for the screenshot process.
     """
     if os.name == 'nt':
         bin_name = 'qpdf.exe'
@@ -157,19 +159,33 @@ class QpdfProcess(BaseSubProcess):
         self._run_command(cmd)
         shutil.copy(outfile, filepath)
 
+    def strip_page(self, filepath, pagenumber):
+        tmpdir = mkdtemp()
+        tmpfilepath = os.path.join(tmpdir, 'temp.pdf')
+        pagenumber = str(pagenumber)
+        
+        cmd = [self.bin_name,
+               '--empty', '--pages',
+               filepath, pagenumber, '--', tmpfilepath,
+               '&&', 'rm', filepath,
+               '&&', 'mv', tmpfilepath, filepath]
+
+        self._run_command(cmd)
+        os.remove(tmpfilepath)
 
 try:
     qpdf = QpdfProcess()
 except IOError:
     qpdf = None
-    logger.warn('qpdf not installed.  Some metadata might remain in PDF files.') # noqa
+    logger.warn("qpdf not installed.  Some metadata might remain in PDF files."
+                "You will also not able to make screenshots")
 
 
 class GhostScriptPDFProcess(BaseSubProcess):
     """
     """
     if os.name == "nt":
-        bin_name = 'gs.exe'
+        bin_name = 'gswin32c'
     else:
         bin_name = 'gs'
 
@@ -184,7 +200,6 @@ class GhostScriptPDFProcess(BaseSubProcess):
                ]
         self._run_command(cmd)
         shutil.copy(outfile, filepath)
-
 
 try:
     gs_pdf = GhostScriptPDFProcess()
@@ -240,8 +255,91 @@ except IOError:
     logger.exception("No md5sum or md5 installed. castle.cms "
                      "will not be able to detect md5 of files.")
     md5 = None
+    
+class GraphicsMagickSubProcess(BaseSubProcess):
+    """
+    Allows us to create small images using graphicsmagick
+    """
+    if os.name == 'nt':
+        bin_name = 'graphicsmagick.exe'
+    else:
+        bin_name = 'graphicsmagick'    
 
+    def __call__(self, data, size, _format):
 
+        tmpdir = mkdtemp()
+        tmpfilepath = os.path.join(tmpdir, TMP_PDF_FILENAME)
+        tmpfi = open(tmpfilepath, 'wb')
+        tmpfi.write(data)
+        tmpfi.close()
+        try:
+            QpdfProcess.strip_page(tmpfilepath, 1)
+        except e:
+            raise e
+        
+        cmd = [
+            self.binary, "convert", tmpfilepath,
+            '-resize', size,
+            '-format', _format,
+            tmpdir]
+
+        self._run_command(cmd)
+        os.remove(tmpfilepath)
+        return os.path.join(tmpdir, 'dump_1.gif')
+
+try:
+    gm = GraphicsMagickSubProcess()
+except IOError:
+    logger.exception("Graphics Magick is not installed, castle.cms"
+                     "Will not be able to make screenshots")
+    gm = None
+
+    
+class LibreOfficeSubProcess(BaseSubProcess):
+    """
+    Converts files of other formats into pdf files using libreoffice.
+    """
+    if os.name == 'nt':
+        bin_name = 'soffice.exe'
+    else:
+        bin_name = 'soffice'
+    
+    def __call__(self, filepath, filename, output_dir):
+        ext = os.path.splitext(os.path.normcase(filename))[1][1:]
+        inputfilepath = os.path.join(output_dir, 'dump.%s' % ext)
+        shutil.move(filepath, inputfilepath)
+        orig_files = set(os.listdir(output_dir))
+        cmd = [
+            self.binary, '--headless', '--convert-to', 'pdf', inputfilepath,
+            '--outdir', output_dir]
+        self._run_command(cmd)
+
+        # remove original
+        os.remove(inputfilepath)
+
+        # move the file to the right location now
+        files = set(os.listdir(output_dir))
+
+        if len(files) != len(orig_files):
+            # we should have the same number of files as when we first began
+            # since we removed libreoffice.
+            # We do this in order to keep track of the files being created
+            # and used...
+            raise Exception("Error converting to pdf")
+
+        converted_path = os.path.join(output_dir,
+                                      [f for f in files - orig_files][0])
+        shutil.move(converted_path, os.path.join(output_dir, DUMP_FILENAME))
+
+try:
+    loffice = LibreOfficeSubProcess()
+except IOError:
+    logger.exception("Libreoffice not installed. castle.cms"
+                 "will not be able to convert text files to pdf.")
+    loffice = None
+    
+
+    
 class DocSplitSubProcess(BaseSubProcess):
     """
     idea of how to handle this shamelessly
@@ -256,6 +354,9 @@ class DocSplitSubProcess(BaseSubProcess):
     def dump_image(self, data, size, _format):
         # docsplit images pdf.pdf --size 700x,300x,50x
         # --format gif --output
+        return GraphicsMagickSubProcess(data, size, _format)
+    """
+    import pdb; pdb.set_trace()
         tmpdir = mkdtemp()
         tmpfilepath = os.path.join(tmpdir, TMP_PDF_FILENAME)
         tmpfi = open(tmpfilepath, 'wb')
@@ -272,7 +373,7 @@ class DocSplitSubProcess(BaseSubProcess):
         self._run_command(cmd)
         os.remove(tmpfilepath)
         return os.path.join(tmpdir, 'dump_1.gif')
-
+"""
     def convert_to_pdf(self, filepath, filename, output_dir):
         # get ext from filename
         ext = os.path.splitext(os.path.normcase(filename))[1][1:]

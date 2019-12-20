@@ -36,6 +36,7 @@ def create_pdf(obj, html, css):
     time.sleep(2)
     if not getCelery().conf.task_always_eager:
         obj._p_jar.sync()
+    import pdb; pdb.set_trace()
     return _create_pdf(obj, html, css)
 
 

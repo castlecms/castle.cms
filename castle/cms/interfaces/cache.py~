@@ -1,0 +1,17 @@
+from zope import schema
+from zope.interface import Interface
+
+class IgetFragment(Interface):
+
+    def add_dictionary(context, request, name, utils, result):
+        "adds to the dictionary"
+
+    _transaction_history = schema.List(
+        schema.Dict(
+            context = schema.Object(),
+            request = schema.Object(),
+            name = schema.Object(),
+            utils = schema.List(),
+            result = schema.Object(),
+            creation_time = schema.Time()
+        ))
