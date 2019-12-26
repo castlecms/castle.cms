@@ -255,15 +255,16 @@ except IOError:
     logger.exception("No md5sum or md5 installed. castle.cms "
                      "will not be able to detect md5 of files.")
     md5 = None
-    
+
+
 class GraphicsMagickSubProcess(BaseSubProcess):
     """
     Allows us to create small images using graphicsmagick
     """
     if os.name == 'nt':
-        bin_name = 'graphicsmagick.exe'
+        bin_name = 'gm.exe'
     else:
-        bin_name = 'graphicsmagick'    
+        bin_name = 'gm'
 
     def __call__(self, data, size, _format):
 
