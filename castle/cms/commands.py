@@ -145,7 +145,7 @@ except IOError:
 
 class QpdfProcess(BaseSubProcess):
     """
-    This is ued to both strip metadata in pdf files.
+    This is used to both strip metadata in pdf files.
     And to strip a page for the screenshot process.
     """
     if os.name == 'nt':
