@@ -254,7 +254,8 @@ except IOError:
     logger.exception("No md5sum or md5 installed. castle.cms "
                      "will not be able to detect md5 of files.")
     md5 = None
-    
+
+
 class GraphicsMagickSubProcess(BaseSubProcess):
     """
     Allows us to create small images using graphicsmagick

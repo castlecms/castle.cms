@@ -42,3 +42,4 @@ dump.rdb
 /watch-run.py
 /watchable-grunt.js
 *~
+/lib64/
