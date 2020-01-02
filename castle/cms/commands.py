@@ -160,18 +160,17 @@ class QpdfProcess(BaseSubProcess):
         shutil.copy(outfile, filepath)
 
     def strip_page(self, filepath, pagenumber):
-        tmpdir = mkdtemp()
+        tmpdir = tempfile.mkdtemp()
         tmpfilepath = os.path.join(tmpdir, 'temp.pdf')
         pagenumber = str(pagenumber)
-        
+
         cmd = [self.bin_name,
                '--empty', '--pages',
-               filepath, pagenumber, '--', tmpfilepath,
-               '&&', 'rm', filepath,
-               '&&', 'mv', tmpfilepath, filepath]
+               filepath, pagenumber, '--', tmpfilepath]
 
         self._run_command(cmd)
-        os.remove(tmpfilepath)
+        return tmpfilepath
+
 
 try:
     qpdf = QpdfProcess()
@@ -261,32 +260,39 @@ class GraphicsMagickSubProcess(BaseSubProcess):
     Allows us to create small images using graphicsmagick
     """
     if os.name == 'nt':
-        bin_name = 'graphicsmagick.exe'
+        bin_name = 'gm.exe'
     else:
-        bin_name = 'graphicsmagick'    
+        bin_name = 'gm'    
 
-    def __call__(self, data, size, _format):
-
-        tmpdir = mkdtemp()
-        tmpfilepath = os.path.join(tmpdir, TMP_PDF_FILENAME)
-        tmpfi = open(tmpfilepath, 'wb')
-        tmpfi.write(data)
-        tmpfi.close()
+    def __call__(self, filepath, output_dir, sizes, format, lang='eng'):
         try:
-            QpdfProcess.strip_page(tmpfilepath, 1)
-        except e:
-            raise e
-        
-        cmd = [
-            self.binary, "convert", tmpfilepath,
-            '-resize', size,
-            '-format', _format,
-            tmpdir]
+            tmpfilepath = qpdf.strip_page(filepath, 1)
+        except Exception:
+            raise Exception
 
-        self._run_command(cmd)
+        for size in sizes:
+            output_file = os.path.join(output_dir, '%ix.%s' % (size[1], format))
+            cmd = [
+                self.binary, "convert", tmpfilepath,
+                '-resize', str(size[1]),
+                '-format', format,
+                output_file]
+
+            self._run_command(cmd)
+
         os.remove(tmpfilepath)
-        return os.path.join(tmpdir, 'dump_1.gif')
+        # now, move images to correctly named folders
+        for name, size in sizes:
+            dest = os.path.join(output_dir, name)
+            
+            if os.path.exists(dest):
+                shutil.rmtree(dest)
 
+            os.makedirs(dest)
+            source = os.path.join(output_dir, '%ix.%s' % (size, format))
+            dest_file = os.path.join(dest, 'dump_1.gif')
+            shutil.move(source, dest_file)        
+        
 try:
     gm = GraphicsMagickSubProcess()
 except IOError:
@@ -346,71 +352,11 @@ class DocSplitSubProcess(BaseSubProcess):
     stolen from ploneformgen's gpg calls
     """
 
-    if os.name == 'nt':
-        bin_name = 'docsplit.exe'
-    else:
-        bin_name = 'docsplit'
-
-    def dump_image(self, data, size, _format):
+    def dump_image(self, filepath, output_dir, sizes, format, lang='eng'):
         # docsplit images pdf.pdf --size 700x,300x,50x
         # --format gif --output
-        return GraphicsMagickSubProcess(data, size, _format)
-    """
-    import pdb; pdb.set_trace()
-        tmpdir = mkdtemp()
-        tmpfilepath = os.path.join(tmpdir, TMP_PDF_FILENAME)
-        tmpfi = open(tmpfilepath, 'wb')
-        tmpfi.write(data)
-        tmpfi.close()
-        cmd = [
-            self.binary, "images", tmpfilepath,
-            '--language', 'eng',
-            '--size', size,
-            '--format', _format,
-            '--output', tmpdir,
-            '--pages', '1']
+        return gm(filepath, output_dir, sizes, format, lang='eng')
 
-        self._run_command(cmd)
-        os.remove(tmpfilepath)
-        return os.path.join(tmpdir, 'dump_1.gif')
-"""
     def convert_to_pdf(self, filepath, filename, output_dir):
         # get ext from filename
-        ext = os.path.splitext(os.path.normcase(filename))[1][1:]
-        inputfilepath = os.path.join(output_dir, 'dump.%s' % ext)
-        shutil.move(filepath, inputfilepath)
-        orig_files = set(os.listdir(output_dir))
-        cmd = [
-            self.binary, 'pdf', inputfilepath,
-            '--output', output_dir]
-        self._run_command(cmd)
-
-        # remove original
-        os.remove(inputfilepath)
-
-        # while using libreoffice, docsplit leaves a 'libreoffice'
-        # folder next to the generated PDF, removes it!
-        libreOfficePath = os.path.join(output_dir, 'libreoffice')
-        if os.path.exists(libreOfficePath):
-            shutil.rmtree(libreOfficePath)
-
-        # move the file to the right location now
-        files = set(os.listdir(output_dir))
-
-        if len(files) != len(orig_files):
-            # we should have the same number of files as when we first began
-            # since we removed libreoffice.
-            # We do this in order to keep track of the files being created
-            # and used...
-            raise Exception("Error converting to pdf")
-
-        converted_path = os.path.join(output_dir,
-                                      [f for f in files - orig_files][0])
-        shutil.move(converted_path, os.path.join(output_dir, DUMP_FILENAME))
-
-
-try:
-    docsplit = DocSplitSubProcess()
-except IOError:
-    logger.exception("No docsplit installed.")
-    docsplit = None
+        return loffice(filepath, filename, output_dir)
