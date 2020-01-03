@@ -1,36 +1,35 @@
 from Acquisition import aq_inner
-from castle.cms import texting
-from castle.cms import subscribe
+from castle.cms import subscribe, texting, _
 from castle.cms.browser.utils import Utils
 from castle.cms.constants import ALL_SUBSCRIBERS
 from castle.cms.interfaces import IAnnouncementData
-from castle.cms.tasks import send_email
-from castle.cms.tasks import send_email_to_subscribers
-from castle.cms.widgets import AjaxSelectFieldWidget
-from castle.cms.widgets import SelectFieldWidget, TinyMCETextFieldWidget
+from castle.cms.tasks import send_email, send_email_to_subscribers
+from castle.cms.widgets import (AjaxSelectFieldWidget, SelectFieldWidget,
+                                TinyMCETextFieldWidget)
 from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.app.textfield import RichText
 from plone.app.textfield.value import RichTextValue
 from plone.autoform import directives
 from plone.autoform.form import AutoExtensibleForm
+from plone.dexterity.utils import createContentInContainer
 from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
 from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
 from Products.CMFPlone.utils import safe_unicode
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from z3c.form import button
-from z3c.form import form
+from z3c.form import button, form
 from z3c.form.browser.file import FileWidget
 from z3c.form.interfaces import WidgetActionExecutionError
-from zope import schema
-from zope.component import getAdapters
-from zope.component import getUtility
-from zope.interface import Invalid
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from Products.Five import BrowserView
-
+from zope import schema, component, interface
+from zope.component import getAdapters, getUtility, adapts
+from zope.interface import Invalid, provider
+from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
+from Products.statusmessages.interfaces import IStatusMessage
+from zope.component.hooks import getSite
+from castle.cms.interfaces import IEmailTemplateSchema
 reg_key = 'castle.subscriber_categories'
 
 
@@ -47,9 +46,13 @@ class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
         self.fields['site_disclaimer'].widgetFactory = TinyMCETextFieldWidget
 
 
+
 class ISendEmailUsersForm(model.Schema):
+    # adapts(IEmailTemplateSchema)
     subject = schema.ASCIILine(
-        title=u'Subject')
+        title=u'Subject',
+        required=False,
+    )
 
     send_from = schema.TextLine(
         title=u'Custom FROM address',
@@ -73,7 +76,8 @@ class ISendEmailUsersForm(model.Schema):
     directives.widget(
         'send_to_users',
         AjaxSelectFieldWidget,
-        vocabulary='plone.app.vocabularies.Users'
+        vocabulary='plone.app.vocabularies.Users',
+        required = False
     )
 
     send_to_users = schema.List(
@@ -98,13 +102,82 @@ class ISendEmailUsersForm(model.Schema):
         default_mime_type='text/html',
         output_mime_type='text/html',
         allowed_mime_types=('text/html',),
-        required=True)
+        required=False)
 
 
 class SendEmailUsersForm(AutoExtensibleForm, form.Form):
-    schema = ISendEmailUsersForm
+    # try:
+    #     context
+    # except NameError:
+    #     context = getSite()
+    schema = IEmailTemplateSchema
+    # form_name = 'email_users_form'
+    # label = _(u'here is my label')
+    # description = _(u'here_is_my_description')
+    # ignoreContext = True
 
-    ignoreContext = True
+    
+    def getContent(self, key=None):
+            self.ignoreContext = False
+            if not key:
+                return api.portal.get().emailtemplates.emailtemplate
+            return api.portal.get().emailtemplates[key]
+
+    @button.buttonAndHandler(u'Save As Template', name='save_template', condition=lambda form: form.ignoreContext)
+    def handle_save(self, action):
+        data, errors = self.extractData()
+        if not errors:
+            send_to_custom = data['send_to_custom'] or []
+            send_to_groups =  data['send_to_groups'] or []
+            send_to_users = data['send_to_users'] or []
+            body = data['body']
+            subject = data['subject']
+            try:
+                send_from = data['send_from']
+            except Exception:
+                send_from = None
+
+            portal = api.portal.get()
+            item = createContentInContainer(
+                portal['emailtemplates'],
+                'EmailTemplate',
+                send_to_custom = send_to_custom,
+                send_to_groups = send_to_groups,
+                send_to_users = send_to_users,
+                body = body,
+                subject = subject,
+                send_from = send_from,
+                title = subject,
+            )
+            if item:
+                self.status = 'email saved'
+            self.context = item
+            # ignoreContext = False
+            # import pdb; pdb.set_trace()
+
+            # import pdb; pdb.set_trace()
+            # self.request.response.redirect('%s/@@announcements-controlpanel' % (
+            #     self.context.absolute_url()))
+            self.ignoreContext = False
+            # self.context = self.context['emailtemplates']['pp']
+            import pdb; pdb.set_trace()
+
+    @button.buttonAndHandler(u'Import', name='handle_import')
+    def import_info(self, action):
+        self.getContent('emailtemplate-3')
+        # self.updateFields()
+        # self.context = self.context['emailtemplates']['pp']
+        # self.ignoreContext = False
+        import pdb; pdb.set_trace()
+        # self.update()
+
+
+    @button.buttonAndHandler(_(u"Cancel"))
+    def handleCancel(self, action):
+        """User cancelled. Redirect back to the front page.
+        """
+        contextURL = self.context.absolute_url()
+        self.request.response.redirect(contextURL)
 
     @button.buttonAndHandler(u'Send', name='send')
     def handle_send(self, action):
