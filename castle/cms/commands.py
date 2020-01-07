@@ -1,9 +1,9 @@
 from collective.documentviewer.convert import DUMP_FILENAME
-from tempfile import mkdtemp
 from logging import getLogger
 import os
 import subprocess
 import shutil
+import tempfile
 
 
 TMP_PDF_FILENAME = 'dump.pdf'
@@ -166,7 +166,7 @@ class QpdfProcess(BaseSubProcess):
 
         cmd = [self.bin_name,
                '--empty', '--pages',
-               filepath, pagenumber, '--', tmpfilepath]
+               filepath, pagenumber, tmpfilepath]
 
         self._run_command(cmd)
         return tmpfilepath
@@ -199,6 +199,7 @@ class GhostScriptPDFProcess(BaseSubProcess):
                ]
         self._run_command(cmd)
         shutil.copy(outfile, filepath)
+
 
 try:
     gs_pdf = GhostScriptPDFProcess()
@@ -263,37 +264,44 @@ class GraphicsMagickSubProcess(BaseSubProcess):
     if os.name == 'nt':
         bin_name = 'gm.exe'
     else:
-        bin_name = 'gm'    
+        bin_name = 'gm'
 
-    def __call__(self, filepath, output_dir, sizes, format, lang='eng'):
-        try:
-            tmpfilepath = qpdf.strip_page(filepath, 1)
-        except Exception:
-            raise Exception
-
+    def dump_image(self, filepath, output_dir, sizes, format, lang='eng'):
         for size in sizes:
-            output_file = os.path.join(output_dir, '%ix.%s' % (size[1], format))
-            cmd = [
-                self.binary, "convert", tmpfilepath,
-                '-resize', str(size[1]),
-                '-format', format,
-                output_file]
+            if type(size) is str:
+                if not size[:-1] == 'x':
+                    size += 'x'
+            output_folder = os.path.join(output_dir, size)
+            os.makedirs(output_folder)
+            try:
+                qpdf.strip_page(filepath, output_folder)
+            except Exception:
+                raise Exception
+            for filename in os.listdir(output_folder):
+                # For documents whose number of pages is 2 or higher digits we need to cut out the zeros
+                # at the beginning of dump the page number or the browser viewer won't work.
+                output_file = filename.split('_')
+                output_file[1] = output_file[1][:-4]
+                output_file[1] = int(output_file[1])
+                output_file = "%s_%i.%s" % (output_file[0], output_file[1], format)
+                output_file = os.path.join(output_folder, output_file)
+                filename = os.path.join(output_folder, filename)
 
-            self._run_command(cmd)
+                cmd = [
+                    self.binary, "convert",
+                    '-resize', str(size),
+                    '-density', '150',
+                    '-format', format,
+                    filename, output_file]
 
-        os.remove(tmpfilepath)
-        # now, move images to correctly named folders
-        for name, size in sizes:
-            dest = os.path.join(output_dir, name)
-            
-            if os.path.exists(dest):
-                shutil.rmtree(dest)
+                self._run_command(cmd)
+                os.remove(filename)
+        # Note that from this point forward all programmers have to design
+        # their programs to access the output_dir
+        # Should use the collective.documentviewer anyways for it is much better
+        return output_dir
 
-            os.makedirs(dest)
-            source = os.path.join(output_dir, '%ix.%s' % (size, format))
-            dest_file = os.path.join(dest, 'dump_1.gif')
-            shutil.move(source, dest_file)        
-        
+
 try:
     gm = GraphicsMagickSubProcess()
 except IOError:
@@ -301,7 +309,7 @@ except IOError:
                      "Will not be able to make screenshots")
     gm = None
 
-    
+
 class LibreOfficeSubProcess(BaseSubProcess):
     """
     Converts files of other formats into pdf files using libreoffice.
@@ -310,15 +318,21 @@ class LibreOfficeSubProcess(BaseSubProcess):
         bin_name = 'soffice.exe'
     else:
         bin_name = 'soffice'
-    
-    def __call__(self, filepath, filename, output_dir):
+
+    def convert_to_pdf(self, filepath, filename, output_dir):
         ext = os.path.splitext(os.path.normcase(filename))[1][1:]
         inputfilepath = os.path.join(output_dir, 'dump.%s' % ext)
         shutil.move(filepath, inputfilepath)
         orig_files = set(os.listdir(output_dir))
-        cmd = [
-            self.binary, '--headless', '--convert-to', 'pdf', inputfilepath,
-            '--outdir', output_dir]
+        # HTML takes unnecesarily too long using standard settings.
+        if ext == 'html':
+            cmd = [
+                self.binary, '--headless', '--convert-to', 'pdf:writer_pdf_Export',
+                inputfilepath, '--outdir', output_dir]
+        else:
+            cmd = [
+                self.binary, '--headless', '--convert-to', 'pdf', inputfilepath,
+                '--outdir', output_dir]
         self._run_command(cmd)
 
         # remove original
@@ -338,15 +352,15 @@ class LibreOfficeSubProcess(BaseSubProcess):
                                       [f for f in files - orig_files][0])
         shutil.move(converted_path, os.path.join(output_dir, DUMP_FILENAME))
 
+
 try:
     loffice = LibreOfficeSubProcess()
 except IOError:
     logger.exception("Libreoffice not installed. castle.cms"
-                 "will not be able to convert text files to pdf.")
+                     "will not be able to convert text files to pdf.")
     loffice = None
-    
 
-    
+
 class DocSplitSubProcess(BaseSubProcess):
     """
     idea of how to handle this shamelessly
@@ -356,8 +370,12 @@ class DocSplitSubProcess(BaseSubProcess):
     def dump_image(self, filepath, output_dir, sizes, format, lang='eng'):
         # docsplit images pdf.pdf --size 700x,300x,50x
         # --format gif --output
-        return gm(filepath, output_dir, sizes, format, lang='eng')
+        sizes = sizes.split(',')
+        return gm.dump_image(filepath, output_dir, sizes, format, lang='eng')
 
     def convert_to_pdf(self, filepath, filename, output_dir):
         # get ext from filename
-        return loffice(filepath, filename, output_dir)
+        return loffice.convert_to_pdf(filepath, filename, output_dir)
+
+
+docsplit = DocSplitSubProcess

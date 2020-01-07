@@ -85,7 +85,6 @@ def create(html, css):
 
 
 def screenshot(blob):
-    import pdb; pdb.set_trace
     blobfi = openBlob(blob)
     filepath = docsplit.dump_image(blobfi.read(), '1000', 'gif')
     blobfi.close()
