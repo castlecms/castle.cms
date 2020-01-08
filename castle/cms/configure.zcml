@@ -108,6 +108,10 @@
     name="castle.cms.vocabularies.EmailCategories"
     />
   <utility
+    component=".vocabularies.EmailTemplateVocabulary"
+    name="castle.cms.vocabularies.EmailTemplates"
+    />
+  <utility
     component=".vocabularies.SurveyVocabulary"
     name="castle.cms.vocabularies.Surveys"
     />

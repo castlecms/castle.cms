@@ -158,6 +158,28 @@ class EmailCategoryVocabularyFactory(object):
 
 EmailCategoryVocabulary = EmailCategoryVocabularyFactory()
 
+@implementer(IVocabularyFactory)
+class EmailTemplateVocabularyFactory(object):
+
+    def __call__(self, context):
+        catalog = api.portal.get_tool('portal_catalog')
+        email_template_choice_names = [ SimpleVocabulary.createTerm('None')]
+        for template_brain in catalog(
+            {
+            'portal_type': 'EmailTemplate',
+            'sort_on': 'id',
+            }
+        ):
+            email_template = template_brain.getObject()
+            email_template_choice_names.append(
+                SimpleVocabulary.createTerm(email_template.id,)
+            )
+        return SimpleVocabulary(email_template_choice_names)
+
+
+
+EmailTemplateVocabulary = EmailTemplateVocabularyFactory()
+
 
 @implementer(IVocabularyFactory)
 class SurveyVocabularyFactory(object):

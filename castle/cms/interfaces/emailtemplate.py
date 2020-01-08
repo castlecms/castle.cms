@@ -1,10 +1,23 @@
-from castle.cms import  _
-from plone.supermodel import model
-from zope import schema
-from plone.app.textfield import RichText
+# <<<<<<< Updated upstream
+# from castle.cms import  _
+# from plone.supermodel import model
+# from zope import schema
+# from plone.app.textfield import RichText
+# from plone.autoform import directives
+# # from castle.cms.widgets import (AjaxSelectFieldWidget, SelectFieldWidget,
+# #                                 TinyMCETextFieldWidget)
+# =======
+from castle.cms import _
+# from castle.cms.widgets import AjaxSelectFieldWidget, SelectFieldWidget
+from plone.app.textfield import RichText, RichTextValue
 from plone.autoform import directives
-# from castle.cms.widgets import (AjaxSelectFieldWidget, SelectFieldWidget,
-#                                 TinyMCETextFieldWidget)
+from plone.supermodel import model
+from zope import schema, component
+from zope.interface import Interface, provider, implementer
+from zope.schema.interfaces import IContextSourceBinder, IVocabularyFactory
+from zope.schema.vocabulary import SimpleVocabulary
+from plone.app.z3cform.widget import QueryStringFieldWidget, AjaxSelectFieldWidget, SelectFieldWidget
+
 
 class IEmailTemplateSchema(model.Schema):
 
@@ -12,7 +25,7 @@ class IEmailTemplateSchema(model.Schema):
 
     subject = schema.ASCIILine(
         title=u'Subject',
-        required=False,
+        required=True,
     )
 
     send_from = schema.TextLine(
@@ -20,12 +33,13 @@ class IEmailTemplateSchema(model.Schema):
         required=False,
     )
 
-    # directives.widget(
-    #     'send_to_groups',
-    #     AjaxSelectFieldWidget,
-    #     vocabulary='plone.app.vocabularies.Groups',
-    #     required = False
-    # )
+
+    directives.widget(
+        'send_to_groups',
+        SelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Groups',
+        required = False
+    )
 
     send_to_groups = schema.List(
         title=u'Send to groups',
@@ -35,12 +49,13 @@ class IEmailTemplateSchema(model.Schema):
         required=False
     )
 
-    # directives.widget(
-    #     'send_to_users',
-    #     AjaxSelectFieldWidget,
-    #     vocabulary='plone.app.vocabularies.Users',
-    #     required = False
-    # )
+
+    directives.widget(
+        'send_to_users',
+        SelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Users',
+        required = False
+    )
 
     send_to_users = schema.List(
         title=u'Send to users',
@@ -64,66 +79,46 @@ class IEmailTemplateSchema(model.Schema):
         default_mime_type='text/html',
         output_mime_type='text/html',
         allowed_mime_types=('text/html',),
-        required=False
+        required=True
     )
 
 
 
+    directives.mode(send_to_categories='hidden')
+    directives.widget('send_to_categories',SelectFieldWidget)
+    send_to_categories = schema.List(
+        title=u'Send to categories',
+        required=False,
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.EmailCategories'
+        )
+    )
 
-    # subject = schema.ASCIILine(
-    #     title = _(u'Email Template Subject'),
-    #     description = _(u'The subject line for the email'),
-    #     required = True,
-    # )
-    # title = schema.ASCIILine(
-    #     title = _(u'Email Template Subject'),
-    #     description = _(u'The subject line for the email'),
-    #     required = True,
-    # )
+    
 
-    # body = RichText(
-    #     title=u'Body',
-    #     description=u'Message body',
-    #     default_mime_type='text/html',
-    #     output_mime_type='text/html',
-    #     allowed_mime_types=('text/html',),
-    #     required=True
-    # )
+    
+    directives.mode(unsubscribe_links='hidden')
+    unsubscribe_links = RichText(
+        title=u'Unsubscribe',
+        description=u'Email Tail',
+        default_mime_type='text/html',
+        output_mime_type='text/html',
+        allowed_mime_types=('text/html',),
+        required=False,
+        default=RichTextValue(
+            u'<p></p><p></p>'
+            u'<p><a href="{{change_url}}">Change your subscription settings</a></p>'
+            u'<p><a href="{{unsubscribe_url}}">Unsubscribe from these messages</a></p>',
+            'text/html', 'text/html'
+            )
+    )
 
-    # send_from = schema.TextLine(
-    #     title = _(u'Email "From:" Address'),
-    #     description = _(u'The sender\'s name for this email'),
-    #     required = False,
-    # )
 
-    # send_to_groups = schema.List(
-    #     title=u'Send to groups',
-    #     value_type=schema.Choice(
-    #         vocabulary='plone.app.vocabularies.Groups'
-    #     ),
-    #     required=False
-    # )
-
-    # send_to_users = schema.List(
-    #     title=u'Send to users',
-    #     value_type=schema.Choice(
-    #         vocabulary='plone.app.vocabularies.Users'
-    #     ),
-    #     required=False
-    # )
-
-    # send_to_custom = schema.List(
-    #     title=u'To(additional)',
-    #     description=u'Additional email addresses, one per line, to '
-    #                 u'send emails to.',
-    #     value_type=schema.TextLine(),
-    #     required=False
-    # )
-
-# @interface.implementer(IEmailTemplate)
-# class EmailTemplate(object):
-#     def __init__(self, **kwargs):
-#         for key, value in kwargs.items():
-#             self[key] = value
-#     def __repr__(self):
-#         return "<Template with name=%r, body=%r>" % (self.name, self.body)
+    directives.mode(select_email_template='hidden')
+    directives.widget(select_email_template=SelectFieldWidget)
+    select_email_template = schema.Choice(
+        title=u'Load Email Template',     
+        vocabulary='castle.cms.vocabularies.EmailTemplates', 
+        required=True,
+        default='None'
+    )
