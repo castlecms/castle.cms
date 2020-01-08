@@ -77,25 +77,6 @@ def castle(context):
         folder.exclude_from_nav = True
         folder.reindexObject()
 
-    #create email templates folder
- 
-    folder = api.content.create(
-        container=site,
-        type='Folder',
-        id='emailtemplates',
-        title='Email Templates',
-    )
-    allowable_type = 'EmailTemplate'
-    aspect = ISelectableConstrainTypes(folder, None)
-
-    if aspect and aspect.getConstrainTypesMode() != 1:
-        aspect.setConstrainTypesMode(1)
-        aspect.setLocallyAllowedTypes([allowable_type])
-        aspect.setImmediatelyAddableTypes([allowable_type])
-    if not getattr(folder, 'exclude_from_nav', False):
-        folder.exclude_from_nav = True
-        folder.reindexObject()
-
     if 'front-page' not in site:
         api.content.create(type='Document', id='front-page', container=site)
         site.setDefaultPage('front-page')

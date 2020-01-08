@@ -1,38 +1,35 @@
 from Acquisition import aq_inner
-from castle.cms import subscribe, texting, _
+from castle.cms import texting
+from castle.cms import subscribe
 from castle.cms.browser.utils import Utils
 from castle.cms.constants import ALL_SUBSCRIBERS
 from castle.cms.interfaces import IAnnouncementData, IEmailTemplateSchema
 from castle.cms.tasks import send_email, send_email_to_subscribers
 from castle.cms.widgets import (AjaxSelectFieldWidget, SelectFieldWidget,
                                 TinyMCETextFieldWidget)
+from castle.cms.interfaces import IAnnouncementData
+from castle.cms.tasks import send_e
 from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.app.textfield import RichText
 from plone.app.textfield.value import RichTextValue
 from plone.autoform import directives
 from plone.autoform.form import AutoExtensibleForm
-from plone.dexterity.utils import createContentInContainer
 from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
 from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
 from Products.CMFPlone.utils import safe_unicode
-from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from z3c.form import button, form
+from z3c.form import button
+from z3c.form import form
 from z3c.form.browser.file import FileWidget
 from z3c.form.interfaces import WidgetActionExecutionError, INPUT_MODE, HIDDEN_MODE
 from zope import schema, component, interface
-from zope.component import getAdapters, getUtility, adapts
-from zope.interface import Invalid, provider
+from zope.component import getAdapters, getUtility
+from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from Products.statusmessages.interfaces import IStatusMessage
-from zope.component.hooks import getSite
-from zope.lifecycleevent import modified
-from z3c.form.interfaces import IEditForm
-
-import pdb
 reg_key = 'castle.subscriber_categories'
 
 
@@ -134,6 +131,10 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
         """
         contextURL = self.context.absolute_url()
         self.request.response.redirect(contextURL)
+
+class SendEmailUsersForm(AutoExtensibleForm, form.Form):
+    schema = ISendEmailUsersForm
+
 
 
     @button.buttonAndHandler(u'Send', name='send')

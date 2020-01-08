@@ -13,7 +13,6 @@
  <object meta_type="Dexterity FTI" name="Pad" />
  <object meta_type="Dexterity FTI" name="Dashboard" />
  <object meta_type="Dexterity FTI" name="Event" />
- <object meta_type="Dexterity FTI" name="EmailTemplate" />
 
  <object name="Plone Site"
      meta_type="Factory-based Type Information with dynamic views" />
