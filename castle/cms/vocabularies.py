@@ -172,14 +172,12 @@ class EmailTemplateVocabularyFactory(object):
         ):
             email_template = template_brain.getObject()
             email_template_choice_names.append(
-                SimpleVocabulary.createTerm(email_template.id,)
+                SimpleVocabulary.createTerm(email_template.id)
             )
         return SimpleVocabulary(email_template_choice_names)
 
 
-
 EmailTemplateVocabulary = EmailTemplateVocabularyFactory()
-
 
 @implementer(IVocabularyFactory)
 class SurveyVocabularyFactory(object):
