@@ -7,6 +7,8 @@ from plone.app.z3cform.widget import AjaxSelectFieldWidget, SelectFieldWidget
 
 class IEmailTemplateSchema(model.Schema):
 
+
+class IEmailTemplateSchema(model.Schema):
     subject = schema.ASCIILine(
         title=u'Subject',
         required=True,
@@ -81,6 +83,7 @@ class IEmailTemplateSchema(model.Schema):
         required=True
     )
 
+ 
 
     
     unsubscribe_links = RichText(

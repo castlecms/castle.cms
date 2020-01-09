@@ -28,6 +28,7 @@ from zope.component import getAdapters, getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 
+
 reg_key = 'castle.subscriber_categories'
 
 
@@ -50,6 +51,7 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
     def no_template_loaded(self):
         try:
             self.request.form['emailtemplate']
+
         except KeyError:
             return True
         return False
@@ -128,12 +130,13 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
         self.set_redirect_url(email_template_id)
 
 
-    @button.buttonAndHandler(u"Cancel")
+    @button.buttonAndHandler(u'Cancel')
     def handle_cancel(self, action):
         """User cancelled. Redirect back to the front page.
         """
         contextURL = self.context.absolute_url()
         self.request.response.redirect(contextURL)
+
 
     @button.buttonAndHandler(u'Send', name='send')
     def handle_send(self, action):
@@ -166,10 +169,9 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
             html = html.replace(self.context.absolute_url(), public_url.encode('utf8'))
 
             send_email.delay(list(set(addresses)), data['subject'], html=html, sender=sender)
-            self.request.response.redirect('%s/@@announcements-controlpanel' % (
-                self.context.absolute_url()))
+            self.set_redirect_url(self.context.absolute_url())
 
-
+        
 class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
     schema = IEmailTemplateSchema
 
@@ -203,7 +205,6 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
         self.widgets['send_to_groups'].mode = HIDDEN_MODE
         self.widgets['send_to_users'].mode = HIDDEN_MODE
         self.widgets['send_to_custom'].mode = HIDDEN_MODE
-        # self.widgets['unsubscribe_links'].mode = INPUT_MODE
         try:
             email_template_id = self.request.form['emailtemplate']
         except KeyError:
@@ -246,7 +247,7 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
             self.set_redirect_url(item.id)
             
 
-    @button.buttonAndHandler(u'Load Selected Template', name='import_template2', condition=no_template_loaded)
+    @button.buttonAndHandler(u'Load selected template', name='import_template2', condition=no_template_loaded)
     def import_template2(self, action):
         messages = IStatusMessage(self.request)
         email_template_id = str(self.request.get('form.widgets.select_email_template'))
@@ -282,6 +283,12 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
             self.request.response.redirect('%s/@@announcements-controlpanel' % (
                 self.context.absolute_url()))
 
+    @button.buttonAndHandler(u'Cancel', name='cancel2')
+    def handle_cancel2(self, action):
+        """User cancelled. Redirect back to the front page.
+        """
+        contextURL = self.context.absolute_url()
+        self.request.response.redirect(contextURL)
 
 class ISendTextForm(model.Schema):
 
