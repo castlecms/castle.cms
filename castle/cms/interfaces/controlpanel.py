@@ -195,6 +195,17 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
         required=False)
 
+    scrub_title_logo_to_backend_login = schema.Bool(
+        title=u'Do not show identifying customizations (logo/text) at backend login view',
+        description=u'If set, backend visitors will see a generic login view.',
+        default=False,
+        required=False)
+
+    login_footer_message = schema.TextLine(
+        title=u'Login Footer Message',
+        description=u'Display a message or warning below the secure login form',
+        required=False)
+
 
 class IAnnouncementData(Interface):
     show_announcement = schema.Bool(

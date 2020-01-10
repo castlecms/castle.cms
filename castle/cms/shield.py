@@ -52,7 +52,7 @@ def protect(req, recheck=False):
     if protect:
         if req.getURL().lower().endswith("robots.txt"):
             return """User-agent: *
-                      Disallow: /"""
+Disallow: /"""
 
         if recheck:
             portal = api.portal.get()
