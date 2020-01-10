@@ -54,7 +54,8 @@ def upgrade(context, logger=None):
         context[id].reindexObject(idxs=['has_private_parents'])
 
     try:
-        scrub_site_identity = api.portal.get_registry_record(name='plone.scrub_title_logo_to_backend_login', default=None)
+        scrub_site_identity = api.portal.get_registry_record(name='plone.scrub_title_logo_to_backend_login',
+                                                             default=None)
     except api.exc.InvalidParameterError:
         scrub_site_identity = None
 
@@ -68,7 +69,8 @@ def upgrade(context, logger=None):
         registry._records['plone.scrub_title_logo_to_backend_login'] = scrub_identity_record
 
     try:
-        login_footer_message = api.portal.get_registry_record(name='plone.scrub_title_logo_to_backend_login', default=None)
+        login_footer_message = api.portal.get_registry_record(name='plone.scrub_title_logo_to_backend_login',
+                                                              default=None)
     except api.exc.InvalidParameterError:
         login_footer_message = None
 

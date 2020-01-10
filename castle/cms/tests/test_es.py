@@ -97,7 +97,7 @@ if ES_ENABLED:
 
         def tearDown(self):
             api.content.delete(self.portal.esfolder1)
-            # transaction.commit()
+            transaction.commit()
 
         def _test_ajax_search_rank_social(self):
             self.request.form.update({
