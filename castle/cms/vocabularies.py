@@ -298,7 +298,7 @@ class CountriesVocabulary(object):
     def __call__(self, context):
         items = []
         for country in pycountry.countries:
-            items.append(SimpleTerm(country.alpha2, country.alpha2,
+            items.append(SimpleTerm(country.alpha_2, country.alpha_2,
                                     country.name))
         return SimpleVocabulary(items)
 
