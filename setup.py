@@ -78,7 +78,7 @@ setup(
         'pyopenssl',
         'phonenumbers',
         'html2text',
-        'pycountry',
+        'pycountry>=1.10<=18.12.8',
         'tendo',
         'pylru',
         'sqlalchemy',
