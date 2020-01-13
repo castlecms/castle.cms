@@ -22,7 +22,6 @@ this_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def script_runner(script, argv=sys.argv):
-    import pdb; pdb.set_trace()
     args, _ = parser.parse_known_args()
     instance = args.instance
     if not instance:
@@ -46,11 +45,13 @@ def script_runner(script, argv=sys.argv):
     print('Running command: %s' % ' '.join(cmd))
     subprocess.check_call(cmd, env=os.environ)
 
+
 def lookup_path_generator():
     cwd = os.getcwd()
     lookup_paths = glob.glob('/opt/plone/parts/*/etc/zope.conf')
     lookup_paths += glob.glob(os.path.join(cwd, 'parts/*/etc/zope.conf'))
     return lookup_paths
+
 
 def run_it(module):
     conf_path = None
