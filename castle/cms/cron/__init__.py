@@ -2,6 +2,13 @@ import os
 import argparse
 import sys
 import subprocess
+import Zope2
+import glob
+from Testing.ZopeTestCase.utils import makerequest
+from zope.globalrequest import setRequest
+from AccessControl.SpecialUsers import system as user
+from AccessControl.SecurityManagement import newSecurityManager
+from zope.dottedname.resolve import resolve
 
 parser = argparse.ArgumentParser(description='Run a script')
 parser.add_argument('--instance', dest='instance',
@@ -15,6 +22,7 @@ this_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def script_runner(script, argv=sys.argv):
+    import pdb; pdb.set_trace()
     args, _ = parser.parse_known_args()
     instance = args.instance
     if not instance:
@@ -38,15 +46,15 @@ def script_runner(script, argv=sys.argv):
     print('Running command: %s' % ' '.join(cmd))
     subprocess.check_call(cmd, env=os.environ)
 
+def lookup_path_generator():
+    cwd = os.getcwd()
+    lookup_paths = glob.glob('/opt/plone/parts/*/etc/zope.conf')
+    lookup_paths += glob.glob(os.path.join(cwd, 'parts/*/etc/zope.conf'))
+    return lookup_paths
 
 def run_it(module):
-    cwd = os.getcwd()
     conf_path = None
-    lookup_paths = [
-        '/opt/plone/parts/client1/etc/zope.conf',
-        os.path.join(cwd, 'parts/instance/etc/zope.conf'),
-        os.path.join(cwd, 'parts/client1/etc/zope.conf'),
-    ]
+    lookup_paths = lookup_path_generator()
     for path in lookup_paths:
         if os.path.exists(path):
             conf_path = path
@@ -54,20 +62,13 @@ def run_it(module):
     if conf_path is None:
         raise Exception('Could not find zope.conf in {}'.format(lookup_paths))
 
-    from Zope2 import configure
-    configure(conf_path)
-    import Zope2
+    Zope2.configure(conf_path)
     app = Zope2.app()
-    from Testing.ZopeTestCase.utils import makerequest
     app = makerequest(app)
     app.REQUEST['PARENTS'] = [app]
-    from zope.globalrequest import setRequest
     setRequest(app.REQUEST)
-    from AccessControl.SpecialUsers import system as user
-    from AccessControl.SecurityManagement import newSecurityManager
     newSecurityManager(None, user)
 
-    from zope.dottedname.resolve import resolve
     mod = resolve('castle.cms.cron.' + module)
     mod.run(app)
 
