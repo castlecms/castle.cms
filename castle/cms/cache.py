@@ -70,8 +70,8 @@ class RedisAdapter(AbstractDict):
         except redis.exceptions.ConnectionError:
             # Try again in getting a redis connection or use a alternative
             # First resetting the client to none then to the get_client function
-            logger.warning("Redis server at %s is currently down, "\
-                           "reprioritizing to alternative cache" \
+            logger.warning("Redis server at %s is currently down, "
+                           "reprioritizing to alternative cache"
                            % str(os.environ.get('REDIS_SERVER')))
             setattr(thread_local, "client", None)
             cache = get_client(self.globalkey.split(":")[0])
