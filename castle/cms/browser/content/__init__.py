@@ -16,6 +16,7 @@ from castle.cms import utils
 from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
+from castle.cms.commands import mupdf
 from castle.cms.files import duplicates
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import get_upload_fields
@@ -386,7 +387,7 @@ class Creator(BrowserView):
 
                 if is_pdf and qpdf is not None:
                     try:
-                        # Will recursively remove the tags of the file from exiftool to pdf and back again.
+                        # Will recursively remove the tags of the file using exiftool, linearize it.  And do it again.
                         exiftool(info['tmp_file'])
                         qpdf(info['tmp_file'])
                         exiftool(info['tmp_file'])
@@ -398,7 +399,12 @@ class Creator(BrowserView):
                         exiftool(info['tmp_file'])
                     except Exception:
                         logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
-
+                # File optimization
+                if is_pdf and mupdf is not None:
+                    try:
+                        mupdf(info['tmp_file'])
+                    except Exception:
+                        logger.warn('Could not optimize the file using mupdf %s' % info['tmp_file'])
         fi = open(info['tmp_file'], 'r')
         try:
             # Try to determine which kind of NamedBlob we need
