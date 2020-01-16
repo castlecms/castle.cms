@@ -181,6 +181,36 @@ except IOError:
                 "You will also not able to make screenshots")
 
 
+class GhostScriptPDFProcess(BaseSubProcess):
+    """
+    Creates a new pdf file from the image output of a old pdf file.
+    To ensure that there is no sticky metadata.
+    """
+    if os.name == "nt":
+        bin_name = 'gswin32c'
+    else:
+        bin_name = 'gs'
+
+    def __call__(self, filepath):
+        outfile = '{}-clean.pdf'.format(filepath[:-4])
+        cmd = [self.binary,
+               '-q',
+               '-o',
+               outfile,
+               '-sDEVICE=pdfwrite',
+               filepath
+               ]
+        self._run_command(cmd)
+        shutil.copy(outfile, filepath)
+
+
+try:
+    gs_pdf = GhostScriptPDFProcess()
+except IOError:
+    gs_pdf = None
+    logger.warn('gs not installed. Some metadata might remain in PDF files.')
+
+
 class MD5SubProcess(BaseSubProcess):
     """
     To get md5 hash of files on the filesystem so
