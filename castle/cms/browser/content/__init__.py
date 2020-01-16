@@ -387,14 +387,17 @@ class Creator(BrowserView):
                 if is_pdf and qpdf is not None:
                     try:
                         # Will recursively remove the tags of the file from exiftool to pdf and back again.
-                        qpdf(exiftool(qpdf(exiftool(info['tmp_file']))))
+                        exiftool(info['tmp_file'])
+                        qpdf(info['tmp_file'])
+                        exiftool(info['tmp_file'])
+                        qpdf(info['tmp_file'])
                     except Exception:
                         logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
-                    else:
-                        try:
-                            exiftool(info['tmp_file'])
-                        except Exception:
-                            logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+                else:
+                    try:
+                        exiftool(info['tmp_file'])
+                    except Exception:
+                        logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
         fi = open(info['tmp_file'], 'r')
         try:
