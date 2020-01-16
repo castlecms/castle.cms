@@ -134,11 +134,13 @@ class MuToolSubProcess(BaseSubProcess):
         cmd = [self.binary, 'clean', '-g', '-g', '-g', '-l', filepath]
         self._run_command(cmd)
 
+
 try:
     mupdf = MuToolSubProcess()
 except IOError:
     mupdf = None
     logger.warn('MuPDF is not installed, you won\'t be able to optimize files')
+
 
 class ExifToolProcess(BaseSubProcess):
     """

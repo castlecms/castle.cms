@@ -387,7 +387,8 @@ class Creator(BrowserView):
 
                 if is_pdf and qpdf is not None:
                     try:
-                        # Will recursively remove the tags of the file using exiftool, linearize it.  And do it again.
+                        # Will recursively remove the tags of the file using exiftool, linearize it.
+                        # And do it again.
                         exiftool(info['tmp_file'])
                         qpdf(info['tmp_file'])
                         exiftool(info['tmp_file'])
