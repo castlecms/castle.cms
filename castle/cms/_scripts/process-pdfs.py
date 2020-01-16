@@ -8,7 +8,6 @@ import os
 from zope.component.hooks import setSite
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
-from castle.cms.commands import gs_pdf
 from plone.namedfile.file import NamedBlobFile
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
