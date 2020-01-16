@@ -134,6 +134,7 @@ class ExifToolProcess(BaseSubProcess):
     def __call__(self, filepath):
         cmd = [self.binary, '-all:all=', filepath]
         self._run_command(cmd)
+        return filepath
 
 
 try:
@@ -155,9 +156,10 @@ class QpdfProcess(BaseSubProcess):
 
     def __call__(self, filepath):
         outfile = '{}-processed.pdf'.format(filepath[:-4])
-        cmd = [self.binary, '--linearize', filepath, outfile]
+        cmd = [self.binary, '--linearize', '--cleartext-metadata', '--force-version=1.7', filepath, outfile]
         self._run_command(cmd)
         shutil.copy(outfile, filepath)
+        return filepath
 
     def strip_page(self, filepath, pagenumber):
         tmpdir = tempfile.mkdtemp()
@@ -178,34 +180,6 @@ except IOError:
     qpdf = None
     logger.warn("qpdf not installed.  Some metadata might remain in PDF files."
                 "You will also not able to make screenshots")
-
-
-class GhostScriptPDFProcess(BaseSubProcess):
-    """
-    """
-    if os.name == "nt":
-        bin_name = 'gswin32c'
-    else:
-        bin_name = 'gs'
-
-    def __call__(self, filepath):
-        outfile = '{}-clean.pdf'.format(filepath[:-4])
-        cmd = [self.binary,
-               '-q',
-               '-o',
-               outfile,
-               '-sDEVICE=pdfwrite',
-               filepath
-               ]
-        self._run_command(cmd)
-        shutil.copy(outfile, filepath)
-
-
-try:
-    gs_pdf = GhostScriptPDFProcess()
-except IOError:
-    gs_pdf = None
-    logger.warn('gs not installed. Some metadata might remain in PDF files.')
 
 
 class MD5SubProcess(BaseSubProcess):
