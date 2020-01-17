@@ -73,7 +73,7 @@ html_parser = HTMLParser()
 logger = logging.getLogger('castle.cms')
 
 
-def dump_object_data(obj, duplicate=False):
+def dump_object_data(obj, duplicate=False, metadata_stripped=None):
     try:
         state = api.content.get_state(obj=obj)
     except WorkflowException:
@@ -94,7 +94,8 @@ def dump_object_data(obj, duplicate=False):
         'workflow_state': state,
         'title': obj.Title(),
         'valid': True,
-        'duplicate': duplicate
+        'duplicate': duplicate,
+        'metadata_stripped': metadata_stripped
     })
 
 
@@ -226,7 +227,7 @@ class Creator(BrowserView):
                 # tmp files need to stick around and be managed later...
                 self._clean_tmp(info)
             cache.delete(cache_key_prefix + _id)
-            return dump_object_data(obj, dup)
+            return dump_object_data(obj, dup, self.metadata_stripped)
         else:
             cache.set(cache_key_prefix + _id, info)
             check_put = None
@@ -373,7 +374,7 @@ class Creator(BrowserView):
             dup_detector.register(obj, md5_hash)
         return obj
 
-    def create_object(self, folder, type_, info):
+    def create_object(self, folder, type_, info):        
         filename = info['name']
         name = filename.decode("utf8")
         chooser = INameChooser(folder)
@@ -384,7 +385,7 @@ class Creator(BrowserView):
                 exiftool is not None and 'tmp_file' in info):
             is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
             if is_pdf is not None:
-
+                self.metadata_stripped = False
                 if is_pdf and qpdf is not None:
                     try:
                         # Will recursively remove the tags of the file using exiftool, linearize it.
@@ -393,13 +394,17 @@ class Creator(BrowserView):
                         qpdf(info['tmp_file'])
                         exiftool(info['tmp_file'])
                         qpdf(info['tmp_file'])
+                        self.metadata_stripped = True
                     except Exception:
                         logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
+                        self.metadata_stripped = False
                 else:
                     try:
                         exiftool(info['tmp_file'])
+                        self.metadata_stripped = True
                     except Exception:
                         logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+                        self.metadata_stripped = False
                 # File optimization
                 if is_pdf and mupdf is not None:
                     try:
@@ -465,7 +470,7 @@ class Creator(BrowserView):
                     api.content.transition(obj=obj, transition=transition_to)
                 except Exception:
                     pass
-            return dump_object_data(obj)
+            return dump_object_data(obj, self.metadata_stripped)
         else:
             return json.dumps({
                 'valid': False,
