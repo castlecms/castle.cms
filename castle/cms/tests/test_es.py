@@ -110,6 +110,7 @@ if ES_ENABLED:
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
         def test_ajax_search_pt(self):
+            print(os.environ['ES_HOST'])
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'portal_type': 'Folder'
