@@ -131,7 +131,7 @@ class MuToolSubProcess(BaseSubProcess):
         bin_name = 'mutool'
 
     def __call__(self, filepath):
-        cmd = [self.binary, 'clean', '-g', '-g', '-g', '-l', filepath]
+        cmd = [self.binary, 'clean', '-g', '-l', filepath]
         self._run_command(cmd)
 
 

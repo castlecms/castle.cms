@@ -240,7 +240,8 @@ define([
 	if(typeof this.state.metadata_stripped !== undefined){
 	    if(this.state.metadata_stripped == false){
 		label = D.span({}, [
-		    D.b({}, 'Warning: filetype is not compatible for document metadata stripping.')
+		    D.b({}, 'Warning: filetype is not compatible for document metadata stripping. '),
+		    label
 		]);
 	    }
 	}
