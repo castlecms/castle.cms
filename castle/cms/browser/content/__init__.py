@@ -405,12 +405,7 @@ class Creator(BrowserView):
                     except Exception:
                         logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
                         self.metadata_stripped = False
-                # File optimization
-                if is_pdf and mupdf is not None:
-                    try:
-                        mupdf(info['tmp_file'])
-                    except Exception:
-                        logger.warn('Could not optimize the file using mupdf %s' % info['tmp_file'])
+
         fi = open(info['tmp_file'], 'r')
         try:
             # Try to determine which kind of NamedBlob we need
