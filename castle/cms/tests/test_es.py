@@ -24,7 +24,10 @@ logger = logging.getLogger(__name__)
 
 
 ES_ENABLED = False
-
+if 'ES_HOST' not in os.environ:
+    os.environ['ES_HOST'] = '127.0.0.1'
+    logger.warning('ES_HOST not specified in os.environ, using default %s' % str(os.environ['ES_HOST']))
+    
 if 'ES_HOST' in os.environ:
     host = os.environ['ES_HOST']
     url = 'http://{}:9200'.format(host)
@@ -96,6 +99,7 @@ if ES_ENABLED:
             requests.post(url)
 
         def tearDown(self):
+            transaction.begin()
             api.content.delete(self.portal.esfolder1)
             transaction.commit()
 
@@ -110,7 +114,6 @@ if ES_ENABLED:
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
         def test_ajax_search_pt(self):
-            print(os.environ['ES_HOST'])
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'portal_type': 'Folder'
