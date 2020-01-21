@@ -27,7 +27,7 @@ ES_ENABLED = False
 if 'ES_HOST' not in os.environ:
     os.environ['ES_HOST'] = '127.0.0.1'
     logger.warning('ES_HOST not specified in os.environ, using default %s' % str(os.environ['ES_HOST']))
-    
+
 if 'ES_HOST' in os.environ:
     host = os.environ['ES_HOST']
     url = 'http://{}:9200'.format(host)
