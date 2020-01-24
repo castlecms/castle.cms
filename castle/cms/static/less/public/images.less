@@ -13,12 +13,12 @@
 // @portrait_height: @screen-lg-min;
 
 
-.focuspoint {
+.focuspoint, .focuspoint-cover {
 	position: relative; /*Any position but static should work*/
 	overflow: hidden;
   width: 100%;
 
-  img {
+  img, video {
   	position: absolute;
   	left: 0;
   	top: 0;
@@ -32,15 +32,15 @@
 }
 
 .mosaic-tile {
-  .focuspoint {
-    img {
+  .focuspoint, .focuspoint-cover {
+    img, video {
       max-width: none !important;
     }
   }
 }
 
 .image-tile-container.fullwidth {
-  img {
+  img, video {
     width: 100%;
   }
 }
