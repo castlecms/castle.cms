@@ -30,6 +30,7 @@ from zope.interface import Interface
 from zope.interface import Invalid
 
 import phonenumbers
+import random
 import string
 
 
@@ -116,23 +117,29 @@ class SubscribeForm(BaseForm):
         self.has_texting = registry.get('castle.plivio_auth_id') not in (None, '')
         self.isAnon = None
 
-    def send_mail(self, email, item):
+    def send_mail(self, email, categories, username='User'):
+
+        # Generate a random string for the url code.
+        lettersAndDigits = string.ascii_letters + string.digits
+        self.url_code = ''.join(random.choice(lettersAndDigits) for i in range(8))
+
         registry = getUtility(IRegistry)
         site_settings = registry.forInterface(ISiteSchema,
                                               prefix="plone",
                                               check=False)
-        url = '%s/@@subscribe?confirmed_email=%s&confirmed_code=%s' % (
-            self.context.absolute_url(), email, item['code'])
+        url = '%s/@@subscribe?confirmed_email=%s&confirmed_code=%s&categories=%s' % (
+            self.context.absolute_url(), email, self.url_code, categories)
         text = """
 Copy and paste this url into your web browser to confirm your address: %s
 """ % url
         html = """
-<p>You have requested subscription, please
-<a href="%s">confirm your email address by clicking on this link</a>.
+<p>Hi %s,</p><br>
+<p>You have requested subscription to: <strong>%s</strong>.</p>
+<p>Please <a href="%s">confirm your email address by clicking on this link</a>.
 </p>
 <p>
-If that does not work, copy and paste this url into your web browser: %s
-</p>""" % (url, url)
+If that does not work, copy and paste this url into your web browser: <i>%s</i>
+</p>""" % (username, ', '.join(categories), url, url)
         send_email(
             [email], "Email Confirmation for subscription(%s)" % site_settings.site_title,
             html=html, text=text)
@@ -172,7 +179,7 @@ If that does not work, copy and paste this url into your web browser: %s
 
         if not errors:
             item = subscribe.register(data['email'], data)
-            self.send_mail(data['email'], item)
+            # self.send_mail(data['email'], item)
             self.sent = True
             api.portal.show_message(
                 'Verification email has been sent to your email', request=self.request, type='info')
@@ -198,13 +205,27 @@ If that does not work, copy and paste this url into your web browser: %s
         portal_membership = getToolByName(self.context, 'portal_membership')
         self.isAnon = portal_membership.isAnonymousUser()
 
-        if not self.has_captcha or not self.subscriptions_enabled:
+        # Sends email to the user if the form has been submitted.
+        if self.request.method == 'POST':
+
+            self.send_mail(self.request.form['form.widgets.email'],
+            self.request.form['form.widgets.categories'], self.request.form['form.widgets.name'])
+
+            self.sent = True
+            api.portal.show_message(
+                'Verification email has been sent to your email', request=self.request, type='info')
+
+        if not self.subscriptions_enabled:
             api.portal.show_message(
                 'Subscriptions are not enabled on this site', request=self.request, type='error')
             return self.request.response.redirect(self.context.absolute_url())
         if 'confirmed_code' in self.request.form and 'confirmed_email' in self.request.form:
+
             try:
                 alsoProvides(self.request, IDisableCSRFProtection)
+
+                subscribe.register(self.request.form['confirmed_email'], None, self.request.form['confirmed_code'])
+
                 subscribe.confirm(self.request.form['confirmed_email'],
                                   self.request.form['confirmed_code'])
                 api.portal.show_message('Succussfully subscribed to portal', request=self.request)

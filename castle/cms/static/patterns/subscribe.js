@@ -21,7 +21,6 @@ define([
       var self = this;
       self.$form = self.$el.find('form');
       self.url = self.$form.attr('action');
-
       self.$form.submit(function(e) {
         e.preventDefault();
 
