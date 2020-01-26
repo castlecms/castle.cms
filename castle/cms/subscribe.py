@@ -25,21 +25,19 @@ class SubscriptionStorage(object):
             self._data = OOBTree()
             self.site._subscribers = self._data
 
-    def add(self, email, data=None, code=None):
-
-        import pdb; pdb.set_trace()
+    def add(self, email, data=None, code=None, categories=None):
 
         email = email.lower()
         if data is None:
             data = {}
-        import pdb; pdb.set_trace()
         if code is None:
             data.update({
                 'created': time(),
                 'code': make_random_key(100),
                 'confirmed': False,
                 'phone_number_confirmed': False,
-                'email': email
+                'email': email,
+                'categories': categories
             })
         else:
             data.update({
@@ -47,7 +45,8 @@ class SubscriptionStorage(object):
                 'code': code,
                 'confirmed': False,
                 'phone_number_confirmed': False,
-                'email': email
+                'email': email,
+                'categories': categories
             })
         self._data[email] = PersistentMapping(data)
         return data
@@ -70,10 +69,9 @@ def remove(email):
     return storage.remove(email)
 
 
-def register(email, data, code=None):
-    import pdb; pdb.set_trace()
+def register(email, data, code=None, categories=None):
     storage = SubscriptionStorage()
-    return storage.add(email, data, code)
+    return storage.add(email, data, code, categories)
 
 
 def confirm(email, code):

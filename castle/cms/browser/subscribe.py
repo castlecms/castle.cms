@@ -117,18 +117,14 @@ class SubscribeForm(BaseForm):
         self.has_texting = registry.get('castle.plivio_auth_id') not in (None, '')
         self.isAnon = None
 
-    def send_mail(self, email, categories, username='User'):
-
-        # Generate a random string for the url code.
-        lettersAndDigits = string.ascii_letters + string.digits
-        self.url_code = ''.join(random.choice(lettersAndDigits) for i in range(8))
+    def send_mail(self, email, categories, username='User', code=None):
 
         registry = getUtility(IRegistry)
         site_settings = registry.forInterface(ISiteSchema,
                                               prefix="plone",
                                               check=False)
         url = '%s/@@subscribe?confirmed_email=%s&confirmed_code=%s&categories=%s' % (
-            self.context.absolute_url(), email, self.url_code, categories)
+            self.context.absolute_url(), email, code, categories)
         text = """
 Copy and paste this url into your web browser to confirm your address: %s
 """ % url
@@ -208,8 +204,20 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
         # Sends email to the user if the form has been submitted.
         if self.request.method == 'POST':
 
-            self.send_mail(self.request.form['form.widgets.email'],
-            self.request.form['form.widgets.categories'], self.request.form['form.widgets.name'])
+            #! Maybe register the user before sending mail.
+            #! This would also include generating the code here and passing that into the send_mail function
+            # Generate a random string for the url code.
+            lettersAndDigits = string.ascii_letters + string.digits
+            url_code = ''.join(random.choice(lettersAndDigits) for i in range(8))
+
+            # User data from the submitted form
+            email = self.request.form['form.widgets.email']
+            categories = self.request.form['form.widgets.categories']
+            name = self.request.form['form.widgets.name']
+
+            subscriber = subscribe.register(email, None, url_code, categories)
+
+            self.send_mail(email, categories, name, url_code)
 
             self.sent = True
             api.portal.show_message(
@@ -224,11 +232,9 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
             try:
                 alsoProvides(self.request, IDisableCSRFProtection)
 
-                subscribe.register(self.request.form['confirmed_email'], None, self.request.form['confirmed_code'])
-
                 subscribe.confirm(self.request.form['confirmed_email'],
                                   self.request.form['confirmed_code'])
-                api.portal.show_message('Succussfully subscribed to portal', request=self.request)
+                api.portal.show_message('Successfully subscribed to portal', request=self.request)
                 self.subscribed = True
             except subscribe.InvalidEmailException:
                 api.portal.show_message('Invalid Email', request=self.request, type='error')
