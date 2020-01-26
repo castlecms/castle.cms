@@ -20,6 +20,7 @@
 </head>
 
 
+<tal:block tal:condition="view/from_local_or_IP">
 <body tal:define="sites view/sites">
 <div id="box">
     <header><h1><img src="/++resource++plone-logo.png"
@@ -65,7 +66,7 @@
                     </tal>
                 </tal:one>
                 <tal:many tal:condition="python:len(sites) &gt; 1">
-                    <h2 id="multiple-sites" i18n:translate=""> You have multiple CastleCMS sites:</h2>
+                    <h2 id="multiple-sites" i18n:translate="">You have multiple CastleCMS sites:</h2>
                     <ul class="sites">
                         <li tal:repeat="site sites">
                             <span class="prominent">
@@ -153,4 +154,8 @@
   </footer>
 </div>
 </body>
+</tal:block>
+<tal:block tal:condition="not:view/from_local_or_IP">
+    You can only view the overview page when accessing the server directly (via localhost or IP).
+</tal:block>
 </html>

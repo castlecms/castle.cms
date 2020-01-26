@@ -1,13 +1,16 @@
-import io
-import logging
-import math
-import urllib
-from datetime import datetime
-from time import time
-from urlparse import urlparse
+# for compat with python3, specifically the urllib.parse includes
+# noqa because these need to precede other imports
+from future.standard_library import install_aliases
+install_aliases()  # noqa
 
-from boto.s3.connection import (ProtocolIndependentOrdinaryCallingFormat,
-                                S3Connection)
+import logging
+from datetime import datetime
+import StringIO
+from time import time
+from urllib.parse import urlparse, quote, quote_plus
+
+import botocore
+import boto3
 from collective.celery.utils import getCelery
 from persistent.mapping import PersistentMapping
 from plone.namedfile.file import NamedBlobFile
@@ -39,52 +42,68 @@ def get_bucket(s3_bucket=None):
     if not s3_id or not s3_key or not s3_bucket:
         return None, None
 
+    s3args = {
+        'aws_access_key_id': s3_id,
+        'aws_secret_access_key': s3_key,
+    }
+
     endpoint = registry.get('castle.aws_s3_host_endpoint', None)
     if endpoint:
-        s3_conn = S3Connection(
-            s3_id, s3_key, host=endpoint,
-            calling_format=ProtocolIndependentOrdinaryCallingFormat())
-    else:
-        s3_conn = S3Connection(s3_id, s3_key)
+        s3args['endpoint_url'] = endpoint
 
-    return s3_conn, s3_conn.get_bucket(s3_bucket)
+    s3 = boto3.resource('s3', **s3args)
+    bucket = None
+    try:
+        s3.meta.client.head_bucket(Bucket=s3_bucket)
+        bucket = s3.Bucket(s3_bucket)
+    except botocore.exceptions.ClientError as e:
+        bucket = None
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            logger.warning('bucket {name} not found'.format(name=s3_bucket))
+        else:
+            logger.error('error querying for bucket {name} (code {code})'.format(
+                name=s3_bucket,
+                code=error_code,
+                log_exc=True))
+
+    return s3, bucket
 
 
+# move a file from castle to aws
 def move_file(obj):
     _, bucket = get_bucket()
     if bucket is None:
         return
 
+    # META DATA
     uid = IUUID(obj)
     if not uid:
         logger.info('Could not get uid of object')
         return
-
     key = KEY_PREFIX + uid
     filename = obj.file.filename
     if not isinstance(filename, unicode):
         filename = unicode(filename, 'utf-8', errors="ignore")
-    filename = urllib.quote(filename.encode("utf8"))
+    filename = quote(filename.encode("utf8"))
     disposition = "attachment; filename*=UTF-8''%s" % filename
-
     size = obj.file.getSize()
-    chunk_count = int(math.ceil(size / float(CHUNK_SIZE)))
     content_type = obj.file.contentType
-    mp = bucket.initiate_multipart_upload(key, metadata={
-        'Content-Type': content_type,
-        'Content-Disposition': disposition
-    })
+    extraargs = {
+        'ContentType': content_type,
+        'ContentDisposition': disposition,
+    }
 
+    # Upload to AWS
+    # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
+    #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
+    # note: upload_fileobj() does a multipart upload, which is why
+    #   chunked uploading is no longer performed explicitly
+    #   see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_fileobj  # noqa
     blob_fi = obj.file._blob.open('r')
+    bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 
-    for i in range(chunk_count):
-        chunk = blob_fi.read(CHUNK_SIZE)
-        fp = io.BytesIO(chunk)
-        mp.upload_part_from_file(fp, part_num=i + 1)
-
-    mp.complete_upload()
-    blob_fi.close()
-
+    # Delete data from ZODB, but leave a reference
     if not getCelery().conf.task_always_eager:
         obj._p_jar.sync()
     obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
@@ -96,15 +115,26 @@ def move_file(obj):
 
 
 def set_permission(obj):
-    s3_conn, bucket = get_bucket()
+    s3, bucket = get_bucket()
     if bucket is None:
         return
+
     uid = IUUID(obj)
-    key_name = KEY_PREFIX + uid
-    key = bucket.get_key(key_name)
-    if key is None:
+    key = KEY_PREFIX + uid
+
+    # check if object is in aws
+    s3_obj = bucket.Object(key)
+    try:
+        s3_obj.load()  # does HEAD request
+    except botocore.exceptions.ClientError:
+        logger.error(
+            'error reading object {key} in bucket {name}'.format(
+                key=key,
+                name=bucket.name),
+            log_exc=True)
         return
 
+    # is the object public?
     perms = obj.rolesOfPermission("View")
     public = False
     for perm in perms:
@@ -113,20 +143,30 @@ def set_permission(obj):
                 public = True
                 break
 
+    # set aws public/private and get url
+    object_acl = s3_obj.Acl()
+    if public:
+        object_acl.put(ACL='public-read')
+        expires_in = 0
+        # a public URL is not fetchable with no expiration, apparently
+        url = '{endpoint_url}/{bucket}/{key}'.format(
+            endpoint_url=s3.meta.client.meta.endpoint_url,
+            bucket=bucket.name,
+            key=quote_plus(key))  # quote_plus usage means a safer url
+    else:
+        object_acl.put(ACL='private')
+        expires_in = EXPIRES_IN
+        params = {
+            'Bucket': bucket.name,
+            'Key': key,
+        }
+        url = s3_obj.meta.client.generate_presigned_url(
+            'get_object',
+            Params=params,
+            ExpiresIn=expires_in)
+
     annotations = IAnnotations(obj)
     info = annotations.get(STORAGE_KEY, PersistentMapping())
-    if public:
-        key.make_public()
-        expires_in = 0
-        url = 'https://{host}/{bucket}/{key}'.format(
-            host=s3_conn.server_name(),
-            bucket=bucket.name,
-            key=key_name)
-    else:
-        key.set_canned_acl('private')
-        url = key.generate_url(EXPIRES_IN)
-        expires_in = EXPIRES_IN
-
     info.update({
         'url': url,
         'expires_in': expires_in,
@@ -135,15 +175,24 @@ def set_permission(obj):
     annotations[STORAGE_KEY] = info
 
 
+# TODO: determine if the file obj in plone should also be deleted
+# at this time, or document why it isn't, maybe. Content is all
+# moved to aws anyway.
 def delete_file(uid):
     _, bucket = get_bucket()
     if bucket is None:
         return
 
     key_name = KEY_PREFIX + uid
-    key = bucket.get_key(key_name)
-    if key:
-        bucket.delete_key(key_name)
+    try:
+        key = bucket.Object(key_name)
+        key.delete()
+    except botocore.exceptions.ClientError:
+        logger.error(
+            'error deleting object {key} in bucket {name}'.format(
+                key=key,
+                name=bucket.name),
+            log_exc=True)
 
 
 def uploaded(obj):
@@ -153,16 +202,6 @@ def uploaded(obj):
         return False
     info = annotations.get(STORAGE_KEY, PersistentMapping())
     return 'url' in info
-
-
-def _one(val):
-    """Wonky, values returning tuple sometimes?"""
-    if type(val) in (tuple, list, set):
-        if len(val) > 0:
-            val = val[0]
-        else:
-            return
-    return val
 
 
 def swap_url(url, registry=None, base_url=None):
@@ -181,7 +220,18 @@ def swap_url(url, registry=None, base_url=None):
         url = '{}/{}'.format(base_url.strip('/'), '/'.join(parsed_url.path.split('/')[2:]))
         if parsed_url.query:
             url += '?' + parsed_url.query
+
     return url
+
+
+def _one(val):
+    """Wonky, values returning tuple sometimes?"""
+    if type(val) in (tuple, list, set):
+        if len(val) > 0:
+            val = val[0]
+        else:
+            return
+    return val
 
 
 def get_url(obj):
@@ -194,18 +244,59 @@ def get_url(obj):
         expires = datetime.fromtimestamp(generated_on + info['expires_in'])
         if datetime.utcnow() > expires:
             # need a new url
-            _, bucket = get_bucket()
-            uid = IUUID(obj)
-            key = bucket.get_key(KEY_PREFIX + uid)
-            url = key.generate_url(EXPIRES_IN)
-            info.update({
-                'url': url,
-                'generated_on': time(),
-                'expires_in': EXPIRES_IN
-            })
-            annotations[STORAGE_KEY] = info
+            s3, bucket = get_bucket()
+            if bucket is not None:
+                uid = IUUID(obj)
+                key = KEY_PREFIX + uid
+                params = {
+                    'Bucket': bucket.name,
+                    'Key': key,
+                }
+                url = s3.meta.client.generate_presigned_url(
+                    'get_object',
+                    Params=params,
+                    ExpiresIn=EXPIRES_IN)
+
+                info.update({
+                    'url': url,
+                    'generated_on': time(),
+                    'expires_in': EXPIRES_IN
+                })
+                annotations[STORAGE_KEY] = info
+
     url = _one(info['url'])
     if not url.startswith('http'):
         url = 'https:' + url
 
     return swap_url(url)
+
+
+def create_or_update(bucket, key, content_type, data, content_disposition=None, make_public=True):
+    extraargs = {
+        'ContentType': content_type,
+    }
+    if content_disposition is not None:
+        extraargs['ContentDisposition'] = content_disposition
+    contentio = StringIO.StringIO(data)
+    bucket.upload_fileobj(contentio, key, ExtraArgs=extraargs)
+    if make_public:
+        s3_obj = bucket.Object(key)
+        object_acl = s3_obj.Acl()
+        object_acl.put(ACL='public-read')
+
+
+def create_if_not_exists(bucket, key, content_type, data, content_disposition=None, make_public=True):
+    try:
+        # does a head request for a single key, will throw an error
+        # if not found (or elsewise)
+        bucket.Object(key).load()
+    except botocore.exceptions.ClientError:
+        # the object hasn't been pushed to s3 yet, so do that
+        # create/update
+        create_or_update(
+            bucket,
+            key,
+            content_type,
+            data,
+            content_disposition=content_disposition,
+            make_public=make_public)

@@ -6,10 +6,19 @@ class IAuthenticator(Interface):
     def __init__(context, request):
         pass
 
+    def get_secure_flow_key(username=None):
+        pass
+
+    def get_secure_flow_state(username=None):
+        pass
+
+    def set_secure_flow_state(username=None, state='requesting-auth-code'):
+        pass
+
     def change_password(member, new_password):
         pass
 
-    def issue_country_exception(user, country):
+    def issue_country_exception_request(user, country):
         pass
 
     def login(user):

@@ -13,6 +13,8 @@ from plone.uuid.interfaces import IUUID
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
 from plone.event.interfaces import IEvent
+from Products.CMFCore.interfaces._content import IFolderish
+from Products.CMFCore.interfaces import ISiteRoot
 
 
 @indexer(IItem)
@@ -173,3 +175,19 @@ def last_modified_by(context):
         return creator
 
     return principal
+
+
+@indexer(IItem)
+def has_private_parents(obj):
+    if IFolderish.providedBy(obj):
+        for childId in obj.objectIds():
+            obj[childId].reindexObject(idxs=['has_private_parents'])
+    parent = aq_parent(obj)
+    while not ISiteRoot.providedBy(parent):
+        try:
+            if api.content.get_state(parent) != 'published':
+                return True
+        except Exception:
+            pass
+        parent = aq_parent(parent)
+    return False

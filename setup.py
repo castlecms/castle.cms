@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='2.5.16',
+    version='2.5.17.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
@@ -37,7 +37,7 @@ setup(
     namespace_packages=['castle'],
     install_requires=[
         # plone packages
-        'Products.CMFPlone>=5.0.10.dev2',
+        'Products.CMFPlone>=5.0.10',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
@@ -50,6 +50,7 @@ setup(
         'z3c.relationfield>=0.7.1.dev0',
         'Products.ZCatalog>=3.0.3dev2',
         'plone.app.standardtiles>=2.0.0.dev0',
+        'plone.stringinterp>=1.3.1',
 
         'Products.CMFPlacefulWorkflow',
         'plone.app.caching',
@@ -66,7 +67,7 @@ setup(
         'collective.celery>=1.1.4',
 
         # python
-        'boto>=2.38.0<3',
+        'boto3>=1.9.222',
         'google-api-python-client>=1.4.2<2',
         'redis>=2.10.3<3',
         'requests>=2.7.0<3',
@@ -93,7 +94,8 @@ setup(
             'responses',
             'mock',
             'argon2_cffi',
-            'plone.app.robotframework'
+            'plone.app.robotframework',
+            'moto',
         ],
         'development': [
             'zest.releaser',
