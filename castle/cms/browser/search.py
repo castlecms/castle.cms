@@ -216,7 +216,7 @@ class SearchAjax(BrowserView):
             if 'SearchableText' in query2:
                 del query2['SearchableText']
             raw_results = catalog(**query2)
-                    
+
         registry = getUtility(IRegistry)
         view_types = registry.get('plone.types_use_view_action_in_listings', [])
 
