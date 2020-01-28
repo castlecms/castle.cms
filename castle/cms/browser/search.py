@@ -211,12 +211,13 @@ class SearchAjax(BrowserView):
         catalog = api.portal.get_tool('portal_catalog')
         raw_results = catalog(**query)
         items = []
+        #If no results and user click full site search then show entire site
         try:
             if len(raw_results) == 0 and query.get('fullsitesearch') == 'true':
                 query2 = query.copy()
                 if 'SearchableText' in query2:
                     del query2['SearchableText']
-                    raw_results = catalog(**query2)
+                raw_results = catalog(**query2)
         except Exception as e:
             logger.error("Unable to find or convert fullsitesearch variable %s" % e)
 
@@ -253,11 +254,16 @@ class SearchAjax(BrowserView):
         count = 0
         if len(query) > 0:
             results = self.search_es(query, start, page_size)
-            if len(results) == 0:
-                query2 = query.copy()
-                if 'SearchableText' in query2:
-                    del query2['SearchableText']
-                results = self.search_es(query2, start, page_size)
+            #If no results and user click full site search then show entire site
+            try:
+                if len(results['hits']['hits']) == 0 and query.get('fullsitesearch') == 'true':
+                    query2 = query.copy()
+                    if 'SearchableText' in query2:
+                        del query2['SearchableText']
+                    results = self.search_es(query2, start, page_size)
+            except Exception as e:
+                logger.error("Unable to find or conver fullsitesearch variable for elasticsearch %s" % e)
+
             count = results['hits']['total']
             try:
                 suggestions = results['suggest']['SearchableText'][0]['options']
