@@ -204,8 +204,6 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
         # Sends email to the user if the form has been submitted.
         if self.request.method == 'POST':
 
-            #! Maybe register the user before sending mail.
-            #! This would also include generating the code here and passing that into the send_mail function
             # Generate a random string for the url code.
             lettersAndDigits = string.ascii_letters + string.digits
             url_code = ''.join(random.choice(lettersAndDigits) for i in range(8))

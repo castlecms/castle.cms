@@ -78,8 +78,6 @@ def confirm(email, code):
     storage = SubscriptionStorage()
     subscriber = storage.get(email)
 
-    import pdb; pdb.set_trace()
-
     if not subscriber:
         raise InvalidEmailException(email)
     if subscriber['code'] != code:
