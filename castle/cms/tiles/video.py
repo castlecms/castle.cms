@@ -43,10 +43,13 @@ class VideoTile(ContentTile):
     def tweak_video_url(self, url):
         # add params for properties...
         parts = url.split('/')
-        
+
         # gets the 't=' start time value before cleaning the url
         parsed = urlparse.urlparse(url)
-        start_time = urlparse.parse_qs(parsed.query)['t'][0]
+        try:
+            start_time = urlparse.parse_qs(parsed.query)['t'][0]
+        except KeyError:
+            start_time = None
 
         if 'vimeo.com' in parts:
             url = 'https://player.vimeo.com/video/{id}'.format(id=parts[-1:][0])
