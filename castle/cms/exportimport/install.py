@@ -86,6 +86,26 @@ def castle(context):
     front_page.title = u'Welcome to CastleCMS'
     front_page.description = u'Welcome to your new CastleCMS site.'
 
+    if 'email-templates' not in site:
+        folder = api.content.create(
+            container=site,
+            type='Folder',
+            id='email-templates',
+            title='Email Templates',
+        )
+        allowable_type = 'EmailTemplate'
+        aspect = ISelectableConstrainTypes(folder, None)
+
+        if aspect and aspect.getConstrainTypesMode() != 1:
+            aspect.setConstrainTypesMode(1)
+            aspect.setLocallyAllowedTypes([allowable_type])
+            aspect.setImmediatelyAddableTypes([allowable_type])
+        if not getattr(folder, 'exclude_from_nav', False):
+            folder.exclude_from_nav = True
+            folder.reindexObject()
+
+
+
     # enable syndication by default and modify some of the settings
     registry = getUtility(IRegistry)
     settings = registry.forInterface(ISiteSyndicationSettings)

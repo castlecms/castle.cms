@@ -1,37 +1,61 @@
 from Acquisition import aq_inner
-from castle.cms import texting
-from castle.cms import subscribe
+from castle.cms import subscribe, texting
 from castle.cms.browser.utils import Utils
 from castle.cms.constants import ALL_SUBSCRIBERS
-from castle.cms.interfaces import IAnnouncementData
+from castle.cms.interfaces import IAnnouncementData, IEmailTemplateSchema
 from castle.cms.tasks import send_email, send_email_to_subscribers
 from castle.cms.widgets import (AjaxSelectFieldWidget, SelectFieldWidget,
                                 TinyMCETextFieldWidget)
-from castle.cms.interfaces import IAnnouncementData
-from castle.cms.tasks import send_e
 from plone import api
 from plone.app.registry.browser import controlpanel
-from plone.app.textfield import RichText
+from plone.app.textfield import RichText, RichTextValue
 from plone.app.textfield.value import RichTextValue
 from plone.autoform import directives
 from plone.autoform.form import AutoExtensibleForm
+from plone.dexterity.utils import createContentInContainer
 from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
 from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
 from Products.CMFPlone.utils import safe_unicode
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from z3c.form import button
-from z3c.form import form
+from Products.statusmessages.interfaces import IStatusMessage
+from z3c.form import button, form
 from z3c.form.browser.file import FileWidget
-from z3c.form.interfaces import WidgetActionExecutionError
-from zope import schema, component, interface
+from z3c.form.interfaces import (HIDDEN_MODE, INPUT_MODE,
+                                 WidgetActionExecutionError)
+from zope import component, interface, schema
 from zope.component import getAdapters, getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
-from Products.statusmessages.interfaces import IStatusMessage
-from castle.cms.interfaces import IEmailTemplateSchema
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
+from zope.interface import implements
+from plone.dexterity.interfaces import IDexterityContent
+from zope.component import adapter
+
 reg_key = 'castle.subscriber_categories'
+
+def verify_email_templates_folder(context):
+    site = api.portal.get()
+
+    if 'email-templates' not in site:
+        folder = api.content.create(
+            container=site,
+            type='Folder',
+            id='email-templates',
+            title='Email Templates',
+        )
+        allowable_type = 'EmailTemplate'
+        aspect = ISelectableConstrainTypes(folder, None)
+
+        if aspect and aspect.getConstrainTypesMode() != 1:
+            aspect.setConstrainTypesMode(1)
+            aspect.setLocallyAllowedTypes([allowable_type])
+            aspect.setImmediatelyAddableTypes([allowable_type])
+        if not getattr(folder, 'exclude_from_nav', False):
+            folder.exclude_from_nav = True
+            folder.reindexObject()
 
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
@@ -48,24 +72,13 @@ class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
 
 
 
-class ISendEmailUsersForm(model.Schema):
-    # adapts(IEmailTemplateSchema)
-    subject = schema.ASCIILine(
-        title=u'Subject',
-        required=False,
-    )
 
-    send_from = schema.TextLine(
-        title=u'Custom FROM address',
-        required=False,
-    )
 
-    directives.widget(
-        'send_to_groups',
-        AjaxSelectFieldWidget,
-        vocabulary='plone.app.vocabularies.Groups'
-    )
 
+
+class ISendEmailUsersForm(IEmailTemplateSchema):
+
+    directives.widget(send_to_groups=SelectFieldWidget)
     send_to_groups = schema.List(
         title=u'Send to groups',
         value_type=schema.Choice(
@@ -74,13 +87,8 @@ class ISendEmailUsersForm(model.Schema):
         required=False
     )
 
-    directives.widget(
-        'send_to_users',
-        AjaxSelectFieldWidget,
-        vocabulary='plone.app.vocabularies.Users',
-        required = False
-    )
 
+    directives.widget(send_to_users=SelectFieldWidget)
     send_to_users = schema.List(
         title=u'Send to users',
         value_type=schema.Choice(
@@ -88,6 +96,8 @@ class ISendEmailUsersForm(model.Schema):
         ),
         required=False
     )
+
+
 
     send_to_custom = schema.List(
         title=u'To(additional)',
@@ -97,91 +107,139 @@ class ISendEmailUsersForm(model.Schema):
         required=False
     )
 
-    body = RichText(
-        title=u'Body',
-        description=u'Message body',
-        default_mime_type='text/html',
-        output_mime_type='text/html',
-        allowed_mime_types=('text/html',),
-        required=False)
 
+    directives.widget(select_email_template=SelectFieldWidget)
+    select_email_template = schema.Choice(
+        title=u'Load Email Template',     
+        vocabulary='castle.cms.vocabularies.EmailTemplates', 
+        required=False,
+        default='None'
+    )
 
+@implementer(IEmailTemplateSchema)
+@adapter(IDexterityContent)
+class Tags(object):
+    """Store tags in the Dublin Core metadata Subject field. This makes
+    tags easy to search for.
+    """
+
+    def __init__(self, context):
+        self.context = context
+
+    # the properties below are not necessary the first time when you just want to see your added field(s)
+    @property
+    def tags(self):
+        return set(self.context.Subject())
+    @tags.setter
+    def tags(self, value):
+        if value is None:
+            value = ()
+        self.context.setSubject(tuple(value))
 class SendEmailUsersForm(AutoExtensibleForm, form.Form):
-    # try:
-    #     context
-    # except NameError:
-    #     context = getSite()
-    schema = IEmailTemplateSchema
-    # form_name = 'email_users_form'
-    # label = _(u'here is my label')
-    # description = _(u'here_is_my_description')
-    # ignoreContext = True
+    schema = ISendEmailUsersForm
+    implements(IEmailTemplateSchema)
 
+    def template_loaded(self):
+        try:
+            self.request.form['email-template']
+        except Exception:
+            return False
+        return True
     
-    def getContent(self, key=None):
-            self.ignoreContext = False
-            if not key:
-                return api.portal.get().emailtemplates.emailtemplate
-            return api.portal.get().emailtemplates[key]
+    def no_template_loaded(self):
+        return not self.template_loaded()
 
-    @button.buttonAndHandler(u'Save As Template', name='save_template', condition=lambda form: form.ignoreContext)
+    def set_redirect_url(self, email_template_id):
+        redirect_url = '%s/@@announcements-controlpanel' % (self.context.absolute_url())
+        if not email_template_id == 'None':
+            redirect_url += '?email-template=' + email_template_id
+        self.request.response.redirect(redirect_url)
+
+    def getContent(self):
+        try:
+            email_template_id = str(self.request.form['email-template'])
+        except Exception:
+            self.ignoreContext = True
+            return
+        self.status = 'Viewing Email Template "{}"'.format(email_template_id)
+        self.context = api.portal.get()['email-templates'][email_template_id]
+        return self.context
+
+    # def updateFields(self):
+    #     super(SendEmailUsersForm, self).updateFields()
+    #     self.fields.omit('unsubscribe_links', 'send_to_categories')
+    
+    # def updateWidgets(self):
+    #     super(SendEmailUsersForm, self).updateWidgets()
+    #     self.widgets['select_email_template'].mode = INPUT_MODE
+    #     self.widgets['unsubscribe_links'].mode = HIDDEN_MODE
+    #     self.widgets['send_to_categories'].mode = HIDDEN_MODE
+
+
+    @button.buttonAndHandler(u'Load selected template', name='import_template')
+    def import_template(self, action):
+        messages = IStatusMessage(self.request)
+        email_template_id = str(self.request.get('form.widgets.select_email_template'))
+        if str(email_template_id) in ('None', ''):
+            messages.add(u'No Email Template Selected', type=u'error')
+        else:
+            messages.add(u'Loaded Email Template "{}"'.format(email_template_id), type=u'info')
+            self.set_redirect_url(email_template_id)
+    
+
+    @button.buttonAndHandler(u'Save As Template', name='save_template', condition=no_template_loaded)
     def handle_save(self, action):
+        import pdb; pdb.set_trace()
+        # messages = IStatusMessage(self.request)
         data, errors = self.extractData()
+        # error_messages = []
+        # required_keys = ('subject', 'body')
+        # for key in required_keys: 
+        #     if key not in data:
+        #         error_messages.append(u'Email Template must have a {}'.format(key))
+        # if error_messages:
+        #     for message in error_messages:
+        #         messages.add(message)
+        #     return
         if not errors:
-            send_to_custom = data['send_to_custom'] or []
-            send_to_groups =  data['send_to_groups'] or []
-            send_to_users = data['send_to_users'] or []
-            body = data['body']
+            verify_email_templates_folder(self.context)
             subject = data['subject']
-            try:
-                send_from = data['send_from']
-            except Exception:
-                send_from = None
-
+            send_from = data['send_from'] or None
+            # send_to_groups =  data['send_to_groups'] or []
+            # send_to_users = data['send_to_users'] or []
+            # send_to_custom = data['send_to_custom'] or []
+            body = data['body']
+            unsubscribe_links = RichTextValue( 
+                u'<p></p><p></p>'
+                u'<p><a href="{{change_url}}">Change your subscription settings</a></p>'
+                u'<p><a href="{{unsubscribe_url}}">Unsubscribe from these messages</a></p>',
+                'text/html', 'text/html'
+            )
             portal = api.portal.get()
             item = createContentInContainer(
-                portal['emailtemplates'],
+                portal['email-templates'],
                 'EmailTemplate',
-                send_to_custom = send_to_custom,
-                send_to_groups = send_to_groups,
-                send_to_users = send_to_users,
-                body = body,
-                subject = subject,
-                send_from = send_from,
-                title = subject,
+                id=subject,
+                # send_to_custom=send_to_custom,
+                # send_to_groups=send_to_groups,
+                # send_to_users=send_to_users,
+                body=body,
+                subject=subject,
+                send_from=send_from,
+                title=subject,
+                unsubscribe_links=unsubscribe_links
             )
             if item:
-                self.status = 'email saved'
-            self.context = item
-            # ignoreContext = False
-            # import pdb; pdb.set_trace()
+                messages = IStatusMessage(self.request)
+                messages.add(u'Email Template saved as "{}"'.format(item.getId()), type=u"info")
+                self.set_redirect_url(item.id)
 
-            # import pdb; pdb.set_trace()
-            # self.request.response.redirect('%s/@@announcements-controlpanel' % (
-            #     self.context.absolute_url()))
-            self.ignoreContext = False
-            # self.context = self.context['emailtemplates']['pp']
-            import pdb; pdb.set_trace()
-
-    @button.buttonAndHandler(u'Import', name='handle_import')
-    def import_info(self, action):
-        self.getContent('emailtemplate-3')
-        # self.updateFields()
-        # self.context = self.context['emailtemplates']['pp']
-        # self.ignoreContext = False
-        import pdb; pdb.set_trace()
-        # self.update()
-
-
-    @button.buttonAndHandler(_(u"Cancel"))
-    def handleCancel(self, action):
+    @button.buttonAndHandler(u'Cancel')
+    def handle_cancel(self, action):
         """User cancelled. Redirect back to the front page.
         """
         contextURL = self.context.absolute_url()
         self.request.response.redirect(contextURL)
-
-class SendEmailUsersForm(AutoExtensibleForm, form.Form):
-    schema = ISendEmailUsersForm
 
     @button.buttonAndHandler(u'Send', name='send')
     def handle_send(self, action):
@@ -218,11 +276,10 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
                 self.context.absolute_url()))
 
 
-class ISendEmailSubscribersForm(model.Schema):
-    subject = schema.ASCIILine(
-        title=u'Subject')
+class ISendEmailSubscribersForm(IEmailTemplateSchema):
+    
 
-    directives.widget('send_to_categories', SelectFieldWidget)
+    directives.widget(send_to_categories=SelectFieldWidget)
     send_to_categories = schema.List(
         title=u'Send to categories',
         required=False,
@@ -231,10 +288,7 @@ class ISendEmailSubscribersForm(model.Schema):
         )
     )
 
-    send_from = schema.TextLine(
-        title=u'Custom FROM address',
-        required=False,
-    )
+
 
     body = RichText(
         title=u'Body',
@@ -242,18 +296,113 @@ class ISendEmailSubscribersForm(model.Schema):
         default_mime_type='text/html',
         output_mime_type='text/html',
         allowed_mime_types=('text/html',),
-        required=True,
-        default=RichTextValue(
-            u'<p></p><p></p>'
-            u'<p><a href="{{change_url}}">Change your subscription settings</a></p>'
-            u'<p><a href="{{unsubscribe_url}}">Unsubscribe from these messages</a></p>',
-            'text/html', 'text/html'))
+        required=True
+    )
 
+
+    directives.widget(select_email_template=SelectFieldWidget)
+    select_email_template = schema.Choice(
+        title=u'Load Email Template',     
+        vocabulary='castle.cms.vocabularies.EmailTemplates', 
+        required=False,
+        default='None'
+    )
 
 class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
     schema = ISendEmailSubscribersForm
+    def no_template_loaded(self):
+        try:
+            self.request.form['email-template']
+        except Exception:
+            return True
+        return False
 
-    ignoreContext = True
+    def set_redirect_url(self, email_template_id):
+        redirect_url = '%s/@@announcements-controlpanel' % (self.context.absolute_url())
+        if not email_template_id == 'None':
+            redirect_url += '?email-template=' + email_template_id
+        redirect_url += '#autotoc-item-autotoc-1'
+        self.request.response.redirect(redirect_url)
+
+    def getContent(self):
+        print('i got here2')
+
+        try:
+            email_template_id = self.request.form['email-template']
+            email_template_id = str(email_template_id)
+            self.status = 'Viewing Email Template "{}"'.format(email_template_id)
+        except Exception:
+            self.ignoreContext = True
+            return
+        self.context = api.portal.get()['email-templates'][email_template_id]
+        return self.context
+
+    # def updateFields(self):
+    #     super(SendEmailSubscribersForm, self).updateFields()
+    #     self.fields.omit('send_to_groups', 'send_to_users', 'send_to_custom')
+        
+
+    # def updateWidgets(self):
+    #     super(SendEmailSubscribersForm, self).updateWidgets()
+    #     self.widgets['send_to_groups'].mode = HIDDEN_MODE
+    #     self.widgets['send_to_users'].mode = HIDDEN_MODE
+    #     self.widgets['send_to_custom'].mode = HIDDEN_MODE
+    #     self.widgets['select_email_template'].mode = INPUT_MODE
+    #     self.widgets['send_to_categories'].mode = INPUT_MODE
+
+    def action(self):
+        print('action')
+        return self.context.absolute_url() + '/@@announcements-controlpanel' + '#autotoc-item-autotoc-1'
+
+    @button.buttonAndHandler(u'Save as template', name='handle_save2', condition=no_template_loaded)
+    def handle_save2(self, action):
+        # import pdb; pdb.set_trace()
+        data, errors = self.extractData()
+
+            # return
+        if not errors:
+            subject = data['subject']
+            body = data['body']
+            send_to_custom = data['send_to_custom'] or []
+            send_to_groups =  data['send_to_groups'] or []
+            send_to_users = data['send_to_users'] or []
+            unsubscribe_links = data['unsubscribe_links'] or RichTextValue(u'')
+            try:
+                send_from = data['send_from']
+            except Exception:
+                send_from = None
+
+            portal = api.portal.get()
+            item = createContentInContainer(
+                portal['email-templates'],
+                'EmailTemplate',
+                id=subject,
+                title=subject,
+                send_to_custom=send_to_custom,
+                send_to_groups=send_to_groups,
+                send_to_users=send_to_users,
+                body=body,
+                subject=subject,
+                send_from=send_from,
+                unsubscribe_links=unsubscribe_links
+            )
+            if item:
+                messages = IStatusMessage(self.request)
+                messages.add(u'Email Template saved as "{}"'.format(item.getId()), type=u"info")
+            self.set_redirect_url(item.id)
+
+            
+
+    @button.buttonAndHandler(u'Load selected template', name='import_template2', condition=no_template_loaded)
+    def import_template2(self, action):
+
+        messages = IStatusMessage(self.request)
+        email_template_id = str(self.request.get('form.widgets.select_email_template'))
+        if str(email_template_id) in ('None', ''):
+            messages.add(u'No Email Template Selected', type=u'error')
+        else:
+            messages.add(u'Loaded Email Template "{}"'.format(email_template_id), type=u'info')
+        self.set_redirect_url(email_template_id)
 
     @button.buttonAndHandler(u'Send', name='send2')
     def handle_send2(self, action):
@@ -261,8 +410,7 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
         if not errors:
             utils = Utils(self.context, self.request)
             public_url = utils.get_public_url()
-            html = data['body'].output
-
+            html = data['body'].output + data['unsubscribe_links'].output
             filters = [f for _, f in getAdapters((self.context, self.request), IFilter)]
             html = apply_filters(filters, html)
             html = html.replace(self.context.absolute_url(), public_url.encode('utf8'))
@@ -282,6 +430,12 @@ class SendEmailSubscribersForm(AutoExtensibleForm, form.Form):
             self.request.response.redirect('%s/@@announcements-controlpanel' % (
                 self.context.absolute_url()))
 
+    @button.buttonAndHandler(u'Cancel', name='cancel2')
+    def handle_cancel2(self, action):
+        """User cancelled. Redirect back to the front page.
+        """
+        contextURL = self.context.absolute_url()
+        self.request.response.redirect(contextURL)
 
 class ISendTextForm(model.Schema):
 

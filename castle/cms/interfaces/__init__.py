@@ -23,6 +23,7 @@ from .controlpanel import ISecuritySchema
 from .controlpanel import ISiteConfiguration
 from .controlpanel import ISiteSchema
 from .controlpanel import ISocialMediaSchema
+from .emailtemplate import IEmailTemplateSchema
 from .layers import ICastleLayer
 from .layers import IVersionViewLayer
 from .metadata import ILDData
