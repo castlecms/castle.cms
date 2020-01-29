@@ -13,6 +13,8 @@ from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
+import urlparse
+
 
 class VideoTile(ContentTile):
     default_display_fields = ()
@@ -41,17 +43,24 @@ class VideoTile(ContentTile):
     def tweak_video_url(self, url):
         # add params for properties...
         parts = url.split('/')
+        
+        # gets the 't=' start time value before cleaning the url
+        parsed = urlparse.urlparse(url)
+        start_time = urlparse.parse_qs(parsed.query)['t'][0]
+
         if 'vimeo.com' in parts:
             url = 'https://player.vimeo.com/video/{id}'.format(id=parts[-1:][0])
         else:
             url = self.utils.clean_youtube_url(url)
         url += '?'
         if self.autoplay:
-            url += 'autoplay=1&'
+            url += 'autoplay=1&mute=1&'
         if not self.show_controls:
             url += 'controls=0&'
         if self.loop:
-            url += 'loop=1'
+            url += 'loop=1&'
+        if start_time:
+            url += 'start=%s' % start_time[:-1]
         return url
 
 
