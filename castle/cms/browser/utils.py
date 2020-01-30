@@ -411,7 +411,7 @@ class Utils(BrowserView):
             attrib.update({
                 'src': '{0}/@@images/image'.format(url),
                 'alt': unidecode(alt),
-                'class': 'focuspoint-cover'
+                'class': 'pat-focuspoint-cover'
             })
 
         div_element = etree.Element('div')
@@ -467,7 +467,7 @@ class Utils(BrowserView):
         
         video_element = etree.Element('video')
         video_element.attrib.update({
-            'class': 'focuspoint-cover',
+            'class': 'pat-focuspoint-cover',
             'preload': 'none',
             'loop': 'true',
             'autoplay': 'true',
