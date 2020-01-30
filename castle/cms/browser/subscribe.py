@@ -1,5 +1,6 @@
 from castle.cms import subscribe
 from castle.cms import texting
+from castle.cms.utils import get_random_string
 from castle.cms.utils import send_email
 from castle.cms.utils import verify_recaptcha
 from castle.cms.widgets import ReCaptchaFieldWidget
@@ -30,7 +31,6 @@ from zope.interface import Interface
 from zope.interface import Invalid
 
 import phonenumbers
-import random
 import string
 
 
@@ -205,8 +205,7 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
         if self.request.method == 'POST':
 
             # Generate a random string for the url code.
-            lettersAndDigits = string.ascii_letters + string.digits
-            url_code = ''.join(random.choice(lettersAndDigits) for i in range(8))
+            url_code = get_random_string(8)
 
             # User data from the submitted form
             email = self.request.form['form.widgets.email']
