@@ -393,7 +393,7 @@ class Utils(BrowserView):
         return tostring(el)
 
     def focal_cover_image_tag(self, brain, scale=None, class_name='',
-                        attributes=None, focal=None):
+                              attributes=None, focal=None):
         # read https://github.com/jonom/jquery-focuspoint on how to calc
         image_info = utils.get_image_info(brain)
 
@@ -450,7 +450,7 @@ class Utils(BrowserView):
         return tostring(div_element)
 
     def focal_cover_video_tag(self, video_brain, scale=None, class_name='',
-                        attributes=None, focal=None, muted=True):
+                              attributes=None, focal=None, muted=True):
         # read https://github.com/jonom/jquery-focuspoint on how to calc
         image_info = utils.get_image_info(video_brain)
         content_type = video_brain.file.contentType
@@ -464,7 +464,7 @@ class Utils(BrowserView):
         div_element = etree.Element('div')
         if class_name:
             div_element.attrib['class'] = class_name
-        
+
         video_element = etree.Element('video')
         video_element.attrib.update({
             'class': 'pat-focuspoint-cover',
@@ -492,7 +492,6 @@ class Utils(BrowserView):
                 'srclang': 'en',
             })
             video_element.append(track_element)
-
 
         if not focal and image_info and 'focal_point' in image_info:
             focal = image_info['focal_point']
