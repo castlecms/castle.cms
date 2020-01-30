@@ -175,7 +175,7 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
 
         if not errors:
             item = subscribe.register(data['email'], data)
-            # self.send_mail(data['email'], item)
+            self.send_mail(data['email'], item)
             self.sent = True
             api.portal.show_message(
                 'Verification email has been sent to your email', request=self.request, type='info')
@@ -213,7 +213,7 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
             categories = self.request.form['form.widgets.categories']
             name = self.request.form['form.widgets.name']
 
-            subscriber = subscribe.register(email, None, url_code, categories)
+            subscribe.register(email, {'categories': categories}, url_code)
 
             self.send_mail(email, categories, name, url_code)
 
