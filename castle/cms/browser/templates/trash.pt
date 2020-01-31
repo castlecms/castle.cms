@@ -49,7 +49,7 @@
             <td>
               <form method="POST">
                 <input type="hidden" name="uid" value="${item/UID}" />
-                <input type="checkbox" name="restore_this:tuple" value="restore_this">Restore</input>
+                <input type="checkbox" class="noborder"  name="restore_this" value="restore_this:tuple">Restore</input>
               </form>
             </td>
             <td>
