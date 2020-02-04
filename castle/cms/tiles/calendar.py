@@ -27,6 +27,20 @@ class CalendarTile(BaseTile):
 
     def get_query(self):
         parsed = parse_query_from_data(self.data, self.context)
+        # If parsed is empty and the self.data doesn't contain any of the variables below
+        # then we have a new calendar to set the defaults on.
+        if parsed == {}:
+            if self.data.get('query', None) is None:
+                if self.data.get('limit', None) is None:
+                    if self.data.get('sort_reversed', None) is None:
+                        if self.data.get('sort_on', None) is None:
+                            self.data[u'limit'] = 250
+                            self.data[u'query'] = [{'i': 'portal_type',
+                                                    'o': 'plone.app.querystring.operation.selection.any',
+                                                    'v': ['Event']}]
+                            self.data[u'sort_reversed'] = False
+                            return self.get_query()
+
         parsed['sort_order'] = 'reverse'
         return parsed
 
