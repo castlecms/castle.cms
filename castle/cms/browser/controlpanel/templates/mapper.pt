@@ -54,7 +54,7 @@
 
     <div tal:replace="structure provider:plone.scripts" />
 
-    <meta name="generator" content="Castle - http://www.wildcardcorp.com" />
+    <meta name="generator" content="CastleCMS - http://www.wildcardcorp.com" />
 
   </head>
 
