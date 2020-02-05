@@ -80,7 +80,6 @@ class MetaDataTile(Tile):
                     context = context[get_default_page(context)]
                 except AttributeError:
                     pass
-
             tags = {
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
