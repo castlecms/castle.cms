@@ -67,6 +67,16 @@ class RedisAdapter(AbstractDict):
             self.client.set(cache_key, cached_value)
         except cPickle.PicklingError:
             pass
+        except redis.exceptions.ConnectionError:
+            # Try again in getting a redis connection or use a alternative
+            # First resetting the client to none then to the get_client function
+            logger.warning("Redis server at %s is currently down, "
+                           "reprioritizing to alternative cache"
+                           % str(os.environ.get('REDIS_SERVER')))
+            setattr(thread_local, "client", None)
+            cache = get_client(self.globalkey.split(":")[0])
+            cache[key] = value
+            logger.info("Cache Reprioritization successful, using %s" % str(cache))
 
 
 def get_client(fun_name=''):
