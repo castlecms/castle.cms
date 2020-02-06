@@ -392,10 +392,6 @@ class Creator(BrowserView):
                     qpdf(info['tmp_file'])
                 except Exception:
                     logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
-                    try:
-                        exiftool(info['tmp_file'])
-                    except Exception:
-                        logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
             else:
                 try:
                     exiftool(info['tmp_file'])
