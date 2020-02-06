@@ -384,16 +384,14 @@ class Creator(BrowserView):
             is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
             if is_pdf and qpdf is not None:
                 try:
-                    qpdf(info['tmp_file'])
+                    # Will recursively remove the tags of the file using exiftool, linearize it.
+                    # And do it again.
                     exiftool(info['tmp_file'])
                     qpdf(info['tmp_file'])
                     exiftool(info['tmp_file'])
+                    qpdf(info['tmp_file'])
                 except Exception:
-                    logger.warn('Could not strip additional metadata with qpdf {}'.format(info['tmp_file']))  # noqa
-                    try:
-                        exiftool(info['tmp_file'])
-                    except Exception:
-                        logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+                    logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
             else:
                 try:
                     exiftool(info['tmp_file'])
