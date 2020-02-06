@@ -382,23 +382,28 @@ class Creator(BrowserView):
         if (type_ in ('Image', 'File', 'Video', 'Audio') and
                 exiftool is not None and 'tmp_file' in info):
             is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
-            if is_pdf is not None:
-
-                if is_pdf and qpdf is not None:
-                    try:
-                        # Will recursively remove the tags of the file using exiftool, linearize it.
-                        # And do it again.
-                        exiftool(info['tmp_file'])
-                        qpdf(info['tmp_file'])
-                        exiftool(info['tmp_file'])
-                        qpdf(info['tmp_file'])
-                    except Exception:
-                        logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
-                else:
+            if is_pdf and qpdf is not None:
+                try:
+                    # Will recursively remove the tags of the file using exiftool, linearize it.
+                    # And do it again.
+                    exiftool(info['tmp_file'])
+                    qpdf(info['tmp_file'])
+                    exiftool(info['tmp_file'])
+                    qpdf(info['tmp_file'])
+                except Exception:
+                    logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
                     try:
                         exiftool(info['tmp_file'])
                     except Exception:
                         logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+            else:
+                try:
+                    exiftool(info['tmp_file'])
+                    logger.warn('qpdf is not installed.  Will not be able to '
+                                'strip all metadata from from file %s'
+                                % str(info['tmp_file']))
+                except Exception:
+                    logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
         fi = open(info['tmp_file'], 'r')
         try:
