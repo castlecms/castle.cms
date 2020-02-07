@@ -10,7 +10,6 @@ from unidecode import unidecode
 class TrashView(BrowserView):
 
     def __call__(self):
-        import pdb; pdb.set_trace()
         self.catalog = api.portal.get_tool('portal_catalog')
         self.site = api.portal.get()
         self.site_path = '/'.join(self.site.getPhysicalPath())
@@ -22,12 +21,10 @@ class TrashView(BrowserView):
                 self.delete()
             elif action == 'empty':
                 self.empty()
-            elif action == 'restore-all':
-                self.restore_all()
         self.items = self.catalog(trashed=True, sort_on='modified',
                                   object_provides=ITrashed.__identifier__)
         return self.index()
-
+    
     def get_label(self, brain):
         label = brain.Title
         if brain.is_folderish:
@@ -47,11 +44,18 @@ class TrashView(BrowserView):
         return self.catalog(UID=uid, trashed=True)[0].getObject()
 
     def restore(self):
-        uid = self.request.get('uid')
-        obj = self.get_by_uid(uid)
-        api.portal.show_message(u'Successfully restored "%s" located at: %s' % (
-            unidecode(obj.Title()), self.get_path(obj)), self.request, type='info')
-        trash.restore(obj)
+        uidarray = self.request.get('restore_item_uid')
+        if uidarray == None or uidarray == []:
+            return 0
+        uidarray = uidarray.split(',')
+        for uid in uidarray:
+            try:
+                obj = self.get_by_uid(uid)
+                api.portal.show_message(u'Successfully restored "%s" located at: %s' % (
+                    unidecode(obj.Title()), self.get_path(obj)), self.request, type='info')
+                trash.restore(obj)
+            except Exception:
+                pass
 
     def delete(self):
         obj = self.get_by_uid(self.request.get('uid'))
@@ -82,12 +86,3 @@ class TrashView(BrowserView):
                     'to other content on the site.',
                     self.request, type='warning')
         api.portal.show_message('Trash emptied', self.request, type='warning')
-
-    def restore_all(self):
-        import pdb; pdb.set_trace()
-        for item in [i for i in self.catalog(trashed=True,
-                                             object_provides=ITrashed.__identifier__)]:
-            obj = item.getObject()
-            api.portal.show_message(u'Successfully restored "%s" located at: %s' % (
-                unidecode(obj.Title()), self.get_path(obj)), self.request, type='info')
-            trash.restore(obj)

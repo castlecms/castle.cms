@@ -47,9 +47,9 @@
                    data-pat-moment="format:MMMM Do, YYYY h:mm a;"
                    data-date="${python: item.modified.ISO8601()}" />
             <td>
-              <form method="POST">
-                <input type="hidden" name="uid" value="${item/UID}" />
-                <input type="checkbox" class="noborder"  name="restore_this" value="restore_this:tuple">Restore</input>
+	      <form method="POST" class="restore-checkbox">
+		<input type="hidden" name="uid" value="${item/UID}" />
+		<input type="checkbox" class="noborder" name="restore"> Restore </input>
               </form>
             </td>
             <td>
@@ -68,12 +68,36 @@
       <input type="hidden" name="action" value="empty" />
       <button type="submit" class="plone-btn plone-btn-danger">Empty All Recycled Items</button>
     </form>
-    <form method="POST" tal:condition="view/items">
-      <input type="hidden" name="action" value="restore-all" />
+    <form method="POST" id="restore_all" onsubmit="SendCheckMarks()" tal:condition="view/items">
+      <input type="hidden" name="action" value="restore" />
       <button type="submit" class="plone-btn plone-btn-default">Restore All Recycled Items</button>
     </form>
   </tal:b>
+<script>
+  function SendCheckMarks(){
+      var elements = document.getElementsByClassName("restore-checkbox");
+      var restore_item_uid = [];
+      for(element = 0; element < elements.length; element++)
+      {
+	  console.log(elements[element]);
+	  if(elements[element][1].checked == true)
+	  {
+	      console.log(elements[element][0].value);
+	      restore_item_uid.push(elements[element][0].value);
+	  };
+      };
+      var form = document.getElementById("restore_all");
+      var input = document.createElement('input');
+      input.setAttribute('name', 'restore_item_uid');
+      input.setAttribute('value', restore_item_uid);
+      input.setAttribute('type', 'hidden');
+
+      form.appendChild(input);
+      form.submit();
+  };
+</script>
 </metal:b>
+
 
 </body>
 </html>
