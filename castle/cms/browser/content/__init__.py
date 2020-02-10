@@ -388,13 +388,16 @@ class Creator(BrowserView):
                     # Will recursively remove the tags of the file using exiftool, linearize it.
                     # And do it again.
                     exiftool(info['tmp_file'])
+                    self.metadata_stripped = True
                     qpdf(info['tmp_file'])
                     exiftool(info['tmp_file'])
                     qpdf(info['tmp_file'])
-                    self.metadata_stripped = True
                 except Exception:
-                    logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
-                    self.metadata_stripped = False
+                    if self.metadata_stripped is None:
+                        self.metadata_stripped = False
+                        logger.warn('File format is incompatible with exiftool %s' % info['tmp_file'])
+                    else:
+                        logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
             else:
                 try:
                     exiftool(info['tmp_file'])
