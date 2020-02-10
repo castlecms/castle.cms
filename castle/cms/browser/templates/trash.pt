@@ -6,6 +6,8 @@
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="plone">
 
+
+
 <body>
 
 <metal:b fill-slot="content-title">
@@ -68,34 +70,11 @@
       <input type="hidden" name="action" value="empty" />
       <button type="submit" class="plone-btn plone-btn-danger">Empty All Recycled Items</button>
     </form>
-    <form method="POST" id="restore_all" onsubmit="SendCheckMarks()" tal:condition="view/items">
+    <form method="POST" id="restore_all" class="pat-trash_checkbox" tal:condition="view/items">
       <input type="hidden" name="action" value="restore" />
-      <button type="submit" class="plone-btn plone-btn-default">Restore All Recycled Items</button>
+      <button type="submit" class="plone-btn plone-btn-default ">Restore All Recycled Items</button>
     </form>
   </tal:b>
-<script>
-  function SendCheckMarks(){
-      var elements = document.getElementsByClassName("restore-checkbox");
-      var restore_item_uid = [];
-      for(element = 0; element < elements.length; element++)
-      {
-	  console.log(elements[element]);
-	  if(elements[element][1].checked == true)
-	  {
-	      console.log(elements[element][0].value);
-	      restore_item_uid.push(elements[element][0].value);
-	  };
-      };
-      var form = document.getElementById("restore_all");
-      var input = document.createElement('input');
-      input.setAttribute('name', 'restore_item_uid');
-      input.setAttribute('value', restore_item_uid);
-      input.setAttribute('type', 'hidden');
-
-      form.appendChild(input);
-      form.submit();
-  };
-</script>
 </metal:b>
 
 
