@@ -24,7 +24,7 @@ class TrashView(BrowserView):
         self.items = self.catalog(trashed=True, sort_on='modified',
                                   object_provides=ITrashed.__identifier__)
         return self.index()
-    
+
     def get_label(self, brain):
         label = brain.Title
         if brain.is_folderish:
@@ -45,7 +45,7 @@ class TrashView(BrowserView):
 
     def restore(self):
         uidarray = self.request.get('restore_item_uid')
-        if uidarray == None or uidarray == []:
+        if uidarray is None or uidarray == []:
             return 0
         uidarray = uidarray.split(',')
         for uid in uidarray:
