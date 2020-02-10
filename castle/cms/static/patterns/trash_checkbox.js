@@ -20,10 +20,8 @@ define([
 		var restore_item_uid = [];
 		for(var element = 0; element < elements.length; element++)
 		{
-		    console.log(elements[element]);
 		    if(elements[element][1].checked == true)
-		    {
-			console.log(elements[element][0].value);
+		     {
 			restore_item_uid.push(elements[element][0].value);
 		    };
 		};
