@@ -1,0 +1,51 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en-US" lang="en-US"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <head>
+    <script src="${portal_url}/++plone++castle/libs/revealjs/reveal.js"/>
+  </head>
+  <body>
+    <tal:defs tal:define="slides view/get_slides|nothing">
+      <div tal:condition="nocall: slides">
+        <tal:item tal:repeat="slide slides">
+          <!-- Full Background Video Slide -->
+          <div class="background-video-slide" tal:condition="python: view.slide_type(slide) == 'background-video'">
+          </div>
+
+          <!-- Left Video w/ Right Text Slide-->
+          <div class="left-video-right-text-slide" tal:condition="python: view.slide_type(slide) == 'left-video-right-text'">
+          </div>
+
+          <!-- Full Background Image Slide -->
+          <div class="background-image-slide" tal:condition="python: view.slide_type(slide) == 'background-image'">
+              <tal:container tal:define="image python: view.get_image(slide)">
+                <section
+                  tal:condition="image"
+                  class="background-image-slide"
+                  data-background="${image/absolute_url}"
+                  data-transition="fade">
+                  <div class="row bottom-xs start-lg">
+                    <div class="col-xs-12 col-lg-6">
+                      <div class="box-row">
+                        <p>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <div tal:condition="not: image">
+                  Image slide with no image selected.
+                </div>
+              </tal:container>
+            </div>
+          </div>
+
+          <!-- Left Image w/ Right Text Slide -->
+          <div class="left-image-right-text-slide" tal:condition="python: view.slide_type(slide) == 'left-image-right-text'">
+          </div>
+
+        </tal:item>
+      </div>
+    </tal:defs>
+  </body>
+</html>

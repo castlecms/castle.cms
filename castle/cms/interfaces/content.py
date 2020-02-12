@@ -5,6 +5,7 @@ from plone.app.contenttypes.interfaces import IFile
 from plone.supermodel import model
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
 from zope.interface import Interface
+from zope import schema
 
 
 class ICastleApplication(IApplication):
@@ -25,6 +26,13 @@ class IVideo(IMedia):
 
 class IAudio(IMedia):
     pass
+
+
+class ISlideshow(Interface):
+    custom_dom_id = schema.Text(
+        title="ID for ",
+        required=False,
+    )
 
 
 class ITrashed(Interface):

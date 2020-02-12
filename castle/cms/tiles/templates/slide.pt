@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en-US" lang="en-US"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <body>
+    <!-- Full Background Video Slide -->
+    <div class="background-video-slide" tal:condition="python: view.slide_type == 'background-video'">
+    </div>
+
+    <!-- Left Video w/ Right Text Slide-->
+    <div class="left-video-right-text-slide" tal:condition="python: view.slide_type == 'left-video-right-text'">
+    </div>
+
+    <!-- Full Background Image Slide -->
+    <div class="background-image-slide" tal:condition="python: view.slide_type == 'background-image'">
+      <tal:container tal:define="image python: view.get_image()">
+        <section
+          tal:condition="image"
+          class="background-image-slide"
+          data-background="${image/absolute_url}"
+          data-transition="fade">
+          <div class="row bottom-xs start-lg">
+            <div class="col-xs-12 col-lg-6">
+              <div class="box-row">
+                <p>
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div tal:condition="not: image">
+          Image slide with no image selected.
+        </div>
+      </tal:container>
+    </div>
+
+    <!-- Left Image w/ Right Text Slide -->
+    <div class="left-image-right-text-slide" tal:condition="python: view.slide_type == 'left-image-right-text'">
+    </div>
+  </body>
+</html>
