@@ -373,7 +373,7 @@ class Creator(BrowserView):
             dup_detector.register(obj, md5_hash)
         return obj
 
-    def create_object(self, folder, type_, info):        
+    def create_object(self, folder, type_, info):
         filename = info['name']
         name = filename.decode("utf8")
         chooser = INameChooser(folder)
@@ -408,7 +408,7 @@ class Creator(BrowserView):
                 except Exception:
                     logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
                     self.metadata_stripped = False
-                    
+
         fi = open(info['tmp_file'], 'r')
         try:
             # Try to determine which kind of NamedBlob we need
