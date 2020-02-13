@@ -139,6 +139,13 @@ class Creator(BrowserView):
         elif self.request.form.get('action') == 'chunk-upload':
             return self.chunk_upload()
 
+    def dump_object_data(self, obj, duplicate=False):
+        # Acts as a buffer to solve the edge case of not all returns
+        # bringing the metadata_stripped while some returns do.
+        if not hasattr(self, 'metadata_stripped'):
+            self.metadata_stripped = None
+        return dump_object_data(obj, duplicate, self.metadata_stripped)
+
     def chunk_upload(self):
         chunk = int(self.request.form['chunk'])
         chunk_size = int(self.request.form['chunkSize'])
@@ -226,7 +233,7 @@ class Creator(BrowserView):
                 # tmp files need to stick around and be managed later...
                 self._clean_tmp(info)
             cache.delete(cache_key_prefix + _id)
-            return dump_object_data(obj, dup, self.metadata_stripped)
+            return self.dump_object_data(obj, dup)
         else:
             cache.set(cache_key_prefix + _id, info)
             check_put = None
@@ -468,7 +475,7 @@ class Creator(BrowserView):
                     api.content.transition(obj=obj, transition=transition_to)
                 except Exception:
                     pass
-            return dump_object_data(obj, self.metadata_stripped)
+            return self.dump_object_data(obj)
         else:
             return json.dumps({
                 'valid': False,
