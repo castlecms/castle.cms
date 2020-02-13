@@ -139,13 +139,6 @@ class Creator(BrowserView):
         elif self.request.form.get('action') == 'chunk-upload':
             return self.chunk_upload()
 
-    def dump_object_data(self, obj, duplicate=False):
-        # Acts as a buffer to solve the edge case of not all returns
-        # bringing the metadata_stripped while some returns do.
-        if not hasattr(self, 'metadata_stripped'):
-            self.metadata_stripped = None
-        return dump_object_data(obj, duplicate, self.metadata_stripped)
-
     def chunk_upload(self):
         chunk = int(self.request.form['chunk'])
         chunk_size = int(self.request.form['chunkSize'])
@@ -154,6 +147,7 @@ class Creator(BrowserView):
         _id = self.request.form.get('id')
         existing_id = self.request.form.get('content', None)
         field_name = self.request.form.get('field', None)
+        self.metadata_stripped = None
 
         if chunk > total_chunks:
             raise Exception("More chunks than what should be possible")
@@ -233,7 +227,7 @@ class Creator(BrowserView):
                 # tmp files need to stick around and be managed later...
                 self._clean_tmp(info)
             cache.delete(cache_key_prefix + _id)
-            return self.dump_object_data(obj, dup)
+            return dump_object_data(obj, dup, self.metadata_stripped)
         else:
             cache.set(cache_key_prefix + _id, info)
             check_put = None
@@ -461,6 +455,7 @@ class Creator(BrowserView):
                         form.get('selectedType[id]')).replace('%20', ' ')
 
     def create(self):
+        self.metadata_stripped = None
         if self._check():
             path = self.request.form.get('basePath', '/')
             folder = utils.recursive_create_path(self.context, path)
@@ -475,7 +470,7 @@ class Creator(BrowserView):
                     api.content.transition(obj=obj, transition=transition_to)
                 except Exception:
                     pass
-            return self.dump_object_data(obj)
+            return dump_object_data(obj, metadata_stripped=self.metadata_stripped)
         else:
             return json.dumps({
                 'valid': False,
