@@ -30,8 +30,9 @@ class IAudio(IMedia):
 
 class ISlideshow(Interface):
     custom_dom_id = schema.Text(
-        title="ID for ",
-        required=False,
+        title=u"ID for the slideshow element",
+        description=u"If custom styling desired for this slideshow",
+        required=False
     )
 
 
