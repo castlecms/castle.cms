@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.17 (unreleased)
+2.5.17 (2020-02-17)
 -------------------
 
 - add preliminary support for category subscriber emails to be used in content rules
