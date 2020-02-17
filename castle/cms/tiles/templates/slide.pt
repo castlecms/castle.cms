@@ -3,38 +3,43 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal">
   <body>
     <!-- Full Background Video Slide -->
-    <div class="background-video-slide" tal:condition="python: view.slide_type == 'background-video'">
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-video'">
+      <div tal:condition="view/data/video">
+        Background Video Slide
+      </div>
+      <div tal:condition="not: view/data/video">
+        Background Video Slide with no video selected.
+      </div>
     </div>
 
     <!-- Left Video w/ Right Text Slide-->
-    <div class="left-video-right-text-slide" tal:condition="python: view.slide_type == 'left-video-right-text'">
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-video-right-text'">
+      <div tal:condition="view/data/video">
+        Video Slide with right text
+      </div>
+      <div tal:condition="not: view/data/video">
+        Video Slide with no video selected.
+      </div>
     </div>
 
     <!-- Full Background Image Slide -->
-    <div class="background-image-slide" tal:condition="python: view.slide_type == 'background-image'">
-      <tal:container tal:define="image python: view.get_image()">
-        <section
-          tal:condition="image"
-          class="background-image-slide"
-          data-background="${image/absolute_url}"
-          data-transition="fade">
-          <div class="row bottom-xs start-lg">
-            <div class="col-xs-12 col-lg-6">
-              <div class="box-row">
-                <p>
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div tal:condition="not: image">
-          Image slide with no image selected.
-        </div>
-      </tal:container>
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-image'">
+      <div tal:condition="view/data/image">
+        Image slide
+      </div>
+      <div tal:condition="not: view/data/image">
+        Image slide with no image selected.
+      </div>
     </div>
 
     <!-- Left Image w/ Right Text Slide -->
-    <div class="left-image-right-text-slide" tal:condition="python: view.slide_type == 'left-image-right-text'">
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-image-right-text'">
+      <div tal:condition="view/data/image">
+        Image slide with right text.
+      </div>
+      <div tal:condition="not: view/data/image">
+        Image slide with no image selected.
+      </div>
     </div>
   </body>
 </html>

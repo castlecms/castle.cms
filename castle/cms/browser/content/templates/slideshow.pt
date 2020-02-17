@@ -18,15 +18,62 @@
       <tal:defs tal:define="slides view/get_slides|nothing">
         <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
           <tal:item tal:repeat="slide slides">
+
             <!-- Full Background Video Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
-              <section class="background-video-slide">
+            <tal:container tal:condition="python: slide['displayType'] == 'background-video'"  tal:define="video python: slide['video']">
+              <section
+                class="background-video-slide"
+                data-background-video="${video}"
+                data-background-color="#000000"
+                data-background-video-loop
+                data-background-video-muted
+                data-transition="fade">
+                <div class="row top-xs center-xs">
+                  <div class="col-xs-12 col-lg-6">
+                    <div class="box-row">
+                      <p>${python: slide['text'] or None}</p>
+                    </div>
+                  </div>
+                </div>
               </section>
             </tal:container>
 
             <!-- Left Video w/ Right Text Slide-->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
-              <section class="left-video-right-text-slide" >
+            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'" tal:define="video python: slide['video']">
+              <section class="left-video-slide">
+                <div class="row middle-xs d-lg-none">
+                  <!--
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
+                    <div class="row bottom-xs text-overlay">
+                      <div class="col-xs-12">
+                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                        <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                      </div>
+                    </div>
+                    <video
+                      class="video-background"
+                      data-autoplay
+                      autoplay
+                      muted
+                      loop
+                      playsinline>
+                      <source src="${video}" type="video/mp4" />
+                    </video>
+                  </div>
+                </div>
+                -->
+                <!-- md/lg view -->
+                <div class="row middle-xs">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
+                    <video data-autoplay muted loop>
+                      <source src="${video}"/>
+                    </video>
+                  </div>
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                    <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                  </div>
+                </div>
               </section>
             </tal:container>
 
@@ -51,8 +98,18 @@
             </tal:container>
 
             <!-- Left Image w/ Right Text Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
-              <section class="left-image-right-text-slide">
+            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'" tal:define="image python: slide['image']">
+              <section class="left-image-slide">
+                <div class="row middle-xs">
+                  <div
+                    class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
+                    style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="box-row">
+                      <p>${python: slide['text'] or None}</p>
+                    </div>
+                  </div>
+                </div>
               </section>
             </tal:container>
           </tal:item>

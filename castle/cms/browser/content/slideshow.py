@@ -26,6 +26,11 @@ class SlideshowView(BrowserView):
                 except Exception:
                     slide['image'] = None
                 try:
+                    video = uuidToObject(data['video:list'][0])
+                    slide['video'] = video.absolute_url()
+                except Exception:
+                    slide['video'] = None
+                try:
                     slide['displayType'] = data['display_type'][0]
                 except Exception:
                     slide['displayType'] = 'background-image'

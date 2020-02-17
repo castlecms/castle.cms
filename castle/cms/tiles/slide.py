@@ -12,7 +12,7 @@ class SlideTile(BaseTile):
 
     @property
     def slide_type(self):
-        return self.data.get('slide_type', 'image-background')
+        return self.data.get('display_type', 'background-image')
 
 
 class ISlideTileSchema(model.Schema):
@@ -43,7 +43,7 @@ class ISlideTileSchema(model.Schema):
     image = schema.List(
         title=u"Image",
         description=u"Reference image on the site.",
-        required=True,
+        required=False,
         default=[],
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
