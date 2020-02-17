@@ -2,47 +2,95 @@
       xml:lang="en-US" lang="en-US"
       xmlns:tal="http://xml.zope.org/namespaces/tal">
   <head>
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reset.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reveal.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/theme/black.css" />
+    <!-- Flexbox Grid -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css"
+      type="text/css"
+    />
     <script src="${context/portal_url}/++plone++castle/libs/revealjs/reveal.js"/>
   </head>
   <body>
-    <tal:defs tal:define="slides view/get_slides|nothing">
-      <div id="${view/get_id|nothing}" tal:condition="nocall: slides">
-        <tal:item tal:repeat="slide slides">
-          <!-- Full Background Video Slide -->
-          <div class="background-video-slide" tal:condition="python: slide['displayType'] == 'background-video'">
-          </div>
+    <div class="reveal">
+      <tal:defs tal:define="slides view/get_slides|nothing">
+        <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
+          <tal:item tal:repeat="slide slides">
+            <!-- Full Background Video Slide -->
+            <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
+              <section class="background-video-slide">
+              </section>
+            </tal:container>
 
-          <!-- Left Video w/ Right Text Slide-->
-          <div class="left-video-right-text-slide" tal:condition="python: slide['displayType'] == 'left-video-right-text'">
-          </div>
+            <!-- Left Video w/ Right Text Slide-->
+            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
+              <section class="left-video-right-text-slide" >
+              </section>
+            </tal:container>
 
-          <!-- Full Background Image Slide -->
-          <div class="background-image-slide" tal:condition="python: slide['displayType'] == 'background-image'">
-            <tal:container tal:define="image python: slide['image']">
-              <section
-                tal:condition="image"
-                class="background-image-slide"
-                data-background="${image}"
-                data-transition="fade">
-                <div class="row bottom-xs start-lg">
-                  <div class="col-xs-12 col-lg-6">
-                    <div class="box-row">
-                      <p>${python: slide['text'] or None}</p>
+            <!-- Full Background Image Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'background-image'" tal:define="image python: slide['image']">
+                <section
+                  tal:condition="image"
+                  class="background-image-slide"
+                  data-background="${image}"
+                  data-transition="fade">
+                  <div class="row bottom-xs start-lg">
+                    <div class="col-xs-12 col-lg-6">
+                      <div class="box-row">
+                        <p>${python: slide['text'] or None}</p>
+                      </div>
                     </div>
                   </div>
+                <div tal:condition="not: image">
+                  Image slide with no image selected.
                 </div>
               </section>
-              <div tal:condition="not: image">
-                Image slide with no image selected.
-              </div>
             </tal:container>
-          </div>
 
-          <!-- Left Image w/ Right Text Slide -->
-          <div class="left-image-right-text-slide" tal:condition="python: slide['displayType'] == 'left-image-right-text'">
-          </div>
-        </tal:item>
-      </div>
-    </tal:defs>
+            <!-- Left Image w/ Right Text Slide -->
+            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
+              <section class="left-image-right-text-slide">
+              </section>
+            </tal:container>
+          </tal:item>
+        </div>
+      </tal:defs>
+    </div>
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependenciess
+
+      /* @param {HTMLElement} slide
+      function syncSlide( slide ) {
+      Reveal.syncSlide({ })
+      Reveal.configure({ backgroundTransition: "zoom" });
+      */
+
+      Reveal.initialize({
+        // Slide Dimensions
+        width: "100%",
+        height: "100%",
+        margin: 0,
+        minScale: 1,
+        maxScale: 1,
+
+        // Transition speed
+        transitionSpeed: "default", // default/fast/slow
+
+        // Transition type
+        transition: "fade", // none/fade/slide/convex/concave/zoom
+
+        dependencies: [
+          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/marked.js" },
+          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/markdown.js" },
+          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/notes/notes.js", async: true },
+          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/highlight/highlight.js", async: true }
+        ]
+      });
+    </script>
   </body>
 </html>

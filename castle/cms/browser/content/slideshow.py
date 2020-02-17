@@ -36,6 +36,5 @@ class SlideshowView(BrowserView):
                 slides.append(slide)
         return slides
 
-
     def get_id(self):
         return self.context.custom_dom_id or None
