@@ -8,7 +8,6 @@ import os
 from zope.component.hooks import setSite
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
-from castle.cms.commands import gs_pdf
 from plone.namedfile.file import NamedBlobFile
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
@@ -41,10 +40,16 @@ def process_PDFs(site):
         blob.close()
         exception = False
         try:
-            gs_pdf(filepath)
+            exiftool(filepath)
         except Exception:
-            logger.warn(u'Could not strip additional metadata with gs {}'.format(filepath), exc_info=True)  # noqa
+            logger.warn(u'Could not strip metadata with exiftool {}'.format(filepath), exc_info=True)  # noqa
             exception = True
+        if not exception:
+            try:
+                qpdf(filepath)
+            except Exception:
+                logger.warn(u'Could not strip additional metadata with qpdf {}'.format(filepath), exc_info=True)  # noqa
+                exception = True
         if not exception:
             try:
                 exiftool(filepath)
@@ -57,6 +62,7 @@ def process_PDFs(site):
             except Exception:
                 logger.warn(u'Could not strip additional metadata with qpdf {}'.format(filepath), exc_info=True)  # noqa
                 exception = True
+
         if not exception:
             file = open(filepath, 'rb')
             obj.file = NamedBlobFile(file, filename=obj.file.filename)

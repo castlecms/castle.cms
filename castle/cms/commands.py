@@ -1,12 +1,13 @@
 from collective.documentviewer.convert import DUMP_FILENAME
-from tempfile import mkdtemp
 from logging import getLogger
 import os
 import subprocess
 import shutil
+import tempfile
 
 
 TMP_PDF_FILENAME = 'dump.pdf'
+PDF_METADATA_VERSION = '1.7'
 
 logger = getLogger(__name__)
 
@@ -123,6 +124,24 @@ except IOError:
                     'be able to convert video')
 
 
+class MuToolSubProcess(BaseSubProcess):
+    if os.name == 'nt':
+        bin_name = 'mutool.exe'
+    else:
+        bin_name = 'mutool'
+
+    def __call__(self, filepath):
+        cmd = [self.binary, 'clean', '-g', '-g', '-g', '-l', filepath]
+        self._run_command(cmd)
+
+
+try:
+    mupdf = MuToolSubProcess()
+except IOError:
+    mupdf = None
+    logger.warn('MuPDF is not installed, you won\'t be able to optimize files')
+
+
 class ExifToolProcess(BaseSubProcess):
     """
     """
@@ -145,6 +164,8 @@ except IOError:
 
 class QpdfProcess(BaseSubProcess):
     """
+    This is used to both strip metadata in pdf files.
+    And to strip a page for the screenshot process.
     """
     if os.name == 'nt':
         bin_name = 'qpdf.exe'
@@ -153,44 +174,29 @@ class QpdfProcess(BaseSubProcess):
 
     def __call__(self, filepath):
         outfile = '{}-processed.pdf'.format(filepath[:-4])
-        cmd = [self.binary, '--linearize', filepath, outfile]
+        cmd = [self.binary, '--linearize', '--force-version=%s' % PDF_METADATA_VERSION, filepath, outfile]
         self._run_command(cmd)
-        shutil.copy(outfile, filepath)
+        shutil.move(outfile, filepath)
+
+    def strip_page(self, filepath, pagenumber):
+        tmpdir = tempfile.mkdtemp()
+        tmpfilepath = os.path.join(tmpdir, 'temp.pdf')
+        pagenumber = str(pagenumber)
+
+        cmd = [self.bin_name,
+               '--empty', '--pages',
+               filepath, pagenumber, tmpfilepath]
+
+        self._run_command(cmd)
+        return tmpfilepath
 
 
 try:
     qpdf = QpdfProcess()
 except IOError:
     qpdf = None
-    logger.warn('qpdf not installed.  Some metadata might remain in PDF files.') # noqa
-
-
-class GhostScriptPDFProcess(BaseSubProcess):
-    """
-    """
-    if os.name == "nt":
-        bin_name = 'gs.exe'
-    else:
-        bin_name = 'gs'
-
-    def __call__(self, filepath):
-        outfile = '{}-clean.pdf'.format(filepath[:-4])
-        cmd = [self.binary,
-               '-q',
-               '-o',
-               outfile,
-               '-sDEVICE=pdfwrite',
-               filepath
-               ]
-        self._run_command(cmd)
-        shutil.copy(outfile, filepath)
-
-
-try:
-    gs_pdf = GhostScriptPDFProcess()
-except IOError:
-    gs_pdf = None
-    logger.warn('gs not installed. Some metadata might remain in PDF files.')
+    logger.warn("qpdf not installed.  Some metadata might remain in PDF files."
+                "You will also not able to make screenshots")
 
 
 class MD5SubProcess(BaseSubProcess):
@@ -242,56 +248,86 @@ except IOError:
     md5 = None
 
 
-class DocSplitSubProcess(BaseSubProcess):
+class GraphicsMagickSubProcess(BaseSubProcess):
     """
-    idea of how to handle this shamelessly
-    stolen from ploneformgen's gpg calls
+    Allows us to create small images using graphicsmagick
     """
-
     if os.name == 'nt':
-        bin_name = 'docsplit.exe'
+        bin_name = 'gm.exe'
     else:
-        bin_name = 'docsplit'
+        bin_name = 'gm'
 
-    def dump_image(self, data, size, _format):
-        # docsplit images pdf.pdf --size 700x,300x,50x
-        # --format gif --output
-        tmpdir = mkdtemp()
-        tmpfilepath = os.path.join(tmpdir, TMP_PDF_FILENAME)
-        tmpfi = open(tmpfilepath, 'wb')
-        tmpfi.write(data)
-        tmpfi.close()
-        cmd = [
-            self.binary, "images", tmpfilepath,
-            '--language', 'eng',
-            '--size', size,
-            '--format', _format,
-            '--output', tmpdir,
-            '--pages', '1']
+    def dump_image(self, filepath, output_dir, sizes, format, lang='eng'):
+        for size in sizes:
+            if type(size) is str:
+                if not size[:-1] == 'x':
+                    size += 'x'
+            output_folder = os.path.join(output_dir, size)
+            os.makedirs(output_folder)
+            try:
+                qpdf.strip_page(filepath, output_folder)
+            except Exception:
+                raise Exception
+            for filename in os.listdir(output_folder):
+                # For documents whose number of pages is 2 or higher digits we need to cut out the zeros
+                # at the beginning of dump the page number or the browser viewer won't work.
+                output_file = filename.split('_')
+                output_file[1] = output_file[1][:-4]
+                output_file[1] = int(output_file[1])
+                output_file = "%s_%i.%s" % (output_file[0], output_file[1], format)
+                output_file = os.path.join(output_folder, output_file)
+                filename = os.path.join(output_folder, filename)
 
-        self._run_command(cmd)
-        os.remove(tmpfilepath)
-        return os.path.join(tmpdir, 'dump_1.gif')
+                cmd = [
+                    self.binary, "convert",
+                    '-resize', str(size),
+                    '-density', '150',
+                    '-format', format,
+                    filename, output_file]
+
+                self._run_command(cmd)
+                os.remove(filename)
+        # Note that from this point forward all programmers have to design
+        # their programs to access the output_dir
+        # Should use the collective.documentviewer anyways for it is much better
+        return output_dir
+
+
+try:
+    gm = GraphicsMagickSubProcess()
+except IOError:
+    logger.exception("Graphics Magick is not installed, castle.cms"
+                     "Will not be able to make screenshots")
+    gm = None
+
+
+class LibreOfficeSubProcess(BaseSubProcess):
+    """
+    Converts files of other formats into pdf files using libreoffice.
+    """
+    if os.name == 'nt':
+        bin_name = 'soffice.exe'
+    else:
+        bin_name = 'soffice'
 
     def convert_to_pdf(self, filepath, filename, output_dir):
-        # get ext from filename
         ext = os.path.splitext(os.path.normcase(filename))[1][1:]
         inputfilepath = os.path.join(output_dir, 'dump.%s' % ext)
         shutil.move(filepath, inputfilepath)
         orig_files = set(os.listdir(output_dir))
-        cmd = [
-            self.binary, 'pdf', inputfilepath,
-            '--output', output_dir]
+        # HTML takes unnecesarily too long using standard settings.
+        if ext == 'html':
+            cmd = [
+                self.binary, '--headless', '--convert-to', 'pdf:writer_pdf_Export',
+                inputfilepath, '--outdir', output_dir]
+        else:
+            cmd = [
+                self.binary, '--headless', '--convert-to', 'pdf', inputfilepath,
+                '--outdir', output_dir]
         self._run_command(cmd)
 
         # remove original
         os.remove(inputfilepath)
-
-        # while using libreoffice, docsplit leaves a 'libreoffice'
-        # folder next to the generated PDF, removes it!
-        libreOfficePath = os.path.join(output_dir, 'libreoffice')
-        if os.path.exists(libreOfficePath):
-            shutil.rmtree(libreOfficePath)
 
         # move the file to the right location now
         files = set(os.listdir(output_dir))
@@ -309,7 +345,28 @@ class DocSplitSubProcess(BaseSubProcess):
 
 
 try:
-    docsplit = DocSplitSubProcess()
+    loffice = LibreOfficeSubProcess()
 except IOError:
-    logger.exception("No docsplit installed.")
-    docsplit = None
+    logger.exception("Libreoffice not installed. castle.cms"
+                     "will not be able to convert text files to pdf.")
+    loffice = None
+
+
+class DocSplitSubProcess(BaseSubProcess):
+    """
+    idea of how to handle this shamelessly
+    stolen from ploneformgen's gpg calls
+    """
+
+    def dump_image(self, filepath, output_dir, sizes, format, lang='eng'):
+        # docsplit images pdf.pdf --size 700x,300x,50x
+        # --format gif --output
+        sizes = sizes.split(',')
+        return gm.dump_image(filepath, output_dir, sizes, format, lang='eng')
+
+    def convert_to_pdf(self, filepath, filename, output_dir):
+        # get ext from filename
+        return loffice.convert_to_pdf(filepath, filename, output_dir)
+
+
+docsplit = DocSplitSubProcess
