@@ -7,6 +7,7 @@ import shutil
 
 
 TMP_PDF_FILENAME = 'dump.pdf'
+PDF_METADATA_VERSION = '1.7'
 
 logger = getLogger(__name__)
 
@@ -153,7 +154,8 @@ class QpdfProcess(BaseSubProcess):
 
     def __call__(self, filepath):
         outfile = '{}-processed.pdf'.format(filepath[:-4])
-        cmd = [self.binary, '--linearize', filepath, outfile]
+        cmd = [self.binary, '--linearize', '--force-version=%s' %
+               PDF_METADATA_VERSION, filepath, outfile]
         self._run_command(cmd)
         shutil.copy(outfile, filepath)
 
