@@ -38,6 +38,8 @@ class SlideshowView(BrowserView):
                     slide['title'] = data['title'][0]
                 except Exception:
                     slide['title'] = None
+                slide['vert'] = data['vert_text_position'][0]
+                slide['hor'] = data['hor_text_position'][0]
                 slides.append(slide)
         return slides
 

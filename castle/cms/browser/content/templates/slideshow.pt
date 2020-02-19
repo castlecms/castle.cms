@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reset.css" />
     <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reveal.css" />
     <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/theme/black.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/custom.css" />
     <!-- Flexbox Grid -->
     <link
       rel="stylesheet"
@@ -20,7 +21,10 @@
           <tal:item tal:repeat="slide slides">
 
             <!-- Full Background Video Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'background-video'"  tal:define="video python: slide['video']">
+            <tal:container tal:condition="python: slide['displayType'] == 'background-video'"
+                           tal:define="video python: slide['video'];
+                                       vert python: slide['vert'];
+                                       hor python: slide['hor']">
               <section
                 class="background-video-slide"
                 data-background-video="${video}"
@@ -28,7 +32,7 @@
                 data-background-video-loop
                 data-background-video-muted
                 data-transition="fade">
-                <div class="row top-xs center-xs">
+                <div class="row ${vert}-xs ${hor}-xs">
                   <div class="col-xs-12 col-lg-6">
                     <div class="box-row">
                       <p>${python: slide['text'] or None}</p>
@@ -39,31 +43,34 @@
             </tal:container>
 
             <!-- Left Video w/ Right Text Slide-->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'" tal:define="video python: slide['video']">
+            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'"
+                           tal:define="video python: slide['video'];
+                                       vert python: slide['vert'];
+                                       hor python: slide['hor']">
               <section class="left-video-slide">
-                <div class="row middle-xs d-lg-none">
-                  <!--
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
-                    <div class="row bottom-xs text-overlay">
-                      <div class="col-xs-12">
-                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                <!--
+                  <div class="row middle-xs d-lg-none">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
+                      <div class="row bottom-xs text-overlay">
+                        <div class="col-xs-12">
+                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                          <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                        </div>
                       </div>
+                      <video
+                        class="video-background"
+                        data-autoplay
+                        autoplay
+                        muted
+                        loop
+                        playsinline>
+                        <source src="${video}" type="video/mp4" />
+                      </video>
                     </div>
-                    <video
-                      class="video-background"
-                      data-autoplay
-                      autoplay
-                      muted
-                      loop
-                      playsinline>
-                      <source src="${video}" type="video/mp4" />
-                    </video>
                   </div>
-                </div>
                 -->
                 <!-- md/lg view -->
-                <div class="row middle-xs">
+                <div class="row ${vert}-xs">
                   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
                     <video data-autoplay muted loop>
                       <source src="${video}"/>
@@ -78,13 +85,16 @@
             </tal:container>
 
             <!-- Full Background Image Slide -->
-              <tal:container tal:condition="python: slide['displayType'] == 'background-image'" tal:define="image python: slide['image']">
+              <tal:container tal:condition="python: slide['displayType'] == 'background-image'"
+                             tal:define="image python: slide['image'];
+                                         vert python: slide['vert'];
+                                         hor python: slide['hor']">
                 <section
                   tal:condition="image"
                   class="background-image-slide"
                   data-background="${image}"
                   data-transition="fade">
-                  <div class="row bottom-xs start-lg">
+                  <div class="row ${vert}-xs ${hor}-lg">
                     <div class="col-xs-12 col-lg-6">
                       <div class="box-row">
                         <p>${python: slide['text'] or None}</p>
@@ -98,9 +108,12 @@
             </tal:container>
 
             <!-- Left Image w/ Right Text Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'" tal:define="image python: slide['image']">
+            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'"
+                           tal:define="image python: slide['image'];
+                                       vert python: slide['vert'];
+                                       hor python: slide['hor']">
               <section class="left-image-slide">
-                <div class="row middle-xs">
+                <div class="row ${vert}-xs">
                   <div
                     class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
                     style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
@@ -135,10 +148,8 @@
         minScale: 1,
         maxScale: 1,
 
-        // Transition speed
         transitionSpeed: "default", // default/fast/slow
 
-        // Transition type
         transition: "fade", // none/fade/slide/convex/concave/zoom
 
         dependencies: [

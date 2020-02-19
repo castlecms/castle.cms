@@ -39,6 +39,28 @@ class ISlideTileSchema(model.Schema):
         required=False,
         default=u'')
 
+    vert_text_position = schema.Choice(
+        title=u"Slide Text Position (Vertical)",
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('top', 'top', u'Top'),
+            SimpleTerm('middle', 'middle', u'Middle'),
+            SimpleTerm('bottom', 'bottom', u'Bottom'),
+        ]),
+        required=True,
+        default=u'middle'
+    )
+
+    hor_text_position = schema.Choice(
+        title=u"Slide Text Position (Horizontal)",
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('start', 'start', u'Left'),
+            SimpleTerm('center', 'center', u'Center'),
+            SimpleTerm('end', 'end', u'Right'),
+        ]),
+        required=True,
+        default=u'center'
+    )
+
     form.widget(image=ImageRelatedItemFieldWidget)
     image = schema.List(
         title=u"Image",
