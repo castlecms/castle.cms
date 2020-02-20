@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.18 (unreleased)
+2.5.18 (2020-02-20)
 -------------------
 
 - add initial slideshow support
