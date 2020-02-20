@@ -4,7 +4,17 @@ Changelog
 2.5.18 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- add initial slideshow support
+  [lucid-0]
+
+- change pdf metadata removal to be more particular so that form fillable pdfs will still be usable
+  [alphaomega325]
+
+- move adapter override to override.zcml
+  [zombified]
+
+- fix for history version template to correctly check for associated image
+  [zombified]
 
 
 2.5.17 (2020-02-17)
