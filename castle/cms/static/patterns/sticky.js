@@ -19,7 +19,7 @@ define([
 
         // Sets the cookie to indicate the footer was closed and won't re-appear.
         $(".close").click(function() {
-          self.cookie_data = self.getCookie("closed-footer")
+          self.cookie_data = self.setCookie("closed-footer")
         });
 
         if (self.cookie_data !== "closed-footer") {
@@ -29,13 +29,13 @@ define([
               $(".sticky-footer")
                 .css({ bottom: "-100px" })
                 .animate({ bottom: "0px" }, "slow");
-              self.cookie_data = self.getCookie("no-animation");
+              self.cookie_data = self.setCookie("no-animation");
           }
       }
       });
     },
 
-    getCookie: function(args) {
+    setCookie: function(args) {
       return $.cookie("sticky-footer", args, { path: '/' });
     },
   });
