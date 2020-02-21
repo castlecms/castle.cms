@@ -282,19 +282,19 @@
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
-    name="2_5_18"
-    title="CastleCMS upgrade to 2.5.18 profile"
-    directory="profiles/2_5_18"
+    name="2_5_19"
+    title="CastleCMS upgrade to 2.5.19 profile"
+    directory="profiles/2_5_19"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 2.5.18"
+    title="Upgrade CastleCMS to 2.5.19"
     description=""
     source="*"
-    destination="2518"
-    handler=".upgrades.upgrade_2_5_18.upgrade"
+    destination="2519"
+    handler=".upgrades.upgrade_2_5_19.upgrade"
     profile="castle.cms:default"/>
 
 </configure>

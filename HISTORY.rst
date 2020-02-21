@@ -4,7 +4,8 @@ Changelog
 2.5.19 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Building static and fixing profile
+  [lucid-0]
 
 
 2.5.18 (2020-02-20)
