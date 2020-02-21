@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5.19 (unreleased)
+2.5.19 (2020-02-20)
 -------------------
 
 - Building static and fixing profile
