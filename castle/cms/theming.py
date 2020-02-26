@@ -8,10 +8,10 @@ import json
 import logging
 import re
 from urlparse import urljoin
-import time
 
 import Globals
 from Acquisition import aq_parent
+from castle.cms.cache import ram as cache
 from castle.cms.utils import get_context_from_request
 from castle.cms.interfaces.theming import ICastleCmsThemeTemplateLoader
 from chameleon import PageTemplate
@@ -64,13 +64,10 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 class ThemeTemplateLoader(PageTemplateLoader):
     implements(ICastleCmsThemeTemplateLoader)
-
-    def __init__(self, theme, template_cache=None,  *args, **kwargs):
-        self.file_cache = {}
-
-        if template_cache is None:
-            template_cache = {}
-        self.template_cache = template_cache
+ 
+    def __init__(self, theme, *args, **kwargs):
+        self.THEME_TEMPLATE_CACHE = "THEME_TEMPLATE_LOADER_CACHE_"
+        self.THEME_TEMPLATE_FILE_CACHE = "THEME_TEMPLATE_LOADER_FILE_CACHE_"
         
         self.theme = theme
         try:
@@ -86,23 +83,27 @@ class ThemeTemplateLoader(PageTemplateLoader):
         options are `xml` and `text`.
         """
 
-        if filename in self.template_cache:
-            return self.template_cache[filename]
-        
+        try:
+            return cache.get(self.THEME_TEMPLATE_CACHE + filename)
+        except KeyError:
+            pass
+                
         try:
             data = self.read_file(filename)
         except Exception:
             data = None
         if not data:
             filename = backup
-            if filename in self.template_cache:
-                return self.template_cache[filename]
+            try:
+                return cache.get(self.THEME_TEMPLATE_CACHE + filename)
+            except KeyError:
+                pass
             data = self.read_file(filename)
 
         template = PageTemplate(data)
 
-        self.template_cache[filename] = template
-
+        cache.set(self.THEME_TEMPLATE_CACHE + filename, template)
+        
         return template
 
     __getitem__ = load
@@ -110,13 +111,15 @@ class ThemeTemplateLoader(PageTemplateLoader):
     def read_file(self, filename):
         if self.folder is None:
             return
-        if filename in self.file_cache:
-            return self.file_cache[filename]
+        try:
+            return cache.get(self.THEME_TEMPLATE_FILE_CACHE + filename)
+        except:
+            pass
         try:
             if isinstance(filename, unicode):
                 filename = filename.encode('utf8')
             result = unicode(self.folder.readFile(filename), 'utf8')
-            self.file_cache[filename] = result
+            cache.set(self.THEME_TEMPLATE_FILE_CACHE + filename, result)
             return result
         except (NotFound, IOError):
             raise KeyError
@@ -153,7 +156,6 @@ class _Transform(object):
     def __init__(self, name):
         # provide backup theme in case missing
         self.name = name or 'castle.theme'
-        self.template_cache = {}
 
     def __call__(self, request, result, context=None):
         if '++plone++' in request.ACTUAL_URL:
