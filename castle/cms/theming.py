@@ -65,17 +65,13 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 class ThemeTemplateLoader(PageTemplateLoader):
     implements(ICastleCmsThemeTemplateLoader)
 
-    def __init__(self, theme, *args, **kwargs):
+    def __init__(self, theme, template_cache=None,  *args, **kwargs):
         self.file_cache = {}
 
-        self.previous_templates = [
-            {
-                "filename": '',
-                "data": '',
-                "template": '',
-                "creation_time": time.time()
-            }]
-
+        if template_cache is None:
+            template_cache = {}
+        self.template_cache = template_cache
+        
         self.theme = theme
         try:
             self.folder = queryResourceDirectory(THEME_RESOURCE_NAME, theme)
@@ -90,45 +86,26 @@ class ThemeTemplateLoader(PageTemplateLoader):
         options are `xml` and `text`.
         """
 
+        if filename in self.template_cache:
+            return self.template_cache[filename]
+        
         try:
             data = self.read_file(filename)
         except Exception:
             data = None
         if not data:
             filename = backup
+            if filename in self.template_cache:
+                return self.template_cache[filename]
             data = self.read_file(filename)
-
-        template = self.previous_template_file_cache(filename, data)
-        if template:
-            return template
 
         template = PageTemplate(data)
 
-        self.add_template_file_cache(filename, data, template)
+        self.template_cache[filename] = template
 
         return template
 
     __getitem__ = load
-
-    def previous_template_file_cache(self, filename, data):
-        for template in self.previous_templates:
-            if template.get("creation_time") - time.time() < 600 or not filename == '':
-                if filename == template.get("filename") and data == template.get("data"):
-                    return template.get("template")
-                if filename == template.get("filename") and not data == template.get("data"):
-                    self.previous_templates.remove(template)
-            else:
-                self.previous_templates.remove(template)
-
-        return None
-
-    def add_template_file_cache(self, filename, data, template):
-        self.previous_templates.append({
-            "filename": filename,
-            "data": data,
-            "template": template,
-            "creation_time": time.time()
-        })
 
     def read_file(self, filename):
         if self.folder is None:
@@ -176,6 +153,7 @@ class _Transform(object):
     def __init__(self, name):
         # provide backup theme in case missing
         self.name = name or 'castle.theme'
+        self.template_cache = {}
 
     def __call__(self, request, result, context=None):
         if '++plone++' in request.ACTUAL_URL:
