@@ -113,12 +113,14 @@ $(document).ready(function(){
 
   // check if cookie exists and will display first time visit message
   if (firstVisitCookie !== "acknowledged") {
-    $.cookie(cookieKey, 'shown');
+    $.cookie(cookieKey, 'shown', {
+      path: '/',
+      expires: 2147483647
+    });
     $.ajax({
       type: "GET",
       url: PORTAL_URL + '/disclaimer',
     }).done(function(res) {
-        debugger;
        if (res.enabled) {
          // create divs
          $("<div id='disclaimerOverlay'><div id='disclaimerDiv'>" + res.msg + "</div></div>").appendTo('body');
@@ -127,7 +129,10 @@ $(document).ready(function(){
          // close div functionality
          document.getElementById("closeButton").addEventListener("click", function(e) {
           document.getElementById("disclaimerOverlay").style.display = "none";
-          $.cookie(cookieKey, 'acknowledged');
+          $.cookie(cookieKey, 'acknowledged', {
+            path: '/',
+            expires: 2147483647
+          });
          });
          // display div
          document.getElementById("disclaimerOverlay").style.display = "block";

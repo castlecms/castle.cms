@@ -80,12 +80,11 @@ class MetaDataTile(Tile):
                     context = context[get_default_page(context)]
                 except AttributeError:
                     pass
-
             tags = {
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'CastleCMS 2.0',
+                'generator': 'CastleCMS 2.5.17',
                 "distribution": "Global",
                 "robots": "index,follow"
             }
