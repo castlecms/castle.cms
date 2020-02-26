@@ -157,8 +157,21 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
+        subsciber = subscribe.get_subscriber(data.get('email'))
+        if subsciber:
+            notify(
+                ActionErrorOccurred(
+                    action,
+                    WidgetActionExecutionError('email', Invalid('User already subscribed'))))
+            return
+
         # keep this line for the form validation to display.
         if errors:
+            self.formErrorsMessage = 'Must enter name, email, and select at least one category'
+            self.status = self.formErrorsMessage
+            return
+        if data['categories'] == []:
+            self.formErrorsMessage = 'At least one category must be selected'
             self.status = self.formErrorsMessage
             return
 
@@ -170,34 +183,26 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                         WidgetActionExecutionError('captcha', Invalid('Invalid Recaptcha'))))
                 return
 
-        subsciber = subscribe.get_subscriber(data.get('email'))
-        if subsciber:
-            notify(
-                ActionErrorOccurred(
-                    action,
-                    WidgetActionExecutionError('email', Invalid('User already subscribed'))))
-            return
-
-        if not errors:
-            item = subscribe.register(data['email'], data)
-            self.send_mail(data['email'], item)
-            self.sent = True
-            api.portal.show_message(
-                'Verification email has been sent to your email', request=self.request, type='info')
-            if self.has_texting and data.get('phone_number'):
-                if not self.send_text_message(item):
-                    api.portal.show_message('Error sending code', request=self.request,
-                                            type='error')
-                else:
-                    api.portal.show_message('Code texted to your number to verify',
-                                            request=self.request, type='info')
-                self.request.response.redirect('%s/@@subscribe-phone?%s' % (
-                    self.context.absolute_url(),
-                    urlencode({
-                        'form.widgets.email': item['email'],
-                        'form.widgets.phone_number': item.get('phone_number', '')
-                        })
-                    ))
+        # if not errors:
+        #     item = subscribe.register(data['email'], data)
+        #     self.send_mail(data['email'], item)
+        #     self.sent = True
+        #     api.portal.show_message(
+        #         'Verification email has been sent to your email', request=self.request, type='info')
+        #     if self.has_texting and data.get('phone_number'):
+        #         if not self.send_text_message(item):
+        #             api.portal.show_message('Error sending code', request=self.request,
+        #                                     type='error')
+        #         else:
+        #             api.portal.show_message('Code texted to your number to verify',
+        #                                     request=self.request, type='info')
+        #         self.request.response.redirect('%s/@@subscribe-phone?%s' % (
+        #             self.context.absolute_url(),
+        #             urlencode({
+        #                 'form.widgets.email': item['email'],
+        #                 'form.widgets.phone_number': item.get('phone_number', '')
+        #                 })
+        #             ))
 
     def __call__(self):
         registry = queryUtility(IRegistry)
