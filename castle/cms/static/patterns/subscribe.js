@@ -37,14 +37,19 @@ define([
           success: function(responseText, statusText, xhr) {
             self.$el.find('.portalMessage').remove();
             var message = $('.portalMessage', responseText);
+            var form = $('form', responseText);
 
-            $('.documentFirstHeading', self.$el).append(message);
-
-            // These lines were added to fix a bug where sign up
-            // field was rendered when form submitted.
-            $("p").remove(".discreet");
-            $("h1").remove(".documentFirstHeading");
-            $('form', self.$el).replaceWith('<h3>Please check you email to confirm subscription(s).</h3>');
+            if (message.length != 0) {
+              $('.documentFirstHeading', self.$el).append(message);
+              $('form', self.$el).replaceWith(form);
+            }
+            else {
+              // These lines were added to fix a bug where sign up
+              // field was rendered when form submitted.
+              $("p").remove(".discreet");
+              $("h1").remove(".documentFirstHeading");
+              $('form', self.$el).replaceWith('<h3>Please check you email to confirm subscription(s).</h3>');
+            }
 
             //When we get a valid submit, the form
             //"Disappears" off the top of the viewport sometimes

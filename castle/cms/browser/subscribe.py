@@ -76,7 +76,7 @@ class ISubscribeForm(Interface):
     categories = schema.List(
         title=u'Categories',
         description=u"Select the types of content you'd like to receive.",
-        required=False,
+        required=True,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
@@ -157,6 +157,11 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
+        # keep this line for the form validation to display.
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
         if self.has_captcha and self.isAnon:
             if not verify_recaptcha(self.request):
                 notify(
@@ -204,21 +209,26 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
         # Sends email to the user if the form has been submitted.
         if self.request.method == 'POST':
 
-            # Generate a random string for the url code.
-            url_code = get_random_string(8)
+            try:
+                # Generate a random string for the url code.
+                url_code = get_random_string(8)
 
-            # User data from the submitted form
-            email = self.request.form['form.widgets.email']
-            categories = self.request.form['form.widgets.categories']
-            name = self.request.form['form.widgets.name']
+                # User data from the submitted form
+                email = self.request.form['form.widgets.email']
+                categories = self.request.form['form.widgets.categories']
+                name = self.request.form['form.widgets.name']
 
-            subscribe.register(email, {'categories': categories}, url_code)
+                subscribe.register(email, {'categories': categories}, url_code)
 
-            self.send_mail(email, categories, name, url_code)
+                self.send_mail(email, categories, name, url_code)
 
-            self.sent = True
-            api.portal.show_message(
-                'Verification email has been sent to your email', request=self.request, type='info')
+                self.sent = True
+                api.portal.show_message(
+                    'Verification email has been sent to your email', request=self.request, type='info')
+            except Exception:
+                api.portal.show_message(
+                    'Must enter name, email, and select at least one category',
+                    request=self.request, type='error')
 
         if not self.subscriptions_enabled:
             api.portal.show_message(
