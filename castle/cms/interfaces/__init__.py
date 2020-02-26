@@ -13,6 +13,7 @@ from .content import IReferenceNamedImage
 from .content import ITrashed
 from .content import IUploadedToYoutube
 from .content import IVideo
+from .content import ISlideshow
 from .controlpanel import IAnnouncementData
 from .controlpanel import IAPISettings
 from .controlpanel import IArchivalSettings

@@ -211,10 +211,5 @@
      factory=".stringinterp.SubscriberCategoryEmailSubstitution"
      name="category_emails_for_x"
  />
- <adapter
-     for="zope.interface.Interface"
-     provides="plone.stringinterp.interfaces.IStringInterpolator"
-     factory=".stringinterp.CastleInterpolator"
- />
 
 </configure>

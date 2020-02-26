@@ -94,8 +94,7 @@ Development setup on macOS
 7. ``bin/buildout``
 8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg``
 9. Browse to http://localhost:8080/
-10. Once you have created a site in the development instance, run init-dev script to populate templates,
-``bin/instance run castle/cms/_scripts/init-dev.py``
+10. Once you have created a site in the development instance, run init-dev script to populate templates, ``bin/instance run castle/cms/_scripts/init-dev.py``
 
 
 Optional Dependencies
