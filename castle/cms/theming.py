@@ -13,6 +13,7 @@ import Globals
 from Acquisition import aq_parent
 from castle.cms.cache import ram as cache
 from castle.cms.utils import get_context_from_request
+from collective.celery import task
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -193,6 +194,8 @@ class _Transform(object):
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
 
+        import pdb; pdb.set_trace()
+
         layout = self.get_layout(context, request=request)
         layout = layout(
             portal_url=portal_url,
@@ -224,9 +227,25 @@ class _Transform(object):
         self.dynamic_grid(dom.tree)
 
         self.authenticate(context, request, generate=True)
-
+        
         return dom
 
+    def render_tiles(request, tree):
+        for tileNode in tree:
+            jobs.append(render_individual_tile.delay(request, tileNode))
+
+        for job in jobs:
+            result.append(job.get())
+
+        for tileNode in tree:
+            tileNode = result[tileNode]
+
+        return tree
+
+    @task
+    def render_individual_tile(request, tileNode):
+        return tiles.renderTiles(requst, tileNode)
+    
     def authenticate(self, context, request, generate=False):
         '''
         Automatically checks the authentication token if it exists.

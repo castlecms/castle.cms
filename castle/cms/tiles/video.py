@@ -2,7 +2,6 @@ from castle.cms import defaults
 from castle.cms.tiles.base import ContentTile
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.autoform import directives as form
-from plone.memoize import view
 from plone.supermodel import model
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
@@ -19,8 +18,7 @@ import urlparse
 
 class VideoTile(ContentTile):
     default_display_fields = ()
-
-    @view.memoize
+    
     def render(self):
         return self._render()
 
