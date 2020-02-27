@@ -4,7 +4,8 @@ Changelog
 2.5.20 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- a couple sticky footer tweaks and static build
+  [lucid-0]
 
 
 2.5.19 (2020-02-20)
