@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.5.20 (unreleased)
--------------------
+2.6.0 (2020-02-27)
+------------------
 
 - a couple sticky footer tweaks and static build
   [lucid-0]
