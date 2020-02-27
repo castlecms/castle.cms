@@ -15,17 +15,13 @@ define([
     init: function() {
       var self = this;
       window.addEventListener("load", function(event) {
-        self.cookie_data = $.cookie("sticky-footer");
-
-        if (self.cookie_data !== "footer-shown") {
-          $(".sticky-footer").show();
-            // If cookie hasn't been set yet, do the rising animation.
-            if (typeof(self.cookie_data) === "undefined") {
-              $(".sticky-footer")
-                .css({ bottom: "-100px" })
-                .animate({ bottom: "0px" }, "slow");
-            }
-          self.cookie_data = self.setCookie("footer-shown");
+        if ($.cookie("sticky-footer") !== "footer-shown") {
+          var stickyElement = $(".sticky-footer")
+          stickyElement.show();
+          stickyElement
+            .css({ bottom: "-100px" })
+            .animate({ bottom: "0px" }, "slow");
+          self.setCookie("footer-shown");
         }
       });
     },
