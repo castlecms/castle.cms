@@ -13,7 +13,6 @@ import Globals
 from Acquisition import aq_parent
 from castle.cms.cache import ram as cache
 from castle.cms.utils import get_context_from_request
-from castle.cms.interfaces.theming import ICastleCmsThemeTemplateLoader
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -39,7 +38,6 @@ from zope.component import queryUtility
 from zope.component import getUtility
 from zope.component import getGlobalSiteManager
 from zope.interface import alsoProvides
-from zope.interface import implements
 
 
 logger = logging.getLogger('castle.cms')
@@ -63,7 +61,6 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 
 class ThemeTemplateLoader(PageTemplateLoader):
-    implements(ICastleCmsThemeTemplateLoader)
  
     def __init__(self, theme, *args, **kwargs):
         self.THEME_TEMPLATE_CACHE = "THEME_TEMPLATE_LOADER_CACHE_"
@@ -277,13 +274,7 @@ class _Transform(object):
                                   'plone.app.standardtiles.stylesheets')
 
     def get_loader(self):
-        if queryUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader"):
-            return getUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader")
-        else:
-            themetemplateloader = ThemeTemplateLoader(self.name)
-            getGlobalSiteManager().registerUtility(themetemplateloader, ICastleCmsThemeTemplateLoader,
-                                                   name="ThemeTemplateLoader")
-            return getUtility(ICastleCmsThemeTemplateLoader, "ThemeTemplateLoader")
+        return ThemeTemplateLoader(self.name)
 
     def get_raw_layout(self, context, loader=None):
         '''
