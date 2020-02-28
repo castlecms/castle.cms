@@ -37,7 +37,8 @@ class SecureLoginView(BrowserView):
             else:
                 initial_state = self.auth.CHECK_CREDENTIALS
             self.auth.set_secure_flow_state(initial_state)
-        else:
+
+        if self.request.REQUEST_METHOD == 'POST':
             self.request.response.setHeader('Content-type', 'application/json')
             if not self.auth.two_factor_enabled and state == self.auth.REQUESTING_AUTH_CODE:
                 state = self.auth.CHECK_CREDENTIALS
