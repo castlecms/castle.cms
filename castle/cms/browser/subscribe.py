@@ -55,7 +55,9 @@ def check_phone_number(val):
 
 class ISubscribeForm(Interface):
     name = schema.ASCIILine(
-        title=u'Full name')
+        title=u'Full name',
+        description=u'',
+        required=True)
 
     email = schema.ASCIILine(
         title=u'E-mail',
@@ -157,23 +159,31 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
-        subsciber = subscribe.get_subscriber(data.get('email'))
-        if subsciber:
+        # This doesn't want to trigger if the other errors don't show up...
+        try:
+            subsciber = subscribe.get_subscriber(data.get('email'))
+            if subsciber:
+                notify(
+                    ActionErrorOccurred(
+                        action,
+                        WidgetActionExecutionError('email', Invalid('User already subscribed'))))
+                self.status = self.formErrorsMessage
+        except AttributeError:
+            self.status = self.formErrorsMessage
+
+        if 'name' not in data:
             notify(
                 ActionErrorOccurred(
                     action,
-                    WidgetActionExecutionError('email', Invalid('User already subscribed'))))
-            return
+                    WidgetActionExecutionError('name', Invalid('Must input a name'))))
+            self.status = self.formErrorsMessage
 
-        # keep this line for the form validation to display.
-        if errors:
-            self.formErrorsMessage = 'Must enter name, email, and select at least one category'
-            self.status = self.formErrorsMessage
-            return
         if data['categories'] == []:
-            self.formErrorsMessage = 'At least one category must be selected'
+            notify(
+                ActionErrorOccurred(
+                    action,
+                    WidgetActionExecutionError('categories', Invalid('At least one category must be selected.'))))
             self.status = self.formErrorsMessage
-            return
 
         if self.has_captcha and self.isAnon:
             if not verify_recaptcha(self.request):
@@ -182,6 +192,9 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                         action,
                         WidgetActionExecutionError('captcha', Invalid('Invalid Recaptcha'))))
                 return
+
+        if errors:
+            self.status = self.formErrorsMessage
 
         # if not errors:
         #     item = subscribe.register(data['email'], data)
@@ -223,13 +236,19 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                 categories = self.request.form['form.widgets.categories']
                 name = self.request.form['form.widgets.name']
 
-                subscribe.register(email, {'categories': categories}, url_code)
+                if name != '':
+                    subscribe.register(email, {'categories': categories}, url_code)
 
-                self.send_mail(email, categories, name, url_code)
+                    self.send_mail(email, categories, name, url_code)
 
-                self.sent = True
-                api.portal.show_message(
-                    'Verification email has been sent to your email', request=self.request, type='info')
+                    self.sent = True
+                    api.portal.show_message(
+                        'Verification email has been sent to your email', request=self.request, type='info')
+                else:
+                    api.portal.show_message(
+                        'Must enter name, email, and select at least one category',
+                        request=self.request, type='error'
+                    )
             except Exception:
                 api.portal.show_message(
                     'Must enter name, email, and select at least one category',
