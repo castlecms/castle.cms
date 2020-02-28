@@ -159,7 +159,6 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
-        # This doesn't want to trigger if the other errors don't show up...
         try:
             subsciber = subscribe.get_subscriber(data.get('email'))
             if subsciber:
@@ -167,7 +166,6 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                     ActionErrorOccurred(
                         action,
                         WidgetActionExecutionError('email', Invalid('User already subscribed'))))
-                self.status = self.formErrorsMessage
         except AttributeError:
             self.status = self.formErrorsMessage
 
@@ -176,14 +174,12 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                 ActionErrorOccurred(
                     action,
                     WidgetActionExecutionError('name', Invalid('Must input a name'))))
-            self.status = self.formErrorsMessage
 
         if data['categories'] == []:
             notify(
                 ActionErrorOccurred(
                     action,
                     WidgetActionExecutionError('categories', Invalid('At least one category must be selected.'))))
-            self.status = self.formErrorsMessage
 
         if self.has_captcha and self.isAnon:
             if not verify_recaptcha(self.request):
