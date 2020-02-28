@@ -105,7 +105,7 @@ class TestTwoFactor(unittest.TestCase):
             'authType': 'sms',
             'username': TEST_USER_NAME
         })
-        
+
         self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
@@ -142,7 +142,7 @@ class TestTwoFactor(unittest.TestCase):
             'password': TEST_USER_PASSWORD,
             'code': code
         })
-        
+
         self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])

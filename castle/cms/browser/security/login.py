@@ -361,7 +361,6 @@ The user requesting this access logged this information:
             return api.portal.get_tool(name)
 
     def options(self):
-        self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps(self.auth.get_options())
 
 
