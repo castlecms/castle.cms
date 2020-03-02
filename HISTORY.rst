@@ -4,7 +4,8 @@ Changelog
 2.6.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- secure-login fixes, test updates
+  [lucid-0]
 
 
 2.6.0 (2020-02-27)
