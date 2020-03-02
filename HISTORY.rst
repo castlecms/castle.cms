@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.1 (unreleased)
+2.6.1 (2020-03-02)
 ------------------
 
 - secure-login fixes, test updates
