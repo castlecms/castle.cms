@@ -1,8 +1,13 @@
 from zope.component import getAllUtilitiesRegisteredFor
 from castle.cms.fragments.interfaces import IFragmentsDirectory
+from castle.cms.cache import ram as cache
 
 
 def getFragment(context, request, name):
+    try:
+        cache.get("GET_FRAGMENT_" + str(context) + str(name))
+    except KeyError:
+        pass
     utils = getAllUtilitiesRegisteredFor(IFragmentsDirectory)
     utils.sort(key=lambda u: u.order)
     for util in reversed(utils):
@@ -10,7 +15,12 @@ def getFragment(context, request, name):
             if not util.layer.providedBy(request):
                 continue
         try:
-            return util.get(context, request, name)
+            result = util.get(context, request, name)
+            cache.set("GET_FRAGMENT_" + str(context) + str(name), result)
+            return result
         except KeyError:
             pass
     raise KeyError(name)
+
+def _checkFragement(util):
+    pass

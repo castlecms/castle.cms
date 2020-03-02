@@ -11,7 +11,8 @@ from urlparse import urljoin
 
 import Globals
 from Acquisition import aq_parent
-from castle.cms.cache import ram as cache
+from castle.cms.cache import ram
+from castle.cms import cache
 from castle.cms.utils import get_context_from_request
 from collective.celery import task
 from chameleon import PageTemplate
@@ -82,7 +83,9 @@ class ThemeTemplateLoader(PageTemplateLoader):
         """
 
         try:
-            return cache.get(self.THEME_TEMPLATE_CACHE + filename)
+            # Need to use ram cache for this to ensure ease of deployment of new pages
+            # And that redis doesn't like webpage layouts
+            return ram.get(self.THEME_TEMPLATE_CACHE + filename)
         except KeyError:
             pass
                 
@@ -93,14 +96,14 @@ class ThemeTemplateLoader(PageTemplateLoader):
         if not data:
             filename = backup
             try:
-                return cache.get(self.THEME_TEMPLATE_CACHE + filename)
+                return ram.get(self.THEME_TEMPLATE_CACHE + filename)
             except KeyError:
                 pass
             data = self.read_file(filename)
 
         template = PageTemplate(data)
 
-        cache.set(self.THEME_TEMPLATE_CACHE + filename, template)
+        ram.set(self.THEME_TEMPLATE_CACHE + filename, template)
         
         return template
 
@@ -110,14 +113,14 @@ class ThemeTemplateLoader(PageTemplateLoader):
         if self.folder is None:
             return
         try:
-            return cache.get(self.THEME_TEMPLATE_FILE_CACHE + filename)
+            return ram.get(self.THEME_TEMPLATE_FILE_CACHE + filename)
         except:
             pass
         try:
             if isinstance(filename, unicode):
                 filename = filename.encode('utf8')
             result = unicode(self.folder.readFile(filename), 'utf8')
-            cache.set(self.THEME_TEMPLATE_FILE_CACHE + filename, result)
+            ram.set(self.THEME_TEMPLATE_FILE_CACHE + filename, result)
             return result
         except (NotFound, IOError):
             raise KeyError
@@ -156,6 +159,9 @@ class _Transform(object):
         self.name = name or 'castle.theme'
 
     def __call__(self, request, result, context=None):
+#        import cProfile
+#        pr = cProfile.Profile(timeunit=0.0001)
+#        pr.enable()
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -194,8 +200,6 @@ class _Transform(object):
         utils = getMultiAdapter((context, request),
                                 name='castle-utils')
 
-        import pdb; pdb.set_trace()
-
         layout = self.get_layout(context, request=request)
         layout = layout(
             portal_url=portal_url,
@@ -219,7 +223,7 @@ class _Transform(object):
             self.bbb(dom.tree, result)
 
         dom.tree = tiles.renderTiles(request, dom.tree)
-
+ 
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
 
@@ -227,24 +231,8 @@ class _Transform(object):
         self.dynamic_grid(dom.tree)
 
         self.authenticate(context, request, generate=True)
-        
+#        pr.disable()
         return dom
-
-    def render_tiles(request, tree):
-        for tileNode in tree:
-            jobs.append(render_individual_tile.delay(request, tileNode))
-
-        for job in jobs:
-            result.append(job.get())
-
-        for tileNode in tree:
-            tileNode = result[tileNode]
-
-        return tree
-
-    @task
-    def render_individual_tile(request, tileNode):
-        return tiles.renderTiles(requst, tileNode)
     
     def authenticate(self, context, request, generate=False):
         '''
@@ -293,7 +281,13 @@ class _Transform(object):
                                   'plone.app.standardtiles.stylesheets')
 
     def get_loader(self):
-        return ThemeTemplateLoader(self.name)
+        themetemplateloader= "THEME_TEMPLATE_LOADER_OBJECT"
+        try:
+            return cache.get(themetemplateloader)
+        except KeyError:
+            ttl = ThemeTemplateLoader(self.name)
+            cache.set(themetemplateloader, ttl)
+            return ttl
 
     def get_raw_layout(self, context, loader=None):
         '''

@@ -31,5 +31,14 @@ class FragmentTile(Tile):
             self.index = lambda: u''
 
     def __call__(self):
+        import pdb; pdb.set_trace()
+        import cProfile
+        pr = cProfile.Profile()
+        pr.enable()
         self.update()
-        return u'<html><body>{0:s}</body></html>'.format(self.index())
+        result = u'<html><body>{0:s}</body></html>'.format(self.index())
+        pr.disable()
+        from pstats import Stats
+        stats = Stats(pr)
+        pdb.set_trace()
+        return result
