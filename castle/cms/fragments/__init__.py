@@ -3,6 +3,7 @@ from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from castle.cms.fragments.interfaces import FRAGMENTS_DIRECTORY
 from castle.cms.fragments.interfaces import IFragmentsDirectory
+from castle.cms import cache
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.utils import theming_policy
@@ -38,31 +39,33 @@ class FileCacheFactory(object):
         return cache
 
     def get(self, name, filepath):
-        cache = self.get_cache_storage()
-        if filepath not in cache:
-            if not os.path.exists(filepath):
-                cache[filepath] = {
-                    'template': None,
-                    'mtime': 0
-                }
-            else:
-                fi = open(filepath)
-                cache[filepath] = {
-                    'template': ZopePageTemplate(name, text=fi.read()),
-                    'mtime': 0
-                }
-                fi.close()
-        return cache[filepath]['template']
+        try:
+            return cache.get(filepath)
+        except KeyError:
+            if filepath not in cache:
+                if not os.path.exists(filepath):
+                    cache.set(filepath, {
+                        'template': None,
+                        'mtime': 0
+                    })
+                else:
+                    fi = open(filepath)
+                    cache.set(filepath, {
+                        'template': ZopePageTemplate(name, text=fi.read()),
+                        'mtime': 0
+                    })
+                    fi.close()
+            return cache.get(filepath)['template']
 
 
 class FileChangedCacheFactory(FileCacheFactory):
     def get(self, name, filepath):
-        cache = self.get_cache_storage()
         update = False
-        if filepath not in cache:
+        try:
+            data = cache.get(filepath)
+        except KeyError:
             update = True
-        else:
-            data = cache[filepath]
+        if not update:
             # check mtime
             if (os.path.exists(filepath) and
                     os.path.getmtime(filepath) > data['mtime']):
@@ -70,18 +73,18 @@ class FileChangedCacheFactory(FileCacheFactory):
                 update = True
         if update:
             if not os.path.exists(filepath):
-                cache[filepath] = {
+                cache.set(filepath, {
                     'template': None,
                     'mtime': 9999999999
-                }
+                })
             else:
                 fi = open(filepath)
-                cache[filepath] = {
+                cache.set(filepath, {
                     'template': ZopePageTemplate(name, fi.read()),
                     'mtime': os.path.getmtime(filepath)
-                }
+                })
                 fi.close()
-        return cache[filepath]['template']
+        return cache.get(filepath)['template']
 
 
 class FragmentsDirectory(object):
