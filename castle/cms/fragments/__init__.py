@@ -18,51 +18,53 @@ from zope.publisher.browser import BrowserPage
 
 import logging
 import os
-import threading
 import time
 
 
 logger = logging.getLogger('castle')
 
-_local_file_cache = threading.local()
-_theme_file_cache = threading.local()
-
-
 class FileCacheFactory(object):
 
+    CACHE_KEY = "FRAGMENTS_FILE_CACHE_FACTORY"
+    
     def get_cache_storage(self):
         try:
-            cache = _local_file_cache.data
-        except Exception:
-            _local_file_cache.data = {}
-            cache = _local_file_cache.data
-        return cache
+            self.cache = cache.get(self.CACHE_KEY)
+        except KeyError:
+            cache.set(self.CACHE_KEY, {})
+            self.cache = cache.get(self.CACHE_KEY)
+        if self.cache is None:
+            cache.set(self.CACHE_KEY, {})
+            self.cache = cache.get(self.CACHE_KEY)
+        return self.cache
 
     def get(self, name, filepath):
         try:
-            return cache.get(filepath)
+            return cache.get(self.CACHE_KEY)[filepath]
         except KeyError:
-            if filepath not in cache:
+            if filepath not in self.cache:
                 if not os.path.exists(filepath):
-                    cache.set(filepath, {
+                    self.cache[filepath] = {
                         'template': None,
                         'mtime': 0
-                    })
+                    }
+                    cache.set(self.CACHE_KEY, self.cache)
                 else:
                     fi = open(filepath)
-                    cache.set(filepath, {
+                    self.cache[filepath] = {
                         'template': ZopePageTemplate(name, text=fi.read()),
                         'mtime': 0
-                    })
+                    }
+                    cache.set(self.CACHE_KEY, self.cache)
                     fi.close()
-            return cache.get(filepath)['template']
+            return cache.get(self.CACHE_KEY)[filepath]['template']
 
 
 class FileChangedCacheFactory(FileCacheFactory):
     def get(self, name, filepath):
         update = False
         try:
-            data = cache.get(filepath)
+            data = self.get_cache_storage()[filepath]
         except KeyError:
             update = True
         if not update:
@@ -73,18 +75,20 @@ class FileChangedCacheFactory(FileCacheFactory):
                 update = True
         if update:
             if not os.path.exists(filepath):
-                cache.set(filepath, {
+                self.cache[filepath] = {
                     'template': None,
                     'mtime': 9999999999
-                })
+                }
+                cache.set(self.CACHE_KEY, self.cache)
             else:
                 fi = open(filepath)
-                cache.set(filepath, {
+                self.cache[filepath] = {
                     'template': ZopePageTemplate(name, fi.read()),
                     'mtime': os.path.getmtime(filepath)
-                })
+                }
+                cache.set(self.CACHE_KEY, self.cache)
                 fi.close()
-        return cache.get(filepath)['template']
+        return self.cache[filepath]['template']
 
 
 class FragmentsDirectory(object):
@@ -133,6 +137,7 @@ class FragmentsDirectory(object):
 class ThemeFragmentsDirectory(object):
     implements(IFragmentsDirectory)
 
+    CACHE_KEY = "THEME_FRAGMENTS_DIRECTORY"
     order = 100
     layer = None
 
@@ -140,11 +145,11 @@ class ThemeFragmentsDirectory(object):
         self.cache = {}
 
     def _reset_cache(self):
-        _theme_file_cache.data = {
+        cache.set(self.CACHE_KEY, {
             'mtime': time.time(),
             'templates': {}
-        }
-        return _theme_file_cache.data
+        })
+        return cache.get(self.CACHE_KEY)
 
     def get_mtime(self, fi):
         try:
@@ -155,23 +160,23 @@ class ThemeFragmentsDirectory(object):
     def get_from_cache(self, policy, theme_directory, name, template_path):
         mtime = policy.getCacheStorage()['mtime']
         try:
-            cache = _theme_file_cache.data
+            self.cache = cache.get(self.CACHE_KEY)
         except Exception:
-            cache = self._reset_cache()
+            self.cache = self._reset_cache()
 
         key = policy.getCacheKey() + template_path
         update = False
-        if mtime > cache['mtime']:
+        if mtime > self.cache['mtime']:
             # was invalidated, we need to update the template
-            cache = self._reset_cache()
+            self.cache = self._reset_cache()
             update = True
-        elif key not in cache['templates']:
+        elif key not in self.cache['templates']:
             update = True
 
-        if not update and key in cache['templates'] and api.env.debug_mode():
+        if not update and key in self.cache['templates'] and api.env.debug_mode():
             # check if we need to update the cache
             try:
-                template = cache['templates'][key]
+                template = self.cache['templates'][key]
                 if self.get_mtime(theme_directory[template_path]) > template['mtime']:  # noqa
                     update = True
             except Exception:
@@ -184,11 +189,12 @@ class ThemeFragmentsDirectory(object):
             fi = theme_directory[template_path]
             template = ZopePageTemplate(name, text=theme_directory.readFile(
                 str(template_path)))
-            cache['templates'][key] = {
+            self.cache['templates'][key] = {
                 'template': template,
                 'mtime': self.get_mtime(fi)
             }
-        return cache['templates'][key]['template']
+            cache.set(self.CACHE_KEY, self.cache)
+        return self.cache['templates'][key]['template']
 
     def get(self, context, request, name):
         policy = theming_policy()
@@ -240,12 +246,14 @@ class FragmentView(BrowserPage):
     defined in ``fragments/foobar.pt`` in the theme, this becomes the ``view``.
     """
 
+    CACHE_KEY="FAGMENT_VIEW_RESULTS"
+
     def __init__(self, context, request, name, permission, template):
         super(FragmentView, self).__init__(context, request)
         self.__name__ = name
         self._permission = permission
         self._template = template
-
+    
     def __call__(self, options=None, *args, **kwargs):
         sm = getSecurityManager()
         if not sm.checkPermission(self._permission, self.context):
@@ -260,6 +268,12 @@ class FragmentView(BrowserPage):
             if not api.user.is_anonymous():
                 site_url = public_url
 
+        key = "%s::%s/%s" % (public_url, site_url, self.__name__)
+
+        self.get()
+        if key in self.cache:
+            return self.cache[key]
+        
         utils = getMultiAdapter((self.context, self.request),
                                 name='castle-utils')
         boundNames = {
@@ -278,7 +292,20 @@ class FragmentView(BrowserPage):
 
         zpt = self._template.__of__(self.context)
         try:
-            return zpt._exec(boundNames, args, kwargs)
+            result = zpt._exec(boundNames, args, kwargs)
+            self.set(key, result)
+            return result
         except NotFound as e:
             # We don't want 404's for these - they are programming errors
             raise Exception(e)
+        
+    def get(self):
+        try:
+            self.cache = cache.get(self.CACHE_KEY)
+        except KeyError:
+            self.cache = {}
+            cache.set(self.CACHE_KEY, self.cache)
+
+    def set(self, key, value):
+        self.cache[key] = value
+        cache.set(self.CACHE_KEY, self.cache, expire=60*10)
