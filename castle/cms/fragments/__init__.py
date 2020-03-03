@@ -39,25 +39,23 @@ class FileCacheFactory(object):
         return self.cache
 
     def get(self, name, filepath):
-        try:
-            return cache.get(self.CACHE_KEY)[filepath]
-        except KeyError:
-            if filepath not in self.cache:
-                if not os.path.exists(filepath):
-                    self.cache[filepath] = {
-                        'template': None,
-                        'mtime': 0
-                    }
-                    cache.set(self.CACHE_KEY, self.cache)
-                else:
-                    fi = open(filepath)
-                    self.cache[filepath] = {
-                        'template': ZopePageTemplate(name, text=fi.read()),
-                        'mtime': 0
-                    }
-                    cache.set(self.CACHE_KEY, self.cache)
-                    fi.close()
-            return cache.get(self.CACHE_KEY)[filepath]['template']
+        self.get_cache_storage()
+        if filepath not in self.cache:
+            if not os.path.exists(filepath):
+                self.cache[filepath] = {
+                    'template': None,
+                    'mtime': 0
+                }
+                cache.set(self.CACHE_KEY, self.cache)
+            else:
+                fi = open(filepath)
+                self.cache[filepath] = {
+                    'template': ZopePageTemplate(name, text=fi.read()),
+                    'mtime': 0
+                }
+                cache.set(self.CACHE_KEY, self.cache)
+                fi.close()
+        return self.cache[filepath]['template']
 
 
 class FileChangedCacheFactory(FileCacheFactory):
