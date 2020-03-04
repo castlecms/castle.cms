@@ -1,6 +1,5 @@
 from zope.component import getAllUtilitiesRegisteredFor
 from castle.cms.fragments.interfaces import IFragmentsDirectory
-from castle.cms.cache import ram as cache
 
 
 def getFragment(context, request, name):
@@ -15,6 +14,3 @@ def getFragment(context, request, name):
         except KeyError:
             pass
     raise KeyError(name)
-
-def _checkFragement(util):
-    pass

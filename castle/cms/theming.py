@@ -14,7 +14,6 @@ from Acquisition import aq_parent
 from castle.cms.cache import ram
 from castle.cms import cache
 from castle.cms.utils import get_context_from_request
-from collective.celery import task
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -36,9 +35,6 @@ from repoze.xmliter.utils import getHTMLSerializer
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
-from zope.component import queryUtility
-from zope.component import getUtility
-from zope.component import getGlobalSiteManager
 from zope.interface import alsoProvides
 
 
@@ -63,11 +59,11 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 
 class ThemeTemplateLoader(PageTemplateLoader):
- 
+
     def __init__(self, theme, *args, **kwargs):
         self.THEME_TEMPLATE_CACHE = "THEME_TEMPLATE_LOADER_CACHE_"
         self.THEME_TEMPLATE_FILE_CACHE = "THEME_TEMPLATE_LOADER_FILE_CACHE_"
-        
+
         self.theme = theme
         try:
             self.folder = queryResourceDirectory(THEME_RESOURCE_NAME, theme)
@@ -88,7 +84,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
             return ram.get(self.THEME_TEMPLATE_CACHE + filename)
         except KeyError:
             pass
-                
+
         try:
             data = self.read_file(filename)
         except Exception:
@@ -104,7 +100,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
         template = PageTemplate(data)
 
         ram.set(self.THEME_TEMPLATE_CACHE + filename, template)
-        
+
         return template
 
     __getitem__ = load
@@ -114,7 +110,7 @@ class ThemeTemplateLoader(PageTemplateLoader):
             return
         try:
             return ram.get(self.THEME_TEMPLATE_FILE_CACHE + filename)
-        except:
+        except KeyError:
             pass
         try:
             if isinstance(filename, unicode):
@@ -159,9 +155,9 @@ class _Transform(object):
         self.name = name or 'castle.theme'
 
     def __call__(self, request, result, context=None):
-#        import cProfile
-#        pr = cProfile.Profile(timeunit=0.0001)
-#        pr.enable()
+        # import cProfile
+        # pr = cProfile.Profile(timeunit=0.0001)
+        # pr.enable()
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -223,7 +219,7 @@ class _Transform(object):
             self.bbb(dom.tree, result)
 
         dom.tree = tiles.renderTiles(request, dom.tree)
- 
+
         self.add_body_classes(original_context, context, request,
                               dom.tree, result, raw)
 
@@ -231,9 +227,9 @@ class _Transform(object):
         self.dynamic_grid(dom.tree)
 
         self.authenticate(context, request, generate=True)
-#        pr.disable()
+        # pr.disable()
         return dom
-    
+
     def authenticate(self, context, request, generate=False):
         '''
         Automatically checks the authentication token if it exists.
@@ -281,7 +277,7 @@ class _Transform(object):
                                   'plone.app.standardtiles.stylesheets')
 
     def get_loader(self):
-        themetemplateloader= "THEME_TEMPLATE_LOADER_OBJECT"
+        themetemplateloader = "THEME_TEMPLATE_LOADER_OBJECT"
         try:
             return cache.get(themetemplateloader)
         except KeyError:

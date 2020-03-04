@@ -23,10 +23,11 @@ import time
 
 logger = logging.getLogger('castle')
 
+
 class FileCacheFactory(object):
 
     CACHE_KEY = "FRAGMENTS_FILE_CACHE_FACTORY"
-    
+
     def get_cache_storage(self):
         try:
             self.cache = cache.get(self.CACHE_KEY)
@@ -244,14 +245,14 @@ class FragmentView(BrowserPage):
     defined in ``fragments/foobar.pt`` in the theme, this becomes the ``view``.
     """
 
-    CACHE_KEY="FAGMENT_VIEW_RESULTS"
+    CACHE_KEY = "FAGMENT_VIEW_RESULTS"
 
     def __init__(self, context, request, name, permission, template):
         super(FragmentView, self).__init__(context, request)
         self.__name__ = name
         self._permission = permission
         self._template = template
-    
+
     def __call__(self, options=None, *args, **kwargs):
         sm = getSecurityManager()
         if not sm.checkPermission(self._permission, self.context):
@@ -271,7 +272,7 @@ class FragmentView(BrowserPage):
         self.get()
         if key in self.cache:
             return self.cache[key]
-        
+
         utils = getMultiAdapter((self.context, self.request),
                                 name='castle-utils')
         boundNames = {
@@ -296,7 +297,7 @@ class FragmentView(BrowserPage):
         except NotFound as e:
             # We don't want 404's for these - they are programming errors
             raise Exception(e)
-        
+
     def get(self):
         try:
             self.cache = cache.get(self.CACHE_KEY)
@@ -306,4 +307,4 @@ class FragmentView(BrowserPage):
 
     def set(self, key, value):
         self.cache[key] = value
-        cache.set(self.CACHE_KEY, self.cache, expire=60*10)
+        cache.set(self.CACHE_KEY, self.cache, expire=60 * 10)
