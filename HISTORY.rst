@@ -1,10 +1,24 @@
 Changelog
 =========
 
-2.5.20 (unreleased)
--------------------
+2.6.2 (unreleased)
+------------------
 
 - Nothing changed yet.
+
+
+2.6.1 (2020-03-02)
+------------------
+
+- secure-login fixes, test updates
+  [lucid-0]
+
+
+2.6.0 (2020-02-27)
+------------------
+
+- a couple sticky footer tweaks and static build
+  [lucid-0]
 
 
 2.5.19 (2020-02-20)
