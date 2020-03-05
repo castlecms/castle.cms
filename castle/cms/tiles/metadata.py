@@ -145,7 +145,7 @@ class MetaDataTile(Tile):
 
         alsoProvides(self, IViewView)
 
-        # map is a for loop but is faster and is inherently paralleled in executing the render
+        # map is a for loop but is faster and can be paralleled in the future
         result += "".join(map(self.render, head_viewlets.items()))
         result += unidecode(self.get_basic_tags())
         result += unidecode(self.get_navigation_links())

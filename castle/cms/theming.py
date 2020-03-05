@@ -155,9 +155,6 @@ class _Transform(object):
         self.name = name or 'castle.theme'
 
     def __call__(self, request, result, context=None):
-        # import cProfile
-        # pr = cProfile.Profile(timeunit=0.0001)
-        # pr.enable()
         if '++plone++' in request.ACTUAL_URL:
             return
         portal = api.portal.get()
@@ -227,7 +224,6 @@ class _Transform(object):
         self.dynamic_grid(dom.tree)
 
         self.authenticate(context, request, generate=True)
-        # pr.disable()
         return dom
 
     def authenticate(self, context, request, generate=False):
