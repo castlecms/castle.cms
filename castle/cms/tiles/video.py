@@ -18,7 +18,7 @@ import urlparse
 
 class VideoTile(ContentTile):
     default_display_fields = ()
-    
+
     def render(self):
         return self._render()
 

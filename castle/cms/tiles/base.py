@@ -111,7 +111,7 @@ class BaseTile(Tile):
             url += '?' + qs
         return url
 
-    def __call__(self):        
+    def __call__(self):
         self.request.response.setHeader('X-Theme-Disabled', '1')
         try:
             res = self.render()
