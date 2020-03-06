@@ -72,7 +72,7 @@
     </form>
     <form method="POST" id="restore_all" class="pat-trash_checkbox" tal:condition="view/items">
       <input type="hidden" name="action" value="restore" />
-      <button type="submit" class="plone-btn plone-btn-default">Restore All Recycled Items</button>
+      <button type="submit" class="plone-btn plone-btn-default">Restore Selected Recycled Items</button>
     </form>
   </tal:b>
 </metal:b>
