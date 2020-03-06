@@ -43,6 +43,7 @@
         <element>castle.cms.maptile</element>
         <element>castle.cms.gallerytile</element>
         <element>castle.cms.slidertile</element>
+        <element>castle.cms.slide</element>
         <element>castle.cms.videotile</element>
         <element>castle.cms.imagetile</element>
       </element>

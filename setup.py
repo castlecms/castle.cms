@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='2.5.17.dev0',
+    version='2.6.2.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
@@ -59,7 +59,7 @@ setup(
         'plone.api',
 
         # castle
-        'castle.theme>=1.0.4',
+        'castle.theme>=1.0.6',
 
         # add-ons
         'collective.documentviewer>=5.0.4',

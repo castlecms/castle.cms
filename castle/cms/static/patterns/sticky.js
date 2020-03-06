@@ -3,6 +3,7 @@
 define([
   'jquery',
   'pat-base',
+  'jquery.cookie'
 ], function($, Base) {
   'use strict';
 
@@ -12,13 +13,22 @@ define([
     parser: 'mockup',
     defaults: {},
     init: function() {
+      var self = this;
       window.addEventListener("load", function(event) {
-        $(".sticky-footer").show();
-        $(".sticky-footer")
-          .css({ bottom: "-100px" })
-          .animate({ bottom: "0px" }, "slow");
+        if ($.cookie("sticky-footer") !== "footer-shown") {
+          var stickyElement = $(".sticky-footer")
+          stickyElement.show();
+          stickyElement
+            .css({ bottom: "-100px" })
+            .animate({ bottom: "0px" }, "slow");
+          self.setCookie("footer-shown");
+        }
       });
-    }
+    },
+
+    setCookie: function(value) {
+      return $.cookie("sticky-footer", value, { path: '/' });
+    },
   });
   return StickyFooter;
 });

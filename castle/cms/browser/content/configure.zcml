@@ -151,7 +151,7 @@
     permission="zope2.DeleteObjects"
     layer="castle.cms.interfaces.ICastleLayer"
     />
-  
+
   <browser:page
     for="*"
     name="content-analytics"
@@ -179,5 +179,14 @@
     class=".video.VideoEditForm"
     permission="cmf.ModifyPortalContent"
     />
+
+  <browser:page
+    for="castle.cms.interfaces.ISlideshow"
+    name="view-slideshow"
+    class=".slideshow.SlideshowView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/slideshow.pt"
+  />
 
 </configure>

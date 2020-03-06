@@ -9,7 +9,6 @@ from castle.cms import cache
 from castle.cms import constants
 from castle.cms import security
 from castle.cms.browser.security.login import SecureLoginView
-# from castle.cms.browser.security.passwordreset import PasswordResetView
 from castle.cms.interfaces import IAuthenticator
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.cron._pw_expiry import update_password_expiry
@@ -17,7 +16,6 @@ from DateTime import DateTime
 from plone import api
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-# from plone.app.testing import login
 from plone.app.testing import logout
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
@@ -56,6 +54,7 @@ class TestTwoFactor(unittest.TestCase):
                 id="reset_password_time", value=time.time(), type="float")
         logout()
         self.request.cookies['castle_session_id'] = 'test_session'
+        self.request.cookies['__sl__'] = 'test_login'
         self.auth = self.authenticator = getMultiAdapter(
             (self.portal, self.request), IAuthenticator)
         self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
@@ -85,6 +84,8 @@ class TestTwoFactor(unittest.TestCase):
 
     @responses.activate
     def test_send_text_message_with_code(self):
+        view = SecureLoginView(self.portal, self.request)
+        view()
         self.auth.set_secure_flow_state(self.auth.REQUESTING_AUTH_CODE)
 
         responses.add(
@@ -104,7 +105,8 @@ class TestTwoFactor(unittest.TestCase):
             'authType': 'sms',
             'username': TEST_USER_NAME
         })
-        view = SecureLoginView(self.portal, self.request)
+
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
         self.assertEquals(len(responses.calls), 1)
@@ -114,6 +116,8 @@ class TestTwoFactor(unittest.TestCase):
         self.assertEquals(text_body['src'], '15555555555')
 
     def test_send_email_with_code(self):
+        view = SecureLoginView(self.portal, self.request)
+        view()
         self.auth.set_secure_flow_state(self.auth.REQUESTING_AUTH_CODE)
 
         self.request.form.update({
@@ -123,95 +127,105 @@ class TestTwoFactor(unittest.TestCase):
         user = api.user.get(username=TEST_USER_NAME)
         user.setMemberProperties(mapping={'email': 'foo@bar.com', })
 
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         json.loads(view())
         mailhost = self.portal.MailHost
         self.assertEqual(len(mailhost.messages), 1)
 
     def test_authorize_code_succeeds(self):
-        self.request.form.update({
-            'username': TEST_USER_NAME,
-            'password': TEST_USER_PASSWORD
-        })
         view = SecureLoginView(self.portal, self.request)
+        view()
+
         code = view.auth.issue_2factor_code(TEST_USER_NAME)
         self.request.form.update({
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD,
             'code': code
         })
 
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 
     def test_authorize_code_fails(self):
-        self.request.form.update({
-            'username': TEST_USER_NAME,
-            'password': TEST_USER_PASSWORD
-        })
         view = SecureLoginView(self.portal, self.request)
+        view()
+
         view.auth.issue_2factor_code(TEST_USER_NAME)
         self.request.form.update({
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD,
             'code': 'foobar'
         })
 
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
     def test_authorize_code_required_for_login(self):
+        view = SecureLoginView(self.portal, self.request)
+        view()
+        view.auth.issue_2factor_code(TEST_USER_NAME)
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
-        view.auth.issue_2factor_code(TEST_USER_NAME)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
     def test_two_factor_login_success(self):
         registry = getUtility(IRegistry)
         registry['plone.two_factor_enabled'] = True
+        view = SecureLoginView(self.portal, self.request)
+        view()
+        code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
             'username': TEST_USER_NAME,
-            'password': TEST_USER_PASSWORD
-        })
-        view = SecureLoginView(self.portal, self.request)
-        code = view.auth.issue_2factor_code(TEST_USER_NAME)
-        self.request.form.update({
+            'password': TEST_USER_PASSWORD,
             'code': code
         })
+        self.request.REQUEST_METHOD = 'POST'
+
         result = json.loads(view())
         self.assertTrue(result['success'])
 
     def test_two_factor_login_failure(self):
+        view = SecureLoginView(self.portal, self.request)
+        view()
+        code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
             'username': TEST_USER_NAME,
-            'password': 'foobar'
-        })
-        view = SecureLoginView(self.portal, self.request)
-        code = view.auth.issue_2factor_code(TEST_USER_NAME)
-        self.request.form.update({
+            'password': 'foobar',
             'code': code
         })
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
     def test_login_success_without_two_factor(self):
         registry = getUtility(IRegistry)
         registry['plone.two_factor_enabled'] = False
+        view = SecureLoginView(self.portal, self.request)
+        view()
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 
     def test_authorize_code_does_not_work_out_of_time(self):
-        self.request.form.update({
-            'username': TEST_USER_NAME
-        })
         view = SecureLoginView(self.portal, self.request)
+        view()
         code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD,
             'code': code
         })
 
@@ -221,6 +235,7 @@ class TestTwoFactor(unittest.TestCase):
         code_data['timestamp'] -= (5 * 60) + 1
         cache.set(cache_key, code_data)
 
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
@@ -233,13 +248,15 @@ class TestTwoFactor(unittest.TestCase):
 
         registry = getUtility(IRegistry)
         registry['plone.two_factor_enabled'] = False
+
+        view = SecureLoginView(self.portal, self.request)
+        view()
+
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        self.request.method = self.request.REQUEST_METHOD = 'POST'
-
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
@@ -252,12 +269,16 @@ class TestTwoFactor(unittest.TestCase):
 
         registry = getUtility(IRegistry)
         registry['plone.two_factor_enabled'] = False
+
+        view = SecureLoginView(self.portal, self.request)
+        view()
+
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD,
             '_authenticator': createToken()
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
         self.assertTrue(result['changePasswordRequired'])
@@ -297,11 +318,15 @@ class TestTwoFactor(unittest.TestCase):
         registry['plone.two_factor_enabled'] = False
         registry['plone.restrict_logins_to_countries'] = (u'US',)
         self.request.environ['HTTP_CF_IPCOUNTRY'] = 'AF'
+
+        view = SecureLoginView(self.portal, self.request)
+        view()
+
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
         self.assertTrue(result['countryBlocked'])
@@ -329,11 +354,13 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
             name='plone.backend_url',
             value=(unicode(''),)
         )
+        view = SecureLoginView(self.portal, self.request)
+        view()  # call the view once to set initial state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 
@@ -346,11 +373,13 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
             name='plone.backend_url',
             value=(unicode(''),)
         )
+        view = SecureLoginView(self.portal, self.request)
+        view()  # call the view once to set initial state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
@@ -367,11 +396,13 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
                 unicode('http://vpn.example.com')
             )
         )
+        view = SecureLoginView(self.portal, self.request)
+        view()  # call the view once to set initial state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 
@@ -384,11 +415,13 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
             name='plone.backend_url',
             value=()
         )
+        view = SecureLoginView(self.portal, self.request)
+        view()  # call the view once to set initial state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 
@@ -448,11 +481,13 @@ class TestPwexpiry(unittest.TestCase):
         self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
 
     def test_initial_login(self):
+        view = SecureLoginView(self.portal, self.request)
+        view()  # call the view once to set initial state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 
@@ -461,12 +496,14 @@ class TestPwexpiry(unittest.TestCase):
         editableUser.setMemberProperties({
             'password_date': DateTime('01/10/2011')
         })
+        view = SecureLoginView(self.portal, self.request)
+        view()
+        update_password_expiry(self.portal)
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
-        update_password_expiry(self.portal)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['changePasswordRequired'])
 
@@ -479,11 +516,13 @@ class TestPwexpiry(unittest.TestCase):
             name='plone.pwexpiry_whitelisted_users',
             value=[editableUser.getId().decode('utf-8')]
         )
+        view = SecureLoginView(self.portal, self.request)
+        view()  # call the view once to set initial state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        view = SecureLoginView(self.portal, self.request)
+        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertTrue(result['success'])
 

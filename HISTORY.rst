@@ -1,7 +1,50 @@
 Changelog
 =========
 
-2.5.17 (unreleased)
+2.6.2 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
+2.6.1 (2020-03-02)
+------------------
+
+- secure-login fixes, test updates
+  [lucid-0]
+
+
+2.6.0 (2020-02-27)
+------------------
+
+- a couple sticky footer tweaks and static build
+  [lucid-0]
+
+
+2.5.19 (2020-02-20)
+-------------------
+
+- Building static and fixing profile
+  [lucid-0]
+
+
+2.5.18 (2020-02-20)
+-------------------
+
+- add initial slideshow support
+  [lucid-0]
+
+- change pdf metadata removal to be more particular so that form fillable pdfs will still be usable
+  [alphaomega325]
+
+- move adapter override to override.zcml
+  [zombified]
+
+- fix for history version template to correctly check for associated image
+  [zombified]
+
+
+2.5.17 (2020-02-17)
 -------------------
 
 - add preliminary support for category subscriber emails to be used in content rules
