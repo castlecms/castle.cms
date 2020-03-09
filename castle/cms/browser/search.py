@@ -151,7 +151,8 @@ _valid_params = [
     'Subject:list',
     'after',
     'sort_on',
-    'sort_order'
+    'sort_order',
+    'fullsitesearch'
 ]
 
 
@@ -185,7 +186,6 @@ class SearchAjax(BrowserView):
                 }
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
-
         try:
             page_size = int(self.request.form.get('pageSize'))
         except Exception:
@@ -210,6 +210,12 @@ class SearchAjax(BrowserView):
         catalog = api.portal.get_tool('portal_catalog')
         raw_results = catalog(**query)
         items = []
+        # If no results and user click full site search then show entire site
+        if len(raw_results) == 0 and query.get('fullsitesearch') == 'true':
+            query2 = query.copy()
+            if 'SearchableText' in query2:
+                del query2['SearchableText']
+            raw_results = catalog(**query2)
 
         registry = getUtility(IRegistry)
         view_types = registry.get('plone.types_use_view_action_in_listings', [])
@@ -244,6 +250,13 @@ class SearchAjax(BrowserView):
         count = 0
         if len(query) > 0:
             results = self.search_es(query, start, page_size)
+            # If no results and user click full site search then show entire site
+            if len(results['hits']['hits']) == 0 and query.get('fullsitesearch') == 'true':
+                query2 = query.copy()
+                if 'SearchableText' in query2:
+                    del query2['SearchableText']
+                results = self.search_es(query2, start, page_size)
+
             count = results['hits']['total']
             try:
                 suggestions = results['suggest']['SearchableText'][0]['options']
