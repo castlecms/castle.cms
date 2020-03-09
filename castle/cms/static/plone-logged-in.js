@@ -40,7 +40,8 @@ require([
   'castle-url/patterns/focalpointselect',
   'castle-url/patterns/upload-update',
   'castle-url/patterns/widgets',
-
+  'castle-url/patterns/trash_checkbox',
+    
   // scripts
   'castle-url/scripts/patches',
   'castle-url/scripts/drafts',
