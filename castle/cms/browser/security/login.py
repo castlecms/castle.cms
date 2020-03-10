@@ -51,7 +51,7 @@ class SecureLoginView(BrowserView):
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
 
-        if self.request.cookies['castle_session_id'] == 'test_session':
+        if self.request.cookies.get('castle_session_id', None) == 'test_session':
             return 'test-view'
 
         self.request.response.setHeader('X-Theme-Applied', True)
