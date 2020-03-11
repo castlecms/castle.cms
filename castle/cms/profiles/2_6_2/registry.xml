@@ -2,11 +2,13 @@
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="plone">
 
-  <record name="plone.allow_public_in_private_container">
+  <record field="plone.allow_public_in_private_container"
+          interface="castle.cms.interfaces.ISecuritySchema">
     <field type="plone.registry.field.Bool">
         <title>Allow access to published objects inside private containers</title>
         <description>Check this box to allow public access to Published content inside of private containers.</description>
     </field>
     <value>False</value>
+    <required>False</required>
   </record>
 </registry>
