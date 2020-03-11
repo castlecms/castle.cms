@@ -126,4 +126,3 @@ class CalendarTile(BaseTile):
             },
             'events': events
         })
-
