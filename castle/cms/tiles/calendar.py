@@ -62,7 +62,6 @@ class ICalendarTileSchema(Interface):
 
 
 class CalendarTile(BaseTile):
-    implements(ICalendarTileSchema)
 
     def get_query(self):
         parsed = parse_query_from_data(self.data, self.context)
@@ -73,12 +72,16 @@ class CalendarTile(BaseTile):
                 if self.data.get('limit', None) is None:
                     if self.data.get('sort_reversed', None) is None:
                         if self.data.get('sort_on', None) is None:
+                            # If all of these are None, then Assume the remaining data is garbage and reinitialize
+                            self.data.clear()
                             self.data[u'limit'] = ICalendarTileSchema["limit"].default
                             self.data[u'query'] = ICalendarTileSchema["query"].default
                             self.data[u'sort_reversed'] = ICalendarTileSchema["sort_reversed"].default
-                            return self.get_query()
-
-        parsed['sort_order'] = 'reverse'
+                            # Acts as a preventative measure to ensure that if all the items in self.data are still None
+                            # Then it will prevent a recursion loop.
+                            for item in self.data:
+                                if not item is None:
+                                    return self.get_query()
         return parsed
 
     def results(self):
