@@ -9,6 +9,7 @@ from plone.event.recurrence import recurrence_sequence_ical as recurrences
 from Products.CMFCore.utils import getToolByName
 from zope import schema
 from zope.interface import Interface
+from zope.interface import implements
 
 import json
 
@@ -23,7 +24,45 @@ def format_date(dt):
             pass
 
 
+class ICalendarTileSchema(Interface):
+
+    form.widget(query=QueryFieldWidget)
+    query = schema.List(
+        title=u'Base query',
+        description=u"This query can be customized base on user selection",
+        value_type=schema.Dict(value_type=schema.Field(),
+                               key_type=schema.TextLine()),
+        required=False,
+        default=[{
+            u'i': u'portal_type',
+            u'v': [u'Event'],
+            u'o': u'plone.app.querystring.operation.selection.any'}]
+    )
+
+    sort_on = schema.TextLine(
+        title=u'Sort on',
+        description=u"Sort on this index",
+        required=False,
+    )
+
+    sort_reversed = schema.Bool(
+        title=u'Reversed order',
+        description=u'Sort the results in reversed order',
+        required=False,
+        default=False,
+    )
+
+    limit = schema.Int(
+        title=u'Limit',
+        description=u'Limit Search Results',
+        required=False,
+        default=250,
+        min=1,
+    )
+
+
 class CalendarTile(BaseTile):
+    implements(ICalendarTileSchema)
 
     def get_query(self):
         parsed = parse_query_from_data(self.data, self.context)
@@ -34,11 +73,9 @@ class CalendarTile(BaseTile):
                 if self.data.get('limit', None) is None:
                     if self.data.get('sort_reversed', None) is None:
                         if self.data.get('sort_on', None) is None:
-                            self.data[u'limit'] = 250
-                            self.data[u'query'] = [{'i': 'portal_type',
-                                                    'o': 'plone.app.querystring.operation.selection.any',
-                                                    'v': ['Event']}]
-                            self.data[u'sort_reversed'] = False
+                            self.data[u'limit'] = ICalendarTileSchema["limit"].default
+                            self.data[u'query'] = ICalendarTileSchema["query"].default
+                            self.data[u'sort_reversed'] = ICalendarTileSchema["sort_reversed"].default
                             return self.get_query()
 
         parsed['sort_order'] = 'reverse'
@@ -90,38 +127,3 @@ class CalendarTile(BaseTile):
             'events': events
         })
 
-
-class ICalendarTileSchema(Interface):
-
-    form.widget(query=QueryFieldWidget)
-    query = schema.List(
-        title=u'Base query',
-        description=u"This query can be customized base on user selection",
-        value_type=schema.Dict(value_type=schema.Field(),
-                               key_type=schema.TextLine()),
-        required=False,
-        default=[{
-            u'i': u'portal_type',
-            u'v': [u'Event'],
-            u'o': u'plone.app.querystring.operation.selection.any'}]
-    )
-
-    sort_on = schema.TextLine(
-        title=u'Sort on',
-        description=u"Sort on this index",
-        required=False,
-    )
-
-    sort_reversed = schema.Bool(
-        title=u'Reversed order',
-        description=u'Sort the results in reversed order',
-        required=False,
-    )
-
-    limit = schema.Int(
-        title=u'Limit',
-        description=u'Limit Search Results',
-        required=False,
-        default=250,
-        min=1,
-    )
