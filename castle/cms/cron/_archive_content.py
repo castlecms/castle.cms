@@ -9,7 +9,7 @@ from castle.cms.utils import get_backend_url
 from castle.cms.utils import retriable
 from castle.cms.utils import send_email
 from plone import api
-from plone.app.layout.navigation.defaultpage import getDefaultPage
+from Products.CMFPlone.defaultpage import get_default_page
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
 
@@ -42,7 +42,7 @@ def archive(site, app):
 
             container = aq_parent(ob)
             if (IPloneSiteRoot.providedBy(container) and
-                    getDefaultPage(container) == ob.getId()):
+                    get_default_page(container) == ob.getId()):
                 continue
 
             allowed = set(rolesForPermissionOn('View', ob))

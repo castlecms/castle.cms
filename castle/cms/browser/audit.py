@@ -25,7 +25,7 @@ class AuditView(BrowserView):
         try:
             results = self.do_query()
             self.results = results['hits']['hits']
-            self.total = results['hits']['total']
+            self.total = results['hits']['total']['value']
 
             if 'Export' in self.request.form.get('export', ''):
                 return self.export()
@@ -118,7 +118,6 @@ class AuditView(BrowserView):
         query = self.get_query()
         results = es.search(
             index=index_name,
-            doc_type=audit.es_doc_type,
             body=query,
             sort='date:desc',
             size=3000)
@@ -154,7 +153,6 @@ class AuditView(BrowserView):
         start = (page - 1) * self.limit
         results = es.search(
             index=index_name,
-            doc_type=audit.es_doc_type,
             body=query,
             sort='date:desc',
             from_=start,

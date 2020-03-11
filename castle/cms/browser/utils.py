@@ -14,7 +14,7 @@ from lxml.html import tostring
 from plone import api
 from plone.app.imaging.utils import getAllowedSizes
 from plone.app.layout.globals.interfaces import IViewView
-from plone.app.layout.navigation.defaultpage import getDefaultPage
+from Products.CMFPlone.defaultpage import get_default_page
 from plone.app.layout.viewlets.common import GlobalSectionsViewlet
 from plone.app.uuid.utils import uuidToObject
 from plone.i18n.normalizer.interfaces import IIDNormalizer
@@ -243,7 +243,7 @@ class Utils(BrowserView):
         selected_tab = viewlet.selected_portal_tab
 
         site = api.portal.get()
-        site_default_page = getDefaultPage(site)
+        site_default_page = get_default_page(site)
         if selected_tab == site_default_page:
             selected_tab = 'index_html'
 

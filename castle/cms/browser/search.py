@@ -1,4 +1,3 @@
-from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.interfaces import ICrawlerConfiguration
 from castle.cms.utils import get_public_url
 from collective.elasticsearch.es import ElasticSearchCatalog
@@ -99,11 +98,9 @@ class Search(BrowserView):
                         }
                     }
                 }
-            }
             try:
                 result = es.connection.search(
                     index=es.index_name,
-                    doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                     body=query)
                 for res in result['aggregations']['totals']['buckets']:
                     site_name = res.get('key')
@@ -250,7 +247,8 @@ class SearchAjax(BrowserView):
         count = 0
         if len(query) > 0:
             results = self.search_es(query, start, page_size)
-            count = results['hits']['total']
+            count = results['hits']['total']['value']
+
             try:
                 suggestions = results['suggest']['SearchableText'][0]['options']
             except Exception:
@@ -307,13 +305,11 @@ class SearchAjax(BrowserView):
 
         equery = qassembler(dquery)
 
-        doc_type = es.doc_type
         index_name = es.index_name
         if 'searchSite' in self.request.form:
-            doc_type = CRAWLED_SITE_ES_DOC_TYPE
             index_name = '{index_name}_crawler'.format(index_name=es.index_name)
             # get rid of allowedRolesAndUsers,trashed,popularity script,etc (n/a for public crawl)
-            equery = equery['function_score']['query']
+            equery = equery['script_score']['query']
             equery['bool']['filter'] = [{'term': {'domain': self.request.form['searchSite']}}]
 
         query = {
@@ -330,13 +326,11 @@ class SearchAjax(BrowserView):
         }
 
         query_params = {
-            'stored_fields': ','.join(_search_attributes) + ',path.path',
+            'stored_fields': ','.join(_search_attributes),
             'from_': start,
             'size': size,
-            'fields': ','.join(_search_attributes) + ',path.path'
         }
 
         return es.connection.search(index=index_name,
-                                    doc_type=doc_type,
                                     body=query,
                                     **query_params)

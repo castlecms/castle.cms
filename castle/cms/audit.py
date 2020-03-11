@@ -143,7 +143,6 @@ _registered = {
 }
 
 
-es_doc_type = 'entry'
 
 
 def _create_index(es, index_name):
@@ -160,7 +159,6 @@ def _create_index(es, index_name):
     if not es.indices.exists(index_name):
         es.indices.create(index_name)
     es.indices.put_mapping(
-        doc_type=es_doc_type,
         body=mapping,
         index=index_name)
 
@@ -175,7 +173,7 @@ def _record(conn_factory, site_path, data):
     index_name = get_index_name(site_path)
     es = conn_factory()
     try:
-        es.index(index=index_name, doc_type=es_doc_type, body=data)
+        es.index(index=index_name, body=data)
     except TransportError as ex:
         if 'InvalidIndexNameException' in ex.error:
             try:

@@ -61,7 +61,6 @@ def check_site(site):
     }
     results = es.search(
         index=index_name,
-        doc_type=audit.es_doc_type,
         body=query,
         sort='date:desc',
         size=1000)

@@ -11,7 +11,7 @@ from castle.cms.interfaces import IToolbarModifier
 from castle.cms.utils import get_chat_info
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
-from plone.app.layout.navigation.defaultpage import getDefaultPage
+from Products.CMFPlone.defaultpage import get_default_page
 from plone.cachepurging.interfaces import ICachePurgingSettings
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.dexterity.interfaces import IDexterityItem
@@ -477,7 +477,7 @@ class Toolbar(BrowserView):
         if ISiteRoot.providedBy(context):
             # we're at site root but actually kind of want context front page
             try:
-                context = context[getDefaultPage(context)]
+                context = context[get_default_page(context)]
             except (AttributeError, KeyError):
                 pass
         if IDashboard.providedBy(context):

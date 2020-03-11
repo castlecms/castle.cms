@@ -1,7 +1,6 @@
 from BTrees.OOBTree import OOBTree
 from castle.cms import archival
 from castle.cms.constants import CRAWLED_DATA_KEY
-from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 from castle.cms.cron.utils import spoof_request
@@ -170,7 +169,6 @@ class Crawler(object):
         try:
             self.es.connection.get(
                 index=self.index_name,
-                doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                 id=url)
             return True
         except NotFoundError:
@@ -185,7 +183,6 @@ class Crawler(object):
         data['sitemap'] = 'archives'
         self.es.connection.index(
             index=self.index_name,
-            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             id=url,
             body=data
         )
@@ -228,7 +225,6 @@ class Crawler(object):
         page_size = 700
         result = self.es.connection.search(
             index=self.index_name,
-            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             scroll='30s',
             size=page_size,
             body={
@@ -267,7 +263,6 @@ class Crawler(object):
     def delete_from_index(self, url):
         self.es.connection.delete(
             index=self.index_name,
-            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             id=url)
 
     def crawl_site_map(self, sitemap, full=False):
@@ -327,7 +322,6 @@ class Crawler(object):
                 try:
                     self.es.connection.delete(
                         index=self.index_name,
-                        doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                         id=url)
                 except NotFoundError:
                     pass
@@ -335,7 +329,6 @@ class Crawler(object):
                 data['sitemap'] = sitemap
                 self.es.connection.index(
                     index=self.index_name,
-                    doc_type=CRAWLED_SITE_ES_DOC_TYPE,
                     id=url,
                     body=data
                 )
@@ -360,9 +353,7 @@ def crawl_site(site, full=False):
 
     # check index type is mapped, create if not
     try:
-        es.connection.indices.get_mapping(
-            index=index_name,
-            doc_type=CRAWLED_SITE_ES_DOC_TYPE)
+        es.connection.indices.get_mapping(index=index_name)
     except NotFoundError:
         # need to add it
         adapter = getMultiAdapter((getRequest(), es), IMappingProvider)
@@ -371,7 +362,6 @@ def crawl_site(site, full=False):
         if not es.connection.indices.exists(index_name):
             es.connection.indices.create(index_name)
         es.connection.indices.put_mapping(
-            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
             body=mapping,
             index=index_name)
 

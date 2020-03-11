@@ -3,9 +3,9 @@ from castle.cms.tests.utils import get_tile
 import logging
 import os
 import unittest
+import time
 
 import requests
-
 import transaction
 from castle.cms.browser.search import SearchAjax
 from collective.elasticsearch.es import ElasticSearchCatalog
@@ -35,7 +35,7 @@ if 'ES_HOST' in os.environ:
         resp = requests.get(url)
         data = resp.json()
         version = data['version']['number']
-        if version in ('7.3.0'):
+        if version in ('7.6.0'):
             ES_ENABLED = True
         else:
             logger.warning('Unsupported ES version: {}'.format(version))
@@ -114,6 +114,7 @@ if ES_ENABLED:
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
         def test_ajax_search_pt(self):
+            time.sleep(1)
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'portal_type': 'Folder'
@@ -124,6 +125,7 @@ if ES_ENABLED:
             self.assertEquals(result['results'][0]['path'], '/esfolder1')
 
         def test_ajax_search_subject(self):
+            time.sleep(1)
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'Subject': 'foobar'

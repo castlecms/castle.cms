@@ -207,7 +207,6 @@ class DashboardUtils(BrowserView):
             es = ElasticSearchCatalog(portal_catalog)
             result = es.connection.search(
                 index=es.index_name,
-                doc_type=es.doc_type,
                 body=query)
         except TransportError:
             return []
@@ -232,7 +231,6 @@ class DashboardUtils(BrowserView):
             es = ElasticSearchCatalog(portal_catalog)
             return es.connection.search(
                 index=es.index_name,
-                doc_type=es.doc_type,
                 body=query)['aggregations']['totals']['buckets']
         except TransportError:
             return []

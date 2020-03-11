@@ -387,7 +387,8 @@ class Storage(object):
         url = '{endpoint_url}/{bucket}/{key}'.format(
             endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path))
+            key=content_path
+        )
         key = self.bucket.new_key(content_path)
         key.set_contents_from_string(content, headers={
             'Content-Type': content_type

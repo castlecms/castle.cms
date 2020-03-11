@@ -30,15 +30,17 @@ def index_site(site):
     # first we want to get all document ids from elastic
     page_size = 700
     ids = []
+    query = {
+        "query": {
+            "match_all": {}
+        }
+    }
     result = es.connection.search(
-        index=es.index_name, doc_type=es.doc_type,
+        index=es.index_name,
         scroll='30s',
         size=page_size,
-        body={
-            "query": {
-                "match_all": {}
-            }
-        })
+        body=query
+    )
     ids.extend([r['_id'] for r in result['hits']['hits']])
     scroll_id = result['_scroll_id']
     while scroll_id:
@@ -46,7 +48,7 @@ def index_site(site):
             scroll_id=scroll_id,
             scroll='30s'
         )
-        if len(result['hits']['hits']) == 0:
+        if result['hits']['total']['value'] == 0:
             break
         ids.extend([r['_id'] for r in result['hits']['hits']])
         scroll_id = result['_scroll_id']
