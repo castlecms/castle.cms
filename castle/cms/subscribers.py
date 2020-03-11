@@ -118,6 +118,10 @@ def on_object_event(obj, event):
     audit.event(obj, event)
 
 
+def on_config_modified_event(event):
+    audit.event(event)
+
+
 def on_pas_event(event):
     audit.event(event)
 

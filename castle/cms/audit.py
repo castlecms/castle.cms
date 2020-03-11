@@ -10,7 +10,10 @@ from plone import api
 from plone.app.iterate.interfaces import (IAfterCheckinEvent,
                                           ICancelCheckoutEvent, ICheckoutEvent,
                                           IWorkingCopyDeletedEvent)
-from plone.registry.interfaces import IRegistry
+from plone.registry.interfaces import (IRegistry,
+                                       IRecordAddedEvent,
+                                       IRecordRemovedEvent,
+                                       IRecordModifiedEvent)
 from plone.uuid.interfaces import IUUID
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 from Products.PluggableAuthService.interfaces.events import (ICredentialsUpdatedEvent,  # noqa
@@ -82,6 +85,21 @@ class MetaTileRecorder(DefaultRecorder):
         return data
 
 
+class ConfigModifyRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(ConfigModifyRecorder, self).__call__()
+        try:
+            data['summary'] = 'Configuration Record %s modified. Old value: %s, New value: %s' % (
+                self.event.record,
+                self.event.oldValue,
+                self.event.newValue
+            )
+        except AttributeError:
+            data['summary'] = 'Configuration Record %s modified.' % self.event.record
+        return data
+
+
 class AuditData(object):
 
     def __init__(self, _type, name, summary=None,
@@ -118,6 +136,9 @@ _registered = {
         'workflow', 'Transition', recorder_class=WorkflowRecorder),
     IMetaTileEditedEvent: AuditData(
         'slots', 'Slot edited', recorder_class=MetaTileRecorder),
+    IRecordAddedEvent: AuditData('configuration', 'Added', recorder_class=ConfigModifyRecorder),
+    IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
+    IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
 }
 
 

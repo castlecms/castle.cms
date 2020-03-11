@@ -98,4 +98,15 @@
          .events.IAppInitializedEvent"
     handler=".authentication.install_acl_users" />
 
+  <!-- configuration registry events -->
+  <subscriber
+    for="plone.registry.interfaces.IRecordAddedEvent"
+    handler=".subscribers.on_config_modified_event" />
+  <subscriber
+    for="plone.registry.interfaces.IRecordModifiedEvent"
+    handler=".subscribers.on_config_modified_event" />
+  <subscriber
+    for="plone.registry.interfaces.IRecordRemovedEvent"
+    handler=".subscribers.on_config_modified_event" />
+
 </configure>
