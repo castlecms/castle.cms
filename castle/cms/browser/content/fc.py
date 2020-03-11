@@ -212,6 +212,8 @@ class TrashActionView(delete.DeleteActionView):
 
     def action(self, obj):
         trash.object(obj)
+        import pdb; pdb.set_trace()
+        self.success_msg = "Successfully moved <a href=\"%s\">%s</a> to recycle bin" % (obj.absolute_url(), obj.Title())
 
 
 @implementer(IStructureAction)
