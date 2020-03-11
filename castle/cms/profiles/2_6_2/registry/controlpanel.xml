@@ -7,5 +7,6 @@
         <title>Allow access to published objects inside private containers</title>
         <description>Check this box to allow public access to Published content inside of private containers.</description>
     </field>
+    <value>False</value>
   </record>
 </registry>
