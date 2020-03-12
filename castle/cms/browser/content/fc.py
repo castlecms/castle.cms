@@ -211,9 +211,14 @@ class TrashActionView(delete.DeleteActionView):
     failure_msg = 'Failed to move items to recycle bin'
 
     def action(self, obj):
+        from chameleon import PageTemplate
         trash.object(obj)
-        import pdb; pdb.set_trace()
-        self.success_msg = "Successfully moved <a href=\"%s\">%s</a> to recycle bin" % (obj.absolute_url(), obj.Title())
+        if not hasattr(self, multiple_items) or self.multiple_items is False:
+            self.multiple_items = True
+            self.success_msg = PageTemplate("Successfully moved <a tal:attributes='href obj.absolute_url()'> tal:attribute='obj.Title()' </a> to recycle bin")
+            self.success_msg = PageTemplate.render(self.success_msg, obj=obj)
+        else:
+            self.success_msg = 'Successfully moved items to recycle bin'
 
 
 @implementer(IStructureAction)
