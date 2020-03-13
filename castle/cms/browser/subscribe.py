@@ -159,13 +159,23 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
+        # Checks if the user is already subscribed to certain categories
+        # and will show an error if so.
         try:
-            subsciber = subscribe.get_subscriber(data.get('email'))
-            if subsciber:
-                notify(
-                    ActionErrorOccurred(
-                        action,
-                        WidgetActionExecutionError('email', Invalid('User already subscribed'))))
+            subscriber = subscribe.get_subscriber(data.get('email'))
+            if subscriber:
+                try:
+                    already_subscribed = set(subscriber['categories']).intersection(
+                        set(self.request.form['form.widgets.categories']))
+                    if already_subscribed:
+                        notify(
+                            ActionErrorOccurred(
+                                action,
+                                WidgetActionExecutionError('email', Invalid(
+                                    'User already subscribed to %s' % ', '.join(already_subscribed)))))
+                        return
+                except KeyError:
+                    self.status = self.formErrorsMessage
         except AttributeError:
             self.status = self.formErrorsMessage
 
@@ -191,34 +201,6 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
 
         if errors:
             self.status = self.formErrorsMessage
-
-        # if not errors:
-        #     item = subscribe.register(data['email'], data)
-        #     self.send_mail(data['email'], item)
-        #     self.sent = True
-        #     api.portal.show_message(
-        #         'Verification email has been sent to your email', request=self.request, type='info')
-        #     if self.has_texting and data.get('phone_number'):
-        #         if not self.send_text_message(item):
-        #             api.portal.show_message('Error sending code', request=self.request,
-        #                                     type='error')
-        #         else:
-        #             api.portal.show_message('Code texted to your number to verify',
-        #                                     request=self.request, type='info')
-        #         self.request.response.redirect('%s/@@subscribe-phone?%s' % (
-        #             self.context.absolute_url(),
-        #             urlencode({
-        #                 'form.widgets.email': item['email'],
-        #                 'form.widgets.phone_number': item.get('phone_number', '')
-        #                 })
-        #             ))
-
-    def __call__(self):
-        registry = queryUtility(IRegistry)
-        self.subscriptions_enabled = registry.get(
-            'plone.enable_notification_subscriptions', False)
-        portal_membership = getToolByName(self.context, 'portal_membership')
-        self.isAnon = portal_membership.isAnonymousUser()
 
         # Sends email to the user if the form has been submitted.
         if self.request.method == 'POST':
@@ -249,6 +231,13 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                 api.portal.show_message(
                     'Must enter name, email, and select at least one category',
                     request=self.request, type='error')
+
+    def __call__(self):
+        registry = queryUtility(IRegistry)
+        self.subscriptions_enabled = registry.get(
+            'plone.enable_notification_subscriptions', False)
+        portal_membership = getToolByName(self.context, 'portal_membership')
+        self.isAnon = portal_membership.isAnonymousUser()
 
         if not self.subscriptions_enabled:
             api.portal.show_message(
