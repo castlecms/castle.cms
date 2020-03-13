@@ -51,6 +51,9 @@ class SecureLoginView(BrowserView):
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
 
+        if self.request.cookies.get('castle_session_id', None) == 'test_session':
+            return 'test-view'
+
         self.request.response.setHeader('X-Theme-Applied', True)
         return self.index()
 
@@ -171,7 +174,7 @@ The user requesting this access logged this information:
                     'message': 'You may request another auth code.'
                 })
             code = self.request.form.get('code')
-            if not self.auth.authorize_2factor(self.username, code, 5 * 60):
+            if not self.auth.authorize_2factor(self.username, code):
                 return json.dumps({
                     'success': False,
                     'message': 'Two Factor is enabled, code not authorized.'

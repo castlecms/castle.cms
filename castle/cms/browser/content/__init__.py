@@ -379,7 +379,7 @@ class Creator(BrowserView):
         chooser_name = name.lower().replace('aq_', '')
         newid = chooser.chooseName(chooser_name, folder.aq_parent)
         # strip metadata from file
-        if (type_ in ('Image', 'File', 'Video', 'Audio') and
+        if (type_ in ('Image', 'File', 'Video') and
                 exiftool is not None and 'tmp_file' in info):
             is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
             if is_pdf and qpdf is not None:
@@ -395,9 +395,6 @@ class Creator(BrowserView):
             else:
                 try:
                     exiftool(info['tmp_file'])
-                    logger.warn('qpdf is not installed.  Will not be able to '
-                                'strip all metadata from from file %s'
-                                % str(info['tmp_file']))
                 except Exception:
                     logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 

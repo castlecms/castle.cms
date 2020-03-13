@@ -16,6 +16,7 @@ class SiteMapView(sitemap.SiteMapView):
 
     def objects(self):
         """Returns the data to create the sitemap."""
+        registry = getUtility(IRegistry)
         catalog = api.portal.get_tool('portal_catalog')
         query = {
             'sort_on': 'modified',
@@ -28,7 +29,6 @@ class SiteMapView(sitemap.SiteMapView):
         if 'Image' in types:
             types.remove('Image')
         query['portal_type'] = types
-        registry = getUtility(IRegistry)
         typesUseViewActionInListings = frozenset(
             registry.get('plone.types_use_view_action_in_listings', []))
 
@@ -59,7 +59,9 @@ class SiteMapView(sitemap.SiteMapView):
                 }
 
         for brain in catalog.searchResults(query)[:MAX_ITEMS]:  # max of 50,000 items
-            if root_page_uid == brain.UID or brain.id == 'Members' or brain.has_private_parents:
+            pub_in_priv = registry.get('plone.allow_public_in_private_container')
+            if root_page_uid == brain.UID or brain.id == 'Members' or \
+                    (brain.has_private_parents and not pub_in_priv):
                 continue
             loc = brain.getURL()
             date = brain.modified.ISO8601()

@@ -63,7 +63,6 @@ class Authenticator(object):
         self.context = context
         self.request = request
 
-
         self.login_session_id = self.request.cookies.get('__sl__', None)
         if not self.login_session_id:
             self.login_session_id = uuid4()
