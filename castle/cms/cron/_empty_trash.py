@@ -29,10 +29,9 @@ def empty(site):
         },
         trashed=True)
     deleted_count = 0
-    not_deleted_count = 0
-    empty_trash_log = 'The following items could not be deleted\n' \
-                        'They may still be linked by other content.\n'
-    for brain in catalog(**query):
+    empty_trash_log = ''
+    trash_brains = catalog(**query)
+    for brain in trash_brains:
         ob = brain.getObject()
         lockable = ILockable(ob, None)
         if lockable and lockable.locked():
@@ -41,19 +40,22 @@ def empty(site):
             api.content.delete(ob)
             deleted_count += 1
         except LinkIntegrityNotificationException:
-            not_deleted_count += 1
             logger.warn('Did not delete {} from trash, link integrity'.format(ob))
+            if not empty_trash_log:
+                empty_trash_log = 'The following items could not be deleted\n' \
+                    'They may still be linked by other content.\n'
             empty_trash_log += '{}\n'.format(ob.absolute_url())
             pass
         if deleted_count % 20 == 0:
             transaction.commit()
-    transaction.commit()
     site_annotations = IAnnotations(site)
-    empty_trash_log += 'Deleted {} items, could not delete {} items'.format(
-        deleted_count,
-        not_deleted_count
+
+    empty_trash_log += 'Found {} items recycled 30+ days ago, deleted {} items'.format(
+        len(trash_brains),
+        deleted_count
     )
     site_annotations[TRASH_LOG_KEY] = empty_trash_log
+    transaction.commit()
 
 
 def run(app):

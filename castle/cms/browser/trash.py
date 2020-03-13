@@ -83,7 +83,7 @@ class TrashView(BrowserView):
                     self.request, type='warning')
         api.portal.show_message('Trash emptied', self.request, type='warning')
 
-    def get_empty_log(self):
+    def get_trash_log(self):
         annotations = IAnnotations(self.site)
         if TRASH_LOG_KEY in annotations:
             return annotations[TRASH_LOG_KEY]
