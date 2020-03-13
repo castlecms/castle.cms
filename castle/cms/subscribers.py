@@ -16,6 +16,9 @@ from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 from zope.interface import Interface
+import logging
+
+logger = logging.getLogger('castle.cms')
 
 
 try:
@@ -120,16 +123,18 @@ def on_object_event(obj, event):
 
 def on_config_modified_event(event):
     # Handling for theme change being triggered.
-    event_type = event.record.__name__.split('.')
-    if event_type[-2] == 'IThemeSettings':
-        on_theme_event(event, event_type)
-    else:
-        audit.event(event)
+    try:
+        if 'IThemeSettings' in event.record.__name__:
+            on_theme_event(event)
+        else:
+            audit.event(event)
+    except Exception:
+        logger.warn('Event %s unable to be logged.' % event.record.__name__)
 
 
-def on_theme_event(event, event_type):
+def on_theme_event(event):
     # Prevents theme change from logging several times
-    if event_type[-1] == 'currentTheme':
+    if 'currentTheme' in event.record.__name__:
         audit.event(event)
 
 
