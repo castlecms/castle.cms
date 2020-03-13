@@ -4,7 +4,11 @@ Changelog
 2.6.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove Audio type from metadata stripping on upload (exiftool does not support)
+  [lucid-0]
+- Add security panel option to allow access to published content inside a private container
+  (this behavior used to be default, now defaults to false but option requested)
+  [lucid-0]
 
 
 2.6.1 (2020-03-02)
