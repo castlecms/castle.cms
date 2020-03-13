@@ -5,6 +5,8 @@ from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationExceptio
 from plone.locking.interfaces import ILockable
 from Products.Five import BrowserView
 from unidecode import unidecode
+from zope.event import notify
+from castle.cms.events import TrashEmptiedEvent
 
 
 class TrashView(BrowserView):
@@ -78,4 +80,5 @@ class TrashView(BrowserView):
                     'Some content could not be removed because it is still linked '
                     'to other content on the site.',
                     self.request, type='warning')
+        notify(TrashEmptiedEvent(self))
         api.portal.show_message('Trash emptied', self.request, type='warning')

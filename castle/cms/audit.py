@@ -2,7 +2,7 @@ import threading
 from datetime import datetime
 
 import transaction
-from castle.cms.events import IMetaTileEditedEvent
+from castle.cms.events import IMetaTileEditedEvent, ITrashEmptiedEvent
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
@@ -139,6 +139,7 @@ _registered = {
     IRecordAddedEvent: AuditData('configuration', 'Added', recorder_class=ConfigModifyRecorder),
     IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
     IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
+    ITrashEmptiedEvent: AuditData('content', 'Trash Emptied')
 }
 
 

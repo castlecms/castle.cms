@@ -119,7 +119,22 @@ def on_object_event(obj, event):
 
 
 def on_config_modified_event(event):
-    audit.event(event)
+    # Handling for theme change being triggered.
+    event_type = event.record.__name__.split('.')
+    if event_type[-2] == 'IThemeSettings':
+        on_theme_event(event, event_type)
+    else:
+        audit.event(event)
+
+
+def on_theme_event(event, event_type):
+    # Prevents theme change from logging several times
+    if event_type[-1] == 'currentTheme':
+        audit.event(event)
+
+
+def on_trash_emptied(obj):
+    audit.event(obj)
 
 
 def on_pas_event(event):

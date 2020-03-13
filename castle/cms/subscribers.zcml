@@ -91,6 +91,9 @@
     for=".interfaces.ITrashed
          Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
     handler=".subscribers.on_trash_transitioned" />
+  <subscriber
+    for=".events.ITrashEmptiedEvent"
+    handler=".subscribers.on_trash_emptied" />
   
   <!-- initialization -->
   <subscriber
