@@ -6,11 +6,24 @@
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="plone">
 
+<head>
+  <script>
+    function toggleLog() {
+      var trashLog = document.getElementByID('trash-log');
+      if (trashLog.style.display === "none") {
+        trashLog.style.display = "block";
+      } else {
+        trashLog.style.display = "none";
+      }
+    }
+  </script>
+</head>
+
 <body>
 
 <metal:b fill-slot="content-title">
   <h1 class="documentFirstHeading">
-	  Recyle Bin
+	  Recycle Bin
   </h1>
 </metal:b>
 
@@ -69,6 +82,8 @@
       <input type="hidden" name="action" value="empty" />
       <button type="submit" class="plone-btn plone-btn-danger">Empty All Recycled Items</button>
     </form>
+    <button onclick="toggleLog()">Show Trash Log</button>
+    <div id="trash-log" style="display:none;">${view/get_trash_log}</div>
   </tal:b>
 </metal:b>
 

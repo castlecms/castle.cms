@@ -9,7 +9,9 @@ Changelog
 - Add security panel option to allow access to published content inside a private container
   (this behavior used to be default, now defaults to false but option requested)
   [lucid-0]
-
+- Add empty-trash log to site annotations, and to the @@trash view
+  Users can see which, and how many items were removed by the script.
+  [lucid-0]
 
 2.6.1 (2020-03-02)
 ------------------
