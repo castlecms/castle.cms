@@ -1,8 +1,10 @@
 from castle.cms import trash
 from castle.cms.interfaces import ITrashed
+from castle.cms.constants import TRASH_LOG_KEY
 from plone import api
 from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
 from plone.locking.interfaces import ILockable
+from zope.annotation.interfaces import IAnnotations
 from Products.Five import BrowserView
 from unidecode import unidecode
 from zope.event import notify
@@ -24,6 +26,7 @@ class TrashView(BrowserView):
             elif action == 'empty':
                 self.empty()
         self.items = self.catalog(trashed=True, sort_on='modified',
+                                  sort_order='reverse',
                                   object_provides=ITrashed.__identifier__)
         return self.index()
 
@@ -82,3 +85,10 @@ class TrashView(BrowserView):
                     self.request, type='warning')
         notify(TrashEmptiedEvent(self))
         api.portal.show_message('Trash emptied', self.request, type='warning')
+
+    def get_trash_log(self):
+        annotations = IAnnotations(self.site)
+        if TRASH_LOG_KEY in annotations:
+            return annotations[TRASH_LOG_KEY]
+        else:
+            return "No empty operation log, the trash has not been emptied"
