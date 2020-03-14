@@ -27,7 +27,7 @@ Changelog
 ------------------
 
 - a couple sticky footer tweaks and static build
-  [lucid-0]
+  [lucid-0, OdiumSpeck]
 
 
 2.5.19 (2020-02-20)
