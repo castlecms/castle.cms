@@ -3,7 +3,6 @@ from castle.cms.widgets import AudioRelatedItemsFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from z3c.form.browser.radio import RadioFieldWidget
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
@@ -12,7 +11,6 @@ from zope.interface import Invalid
 from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from castle.cms.tiles.views import getTileView
 from castle.cms.widgets import PreviewSelectFieldWidget
 
 
@@ -38,7 +36,7 @@ class AudioTile(ContentTile):
         return res
 
     @property
-    def player_type(self):    
+    def player_type(self):
         pt = self.data.get('player_type', None)
         if not pt:
             pt = self.default_player_type
@@ -102,11 +100,11 @@ class IAudioTileSchema(model.Schema):
     )
 
     form.widget('player_type', PreviewSelectFieldWidget,
-            previews={
-                'simple': '++plone++castle/images/previews/audioplayers/simple.png',
-                'advanced': '++plone++castle/images/previews/audioplayers/thumbnail.png',
-                'advancedbackground': '++plone++castle/images/previews/audioplayers/background.png'
-            })
+                previews={
+                    'simple': '++plone++castle/images/previews/audioplayers/simple.png',
+                    'advanced': '++plone++castle/images/previews/audioplayers/thumbnail.png',
+                    'advancedbackground': '++plone++castle/images/previews/audioplayers/background.png'
+                })
 
     player_type = schema.Choice(
         title=u'Player Type',
@@ -114,7 +112,7 @@ class IAudioTileSchema(model.Schema):
         default=u'simple',
         required=False,
         vocabulary=SimpleVocabulary([
-            SimpleTerm('simple', 'simple', u'Simple'),            
+            SimpleTerm('simple', 'simple', u'Simple'),
             SimpleTerm('advanced', 'advanced', u'Advanced with thumbnail'),
             SimpleTerm('advancedbackground', 'advancedbackground', u'Advanced with background image')
         ])
