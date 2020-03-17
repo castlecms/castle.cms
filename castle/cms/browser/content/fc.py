@@ -213,12 +213,18 @@ class TrashActionView(delete.DeleteActionView):
     def action(self, obj):
         from chameleon import PageTemplate
         trash.object(obj)
-        if not hasattr(self, multiple_items) or self.multiple_items is False:
+        if not hasattr(self, 'multiple_items') or self.multiple_items == False:
             self.multiple_items = True
-            self.success_msg = PageTemplate("Successfully moved <a tal:attributes='href obj.absolute_url()'> tal:attribute='obj.Title()' </a> to recycle bin")
+            self.success_msg = PageTemplate("""<div tal:define="Std modules/Products.PythonScripts/standard;
+                 restructured_text nocall: Std/restructured_text;"
+    tal:content="structure python: restructured_text(context.Description())">
+<p>Successfully moved <a tal:attributes='href obj.absolute_url()' tal:content='obj.Title()' class='link'> </a> to recycle bin</p>
+</div>
+""")
             self.success_msg = PageTemplate.render(self.success_msg, obj=obj)
         else:
             self.success_msg = 'Successfully moved items to recycle bin'
+            self.multiple_items = True
 
 
 @implementer(IStructureAction)

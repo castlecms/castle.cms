@@ -51,8 +51,8 @@ class TrashView(BrowserView):
     def restore(self):
         uid = self.request.get('uid')
         obj = self.get_by_uid(uid)
-        api.portal.show_message(u'Successfully restored "%s" located at: %s' % (
-            unidecode(obj.Title()), self.get_path(obj)), self.request, type='info')
+        api.portal.show_message(u'Successfully restored <a href=%s> "%s" </a>' % (
+            obj.absolute_url(), unidecode(obj.Title())), self.request, type='info')
         trash.restore(obj)
 
     def delete(self):
