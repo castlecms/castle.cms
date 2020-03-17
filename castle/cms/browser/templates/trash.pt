@@ -6,11 +6,29 @@
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="plone">
 
+<head>
+  <metal:javascript fill-slot="javascript_head_slot">
+    <script>
+      function toggleLog() {
+        var trashLog = document.getElementById('trash-log');
+        var logButton = document.getElementById('show-trash-log');
+        if (trashLog.style.display === "none") {
+          logButton.innerHTML = "Hide Auto-Empty Log";
+          trashLog.style.display = "block";
+        } else {
+          logButton.innerHTML = "Show Auto-Empty Log";
+          trashLog.style.display = "none";
+        }
+      }
+    </script>
+  </metal:javascript>
+</head>
+
 <body>
 
 <metal:b fill-slot="content-title">
   <h1 class="documentFirstHeading">
-	  Recyle Bin
+	  Recycle Bin
   </h1>
 </metal:b>
 
@@ -22,6 +40,8 @@
       after they were moved to the recycle bin.
     </p>
 
+    <button id="show-trash-log" onclick="toggleLog()">Show Auto-Empty Log</button>
+    <div id="trash-log" style="">${view/get_trash_log}</div>
     <div class="portalMessage info"
          tal:condition="not: view/items">
         <strong>Info</strong>

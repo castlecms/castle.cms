@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <record name="plone.app.tiles">
+    <value purge="false">
+      <element>castle.cms.slide</element>
+    </value>
+  </record>
+
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_slide"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.slide</value>
+    <value key="label">Slide (for Slideshow only)</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">80</value>
+  </records>
+</registry>

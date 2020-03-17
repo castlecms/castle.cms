@@ -10,10 +10,11 @@
       <span tal:condition="python: not view.data.get('internal_link', None)" class="subscribe-button">
         <a class="plone-btn plone-btn-primary" href="${view/data/external_link}" role="button">${view/data/button_text}</a>
       </span>
-      <span class="no-thanks-button"><a href="#" data-dismiss="alert" aria-label="Close">No Thanks</a></span>
+      <span class="no-thanks-button close-footer" id="no-thanks-button"><a href="#" data-dismiss="alert" aria-label="Close">No Thanks</a></span>
       <button
         type="button"
         class="close"
+        id="footer-close-button"
         data-dismiss="alert"
         aria-label="Close">
         <span aria-hidden="true">&times;</span>
