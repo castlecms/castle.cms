@@ -9,7 +9,6 @@ from plone.event.recurrence import recurrence_sequence_ical as recurrences
 from Products.CMFCore.utils import getToolByName
 from zope import schema
 from zope.interface import Interface
-from zope.interface import implements
 
 import json
 
@@ -72,15 +71,17 @@ class CalendarTile(BaseTile):
                 if self.data.get('limit', None) is None:
                     if self.data.get('sort_reversed', None) is None:
                         if self.data.get('sort_on', None) is None:
-                            # If all of these are None, then Assume the remaining data is garbage and reinitialize
+                            # If all of these are None,
+                            # then Assume the remaining data is garbage and reinitialize
                             self.data.clear()
                             self.data[u'limit'] = ICalendarTileSchema["limit"].default
                             self.data[u'query'] = ICalendarTileSchema["query"].default
                             self.data[u'sort_reversed'] = ICalendarTileSchema["sort_reversed"].default
-                            # Acts as a preventative measure to ensure that if all the items in self.data are still None
+                            # Acts as a preventative measure to ensure that
+                            # if all the items in self.data are still None
                             # Then it will prevent a recursion loop.
                             for item in self.data:
-                                if not item is None:
+                                if item is not None:
                                     return self.get_query()
         return parsed
 
