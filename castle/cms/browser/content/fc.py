@@ -7,6 +7,7 @@ from castle.cms import tasks
 from castle.cms import trash
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
+from chameleon import PageTemplate
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import cookie_path
 from OFS.CopySupport import CopyError
@@ -215,9 +216,7 @@ class TrashActionView(delete.DeleteActionView):
     failure_msg = 'Failed to move items to recycle bin'
 
     def action(self, obj):
-        from chameleon import PageTemplate
         trash.object(obj)
-        import pdb; pdb.set_trace()
         if hasattr(self, 'multiple_items') is False or self.multiple_items is False:
             self.multiple_items = True
             self.success_msg = PageTemplate(self.single_success_msg)
@@ -355,7 +354,6 @@ FC_MINIMAL_LAYOUT = """<!doctype html>
 class FolderContentsView(BaseFolderContentsView):
 
     def __call__(self):
-        import pdb; pdb.set_trace()
         self.request.environ['X-CASTLE-LAYOUT'] = FC_MINIMAL_LAYOUT
         return super(FolderContentsView, self).__call__()
 
