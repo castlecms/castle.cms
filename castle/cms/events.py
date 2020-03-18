@@ -26,3 +26,13 @@ class AppInitializedEvent(ObjectEvent):
     def __init__(self, object, commit):
         super(AppInitializedEvent, self).__init__(object)
         self.commit = commit
+
+
+class ITrashEmptiedEvent(IObjectEvent):
+    pass
+
+
+@implementer(ITrashEmptiedEvent)
+class TrashEmptiedEvent(ObjectEvent):
+    def __init__(self, object):
+        super(TrashEmptiedEvent, self).__init__(object)

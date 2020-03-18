@@ -28,6 +28,7 @@ from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import Interface
 from zope.interface import implementer
+from uuid import uuid4
 
 
 class AuthenticationException(Exception):
@@ -62,7 +63,10 @@ class Authenticator(object):
         self.context = context
         self.request = request
 
-        self.session_id = self.request.cookies.get('castle_session_id', None)
+        self.login_session_id = self.request.cookies.get('__sl__', None)
+        if not self.login_session_id:
+            self.login_session_id = uuid4()
+            self.request.response.setCookie('__sl__', self.login_session_id)
 
         self.valid_flow_states = [
             self.REQUESTING_AUTH_CODE,
@@ -113,7 +117,7 @@ class Authenticator(object):
         return auth_schemes
 
     def get_secure_flow_key(self):
-        return '{id}-secure-state'.format(id=self.session_id)
+        return '{id}-secure-state'.format(id=self.login_session_id)
 
     def set_secure_flow_state(self, state=None):
         if state not in self.valid_flow_states:

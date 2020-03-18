@@ -4,7 +4,8 @@ import time
 from castle.cms import _, authentication, cache, texting
 from castle.cms.interfaces import (IAuthenticator, ISecureLoginAllowedView,
                                    ISiteSchema)
-from castle.cms.utils import get_managers, send_email, strings_differ
+from castle.cms.utils import (get_managers, send_email, strings_differ,
+                              is_backend)
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
@@ -36,7 +37,8 @@ class SecureLoginView(BrowserView):
             else:
                 initial_state = self.auth.CHECK_CREDENTIALS
             self.auth.set_secure_flow_state(initial_state)
-        else:
+
+        if self.request.REQUEST_METHOD == 'POST':
             self.request.response.setHeader('Content-type', 'application/json')
             if not self.auth.two_factor_enabled and state == self.auth.REQUESTING_AUTH_CODE:
                 state = self.auth.CHECK_CREDENTIALS
@@ -49,12 +51,24 @@ class SecureLoginView(BrowserView):
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
 
+        if self.request.cookies.get('castle_session_id', None) == 'test_session':
+            return 'test-view'
+
         self.request.response.setHeader('X-Theme-Applied', True)
         return self.index()
 
     @property
     def username(self):
         return self.request.form.get('username', None)
+
+    @property
+    def from_backend_url(self):
+        return is_backend(self.request)
+
+    def scrub_backend(self):
+        if not self.auth.is_zope_root and self.from_backend_url:
+            return api.portal.get_registry_record('plone.scrub_title_logo_to_backend_login')
+        return False
 
     def get_country_header(self):
         return (
@@ -160,7 +174,7 @@ The user requesting this access logged this information:
                     'message': 'You may request another auth code.'
                 })
             code = self.request.form.get('code')
-            if not self.auth.authorize_2factor(self.username, code, 5 * 60):
+            if not self.auth.authorize_2factor(self.username, code):
                 return json.dumps({
                     'success': False,
                     'message': 'Two Factor is enabled, code not authorized.'

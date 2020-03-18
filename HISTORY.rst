@@ -1,7 +1,59 @@
 Changelog
 =========
 
-2.5.17 (unreleased)
+2.6.2 (unreleased)
+------------------
+
+- Remove Audio type from metadata stripping on upload (exiftool does not support)
+  [lucid-0]
+- Add security panel option to allow access to published content inside a private container
+  (this behavior used to be default, now defaults to false but option requested)
+  [lucid-0]
+- Add empty-trash log to site annotations, and to the @@trash view
+  Users can see which, and how many items were removed by the script.
+  [lucid-0]
+- Add audit logging for changes to configuration registry, theme selection,
+  and manual trash emptying.
+  [OdiumSpeck]
+
+2.6.1 (2020-03-02)
+------------------
+
+- secure-login fixes, test updates
+  [lucid-0]
+
+
+2.6.0 (2020-02-27)
+------------------
+
+- a couple sticky footer tweaks and static build
+  [lucid-0, OdiumSpeck]
+
+
+2.5.19 (2020-02-20)
+-------------------
+
+- Building static and fixing profile
+  [lucid-0]
+
+
+2.5.18 (2020-02-20)
+-------------------
+
+- add initial slideshow support
+  [lucid-0]
+
+- change pdf metadata removal to be more particular so that form fillable pdfs will still be usable
+  [alphaomega325]
+
+- move adapter override to override.zcml
+  [zombified]
+
+- fix for history version template to correctly check for associated image
+  [zombified]
+
+
+2.5.17 (2020-02-17)
 -------------------
 
 - add preliminary support for category subscriber emails to be used in content rules

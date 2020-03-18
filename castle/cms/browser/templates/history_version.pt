@@ -64,7 +64,7 @@
         <h3>Lead image</h3>
         <div class="history-lead-image"
              tal:define="referenced python: view.get_referenced_image(obj)">
-          <div class="history-has-lead-image" tal:condition="python: utils.has_image(obj)">
+          <div class="history-has-lead-image" tal:condition="python: obj.image is not None">
             <p class="discreet">
               This version has a lead image assigned to it.
             </p>
@@ -79,7 +79,7 @@
               </a>
             </p>
           </div>
-          <div class="history-no-lead-image" tal:condition="python: not utils.has_image(obj)">
+          <div class="history-no-lead-image" tal:condition="python: obj.image is None">
             <p class="discreet">
               No lead image assigned to this version.
             </p>
