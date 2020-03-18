@@ -185,11 +185,15 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
                     action,
                     WidgetActionExecutionError('name', Invalid('Must input a name'))))
 
-        if data['categories'] == []:
-            notify(
-                ActionErrorOccurred(
-                    action,
-                    WidgetActionExecutionError('categories', Invalid('At least one category must be selected.'))))
+        try:
+            if data['categories'] == []:
+                notify(
+                    ActionErrorOccurred(
+                        action,
+                        WidgetActionExecutionError('categories', Invalid(
+                            'At least one category must be selected.'))))
+        except KeyError:
+            self.status = self.formErrorsMessage
 
         if self.has_captcha and self.isAnon:
             if not verify_recaptcha(self.request):
@@ -239,9 +243,11 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
         portal_membership = getToolByName(self.context, 'portal_membership')
         self.isAnon = portal_membership.isAnonymousUser()
 
-        if not self.subscriptions_enabled:
+        if not self.has_captcha or not self.subscriptions_enabled:
             api.portal.show_message(
-                'Subscriptions are not enabled on this site', request=self.request, type='error')
+                """Subscriptions are not enabled on this site. Enable them in site control panel.
+                    Recaptcha must also be enabled""",
+                request=self.request, type='error')
             return self.request.response.redirect(self.context.absolute_url())
         if 'confirmed_code' in self.request.form and 'confirmed_email' in self.request.form:
 
