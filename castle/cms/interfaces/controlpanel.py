@@ -206,6 +206,13 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         description=u'Display a message or warning below the secure login form',
         required=False)
 
+    allow_public_in_private_container = schema.Bool(
+        title=u'Allow access to published objects inside private containers',
+        description=u'Check this box to allow public access to Published content '
+                    u'inside of private containers.',
+        default=False,
+        required=False)
+
 
 class IAnnouncementData(Interface):
     show_announcement = schema.Bool(
