@@ -207,20 +207,20 @@ when the content is done being deleted."""
 
 
 class TrashActionView(delete.DeleteActionView):
+    single_success_msg = """<p>Successfully moved
+    <span tal:content='obj.Title()'> </span>
+    to recycle bin, located at:
+    <a tal:attributes='href obj.absolute_url()' tal:content='obj.absolute_url()'></p>"""
     success_msg = 'Successfully moved items to recycle bin'
     failure_msg = 'Failed to move items to recycle bin'
 
     def action(self, obj):
         from chameleon import PageTemplate
         trash.object(obj)
-        if not hasattr(self, 'multiple_items') or self.multiple_items == False:
+        import pdb; pdb.set_trace()
+        if hasattr(self, 'multiple_items') is False or self.multiple_items is False:
             self.multiple_items = True
-            self.success_msg = PageTemplate("""<div tal:define="Std modules/Products.PythonScripts/standard;
-                 restructured_text nocall: Std/restructured_text;"
-    tal:content="structure python: restructured_text(context.Description())">
-<p>Successfully moved <a tal:attributes='href obj.absolute_url()' tal:content='obj.Title()' class='link'> </a> to recycle bin</p>
-</div>
-""")
+            self.success_msg = PageTemplate(self.single_success_msg)
             self.success_msg = PageTemplate.render(self.success_msg, obj=obj)
         else:
             self.success_msg = 'Successfully moved items to recycle bin'
@@ -355,6 +355,7 @@ FC_MINIMAL_LAYOUT = """<!doctype html>
 class FolderContentsView(BaseFolderContentsView):
 
     def __call__(self):
+        import pdb; pdb.set_trace()
         self.request.environ['X-CASTLE-LAYOUT'] = FC_MINIMAL_LAYOUT
         return super(FolderContentsView, self).__call__()
 
