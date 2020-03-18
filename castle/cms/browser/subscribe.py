@@ -206,35 +206,32 @@ If that does not work, copy and paste this url into your web browser: <i>%s</i>
         if errors:
             self.status = self.formErrorsMessage
 
-        # Sends email to the user if the form has been submitted.
-        if self.request.method == 'POST':
+        try:
+            # Generate a random string for the url code.
+            url_code = get_random_string(8)
 
-            try:
-                # Generate a random string for the url code.
-                url_code = get_random_string(8)
+            # User data from the submitted form
+            email = self.request.form['form.widgets.email']
+            categories = self.request.form['form.widgets.categories']
+            name = self.request.form['form.widgets.name']
 
-                # User data from the submitted form
-                email = self.request.form['form.widgets.email']
-                categories = self.request.form['form.widgets.categories']
-                name = self.request.form['form.widgets.name']
+            if name != '':
+                subscribe.register(email, {'categories': categories}, url_code)
 
-                if name != '':
-                    subscribe.register(email, {'categories': categories}, url_code)
+                self.send_mail(email, categories, name, url_code)
 
-                    self.send_mail(email, categories, name, url_code)
-
-                    self.sent = True
-                    api.portal.show_message(
-                        'Verification email has been sent to your email', request=self.request, type='info')
-                else:
-                    api.portal.show_message(
-                        'Must enter name, email, and select at least one category',
-                        request=self.request, type='error'
-                    )
-            except Exception:
+                self.sent = True
+                api.portal.show_message(
+                    'Verification email has been sent to your email', request=self.request, type='info')
+            else:
                 api.portal.show_message(
                     'Must enter name, email, and select at least one category',
-                    request=self.request, type='error')
+                    request=self.request, type='error'
+                )
+        except Exception:
+            api.portal.show_message(
+                'Must enter name, email, and select at least one category',
+                request=self.request, type='error')
 
     def __call__(self):
         registry = queryUtility(IRegistry)
