@@ -42,6 +42,13 @@ class AudioTile(ContentTile):
             pt = self.default_player_type
         return pt
 
+    @property
+    def author_name(self):
+        an = self.data.get('author_name', None)
+        if not an:
+            an = ""
+        return an
+
     def get_url(self, audio):
         fi = audio.file
         return '%s/@@download/file/%s' % (audio.absolute_url(), fi.filename)
