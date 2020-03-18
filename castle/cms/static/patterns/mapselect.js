@@ -16,6 +16,7 @@ define([
   'use strict';
 
   var D = R.DOM;
+  var apiKey = '';
 
   var generateColorDropdown = function(selected) {
     var colorList = { Red: '#e6194b', Green: '#3cb44b', Yellow: '#ffe119', Blue: '#0082c8', Orange: '#f58231', Purple: '#911eb4', Cyan: '#46f0f0', Magenta: '#f032e6', Lime: '#d2f53c', Pink: '#fabebe', Teal: '#008080', Lavender: '#e6beff', Brown: '#aa6e28', Beige: '#fffac8', Maroon: '#800000', Mint: '#aaffc3', Olive: '#808000', Coral: '#ffd8b1', Navy: '#000080', Grey: '#808080', White: '#FFFFFF', Black: '#000000'};
@@ -109,7 +110,13 @@ define([
               ]);
             }))
           ]);
-        }else{
+        }else if(apiKey == ''){
+          results = D.div({}, [
+            D.span({}, 'Google Maps Api Key not configured. To set an api key go to Site Setup -> CastleCMS -> APIs tab. If you need an api key go '),
+            D.a({href: 'https://developers.google.com/maps/documentation/javascript/get-api-key'}, 'here'),
+            D.span({}, ' and follow the instructions.')
+          ]);
+        } else{
           results = 'No results';
         }
       }
@@ -508,12 +515,11 @@ define([
     },
     init: function() {
       var self = this;
-
       if(window.google && window.google.maps){
         self.initialize();
       }else{
         var mapApiUrl = 'https://maps.google.com/maps/api/js?v=3&sensor=false';
-        var apiKey = $('body').attr('data-google-maps-api-key');
+        apiKey = $('body').attr('data-google-maps-api-key');
         if(apiKey){
           mapApiUrl += '&key=' + apiKey;
         }
