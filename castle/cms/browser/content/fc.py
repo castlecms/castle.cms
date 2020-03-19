@@ -213,6 +213,9 @@ class TrashActionView(delete.DeleteActionView):
                 'label': 'Recycled',
                 'type': 'success',
                 'text': '',
+                # the JavaScript that handles the html render is located at:
+                # https://github.com/castlecms/castle.cms/blob/4ec4b7b197be7e808738d33dcf4f25bae6d519b5
+                # /castle/cms/static/scripts/patches.js#L25
                 'html': 'Successfully moved items to <a href="./@@trash">Recycle Bin</a>.',
             }
         })
