@@ -15,6 +15,8 @@ Changelog
 - Add audit logging for changes to configuration registry, theme selection,
   and manual trash emptying.
   [OdiumSpeck]
+- Updates to audio tile schema and template, advanced player in castle.advantage
+  [Takiyo]
 
 2.6.1 (2020-03-02)
 ------------------
