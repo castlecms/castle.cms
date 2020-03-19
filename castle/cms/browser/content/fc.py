@@ -206,6 +206,8 @@ when the content is done being deleted."""
 
 
 class TrashActionView(delete.DeleteActionView):
+    failure_msg = 'Failed to move items to recycle bin'
+    
     def message_async(self):
         return self.json({
             'status': 'success',
@@ -219,6 +221,9 @@ class TrashActionView(delete.DeleteActionView):
                 'html': 'Successfully moved items to <a href="./@@trash">Recycle Bin</a>.',
             }
         })
+
+    def action(self, obj):
+        trash.object(obj)
 
     def __call__(self):
         delete.DeleteActionView.__call__(self)  # run the parent class function for this child
