@@ -4,6 +4,7 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from castle.cms import cache
 from castle.cms import tasks
+from castle.cms import trash
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
 from OFS.CopySupport import _cb_encode
