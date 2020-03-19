@@ -6,8 +6,8 @@
     <field type="plone.registry.field.Bool">
         <title>Allow access to published objects inside private containers</title>
         <description>Check this box to allow public access to Published content inside of private containers.</description>
+        <value>False</value>
+        <required>False</required>
     </field>
-    <value>False</value>
-    <required>False</required>
   </record>
 </registry>
