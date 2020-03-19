@@ -208,7 +208,7 @@ when the content is done being deleted."""
 
 class TrashActionView(delete.DeleteActionView):
     failure_msg = 'Failed to move items to recycle bin'
-    
+
     def message_async(self):
         return self.json({
             'status': 'success',
