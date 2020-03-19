@@ -221,7 +221,7 @@ class TrashActionView(delete.DeleteActionView):
         })
 
     def __call__(self):
-        delete.DeleteActionView.__call__(self) # run the parent class function for this child
+        delete.DeleteActionView.__call__(self)  # run the parent class function for this child
 
         # only send the success message on the second request, which does not contain 'render'
         if not self.request.form.get('render') == 'yes':
