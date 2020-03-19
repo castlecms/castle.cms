@@ -6,7 +6,6 @@ from castle.cms import cache
 from castle.cms import tasks
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
-from chameleon import PageTemplate
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import cookie_path
 from OFS.CopySupport import CopyError
