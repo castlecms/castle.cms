@@ -206,24 +206,61 @@ when the content is done being deleted."""
         else:
             return self.delete_async(selection, count)
 
+def InjectJS(script):
+    return '<script type="text/javascript">' + script + '</script>'
 
 class TrashActionView(delete.DeleteActionView):
-    single_success_msg = """<p>Successfully moved
-    <span tal:content='obj.Title()'> </span>
-    to recycle bin, located at:
-    <a tal:attributes='href obj.absolute_url()' tal:content='obj.absolute_url()'></p>"""
-    success_msg = 'Successfully moved items to recycle bin'
-    failure_msg = 'Failed to move items to recycle bin'
 
-    def action(self, obj):
-        trash.object(obj)
-        if hasattr(self, 'multiple_items') is False or self.multiple_items is False:
-            self.multiple_items = True
-            self.success_msg = PageTemplate(self.single_success_msg)
-            self.success_msg = PageTemplate.render(self.success_msg, obj=obj)
+    script_injection = InjectJS("""
+// global context script which allows html to be rendered in @fc-trash success messages
+(function($, setTimeout, kvs) {
+    parseResponseHTML = function(restext) {
+        return JSON.parse(restext)['msg']['html'];
+    };
+
+    if(!kvs['trash_html_event_bound']) { // check if we have bound this event already
+        $(document).ajaxSuccess(function(event, xhr, settings) { // bind event to ajaxSuccess
+            if( (settings.url.split('@@fc-trash').length > 1) && (!(settings.data.split('&render=yes').length > 1)) ) { // only run on @@fc-trash AJAX requests where "&render=yes" does not exist in the request data
+                setTimeout(function() {
+                    $('.alert-success').find('span').html(parseResponseHTML(xhr.responseText)); // inject the HTML
+                }, 250); //wait a bit because underscore will render first and then this function will overide it
+            }
+        });
+
+        kvs['trash_html_event_bound'] = true; // prevent this event from being bound to the Global Ajax Event Handler multiple times
+    }
+})(jQuery, window.setTimeout, (function() {
+    // basic object based key value storage -- accessed as "kvs" in the main function above
+    if(typeof window.__ === 'undefined') {
+        window.__ = {};
+    }
+
+    return window.__;
+})());
+    """)
+
+    def message_async(self):
+        return self.json({
+            'status': 'success',
+            'msg': {
+                'label': 'Recycled',
+                'type': 'success',
+                'text': '',
+                'html': 'Successfully moved items to <a href="./@@trash">Recycle Bin</a>.',
+            }
+        })
+
+    def __call__(self):
+        delete.DeleteActionView.__call__(self) # run the parent class function for this child
+
+        # special handling from here on so we can do async handling
+        if self.request.form.get('render') == 'yes':
+            self.request.response.setHeader('Content-Type', 'application/json')
+            return json.dumps({
+                'html': self.script_injection
+            })
         else:
-            self.success_msg = 'Successfully moved items to recycle bin'
-            self.multiple_items = True
+            return self.message_async()
 
 
 @implementer(IStructureAction)
