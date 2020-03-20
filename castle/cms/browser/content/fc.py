@@ -232,6 +232,8 @@ class TrashActionView(delete.DeleteActionView):
         # only send the success message on the second request, which does not contain 'render'
         if not self.request.form.get('render') == 'yes':
             return self.message_async()
+        else:
+            return self.json({})  # this is needed to prevent "Error loading popover from server."
 
 
 @implementer(IStructureAction)
