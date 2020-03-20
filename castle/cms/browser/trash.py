@@ -69,7 +69,10 @@ class TrashView(BrowserView):
     def restore(self):
         uid = self.request.get('uid')
         obj = self.get_by_uid(uid)
-        self.send_IStatusMessage_info_with_location('Successfully restored: ' + unidecode(obj.Title()), self.get_path(obj))
+
+        self.send_IStatusMessage_info_with_location('Successfully restored: ' +
+            unidecode(obj.Title()), self.get_path(obj))
+        
         trash.restore(obj)
 
     def delete(self):
