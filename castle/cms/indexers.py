@@ -3,9 +3,11 @@ from Acquisition import aq_base, aq_parent
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import (IHasDefaultImage, IReferenceNamedImage,
                                    ITrashed)
+from castle.cms import tasks
 from collective.elasticsearch.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
+from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
 from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
@@ -180,13 +182,17 @@ def last_modified_by(context):
 @indexer(IItem)
 def has_private_parents(obj):
     if IFolderish.providedBy(obj):
-        for childId in obj.objectIds():
-            obj[childId].reindexObject(idxs=['has_private_parents'])
+        tasks.reindex_children.delay(obj, ['has_private_parents'])
     parent = aq_parent(obj)
     while not ISiteRoot.providedBy(parent):
         try:
-            if api.content.get_state(parent) != 'published':
-                return True
+            parent_brain = get_brain(parent.UID())
+            if hasattr(parent_brain, 'has_private_parents'):
+                if parent_brain.has_private_parents:
+                    return True
+            else:
+                if api.content.get_state(parent) != 'published':
+                    return True
         except Exception:
             pass
         parent = aq_parent(parent)
