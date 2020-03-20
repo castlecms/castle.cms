@@ -272,4 +272,4 @@ def _reindex_children(obj, indices=None):
         else:
             obj[childId].reindexObject()
         if IFolderish.providedBy(obj[childId]):
-            reindex_children.delay(obj[childId])
+            reindex_children.delay(obj[childId], indices)
