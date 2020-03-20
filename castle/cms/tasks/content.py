@@ -7,6 +7,7 @@ from castle.cms.utils import retriable
 from collective.celery import task
 from plone import api
 from Products.CMFPlone.utils import pretty_title_or_id
+from Products.CMFCore.interfaces._content import IFolderish
 from collective.celery.utils import getCelery
 
 import logging
@@ -270,3 +271,5 @@ def _reindex_children(obj, indices=None):
             obj[childId].reindexObject(idxs=indices)
         else:
             obj[childId].reindexObject()
+        if IFolderish.providedBy(obj[childId]):
+            reindex_children.delay(obj[childId])
