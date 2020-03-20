@@ -21,6 +21,8 @@ class FourOhFour(FourOhFourView):
 
     def __call__(self):
         shield.protect(self.request, recheck=True)
+        self.notfound = self.context
+        self.context = api.portal.get()
         if '++' in self.request.URL:
             self.request.response.setStatus(404)
             try:
@@ -29,8 +31,6 @@ class FourOhFour(FourOhFourView):
                 logger.warn("Failed to render 404 template, had to return simple response")
                 return "not found"
 
-        self.notfound = self.context
-        self.context = api.portal.get()
         archive_storage = archival.Storage(self.context)
         site_url = self.context.absolute_url()
         path = self.request.ACTUAL_URL[len(site_url):].rstrip('/')
