@@ -56,6 +56,9 @@ class TrashView(BrowserView):
         return unicode(json.dumps({
             'text': text,
             'location': location,
+            # the JS handles this special case here:
+            # https://github.com/castlecms/castle.cms
+            # /blob/9e6ea3a4a6dcd07b28cc39b2e950b21e6e2d3d81/castle/cms/static/patterns/toolbar.js#L554
             'parseAsJSON': True
         }), 'utf-8')
 
