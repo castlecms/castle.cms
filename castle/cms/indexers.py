@@ -180,18 +180,18 @@ def last_modified_by(context):
 @indexer(IItem)
 def has_private_parents(obj):
     if (api.content.get_state(obj) != 'published'):
-        return True
+        return True  # needs to be True for private self as well as parents
     parent = aq_parent(obj)
     while not ISiteRoot.providedBy(parent):
         try:
             parent_brain = get_brain(parent.UID())
-            if hasattr(parent_brain, 'has_private_parents'):
+            try:
                 if parent_brain.has_private_parents:
                     return True
-            else:
+            except AttributeError:
                 if api.content.get_state(parent) != 'published':
                     return True
         except Exception:
-            pass
+            pass  # to be extra secure, could return True here. Better to be fault tolerant for now.
         parent = aq_parent(parent)
     return False
