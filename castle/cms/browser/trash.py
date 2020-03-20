@@ -10,6 +10,8 @@ from unidecode import unidecode
 from zope.event import notify
 from castle.cms.events import TrashEmptiedEvent
 
+import json
+
 
 class TrashView(BrowserView):
 
@@ -48,11 +50,23 @@ class TrashView(BrowserView):
     def get_by_uid(self, uid):
         return self.catalog(UID=uid, trashed=True)[0].getObject()
 
+    # used for modifying the location in a IStatusMessage
+    # if we need this for something else we can move it to a static function library
+    def _special_IStatusMessage_fmt(self, text, location):
+        return unicode(json.dumps({
+            'text': text,
+            'location': location,
+            'parseAsJSON': True
+        }), 'utf-8')
+
+    # wrapper for _special_IStatusMessage_fmt and api.portal.show_message
+    def send_IStatusMessage_info_with_location(self, text, location):
+        api.portal.show_message(self._special_IStatusMessage_fmt(text, location), self.request, type='info')
+
     def restore(self):
         uid = self.request.get('uid')
         obj = self.get_by_uid(uid)
-        api.portal.show_message(u'Successfully restored <a href=%s> "%s" </a>' % (
-            obj.absolute_url(), unidecode(obj.Title())), self.request, type='info')
+        self.send_IStatusMessage_info_with_location('Successfully restored: ' + unidecode(obj.Title()), self.get_path(obj))
         trash.restore(obj)
 
     def delete(self):
