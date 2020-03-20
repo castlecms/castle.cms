@@ -21,6 +21,11 @@
     />
 
 
+  <subscriber
+    for="OFS.interfaces.IItem
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".subscribers.on_content_state_changed" />
+
   <!-- file events -->
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
@@ -94,7 +99,7 @@
   <subscriber
     for=".events.ITrashEmptiedEvent"
     handler=".subscribers.on_trash_emptied" />
-  
+
   <!-- initialization -->
   <subscriber
     for="castle.cms.interfaces.ICastleApplication

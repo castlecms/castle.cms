@@ -3,7 +3,6 @@ from Acquisition import aq_base, aq_parent
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import (IHasDefaultImage, IReferenceNamedImage,
                                    ITrashed)
-from castle.cms import tasks
 from collective.elasticsearch.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
@@ -15,7 +14,6 @@ from plone.uuid.interfaces import IUUID
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
 from plone.event.interfaces import IEvent
-from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.interfaces import ISiteRoot
 
 
@@ -181,8 +179,8 @@ def last_modified_by(context):
 
 @indexer(IItem)
 def has_private_parents(obj):
-    if IFolderish.providedBy(obj):
-        tasks.reindex_children.delay(obj, ['has_private_parents'])
+    if (api.content.get_state(obj) != 'published'):
+        return True
     parent = aq_parent(obj)
     while not ISiteRoot.providedBy(parent):
         try:
