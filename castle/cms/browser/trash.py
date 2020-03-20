@@ -72,7 +72,7 @@ class TrashView(BrowserView):
 
         self.send_IStatusMessage_info_with_location('Successfully restored: ' +
             unidecode(obj.Title()), self.get_path(obj))
-        
+
         trash.restore(obj)
 
     def delete(self):
