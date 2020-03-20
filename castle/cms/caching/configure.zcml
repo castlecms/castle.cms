@@ -18,4 +18,8 @@
       template="purge.pt"
   />
 
+  <adapter
+	factory=".theming_cache_clear.CastleCmsThemingCacheReset"
+	for="zope.publisher.interfaces.IRequest"
+/>
 </configure>
