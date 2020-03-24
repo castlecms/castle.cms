@@ -36,7 +36,6 @@ require([
         message: null,
         messageType: 'info',
         authenticator: '',
-        counter: 0,
       };
     },
 
@@ -219,22 +218,31 @@ require([
     renderUsername: function(submissionFunction){
       var that = this;
 
-      // for calculating ids
-      that.state.counter += 1;
-
       var disabled = that.props.twoFactorEnabled && that.state.state !== STATES.REQUEST_AUTH_CODE;
+      var test = D.input({type: 'text', value: that.state.username,
+               className: 'form-control username',
+               id: 'username',
+               placeholder:'Enter username', disabled: disabled,
+               onKeyUp: that.checkEnterHit.bind(that, submissionFunction),
+               onChange: that.valueChanged.bind(that, 'username')})
       return D.div({ className: 'form-group'}, [
-        D.label({ htmlFor: 'username' + that.state.counter }, 'Username'),
-        D.input({type: 'text', value: that.state.username,
-                 className: 'form-control username',
-                 id: 'username' + that.state.counter,
-                 placeholder:'Enter username', disabled: disabled,
-                 onKeyUp: that.checkEnterHit.bind(that, submissionFunction),
-                 onChange: that.valueChanged.bind(that, 'username')})
+        D.label({ htmlFor: 'username' }, 'Username'),
+        test
       ]);
     },
 
     renderCodeAuthField: function(){
+      var that = this;
+      return D.div({ className: 'form-group'}, [
+        D.label({ htmlFor: 'code' },'Authorization code'),
+        D.input({type: 'text', value: that.state.code,
+                 className: 'form-control', id: 'code', placeholder:'Enter code',
+                 onChange: that.valueChanged.bind(that, 'code')
+               })
+        ])
+    },
+
+    renderResendButton: function(){
       var that = this;
       var resend_auth = function(event) {
         event.preventDefault();
@@ -251,15 +259,8 @@ require([
             }
           });
       }
-      return D.div({ className: 'form-group'}, [
-        D.label({ htmlFor: 'code' },'Authorization code'),
-        D.input({type: 'text', value: that.state.code,
-                 className: 'form-control', id: 'code', placeholder:'Enter code',
-                 onChange: that.valueChanged.bind(that, 'code')
-               }),
-        D.button({ className: getClass('resend-button') + ' btn btn-default',
-                   onClick: resend_auth }, 'Resend Code')
-                 ])
+      return D.button({ className: getClass('resend-button') + ' btn btn-default',
+                                onClick: resend_auth }, 'Resend Code');
     },
 
     renderTwoFactorView: function(message){
@@ -284,7 +285,6 @@ require([
 
     renderCheckCredentials: function(message){
       var that = this;
-      that.state.counter += 1;
       var disabled = false;
       if(!that.state.username || !that.state.password){
         disabled = true;
@@ -295,25 +295,30 @@ require([
         help = 'Login with username and password';
       }
 
-      var buttonDiv = D.div({ className: getClass('buttons')}, [
-                        D.button({ className: getClass('login-button') + ' btn btn-primary',
-                                    onClick: that.login, disabled: disabled }, 'Login'),]);
+      var buttons = [D.button({ className: getClass('login-button') + ' btn btn-primary',
+                                onClick: that.login, disabled: disabled }, 'Login')]
 
       var credentialFields = [
         that.renderUsername(that.login),
         D.div({ className: 'form-group'}, [
-          D.label({ htmlFor: 'password' + that.state.counter}, 'Password'),
+          D.label({ htmlFor: 'password'}, 'Password'),
           D.input({type: 'password', value: that.state.password,
-                   className: 'form-control password', id: 'password' + that.state.counter,
+                   className: 'form-control password', id: 'password',
                    placeholder:'Enter password',
                    onKeyUp: that.checkEnterHit.bind(that, that.login),
                    onChange: that.valueChanged.bind(that, 'password')})
         ]),
       ]
+      var resendButton = '';
       if (that.props.twoFactorEnabled){
+        resendButton = that.renderResendButton();
         credentialFields.push(that.renderCodeAuthField());
       }
+      buttons.push(resendButton);
+
+      var buttonDiv = D.div({ className: getClass('buttons')}, buttons);
       credentialFields.push(buttonDiv);
+
       credentialFields.push(message);
       credentialFields.push(that.renderAdditionalLoginProviders())
 

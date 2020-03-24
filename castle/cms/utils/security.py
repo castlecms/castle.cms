@@ -1,6 +1,5 @@
 from zope.component import queryUtility
 from zope.security.interfaces import IPermission
-from plone.registry.interfaces import IRegistry
 from plone import api
 
 
@@ -36,8 +35,8 @@ def publish_content(obj):
 
 
 def is_backend(request):
-    registry = queryUtility(IRegistry)
-    backend_urls = registry.get('plone.backend_url', [])
-    for backend_url in backend_urls:
-        if backend_url.startswith(request.SERVER_URL):
-            return True
+    backend_urls = api.portal.get_registry_record('plone.backend_url')
+    if backend_urls:
+        for backend_url in backend_urls:
+            if backend_url.startswith(request.SERVER_URL):
+                return True
