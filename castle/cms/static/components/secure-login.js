@@ -219,7 +219,7 @@ require([
       var that = this;
 
       var disabled = that.props.twoFactorEnabled && that.state.state !== STATES.REQUEST_AUTH_CODE;
-      var test = D.input({type: 'text', value: that.state.username,
+      var nameField = D.input({type: 'text', value: that.state.username,
                className: 'form-control username',
                id: 'username',
                placeholder:'Enter username', disabled: disabled,
@@ -227,7 +227,7 @@ require([
                onChange: that.valueChanged.bind(that, 'username')})
       return D.div({ className: 'form-group'}, [
         D.label({ htmlFor: 'username' }, 'Username'),
-        test
+        nameField
       ]);
     },
 
