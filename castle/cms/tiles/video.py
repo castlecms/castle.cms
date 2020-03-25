@@ -66,6 +66,13 @@ class VideoTile(ContentTile):
             url += 'start=%s' % start_time[:-1]
         return url
 
+    def get_conversion_error(self):
+        try:
+            if self.context.file.conversion_error:
+                return True
+        except AttributeError:
+            pass
+
 
 class IVideoTileSchema(model.Schema):
 
