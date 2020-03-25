@@ -12,6 +12,7 @@ from urlparse import urljoin
 import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
+from castle.cms.caching import CastleCmsThemingCacheReset
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -543,6 +544,8 @@ class Policy(ThemingPolicy):
 
     Diazo is an extra layer of theming that we don't need to deal
     with since we have tiles and layouts.
+
+    Also to add additional functionality to clear the various caches.
     '''
 
     def getCurrentTheme(self):
@@ -587,6 +590,11 @@ class Policy(ThemingPolicy):
                 return False
 
         return True
+
+    def invalidateCache(self):
+        CastleCmsThemingCacheReset().invalidateCache()
+        super(Policy, self).invalidateCache()
+        
 
 
 def isPloneTheme(settings):

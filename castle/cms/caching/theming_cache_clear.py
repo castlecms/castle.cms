@@ -1,21 +1,32 @@
 from castle.cms.cache import get_client
 from castle.cms.cache import ram
-from plone.app.theming.policy import ThemingPolicy
-from plone.app.theming.interfaces import IThemingPolicy
-from zope.interface import implementer
-#from ZODB.Connection.Connection import cacheMinimize
+from castle.cms.cache import redis_installed
+from logging import getLogger
+from ZODB.Connection import Connection
 
-@implementer(IThemingPolicy)
+logger = getLogger(__name__)
+
 class CastleCmsThemingCacheReset(object):
 
     def invalidateCache(self):
-        import pdb; pdb.set_trace()
+        self._reset_local_cache()
     
     def _reset_local_cache(self):
         """
          Clears out the redis cache, the ramcache.
          And ZODB cache as well
         """
-        import pdb; pdb.set_trace()
-        redis = get_client()
-#        cacheMinimize()
+
+        if redis_installed() is not False:
+            logger.info("Resetting redis cache")
+            redis = get_client()
+            redis.reset()
+        else:
+            logger.info("Redis not installed, skipping redis cache reset")
+
+        logger.info("Resetting ram cache")
+        ram.reset()
+
+        logger.info("Resetting ZODB cache")
+        
+        Connection.cacheMinimize()

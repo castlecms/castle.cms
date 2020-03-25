@@ -78,6 +78,8 @@ class RedisAdapter(AbstractDict):
             cache[key] = value
             logger.info("Cache Reprioritization successful, using %s" % str(cache))
 
+    def reset(self):
+        self.client.flushdb()
 
 def get_client(fun_name=''):
     server = os.environ.get('REDIS_SERVER', None)
@@ -143,6 +145,9 @@ class RamCache(object):
 
     def set(self, name, value):
         global_ram_cache.set(value, '', {'key': name})
+
+    def reset(self):
+        global_ram_cache.invalidateAll()
 
 
 ram = RamCache()

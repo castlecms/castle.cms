@@ -20,6 +20,8 @@
 
   <adapter
 	factory=".theming_cache_clear.CastleCmsThemingCacheReset"
-	for="zope.publisher.interfaces.IRequest"
-/>
+	for="castle.cms.interfaces.ICastleCacheReset"
+	provides="plone.app.theming.interfaces.IThemingPolicy"
+	/>
+
 </configure>

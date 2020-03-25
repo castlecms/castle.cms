@@ -2,6 +2,7 @@
 from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
 from . import cloudflare
+from .theming_cache_clear import CastleCmsThemingCacheReset
 from App.config import getConfiguration
 from castle.cms.linkintegrity import get_content_links
 from plone import api
