@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.2 (unreleased)
+2.6.2 (2020-03-25)
 ------------------
 
 - Remove Audio type from metadata stripping on upload (exiftool does not support)
