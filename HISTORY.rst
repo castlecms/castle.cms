@@ -4,7 +4,8 @@ Changelog
 2.6.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- allow people logging in at zope root to go straight to /manage
+  [lucid-0]
 
 
 2.6.2 (2020-03-25)
