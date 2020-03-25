@@ -243,6 +243,7 @@ The user requesting this access logged this information:
 
         if logged_in:
             self.auth.expire_secure_flow_state()
+            self.request.response.expireCookie("__sl__")
             resp = {
                 'success': True,
             }
