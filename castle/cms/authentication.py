@@ -310,9 +310,12 @@ class Authenticator(object):
             if (came_from.startswith(site_url) and (
                     not url_tool or url_tool.isURLInPortal(came_from))):
                 success_url = came_from
-            if 'login' in success_url or 'logged_out' in success_url \
-                    or 'manage' in success_url:
+            if 'login' in success_url or 'logged_out' in success_url:
                 success_url = site_url + '/@@dashboard'
+            elif 'manage' in success_url:
+                if ISiteRoot.providedBy(self.context):
+                    success_url = site_url + '/@@dashboard'
+                # else zope root, allow /manage here
 
         data = {
             'supportedAuthSchemes': self.get_supported_auth_schemes(),
