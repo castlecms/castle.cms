@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.3 (unreleased)
+2.6.3 (2020-03-25)
 ------------------
 
 - allow people logging in at zope root to go straight to /manage
