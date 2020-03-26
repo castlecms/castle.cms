@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.4 (unreleased)
+2.6.4 (2020-03-26)
 ------------------
 
 - go to zope root rather than dashboard for root logins coming from logged_out
