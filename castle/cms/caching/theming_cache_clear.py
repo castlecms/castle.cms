@@ -1,3 +1,4 @@
+from . import cloudflare
 from castle.cms.cache import get_client
 from castle.cms.cache import ram
 from castle.cms.cache import redis_installed
@@ -28,5 +29,13 @@ class CastleCmsThemingCacheReset(object):
         ram.reset()
 
         logger.info("Resetting ZODB cache")
+        import pdb; pdb.set_trace()
         
         Connection.cacheMinimize()
+
+        logger.info("Resetting Cloudfare Cache")
+        try:
+            purger = cloudflare.get()
+            purger.purge(purger.getUrlsToPurge())
+        except:
+            logger.info("Unable to reset Cloudfare Cache")
