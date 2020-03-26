@@ -311,7 +311,10 @@ class Authenticator(object):
                     not url_tool or url_tool.isURLInPortal(came_from))):
                 success_url = came_from
             if 'login' in success_url or 'logged_out' in success_url:
-                success_url = site_url + '/@@dashboard'
+                if ISiteRoot.providedBy(self.context):
+                    success_url = site_url + '/@@dashboard'
+                else:
+                    success_url = site_url  # zope root
             elif 'manage' in success_url:
                 if ISiteRoot.providedBy(self.context):
                     success_url = site_url + '/@@dashboard'
