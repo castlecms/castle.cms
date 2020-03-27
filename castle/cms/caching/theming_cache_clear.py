@@ -2,8 +2,13 @@ from . import cloudflare
 from castle.cms.cache import get_client
 from castle.cms.cache import ram
 from castle.cms.cache import redis_installed
+from plone.app.theming.utils import getZODBThemes
+from plone.app.theming.utils import getAvailableThemes
 from logging import getLogger
+from zope.component import getUtility
+from ZODB import DB
 from ZODB.Connection import Connection
+import transaction
 
 logger = getLogger(__name__)
 
@@ -29,13 +34,26 @@ class CastleCmsThemingCacheReset(object):
         ram.reset()
 
         logger.info("Resetting ZODB cache")
+
         import pdb; pdb.set_trace()
         
-        Connection.cacheMinimize()
-
+        try:
+            if getZODBThemes() is []:
+                logger.info("No Themes in ZODB Skipping")
+            connection = DB(ZOPE_HOME+"/var/filestorage/Data.fs").open()
+            connection.cacheMinimize()
+        except:
+            pass
+        
         logger.info("Resetting Cloudfare Cache")
         try:
             purger = cloudflare.get()
-            purger.purge(purger.getUrlsToPurge())
+            if purger.enabled:
+                purger.purge_all()
+            else:
+                logger.info("Cloudfare is not enabled, "
+                "if it is meant to be enabled please check the CastleCMS cloudfare settings")
         except:
             logger.info("Unable to reset Cloudfare Cache")
+        
+        

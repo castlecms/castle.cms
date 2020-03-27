@@ -48,7 +48,14 @@ class PurgeManager(object):
             headers=headers, data=json.dumps({'files': urls}))
 
     def purge_all(self):
-        pass
-
+        headers = {
+            'X-Auth-Email': self.email,
+            "X-Auth-Key": self.api_key,
+            'Content-Type': 'application/json'
+        }
+        return requests.delete(
+            'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
+            headers=headers, data=json.dumps({'purge_everything': true}))
+        
 def get():
     return PurgeManager()
