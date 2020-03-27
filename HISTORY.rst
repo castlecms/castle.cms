@@ -4,8 +4,10 @@ Changelog
 2.6.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Don't show overview page without host header.
+  [lucid-0]
+- Pass on private_parents check when brain not found
+  [lucid-0]
 
 2.6.4 (2020-03-26)
 ------------------

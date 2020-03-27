@@ -148,7 +148,7 @@ class Overview(Overview):
     def from_local_or_IP(self):
         try:
             host = self.request.get_header('host').split(':')[0]
-        except AttributeError, IndexError:
+        except AttributeError:
             return False  # no host header
         try:
             socket.inet_aton(host)
