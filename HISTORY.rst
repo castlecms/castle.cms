@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.5 (unreleased)
+2.6.5 (2020-03-27)
 ------------------
 
 - Don't show overview page without host header.
