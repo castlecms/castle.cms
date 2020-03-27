@@ -41,3 +41,4 @@ dump.rdb
 /package.json
 /watch-run.py
 /watchable-grunt.js
+*.sqlite
