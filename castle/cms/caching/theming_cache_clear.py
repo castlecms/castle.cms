@@ -6,8 +6,7 @@ from plone.app.theming.utils import getZODBThemes
 from plone.app.theming.utils import getAvailableThemes
 from logging import getLogger
 from zope.component import getUtility
-from ZODB import DB
-from ZODB.Connection import Connection
+from ZODB.Connection import resetCaches
 import transaction
 
 logger = getLogger(__name__)
@@ -15,9 +14,9 @@ logger = getLogger(__name__)
 class CastleCmsThemingCacheReset(object):
 
     def invalidateCache(self):
-        self._reset_local_cache()
+        self._reset_other_cache()
     
-    def _reset_local_cache(self):
+    def _reset_other_cache(self):
         """
          Clears out the redis cache, the ramcache.
          And ZODB cache as well
@@ -34,16 +33,17 @@ class CastleCmsThemingCacheReset(object):
         ram.reset()
 
         logger.info("Resetting ZODB cache")
-
-        import pdb; pdb.set_trace()
         
         try:
-            if getZODBThemes() is []:
+            if getZODBThemes() == []:
                 logger.info("No Themes in ZODB Skipping")
-            connection = DB(ZOPE_HOME+"/var/filestorage/Data.fs").open()
-            connection.cacheMinimize()
-        except:
-            pass
+            else:
+                resetCaches()
+        except Exception ex:
+            logger.warning("Something went wrong with ZODB resetCaches()
+            %s", % ex)
+
+        logger.info("Resetting ZEO caches")
         
         logger.info("Resetting Cloudfare Cache")
         try:
