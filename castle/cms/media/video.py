@@ -65,6 +65,7 @@ def process(context):
         try:
             avconv.convert(tmpfilepath, output_filepath)
         except Exception:
+            video.conversion_error = True
             logger.info('Could not convert video', exc_info=True)
         if (os.path.exists(output_filepath) and
                 os.path.getsize(output_filepath) > 0):

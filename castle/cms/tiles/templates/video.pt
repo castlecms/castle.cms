@@ -1,4 +1,5 @@
 <div tal:define="video python: view.get_video();
+                 conversion_error python: view.get_conversion_error();
                  tile_youtube_url python: view.data.get('youtube_url');
                  df view/display_fields;
                  dt python: view.data.get('display_type', 'landscape') or 'landscape';
@@ -10,6 +11,8 @@
                         url video/absolute_url|nothing;">
 
     <h3 tal:condition="python: 'title' in df and video"><a href="${url}">${video/Title}</a></h3>
+    <h3 tal:condition="python: conversion_error" style="color:red;">There was an error with the video conversion.  
+    Make sure the video is formatted correctly and try re-uploading.</h3>
     <div class="video-inner" tal:condition="python: not tile_youtube_url and video">
       <div class="video-inner-container ${python: youtube_url and 'youtube' or ''}"
         tal:define="content_type video/file/contentType|nothing;
