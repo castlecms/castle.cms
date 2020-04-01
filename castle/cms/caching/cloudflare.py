@@ -47,15 +47,21 @@ class PurgeManager(object):
             'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
             headers=headers, data=json.dumps({'files': urls}))
 
-    def purge_all(self):
+    def purge_themes(self):
         headers = {
             'X-Auth-Email': self.email,
             "X-Auth-Key": self.api_key,
             'Content-Type': 'application/json'
         }
+
+        self.get_theme_urls()
+        
         return requests.delete(
             'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
-            headers=headers, data=json.dumps({'purge_everything': true}))
+            headers=headers, data=json.dumps({'purge_everything': True}))
+
+    def get_theme_urls(self):
+        pass
         
 def get():
     return PurgeManager()

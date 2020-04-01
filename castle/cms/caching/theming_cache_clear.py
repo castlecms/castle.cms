@@ -14,6 +14,7 @@ logger = getLogger(__name__)
 class CastleCmsThemingCacheReset(object):
 
     def invalidateCache(self):
+        import pdb; pdb.set_trace()
         self._reset_other_cache()
     
     def _reset_other_cache(self):
@@ -39,17 +40,16 @@ class CastleCmsThemingCacheReset(object):
                 logger.info("No Themes in ZODB Skipping")
             else:
                 resetCaches()
-        except Exception ex:
-            logger.warning("Something went wrong with ZODB resetCaches()
-            %s", % ex)
+        except Exception as ex:
+            logger.warning("Something went wrong with ZODB resetCaches()" \
+            "%s" % ex)
 
-        logger.info("Resetting ZEO caches")
-        
         logger.info("Resetting Cloudfare Cache")
         try:
             purger = cloudflare.get()
+            purger.purge_themes()
             if purger.enabled:
-                purger.purge_all()
+                pass
             else:
                 logger.info("Cloudfare is not enabled, "
                 "if it is meant to be enabled please check the CastleCMS cloudfare settings")
