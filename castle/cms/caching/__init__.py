@@ -212,6 +212,7 @@ class Purge(BrowserView):
     proxy_enabled = False
 
     def purge(self):
+        import pdb; pdb.set_trace()
         site_path = '/'.join(api.portal.get().getPhysicalPath())
         cf = cloudflare.get()
         paths = []
