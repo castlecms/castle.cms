@@ -1,4 +1,5 @@
 from . import cloudflare
+from . import varnish
 from castle.cms.cache import get_client
 from castle.cms.cache import ram
 from castle.cms.cache import redis_installed
@@ -55,5 +56,12 @@ class CastleCmsThemingCacheReset(object):
                 "if it is meant to be enabled please check the CastleCMS cloudfare settings")
         except:
             logger.info("Unable to reset Cloudfare Cache")
-        
-        
+
+        logger.info("Resetting Varnish Cache")
+        try:
+            purger = varnish.get()
+            import pdb; pdb.set_trace()
+            if(purger.is_enabled):
+                purger.purge_themes()
+        except:
+            pass
