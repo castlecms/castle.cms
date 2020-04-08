@@ -61,7 +61,7 @@ class CastleCmsThemingCacheReset(object):
         try:
             purger = varnish.get()
             import pdb; pdb.set_trace()
-            if(purger.is_enabled):
+            if(purger.enabled):
                 purger.purge_themes()
         except:
             pass
