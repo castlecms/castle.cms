@@ -19,10 +19,17 @@ class StickyFooterTile(BaseTile):
 
 class IStickyFooterTileSchema(Interface):
 
+    email_text = schema.TextLine(
+        title=u"Footer Title",
+        description=u"(appears next to email icon)",
+        required=True,
+        default=u"",
+    )
+
     description = schema.TextLine(
         title=u"Footer Description",
         description=u"(appears left of button)",
-        required=True,
+        required=False,
         default=u"",
     )
 
