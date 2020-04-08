@@ -18,7 +18,7 @@ define([
         self.cookie_data = $.cookie("sticky-footer");
 
         // Sets the cookie to indicate the footer was closed and won't re-appear.
-        $(".close").click(function() {
+        $(".close-footer").click(function() {
           self.cookie_data = self.setCookie("closed-footer")
         });
 

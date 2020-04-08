@@ -13,7 +13,7 @@
       <span class="no-thanks-button close-footer" id="no-thanks-button"><a href="#" data-dismiss="alert" aria-label="Close">No Thanks</a></span>
       <button
         type="button"
-        class="close"
+        class="close close-footer"
         id="footer-close-button"
         data-dismiss="alert"
         aria-label="Close">
