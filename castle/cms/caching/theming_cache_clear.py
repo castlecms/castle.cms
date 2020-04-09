@@ -15,7 +15,6 @@ logger = getLogger(__name__)
 class CastleCmsThemingCacheReset(object):
 
     def invalidateCache(self):
-        import pdb; pdb.set_trace()
         self._reset_other_cache()
     
     def _reset_other_cache(self):
@@ -60,7 +59,6 @@ class CastleCmsThemingCacheReset(object):
         logger.info("Resetting Varnish Cache")
         try:
             purger = varnish.get()
-            import pdb; pdb.set_trace()
             if(purger.enabled):
                 purger.purge_themes()
         except:
