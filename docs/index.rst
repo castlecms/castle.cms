@@ -13,3 +13,4 @@ CastleCMS
    configuration.rst
    migration.rst
    matomo.rst
+   varnish.rst

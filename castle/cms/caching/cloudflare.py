@@ -1,4 +1,6 @@
 from plone import api
+from plone.app.theming.utils import getAvailableThemes
+from plone.app.theming.utils import getTheme
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
@@ -61,7 +63,16 @@ class PurgeManager(object):
             headers=headers, data=json.dumps({'purge_everything': True}))
 
     def get_theme_urls(self):
-        pass
+        import pdb; pdb.set_trace()
+        urls = []
+        themes = getAvailableThemes()
+        for theme in themes:
+            urls.append(theme.absolutePrefix + theme.development_css)
+            urls.append(theme.absolutePrefix + theme.development_js)
+            urls.append(theme.absolutePrefix + theme.production_css)
+            urls.append(theme.absolutePrefix + theme.production_js)
+            urls.append(theme.absolutePrefix + theme.tinymce_styles_css)
+            urls.append(theme.absolutePrefix + theme.tinymce_styles_css)
         
 def get():
     return PurgeManager()

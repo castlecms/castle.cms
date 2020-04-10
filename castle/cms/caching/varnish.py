@@ -18,7 +18,12 @@ class VarnishPurgeManager(object):
     def purge_themes(self):
         try:
             self.generate_website()
-            subprocess.check_call(["curl", '-X', 'CASTLE_CMS_PURGE_THEMES', self.address])          
+            response = subprocess.check_call(["curl", '-X', 'CASTLE_CMS_PURGE_THEMES', self.address])
+            if response.find("401") is not -1:
+                logger.info("Lack of access, please check the acl theme_purge to ensure your ip is accepted")
+            elif response.find("200") is -1:
+                logger.info("Some other error happened, "
+                "please check that varnish is using the purge_themes subroutine in the vcl_recv subroutine")
         except Exception as ex:
             logger.error("Something Went Wrong with the varnish purging")
             logger.error(ex)

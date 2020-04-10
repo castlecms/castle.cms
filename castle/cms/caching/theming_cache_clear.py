@@ -61,5 +61,7 @@ class CastleCmsThemingCacheReset(object):
             purger = varnish.get()
             if(purger.enabled):
                 purger.purge_themes()
+            logger.info("Varnish is not enabled, "
+                        "If it is meant to be enabled please check the CastleCMS varnish settings")
         except:
-            pass
+            logger.info("Unable to reset Varnish Cache")
