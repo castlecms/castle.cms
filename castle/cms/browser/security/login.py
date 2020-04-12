@@ -31,13 +31,6 @@ class SecureLoginView(BrowserView):
 
     def __call__(self):
         state = self.auth.get_secure_flow_state()
-        if not state:
-            if self.auth.two_factor_enabled:
-                initial_state = self.auth.REQUESTING_AUTH_CODE
-            else:
-                initial_state = self.auth.CHECK_CREDENTIALS
-            self.auth.set_secure_flow_state(initial_state)
-
         if self.request.REQUEST_METHOD == 'POST':
             self.request.response.setHeader('Content-type', 'application/json')
             if not self.auth.two_factor_enabled and state == self.auth.REQUESTING_AUTH_CODE:
@@ -50,12 +43,20 @@ class SecureLoginView(BrowserView):
                 return json.dumps({
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
+        else:
+            if state:
+                self.auth.expire_secure_flow_state()
+            if self.auth.two_factor_enabled:
+                initial_state = self.auth.REQUESTING_AUTH_CODE
+            else:
+                initial_state = self.auth.CHECK_CREDENTIALS
+            self.auth.set_secure_flow_state(initial_state)
 
-        if self.request.cookies.get('castle_session_id', None) == 'test_session':
-            return 'test-view'
+            if self.request.cookies.get('castle_session_id', None) == 'test_session':
+                return 'test-view'
 
-        self.request.response.setHeader('X-Theme-Applied', True)
-        return self.index()
+            self.request.response.setHeader('X-Theme-Applied', True)
+            return self.index()
 
     @property
     def username(self):
@@ -243,7 +244,6 @@ The user requesting this access logged this information:
 
         if logged_in:
             self.auth.expire_secure_flow_state()
-            self.request.response.expireCookie("__sl__")
             resp = {
                 'success': True,
             }
@@ -283,22 +283,17 @@ The user requesting this access logged this information:
         elif auth_type == 'sms':
             sent = self.send_auth_text()
 
-        if sent:
-            new_state = self.auth.CHECK_CREDENTIALS
-            self.auth.set_secure_flow_state(new_state)
-            return json.dumps({
-                'success': True,
-                'message': 'Authorization code sent to provided username.',
-                'state': new_state
-            })
-        else:
-            # this will happen if a root acl_user tries to log in to a site
-            # with 2factor enabled.  They need to log in at the root.
-            return json.dumps({
-                'success': False,
-                'message': 'Problem sending auth code.',
-                'state': 'request-auth-code'
-            })
+        # sent is false when a root acl_user tries to log in to a site
+        # with 2factor enabled.  They need to log in at the root.
+        # For now, responding the same regardless for security reasons.
+
+        new_state = self.auth.CHECK_CREDENTIALS
+        self.auth.set_secure_flow_state(new_state)
+        return json.dumps({
+            'success': True,
+            'message': 'Authorization code sent to provided username.',
+            'state': new_state
+        })
 
     def send_auth_email(self):
         email = None
