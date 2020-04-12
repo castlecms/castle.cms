@@ -134,9 +134,13 @@ class TestTwoFactor(unittest.TestCase):
 
     def test_authorize_code_succeeds(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-
-        code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        view()  # REQUESTING_AUTH_CODE state
+        self.request.form.update({
+            'username': TEST_USER_NAME
+        })
+        self.request.REQUEST_METHOD = 'POST'
+        view()  # CHECK_CREDENTIALS state
+        code = cache.get(view.auth.get_2factor_code_key(TEST_USER_NAME))['code']
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD,
@@ -149,28 +153,33 @@ class TestTwoFactor(unittest.TestCase):
 
     def test_authorize_code_fails(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-
-        view.auth.issue_2factor_code(TEST_USER_NAME)
+        view()  # REQUESTING_AUTH_CODE state
+        self.request.form.update({
+            'username': TEST_USER_NAME
+        })
+        self.request.REQUEST_METHOD = 'POST'
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD,
             'code': 'foobar'
         })
 
-        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
     def test_authorize_code_required_for_login(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-        view.auth.issue_2factor_code(TEST_USER_NAME)
+        view()  # REQUESTING_AUTH_CODE state
+        self.request.form.update({
+            'username': TEST_USER_NAME
+        })
+        self.request.REQUEST_METHOD = 'POST'
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
         })
-        self.request.REQUEST_METHOD = 'POST'
         result = json.loads(view())
         self.assertFalse(result['success'])
 
@@ -178,23 +187,32 @@ class TestTwoFactor(unittest.TestCase):
         registry = getUtility(IRegistry)
         registry['plone.two_factor_enabled'] = True
         view = SecureLoginView(self.portal, self.request)
-        view()
-        code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        view()  # REQUESTING_AUTH_CODE state
+        self.request.form.update({
+            'username': TEST_USER_NAME
+        })
+        self.request.REQUEST_METHOD = 'POST'
+        view()  # CHECK_CREDENTIALS state
+        code = cache.get(view.auth.get_2factor_code_key(TEST_USER_NAME))['code']
         self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD,
             'code': code
         })
-        self.request.REQUEST_METHOD = 'POST'
 
         result = json.loads(view())
         self.assertTrue(result['success'])
 
     def test_two_factor_login_failure(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-        code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        view()  # REQUESTING_AUTH_CODE state
+        self.request.form.update({
+            'username': TEST_USER_NAME
+        })
+        self.request.REQUEST_METHOD = 'POST'
+        view()  # CHECK_CREDENTIALS state
+        code = cache.get(view.auth.get_2factor_code_key(TEST_USER_NAME))['code']
         self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
             'username': TEST_USER_NAME,
@@ -209,7 +227,7 @@ class TestTwoFactor(unittest.TestCase):
         registry = getUtility(IRegistry)
         registry['plone.two_factor_enabled'] = False
         view = SecureLoginView(self.portal, self.request)
-        view()
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
@@ -220,8 +238,13 @@ class TestTwoFactor(unittest.TestCase):
 
     def test_authorize_code_does_not_work_out_of_time(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-        code = view.auth.issue_2factor_code(TEST_USER_NAME)
+        view()  # REQUESTING_AUTH_CODE state
+        self.request.form.update({
+            'username': TEST_USER_NAME
+        })
+        self.request.REQUEST_METHOD = 'POST'
+        view()  # CHECK_CREDENTIALS state
+        code = cache.get(view.auth.get_2factor_code_key(TEST_USER_NAME))['code']
         self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
             'username': TEST_USER_NAME,
