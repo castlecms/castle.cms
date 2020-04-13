@@ -11,7 +11,7 @@ class StickyFooterTile(BaseTile):
     def internal_link_url(self):
         if self.data.get('internal_link'):
             try:
-                brain = uuidToCatalogBrain(self.data.internal_link[0])
+                brain = uuidToCatalogBrain(self.data['internal_link'][0])
                 return brain.getURL()
             except Exception:
                 pass
