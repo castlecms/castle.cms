@@ -50,29 +50,28 @@ class PurgeManager(object):
             headers=headers, data=json.dumps({'files': urls}))
 
     def purge_themes(self):
-        headers = {
-            'X-Auth-Email': self.email,
-            "X-Auth-Key": self.api_key,
-            'Content-Type': 'application/json'
-        }
-
-        self.get_theme_urls()
-        
-        return requests.delete(
-            'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
-            headers=headers, data=json.dumps({'purge_everything': True}))
+       urls = self.get_theme_urls()
+       return self.purge(urls)
 
     def get_theme_urls(self):
         import pdb; pdb.set_trace()
         urls = []
         themes = getAvailableThemes()
         for theme in themes:
-            urls.append(theme.absolutePrefix + theme.development_css)
-            urls.append(theme.absolutePrefix + theme.development_js)
-            urls.append(theme.absolutePrefix + theme.production_css)
-            urls.append(theme.absolutePrefix + theme.production_js)
-            urls.append(theme.absolutePrefix + theme.tinymce_styles_css)
-            urls.append(theme.absolutePrefix + theme.tinymce_styles_css)
+            if theme.development_css is not '': 
+                urls.append(self.public_url + theme.development_css)
+            if theme.development_js is not '': 
+                urls.append(self.public_url + theme.development_js)
+            if theme.production_css is not '': 
+                urls.append(self.public_url + theme.production_css)
+            if theme.production_js is not '':
+                urls.append(self.public_url + theme.production_js)
+            if theme.tinymce_content_css is not '':
+                urls.append(self.public_url + theme.tinymce_content_css)
+            if theme.tinymce_styles_css is not '':
+                urls.append(self.public_url + theme.tinymce_styles_css)
+        return urls
+
         
 def get():
     return PurgeManager()

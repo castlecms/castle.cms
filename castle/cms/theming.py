@@ -22,6 +22,7 @@ from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
+from plone.app.theming.interfaces import IThemingPolicy
 from plone.app.theming.policy import ThemingPolicy
 from plone.app.theming.utils import theming_policy
 from plone.dexterity.interfaces import IDexterityContent
@@ -33,6 +34,7 @@ from repoze.xmliter.utils import getHTMLSerializer
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
+from zope.component import getAdapter
 from zope.interface import alsoProvides
 
 
@@ -592,8 +594,9 @@ class Policy(ThemingPolicy):
         return True
 
     def invalidateCache(self):
-        CastleCmsThemingCacheReset().invalidateCache()
-        super(Policy, self).invalidateCache()
+        cache_reset = CastleCmsThemingCacheReset(self)
+        cache_reset = getAdapter(cache_reset, IThemingPolicy)
+        cache_reset.invalidateOtherCaches()
         
 
 

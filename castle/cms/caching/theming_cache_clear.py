@@ -1,21 +1,27 @@
 from . import cloudflare
 from . import varnish
+from castle.cms.interfaces import ICastleThemingCacheReset
 from castle.cms.cache import get_client
 from castle.cms.cache import ram
 from castle.cms.cache import redis_installed
+from plone.app.theming.policy import ThemingPolicy
 from plone.app.theming.utils import getZODBThemes
 from plone.app.theming.utils import getAvailableThemes
 from logging import getLogger
 from zope.component import getUtility
+from zope.interface import implementer
 from ZODB.Connection import resetCaches
 import transaction
 
 logger = getLogger(__name__)
 
-class CastleCmsThemingCacheReset(object):
 
-    def invalidateCache(self):
+@implementer(ICastleThemingCacheReset)
+class CastleCmsThemingCacheReset(ThemingPolicy):
+
+    def invalidateOtherCaches(self):
         self._reset_other_cache()
+        self.invalidateCache()
     
     def _reset_other_cache(self):
         """

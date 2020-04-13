@@ -1,7 +1,11 @@
 from .layers import ICastleLayer
 
-class ICastleCacheReset(ICastleLayer):
+class ICastleThemingCacheReset(ICastleLayer):
     """
-    Clears more caches than usual.
+    Clears theming files outside of the local threads.
     """
-    pass
+
+    def invalidateOtherCaches(self):
+        """
+        Calls upon this will clear out the other caches containing theming files.
+        """

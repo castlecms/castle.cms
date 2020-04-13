@@ -20,7 +20,7 @@
 
   <adapter
 	factory=".theming_cache_clear.CastleCmsThemingCacheReset"
-	for="castle.cms.interfaces.ICastleCacheReset"
+	for="castle.cms.interfaces.ICastleThemingCacheReset"
 	provides="plone.app.theming.interfaces.IThemingPolicy"
 	/>
 
