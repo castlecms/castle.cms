@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.6 (unreleased)
+2.6.6 (2020-04-13)
 ------------------
 
 - Sticky footer updates
