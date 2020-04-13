@@ -4,7 +4,8 @@ Changelog
 2.6.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Sticky footer updates
+- Secure login updates
 
 
 2.6.5 (2020-03-27)
