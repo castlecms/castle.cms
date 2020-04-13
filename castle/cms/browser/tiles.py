@@ -474,4 +474,4 @@ outline: 2px dashed blue;
         # This will show up with tiles at site root.
         tiles = meta_tile.data.get('tiles', [])[:]
         if tiles:
-            tile.attrib['class'] = 'slot-contains-tile'
+            tile.attrib['class'] += ' slot-contains-tile'
