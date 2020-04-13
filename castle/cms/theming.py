@@ -11,6 +11,8 @@ from urlparse import urljoin
 
 import Globals
 from Acquisition import aq_parent
+from castle.cms.cache import ram
+from castle.cms import cache
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
@@ -24,6 +26,7 @@ from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.policy import ThemingPolicy
 from plone.app.theming.utils import theming_policy
 from plone.dexterity.interfaces import IDexterityContent
+from plone.protect.utils import addTokenToUrl
 from plone.resource.interfaces import IResourceDirectory
 from plone.resource.utils import queryResourceDirectory
 from Products.CMFCore.interfaces import ISiteRoot
@@ -39,8 +42,7 @@ logger = logging.getLogger('castle.cms')
 
 OVERRIDE_ENVIRON_KEY = 'castle.override.theme'
 wrapper_xpath = etree.XPath('//*[@id="visual-portal-wrapper"]')
-href_xpath = etree.XPath('//*[@href]')
-src_xpath = etree.XPath('//*[@src]')
+src_href_xpath = etree.XPath('//*[@src or @href]')
 js_insert_xpath = etree.XPath('//link[@data-include-js]')
 css_insert_xpath = etree.XPath('//link[@data-include-css]')
 script_xpath = etree.XPath('//script')
@@ -58,11 +60,10 @@ LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
 
 class ThemeTemplateLoader(PageTemplateLoader):
 
-    def __init__(self, theme, template_cache=None, *args, **kwargs):
-        self.file_cache = {}
-        if template_cache is None:
-            template_cache = {}
-        self.template_cache = template_cache
+    def __init__(self, theme, *args, **kwargs):
+        self.THEME_TEMPLATE_CACHE = "THEME_TEMPLATE_LOADER_CACHE_"
+        self.THEME_TEMPLATE_FILE_CACHE = "THEME_TEMPLATE_LOADER_FILE_CACHE_"
+
         self.theme = theme
         try:
             self.folder = queryResourceDirectory(THEME_RESOURCE_NAME, theme)
@@ -76,8 +77,13 @@ class ThemeTemplateLoader(PageTemplateLoader):
         The format parameter determines will parse the file. Valid
         options are `xml` and `text`.
         """
-        if filename in self.template_cache:
-            return self.template_cache[filename]
+
+        try:
+            # Need to use ram cache for this to ensure ease of deployment of new pages
+            # And that redis doesn't like webpage layouts
+            return ram.get(self.THEME_TEMPLATE_CACHE + filename)
+        except KeyError:
+            pass
 
         try:
             data = self.read_file(filename)
@@ -85,12 +91,16 @@ class ThemeTemplateLoader(PageTemplateLoader):
             data = None
         if not data:
             filename = backup
-            if filename in self.template_cache:
-                return self.template_cache[filename]
+            try:
+                return ram.get(self.THEME_TEMPLATE_CACHE + filename)
+            except KeyError:
+                pass
             data = self.read_file(filename)
 
         template = PageTemplate(data)
-        self.template_cache[filename] = template
+
+        ram.set(self.THEME_TEMPLATE_CACHE + filename, template)
+
         return template
 
     __getitem__ = load
@@ -98,13 +108,15 @@ class ThemeTemplateLoader(PageTemplateLoader):
     def read_file(self, filename):
         if self.folder is None:
             return
-        if filename in self.file_cache:
-            return self.file_cache[filename]
+        try:
+            return ram.get(self.THEME_TEMPLATE_FILE_CACHE + filename)
+        except KeyError:
+            pass
         try:
             if isinstance(filename, unicode):
                 filename = filename.encode('utf8')
             result = unicode(self.folder.readFile(filename), 'utf8')
-            self.file_cache[filename] = result
+            ram.set(self.THEME_TEMPLATE_FILE_CACHE + filename, result)
             return result
         except (NotFound, IOError):
             raise KeyError
@@ -141,7 +153,6 @@ class _Transform(object):
     def __init__(self, name):
         # provide backup theme in case missing
         self.name = name or 'castle.theme'
-        self.template_cache = {}
 
     def __call__(self, request, result, context=None):
         if '++plone++' in request.ACTUAL_URL:
@@ -170,7 +181,7 @@ class _Transform(object):
         if isinstance(result, basestring):
             raw = True
         else:
-            self.rewrite(result, context.absolute_url() + '/')
+            self.rewrite(result, context_url + '/')
             result = result.tree
 
         theme_base_url = '%s/++%s++%s/index.html' % (
@@ -212,7 +223,28 @@ class _Transform(object):
         self.add_included_resources(dom.tree, portal, request)
         self.dynamic_grid(dom.tree)
 
+        self.authenticate(context, request, generate=True)
         return dom
+
+    def authenticate(self, context, request, generate=False):
+        '''
+        Automatically checks the authentication token if it exists.
+        If the token doesn't exist, automatically generates the token if generate is true.
+        '''
+        authenticator = getMultiAdapter((context, request), name=u"authenticator")
+        verify = authenticator.verify()
+
+        if generate and not verify:
+            url = addTokenToUrl(request.getURL(), req=request)
+            request.set('URL', url)
+            # addtoken to url only add _auth_token in environ.
+            # Need to check and manually add it in to a _authenticator variable.
+            if not hasattr(request, '_authenticator'):
+                request.set('_authenticator', request.environ.get('_auth_token'))
+            authenticator = getMultiAdapter((context, request), name=u"authenticator")
+            verify = authenticator.verify()
+
+        return verify
 
     def add_viewlet_tile(self, portal, request, el, name):
         tile = queryMultiAdapter(
@@ -241,8 +273,13 @@ class _Transform(object):
                                   'plone.app.standardtiles.stylesheets')
 
     def get_loader(self):
-        return ThemeTemplateLoader(
-            self.name, template_cache=self.template_cache)
+        themetemplateloader = "THEME_TEMPLATE_LOADER_OBJECT"
+        try:
+            return cache.get(themetemplateloader)
+        except KeyError:
+            ttl = ThemeTemplateLoader(self.name)
+            cache.set(themetemplateloader, ttl)
+            return ttl
 
     def get_raw_layout(self, context, loader=None):
         '''
@@ -373,20 +410,18 @@ class _Transform(object):
         '''
         Rewrite layout urls to be full public paths
         '''
+
         if hasattr(dom, 'tree'):
             tree = dom.tree
         else:
             tree = dom
-        for node in href_xpath(tree):
-            url = node.get('href')
-            if url:
-                url = join(base_url, url)
-                node.set('href', url)
-        for node in src_xpath(tree):
-            url = node.get('src')
-            if url:
-                url = join(base_url, url)
-                node.set('src', url)
+
+        for node in src_href_xpath(tree):
+            if node.get('href'):
+                node.set('href', join(base_url, node.get('href')))
+            elif node.get('src'):
+                node.set('src', join(base_url, node.get('src')))
+
         return tree
 
     def bbb(self, dom, result):
@@ -516,7 +551,6 @@ def getTransform(context, request):
 
         if not DevelopmentMode:
             cache.updateTransform(transform)
-
     return transform
 
 
@@ -654,6 +688,7 @@ def transformIterable(self, result, encoding):
     except etree.LxmlError:
         if not(DevelopmentMode):
             raise
+
     return result
 
 

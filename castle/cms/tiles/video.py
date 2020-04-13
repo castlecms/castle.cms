@@ -1,4 +1,5 @@
 from castle.cms import defaults
+from castle.cms import cache
 from castle.cms.tiles.base import ContentTile
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.autoform import directives as form
@@ -20,6 +21,16 @@ class VideoTile(ContentTile):
     default_display_fields = ()
 
     def render(self):
+        # Takes a long time to render so we try to first get a cache.
+        key = "CASTLE_CMS_VIDEO/%s/%s/%s" % (self.url, self.id, self.title)
+        try:
+            return cache.get(key)
+        except KeyError:
+            result = self._render()
+            cache.set(key, result, expire=60 * 10)
+            return result
+
+    def _render(self):
         return self.index()
 
     def get_video(self):

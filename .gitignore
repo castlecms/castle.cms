@@ -35,6 +35,9 @@ packages/
 pyvenv.cfg
 buildout-copy.cfg
 temp_resources/
+*~
+/lib64/
+lib64
 env
 env2
 dump.rdb

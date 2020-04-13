@@ -142,22 +142,11 @@ class MetaDataTile(Tile):
         self.root_url = portal_state.navigation_root_url()
 
         result = self.get_canonical_url()
+
         alsoProvides(self, IViewView)
-        for name, manager_name in head_viewlets.items():
-            manager = queryMultiAdapter(
-                (self.context, self.request, self),
-                IViewletManager, name=manager_name
-            )
-            viewlet = queryMultiAdapter(
-                (self.context, self.request, self, manager),
-                IViewlet, name=name
-            )
-            if viewlet is not None:
-                try:
-                    viewlet.update()
-                    result += viewlet.render()
-                except Exception:
-                    logger.warn('Error rendering head viewlet %s' % name, exc_info=True)
+
+        # map is a for loop but is faster and can be paralleled in the future
+        result += "".join(map(self.render, head_viewlets.items()))
         result += unidecode(self.get_basic_tags())
         result += unidecode(self.get_navigation_links())
         result += unidecode(self.get_ld_data())
@@ -165,3 +154,22 @@ class MetaDataTile(Tile):
         result += unidecode(self.get_search_link())
         result += unidecode(self.get_printcss_link())
         return u'<html><head>%s</head></html>' % result
+
+    def render(self, head_viewlets):
+        name, manager_name = head_viewlets
+        manager = queryMultiAdapter(
+            (self.context, self.request, self),
+            IViewletManager, name=manager_name
+        )
+        viewlet = queryMultiAdapter(
+            (self.context, self.request, self, manager),
+            IViewlet, name=name
+        )
+        if viewlet is not None:
+            try:
+                viewlet.update()
+                result = viewlet.render()
+            except Exception:
+                logger.warn('Error rendering head viewlet %s' % name, exc_info=True)
+                result = ''
+        return result
