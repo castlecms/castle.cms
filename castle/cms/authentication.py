@@ -152,7 +152,6 @@ class Authenticator(object):
             pass
         self.set_login_session_id()
 
-
     def authorize_2factor(self, username, code, offset=0):
         if not code:
             return False

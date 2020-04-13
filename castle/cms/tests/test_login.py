@@ -53,7 +53,7 @@ class TestTwoFactor(unittest.TestCase):
             portal_memberdata.manage_addProperty(
                 id="reset_password_time", value=time.time(), type="float")
         logout()
-        # mock the session id and login session cokie
+        # mock the session id and login session cookie
         self.request.cookies['castle_session_id'] = 'test_session'
         self.request.cookies['__sl__'] = 'test_login'
         self.auth = self.authenticator = getMultiAdapter(

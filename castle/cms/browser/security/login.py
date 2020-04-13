@@ -279,11 +279,11 @@ The user requesting this access logged this information:
     def send_authorization(self):
         auth_type = self.request.form.get('authType') or 'email'
         if auth_type == 'email':
-            sent = self.send_auth_email()
+            self.send_auth_email()
         elif auth_type == 'sms':
-            sent = self.send_auth_text()
+            self.send_auth_text()
 
-        # sent is false when a root acl_user tries to log in to a site
+        # send_* return false when a root acl_user tries to log in to a site
         # with 2factor enabled.  They need to log in at the root.
         # For now, responding the same regardless for security reasons.
 
