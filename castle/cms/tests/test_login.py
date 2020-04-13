@@ -53,12 +53,13 @@ class TestTwoFactor(unittest.TestCase):
             portal_memberdata.manage_addProperty(
                 id="reset_password_time", value=time.time(), type="float")
         logout()
+        # mock the session id and login session cokie
         self.request.cookies['castle_session_id'] = 'test_session'
         self.request.cookies['__sl__'] = 'test_login'
         self.auth = self.authenticator = getMultiAdapter(
             (self.portal, self.request), IAuthenticator)
-        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
-        # mock the session id cookie and set to check credentials state
+        user = api.user.get(username=TEST_USER_NAME)
+        user.setMemberProperties(mapping={'email': 'foo@bar.com', })
 
     def test_authentication_adapter(self):
         getMultiAdapter((self.portal, self.request), IAuthenticator)
@@ -85,9 +86,7 @@ class TestTwoFactor(unittest.TestCase):
     @responses.activate
     def test_send_text_message_with_code(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-        self.auth.set_secure_flow_state(self.auth.REQUESTING_AUTH_CODE)
-
+        view()  # REQUESTING_AUTH_CODE state
         responses.add(
             responses.POST,
             "https://api.plivo.com/v1/Account/foobar_auth_id/Message/",
@@ -117,15 +116,12 @@ class TestTwoFactor(unittest.TestCase):
 
     def test_send_email_with_code(self):
         view = SecureLoginView(self.portal, self.request)
-        view()
-        self.auth.set_secure_flow_state(self.auth.REQUESTING_AUTH_CODE)
+        view()  # REQUESTING_AUTH_CODE state
 
         self.request.form.update({
             'authType': 'email',
             'username': TEST_USER_NAME
         })
-        user = api.user.get(username=TEST_USER_NAME)
-        user.setMemberProperties(mapping={'email': 'foo@bar.com', })
 
         self.request.REQUEST_METHOD = 'POST'
         json.loads(view())
@@ -136,9 +132,11 @@ class TestTwoFactor(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         view()  # REQUESTING_AUTH_CODE state
         self.request.form.update({
+            'authType': 'email',
             'username': TEST_USER_NAME
         })
         self.request.REQUEST_METHOD = 'POST'
+        view = SecureLoginView(self.portal, self.request)
         view()  # CHECK_CREDENTIALS state
         code = cache.get(view.auth.get_2factor_code_key(TEST_USER_NAME))['code']
         self.request.form.update({
@@ -155,9 +153,11 @@ class TestTwoFactor(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         view()  # REQUESTING_AUTH_CODE state
         self.request.form.update({
+            'authType': 'email',
             'username': TEST_USER_NAME
         })
         self.request.REQUEST_METHOD = 'POST'
+        view = SecureLoginView(self.portal, self.request)
         view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
@@ -172,6 +172,7 @@ class TestTwoFactor(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         view()  # REQUESTING_AUTH_CODE state
         self.request.form.update({
+            'authType': 'email',
             'username': TEST_USER_NAME
         })
         self.request.REQUEST_METHOD = 'POST'
@@ -189,6 +190,7 @@ class TestTwoFactor(unittest.TestCase):
         view = SecureLoginView(self.portal, self.request)
         view()  # REQUESTING_AUTH_CODE state
         self.request.form.update({
+            'authType': 'email',
             'username': TEST_USER_NAME
         })
         self.request.REQUEST_METHOD = 'POST'
@@ -245,7 +247,6 @@ class TestTwoFactor(unittest.TestCase):
         self.request.REQUEST_METHOD = 'POST'
         view()  # CHECK_CREDENTIALS state
         code = cache.get(view.auth.get_2factor_code_key(TEST_USER_NAME))['code']
-        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD,
@@ -273,7 +274,7 @@ class TestTwoFactor(unittest.TestCase):
         registry['plone.two_factor_enabled'] = False
 
         view = SecureLoginView(self.portal, self.request)
-        view()
+        view()  # CHECK_CREDENTIALS state
 
         self.request.form.update({
             'username': TEST_USER_NAME,
@@ -294,7 +295,7 @@ class TestTwoFactor(unittest.TestCase):
         registry['plone.two_factor_enabled'] = False
 
         view = SecureLoginView(self.portal, self.request)
-        view()
+        view()  # CHECK_CREDENTIALS state
 
         self.request.form.update({
             'username': TEST_USER_NAME,
@@ -343,7 +344,7 @@ class TestTwoFactor(unittest.TestCase):
         self.request.environ['HTTP_CF_IPCOUNTRY'] = 'AF'
 
         view = SecureLoginView(self.portal, self.request)
-        view()
+        view()  # CHECK_CREDENTIALS state
 
         self.request.form.update({
             'username': TEST_USER_NAME,
@@ -364,9 +365,9 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         self.request = self.layer['request']
         logout()
         self.request.cookies['castle_session_id'] = 'test_session'
+        self.request.cookies['__sl__'] = 'test_login'
         self.auth = self.authenticator = getMultiAdapter(
             (self.portal, self.request), IAuthenticator)
-        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
 
     def test_setting_disabled(self):
         api.portal.set_registry_record(
@@ -397,7 +398,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
             value=(unicode(''),)
         )
         view = SecureLoginView(self.portal, self.request)
-        view()  # call the view once to set initial state
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
@@ -420,7 +421,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
             )
         )
         view = SecureLoginView(self.portal, self.request)
-        view()  # call the view once to set initial state
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
@@ -439,7 +440,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
             value=()
         )
         view = SecureLoginView(self.portal, self.request)
-        view()  # call the view once to set initial state
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
@@ -499,13 +500,13 @@ class TestPwexpiry(unittest.TestCase):
         )
         logout()
         self.request.cookies['castle_session_id'] = 'test_session'
+        self.request.cookies['__sl__'] = 'test_login'
         self.auth = self.authenticator = getMultiAdapter(
             (self.portal, self.request), IAuthenticator)
-        self.auth.set_secure_flow_state(self.auth.CHECK_CREDENTIALS)
 
     def test_initial_login(self):
         view = SecureLoginView(self.portal, self.request)
-        view()  # call the view once to set initial state
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
@@ -520,7 +521,7 @@ class TestPwexpiry(unittest.TestCase):
             'password_date': DateTime('01/10/2011')
         })
         view = SecureLoginView(self.portal, self.request)
-        view()
+        view()  # CHECK_CREDENTIALS state
         update_password_expiry(self.portal)
         self.request.form.update({
             'username': TEST_USER_NAME,
@@ -540,7 +541,7 @@ class TestPwexpiry(unittest.TestCase):
             value=[editableUser.getId().decode('utf-8')]
         )
         view = SecureLoginView(self.portal, self.request)
-        view()  # call the view once to set initial state
+        view()  # CHECK_CREDENTIALS state
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
