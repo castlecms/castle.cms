@@ -56,16 +56,23 @@ class PurgeManager(object):
            for url in urls:
 
                if len(returnurl) > 30:
-                   self.purge(returnurl)
+                   response = self.purge(returnurl)
+                   #If the check isn't 200 then something went wrong with the  
+                   if response is not 200:
+                       error_handling(response, returnurl)
                    returnurl = []
 
                returnurl.append(url)
 
            if len(returnurl) < 30 and len(returnurl) > 0:
-                self.purge(returnurl)
+                response = self.purge(returnurl)
+                if response is not 200:
+                    error_handling(response, returnurl)
        else:
-           return self.purge(urls)
-
+           response = self.purge(urls)
+           if response is not 200:
+               error_handling(response, returnurl)
+           
     def get_theme_urls(self):
         urls = []
         themes = getAvailableThemes()
@@ -88,6 +95,10 @@ class PurgeManager(object):
                 urls.append(self.public_url + theme.disabled_bundles)
         return urls
 
-        
+    def error_handling(self, response, urls):
+        if response is 200:
+            return True
+        if response is 401:
+            pass
 def get():
     return PurgeManager()
