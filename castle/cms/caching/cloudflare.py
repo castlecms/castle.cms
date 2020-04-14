@@ -51,10 +51,22 @@ class PurgeManager(object):
 
     def purge_themes(self):
        urls = self.get_theme_urls()
-       return self.purge(urls)
+       if len(urls) > 30:
+           returnurl = []
+           for url in urls:
+
+               if len(returnurl) > 30:
+                   self.purge(returnurl)
+                   returnurl = []
+
+               returnurl.append(url)
+
+           if len(returnurl) < 30 and len(returnurl) > 0:
+                self.purge(returnurl)
+       else:
+           return self.purge(urls)
 
     def get_theme_urls(self):
-        import pdb; pdb.set_trace()
         urls = []
         themes = getAvailableThemes()
         for theme in themes:
@@ -70,6 +82,10 @@ class PurgeManager(object):
                 urls.append(self.public_url + theme.tinymce_content_css)
             if theme.tinymce_styles_css is not '':
                 urls.append(self.public_url + theme.tinymce_styles_css)
+            for bundle in theme.enabled_bundles:
+                urls.append(self.public_url + theme.enabled_bundles)
+            for bundle in theme.disabled_bundles:
+                urls.append(self.public_url + theme.disabled_bundles)
         return urls
 
         
