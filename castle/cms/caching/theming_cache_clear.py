@@ -22,7 +22,7 @@ class CastleCmsThemingCacheReset(ThemingPolicy):
     def invalidateOtherCaches(self):
         self._reset_other_cache()
         self.invalidateCache()
-    
+
     def _reset_other_cache(self):
         """
          Clears out the redis cache, the ramcache.
@@ -30,44 +30,49 @@ class CastleCmsThemingCacheReset(ThemingPolicy):
         """
 
         if redis_installed() is not False:
-            logger.info("Resetting redis cache")
-            redis = get_client()
-            redis.reset()
+            try:
+                logger.info("Resetting redis cache")
+                redis = get_client()
+                redis.reset()
+            except Exception as ex:
+                logger.warning("Something went wrong with the redis cache reset %s" % ex)
         else:
             logger.info("Redis not installed, skipping redis cache reset")
 
-        logger.info("Resetting ram cache")
-        ram.reset()
+        try:
+            logger.info("Resetting ram cache")
+            ram.reset()
+        except Exception as ex:
+            logger.warning("Something went wrong with reseting the ram cache. %s" %ex)
 
-        logger.info("Resetting ZODB cache")
-        
         try:
             if getZODBThemes() == []:
-                logger.info("No Themes in ZODB Skipping")
+                pass
             else:
+                logger.info("Resetting ZODB cache")
                 resetCaches()
         except Exception as ex:
             logger.warning("Something went wrong with ZODB resetCaches()" \
-            "%s" % ex)
+                           "%s" % ex)
 
-        logger.info("Resetting Cloudfare Cache")
         try:
             purger = cloudflare.get()
-            purger.purge_themes()
             if purger.enabled:
-                pass
+                logger.info("Resetting Cloudfare Cache")
+                purger.purge_themes()
             else:
-                logger.info("Cloudfare is not enabled, "
-                "if it is meant to be enabled please check the CastleCMS cloudfare settings")
-        except:
-            logger.info("Unable to reset Cloudfare Cache")
+                logger.info("Cloudfare is not enabled, " \
+                            "if it is meant to be enabled please check the CastleCMS cloudfare settings")
+        except Exception as ex:
+            logger.info("Unable to reset Cloudfare Cache %s" %ex)
 
-        logger.info("Resetting Varnish Cache")
         try:
             purger = varnish.get()
             if(purger.enabled):
+                logger.info("Resetting Varnish Cache")
                 purger.purge_themes()
-            logger.info("Varnish is not enabled, "
-                        "If it is meant to be enabled please check the CastleCMS varnish settings")
-        except:
-            logger.info("Unable to reset Varnish Cache")
+            else:
+                logger.info("Varnish is not enabled, " \
+                            "If it is meant to be enabled please check the CastleCMS varnish settings")
+        except Exception as ex:
+            logger.info("Unable to reset Varnish Cache %s" %ex)

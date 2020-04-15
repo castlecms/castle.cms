@@ -3,12 +3,14 @@ from plone.app.theming.utils import getAvailableThemes
 from plone.app.theming.utils import getTheme
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from logging import getLogger
 
 import json
 import requests
 
+logger = getLogger(__name__)
 
-class PurgeManager(object):
+class PurgeManager(object):    
     def __init__(self):
         registry = getUtility(IRegistry)
         self.api_key = registry.get('castle.cf_api_key', None)
@@ -39,15 +41,21 @@ class PurgeManager(object):
         urls.append('%s/%s' % (self.public_url.rstrip('/'), path.lstrip('/')))
         return urls
 
-    def purge(self, urls):
+    def purge(self, urls, unsafe = False):
         headers = {
             'X-Auth-Email': self.email,
             "X-Auth-Key": self.api_key,
             'Content-Type': 'application/json'
         }
-        return requests.delete(
+
+        response = requests.delete(
             'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
             headers=headers, data=json.dumps({'files': urls}))
+
+        if unsafe is False and response.status_code is not 200:
+            self.error_handling(response, urls)
+        else:
+            return response
 
     def purge_themes(self):
        urls = self.get_theme_urls()
@@ -57,21 +65,15 @@ class PurgeManager(object):
 
                if len(returnurl) > 30:
                    response = self.purge(returnurl)
-                   #If the check isn't 200 then something went wrong with the  
-                   if response is not 200:
-                       error_handling(response, returnurl)
                    returnurl = []
 
                returnurl.append(url)
 
            if len(returnurl) < 30 and len(returnurl) > 0:
                 response = self.purge(returnurl)
-                if response is not 200:
-                    error_handling(response, returnurl)
        else:
            response = self.purge(urls)
-           if response is not 200:
-               error_handling(response, returnurl)
+       return response
            
     def get_theme_urls(self):
         urls = []
@@ -96,9 +98,35 @@ class PurgeManager(object):
         return urls
 
     def error_handling(self, response, urls):
-        if response is 200:
-            return True
-        if response is 401:
-            pass
+        if response.status_code is 200:
+            return response
+        elif response.status_code is 429:
+            logger.warning("Too Many Requests, you have made too many requests to cloudflare.  " \
+                           "Please wait for 24 hours until calling Cloudflare again.")
+        elif response.status_code is 403:
+            logger.warning("Authentication error.  Please check authentication settings.")
+        elif response.status_code is 401:
+            logger.warning("Authorization error, the user doesn't have proper credentials")
+        elif response.status_code is 400:
+            logger.warning("One or more of the urls are invalid. " \
+                           "Will now be going through the url list " \
+                           "one url at a time to purge the valid urls %s" % urls)
+            self.error_400_handling(urls)
+            return response
+        else:
+            logger.warning("Some other error occurred.  " \
+                           "Please check https://api.cloudflare.com/#getting-started-responses " \
+                           "for possible proper response to the error. %s; %s"  % (response, urls))
+
+    def error_400_handling(self, urls):
+        failed_urls = 0
+        for url in urls:
+            response = self.purge(urls, unsafe = True)
+            if response.status_code is 400:
+                failed_urls += 1
+        if failed_urls == len(urls):
+            logger.warning("Warning, all of the urls have failed please check on the cloudflare settings.")
+        return response
+        
 def get():
     return PurgeManager()
