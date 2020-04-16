@@ -12,7 +12,7 @@ logger = getLogger(__name__)
 class VarnishPurgeManager(object):
     def __init__(self):
         registry = getUtility(IRegistry)
-        self.port = registry.get('castle.va_port', 6081)
+        self.port = registry.get('castle.va_port', None)
         self.address = registry.get('castle.va_address', None)
         self.enabled = (
             self.address is not None)
@@ -41,10 +41,16 @@ class VarnishPurgeManager(object):
             
     def generate_website(self):
         if self.port is None:
-            self.address = "https://%s%s" % (self.address, self.site_path)
+            if self.address.find("https://") is -1:
+                self.address = "https://%s%s" % (self.address, self.site_path)
+            else:
+                self.address = "%s%s" % (self.address, self.site_path)
         else:
-            self.address = "https://%s:%s%s" % (self.address, self.port, self.site_path)
-
+            if self.address.find("https://") is -1:
+                self.address = "https://%s:%s%s" % (self.address, self.port, self.site_path)
+            else:
+                self.address = "%s%s" % (self.address, self.port, self.site_path)
+                
     def error_handling(self, response):
         if response.status_code is 401:
                 logger.warning("Lack of access, please check the acl theme_purge to ensure your ip is accepted")
