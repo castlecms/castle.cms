@@ -597,7 +597,6 @@ class Policy(ThemingPolicy):
         cache_reset = CastleCmsThemingCacheReset(self)
         cache_reset = getAdapter(cache_reset, IThemingPolicy)
         cache_reset.invalidateOtherCaches()
-        
 
 
 def isPloneTheme(settings):

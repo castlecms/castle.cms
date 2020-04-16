@@ -81,6 +81,7 @@ class RedisAdapter(AbstractDict):
     def reset(self):
         self.client.flushdb()
 
+
 def get_client(fun_name=''):
     server = os.environ.get('REDIS_SERVER', None)
     if server is None:
