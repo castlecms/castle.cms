@@ -9,7 +9,9 @@
                         effective video/effective|nothing;
                         url video/absolute_url|nothing;">
 
-    <h3 tal:condition="python: 'title' in df and video"><a href="${url}">${video/Title}</a></h3>
+    <h3 tal:condition="python: 'title' in df and video">
+      <a href="${url}/view">${video/Title}</a>
+    </h3>
     <div class="video-inner" tal:condition="python: not tile_youtube_url and video">
       <div class="video-inner-container ${python: youtube_url and 'youtube' or ''}"
         tal:define="content_type video/file/contentType|nothing;
@@ -47,7 +49,8 @@
     </tal:desc>
     <p class="transcript"
         tal:condition="python: 'transcript' in df and video">
-      <a href="${video/absolute_url}/view" aria-label="Read Transcript / Download ${video/Title}">Transcript / Download</a>
+      <a tal:condition="not: youtube_url" href="${video/absolute_url}/view" aria-label="Read Transcript / Download ${video/Title}">Transcript / Download</a>
+      <a tal:condition="youtube_url" href="${video/absolute_url}/view" aria-label="Read Transcript / View ${video/Title} Source">Transcript / Visit Video Source</a>
     </p>
   </tal:defs>
   </div>

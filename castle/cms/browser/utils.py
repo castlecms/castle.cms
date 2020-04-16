@@ -230,6 +230,17 @@ class Utils(BrowserView):
             return
 
         return self.clean_youtube_url(url)
+    
+    def get_external_youtube_url(self, obj):
+        if isinstance(obj, basestring):
+            url = obj
+        else:
+            try:
+                url = obj.youtube_url
+            except AttributeError:
+                return
+
+        return url
 
     def get_uid(self, obj):
         return IUUID(obj, None)
