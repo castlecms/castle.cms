@@ -46,7 +46,7 @@ install:
   - cp -rf buildout-cache/downloads/* downloads/
   - pip install -r requirements.txt
   - if [ "$TEST_SUITE" == "unit" ]; then
-    pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0;
+    pip install pyflakes==2.1.1 pycodestyle==2.5.0 flake8==3.7.9;
     fi
   - if [ "$TEST_SUITE" == "upgrades" ]; then
     pip install requests;
