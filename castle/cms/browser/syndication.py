@@ -54,7 +54,7 @@ class IFeedSettings(IBaseFeedSettings):
     podcast_image = schema.List(
         title=u"Podcast Image",
         description=u"Image to appear on iTunes",
-        required=True,
+        required=False,
         default=[],
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
