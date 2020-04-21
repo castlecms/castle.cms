@@ -228,7 +228,6 @@ class Utils(BrowserView):
 
         if url is None:
             return
-
         return self.clean_youtube_url(url)
 
     def get_uid(self, obj):
