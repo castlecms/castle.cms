@@ -4,8 +4,9 @@ Changelog
 2.6.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fix broken links for youtube video
+- Add Ability to select custom itunes image per syndication folder
+- Don't error on missing fragment used, rendering warning
 
 2.6.6 (2020-04-13)
 ------------------
