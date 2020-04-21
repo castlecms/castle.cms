@@ -91,6 +91,9 @@ class Utils(BrowserView):
             return val.getObject()
         if not val:
             return None
+        if isinstance(val, list) and len(val) > 0:
+            # if it's a list let's try to use the first value
+            val = val[0]
         if isinstance(val, basestring):
             if val[0] == '/':
                 # it's a path
@@ -230,7 +233,7 @@ class Utils(BrowserView):
             return
 
         return self.clean_youtube_url(url)
-    
+
     def get_external_youtube_url(self, obj):
         if isinstance(obj, basestring):
             url = obj
