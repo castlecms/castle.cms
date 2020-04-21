@@ -95,9 +95,12 @@ def afterTraversal(event):
     if api.user.is_anonymous():
         if hasattr(context, 'UID'):
             if not api.portal.get_registry_record('plone.allow_public_in_private_container', default=False):
-                brain = api.portal.get_tool('portal_catalog')(UID=context.UID())[0]
-                if getattr(brain, 'has_private_parents', False):
-                    raise NotFound
+                try:
+                    brain = api.portal.get_tool('portal_catalog')(UID=context.UID())[0]
+                    if getattr(brain, 'has_private_parents', False):
+                        raise NotFound
+                except IndexError:
+                    pass  # brain 0 was not found by its UID
 
     cache_tags = set([
         getattr(context, 'portal_type', '').lower().replace(' ', '-'),

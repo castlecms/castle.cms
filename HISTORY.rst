@@ -1,7 +1,42 @@
 Changelog
 =========
 
-2.6.2 (unreleased)
+2.6.7 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
+2.6.6 (2020-04-13)
+------------------
+
+- Sticky footer updates
+- Secure login updates
+
+
+2.6.5 (2020-03-27)
+------------------
+
+- Don't show overview page without host header.
+  [lucid-0]
+- Pass on private_parents check when brain not found
+  [lucid-0]
+
+2.6.4 (2020-03-26)
+------------------
+
+- go to zope root rather than dashboard for root logins coming from logged_out
+  [lucid-0]
+
+
+2.6.3 (2020-03-25)
+------------------
+
+- allow people logging in at zope root to go straight to /manage
+  [lucid-0]
+
+
+2.6.2 (2020-03-25)
 ------------------
 
 - Remove Audio type from metadata stripping on upload (exiftool does not support)

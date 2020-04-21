@@ -34,7 +34,7 @@
       </div>
   </div>
 
-  <div tal:condition="view/is_audiotype|nothing" class="foobar">
+  <div tal:condition="view/is_audiotype|nothing">
     <div tal:attributes="
       data-tile string:./@@castle.cms.audiotile?audio_files:list=${context/@@uuid};" />
       <div class="transcript" tal:condition="context/transcript|nothing">
