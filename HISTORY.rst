@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.7 (unreleased)
+2.6.7 (2020-04-21)
 ------------------
 
 - Fix broken links for youtube video
