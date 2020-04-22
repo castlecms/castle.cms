@@ -1,0 +1,45 @@
+<div id="plone-lock-status"
+     i18n:domain="plone"
+     tal:define="locked view/info/is_locked_for_current_user;
+                 stealable view/lock_is_stealable;
+                 lock_details view/lock_info;">
+  <tal:block condition="locked">
+    <dl class="portalMessage info">
+      <dt i18n:translate="label_locked">Locked</dt>
+      <dd>
+        <tal:author-page
+            tal:condition="lock_details/author_page"
+            i18n:translate="description_webdav_locked_by_author_on_time">
+          This item was locked by
+          <a i18n:name="author"
+             tal:content="lock_details/fullname"
+             tal:attributes="href lock_details/author_page" />
+          <span i18n:name="time"
+                tal:content="lock_details/time_difference" /> ago.
+        </tal:author-page>
+        <tal:no-author-page
+            tal:condition="not:lock_details/author_page"
+            i18n:translate="description_webdav_locked_by_author_on_time">
+          This item was locked by
+          <span i18n:name="author"
+                tal:content="lock_details/fullname" />
+          <span i18n:name="time"
+                tal:content="lock_details/time_difference" /> ago.
+        </tal:no-author-page>
+        <form tal:condition="stealable"
+              tal:attributes="action string:${context/absolute_url}/@@plone_lock_operations/force_unlock"
+              method="POST">
+          <span i18n:translate="description_webdav_locked_steal">
+            If you are certain this user has abandoned the object,
+            you may
+            <input type="submit"
+                   value="Unlock"
+                   i18n:name="unlock_button"
+                   i18n:attributes="value" />
+            the object. You will then be able to edit it.
+          </span>
+        </form>
+      </dd>
+    </dl>
+  </tal:block>
+</div>
