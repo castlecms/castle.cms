@@ -10,10 +10,10 @@ from zope.security import checkPermission
 class LockInfoTile(Tile):
     def __call__(self):
         if checkPermission("cmf.ModifyPortalContent", self.context) and \
-        ITTWLockable.providedBy(self.context):
+           ITTWLockable.providedBy(self.context):
             viewlet = LockInfoViewlet(self.context, self.request, None, None)
             return viewlet.render()
-        
+
 
 class GlobalStatusMessageTile(common.GlobalStatusMessageTile):
 
