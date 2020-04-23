@@ -294,7 +294,7 @@
     name="plone.app.standardtiles.lockinfo"
     class=".common.LockInfoTile"
     for="*"
-    permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
     />
   <plone:tile
