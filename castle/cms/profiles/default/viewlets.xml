@@ -22,12 +22,4 @@
   <viewlet name="plone.colophon"/>
   <viewlet name="plone.site_actions"/>
  </hidden>
- <hidden manager="plone.abovecontent" skinname="Plone Default">
-   <viewlet name="plone.lockinfo" />
- </hidden>
- <order manager="plone.abovecontent" skinname="castle"
-           based-on="Plone Default">
-   <viewlet name="castle.cms.CastleCMSLockInfo"
-            insert-before="*" />
- </order>
 </object>

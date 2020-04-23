@@ -14,15 +14,6 @@
       template="social_tags.pt"
       />
 
-    <browser:viewlet
-      name="castle.cms.CastleCMSLockInfo"
-      manager="plone.app.layout.viewlets.interfaces.IAboveContent"
-      class="castle.cms.browser.viewlets.lockinfo.CastleCMSLockInfo"
-      for="plone.locking.interfaces.ITTWLockable"
-      layer="castle.cms.interfaces.ICastleLayer"
-      permission="zope2.View"
-      />
-
     <!-- Render the social media body tags -->
     <browser:viewlet
       name="plone.abovecontenttitle.socialtags"
