@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 import StringIO
 from time import time
-from urllib.parse import urlparse, urlsplit, urlunsplit, quote, quote_plus
+from urllib.parse import urlsplit, urlunsplit, quote, quote_plus
 
 import botocore
 import boto3
