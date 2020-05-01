@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.8 (unreleased)
+2.6.8 (2020-04-30)
 ------------------
 
 - update archival/aws links
