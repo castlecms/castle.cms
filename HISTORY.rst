@@ -4,7 +4,8 @@ Changelog
 2.6.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- update archival/aws links
+- stop excessive logging about tile lockinfo
 
 
 2.6.7 (2020-04-21)
