@@ -50,8 +50,10 @@ class TestUtils(unittest.TestCase):
     def test_get_paste_data(self):
         login(self.portal, TEST_USER_NAME)
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
-        api.content.create(type='Document', id='newpage',
+        newpage = api.content.create(type='Document', id='newpage',
                            container=self.portal)
+        api.content.transition(obj=newpage, to_state='published')
+
         cp = (0, [
             ('', 'plone', 'newpage')
         ])
