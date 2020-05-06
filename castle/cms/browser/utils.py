@@ -5,6 +5,7 @@ from castle.cms import cache
 from castle.cms import utils
 from castle.cms.behaviors.location import ILocation
 from castle.cms.browser.nextprev import NextPrevious
+from castle.cms.browser.security.login import SecureLoginView
 from castle.cms.interfaces import IUtils
 from castle.cms.vocabularies import LocationsVocabulary
 from DateTime import DateTime
@@ -52,6 +53,10 @@ def _clean_youtube_id(val):
 class Utils(BrowserView):
     implements(IUtils)
 
+    def __init__(self, context, request):
+        super(Utils, self).__init__(context, request)
+        self.secure_login_view = SecureLoginView(context, request)
+
     @property
     @memoize
     def registry(self):
@@ -71,9 +76,6 @@ class Utils(BrowserView):
     def types_use_view_action(self):
         return frozenset(
             self.registry.get('plone.types_use_view_action_in_listings', []))
-
-    def get_registry_value(self, name, default=None):
-        return self.registry.get(name, default)
 
     def get_object_url(self, obj):
         if obj is None:
@@ -421,8 +423,21 @@ class Utils(BrowserView):
     def normalize(self, val):
         return self.normalizer.normalize(val)
 
+    def get_registry_value(self, name, default=None):
+        GENERIC_SITE_TITLE = 'CastleCMS'
+
+        if name == 'plone.site_title' and self.secure_login_view.scrub_backend():
+            return GENERIC_SITE_TITLE
+        else:
+            return self.registry.get(name, default)
+
     def get_logo(self):
-        return getSiteLogo()
+        BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+
+        if self.secure_login_view.scrub_backend():
+            return BLANK_IMAGE
+        else:
+            return getSiteLogo()
 
     def get_next_prev(self, obj):
         try:
