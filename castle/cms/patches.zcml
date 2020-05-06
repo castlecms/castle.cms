@@ -6,6 +6,13 @@
     xmlns:monkey="http://namespaces.plone.org/monkey"
     i18n_domain="castle.cms">
 
+    <monkey:patch
+    description="Catalog search results don't return hits with private parents unless allow_public_in_private_folder is True"
+    class="Products.CMFPlone.CatalogTool.CatalogTool"
+    original="searchResults"
+    replacement=".patches.private_parents_search_results"
+    />
+
   <monkey:patch
     description=""
     class="plone.app.mosaic.widget.HideSiteLayoutFields"
