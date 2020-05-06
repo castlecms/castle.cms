@@ -1,19 +1,24 @@
 import logging
+import six
 from time import time
 
 from AccessControl import getSecurityManager
+from AccessControl import ClassSecurityInfo
+from AccessControl.Permissions import search_zcatalog as SearchZCatalog
 from Acquisition import aq_parent
 from castle.cms import cache
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
+from DateTime import DateTime
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
 from plone.keyring.interfaces import IKeyManager
+from plone.registry.interfaces import IRegistry
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from ZODB.POSException import ConnectionStateError
@@ -21,9 +26,51 @@ from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
-
+from Products.CMFCore.utils import _getAuthenticatedUser
+from Products.CMFCore.utils import _checkPermission
+from Products.CMFCore.permissions import AccessInactivePortalContent
+from Products.ZCatalog.ZCatalog import ZCatalog
+from zope.component import getUtility
 
 logger = logging.getLogger('castle.cms')
+security = ClassSecurityInfo()
+
+@security.protected(SearchZCatalog)
+def private_parents_search_results(self, REQUEST=None, **kw):
+
+    kw = kw.copy()
+    show_inactive = kw.get('show_inactive', False)
+    if isinstance(REQUEST, dict) and not show_inactive:
+        show_inactive = 'show_inactive' in REQUEST
+
+    user = _getAuthenticatedUser(self)
+    kw['allowedRolesAndUsers'] = self._listAllowedRolesAndUsers(user)
+
+    if not show_inactive \
+        and not _checkPermission(AccessInactivePortalContent, self):
+        kw['effectiveRange'] = DateTime()
+
+    registry = getUtility(IRegistry)
+    if not registry.get('plone.allow_public_in_private_container', False):
+        kw['has_private_parents'] = False
+        
+    # filter out invalid sort_on indexes
+    sort_on = kw.get('sort_on') or []
+    if isinstance(sort_on, six.string_types):
+        sort_on = [sort_on]
+    valid_indexes = self.indexes()
+    try:
+        sort_on = [idx for idx in sort_on if idx in valid_indexes]
+    except TypeError:
+        # sort_on is not iterable
+        sort_on = []
+    if not sort_on:
+        kw.pop('sort_on', None)
+    else:
+        kw['sort_on'] = sort_on
+
+    return ZCatalog.searchResults(self, REQUEST, **kw)
+
 
 
 def HideSiteLayoutFields_update(self):
