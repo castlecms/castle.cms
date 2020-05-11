@@ -4,7 +4,7 @@ Changelog
 2.6.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- try and ensure that search.js is loaded after everything else is loaded on the page.
 
 
 2.6.8 (2020-04-30)
