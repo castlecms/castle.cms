@@ -7,6 +7,8 @@ from castle.cms.tiles.views import TileViewsSource
 from castle.cms.widgets import FocalPointSelectFieldWidget
 from castle.cms.widgets import PreviewSelectFieldWidget
 from plone.autoform import directives as form
+from plone.subrequest import subrequest
+from plone import api
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
@@ -40,17 +42,32 @@ class SimpleView(BaseTileView):
     index = ViewPageTemplateFile('templates/existing/simple.pt')
     tile_name = DISPLAY_TYPE_KEY
 
-
-    def populate(self):
-        import pdb; pdb.set_trace
-    
     @property
+    def populate(self):
+        import pdb; pdb.set_trace()
+        resp = self.has_recaptcha()
+        if not resp is False:
+            return resp
+        
+        text = self.tile.content.content
+        
+        return text
+
     def has_recaptcha(self):
         try:
-            import pdb; pdb.set_trace()
             if 'collective.easyform.fields.ReCaptcha' in \
                     self.tile.content.fields_model:
-                return True
+                return self.redirect_captcha
+            else:
+                return False
+        except Exception:
+            return False
+
+    def redirect_captcha(self):
+        resp = subrequest('https://www.google.com/recaptcha/api.js')
+        try:
+            if not resp.getStatus() == 404:
+                return resp
             else:
                 return False
         except Exception:

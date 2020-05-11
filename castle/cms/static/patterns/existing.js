@@ -18,8 +18,8 @@ define([
     loadContent: function() {
       var that = this;
       $('.pat-existing').each(function() {
-        var main_content = $(this).attr('content_url') + ' #main-content';
-        var has_recaptcha = $(this).attr('recaptcha');
+        var main_content = $(this).attr('populate') + ' #main-content';
+        var has_recaptcha = $(this).attr('populate');
         function check_recaptcha() {
           if (has_recaptcha === "True") {
             require(['https://www.google.com/recaptcha/api.js']);

@@ -52,6 +52,7 @@ class ArchiveManager(object):
     implements(IArchiveManager)
 
     def getContentToArchive(self, delta=0):
+        import pdb; pdb.set_trace()
         days = api.portal.get_registry_record(
             'castle.archival_number_of_days') - delta
         types = api.portal.get_registry_record(
