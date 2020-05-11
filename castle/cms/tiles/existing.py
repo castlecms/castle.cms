@@ -40,9 +40,14 @@ class SimpleView(BaseTileView):
     index = ViewPageTemplateFile('templates/existing/simple.pt')
     tile_name = DISPLAY_TYPE_KEY
 
+
+    def populate(self):
+        import pdb; pdb.set_trace
+    
     @property
     def has_recaptcha(self):
         try:
+            import pdb; pdb.set_trace()
             if 'collective.easyform.fields.ReCaptcha' in \
                     self.tile.content.fields_model:
                 return True
