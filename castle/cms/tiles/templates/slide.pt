@@ -25,10 +25,10 @@
     <!-- Full Background Image Slide -->
     <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-image'">
       <div tal:condition="view/data/image">
-        Image slide
+        Background Image slide
       </div>
       <div tal:condition="not: view/data/image">
-        Image slide with no image selected.
+        Background Image slide with no image selected.
       </div>
     </div>
 
