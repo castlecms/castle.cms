@@ -3,9 +3,11 @@ p {
 }
 
 .box-row {
-  background-color: rgba(0, 0, 0, 0.2);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
   padding: 0 20px;
   border-radius: 5px;
+  margin-top: 1.8em;
+  margin-bottom: 1em;
 }
 
 
