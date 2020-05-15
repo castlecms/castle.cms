@@ -36,10 +36,10 @@
                   data-background-video-muted
                   data-transition="fade">
                   <div class="row ${vert}-xs ${hor}-xs">
-                    <div class="col-xs-12 col-lg-6">
+                    <div class="col-xs-12 background-video-container">
                       <div class="box-row">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p tal:condition="textlines" class="slide-subtitle">
+                        <p tal:condition="textlines" class="slide-text">
                           <tal:textline tal:repeat="textline textlines">
                             ${textline}
                             <br tal:condition="not:repeat/textline/end"/>
@@ -55,15 +55,15 @@
               <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
                 <section class="left-video-slide">
                   <div class="row ${vert}-xs">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
+                    <div class="col-xs-6 video-container">
                       <video data-autoplay muted loop>
                         <source src="${video}"/>
                       </video>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                      <div class="text-section">
+                    <div class="col-xs-6 text-container">
+                      <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p tal:condition="textlines" class="slide-subtitle">
+                        <p tal:condition="textlines" class="slide-text">
                           <tal:textline tal:repeat="textline textlines">
                             ${textline}
                             <br tal:condition="not:repeat/textline/end"/>
@@ -83,10 +83,10 @@
                     data-background="${image}"
                     data-transition="fade">
                     <div class="row ${vert}-xs ${hor}-lg">
-                      <div class="col-xs-12 col-lg-6">
+                      <div class="col-xs-12 background-image-container">
                         <div class="box-row">
                           <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                          <p tal:condition="textlines" class="slide-subtitle">
+                          <p tal:condition="textlines" class="slide-text">
                             <tal:textline tal:repeat="textline textlines">
                               ${textline}
                               <br tal:condition="not:repeat/textline/end"/>
@@ -106,12 +106,12 @@
                 <section class="left-image-slide">
                   <div class="row ${vert}-xs">
                     <div
-                      class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
+                      class="col-xs-6 image-container"
                       style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
-                    <div class="col-xs-12 col-lg-6">
-                      <div class="text-section">
+                    <div class="col-xs-6 text-container">
+                      <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p tal:condition="textlines" class="slide-subtitle">
+                        <p tal:condition="textlines" class="slide-text">
                           <tal:textline tal:repeat="textline textlines">
                             ${textline}
                             <br tal:condition="not:repeat/textline/end"/>
