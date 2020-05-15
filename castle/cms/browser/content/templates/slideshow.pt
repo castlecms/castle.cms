@@ -38,7 +38,8 @@
                   <div class="row ${vert}-xs ${hor}-xs">
                     <div class="col-xs-12 col-lg-6">
                       <div class="box-row">
-                        <p>${python: slide['text'] or None}</p>
+                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                        <p class="slide-subtitle">${python: slide['text'] or None}</p>
                       </div>
                     </div>
                   </div>
@@ -94,7 +95,8 @@
                     <div class="row ${vert}-xs ${hor}-lg">
                       <div class="col-xs-12 col-lg-6">
                         <div class="box-row">
-                          <p>${python: slide['text'] or None}</p>
+                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                          <p class="slide-subtitle">${python: slide['text'] or None}</p>
                         </div>
                       </div>
                     </div>
@@ -113,7 +115,8 @@
                       style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                       <div class="box-row">
-                        <p>${python: slide['text'] or None}</p>
+                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                        <p class="slide-subtitle">${python: slide['text'] or None}</p>
                       </div>
                     </div>
                   </div>
