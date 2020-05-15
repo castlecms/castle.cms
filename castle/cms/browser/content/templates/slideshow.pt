@@ -126,8 +126,21 @@
           </tal:item>
         </div>
       </tal:defs>
+      <div class="close-container" onclick="goBack()">
+        <div class="x-container">
+          <div class="leftright"></div>
+          <div class="rightleft"></div>
+        </div>
+        <div class="close-text-container">
+          <label class="close">close</label>
+        </div>
+      </div>
     </div>
     <script>
+      function goBack(){
+        window.history.back();
+      }
+
       // More info about config & dependencies:
       // - https://github.com/hakimel/reveal.js#configuration
       // - https://github.com/hakimel/reveal.js#dependenciess
