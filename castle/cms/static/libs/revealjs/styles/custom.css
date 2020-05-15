@@ -27,7 +27,7 @@ p {
 /* Title and text */
 .slide-title,
 .slide-text {
-  padding: 5% 10% 0 10%;
+  padding: 5vh 10% 0 10%;
   text-align: center;
 }
 
@@ -39,7 +39,7 @@ p {
 .reveal .slides > section.left-image-slide,
 .reveal .slides > section > section.left-image-slide,
 .reveal .slides > section.left-video-slide,
-.reveal .slides > section > section.left-video-slide  {
+.reveal .slides > section > section.left-video-slide {
   padding-top: 0;
   height: 100%;
 }
