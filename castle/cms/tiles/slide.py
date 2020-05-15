@@ -22,7 +22,8 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('background-image', 'background-image', u'Background Image'),  # noqa
             SimpleTerm('left-image-right-text','left-image-right-text', u'Left Image Right Text'),  # noqa
             SimpleTerm('background-video', 'background-video', u'Background Video'),  # noqa
-            SimpleTerm('left-video-right-text','left-video-right-text', u'Left Video Right Text')  # noqa
+            SimpleTerm('left-video-right-text','left-video-right-text', u'Left Video Right Text'),  # noqa
+            SimpleTerm('resource-slide','resource-slide', u'Resource Slide')  # noqa
         ]),
         default='background-image'
     )
