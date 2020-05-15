@@ -129,7 +129,7 @@
                       class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
                       style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                      <div class="box-row">
+                      <div class="text-section">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
                         <p tal:condition="textlines" class="slide-subtitle">
                           <tal:textline tal:repeat="textline textlines">
