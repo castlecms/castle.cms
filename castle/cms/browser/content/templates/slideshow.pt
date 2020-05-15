@@ -24,7 +24,7 @@
                                   vert python: slide['vert'];
                                   hor python: slide['hor'];
                                   title python: slide['title'];
-                                  text python: slide['text'];">
+                                  textlines python: slide['text'].split('\n');">
 
               <!-- Full Background Video Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
@@ -39,7 +39,12 @@
                     <div class="col-xs-12 col-lg-6">
                       <div class="box-row">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                        <p tal:condition="textlines" class="slide-subtitle">
+                          <tal:textline tal:repeat="textline textlines">
+                            ${textline}
+                            <br tal:condition="not:repeat/textline/end"/>
+                          </tal:textline>
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -79,7 +84,12 @@
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                       <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                      <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                      <p tal:condition="textlines" class="slide-subtitle">
+                        <tal:textline tal:repeat="textline textlines">
+                          ${textline}
+                          <br tal:condition="not:repeat/textline/end"/>
+                        </tal:textline>
+                      </p>
                     </div>
                   </div>
                 </section>
@@ -96,7 +106,12 @@
                       <div class="col-xs-12 col-lg-6">
                         <div class="box-row">
                           <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                          <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                          <p tal:condition="textlines" class="slide-subtitle">
+                            <tal:textline tal:repeat="textline textlines">
+                              ${textline}
+                              <br tal:condition="not:repeat/textline/end"/>
+                            </tal:textline>
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -116,7 +131,12 @@
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                       <div class="box-row">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                        <p tal:condition="textlines" class="slide-subtitle">
+                          <tal:textline tal:repeat="textline textlines">
+                            ${textline}
+                            <br tal:condition="not:repeat/textline/end"/>
+                          </tal:textline>
+                        </p>
                       </div>
                     </div>
                   </div>
