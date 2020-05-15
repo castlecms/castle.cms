@@ -19,112 +19,107 @@
       <tal:defs tal:define="slides view/get_slides|nothing">
         <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
           <tal:item tal:repeat="slide slides">
+            <tal:wrap tal:define="video python: slide['video'] or None;
+                                  image python: slide['image'] or None;
+                                  vert python: slide['vert'];
+                                  hor python: slide['hor'];
+                                  title python: slide['title'];
+                                  text python: slide['text'];">
 
-            <!-- Full Background Video Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'background-video'"
-                           tal:define="video python: slide['video'];
-                                       vert python: slide['vert'];
-                                       hor python: slide['hor']">
-              <section
-                class="background-video-slide"
-                data-background-video="${video}"
-                data-background-color="#000000"
-                data-background-video-loop
-                data-background-video-muted
-                data-transition="fade">
-                <div class="row ${vert}-xs ${hor}-xs">
-                  <div class="col-xs-12 col-lg-6">
-                    <div class="box-row">
-                      <p>${python: slide['text'] or None}</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </tal:container>
-
-            <!-- Left Video w/ Right Text Slide-->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'"
-                           tal:define="video python: slide['video'];
-                                       vert python: slide['vert'];
-                                       hor python: slide['hor']">
-              <section class="left-video-slide">
-                <!--
-                  <div class="row middle-xs d-lg-none">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
-                      <div class="row bottom-xs text-overlay">
-                        <div class="col-xs-12">
-                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                          <p class="slide-subtitle">${python: slide['text'] or None}</p>
-                        </div>
-                      </div>
-                      <video
-                        class="video-background"
-                        data-autoplay
-                        autoplay
-                        muted
-                        loop
-                        playsinline>
-                        <source src="${video}" type="video/mp4" />
-                      </video>
-                    </div>
-                  </div>
-                -->
-                <!-- md/lg view -->
-                <div class="row ${vert}-xs">
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
-                    <video data-autoplay muted loop>
-                      <source src="${video}"/>
-                    </video>
-                  </div>
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                    <p class="slide-subtitle">${python: slide['text'] or None}</p>
-                  </div>
-                </div>
-              </section>
-            </tal:container>
-
-            <!-- Full Background Image Slide -->
-              <tal:container tal:condition="python: slide['displayType'] == 'background-image'"
-                             tal:define="image python: slide['image'];
-                                         vert python: slide['vert'];
-                                         hor python: slide['hor']">
+              <!-- Full Background Video Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
                 <section
-                  tal:condition="image"
-                  class="background-image-slide"
-                  data-background="${image}"
+                  class="background-video-slide"
+                  data-background-video="${video}"
+                  data-background-color="#000000"
+                  data-background-video-loop
+                  data-background-video-muted
                   data-transition="fade">
-                  <div class="row ${vert}-xs ${hor}-lg">
+                  <div class="row ${vert}-xs ${hor}-xs">
                     <div class="col-xs-12 col-lg-6">
                       <div class="box-row">
                         <p>${python: slide['text'] or None}</p>
                       </div>
                     </div>
                   </div>
-                <div tal:condition="not: image">
-                  Image slide with no image selected.
-                </div>
-              </section>
-            </tal:container>
+                </section>
+              </tal:container>
 
-            <!-- Left Image w/ Right Text Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'"
-                           tal:define="image python: slide['image'];
-                                       vert python: slide['vert'];
-                                       hor python: slide['hor']">
-              <section class="left-image-slide">
-                <div class="row ${vert}-xs">
-                  <div
-                    class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
-                    style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="box-row">
-                      <p>${python: slide['text'] or None}</p>
+              <!-- Left Video w/ Right Text Slide-->
+              <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
+                <section class="left-video-slide">
+                  <!--
+                    <div class="row middle-xs d-lg-none">
+                      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
+                        <div class="row bottom-xs text-overlay">
+                          <div class="col-xs-12">
+                            <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                            <p class="slide-subtitle">${python: slide['text'] or None}</p>
+                          </div>
+                        </div>
+                        <video
+                          class="video-background"
+                          data-autoplay
+                          autoplay
+                          muted
+                          loop
+                          playsinline>
+                          <source src="${video}" type="video/mp4" />
+                        </video>
+                      </div>
+                    </div>
+                  -->
+                  <!-- md/lg view -->
+                  <div class="row ${vert}-xs">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
+                      <video data-autoplay muted loop>
+                        <source src="${video}"/>
+                      </video>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                      <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                      <p class="slide-subtitle">${python: slide['text'] or None}</p>
                     </div>
                   </div>
-                </div>
-              </section>
-            </tal:container>
+                </section>
+              </tal:container>
+
+              <!-- Full Background Image Slide -->
+                <tal:container tal:condition="python: slide['displayType'] == 'background-image'">
+                  <section
+                    tal:condition="image"
+                    class="background-image-slide"
+                    data-background="${image}"
+                    data-transition="fade">
+                    <div class="row ${vert}-xs ${hor}-lg">
+                      <div class="col-xs-12 col-lg-6">
+                        <div class="box-row">
+                          <p>${python: slide['text'] or None}</p>
+                        </div>
+                      </div>
+                    </div>
+                  <div tal:condition="not: image">
+                    Image slide with no image selected.
+                  </div>
+                </section>
+              </tal:container>
+
+              <!-- Left Image w/ Right Text Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
+                <section class="left-image-slide">
+                  <div class="row ${vert}-xs">
+                    <div
+                      class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
+                      style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                      <div class="box-row">
+                        <p>${python: slide['text'] or None}</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </tal:container>
+            </tal:wrap>
           </tal:item>
         </div>
       </tal:defs>
