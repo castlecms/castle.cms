@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.10 (unreleased)
+2.6.10 (2020-05-20)
 -------------------
 
 - ensure tag-manager js is run at the correct time
