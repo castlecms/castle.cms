@@ -4,7 +4,7 @@ Changelog
 2.6.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- ensure tag-manager js is run at the correct time
 
 
 2.6.9 (2020-05-11)

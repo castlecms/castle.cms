@@ -1,3 +1,5 @@
+window.addEventListener('load', function(){
+
 require([
   'jquery',
   'castle-url/libs/react/react.min',
@@ -293,4 +295,6 @@ require([
   var el = document.getElementById('tag-manager');
 
   var component = R.render(R.createElement(TagManagerComponent, {}), el);
+});
+
 });
