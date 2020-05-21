@@ -141,6 +141,13 @@
       <value key="deps">plone-logged-in</value>
   </records>
 
+  <!-- castle-components-usersgroups -->
+  <records prefix="plone.resources/castle-components-usersgroups"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/usersgroups.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
 
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
