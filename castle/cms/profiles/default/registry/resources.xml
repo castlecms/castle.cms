@@ -124,7 +124,7 @@
 
   <!-- depends on plone-logged-in -->
 
-   <!-- castle-components-search -->
+  <!-- castle-components-search -->
   <records prefix="plone.resources/castle-components-search"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/components/search.js</value>
