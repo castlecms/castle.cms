@@ -128,7 +128,7 @@
   <records prefix="plone.resources/castle-components-search"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/components/search.js</value>
-      <value key="deps">plone-logged-in</value>
+      <value key="deps">plone</value>
   </records>
 
   <!-- castle-components-tag-manager -->
