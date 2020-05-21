@@ -121,6 +121,17 @@
       </value>
   </records>
 
+
+  <!-- depends on plone-logged-in -->
+
+   <!-- castle-components-search -->
+  <records prefix="plone.resources/castle-components-search"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/search.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
