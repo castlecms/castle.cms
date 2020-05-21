@@ -131,6 +131,13 @@
       <value key="deps">plone-logged-in</value>
   </records>
 
+  <!-- castle-components-tag-manager -->
+  <records prefix="plone.resources/castle-components-tag-manager"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/tag-manager.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
 
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
