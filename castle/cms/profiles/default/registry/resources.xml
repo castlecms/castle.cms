@@ -122,7 +122,7 @@
   </records>
 
 
-  <!-- depends on plone-logged-in -->
+  <!-- depends on plone -->
 
   <!-- castle-components-search -->
   <records prefix="plone.resources/castle-components-search"
@@ -130,6 +130,9 @@
       <value key="js">++plone++castle/components/search.js</value>
       <value key="deps">plone</value>
   </records>
+
+
+  <!-- depends on plone-logged-in -->
 
   <!-- castle-components-tag-manager -->
   <records prefix="plone.resources/castle-components-tag-manager"
