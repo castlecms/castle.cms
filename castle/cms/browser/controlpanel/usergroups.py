@@ -12,7 +12,7 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
     def __call__(self):
         # utility function to add resource to rendered page
         add_resource_on_request(self.request, 'castle-components-usersgroups')
-        return super(Search, self).__call__()
+        return super(UsersOverviewControlPanel, self).__call__()
 
     def manageUser(self, users=[], resetpassword=[], delete=[]):
         super(UsersOverviewControlPanel, self).manageUser(
