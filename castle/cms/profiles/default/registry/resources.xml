@@ -156,9 +156,9 @@
   </records>
 
   <!-- castle-components-archives-manage -->
-  <records prefix="plone.resources/castle-components-archives-manage"
+  <records prefix="plone.resources/castle-components-manage-archives"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
-      <value key="js">++plone++castle/components/archives-manage.js</value>
+      <value key="js">++plone++castle/components/manage-archives.js</value>
       <value key="deps">plone-logged-in</value>
   </records>
 
