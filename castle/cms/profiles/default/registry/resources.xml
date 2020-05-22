@@ -162,6 +162,16 @@
       <value key="deps">plone-logged-in</value>
   </records>
 
+  <!-- castle-components-history -->
+  <records prefix="plone.resources/castle-components-history"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/history.js</value>
+      <value key="css">
+        <element>++plone++castle/less/misc/history.css</element>
+      </value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
 
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
