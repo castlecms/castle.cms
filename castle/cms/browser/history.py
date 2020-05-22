@@ -23,10 +23,9 @@ import json
 
 class HistoryView(HistoryByLineView):
     def __call__(self):
-         # utility function to add resource to rendered page
-         add_resource_on_request(self.request, 'castle-components-history')
-         return super(HistoryView, self).__call__()
-
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-history')
+        return super(HistoryView, self).__call__()
 
     index = ViewPageTemplateFile('templates/history_view.pt')
 
