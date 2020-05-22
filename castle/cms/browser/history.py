@@ -48,6 +48,12 @@ class ContentHistoryView(BaseContentHistoryView):
 
 
 class HistoryVersionView(DiffView):
+    def __call__(self):
+         # utility function to add resource to rendered page
+         add_resource_on_request(self.request, 'castle-components-history')
+         return super(HistoryVersionView, self).__call__()
+
+
     template = ViewPageTemplateFile("templates/history_version.pt")
 
     def getContent(self, version):
