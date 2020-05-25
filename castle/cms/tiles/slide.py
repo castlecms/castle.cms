@@ -7,7 +7,8 @@ from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-
+from z3c.relationfield.schema import RelationList
+# from plone.formwidget.contenttree import ObjPathSourceBinder
 
 # with open('castle/cms/static/scripts/slide.js', 'r') as file:
 #     javascript = file.read()

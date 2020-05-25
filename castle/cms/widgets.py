@@ -150,6 +150,7 @@ class VideoRelatedItemsWidget(RelatedItemsWidget):
             'o': 'plone.app.querystring.operation.selection.any',
             'v': ['Video', 'Folder']
         }]
+        
         return args
 
 
@@ -208,7 +209,9 @@ def RelatedItemsFieldWidget(field, request):
 @implementer(IFieldWidget)
 def SlideRelatedItemsFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
-    widget.vocabulary = 'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+    # widget.vocabulary = 'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+    widget.vocabulary = u'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+    widget.vocabulary_override = True
     return widget
 
 
