@@ -9,6 +9,11 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
+# with open('castle/cms/static/scripts/slide.js', 'r') as file:
+#     javascript = file.read()
+#     javascript = javascript.replace('\n', '')
+#     javascript = u'javascript:{}'.format(javascript)
+
 class SlideTile(BaseTile):
 
     @property
@@ -18,7 +23,6 @@ class SlideTile(BaseTile):
     @property
     def slide_type(self):
         return self.data.get('display_type', 'background-image')
-
 
 class ISlideTileSchema(model.Schema):
 
@@ -67,7 +71,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('middle', 'middle', u'Middle'),
             SimpleTerm('bottom', 'bottom', u'Bottom'),
         ]),
-        required=True,
+        required=False,
         default=u'middle'
     )
 
@@ -78,7 +82,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('center', 'center', u'Center'),
             SimpleTerm('end', 'end', u'Right'),
         ]),
-        required=True,
+        required=False,
         default=u'center'
     )
 

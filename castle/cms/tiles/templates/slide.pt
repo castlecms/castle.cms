@@ -3,7 +3,6 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal">
   <body>
     <script type="text/javascript" src="/++plone++castle/scripts/slide.js"></script>
-
     <!-- Full Background Video Slide -->
     <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-video'">
       <div tal:condition="view/data/video">
