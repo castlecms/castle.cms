@@ -194,6 +194,49 @@ label.close {
   visibility: visible;
 }
 
+/* Scollable Slide CSS */
+.scrollable-slide {
+  height: 800px;
+  overflow-y: auto !important;
+}
+.scrollable-slide::before {
+  background: none !important;
+}
+.scrollable-slide::after {
+  box-shadow: none !important;
+}
+.scrollable-slide-listing {
+  text-align: left;
+  width: auto;
+  margin-right: 125px;
+  font-size: 0.8em;
+  padding: 0 0 0 15px;
+}
+.scrollable-slide-listing p,
+.scrollable-slide-listing p img {
+  margin: 0;
+}
+.scrollable-slide-listing .view-more {
+  text-align: right;
+}
+.scrollable-slide-item {
+  margin-bottom: 30px;
+  border-bottom: 1px solid white;
+  padding-bottom: 15px;
+}
+@media (min-width: 992px) {
+  .scrollable-slide-listing {
+    width: 60%;
+    margin: auto;
+
+    font-size: 0.5em;
+  }
+  .scrollable-slide-listing p,
+  .scrollable-slide-listing p img {
+    margin: 0;
+  }
+}
+
 /* Reveal.js CSS Overrides */
 .reveal h1,
 .reveal h2,

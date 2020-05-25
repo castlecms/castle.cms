@@ -167,6 +167,22 @@ class AudioRelatedItemsWidget(RelatedItemsWidget):
         return args
 
 
+class SlideRelatedItemsWidget(RelatedItemsWidget):
+    initialPath = '/'
+    base_args = []
+
+    def _base_args(self):
+        args = super(SlideRelatedItemsWidget, self)._base_args()
+        # args['pattern_options']['selectableTypes'] = ['Audio']
+        args['pattern_options']['baseCriteria'] = [{
+            'i': 'has_title_description_and_image',
+            'o': 'plone.app.querystring.operation.boolean.isTrue',
+            'v': ['File', 'Audio', 'Video', 'Folder']
+        }]
+        args['pattern_options']['allowAdd'] = False
+        import pdb; pdb.set_trace()
+        return args
+
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
 def QueryFieldWidget(field, request):
@@ -178,6 +194,13 @@ def QueryFieldWidget(field, request):
 def RelatedItemsFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field, RelatedItemsWidget(request))
     widget.vocabulary = 'plone.app.vocabularies.Catalog'
+    return widget
+
+@adapter(IField, ICastleLayer)
+@implementer(IFieldWidget)
+def SlideRelatedItemsFieldWidget(field, request):
+    widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
+    widget.vocabulary = 'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
     return widget
 
 

@@ -195,3 +195,10 @@ def has_private_parents(obj):
             pass  # to be extra secure, could return True here. Better to be fault tolerant for now.
         parent = aq_parent(parent)
     return False
+
+
+@indexer(IItem)
+def has_title_description_and_image(obj):
+    return hasImage(obj) and \
+        bool(getattr(aq_base(obj), 'title', False)) and \
+        bool(getattr(aq_base(obj), 'description', False))

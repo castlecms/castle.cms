@@ -123,6 +123,10 @@
     component=".vocabularies.CountriesVocabularyFactory"
     name="castle.cms.vocabularies.Countries"
     />
+  <utility
+    component=".vocabularies.ProvidesTitleSummaryLeadImageVocabularyFactory"
+    name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
+    />
 
   <!-- override default syndication -->
   <adapter factory=".syndication.DexterityItem"

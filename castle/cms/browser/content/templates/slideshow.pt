@@ -16,7 +16,8 @@
   </head>
   <body>
     <div class="reveal">
-      <tal:defs tal:define="slides view/get_slides|nothing">
+      <tal:defs tal:define="slides view/get_slides|nothing;
+                            related_items view/">
         <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
           <tal:item tal:repeat="slide slides">
             <tal:wrap tal:define="video python: slide['video'] or None;
@@ -122,6 +123,59 @@
                   </div>
                 </section>
               </tal:container>
+
+              <!-- Resource Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'resource-slide'">
+              <!-- SCROLLABLE SLIDE -->
+              <section class="scrollable-slide" data-transition="fade">
+                <div class="scrollable-slide-listing">
+
+                  <p>
+                    Close slideshow and return to
+                    <a href="#">previous page on FBI.gov</a>
+                  </p>
+                  <hr />
+                  <p>See also:</p>
+                  <br />
+                  <!-- List Item -->
+                  <div class="row scrollable-slide-item">
+                    <div class="col-xs-3">
+                      <!-- Lead Image -->
+                      <p>
+                        <img src="https://www.fbi.gov/news/stories/fbi-philadelphia-volunteers-assist-families-with-sick-children-042920/@@images/image/preview" width="100%" />
+                      </p>
+                    </div>
+                    <div class="col-xs-9">
+                      <!-- Slideshow Title -->
+                      <p class="title">
+                        <a href="#">Slideshow Title</a>
+                      </p>
+                      <!-- Slideshow Date -->
+                      <p class="date">January 1, 2020</p>
+                      <!-- Summary/Description -->
+                      <p class="description">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                        do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat.
+                      </p>
+                      <p class="view-more">
+                        <a href="#">View</a>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <p class="view-more">
+                        <a href="#">View all FBI Stories</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                </section>
+              </tal:container>
+
             </tal:wrap>
           </tal:item>
         </div>

@@ -309,3 +309,34 @@ class CountriesVocabulary(object):
 
 
 CountriesVocabularyFactory = CountriesVocabulary()
+
+
+class ProvidesTitleSummaryLeadImageVocabulary(object):
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        catalog = api.portal.get_tool('portal_catalog')
+        # providers_required = [
+        #     'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
+        #     'plone.app.dexterity.behaviors.metadata.IBasic'
+        # ]
+        # single = False
+        # import pdb; pdb.set_trace()
+        # for brain in catalog():
+        #     if object.title and object.description and object.image:
+        #         items.append(SimpleTerm(value=object.UID, token=object.UID,
+        #                                  title=object.Title))
+
+        # brains = catalog(
+        #     title=None, image=None, description=None)
+        items = make_terms(catalog(has_title_description_and_image=True))
+        return SimpleVocabulary(items)
+
+
+ProvidesTitleSummaryLeadImageVocabularyFactory = ProvidesTitleSummaryLeadImageVocabulary()
+
+
+def make_terms(brains):
+    results = [(brain["UID"], brain["Title"]) for brain in brains]
+    terms = [SimpleTerm(value=result[0], token=result[0], title=result[1]) for result in results]
+    return terms
