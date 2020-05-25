@@ -1,7 +1,7 @@
 from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import ImageRelatedItemFieldWidget
 from castle.cms.widgets import SlideRelatedItemsFieldWidget
-
+from castle.cms.widgets import RelatedItemsFieldWidget
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.supermodel import model
 from plone.autoform import directives as form
@@ -9,7 +9,8 @@ from Products.CMFPlone.resources import add_resource_on_request
 from zope import schema
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-
+from z3c.relationfield.schema import RelationList
+# from plone.formwidget.contenttree import ObjPathSourceBinder
 
 # with open('castle/cms/static/scripts/slide.js', 'r') as file:
 #     javascript = file.read()
@@ -97,14 +98,15 @@ class ISlideTileSchema(model.Schema):
         )
     )
 
-    form.widget(related_items=SlideRelatedItemsFieldWidget)
+    form.widget('related_items', SlideRelatedItemsFieldWidget)
     related_items = schema.List(
         title=u"Related Items",
         description=u"Items to include on Reference slide",
         required=False,
         default=[],
         value_type=schema.Choice(
-            # vocabulary='plone.app.vocabularies.Catalog'
-            vocabulary='castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+            # vocabulary='castle.cms.vocabularies.Catalog'
+            source=u'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
         )
     )
+# related_items = schema.Choice(source="garys-favorite-path-references", title=_("Area"), required=False)

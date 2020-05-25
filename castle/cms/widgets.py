@@ -149,6 +149,7 @@ class VideoRelatedItemsWidget(RelatedItemsWidget):
             'o': 'plone.app.querystring.operation.selection.any',
             'v': ['Video', 'Folder']
         }]
+        
         return args
 
 
@@ -169,18 +170,28 @@ class AudioRelatedItemsWidget(RelatedItemsWidget):
 
 class SlideRelatedItemsWidget(RelatedItemsWidget):
     initialPath = '/'
-    base_args = []
 
     def _base_args(self):
         args = super(SlideRelatedItemsWidget, self)._base_args()
-        # args['pattern_options']['selectableTypes'] = ['Audio']
+        args['pattern_options']['folderTypes'] = ["Folder"]
+        # args['pattern_options']['baseCriteria'] = None
         args['pattern_options']['baseCriteria'] = [{
             'i': 'has_title_description_and_image',
-            'o': 'plone.app.querystring.operation.boolean.isTrue',
-            'v': ['File', 'Audio', 'Video', 'Folder']
+            'o': 'plone.app.querystring.operation.boolean.isTrue'
         }]
-        args['pattern_options']['allowAdd'] = False
-        import pdb; pdb.set_trace()
+        # args['pattern_options'] = {
+        #     'allowAdd': False,
+        #     'maximumSelectionSize': 5,
+        #     'folderTypes': ['Folder'],
+        #     'baseCriteria': None,
+        # }
+        # args['pattern_options']['mode'] = 'search'
+        args['pattern_options']['depth'] = 2
+        args['pattern_options']['maximumSelectionSize'] = 5
+        # args['pattern_options']['treeVocabularyUrl'] = 'http://localhost:8080/Castle/@@getVocabulary?name=castle.cms.vocabularies.ProvidesTitleSummaryLeadImage',
+        # args['pattern_options']['vocabularyUrl'] = 'http://localhost:8080/Castle/@@getVocabulary?name=castle.cms.vocabularies.ProvidesTitleSummaryLeadImage&field=related_items',
+        # args['pattern_options']['attributes'] = ['has_title_description_and_image']
+
         return args
 
 @adapter(IField, ICastleLayer)
@@ -200,7 +211,9 @@ def RelatedItemsFieldWidget(field, request):
 @implementer(IFieldWidget)
 def SlideRelatedItemsFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
-    widget.vocabulary = 'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+    # widget.vocabulary = 'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+    widget.vocabulary = u'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
+    widget.vocabulary_override = True
     return widget
 
 

@@ -311,8 +311,8 @@ class CountriesVocabulary(object):
 CountriesVocabularyFactory = CountriesVocabulary()
 
 
+@implementer(IVocabularyFactory)
 class ProvidesTitleSummaryLeadImageVocabulary(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         catalog = api.portal.get_tool('portal_catalog')
