@@ -128,6 +128,9 @@
   <records prefix="plone.resources/castle-components-search"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/components/search.js</value>
+      <value key="css">
+        <element>++plone++castle/less/misc/search.css</element>
+      </value>
       <value key="deps">plone</value>
   </records>
 
