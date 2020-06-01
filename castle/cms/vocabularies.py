@@ -18,8 +18,11 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from plone.app.tiles.browser.edit import AcquirableDictionary
 from plone.app.content.browser import vocabulary
+from zope.schema.interfaces import IContextSourceBinder
 import requests
 import json
+
+
 
 # XXX needs updating in 5.1
 try:
@@ -27,11 +30,13 @@ try:
     vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
+    vocabulary.PERMISSIONS['castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'] = 'View'
 except KeyError:
     vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
     vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
+    vocabulary._permissions['castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
 
@@ -309,3 +314,46 @@ class CountriesVocabulary(object):
 
 
 CountriesVocabularyFactory = CountriesVocabulary()
+
+
+@implementer(IVocabularyFactory)
+class ProvidesTitleSummaryLeadImageVocabulary(object):
+
+    def __call__(self, context):
+        catalog = api.portal.get_tool('portal_catalog')
+        # providers_required = [
+        #     'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
+        #     'plone.app.dexterity.behaviors.metadata.IBasic'
+        # ]
+        # single = False
+        # import pdb; pdb.set_trace()
+        # for brain in catalog():
+        #     if object.title and object.description and object.image:
+        #         items.append(SimpleTerm(value=object.UID, token=object.UID,
+        #                                  title=object.Title))
+
+        # brains = catalog(
+        #     title=None, image=None, description=None)
+        # items = make_terms(catalog(has_title_description_and_image=True))
+        title_description_image_brains = catalog(self_or_child_has_title_description_and_image=True)
+        folderish_brains = catalog(is_folderish=True)
+        items = make_terms(title_description_image_brains, folderish_brains)
+        
+        return SimpleVocabulary(items)
+
+
+ProvidesTitleSummaryLeadImageVocabularyFactory = ProvidesTitleSummaryLeadImageVocabulary()
+
+
+def make_terms(brains1, brains2):
+    results = []
+    included_brains = []
+    for brain in brains1:
+        results.append((brain['UID'], brain['Title']))
+        included_brains.append(brain['UID'])
+    for brain in brains2:
+        if brain['UID'] not in included_brains:
+            results.append((brain['UID'], brain['Title']))
+            included_brains.append(brain['UID'])
+
+    return [SimpleTerm(value=result[0], token=result[0], title=result[1]) for result in results]
