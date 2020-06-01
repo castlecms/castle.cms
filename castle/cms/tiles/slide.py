@@ -107,7 +107,8 @@ class ISlideTileSchema(model.Schema):
     form.widget('related_items', SlideRelatedItemsFieldWidget)
     related_items = schema.List(
         title=u"Related Items",
-        description=u"Items to include on Resource Slide",
+        description=u"Items to include on Resource Slide. "
+                    u"To be selectable, a content item must contain a Title, Description (Summary), and a Lead Image.", # noqa
         required=False,
         default=[],
         value_type=schema.Choice(
