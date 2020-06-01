@@ -1,7 +1,10 @@
+from plone.dexterity.browser import edit
 from Products.Five import BrowserView
 from lxml import etree
 from urlparse import urlparse, parse_qs
 from plone.app.uuid.utils import uuidToObject
+from plone.api.portal import get_registry_record
+from plone.api.portal import set_registry_record
 
 
 class SlideshowView(BrowserView):
@@ -38,10 +41,55 @@ class SlideshowView(BrowserView):
                     slide['title'] = data['title'][0]
                 except Exception:
                     slide['title'] = None
+                if slide['displayType'] == 'resource-slide':
+                    try:
+                        related_uuids = data['related_items:list']
+                        slide['related_resources'] = [uuidToObject(uuid) for uuid in related_uuids]
+                    except Exception:
+                        pass
                 slide['vert'] = data['vert_text_position'][0]
                 slide['hor'] = data['hor_text_position'][0]
                 slides.append(slide)
         return slides
 
+    def get_domain(self):
+        public_url = get_registry_record('plone.public_url')
+        return public_url.replace('http://', '').replace('https://', '')
+
     def get_id(self):
         return self.context.custom_dom_id or None
+
+    def get_view_more_link_text(self):
+        return self.context.view_more_link_text or None
+
+    def get_view_more_link_url(self):
+        return self.context.view_more_link_url or None
+
+    def display_view_more_link(self):
+        return self.get_view_more_link_text() and self.get_view_more_link_url()
+
+
+class SlideshowEditForm(edit.DefaultEditForm):
+    def update(self):
+        super(SlideshowEditForm, self).update()
+
+    def applyChanges(self, data):
+        self.handle_update_default(data, 'link_text')
+        self.handle_update_default(data, 'link_url')
+        super(SlideshowEditForm, self).applyChanges(data)
+
+    def handle_update_default(self, data, type):
+        should_update_registy = data.get('update_default_{}'.format(type), False)
+        form_value = data.get('view_more_{}'.format(type), None)
+        if should_update_registy and form_value:
+            record_name = 'castle.resource_slide_view_more_{}'.format(type)
+            try:
+                default_value = get_registry_record(record_name)
+            except Exception:
+                return
+            if form_value != default_value:
+                set_registry_record(record_name, form_value)
+        data['update_default_{}'.format(type)] = False
+
+
+SlideshowEditView = SlideshowEditForm

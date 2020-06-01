@@ -16,16 +16,16 @@
   </head>
   <body>
     <div class="reveal">
-      <tal:defs tal:define="slides view/get_slides|nothing">
+      <tal:defs tal:define="slides view/get_slides|nothing;">
         <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
           <tal:item tal:repeat="slide slides">
-            <tal:wrap tal:define="video python: slide['video'] or None;
-                                  image python: slide['image'] or None;
-                                  vert python: slide['vert'];
-                                  hor python: slide['hor'];
-                                  title python: slide['title'];
-                                  textlines python: slide['text'].split('\n');">
-
+            <tal:definitions tal:define="video python: slide.get('video', None);
+                                  image python: slide.get('image', None);
+                                  vert python: slide.get('vert', None);
+                                  hor python: slide.get('hor', None);
+                                  title python: slide.get('title', None);
+                                  textlines python: slide.get('text', '').split('\n');
+                                  related_resources python: slide.get('related_resources', None);">
               <!-- Full Background Video Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
                 <section
@@ -122,7 +122,61 @@
                   </div>
                 </section>
               </tal:container>
-            </tal:wrap>
+
+              <!-- Resource Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'resource-slide'">
+              <!-- SCROLLABLE SLIDE -->
+             <section class="scrollable-slide" data-transition="fade">
+                <div class="scrollable-slide-listing">
+
+                  <p>
+                    Close slideshow and return to
+                    <a href="#" onclick="goBack()">previous page on ${view/get_domain}</a>
+                  </p>
+                  <hr />
+                  <p>See also:</p>
+                  <br />
+                  <!-- List Item -->
+                  <tal:item tal:repeat="resource related_resources">
+                    <div class="row scrollable-slide-item">
+                      <div class="col-xs-3">
+                        <!-- Lead Image -->
+                        <p>
+                          <img src="${resource/absolute_url}/@@images/image/preview" width="100%" />
+                        </p>
+                      </div>
+                      <div class="col-xs-9">
+                        <!-- Slideshow Title -->
+                        <p class="title">
+                          <a href="#">${resource/Title}</a>
+                        </p>
+                        <!-- Slideshow Date -->
+                        <p>
+                          ${python: resource.effective_date.strftime('%B %e, %Y')}
+                        </p>
+                        <!-- Summary/Description -->
+                        <p class="description">
+                          ${resource/Description}
+                        </p>
+                        <p class="view-more">
+                          <a href="${resource/absolute_url}/view">View</a>
+                        </p>
+                      </div>
+                    </div>
+                  </tal:item>
+                  <div class="" tal:condition="${view/display_view_more_link}">
+                    <div class="col-xs-12">
+                      <p class="view-more">
+                        <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                </section>
+              </tal:container>
+
+            </tal:definitions>
           </tal:item>
         </div>
       </tal:defs>
