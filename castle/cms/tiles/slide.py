@@ -1,8 +1,9 @@
 from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import ImageRelatedItemFieldWidget
+from castle.cms.widgets import SlideRelatedItemsFieldWidget
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
-from plone.supermodel import model
 from plone.autoform import directives as form
+from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -11,11 +12,29 @@ from zope.schema.vocabulary import SimpleVocabulary
 class SlideTile(BaseTile):
 
     @property
+    def relatedItems(self):
+        return self.context.relatedItems
+
+    @property
     def slide_type(self):
         return self.data.get('display_type', 'background-image')
 
 
 class ISlideTileSchema(model.Schema):
+
+    model.fieldset(
+        'Type and Text',
+        label=(u'Type and Text'),
+        fields=['display_type', 'title', 'text', 'hor_text_position', 'vert_text_position']
+    )
+
+    model.fieldset(
+        'Media Settings',
+        label=(u'Media Settings'),
+        fields=['related_items', 'image', 'video']
+    )
+
+    form.widget('display_type', onchange=u'javascript:onSlideTypeChange(event)')
     display_type = schema.Choice(
         title=u"Display Type",
         vocabulary=SimpleVocabulary([
@@ -25,6 +44,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('left-video-right-text','left-video-right-text', u'Left Video Right Text'),  # noqa
             SimpleTerm('resource-slide','resource-slide', u'Resource Slide')  # noqa
         ]),
+        required=True,
         default='background-image'
     )
 
@@ -64,7 +84,7 @@ class ISlideTileSchema(model.Schema):
 
     form.widget(image=ImageRelatedItemFieldWidget)
     image = schema.List(
-        title=u"Image",
+        title=u"Slide Image",
         description=u"Reference image on the site.",
         required=False,
         default=[],
@@ -75,8 +95,19 @@ class ISlideTileSchema(model.Schema):
 
     form.widget(video=VideoRelatedItemsFieldWidget)
     video = schema.List(
-        title=u"Video",
+        title=u"Slide Video",
         description=u"Reference video on the site.",
+        required=False,
+        default=[],
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.Catalog'
+        )
+    )
+
+    form.widget('related_items', SlideRelatedItemsFieldWidget)
+    related_items = schema.List(
+        title=u"Related Items",
+        description=u"Items to include on Resource Slide",
         required=False,
         default=[],
         value_type=schema.Choice(
