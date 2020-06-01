@@ -7,6 +7,8 @@ from Products.CMFPlone.utils import validate_json
 from zope import schema
 from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
+from castle.cms.interfaces.content import get_default_url
+from castle.cms.interfaces.content import get_default_text
 
 
 def create_term(val, label):
@@ -497,8 +499,25 @@ class IContentSettings(Interface):
     # but will require a custom widget
 
 
+class ISlideshowSettings(Interface):
+    resource_slide_view_more_link_text = schema.TextLine(
+        title=u"View More link text",
+        description=u'The text a user sees for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False,
+        defaultFactory=get_default_text)
+
+    resource_slide_view_more_link_url = schema.URI(
+        title=u"View More link URL",
+        description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False,
+        defaultFactory=get_default_url)
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
-                      IArchivalSettings, IContentSettings):
+                      IArchivalSettings, IContentSettings,
+                      ISlideshowSettings):
     pass
 
 

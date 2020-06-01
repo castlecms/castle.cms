@@ -16,6 +16,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.ISlideshowSettings"
+           prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
