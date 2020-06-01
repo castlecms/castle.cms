@@ -208,14 +208,6 @@ def RelatedItemsFieldWidget(field, request):
 
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
-def SlideRelatedItemsFieldWidget(field, request):
-    widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
-    widget.vocabulary = 'plone.app.vocabularies.Catalog'
-    return widget
-
-
-@adapter(IField, ICastleLayer)
-@implementer(IFieldWidget)
 def RelatedItemFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field, RelatedItemWidget(request))
     widget.vocabulary = 'plone.app.vocabularies.Catalog'
@@ -245,6 +237,14 @@ def ImageRelatedItemFieldWidget(field, request):
 def FileRelatedItemsFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field,
                                          FileRelatedItemsWidget(request))
+    widget.vocabulary = 'plone.app.vocabularies.Catalog'
+    return widget
+
+
+@adapter(IField, ICastleLayer)
+@implementer(IFieldWidget)
+def SlideRelatedItemsFieldWidget(field, request):
+    widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
     widget.vocabulary = 'plone.app.vocabularies.Catalog'
     return widget
 
