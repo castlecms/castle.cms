@@ -189,4 +189,12 @@
     template="templates/slideshow.pt"
   />
 
+  <browser:page
+    for="castle.cms.interfaces.ISlideshow"
+    name="edit"
+    class=".slideshow.SlideshowEditView"
+    layer="castle.cms.interfaces.ICastleLayer"
+    permission="cmf.ModifyPortalContent"
+  />
+
 </configure>
