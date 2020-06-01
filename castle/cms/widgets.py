@@ -150,7 +150,6 @@ class VideoRelatedItemsWidget(RelatedItemsWidget):
             'o': 'plone.app.querystring.operation.selection.any',
             'v': ['Video', 'Folder']
         }]
-        
         return args
 
 
