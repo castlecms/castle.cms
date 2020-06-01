@@ -7,13 +7,7 @@ from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from z3c.relationfield.schema import RelationList
-# from plone.formwidget.contenttree import ObjPathSourceBinder
 
-# with open('castle/cms/static/scripts/slide.js', 'r') as file:
-#     javascript = file.read()
-#     javascript = javascript.replace('\n', '')
-#     javascript = u'javascript:{}'.format(javascript)
 
 class SlideTile(BaseTile):
 
@@ -24,6 +18,7 @@ class SlideTile(BaseTile):
     @property
     def slide_type(self):
         return self.data.get('display_type', 'background-image')
+
 
 class ISlideTileSchema(model.Schema):
 
