@@ -15,6 +15,7 @@ from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
 from plone.event.interfaces import IEvent
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.interfaces._content import IFolderish
 
 
 @indexer(IItem)
@@ -195,3 +196,15 @@ def has_private_parents(obj):
             pass  # to be extra secure, could return True here. Better to be fault tolerant for now.
         parent = aq_parent(parent)
     return False
+
+
+@indexer(IItem)
+def self_or_child_has_title_description_and_image(obj):
+    if (IFolderish.providedBy(obj)):
+        contents = obj.getFolderContents()
+        for item in contents:
+            if item['self_or_child_has_title_description_and_image']:
+                return True
+    return bool(getattr(aq_base(obj), 'title', False)) and \
+        bool(getattr(aq_base(obj), 'description', False)) and \
+        bool(getattr(aq_base(obj), 'image', False))
