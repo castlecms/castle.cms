@@ -168,10 +168,4 @@
     </value>
   </record>
 
-  <records prefix="plone.resources/slide-js"
-            interface="Products.CMFPlone.interfaces.IResourceRegistry">
-    <value key="js">++plone++castle/scripts/slide.js</value>
-    <!-- <value key="enabled">True</value> -->
-    <!-- <value key="depends">plone</value> -->
-  </records>
-</registry>
+ </registry>
