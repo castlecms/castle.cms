@@ -204,15 +204,6 @@ def RelatedItemsFieldWidget(field, request):
     widget.vocabulary = 'plone.app.vocabularies.Catalog'
     return widget
 
-@adapter(IField, ICastleLayer)
-@implementer(IFieldWidget)
-def SlideRelatedItemsFieldWidget(field, request):
-    widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
-    # widget.vocabulary = 'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
-    widget.vocabulary = u'castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'
-    widget.vocabulary_override = True
-    return widget
-
 
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
