@@ -24,14 +24,11 @@ function getFormVariables(event) {
     return formVariables;
 }
 function shouldElementBeHidden(id, idEndingsToHide) {
-    console.log(`id: ${id}, endings to hide: ${idEndingsToHide}`)
-    console.log(idEndingsToHide.some((ending) => id.endsWith(ending)));
     return idEndingsToHide.some(ending => id.endsWith(ending));
 }
 function hideFields(form) {
     const { slideType, formFields } = form;
     const idEndingsToHide = getIdEndingsToHide(slideType);
-    console.log(`slide type: ${slideType}, endingsToHide: ${idEndingsToHide}`);
     formFields.forEach((formField) => {
       const id = formField.id;
       if (shouldElementBeHidden(id, idEndingsToHide)) {
@@ -56,9 +53,7 @@ function getIdEndingsToHide(slideType) {
     }
 }
 function onSlideTypeChange(event) {
-    console.log(event);
     const form = getFormVariables(event);
-    console.log(form);
     hideFields(form);
 }
 function hasId(element) {
@@ -67,7 +62,6 @@ function hasId(element) {
 function modifyEditTile(mutations) {
     const form = getFormVariables();
     if (form) {
-        console.log(form.slideType);
         hideFields(form);
         // updateFieldsets(form);
     }
@@ -82,7 +76,7 @@ function observe() {
 
 
 // castle attempts to execute this script multiple times, so block the rest
-if (!window.scriptCalled) {
-    window.scriptCalled = true;
+if (!window.slideScriptCalled) {
+    window.slideScriptCalled = true;
     observe();
 }
