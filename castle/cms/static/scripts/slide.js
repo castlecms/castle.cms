@@ -1,5 +1,6 @@
 function getFormVariables(event) {
-    const form = document.getElementById('edit_tile');
+    const form = document.getElementById('edit_tile') ||
+        document.getElementById('add_tile');
     if (!form) {
         return;
     }
@@ -63,7 +64,6 @@ function modifyEditTile(mutations) {
     const form = getFormVariables();
     if (form) {
         hideFields(form);
-        // updateFieldsets(form);
     }
 }
 function observe() {
