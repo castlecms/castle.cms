@@ -12,6 +12,7 @@ from urlparse import urljoin
 import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
+from castle.cms.caching import CastleCmsThemingCacheReset
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -21,6 +22,7 @@ from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
+from plone.app.theming.interfaces import IThemingPolicy
 from plone.app.theming.policy import ThemingPolicy
 from plone.app.theming.utils import theming_policy
 from plone.dexterity.interfaces import IDexterityContent
@@ -32,6 +34,7 @@ from repoze.xmliter.utils import getHTMLSerializer
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
+from zope.component import getAdapter
 from zope.interface import alsoProvides
 
 
@@ -543,6 +546,8 @@ class Policy(ThemingPolicy):
 
     Diazo is an extra layer of theming that we don't need to deal
     with since we have tiles and layouts.
+
+    Also to add additional functionality to clear the various caches.
     '''
 
     def getCurrentTheme(self):
@@ -587,6 +592,11 @@ class Policy(ThemingPolicy):
                 return False
 
         return True
+
+    def invalidateCache(self):
+        cache_reset = CastleCmsThemingCacheReset(self)
+        cache_reset = getAdapter(cache_reset, IThemingPolicy)
+        cache_reset.invalidateOtherCaches()
 
 
 def isPloneTheme(settings):
