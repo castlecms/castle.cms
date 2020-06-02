@@ -253,6 +253,8 @@ define([
       // tiny needs an id in order to initialize. Creat it if not set.
       var id = utils.setId(self.$el);
       var tinyOptions = self.options.tiny;
+      // The actual menu options won't show when the menubar has values.
+      tinyOptions.menubar = null;
       if (self.options.inline === true) {
         self.options.tiny.inline = true;
       }
