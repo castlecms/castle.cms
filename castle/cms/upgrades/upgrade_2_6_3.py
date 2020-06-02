@@ -10,4 +10,4 @@ def upgrade(site, logger=None):
     cookWhenChangingSettings(site)
 
     for id in site.objectIds():
-        site[id].reindexObject(['self_or_child_has_title_description_and_image'])
+        site[id].reindexObject(idxs=['self_or_child_has_title_description_and_image'])
