@@ -203,7 +203,7 @@ def self_or_child_has_title_description_and_image(obj):
     if (IFolderish.providedBy(obj)):
         contents = obj.getFolderContents()
         for item in contents:
-            if item['self_or_child_has_title_description_and_image']:
+            if item.get('self_or_child_has_title_description_and_image', False):
                 return True
     return bool(getattr(aq_base(obj), 'title', False)) and \
         bool(getattr(aq_base(obj), 'description', False)) and \

@@ -60,13 +60,26 @@ class SlideshowView(BrowserView):
         return self.context.custom_dom_id or None
 
     def get_view_more_link_text(self):
-        return self.context.view_more_link_text or None
+        try:
+            return self.context.view_more_link_text
+        except Exception:
+            return None
 
     def get_view_more_link_url(self):
-        return self.context.view_more_link_url or None
+        try:
+            return self.context.view_more_link_url
+        except Exception:
+            return None
 
     def display_view_more_link(self):
-        return self.get_view_more_link_text() and self.get_view_more_link_url()
+        try:
+            show_view_more = self.context.show_view_more_link
+        except Exception:
+            show_view_more = True
+        return (show_view_more and
+                self.get_view_more_link_text() and
+                self.get_view_more_link_url())
+
 
 
 class SlideshowEditForm(edit.DefaultEditForm):

@@ -164,7 +164,7 @@
                       </div>
                     </div>
                   </tal:item>
-                  <div class="" tal:condition="${view/display_view_more_link}">
+                  <div class="" tal:condition="view/display_view_more_link">
                     <div class="col-xs-12">
                       <p class="view-more">
                         <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>

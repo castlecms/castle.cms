@@ -33,27 +33,20 @@ class IAudio(IMedia):
 
 @provider(IContextAwareDefaultFactory)
 def get_default_text(context):
-    # keep default value from being served if user has previously chosen falsy value
-    try:
-        return context.view_more_link_text
-    except AttributeError:
-        return get_registry_record('castle.resource_slide_view_more_link_text', None)
+    return get_registry_record('castle.resource_slide_view_more_link_text', None)
 
 
 @provider(IContextAwareDefaultFactory)
 def get_default_url(context):
-    # keep default value from being served if user has previously chosen falsy value
-    try:
-        return context.view_more_link_url
-    except AttributeError:
-        return get_registry_record('castle.resource_slide_view_more_link_url', None)
+    return get_registry_record('castle.resource_slide_view_more_link_url', None)
 
 
 class ISlideshow(Interface):
 
     model.fieldset(
         'Resource Slide',
-        fields=['view_more_link_text',
+        fields=['show_view_more_link',
+                'view_more_link_text',
                 'update_default_link_text',
                 'view_more_link_url',
                 'update_default_link_url']
@@ -64,10 +57,16 @@ class ISlideshow(Interface):
         required=False
     )
 
+    show_view_more_link = schema.Bool(
+        title=u'Show "View More" link?',
+        description=u'The fields below only matter if this box is checked',
+        required=True,
+        default=False)
+
     view_more_link_text = schema.TextLine(
         title=u"View More link text",
         description=u'The text a user sees for the optional link at the bottom of the slideshow resource slide. ' # noqa
-                    u'This link will be omitted if the link text or link URL is empty.',
+                    u'This link will be omitted if "View More Link" is unchecked or if the link text or link URL is empty.', # noqa
         required=False,
         defaultFactory=get_default_text)
 
@@ -81,7 +80,7 @@ class ISlideshow(Interface):
     view_more_link_url = schema.URI(
         title=u"View More link URL",
         description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
-                    u'This link will be omitted if the link text or link URL is empty.',
+                    u'This link will be omitted if "View More Link" is unchecked or if the link text or link URL is empty.', #noqa
         required=False,
         defaultFactory=get_default_url)
 
