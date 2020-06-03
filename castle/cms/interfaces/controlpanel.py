@@ -497,8 +497,23 @@ class IContentSettings(Interface):
     # but will require a custom widget
 
 
+class ISlideshowSettings(Interface):
+    resource_slide_view_more_link_text = schema.TextLine(
+        title=u"View More link text",
+        description=u'The text a user sees for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False)
+
+    resource_slide_view_more_link_url = schema.URI(
+        title=u"View More link URL",
+        description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False)
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
-                      IArchivalSettings, IContentSettings):
+                      IArchivalSettings, IContentSettings,
+                      ISlideshowSettings):
     pass
 
 

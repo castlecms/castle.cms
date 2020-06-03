@@ -522,8 +522,8 @@ class VideoType(FileType):
     def __init__(self, data, path, *args):
         super(FileType, self).__init__(data, path, *args)
         if self.original_type == 'WildcardVideo':
-                self.data['portal_type'] = 'Video'
-                repo_path = '/video-repository/'
+            self.data['portal_type'] = 'Video'
+            repo_path = '/video-repository/'
 
         if 'retain_paths' in args:
             self.path = path

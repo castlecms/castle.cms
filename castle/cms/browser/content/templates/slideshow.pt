@@ -16,120 +16,185 @@
   </head>
   <body>
     <div class="reveal">
-      <tal:defs tal:define="slides view/get_slides|nothing">
+      <tal:defs tal:define="slides view/get_slides|nothing;">
         <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
           <tal:item tal:repeat="slide slides">
-
-            <!-- Full Background Video Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'background-video'"
-                           tal:define="video python: slide['video'];
-                                       vert python: slide['vert'];
-                                       hor python: slide['hor']">
-              <section
-                class="background-video-slide"
-                data-background-video="${video}"
-                data-background-color="#000000"
-                data-background-video-loop
-                data-background-video-muted
-                data-transition="fade">
-                <div class="row ${vert}-xs ${hor}-xs">
-                  <div class="col-xs-12 col-lg-6">
-                    <div class="box-row">
-                      <p>${python: slide['text'] or None}</p>
+            <tal:definitions tal:define="video python: slide.get('video', None);
+                                  image python: slide.get('image', None);
+                                  vert python: slide.get('vert', None);
+                                  hor python: slide.get('hor', None);
+                                  title python: slide.get('title', None);
+                                  textlines python: view.get_textlines(slide);
+                                  related_resources python: slide.get('related_resources', None);">
+              <!-- Full Background Video Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
+                <section
+                  class="background-video-slide"
+                  data-background-video="${video}"
+                  data-background-color="#000000"
+                  data-background-video-loop
+                  data-background-video-muted
+                  data-transition="fade">
+                  <div class="row ${vert}-xs ${hor}-xs">
+                    <div class="col-xs-12 background-video-container">
+                      <div class="box-row">
+                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                        <p tal:condition="textlines" class="slide-text">
+                          <tal:textline tal:repeat="textline textlines">
+                            ${textline}
+                            <br tal:condition="not:repeat/textline/end"/>
+                          </tal:textline>
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
-            </tal:container>
+                </section>
+              </tal:container>
 
-            <!-- Left Video w/ Right Text Slide-->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'"
-                           tal:define="video python: slide['video'];
-                                       vert python: slide['vert'];
-                                       hor python: slide['hor']">
-              <section class="left-video-slide">
-                <!--
-                  <div class="row middle-xs d-lg-none">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
-                      <div class="row bottom-xs text-overlay">
-                        <div class="col-xs-12">
-                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                          <p class="slide-subtitle">${python: slide['text'] or None}</p>
-                        </div>
-                      </div>
-                      <video
-                        class="video-background"
-                        data-autoplay
-                        autoplay
-                        muted
-                        loop
-                        playsinline>
-                        <source src="${video}" type="video/mp4" />
+              <!-- Left Video w/ Right Text Slide-->
+              <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
+                <section class="left-video-slide">
+                  <div class="row ${vert}-xs">
+                    <div class="col-xs-6 video-container">
+                      <video data-autoplay muted loop>
+                        <source src="${video}"/>
                       </video>
                     </div>
-                  </div>
-                -->
-                <!-- md/lg view -->
-                <div class="row ${vert}-xs">
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 video-container">
-                    <video data-autoplay muted loop>
-                      <source src="${video}"/>
-                    </video>
-                  </div>
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                    <p class="slide-subtitle">${python: slide['text'] or None}</p>
-                  </div>
-                </div>
-              </section>
-            </tal:container>
-
-            <!-- Full Background Image Slide -->
-              <tal:container tal:condition="python: slide['displayType'] == 'background-image'"
-                             tal:define="image python: slide['image'];
-                                         vert python: slide['vert'];
-                                         hor python: slide['hor']">
-                <section
-                  tal:condition="image"
-                  class="background-image-slide"
-                  data-background="${image}"
-                  data-transition="fade">
-                  <div class="row ${vert}-xs ${hor}-lg">
-                    <div class="col-xs-12 col-lg-6">
-                      <div class="box-row">
-                        <p>${python: slide['text'] or None}</p>
+                    <div class="col-xs-6 text-container">
+                      <div class="text-section ${hor}">
+                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                        <p tal:condition="textlines" class="slide-text">
+                          <tal:textline tal:repeat="textline textlines">
+                            ${textline}
+                            <br tal:condition="not:repeat/textline/end"/>
+                          </tal:textline>
+                        </p>
                       </div>
                     </div>
                   </div>
-                <div tal:condition="not: image">
-                  Image slide with no image selected.
-                </div>
-              </section>
-            </tal:container>
+                </section>
+              </tal:container>
 
-            <!-- Left Image w/ Right Text Slide -->
-            <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'"
-                           tal:define="image python: slide['image'];
-                                       vert python: slide['vert'];
-                                       hor python: slide['hor']">
-              <section class="left-image-slide">
-                <div class="row ${vert}-xs">
-                  <div
-                    class="col-xs-12 col-sm-12 col-md-6 col-lg-6"
-                    style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="box-row">
-                      <p>${python: slide['text'] or None}</p>
+              <!-- Full Background Image Slide -->
+                <tal:container tal:condition="python: slide['displayType'] == 'background-image'">
+                  <section
+                    tal:condition="image"
+                    class="background-image-slide"
+                    data-background="${image}"
+                    data-transition="fade">
+                    <div class="row ${vert}-xs ${hor}-lg">
+                      <div class="col-xs-12 background-image-container">
+                        <div class="box-row">
+                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                          <p tal:condition="textlines" class="slide-text">
+                            <tal:textline tal:repeat="textline textlines">
+                              ${textline}
+                              <br tal:condition="not:repeat/textline/end"/>
+                            </tal:textline>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  <div tal:condition="not: image">
+                    Image slide with no image selected.
+                  </div>
+                </section>
+              </tal:container>
+
+              <!-- Left Image w/ Right Text Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
+                <section class="left-image-slide">
+                  <div class="row ${vert}-xs">
+                    <div
+                      class="col-xs-6 image-container"
+                      style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
+                    <div class="col-xs-6 text-container">
+                      <div class="text-section ${hor}">
+                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                        <p tal:condition="textlines" class="slide-text">
+                          <tal:textline tal:repeat="textline textlines">
+                            ${textline}
+                            <br tal:condition="not:repeat/textline/end"/>
+                          </tal:textline>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </tal:container>
+
+              <!-- Resource Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'resource-slide'">
+              <!-- SCROLLABLE SLIDE -->
+             <section class="scrollable-slide" data-transition="fade">
+                <div class="scrollable-slide-listing">
+
+                  <p>
+                    Close slideshow and return to
+                    <a href="#" onclick="goBack()">previous page on ${context/portal_url}</a>
+                  </p>
+                  <hr />
+                  <p>See also:</p>
+                  <br />
+                  <!-- List Item -->
+                  <tal:item tal:repeat="resource related_resources">
+                    <div class="row scrollable-slide-item">
+                      <div class="col-xs-3">
+                        <!-- Lead Image -->
+                        <p>
+                          <img src="${resource/absolute_url}/@@images/image/preview" width="100%" />
+                        </p>
+                      </div>
+                      <div class="col-xs-9">
+                        <!-- Slideshow Title -->
+                        <p class="title">
+                          <a href="${python: view.get_resource_view_url(resource)}">${resource/Title}</a>
+                        </p>
+                        <!-- Slideshow Date -->
+                        <p>
+                          ${python: resource.effective_date.strftime('%B %e, %Y')}
+                        </p>
+                        <!-- Summary/Description -->
+                        <p class="description">
+                          ${resource/Description}
+                        </p>
+                        <p class="view-more">
+                          <a href="${python: view.get_resource_view_url(resource)}">View</a>
+                        </p>
+                      </div>
+                    </div>
+                  </tal:item>
+                  <div class="" tal:condition="view/display_view_more_link">
+                    <div class="col-xs-12">
+                      <p class="view-more">
+                        <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>
+                      </p>
                     </div>
                   </div>
                 </div>
-              </section>
-            </tal:container>
+
+                </section>
+              </tal:container>
+
+            </tal:definitions>
           </tal:item>
         </div>
       </tal:defs>
+      <div class="close-container" onclick="goBack()">
+        <div class="x-container">
+          <div class="leftright"></div>
+          <div class="rightleft"></div>
+        </div>
+        <div class="close-text-container">
+          <label class="close">close</label>
+        </div>
+      </div>
     </div>
     <script>
+      function goBack(){
+        window.history.back();
+      }
+
       // More info about config & dependencies:
       // - https://github.com/hakimel/reveal.js#configuration
       // - https://github.com/hakimel/reveal.js#dependenciess
