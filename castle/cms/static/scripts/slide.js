@@ -14,7 +14,7 @@ function getFormVariables(event) {
             ...Array.from(typeAndTextFieldset.children).filter(hasId),
             ...Array.from(mediaFieldset.children).filter(hasId)
         ],
-        navTabs: form.querySelector('nav')
+        navTabs: Array.from(form.querySelector('nav').children)
     };
     if (event) {
         formVariables.slideType = event.target.value;
@@ -48,7 +48,8 @@ function getIdEndingsToHide(slideType) {
         case 'left-video-right-text':
             return ['widgets-image', 'related_items'];
         case 'resource-slide':
-            return ['widgets-image', 'widgets-video'];
+            return ['widgets-image', 'widgets-video', 'widgets-title',
+                    'widgets-text', 'hor_text_position', 'vert_text_position'];
         default:
             return [];
     }

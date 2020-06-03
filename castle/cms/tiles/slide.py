@@ -25,13 +25,13 @@ class ISlideTileSchema(model.Schema):
     model.fieldset(
         'Type and Text',
         label=(u'Type and Text'),
-        fields=['display_type', 'title', 'text', 'hor_text_position', 'vert_text_position']
+        fields=['display_type', 'title', 'text', 'hor_text_position', 'vert_text_position', 'related_items']
     )
 
     model.fieldset(
         'Media Settings',
         label=(u'Media Settings'),
-        fields=['related_items', 'image', 'video']
+        fields=['image', 'video']
     )
 
     form.widget('display_type', onchange=u'javascript:onSlideTypeChange(event)')
