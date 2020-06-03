@@ -52,10 +52,6 @@ class SlideshowView(BrowserView):
                 slides.append(slide)
         return slides
 
-    def get_domain(self):
-        public_url = get_registry_record('plone.public_url')
-        return public_url.replace('http://', '').replace('https://', '')
-
     def get_id(self):
         return self.context.custom_dom_id or None
 

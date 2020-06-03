@@ -131,7 +131,7 @@
 
                   <p>
                     Close slideshow and return to
-                    <a href="#" onclick="goBack()">previous page on ${view/get_domain}</a>
+                    <a href="#" onclick="goBack()">previous page on ${context/portal_url}</a>
                   </p>
                   <hr />
                   <p>See also:</p>
