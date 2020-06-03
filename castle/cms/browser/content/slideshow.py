@@ -83,6 +83,13 @@ class SlideshowView(BrowserView):
         else:
             return None
 
+    def get_resource_view_url(self, resource):
+        view_types = get_registry_record('plone.types_use_view_action_in_listings') or []
+        url = resource.absolute_url()
+        if resource.portal_type in view_types:
+                url += '/view'
+        return url
+
 
 class SlideshowEditForm(edit.DefaultEditForm):
     def update(self):

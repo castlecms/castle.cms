@@ -148,7 +148,7 @@
                       <div class="col-xs-9">
                         <!-- Slideshow Title -->
                         <p class="title">
-                          <a href="#">${resource/Title}</a>
+                          <a href="${python: view.get_resource_view_url(resource)}">${resource/Title}</a>
                         </p>
                         <!-- Slideshow Date -->
                         <p>
@@ -159,7 +159,7 @@
                           ${resource/Description}
                         </p>
                         <p class="view-more">
-                          <a href="${resource/absolute_url}/view">View</a>
+                          <a href="${python: view.get_resource_view_url(resource)}">View</a>
                         </p>
                       </div>
                     </div>
