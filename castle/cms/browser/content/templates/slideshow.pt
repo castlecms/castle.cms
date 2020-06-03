@@ -24,7 +24,7 @@
                                   vert python: slide.get('vert', None);
                                   hor python: slide.get('hor', None);
                                   title python: slide.get('title', None);
-                                  textlines python: slide.get('text', '').split('\n');
+                                  textlines python: view.get_textlines(slide);
                                   related_resources python: slide.get('related_resources', None);">
               <!-- Full Background Video Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'background-video'">

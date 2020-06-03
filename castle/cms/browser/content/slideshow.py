@@ -80,6 +80,12 @@ class SlideshowView(BrowserView):
                 self.get_view_more_link_text() and
                 self.get_view_more_link_url())
 
+    def get_textlines(self, slide):
+        slide_text = slide.get('text', '')
+        if slide_text:
+            return slide_text.split('\n')
+        else:
+            return None
 
 
 class SlideshowEditForm(edit.DefaultEditForm):
