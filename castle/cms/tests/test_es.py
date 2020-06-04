@@ -10,8 +10,9 @@ import transaction
 from castle.cms.browser.search import SearchAjax
 from collective.elasticsearch.es import ElasticSearchCatalog
 from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING, CASTLE_FIXTURE
 from collective.elasticsearch.interfaces import IElasticSettings
+from fnmatch import fnmatch
 from plone import api
 from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login,
                                setRoles)
@@ -19,7 +20,7 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
-
+from castle.cms.interfaces import ICastleLayer
 logger = logging.getLogger(__name__)
 
 
@@ -35,7 +36,7 @@ if 'ES_HOST' in os.environ:
         resp = requests.get(url)
         data = resp.json()
         version = data['version']['number']
-        if version in ('2.3.2', '2.3.3', '2.3.5'):
+        if fnmatch(version, '2.3.?') or fnmatch(version, '2.4.?'):
             ES_ENABLED = True
         else:
             logger.warning('Unsupported ES version: {}'.format(version))
@@ -47,7 +48,6 @@ if ES_ENABLED:
     class TestES(unittest.TestCase):
 
         layer = CASTLE_PLONE_INTEGRATION_TESTING
-
         def setUp(self):
             self.portal = self.layer['portal']
             self.request = self.layer['request']
@@ -56,8 +56,10 @@ if ES_ENABLED:
             registry = getUtility(IRegistry)
             settings = registry.forInterface(IElasticSettings)
             settings.enabled = True
-            settings.sniffer_timeout = None
+            settings.sniffer_timeout = 1.0
+            # catalog = api.portal.get_tool('portal_catalog')
             catalog = getToolByName(self.portal, 'portal_catalog')
+
             catalog._elasticcustomindex = 'plone-test-index'
             es = ElasticSearchCatalog(catalog)
             es.recreateCatalog()
@@ -65,34 +67,36 @@ if ES_ENABLED:
             transaction.commit()
 
             # have to do commit for es integration...
-            folder = api.content.create(
+            self.folder = api.content.create(
                 type='Folder',
                 id='esfolder1',
                 container=self.portal,
                 title='Foobar folder')
-            api.content.create(
+            self.esdoc1 = api.content.create(
                 type='Document',
                 id='esdoc1',
-                container=folder,
+                container=self.folder,
                 title='Foobar one')
-            doc = api.content.create(
+            self.esdoc2 = doc = api.content.create(
                 type='Document',
                 id='esdoc2',
-                container=folder,
+                container=self.folder,
                 subject=('foobar',),
                 title='Foobar two')
-            api.content.create(
+            self.esdoc3 = api.content.create(
                 type='Document',
                 id='esdoc3',
-                container=folder,
+                container=self.folder,
                 title='Foobar three')
-
-            ann = IAnnotations(doc)
+            ann = IAnnotations(self.esdoc2)
             ann[COUNT_ANNOTATION_KEY] = {
                 'twitter_matomo': 5,
                 'facebook': 5,
             }
-            doc.reindexObject()
+            for item in [self.folder, self.esdoc1, self.esdoc2, self.esdoc3]:
+                api.content.transition(obj=item, to_state='published')
+
+                item.reindexObject()
             transaction.commit()
 
             url = 'http://{}:9200/plone-test-index/_flush'.format(host)
@@ -141,6 +145,44 @@ if ES_ENABLED:
             })
             self.assertTrue(tile.filter_pattern_config != '{}')
             tile()
+
+        def test_ajax_search_with_private_parents(self):
+            self.request.form.update({
+                'SearchableText': 'Foobar',
+                # 'Subject': 'foobar'
+            })
+            view_1 = SearchAjax(self.portal, self.request)
+            result_1 = json.loads(view_1())
+            import pdb; pdb.set_trace()
+            print(result_1)
+            self.assertIn(result_1['count'], [1,2,3,4])
+            api.content.transition(obj=self.esdoc2, to_state='private')
+            self.esdoc2.reindexObject()
+            transaction.commit()
+            import time; time.sleep(3)
+            view_2 = SearchAjax(self.portal, self.request)
+            result_2 = json.loads(view_2())
+            print(result_2)
+            self.assertIn(result_2['count'], [1,2,3,4])
+            # self.assertEquals(result_2['count'], 0)
+            api.content.transition(obj=self.esdoc2, to_state='published')
+            api.content.transition(obj=self.folder, to_state='private')
+            view_3 = SearchAjax(self.portal, self.request)
+            result_3 = json.loads(view_3())
+            print(result_3)
+            self.assertIn(result_3['count'], [1,2,3,4])
+            # self.assertEquals(result_3['count'], 0)
+            registry = getUtility(IRegistry)
+            api.portal.set_registry_record('plone.allow_public_in_private_container', True)
+            view_4 = SearchAjax(self.portal, self.request)
+            result_4 = json.loads(view_4())
+            print(result_4)
+            self.assertIn(result_4['count'], [1,2,3,4])
+            # self.assertEquals(result_4['count'], 1)
+
+
+            
+
 
 else:
     class TestEmptyES(unittest.TestCase):

@@ -29,6 +29,7 @@ from zope.configuration import xmlconfig
 from zope.globalrequest import clearRequest
 from zope.globalrequest import setRequest
 from ZPublisher import HTTPResponse
+from collective.elasticsearch.interfaces import IElasticSearchLayer
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -75,6 +76,10 @@ CASTLE_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
 CASTLE_PLONE_INTEGRATION_TESTING = IntegrationTesting(
     bases=(CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
     name="CastleTesting:Integration")
+CASTLE_PLONE_ES_TESTING = IntegrationTesting(
+    bases=(CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE, IElasticSearchLayer),
+    name="CastleTesting:Integration")
+
 
 
 CASTLE_BUNDLE_FIXTURE = RemoteLibraryLayer(
