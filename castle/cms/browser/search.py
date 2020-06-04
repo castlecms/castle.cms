@@ -6,6 +6,7 @@ from DateTime import DateTime
 from elasticsearch import TransportError
 from plone import api
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.Five import BrowserView
 from urlparse import urljoin
@@ -36,6 +37,10 @@ def _one(val):
 
 
 class Search(BrowserView):
+    def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-search')
+        return super(Search, self).__call__()
 
     @property
     def options(self):

@@ -11,6 +11,7 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from Products.CMFEditions.browser.diff import DiffView
 from Products.CMFPlone.browser.syndication.adapters import SearchFeed
 from Products.CMFPlone.interfaces.syndication import IFeedItem
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import queryMultiAdapter
@@ -21,6 +22,11 @@ import json
 
 
 class HistoryView(HistoryByLineView):
+    def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-history')
+        return super(HistoryView, self).__call__()
+
     index = ViewPageTemplateFile('templates/history_view.pt')
 
     def show(self):
@@ -82,6 +88,9 @@ class HistoryVersionView(DiffView):
         return version_history
 
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-history')
+
         alsoProvides(self.request, IDisableCSRFProtection)
         self.version_info = None
         for version in self.versions:

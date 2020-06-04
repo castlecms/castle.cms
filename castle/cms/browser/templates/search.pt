@@ -10,14 +10,6 @@
   <metal:block fill-slot="top_slot"
                tal:define="disable_column_one python:request.set('disable_plone.leftcolumn',1);
                            disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
-  <metal:block fill-slot="style_slot">
-    <link rel="stylesheet" type="text/css"
-          href="${portal_url}/++plone++castle/less/misc/search.css?v=5">
-  </metal:block>
-  <metal:javascript fill-slot="javascript_head_slot">
-    <script type="text/javascript" src="${context/portal_url}/++plone++castle/components/search.js?v=6">
-    </script>
-  </metal:javascript>
 </head>
 
 <body>

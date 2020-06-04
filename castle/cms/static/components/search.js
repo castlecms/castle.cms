@@ -1,6 +1,5 @@
 /*global history */
 
-window.addEventListener('load', function(){
 
 require([
   'jquery',
@@ -603,7 +602,5 @@ require([
       show: null
     });
   });
-
-});
 
 });

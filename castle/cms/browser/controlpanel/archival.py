@@ -5,6 +5,7 @@ from castle.cms.files import aws
 from DateTime import DateTime
 from plone import api
 from plone.app.uuid.utils import uuidToObject
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 
@@ -188,6 +189,10 @@ class AWSApi(object):
 class Manage(BaseView):
 
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-manage-archives')
+        return super(Manage, self).__call__()
+
         if self.request.form.get('api'):
             self.request.response.setHeader('Content-type', 'application/json')
             return json.dumps(AWSApi(self.context, self.request)())

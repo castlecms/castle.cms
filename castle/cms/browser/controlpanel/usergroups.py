@@ -2,12 +2,18 @@ from Acquisition import aq_inner
 from castle.cms.lockout import LockoutManager
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
+from Products.CMFPlone.resources import add_resource_on_request
 from zExceptions import Forbidden
 
 import time
 
 
 class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPanel):
+    def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-usersgroups')
+        return super(UsersOverviewControlPanel, self).__call__()
+
     def manageUser(self, users=[], resetpassword=[], delete=[]):
         super(UsersOverviewControlPanel, self).manageUser(
             users=users, resetpassword=resetpassword, delete=delete)
