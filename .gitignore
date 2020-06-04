@@ -30,6 +30,7 @@ log.html
 node_modules/
 report.html
 src/
+local.cfg
 zinstance/
 packages/
 pyvenv.cfg
