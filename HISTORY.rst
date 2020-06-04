@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.11 (unreleased)
+2.6.11 (2020-06-04)
 -------------------
 
 - utilize resource registry instead of metal:javascript in some places
