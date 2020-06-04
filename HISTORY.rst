@@ -4,7 +4,12 @@ Changelog
 2.6.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- utilize resource registry instead of metal:javascript in some places
+  [daxxog]
+- add advanced player with no image
+  [Takiyo]
+- Slideshow enhancements and configuration options
+  [bduncan137]
 
 
 2.6.10 (2020-05-20)
