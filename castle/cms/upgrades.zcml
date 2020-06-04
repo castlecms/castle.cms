@@ -314,19 +314,19 @@
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
-    name="2_6_3"
-    title="CastleCMS upgrade to 2.6.3 profile"
-    directory="profiles/2_6_3"
+    name="2_6_11"
+    title="CastleCMS upgrade to 2.6.11 profile"
+    directory="profiles/2_6_11"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 2.6.3"
+    title="Upgrade CastleCMS to 2.6.11"
     description=""
     source="*"
     destination="2603"
-    handler=".upgrades.upgrade_2_6_3.upgrade"
+    handler=".upgrades.upgrade_2_6_11.upgrade"
     profile="castle.cms:default"/>
 
 </configure>
