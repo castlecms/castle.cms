@@ -55,12 +55,12 @@
               <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
                 <section class="left-video-slide">
                   <div class="row ${vert}-xs">
-                    <div class="col-xs-6 video-container">
+                    <div class="col-xs-12 col-sm-6 video-container">
                       <video data-autoplay muted loop>
                         <source src="${video}"/>
                       </video>
                     </div>
-                    <div class="col-xs-6 text-container">
+                    <div class="col-sm-6 text-container">
                       <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
                         <p tal:condition="textlines" class="slide-text">
@@ -106,9 +106,9 @@
                 <section class="left-image-slide">
                   <div class="row ${vert}-xs">
                     <div
-                      class="col-xs-6 image-container"
+                      class="col-xs-12 col-sm-6 image-container"
                       style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
-                    <div class="col-xs-6 text-container">
+                    <div class="col-sm-6 text-container">
                       <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
                         <p tal:condition="textlines" class="slide-text">
