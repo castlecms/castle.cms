@@ -372,24 +372,39 @@ class BaseImportType(object):
                         filename = self.field_data['id']
                 obj.image = im_data
 
-                is_stringio = isinstance(im_obj, StringIO)
-                if is_stringio:
-                    namedblobimage_data = im_data
-                elif isinstance(im_obj, Image):
-                    namedblobimage_data = im_data.data
-                else:
-                    if pdb_if_exception:
-                        pdb.set_trace()
-                    logger.info("    lead image is type %s" % type(im_obj))
-                obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
+                if not isinstance(obj.image, NamedBlobImage):
+                    is_stringio = isinstance(im_obj, StringIO)
+                    if is_stringio:
+                        namedblobimage_data = im_data
+                    elif isinstance(im_obj, Image):
+                        namedblobimage_data = im_data.data
+                    else:
+                        if pdb_if_exception:
+                            pdb.set_trace()
+                        logger.info("    lead image is type %s" % type(im_obj))
+
+                    obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
                 if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
                 else:
                     if isinstance(im_obj, Image):
                         data = im_obj.data
-                    else:
+                    elif hasattr(im_obj, 'buf'):
                         data = im_obj.buf
+                    elif hasattr(im_obj, '_blob'):
+                        if hasattr(im_obj._blob, '_p_blob_uncommitted'):
+                            f = open(im_obj._blob._p_blob_uncommitted, 'r')
+                            data = f.read()
+                            f.close()
+                        else:
+                            raise Exception("no _p_blob_uncommitted attr in im_obj._blob")
+                    else:
+                        raise Exception("no _blob attr in im_obj")
+
+                    if data == '' or data == None:
+                        data = base64.b64decode('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')
+
                     image_type = what('', h=data)
                     if image_type in ['png', 'bmp', 'jpeg', 'xbm', 'tiff', 'gif']:
                         obj.image.contentType = 'image/%s' % image_type
