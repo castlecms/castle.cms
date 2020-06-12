@@ -173,6 +173,7 @@ video::-webkit-media-controls {
   width: 100%;
   height: 50%;
   position: relative;
+  /* background-color: rgba(0, 0, 0, 0.2); */
 }
 
 label.close {
@@ -265,10 +266,11 @@ label.close {
 @media only screen and (max-width: 767px) {
   .text-container{
     position:absolute;
-    left:0;
+    left:-1000px;
     top: 0;
     width: 100vw;
     height: 100vh;
+    z-index: 9998;
   }
   .text-section{
     width: 100vw;
@@ -294,7 +296,13 @@ label.close {
   .middle-xs .text-section{
     justify-content: center;
   }
-  
+  .left-video-slide .video-container {
+    padding: 0;
+  }
+  .video-container video{
+    max-width: 100%;
+    max-height: 100%;
+  }
   /* .hide-xs{
     display: contents;
   } */

@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en-US" lang="en-US"
       xmlns:tal="http://xml.zope.org/namespaces/tal">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1, width=500">
   <head>
     <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reset.css" />
     <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reveal.css" />
@@ -56,7 +57,7 @@
                 <section class="left-video-slide">
                   <div class="row ${vert}-xs">
                     <div class="col-xs-12 col-sm-6 video-container">
-                      <video data-autoplay muted loop>
+                      <video data-autoplay muted loop playsinline>
                         <source src="${video}"/>
                       </video>
                     </div>
