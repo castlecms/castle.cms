@@ -402,7 +402,7 @@ class BaseImportType(object):
                     else:
                         raise Exception("no _blob attr in im_obj")
 
-                    if data == '' or data == None:
+                    if data == '' or data is None:
                         data = base64.b64decode('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')
 
                     image_type = what('', h=data)

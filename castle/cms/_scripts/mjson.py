@@ -263,10 +263,10 @@ class RichTextValueSerializer(BaseTypeSerializer):
 
     @classmethod
     def _deserialize(cls, data):
-        if data['mimeType'] == None:
+        if data['mimeType'] is None:
             data['mimeType'] = u'text/html'
 
-        if data['outputMimeType'] == None:
+        if data['outputMimeType'] is None:
             data['outputMimeType'] = data['mimeType']
 
         return RichTextValue(
