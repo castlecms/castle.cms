@@ -382,7 +382,6 @@ class BaseImportType(object):
                         if pdb_if_exception:
                             pdb.set_trace()
                         logger.info("    lead image is type %s" % type(im_obj))
-
                     obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
                 if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
