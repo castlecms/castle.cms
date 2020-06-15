@@ -64,7 +64,7 @@
                       </video>
                     </div>
                     <div class="col-sm-6 text-container">
-                      <div class="text-section">
+                      <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
                         <p tal:condition="textlines" class="slide-text">
                           <tal:textline tal:repeat="textline textlines">
