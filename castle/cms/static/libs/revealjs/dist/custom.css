@@ -23,7 +23,7 @@ h2.slide-title {
 
 .text-section {
   text-align: center;
-  padding: 75px;
+  padding: 75px 75px 100px 75px;
   display: flex;
   flex-direction: column;
 }
