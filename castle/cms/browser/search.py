@@ -111,9 +111,10 @@ class Search(BrowserView):
         parsed = urlparse(get_public_url())
 
         return json.dumps({
-            'searchTypes': search_types,
+            'searchTypes': [s for s in sorted(search_types, key=lambda st: st['label'])],
             'additionalSites': [s for s in sorted(additional_sites)],
-            'currentSiteLabel': parsed.netloc
+            'currentSiteLabel': parsed.netloc,
+            'searchHelpText': 'Hey there'
         })
 
     @property
