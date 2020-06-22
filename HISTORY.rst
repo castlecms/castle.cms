@@ -4,7 +4,10 @@ Changelog
 2.6.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- slideshow and search updates
+  [bduncan137]
+- some import/export work
+  [daxxog]
 
 
 2.6.11 (2020-06-04)
