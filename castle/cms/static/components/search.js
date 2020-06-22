@@ -370,18 +370,22 @@ require([
         item.searchSite = that.state.searchSite;
         results.push(R.createElement(SearchResult, item));
       });
-      return D.div({ id: 'search-results-wrapper' }, [
-        D.div({ id: 'search-results-bar' }, [
-          D.span({ id: 'results-count' }, [
+      return D.div({ id: "search-results-wrapper" }, [
+        D.div({ id: "search-results-bar" }, [
+          D.span({ id: "results-count" }, [
             'Page ',
             that.state.page,
+            ' (Results ',
+            (that.state.page - 1) * that.state.pageSize + 1,
+            ' to ',
+            Math.min(that.state.page * that.state.pageSize, that.state.count),
             ' of ',
             that.state.count,
-            ' results'
+            ')'
           ])
         ]),
-        D.div({ id: 'search-results' }, [
-          D.ul({ className: 'searchResults' }, results),
+        D.div({ id: "search-results" }, [
+          D.ul({ className: "searchResults" }, results),
           this.renderPaging()
         ])
       ]);
@@ -541,7 +545,6 @@ require([
           }
         }));
       }
-
       return D.div(
         { className: 'search-options' },
         [
