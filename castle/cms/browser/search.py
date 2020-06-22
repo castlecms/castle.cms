@@ -109,12 +109,11 @@ class Search(BrowserView):
                 pass
 
         parsed = urlparse(get_public_url())
-
         return json.dumps({
             'searchTypes': [s for s in sorted(search_types, key=lambda st: st['label'])],
             'additionalSites': [s for s in sorted(additional_sites)],
             'currentSiteLabel': parsed.netloc,
-            'searchHelpText': 'Hey there'
+            'searchHelpText': api.portal.get_registry_record('castle.search_page_help_text', None),
         })
 
     @property

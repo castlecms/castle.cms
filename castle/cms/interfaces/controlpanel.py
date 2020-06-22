@@ -497,7 +497,16 @@ class IContentSettings(Interface):
     # but will require a custom widget
 
 
-class ISlideshowSettings(Interface):
+class IConfigurableTextSettings(Interface):
+    search_page_help_text = schema.TextLine(
+        title=u'Search Page Help Text',
+        description=u'The help text a user sees between the search bar and search results at /@@search. '
+                    u'This text element will be omitted if blank',
+        required=False,
+        default=u'To narrow your search, select a content type option shown in the toolbar below or listed under "More Filters". ' # noqa
+                u'To broaden your search to other crawled sites, select a subdomain listed under "Source."' # noqa
+    )
+
     resource_slide_view_more_link_text = schema.TextLine(
         title=u"View More link text",
         description=u'The text a user sees for the optional link at the bottom of the slideshow resource slide. ' # noqa
@@ -513,7 +522,7 @@ class ISlideshowSettings(Interface):
 
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISlideshowSettings):
+                      IConfigurableTextSettings):
     pass
 
 

@@ -243,7 +243,6 @@ require([
         url: this.props.searchUrl,
         data: state
       }).done(function (data) {
-        console.log(data);
         that.props.Subject = undefined;
         that.props['Subject:list'] = undefined;
         that.setState(
@@ -371,9 +370,9 @@ require([
         item.searchSite = that.state.searchSite;
         results.push(R.createElement(SearchResult, item));
       });
-      return D.div({ id: "search-results-wrapper" }, [
-        D.div({ id: "search-results-bar" }, [
-          D.span({ id: "results-count" }, [
+      return D.div({ id: 'search-results-wrapper' }, [
+        D.div({ id: 'search-results-bar' }, [
+          D.span({ id: 'results-count' }, [
             'Page ',
             that.state.page,
             ' of ',
@@ -381,8 +380,8 @@ require([
             ' results'
           ])
         ]),
-        D.div({ id: "search-results" }, [
-          D.ul({ className: "searchResults" }, results),
+        D.div({ id: 'search-results' }, [
+          D.ul({ className: 'searchResults' }, results),
           this.renderPaging()
         ])
       ]);
@@ -543,7 +542,6 @@ require([
         }));
       }
 
-      console.log(that.state);
       return D.div(
         { className: 'search-options' },
         [
@@ -601,7 +599,7 @@ require([
       SearchComponent,
       cutils.extend(JSON.parse(el.getAttribute('data-search')), {
         SearchableText: getParameterByName('SearchableText') || '',
-        searchHelpText: getParameterByName('searchHelpText') || '',
+        searchHelpText: searchHelpText,
         Subject: Subject,
         'Subject:list': Subjectlist,
         searchUrl: el.getAttribute('data-search-url'),
