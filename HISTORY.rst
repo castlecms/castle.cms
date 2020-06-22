@@ -4,8 +4,7 @@ Changelog
 2.6.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- js fix
 
 2.6.12 (2020-06-22)
 -------------------
