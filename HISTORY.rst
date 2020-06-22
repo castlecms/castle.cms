@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.12 (unreleased)
+2.6.12 (2020-06-22)
 -------------------
 
 - slideshow and search updates
