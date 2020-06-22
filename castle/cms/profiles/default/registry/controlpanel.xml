@@ -16,7 +16,9 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
-  <records interface="castle.cms.interfaces.IConfigurableTextSettings"
+  <records interface="castle.cms.interfaces.ISlideshowSettings" 
+           remove="true" />
+  <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />

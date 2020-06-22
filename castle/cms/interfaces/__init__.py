@@ -23,7 +23,8 @@ from .controlpanel import ICrawlerConfiguration
 from .controlpanel import ISecuritySchema
 from .controlpanel import ISiteConfiguration
 from .controlpanel import ISiteSchema
-from .controlpanel import IConfigurableTextSettings
+from .controlpanel import ISearchSettings
+from .controlpanel import ISlideshowSettings
 from .controlpanel import ISocialMediaSchema
 from .layers import ICastleLayer
 from .layers import IVersionViewLayer

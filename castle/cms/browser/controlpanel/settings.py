@@ -1,6 +1,7 @@
 from castle.cms.interfaces import (IAPISettings, IArchivalSettings,
                                    ICastleSettings, IContentSettings,
-                                   ISiteConfiguration, IConfigurableTextSettings)
+                                   ISiteConfiguration, ISearchSettings,
+                                   ISlideshowSettings)
 from castle.cms.widgets import FileUploadFieldsFieldWidget, SelectFieldWidget
 from plone.app.registry.browser import controlpanel
 from plone.formwidget.namedfile.widget import NamedFileFieldWidget
@@ -26,7 +27,7 @@ class ContentForm(group.GroupForm):
 
 class ConfigurableTextForm(group.GroupForm):
     label = u"Configurable Text"
-    fields = field.Fields(IConfigurableTextSettings)
+    fields = field.Fields(ISearchSettings, ISlideshowSettings)
 
 
 class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
