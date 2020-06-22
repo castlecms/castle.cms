@@ -46,7 +46,7 @@ class Search(BrowserView):
     def options(self):
         search_types = [{
             'id': 'images',
-            'label': 'Images',
+            'label': 'Image',
             'query': {
                 'portal_type': 'Image'
             }
@@ -59,11 +59,12 @@ class Search(BrowserView):
         }]
 
         ptypes = api.portal.get_tool('portal_types')
+        allow_anyway = ['Audio']
         for type_id in ptypes.objectIds():
             if type_id in ('Link', 'Document', 'Folder'):
                 continue
             _type = ptypes[type_id]
-            if not _type.global_allow:
+            if not _type.global_allow and type_id not in allow_anyway:
                 continue
             search_types.append({
                 'id': type_id.lower(),
@@ -72,19 +73,14 @@ class Search(BrowserView):
                     'portal_type': type_id
                 }
             })
-        search_types.extend([{
-            'id': 'video',
-            'label': 'Video',
-            'query': {
-                'portal_type': 'Video'
-            }
-        }, {
-            'id': 'audio',
-            'label': 'Audio',
-            'query': {
-                'portal_type': 'Audio'
-            }
-        }])
+        # search_types.append({
+        #     'id': 'audio',
+        #     'label': 'Audio',
+        #     'query': {
+        #         'portal_type': 'Audio'
+        #     }
+        # })
+        # search_types.sort(key=lambda type: type['label'])
 
         additional_sites = []
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
@@ -113,11 +109,11 @@ class Search(BrowserView):
                 pass
 
         parsed = urlparse(get_public_url())
-
         return json.dumps({
-            'searchTypes': search_types,
-            'additionalSites': [s for s in sorted(additional_sites)],
-            'currentSiteLabel': parsed.netloc
+            'searchTypes': sorted(search_types, key=lambda st: st['label']),
+            'additionalSites': sorted(additional_sites),
+            'currentSiteLabel': parsed.netloc,
+            'searchHelpText': api.portal.get_registry_record('castle.search_page_help_text', None),
         })
 
     @property
