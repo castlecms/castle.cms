@@ -602,7 +602,6 @@ require([
       SearchComponent,
       cutils.extend(JSON.parse(el.getAttribute('data-search')), {
         SearchableText: getParameterByName('SearchableText') || '',
-        searchHelpText: searchHelpText,
         Subject: Subject,
         'Subject:list': Subjectlist,
         searchUrl: el.getAttribute('data-search-url'),
