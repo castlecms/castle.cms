@@ -17,7 +17,7 @@
   <records interface="castle.cms.interfaces.ICrawlerConfiguration"
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISlideshowSettings" 
-           remove="true" />
+           prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
 
