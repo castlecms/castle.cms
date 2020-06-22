@@ -1,18 +1,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en-US" lang="en-US"
       xmlns:tal="http://xml.zope.org/namespaces/tal">
+      <meta name="viewport" content="initial-scale=1, width=device-width">
   <head>
-    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reset.css" />
-    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/reveal.css" />
-    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/theme/black.css" />
-    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/styles/custom.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/theme/black.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
     <!-- Flexbox Grid -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css"
       type="text/css"
     />
-    <script src="${context/portal_url}/++plone++castle/libs/revealjs/reveal.js"/>
+    <script type="module" src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"/>
   </head>
   <body>
     <div class="reveal">
@@ -29,22 +30,24 @@
               <!-- Full Background Video Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
                 <section
-                  class="background-video-slide"
+                  class="background-video-slide background-slide"
                   data-background-video="${video}"
                   data-background-color="#000000"
                   data-background-video-loop
                   data-background-video-muted
                   data-transition="fade">
-                  <div class="row ${vert}-xs ${hor}-xs">
-                    <div class="col-xs-12 background-video-container">
-                      <div class="box-row">
-                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p tal:condition="textlines" class="slide-text">
-                          <tal:textline tal:repeat="textline textlines">
-                            ${textline}
-                            <br tal:condition="not:repeat/textline/end"/>
-                          </tal:textline>
-                        </p>
+                  <div class="row ${vert}-xs">
+                    <div class="col-xs-12 box-row">
+                      <div class="background-video-text-container text-container ${hor}">
+                        <div class="text-section">
+                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                          <p tal:condition="textlines" class="slide-text">
+                            <tal:textline tal:repeat="textline textlines">
+                              ${textline}
+                              <br tal:condition="not:repeat/textline/end"/>
+                            </tal:textline>
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -53,14 +56,14 @@
 
               <!-- Left Video w/ Right Text Slide-->
               <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
-                <section class="left-video-slide">
+                <section class="left-video-slide left-slide">
                   <div class="row ${vert}-xs">
-                    <div class="col-xs-6 video-container">
-                      <video data-autoplay muted loop>
+                    <div class="col-xs-12 col-sm-6 video-container">
+                      <video data-autoplay muted loop playsinline>
                         <source src="${video}"/>
                       </video>
                     </div>
-                    <div class="col-xs-6 text-container">
+                    <div class="col-sm-6 text-container">
                       <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
                         <p tal:condition="textlines" class="slide-text">
@@ -79,19 +82,21 @@
                 <tal:container tal:condition="python: slide['displayType'] == 'background-image'">
                   <section
                     tal:condition="image"
-                    class="background-image-slide"
+                    class="background-image-slide background-slide"
                     data-background="${image}"
                     data-transition="fade">
-                    <div class="row ${vert}-xs ${hor}-lg">
-                      <div class="col-xs-12 background-image-container">
-                        <div class="box-row">
-                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                          <p tal:condition="textlines" class="slide-text">
-                            <tal:textline tal:repeat="textline textlines">
-                              ${textline}
-                              <br tal:condition="not:repeat/textline/end"/>
-                            </tal:textline>
-                          </p>
+                    <div class="row ${vert}-xs">
+                      <div class="col-xs-12 box-row">
+                        <div class="background-image-text-container text-container ${hor}">
+                          <div class="text-section">
+                            <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                            <p tal:condition="textlines" class="slide-text">
+                              <tal:textline tal:repeat="textline textlines">
+                                ${textline}
+                                <br tal:condition="not:repeat/textline/end"/>
+                              </tal:textline>
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -103,12 +108,12 @@
 
               <!-- Left Image w/ Right Text Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
-                <section class="left-image-slide">
+                <section class="left-image-slide left-slide">
                   <div class="row ${vert}-xs">
                     <div
-                      class="col-xs-6 image-container"
+                      class="col-xs-12 col-sm-6 image-container"
                       style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
-                    <div class="col-xs-6 text-container">
+                    <div class="col-sm-6 side-text-container">
                       <div class="text-section ${hor}">
                         <h2 class="slide-title">${python: slide['title'] or None}</h2>
                         <p tal:condition="textlines" class="slide-text">
@@ -180,50 +185,38 @@
           </tal:item>
         </div>
       </tal:defs>
-      <div class="close-container" onclick="goBack()">
-        <div class="x-container">
-          <div class="leftright"></div>
-          <div class="rightleft"></div>
-        </div>
-        <div class="close-text-container">
-          <label class="close">close</label>
-        </div>
+    </div>
+    <div class="close-container" onclick="goBack()">
+      <div class="x-container">
+        <div class="leftright"></div>
+        <div class="rightleft"></div>
+      </div>
+      <div class="close-text-container">
+        <label class="close">close</label>
       </div>
     </div>
+    <script src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"></script>
+    <script src="${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/markdown.js"></script>
+    <script src="${context/portal_url}/++plone++castle/libs/revealjs/plugin/highlight/highlight.js"></script>
     <script>
       function goBack(){
         window.history.back();
       }
 
-      // More info about config & dependencies:
-      // - https://github.com/hakimel/reveal.js#configuration
-      // - https://github.com/hakimel/reveal.js#dependenciess
-
-      /* @param {HTMLElement} slide
-      function syncSlide( slide ) {
-      Reveal.syncSlide({ })
-      Reveal.configure({ backgroundTransition: "zoom" });
-      */
-
       Reveal.initialize({
-        // Slide Dimensions
+        plugins: [ RevealMarkdown, RevealHighlight ],
         width: "100%",
         height: "100%",
         margin: 0,
         minScale: 1,
         maxScale: 1,
-
         transitionSpeed: "default", // default/fast/slow
-
         transition: "fade", // none/fade/slide/convex/concave/zoom
-
-        dependencies: [
-          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/marked.js" },
-          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/markdown.js" },
-          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/notes/notes.js", async: true },
-          { src: "${context/portal_url}/++plone++castle/libs/revealjs/plugin/highlight/highlight.js", async: true }
-        ]
       });
+
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependenciess
     </script>
   </body>
 </html>
