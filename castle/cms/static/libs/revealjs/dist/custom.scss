@@ -2,12 +2,15 @@
 //  sass castle/cms/static/libs/revealjs/dist/custom.scss    castle/cms/static/libs/revealjs/dist/custom.css
 //  
 // If you don't have sass installed, you can install: npm install -g sass (for global install)
+
 p {
   text-shadow: 1px 1px 1px #000;
   font-size: 0.6em;
 }
 h2.slide-title {
   text-shadow: 1px 1px 1px #000;
+  margin: 0;
+  padding: 0;
 }
 .text-container {
   display: flex;
@@ -26,19 +29,21 @@ h2.slide-title {
 
 .text-section {
   text-align: center;
-  padding: 75px 75px 100px 75px;
+  padding: 15px;
+  margin: 60px 0;
   display: flex;
   flex-direction: column;
-  p {
-    padding: 20px auto;
-  }
 }
 
+.col, .row, .box-row {
+  padding: 0 !important;
+  margin: 0 !important;
+}
 .box-row {
-  padding: 0 20px;
+  // padding: 0 20px;
   border-radius: 5px;
     p {
-      padding: 20px auto;
+      // padding: 20px auto;
   }
 }
 
@@ -55,6 +60,7 @@ h2.slide-title {
 
 
 .background-slide {
+  // background-color: white;
   .text-section {
     background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
   }
@@ -340,8 +346,14 @@ Visible only on xl	.d-none .d-xl-block
   display: -ms-inline-flexbox !important;
   display: inline-flex !important;
 }
-
+.title-text-separator {
+  line-height: 1.2rem;
+}
 /* Reveal.js overrides */
+.reveal p {
+  padding: 0;
+  margin: 0;
+}
 p {
   font-size: 0.5em;
 }
