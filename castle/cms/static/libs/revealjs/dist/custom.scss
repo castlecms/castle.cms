@@ -363,6 +363,13 @@ p {
 .text-overlay {
   padding-bottom: 1.5em;
 }
+
+.reveal{
+  img, video, iframe {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
 /* .box-row {
   margin-bottom: 0;
 } */
