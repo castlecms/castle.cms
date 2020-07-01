@@ -4,7 +4,7 @@ Changelog
 2.6.14 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix js inclusion an archival-review view, move it to a resource definition
 
 
 2.6.13 (2020-06-22)
