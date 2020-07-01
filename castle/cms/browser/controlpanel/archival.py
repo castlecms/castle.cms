@@ -43,6 +43,9 @@ class Review(BaseView):
         return json.dumps(self.items())
 
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-review-archives')
+
         extend = self.request.form.get('extend')
         if extend:
             obj = uuidToObject(extend)
@@ -57,6 +60,7 @@ class AWSApi(object):
         self.site = site
         self.request = request
         bucket_name = api.portal.get_registry_record('castle.aws_s3_bucket_name')
+        self.configured_bucket_name = bucket_name
         self.s3, self.bucket = aws.get_bucket(bucket_name)
         self.archive_storage = archival.Storage(site)
 
@@ -172,6 +176,9 @@ class AWSApi(object):
         result = []
         base_path = archival.CONTENT_KEY_PREFIX + self.request.form.get('path', '')
         base_path = base_path.replace('//', '/').rstrip('/') + '/'
+        if self.bucket is None:
+            logger.error('no bucket object (configured bucket name: {})'.format(self.configured_bucket_name))
+            return []
         for key in self.bucket.objects.filter(prefix=base_path):
             path = key.name[len(archival.CONTENT_KEY_PREFIX):]
             result.append({
@@ -191,7 +198,6 @@ class Manage(BaseView):
     def __call__(self):
         # utility function to add resource to rendered page
         add_resource_on_request(self.request, 'castle-components-manage-archives')
-        return super(Manage, self).__call__()
 
         if self.request.form.get('api'):
             self.request.response.setHeader('Content-type', 'application/json')
