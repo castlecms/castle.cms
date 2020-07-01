@@ -198,11 +198,11 @@ class AWSApi(object):
         #
         # an improvement on this would probably be caching the list with every publish to the
         # archive and having somewhere to manually update the cache. TODO.
-	
+
         object_itr = self.bucket.objects.page_size(count=s3_per_page).filter(Prefix=base_path)
         i = 0
         for summary in object_itr:
-            i +=1
+            i += 1
             if i < page_start:
                 continue
             key = summary.key

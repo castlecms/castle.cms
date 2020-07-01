@@ -340,7 +340,7 @@ require([
         }, 'Previous Page'),
         D.button({
           className: 'plone-btn plone-btn-default pull-right',
-          disabled: that.state.items.length < 100,
+          disabled: that.state.items.length < 1000,
           onClick: that.navigateNextClicked
         }, 'Next Page')
       ])
