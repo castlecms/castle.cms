@@ -193,6 +193,11 @@ class AWSApi(object):
         s3_per_page = 1000
 
         # this is so we don't kill the client with a large amount of objects being sent that way
+        # note: s3 api doesn't do paging like the client would expect to render. the pages defined
+        # for the api are basically equivalent to 1000 item max chunks retreived from the bucket.
+        #
+        # an improvement on this would probably be caching the list with every publish to the
+        # archive and having somewhere to manually update the cache. TODO.
 	
         object_itr = self.bucket.objects.page_size(count=s3_per_page).filter(Prefix=base_path)
         i = 0
