@@ -5,7 +5,7 @@ from urlparse import urlparse, parse_qs
 from plone.app.uuid.utils import uuidToObject
 from plone.api.portal import get_registry_record
 from plone.api.portal import set_registry_record
-
+from Products.CMFCore.utils import getToolByName
 
 class SlideshowView(BrowserView):
 
@@ -89,6 +89,13 @@ class SlideshowView(BrowserView):
         if resource.portal_type in view_types:
             url += '/view'
         return url
+
+    def get_domain(self):
+        portal_url = getToolByName(self.context, "portal_url")
+        portal = portal_url.getPortalObject()
+        full_url = portal.absolute_url()
+        domain = full_url.replace('https://', '').replace('http://', '')
+        return domain
 
 
 class SlideshowEditForm(edit.DefaultEditForm):
