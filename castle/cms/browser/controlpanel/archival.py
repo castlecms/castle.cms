@@ -176,20 +176,43 @@ class AWSApi(object):
         result = []
         base_path = archival.CONTENT_KEY_PREFIX + self.request.form.get('path', '')
         base_path = base_path.replace('//', '/').rstrip('/') + '/'
+
         if self.bucket is None:
             logger.error('no bucket object (configured bucket name: {})'.format(self.configured_bucket_name))
             return []
-        for key in self.bucket.objects.filter(prefix=base_path):
-            path = key.name[len(archival.CONTENT_KEY_PREFIX):]
+
+        try:
+            page = int(self.request.form.get('page', 1))
+        except Exception:
+            page = 1
+        if page <= 0:
+            page = 1
+        per_page = 1000
+        page_start = (page - 1) * per_page
+        page_end = page * per_page
+        s3_per_page = 1000
+
+        # this is so we don't kill the client with a large amount of objects being sent that way
+	
+        object_itr = self.bucket.objects.page_size(count=s3_per_page).filter(Prefix=base_path)
+        i = 0
+        for summary in object_itr:
+            i +=1
+            if i < page_start:
+                continue
+            key = summary.key
+            path = key[len(archival.CONTENT_KEY_PREFIX):]
             result.append({
                 'path': path,
                 'id': path.rstrip('/').split('/')[-1],
                 'is_folder': False,
                 'url': '{endpoint_url}/{bucket}/{key}'.format(
-                    endpoint_url=self.s3.meta.endpoint_url,
+                    endpoint_url=self.s3.meta.client.meta.endpoint_url,
                     bucket=self.bucket.name,
-                    key=archival.CONTENT_KEY_PREFIX + path)
+                    key=key)
             })
+            if i >= page_end:
+                break
         return result
 
 

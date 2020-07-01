@@ -4,7 +4,8 @@ Changelog
 2.6.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- update archival-manage view to deal with a large list of objects in an s3 bucket
+  in a very basic, but functional (for now) way.
 
 
 2.6.14 (2020-07-01)
