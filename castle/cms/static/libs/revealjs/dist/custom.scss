@@ -30,7 +30,7 @@ h2.slide-title {
 .text-section {
   text-align: center;
   padding: 15px;
-  margin: 60px 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
 }
@@ -61,11 +61,11 @@ h2.slide-title {
 
 .background-slide {
   // background-color: white;
-  .text-section {
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
+  .radial-background-container {
+    background: radial-gradient(ellipse farthest-corner, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
   }
   .row {
-    padding: 0 5% 7% 5%;
+    // padding: 0 5% 7% 5%;
   }
 }
 
@@ -106,7 +106,19 @@ h2.slide-title {
     position: relative;
   }
 }
-
+.left-image-slide{
+  // position: relative;
+  .image-container {
+    position: static;
+    // top: 50%;
+    // left: 50%;
+    // transform: translateX(-50%) translateY(-50%) scale(1);
+    // overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+  
+}
 video::-webkit-media-controls {
   display: none !important;
 }
@@ -270,6 +282,15 @@ video::-webkit-media-controls {
         max-height: 100%;
       }
     }
+    .image-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%) scale(1);
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
     .text-container {
       position: absolute;
       left: 0;
@@ -277,14 +298,19 @@ video::-webkit-media-controls {
       width: 100vw;
       height: 100vh;
       align-items: flex-end;
+      z-index: 10000;
     }
     .text-section{
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
       &.start, &.end {
         .slide-title, .slide-text {
           text-align: center;
         }
       } 
+    }
+    .radial-background-container {
+      padding: 20px;
+      margin: 40px -20px;
+      background: radial-gradient(ellipse farthest-corner, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
     }
   }
 }
