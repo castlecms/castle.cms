@@ -39,11 +39,11 @@
                   data-transition="fade">
                   <div class="row vert-${vert}-xs">
                     <div class="col col-xs-12 box-row">
-                      <div class="background-video-text-container text-container hor-${hor}">
+                      <div class="background-video-text-container text-container vert-${vert} hor-${hor}">
                         <div class="radial-background-container">
                           <div class="text-section hor-${hor}">
                             <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
-                            <br tal:condition="has_title_and_text" class="title-text-separator">
+                            <div tal:condition="has_title_and_text" class="title-text-separator"></div>
                             <p tal:condition="textlines" class="slide-text">
                               <tal:textline tal:repeat="textline textlines">
                                 ${textline}
@@ -67,11 +67,11 @@
                         <source src="${video}"/>
                       </video>
                     </div>
-                    <div class="col col-sm-6 text-container">
+                    <div class="col col-sm-6 text-container vert-${vert} hor-${hor}">
                       <div class="radial-background-container">
                         <div class="text-section hor-${hor}">
                           <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
-                          <br tal:condition="has_title_and_text" class="title-text-separator">
+                          <div tal:condition="has_title_and_text" class="title-text-separator"></div>
                           <p tal:condition="textlines" class="slide-text">
                             <tal:textline tal:repeat="textline textlines">
                               ${textline}
@@ -94,11 +94,11 @@
                     data-transition="fade">
                     <div class="row vert-${vert}-xs">
                       <div class="col col-xs-12 box-row">
-                        <div class="background-image-text-container text-container hor-${hor}">
+                        <div class="background-image-text-container text-container vert-${vert} hor-${hor}">
                           <div class="radial-background-container">
                             <div class="text-section hor-${hor}">
                               <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
-                              <br tal:condition="has_title_and_text" class="title-text-separator">
+                              <div tal:condition="has_title_and_text" class="title-text-separator"></div>
                               <p tal:condition="textlines" class="slide-text">
                                 <tal:textline tal:repeat="textline textlines">
                                   ${textline}
@@ -130,7 +130,7 @@
 
                       <div class="text-section">
                         <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
-                        <br tal:condition="has_title_and_text" class="title-text-separator">
+                        <div tal:condition="has_title_and_text" class="title-text-separator"></div>
                         <p tal:condition="textlines" class="slide-text">
                           <tal:textline tal:repeat="textline textlines">
                             ${textline}
@@ -187,7 +187,7 @@
                         </div>
                       </div>
                     </tal:item>
-                    <div class="" tal:condition="view/display_view_more_link">
+                    <div tal:condition="view/display_view_more_link">
                       <div class="col col-xs-12">
                         <p class="view-more">
                           <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>
