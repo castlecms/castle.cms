@@ -67,7 +67,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('middle', 'middle', u'Middle'),
             SimpleTerm('bottom', 'bottom', u'Bottom'),
         ]),
-        required=False,
+        required=True,
         default=u'middle'
     )
 
@@ -78,7 +78,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('center', 'center', u'Center'),
             SimpleTerm('end', 'end', u'Right'),
         ]),
-        required=False,
+        required=True,
         default=u'center'
     )
 
