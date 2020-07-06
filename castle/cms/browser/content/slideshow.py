@@ -104,7 +104,7 @@ class SlideshowEditForm(edit.DefaultEditForm):
     def __call__(self, *args, **kw):
         add_resource_on_request(self.request, 'slideshow-js')
         return super(SlideshowEditForm, self).__call__(*args, **kw)
-    
+
     def update(self):
         super(SlideshowEditForm, self).update()
 
