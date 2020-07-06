@@ -223,4 +223,9 @@
     </value>
   </record>
 
+  <records prefix="plone.resources/slideshow-js"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">++plone++castle/scripts/slide.js</value>
+  </records>
+
  </registry>
