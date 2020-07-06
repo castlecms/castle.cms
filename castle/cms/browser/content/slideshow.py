@@ -6,6 +6,8 @@ from plone.app.uuid.utils import uuidToObject
 from plone.api.portal import get_registry_record
 from plone.api.portal import set_registry_record
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.resources import add_resource_on_request
+
 
 class SlideshowView(BrowserView):
 
@@ -99,6 +101,10 @@ class SlideshowView(BrowserView):
 
 
 class SlideshowEditForm(edit.DefaultEditForm):
+    def __call__(self, *args, **kw):
+        add_resource_on_request(self.request, 'slideshow-js')
+        return super(SlideshowEditForm, self).__call__(*args, **kw)
+    
     def update(self):
         super(SlideshowEditForm, self).update()
 
