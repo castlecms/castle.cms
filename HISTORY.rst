@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.16 (unreleased)
+2.6.16 (2020-07-07)
 -------------------
 
 - slideshow upgrades and fixes
