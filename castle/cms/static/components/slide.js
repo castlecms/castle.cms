@@ -1,4 +1,4 @@
-require(['jquery'], function myStuff($) {
+require(['jquery'], function slideComponent($) {
   function getFormVariables(event, form = null) {
     form = form || document.getElementById('edit_tile') || document.getElementById('add_tile');
     if (!form) {
