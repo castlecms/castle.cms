@@ -21,7 +21,7 @@ Precedence: bulk
   Your username is <span i18n:name="member" tal:replace="python:member.getUserName()" />.
   Please activate it by visiting
 
-  ${portal_state/portal_url}/@@secure-login?pwreset=true&code=${reset/randomstring}&userid=${member/id}
+  ${portal_state/portal_url}/@@password-reset?code=${reset/randomstring}&userid=${member/id}
 
     Please activate your account before <span i18n:name="expirationdate" tal:replace="python:
     context.toLocalizedTime(reset['expires'], long_format=1)" />
