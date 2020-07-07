@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <!-- castle-components-archives-review -->
+  <records prefix="plone.resources/castle-components-review-archives"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/review-archives.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+</registry>

@@ -1,10 +1,23 @@
 Changelog
 =========
 
-2.6.14 (unreleased)
+2.6.16 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.6.15 (2020-07-01)
+-------------------
+
+- update archival-manage view to deal with a large list of objects in an s3 bucket
+  in a very basic, but functional (for now) way.
+
+
+2.6.14 (2020-07-01)
+-------------------
+
+- fix js inclusion an archival-review view, move it to a resource definition
 
 
 2.6.13 (2020-06-22)
