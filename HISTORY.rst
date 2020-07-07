@@ -4,7 +4,9 @@ Changelog
 2.6.16 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- slideshow upgrades and fixes
+- fix password reset link in registration email
+- improve scrub login at backend functionality
 
 
 2.6.15 (2020-07-01)
