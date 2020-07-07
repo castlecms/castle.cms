@@ -175,6 +175,13 @@
       <value key="deps">plone-logged-in</value>
   </records>
 
+  <!-- castle-components-slide -->
+  <records prefix="plone.resources/castle-components-slide"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">++plone++castle/components/slide.js</value>
+    <value key="deps">plone-logged-in</value>
+  </records>
+
 
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
@@ -222,10 +229,5 @@
       }</element>
     </value>
   </record>
-
-  <records prefix="plone.resources/slideshow-js"
-            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
-    <value key="js">++plone++castle/scripts/slide.js</value>
-  </records>
 
  </registry>

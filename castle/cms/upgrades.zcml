@@ -346,4 +346,21 @@
     profile="castle.cms:default"
     />
 
+  <genericsetup:registerProfile
+    name="2_6_16"
+    title="CastleCMS upgrade to 2.6.16 profile"
+    directory="profiles/2_6_16"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.16"
+    description=""
+    source="*"
+    destination="2616"
+    handler=".upgrades.upgrade_2_6_16.upgrade"
+    profile="castle.cms:default"
+    />
+
 </configure>
