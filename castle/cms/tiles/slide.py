@@ -34,7 +34,6 @@ class ISlideTileSchema(model.Schema):
         fields=['image', 'video']
     )
 
-    form.widget('display_type', onchange=u'javascript:onSlideTypeChange(event)')
     display_type = schema.Choice(
         title=u"Display Type",
         vocabulary=SimpleVocabulary([
@@ -67,7 +66,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('middle', 'middle', u'Middle'),
             SimpleTerm('bottom', 'bottom', u'Bottom'),
         ]),
-        required=False,
+        required=True,
         default=u'middle'
     )
 
@@ -78,7 +77,7 @@ class ISlideTileSchema(model.Schema):
             SimpleTerm('center', 'center', u'Center'),
             SimpleTerm('end', 'end', u'Right'),
         ]),
-        required=False,
+        required=True,
         default=u'center'
     )
 

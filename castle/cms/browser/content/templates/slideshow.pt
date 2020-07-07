@@ -26,6 +26,7 @@
                                   hor python: slide.get('hor', None);
                                   title python: slide.get('title', None);
                                   textlines python: view.get_textlines(slide);
+                                  has_title_and_text python: slide.get('title', None) and slide.get('text', None);
                                   related_resources python: slide.get('related_resources', None);">
               <!-- Full Background Video Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
@@ -36,11 +37,41 @@
                   data-background-video-loop
                   data-background-video-muted
                   data-transition="fade">
-                  <div class="row ${vert}-xs">
-                    <div class="col-xs-12 box-row">
-                      <div class="background-video-text-container text-container ${hor}">
-                        <div class="text-section">
-                          <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                  <div class="row vert-${vert}-xs">
+                    <div class="col col-xs-12 box-row">
+                      <div class="background-video-text-container text-container vert-${vert} hor-${hor}">
+                        <div class="radial-background-container">
+                          <div class="text-section hor-${hor}">
+                            <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                            <div tal:condition="has_title_and_text" class="title-text-separator"></div>
+                            <p tal:condition="textlines" class="slide-text">
+                              <tal:textline tal:repeat="textline textlines">
+                                ${textline}
+                                <br tal:condition="not:repeat/textline/end"/>
+                              </tal:textline>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </tal:container>
+
+              <!-- Left Video w/ Right Text Slide-->
+              <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
+                <section class="left-video-slide left-slide">
+                  <div class="row vert-${vert}-xs">
+                    <div class="col col-xs-12 col-sm-6 video-container">
+                      <video data-autoplay muted loop playsinline>
+                        <source src="${video}"/>
+                      </video>
+                    </div>
+                    <div class="col col-sm-6 text-container vert-${vert} hor-${hor}">
+                      <div class="radial-background-container">
+                        <div class="text-section hor-${hor}">
+                          <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                          <div tal:condition="has_title_and_text" class="title-text-separator"></div>
                           <p tal:condition="textlines" class="slide-text">
                             <tal:textline tal:repeat="textline textlines">
                               ${textline}
@@ -54,30 +85,6 @@
                 </section>
               </tal:container>
 
-              <!-- Left Video w/ Right Text Slide-->
-              <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
-                <section class="left-video-slide left-slide">
-                  <div class="row ${vert}-xs">
-                    <div class="col-xs-12 col-sm-6 video-container">
-                      <video data-autoplay muted loop playsinline>
-                        <source src="${video}"/>
-                      </video>
-                    </div>
-                    <div class="col-sm-6 text-container">
-                      <div class="text-section ${hor}">
-                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                        <p tal:condition="textlines" class="slide-text">
-                          <tal:textline tal:repeat="textline textlines">
-                            ${textline}
-                            <br tal:condition="not:repeat/textline/end"/>
-                          </tal:textline>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </tal:container>
-
               <!-- Full Background Image Slide -->
                 <tal:container tal:condition="python: slide['displayType'] == 'background-image'">
                   <section
@@ -85,17 +92,20 @@
                     class="background-image-slide background-slide"
                     data-background="${image}"
                     data-transition="fade">
-                    <div class="row ${vert}-xs">
-                      <div class="col-xs-12 box-row">
-                        <div class="background-image-text-container text-container ${hor}">
-                          <div class="text-section">
-                            <h2 class="slide-title">${python: slide['title'] or None}</h2>
-                            <p tal:condition="textlines" class="slide-text">
-                              <tal:textline tal:repeat="textline textlines">
-                                ${textline}
-                                <br tal:condition="not:repeat/textline/end"/>
-                              </tal:textline>
-                            </p>
+                    <div class="row vert-${vert}-xs">
+                      <div class="col col-xs-12 box-row">
+                        <div class="background-image-text-container text-container vert-${vert} hor-${hor}">
+                          <div class="radial-background-container">
+                            <div class="text-section hor-${hor}">
+                              <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                              <div tal:condition="has_title_and_text" class="title-text-separator"></div>
+                              <p tal:condition="textlines" class="slide-text">
+                                <tal:textline tal:repeat="textline textlines">
+                                  ${textline}
+                                  <br tal:condition="not:repeat/textline/end"/>
+                                </tal:textline>
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -109,71 +119,80 @@
               <!-- Left Image w/ Right Text Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
                 <section class="left-image-slide left-slide">
-                  <div class="row ${vert}-xs">
+                  <div class="row">
                     <div
-                      class="col-xs-12 col-sm-6 image-container"
-                      style="height:100%; background: url('${image}'); background-size:cover; background-position: center;"></div>
-                    <div class="col-sm-6 side-text-container">
-                      <div class="text-section ${hor}">
-                        <h2 class="slide-title">${python: slide['title'] or None}</h2>
+                      class="col col-xs-12 col-sm-6 image-container"
+                      style="height:100%; background: url('${image}'); background-size:cover; background-position: center;">
+                      <!-- <img src="url('${image}')" -->
+                    </div>
+                    <div class="col col-sm-6 text-container vert-${vert} hor-${hor}">
+                    <div class="radial-background-container">
+
+                      <div class="text-section">
+                        <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                        <div tal:condition="has_title_and_text" class="title-text-separator"></div>
                         <p tal:condition="textlines" class="slide-text">
                           <tal:textline tal:repeat="textline textlines">
                             ${textline}
                             <br tal:condition="not:repeat/textline/end"/>
                           </tal:textline>
                         </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </section>
               </tal:container>
-
               <!-- Resource Slide -->
               <tal:container tal:condition="python: slide['displayType'] == 'resource-slide'">
               <!-- SCROLLABLE SLIDE -->
              <section class="scrollable-slide" data-transition="fade">
-                <div class="scrollable-slide-listing">
 
-                  <p>
-                    Close slideshow and return to
-                    <a href="#" onclick="goBack()">previous page on ${context/portal_url}</a>
-                  </p>
-                  <hr />
-                  <p>See also:</p>
-                  <br />
-                  <!-- List Item -->
-                  <tal:item tal:repeat="resource related_resources">
-                    <div class="row scrollable-slide-item">
-                      <div class="col-xs-3">
-                        <!-- Lead Image -->
-                        <p>
-                          <img src="${resource/absolute_url}/@@images/image/preview" width="100%" />
-                        </p>
-                      </div>
-                      <div class="col-xs-9">
-                        <!-- Slideshow Title -->
-                        <p class="title">
-                          <a href="${python: view.get_resource_view_url(resource)}">${resource/Title}</a>
-                        </p>
-                        <!-- Slideshow Date -->
-                        <p>
-                          ${python: resource.effective_date.strftime('%B %e, %Y')}
-                        </p>
-                        <!-- Summary/Description -->
-                        <p class="description">
-                          ${resource/Description}
-                        </p>
-                        <p class="view-more">
-                          <a href="${python: view.get_resource_view_url(resource)}">View</a>
-                        </p>
-                      </div>
-                    </div>
-                  </tal:item>
-                  <div class="" tal:condition="view/display_view_more_link">
-                    <div class="col-xs-12">
-                      <p class="view-more">
-                        <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>
+                <div class="resource-slide-container">
+                  <div class="stationary-top">
+                    <div class="return-to-text">
+                      <p tal:condition="view/get_domain">
+                        Close slideshow and return to
+                        <a href="#" onclick="goBack()">previous page on ${view/get_domain}</a>
                       </p>
+                    </div>
+                    <p class="see-also-text">
+                      See also:
+                    </p>
+                  </div>
+                  <div class="scrollable-resource-content">
+                    <!-- List Item -->
+                    <tal:item tal:repeat="resource related_resources">
+                      <div class="scrollable-slide-item">
+                        <div class="col col-xs-12 col-sm-3 resource-slide-image-container">
+                          <!-- Lead Image -->
+                            <img src="${resource/absolute_url}/@@images/image/preview" class="resource-slide-image"/>
+                        </div>
+                        <div class="col col-xs-12 col-sm-9 resource-slide-content-container">
+                          <!-- Slideshow Title -->
+                          <p class="title">
+                            <a href="${python: view.get_resource_view_url(resource)}">${resource/Title}</a>
+                          </p>
+                          <!-- Slideshow Date -->
+                          <p>
+                            ${python: resource.effective_date.strftime('%B %e, %Y')}
+                          </p>
+                          <!-- Summary/Description -->
+                          <p class="description">
+                            ${resource/Description}
+                          </p>
+                          <p class="view-more">
+                            <a href="${python: view.get_resource_view_url(resource)}">View</a>
+                          </p>
+                        </div>
+                      </div>
+                    </tal:item>
+                    <div tal:condition="view/display_view_more_link">
+                      <div class="col col-xs-12">
+                        <p class="view-more">
+                          <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -3,8 +3,10 @@ from Products.Five import BrowserView
 from lxml import etree
 from urlparse import urlparse, parse_qs
 from plone.app.uuid.utils import uuidToObject
+from plone.api.portal import get as get_portal
 from plone.api.portal import get_registry_record
 from plone.api.portal import set_registry_record
+from Products.CMFPlone.resources import add_resource_on_request
 
 
 class SlideshowView(BrowserView):
@@ -90,8 +92,17 @@ class SlideshowView(BrowserView):
             url += '/view'
         return url
 
+    def get_domain(self):
+        full_url = get_portal().absolute_url()
+        domain = full_url.replace('https://', '').replace('http://', '')
+        return domain
+
 
 class SlideshowEditForm(edit.DefaultEditForm):
+    def __call__(self, *args, **kw):
+        add_resource_on_request(self.request, 'castle-components-slide')
+        return super(SlideshowEditForm, self).__call__(*args, **kw)
+
     def update(self):
         super(SlideshowEditForm, self).update()
 
