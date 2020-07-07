@@ -34,7 +34,6 @@ class ISlideTileSchema(model.Schema):
         fields=['image', 'video']
     )
 
-    form.widget('display_type', onchange=u'javascript:onSlideTypeChange(event)')
     display_type = schema.Choice(
         title=u"Display Type",
         vocabulary=SimpleVocabulary([
