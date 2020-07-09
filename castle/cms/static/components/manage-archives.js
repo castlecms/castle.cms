@@ -33,34 +33,24 @@ require([
         items: [],
         path: InitialPath || '/',
         selected: [],
-        previousSelected: null,
-        page: 1
+        previousSelected: null
       };
     },
 
     componentDidMount: function(){
-      this.load(true);
+      this.load();
     },
 
-    load: function(checkpage){
+    load: function(){
       var that = this;
       utils.loading.show();
-      var thepage = that.state.page;
-      if(checkpage) {
-        var qspage = getQueryVariable('page');
-        if(qspage !== undefined) {
-          that.setState({page: qspage});
-          thepage = qspage;
-        }
-      }
       var url = window.location.origin + window.location.pathname;
       $.ajax({
         url: url,
         data: {
           api: 'true',
           method: 'list',
-          path: that.state.path,
-          page: thepage
+          path: that.state.path
         },
         cache: false
       }).done(function(items){
@@ -99,33 +89,12 @@ require([
           }
         }).done(function(){
           utils.loading.hide();
-          that.load(true);
+          that.load();
         }).fail(function(){
           utils.loading.hide();
           alert('error deleting');
         });
       }
-    },
-
-    navigatePrevClicked: function(item, e) {
-      var curpage = this.state.page;
-      var newpage = curpage - 1;
-      if(newpage < 1) {
-        newpage = 1;
-      }
-      var that = this;
-      this.setState({page: newpage}, function(){
-	 that.load(false);
-      });
-    },
-
-    navigateNextClicked: function(item, e) {
-      var curpage = this.state.page;
-      var newpage = curpage + 1;
-      var that = this;
-      this.setState({page: newpage}, function(){
-        this.load(false)
-      });
     },
 
     renderItem: function(item, idx){
@@ -250,7 +219,8 @@ require([
         });
       }
       return D.div({}, [
-        parts
+        parts,
+        D.span({ className: 'pull-right'}, that.state.items.length + ' items in folder')
       ]);
     },
 
@@ -330,29 +300,12 @@ require([
       ]);
     },
 
-    renderNav: function(){
-      var that = this;
-      return D.div({}, [
-        D.button({
-          className: 'plone-btn plone-btn-default',
-          disabled: that.state.page <= 1,
-          onClick: that.navigatePrevClicked
-        }, 'Previous Page'),
-        D.button({
-          className: 'plone-btn plone-btn-default pull-right',
-          disabled: that.state.items.length < 1000,
-          onClick: that.navigateNextClicked
-        }, 'Next Page')
-      ])
-    },
-
     render: function(){
       var that = this;
       return D.div({}, [
         that.renderButtons(),
         that.renderTable(),
         that.renderSelected(),
-        that.renderNav()
       ]);
     }
   });
