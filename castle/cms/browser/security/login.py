@@ -15,6 +15,8 @@ from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
 from zope.interface import implements
 
+from Products.CMFCore.utils import getToolByName
+
 
 class SecureLoginView(BrowserView):
     implements(ISecureLoginAllowedView)
@@ -297,7 +299,13 @@ The user requesting this access logged this information:
 
     def send_auth_email(self):
         email = None
-        user = api.user.get(username=self.username)
+        # This is done instead of api.user.get(username=self.username) to avoid getting root user
+        # if site and root user both have same username.
+        users = api.user.get_users()
+        for usr in users:
+            if usr.getUserName() == self.username:
+                user = usr
+
         if user:
             email = user.getProperty('email')
         if not email:
