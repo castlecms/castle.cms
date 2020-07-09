@@ -209,8 +209,8 @@ class AWSApi(object):
                         bucket=self.bucket.name,
                         key=key)
                 })
-        sorted(folderresults, key=lambda x: x['path'])
-        sorted(fileresults, key=lambda x: x['path'])
+        folderresults = sorted(folderresults, key=lambda x: x['path'])
+        fileresults = sorted(fileresults, key=lambda x: x['path'])
         return folderresults + fileresults
 
 
