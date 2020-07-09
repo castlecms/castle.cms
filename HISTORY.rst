@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.17 (unreleased)
+2.6.17 (2020-07-09)
 -------------------
 
 - revert manage-archives js and improve manage-archives usage of boto3 library
