@@ -76,6 +76,7 @@ h2.slide-title {
 .box-row {
   border-radius: 5px;
 }
+
 .reveal .slides > section,
 .reveal .slides > section > section {
   height: 100%;
@@ -139,8 +140,6 @@ video::-webkit-media-controls {
   margin-right: 15px;
   cursor: pointer;
   border-radius: 50%;
-  /* background-color: rgba(0, 0, 0, 0.2); */
-  /* box-shadow: 0 0 5rem rgba(0, 0, 0.5); */
   right: 5px;
   top: 5px;
   z-index: 9999;
@@ -194,7 +193,6 @@ video::-webkit-media-controls {
   width: 100%;
   height: 50%;
   position: relative;
-  /* background-color: rgba(0, 0, 0, 0.2);; */
 }
 
 .close {
@@ -299,6 +297,7 @@ video::-webkit-media-controls {
 
 .text-container > .radial-background-container {
   padding: 70px;
+  margin: 0 -55px;
   background-image: radial-gradient(ellipse farthest-corner, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
 }
 
@@ -327,25 +326,6 @@ video::-webkit-media-controls {
   text-align: center;
 }
 
-/* Media Queries */
-/* ------ FLEXBOX HIDDEN/VISIBILE ELEMENTS ------
-
-Hidden on all	      .d-none
-Hidden only on xs	  .d-none .d-sm-block
-Hidden only on sm	  .d-sm-none .d-md-block
-Hidden only on md	  .d-md-none .d-lg-block
-Hidden only on lg	  .d-lg-none .d-xl-block
-Hidden only on xl	  .d-xl-none
-
-Visible on all	    .d-block
-Visible only on xs	.d-block .d-sm-none
-Visible only on sm	.d-none .d-sm-block .d-md-none
-Visible only on md	.d-none .d-md-block .d-lg-none
-Visible only on lg	.d-none .d-lg-block .d-xl-none
-Visible only on xl	.d-none .d-xl-block
-
------------------------------------------ */
-/* Small Screens and Higher */
 .title-text-separator {
   height: 0.4em;
 }
@@ -375,9 +355,6 @@ p {
   max-height: 100%;
 }
 
-/* .box-row {
-  margin-bottom: 0;
-} */
 @media (min-width: 576px) {
   .d-sm-none {
     display: none !important;

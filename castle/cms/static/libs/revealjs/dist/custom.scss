@@ -309,6 +309,7 @@ margin-bottom: 30px;
 
 .text-container>.radial-background-container {
   padding: 70px;
+  margin: 0 -55px; 
   background-image: radial-gradient(ellipse farthest-corner, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
 }
 
