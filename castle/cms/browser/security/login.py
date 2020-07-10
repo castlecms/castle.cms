@@ -15,8 +15,6 @@ from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
 from zope.interface import implements
 
-from Products.CMFCore.utils import getToolByName
-
 
 class SecureLoginView(BrowserView):
     implements(ISecureLoginAllowedView)
@@ -297,13 +295,23 @@ The user requesting this access logged this information:
             'state': new_state
         })
 
+    def check_whitelist(self, username, white_listed):
+        for wl in white_listed:
+            if wl in username:
+                username = username.replace(wl, '')
+        return username
+
     def send_auth_email(self):
         email = None
-        # This is done instead of api.user.get(username=self.username) to avoid getting root user
-        # if site and root user both have same username.
+        username = self.username
+
+        white_listed = api.portal.get_registry_record('whitelist_login_domains')
+        if white_listed:
+            username = self.check_whitelist(username, white_listed)
+
         users = api.user.get_users()
         for usr in users:
-            if usr.getUserName() == self.username:
+            if usr.getUserName() == username:
                 user = usr
 
         if user:
