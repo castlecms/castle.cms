@@ -29,6 +29,9 @@ h2.slide-title {
   display: flex;
   flex-direction: column;
 }
+.text-container .text-section .slide-text > span {
+  display: block;
+}
 
 .background-slide .text-container.vert-top {
   align-items: flex-start;
@@ -42,28 +45,72 @@ h2.slide-title {
 .background-slide .text-container.hor-start {
   justify-content: flex-start;
 }
-.background-slide .text-container.hor-start .text-section {
-  text-align: left;
-}
 .background-slide .text-container.hor-center {
   justify-content: center;
-}
-.background-slide .text-container.hor-center .text-section {
-  text-align: center;
 }
 .background-slide .text-container.hor-end {
   justify-content: flex-end;
 }
-.background-slide .text-container.hor-end .text-section {
+.background-slide .text-container .text-section.align-left {
+  text-align: left;
+}
+.background-slide .text-container .text-section.align-center {
+  text-align: center;
+}
+.background-slide .text-container .text-section.align-right {
   text-align: right;
 }
+.background-slide .text-container .text-section.justify-wrap {
+  text-align: justify;
+}
+.background-slide .text-container .text-section.justify-wrap.align-left {
+  text-align-last: left;
+}
+.background-slide .text-container .text-section.justify-wrap.align-center {
+  text-align-last: center;
+}
+.background-slide .text-container .text-section.justify-wrap.align-right {
+  text-align-last: right;
+}
 
-.left-slide .text-container {
+.left-slide .text-container.mobile-vert-top {
   align-items: flex-start;
+}
+.left-slide .text-container.mobile-vert-middle {
+  align-items: center;
+}
+.left-slide .text-container.mobile-vert-bottom {
+  align-items: flex-end;
+}
+.left-slide .text-container.mobile-hor-start {
+  justify-content: flex-start;
+}
+.left-slide .text-container.mobile-hor-center {
   justify-content: center;
 }
-.left-slide .text-section {
+.left-slide .text-container.mobile-hor-end {
+  justify-content: flex-end;
+}
+.left-slide .text-container .text-section.mobile-align-left {
+  text-align: left;
+}
+.left-slide .text-container .text-section.mobile-align-center {
   text-align: center;
+}
+.left-slide .text-container .text-section.mobile-align-right {
+  text-align: right;
+}
+.left-slide .text-container .text-section.justify-wrap {
+  text-align: justify;
+}
+.left-slide .text-container .text-section.justify-wrap.mobile-align-left {
+  text-align-last: left;
+}
+.left-slide .text-container .text-section.justify-wrap.mobile-align-center {
+  text-align-last: center;
+}
+.left-slide .text-container .text-section.justify-wrap.mobile-align-right {
+  text-align-last: right;
 }
 
 .col.col,
@@ -90,16 +137,6 @@ h2.slide-title {
 .left-slide,
 .background-slide {
   padding: auto 10%;
-}
-
-.left-slide .text-section.center {
-  text-align: center;
-}
-.left-slide .text-section.start {
-  text-align: left;
-}
-.left-slide .text-section.end {
-  text-align: right;
 }
 
 .left-video-slide .video-container {
@@ -321,9 +358,6 @@ video::-webkit-media-controls {
   align-items: flex-start;
   justify-content: center;
   z-index: 10000;
-}
-.left-slide .text-container .text-section {
-  text-align: center;
 }
 
 .title-text-separator {
@@ -582,20 +616,32 @@ p {
   .left-slide .text-container.hor-start {
     justify-content: flex-start;
   }
-  .left-slide .text-container.hor-start .text-section {
-    text-align: left;
-  }
   .left-slide .text-container.hor-center {
     justify-content: center;
-  }
-  .left-slide .text-container.hor-center .text-section {
-    text-align: center;
   }
   .left-slide .text-container.hor-end {
     justify-content: flex-end;
   }
-  .left-slide .text-container.hor-end .text-section {
+  .left-slide .text-container .text-section.align-left {
+    text-align: left;
+  }
+  .left-slide .text-container .text-section.align-center {
+    text-align: center;
+  }
+  .left-slide .text-container .text-section.align-right {
     text-align: right;
+  }
+  .left-slide .text-container .text-section.justify-wrap {
+    text-align: justify;
+  }
+  .left-slide .text-container .text-section.justify-wrap.align-left {
+    text-align-last: left;
+  }
+  .left-slide .text-container .text-section.justify-wrap.align-center {
+    text-align-last: center;
+  }
+  .left-slide .text-container .text-section.justify-wrap.align-right {
+    text-align-last: right;
   }
   .left-slide .radial-background-container {
     background-image: none;
