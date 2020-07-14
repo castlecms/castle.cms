@@ -257,69 +257,56 @@ video::-webkit-media-controls {
   margin-right: -100%;
 }
 
-/* Scollable Slide CSS */
-.scrollable-slide {
-  position: absolute;
-  top: 70px;
-  text-align: left;
-}
-
 .reveal img {
   padding: 0;
   margin: 0;
 }
 
-.resource-slide-image {
-  width: 100%;
+/* Scollable Slide CSS */
+.resource-slide {
+  text-align: left;
 }
-
-.resource-slide-container {
+.resource-slide .resource-slide-container {
   display: flex;
   flex-flow: column nowrap;
-  margin-right: 0;
-  padding: 0 15px;
+  height: calc(100vh - 135px);
+  padding: 0 15px 60px;
+  overflow-y: scroll;
+}
+.resource-slide .resource-slide-container .resource-slide-content {
   width: 100%;
-  overflow-y: scroll;
-  height: calc(100% - 84px);
 }
-.resource-slide-container > .stationary-top .see-also-text {
-  font-size: 0.6em;
-  margin: 20px 0 40px;
-}
-
-.scrollable-resource-content {
-  height: calc(100% - 134px);
-  overflow-y: scroll;
-}
-
-.return-to-text {
-  padding: 10px 70px 10px 0;
+.resource-slide .resource-slide-container .resource-slide-content .return-to-text {
+  padding: 10px 0;
   border-bottom: 1px solid white;
   min-height: 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
-
-.scrollable-slide-item {
+.resource-slide .resource-slide-container .resource-slide-content .see-also-text {
+  font-size: 24px;
+  margin: 20px 0;
+}
+.resource-slide .resource-slide-item {
   margin-bottom: 30px;
   border-bottom: 1px solid white;
   padding-bottom: 15px;
   display: flex;
   flex-flow: column nowrap;
-  align-items: stretch;
 }
-.scrollable-slide-item .title {
+.resource-slide .resource-slide-item .resource-slide-item-content-container {
+  padding-bottom: 5px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+}
+.resource-slide .resource-slide-item .title {
   font-size: 0.75em;
 }
-.scrollable-slide-item img {
+.resource-slide .resource-slide-item img.resource-slide-image {
+  width: 100%;
+  max-height: 50vh;
+  height: auto;
   margin-bottom: 10px;
-}
-
-.scrollable-slide {
-  position: absolute;
-  top: 70px;
-  height: calc(100% - 250px);
+  object-fit: cover;
 }
 
 /* Reveal.js CSS Overrides */
@@ -515,7 +502,7 @@ p {
     font-size: 0.85em;
   }
 
-  .scrollable-slide-item .title {
+  .resource-slide-item .title {
     font-size: 1em;
   }
 
@@ -572,25 +559,24 @@ p {
   }
 }
 @media (min-width: 768px) {
-  .scrollable-slide-item {
+  .resource-slide .resource-slide-container {
+    width: 70%;
+    height: calc(100vh - 84px);
+    margin: auto;
+  }
+  .resource-slide .resource-slide-container .view-more {
+    display: flex;
+    align-items: flex-end;
+    text-align: right;
+    justify-content: flex-end;
+    flex-grow: 1;
+  }
+  .resource-slide .resource-slide-container .resource-slide-item {
     flex-flow: row nowrap;
   }
-  .scrollable-slide-item .resource-slide-content-container {
+  .resource-slide .resource-slide-container .resource-slide-item .resource-slide-item-content-container {
+    width: 100%;
     padding: 0 15px 0 20px;
-  }
-
-  .scrollable-slide {
-    top: 0;
-    height: 100%;
-  }
-
-  .resource-slide-container {
-    width: 70%;
-    margin: auto;
-    overflow-y: scroll !important;
-  }
-  .resource-slide-container .view-more {
-    text-align: right;
   }
 
   .left-slide .video-container {
