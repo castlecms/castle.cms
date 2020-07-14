@@ -23,15 +23,13 @@ class SlideTile(BaseTile):
 class ISlideTileSchema(model.Schema):
 
     model.fieldset(
-        'Type and Text',
-        label=(u'Type and Text'),
-        fields=['display_type', 'title', 'text', 'hor_text_position', 'vert_text_position', 'related_items']
-    )
-
-    model.fieldset(
-        'Media Settings',
-        label=(u'Media Settings'),
-        fields=['image', 'video']
+        'type_and_text',
+        label=u'Type & Text',
+        fields=[
+            'display_type',
+            'title',
+            'text',
+        ]
     )
 
     display_type = schema.Choice(
@@ -59,15 +57,17 @@ class ISlideTileSchema(model.Schema):
         required=False,
         default=u'')
 
-    vert_text_position = schema.Choice(
-        title=u"Slide Text Position (Vertical)",
-        vocabulary=SimpleVocabulary([
-            SimpleTerm('top', 'top', u'Top'),
-            SimpleTerm('middle', 'middle', u'Middle'),
-            SimpleTerm('bottom', 'bottom', u'Bottom'),
-        ]),
-        required=True,
-        default=u'middle'
+    #######################################################################################################
+    model.fieldset(
+        'text_positioning',
+        label=u'Text Positioning',
+        fields=[
+            'hor_text_position',
+            'vert_text_position',
+            'text_alignment',
+            'customize_left_slide_mobile',
+            'justify_wrapped_text',
+        ]
     )
 
     hor_text_position = schema.Choice(
@@ -79,6 +79,105 @@ class ISlideTileSchema(model.Schema):
         ]),
         required=True,
         default=u'center'
+    )
+
+    vert_text_position = schema.Choice(
+        title=u"Slide Text Position (Vertical)",
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('top', 'top', u'Top'),
+            SimpleTerm('middle', 'middle', u'Middle'),
+            SimpleTerm('bottom', 'bottom', u'Bottom'),
+        ]),
+        required=True,
+        default=u'middle'
+    )
+
+    text_alignment = schema.Choice(
+        title=u"Slide Text Alignment",
+        description=u'The alignment of slide text relative to other text on the page. '
+                    u'This does not change the position of the text section selected above.',
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('left', 'left', u'Left'),
+            SimpleTerm('center', 'center', u'Center'),
+            SimpleTerm('right', 'right', u'Right'),
+        ]),
+        required=True,
+        default=u'center'
+    )
+
+    customize_left_slide_mobile = schema.Bool(
+        title=u'Use Different Alignment & Position Values for Mobile',
+        description=u'On small screens such as mobile devices, Left Image Right Text and Left Video Right Text slides are displayed exactly like background slides. '  # noqa
+                    u'Select this option to display the "Mobile Text Positioning" tab, which allows different position and alignment values for this slide on small screens.',  # noqa
+        default=False,
+    )
+
+    justify_wrapped_text = schema.Bool(
+        title=u'Justify Wrapped Text Lines',
+        description=u'Select this option to force any text line that wraps to more than one line to take up the entire width. ' # noqa
+                    u'This will assure that there are no gaps to the left and/or right when text fills the whole line, regardless of Text Alignment Choice above.', # noqa 
+        default=False,
+    )
+
+    #######################################################################################################
+    model.fieldset(
+        'left_slide_mobile_text_positioning',
+        label=u'Mobile Text Positioning',
+        description=u'On small screens such as mobile devices, Left Image Right Text and Left Video Right Text slides are displayed exactly like background slides. '  # noqa
+                    u'This page allows you to specify different text position and alignment values that apply to smaller displays only.', # noqa
+        fields=[
+            'left_slide_mobile_hor_text_position',
+            'left_slide_mobile_vert_text_position',
+            'left_slide_mobile_text_alignment',
+        ]
+    )
+
+    left_slide_mobile_hor_text_position = schema.Choice(
+        title=u"Slide Text Position (Horizontal)",
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('default', 'default', u'Leave Unchanged'),
+            SimpleTerm('start', 'start', u'Left'),
+            SimpleTerm('center', 'center', u'Center'),
+            SimpleTerm('end', 'end', u'Right'),
+        ]),
+        required=True,
+        default=u'default'
+    )
+
+    left_slide_mobile_vert_text_position = schema.Choice(
+        title=u"Slide Text Position (Vertical)",
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('default', 'default', u'Leave Unchanged'),
+            SimpleTerm('top', 'top', u'Top'),
+            SimpleTerm('middle', 'middle', u'Middle'),
+            SimpleTerm('bottom', 'bottom', u'Bottom'),
+        ]),
+        required=True,
+        default=u'default'
+    )
+
+    left_slide_mobile_text_alignment = schema.Choice(
+        title=u"Slide Text Alignment",
+        description=u'The alignment of slide text relative to other text on the page. '
+                    u'This does not change the position of the text section selected above.',
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('default', 'default', u'Leave Unchanged'),
+            SimpleTerm('left', 'left', u'Left'),
+            SimpleTerm('center', 'center', u'Center'),
+            SimpleTerm('right', 'right', u'Right'),
+        ]),
+        required=True,
+        default=u'default'
+    )
+
+    #######################################################################################################
+    model.fieldset(
+        'media_settings',
+        label=u'Media Settings',
+        fields=[
+            'image',
+            'video',
+        ]
     )
 
     form.widget(image=ImageRelatedItemFieldWidget)
@@ -101,6 +200,13 @@ class ISlideTileSchema(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
         )
+    )
+
+    #######################################################################################################
+    model.fieldset(
+        'related_items',
+        label=u'Related Items',
+        fields=['related_items']
     )
 
     form.widget('related_items', SlideRelatedItemsFieldWidget)

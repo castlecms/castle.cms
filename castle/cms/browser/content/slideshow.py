@@ -22,10 +22,6 @@ class SlideshowView(BrowserView):
                 data = parse_qs(parsed.query)
                 slide = {}
                 try:
-                    slide['text'] = data['text:text'][0]
-                except Exception:
-                    slide['text'] = None
-                try:
                     image = uuidToObject(data['image:list'][0])
                     slide['image'] = image.absolute_url()
                 except Exception:
@@ -35,22 +31,30 @@ class SlideshowView(BrowserView):
                     slide['video'] = video.absolute_url()
                 except Exception:
                     slide['video'] = None
-                try:
-                    slide['displayType'] = data['display_type'][0]
-                except Exception:
-                    slide['displayType'] = 'background-image'
-                try:
-                    slide['title'] = data['title'][0]
-                except Exception:
-                    slide['title'] = None
+                slide['displayType'] = data.get('display_type', ['background-image'])[0]
                 if slide['displayType'] == 'resource-slide':
                     try:
                         related_uuids = data['related_items:list']
                         slide['related_resources'] = [uuidToObject(uuid) for uuid in related_uuids]
                     except Exception:
                         pass
-                slide['vert'] = data['vert_text_position'][0]
-                slide['hor'] = data['hor_text_position'][0]
+                slide['title'] = data.get('title', [None])[0]
+                slide['text'] = data.get('text:text', [None])[0]
+                slide['vert'] = data.get('vert_text_position', ['middle'])[0]
+                slide['hor'] = data.get('hor_text_position', ['center'])[0]
+                justify_wrapped_text = data.get('justify_wrapped_text:boolean', [0])[0] == '1'
+                slide['justify_wrapped_text'] = justify_wrapped_text
+                slide['justify_wrap_class'] = 'justify-wrap' if justify_wrapped_text else ''
+                slide['text_alignment'] = data.get('text_alignment', ['center'])[0]
+                slide['customize_left_slide_mobile'] = \
+                    data.get('customize_left_slide_mobile:boolean', [0])[0] == '1'
+                if slide['customize_left_slide_mobile']:
+                    slide['left_mobile_hor'] = \
+                        data.get('left_slide_mobile_hor_text_position', ['default'])[0]
+                    slide['left_mobile_vert'] = \
+                        data.get('left_slide_mobile_vert_text_position', ['default'])[0]
+                    slide['left_mobile_alignment'] = \
+                        data.get('left_slide_mobile_text_alignment', ['default'])[0]
                 slides.append(slide)
         return slides
 
@@ -96,6 +100,21 @@ class SlideshowView(BrowserView):
         full_url = get_portal().absolute_url()
         domain = full_url.replace('https://', '').replace('http://', '')
         return domain
+
+    def get_left_slide_mobile_options(self, slide):
+        if slide.get('customize_left_slide_mobile', False):
+            hor = slide.get('left_mobile_hor', 'default')
+            vert = slide.get('left_mobile_vert', 'default')
+            align = slide.get('left_mobile_alignment', 'default')
+        else:
+            hor = 'default'
+            vert = 'default'
+            align = 'default'
+        return{
+            'mobile_hor': slide.get('hor', 'center') if hor == 'default' else hor,
+            'mobile_vert': slide.get('vert', 'middle') if vert == 'default' else vert,
+            'mobile_alignment': slide.get('text_alignment', 'center') if align == 'default' else align,
+        }
 
 
 class SlideshowEditForm(edit.DefaultEditForm):
