@@ -304,6 +304,7 @@ The user requesting this access logged this information:
                 for wl in white_listed:
                     if wl in username:
                         username = username.replace(wl, '')
+                        break
         except ComponentLookupError:
             pass
         return username
@@ -316,6 +317,7 @@ The user requesting this access logged this information:
         for usr in users:
             if usr.getUserName() == username:
                 user = usr
+                break
 
         if user:
             email = user.getProperty('email')
