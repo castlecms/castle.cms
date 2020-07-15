@@ -70,7 +70,7 @@ require(['jquery'], function slideComponent($) {
       showAndHide.hideFieldsetsWithLabels = hideLabels;
       showAndHide.unhideFieldsetsWithLabels = fieldsetLabels.filter((label) => !hideLabels.includes(label));
     } else {
-      const hideLabels = ['Text Positioning', 'Media Settings'];
+      const hideLabels = ['Text Positioning', 'Mobile Text Positioning', 'Media Settings'];
       showAndHide.hideFieldsetsWithLabels = hideLabels;
       showAndHide.unhideFieldsetsWithLabels = fieldsetLabels.filter((label) => !hideLabels.includes(label));
     }
