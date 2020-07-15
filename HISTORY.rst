@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.19 (unreleased)
+2.6.19 (2020-07-14)
 -------------------
 
 - slideshow refinements
