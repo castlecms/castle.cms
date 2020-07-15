@@ -4,7 +4,7 @@ Changelog
 2.6.20 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- slideshow refinements
 
 
 2.6.19 (2020-07-14)
