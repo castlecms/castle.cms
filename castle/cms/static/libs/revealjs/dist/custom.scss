@@ -303,6 +303,9 @@ video::-webkit-media-controls {
     .resource-slide-content {
       width: 100%;
       .return-to-text {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
         padding: 10px 0;
         border-bottom: 1px solid white;
         min-height: 80px;
