@@ -223,7 +223,6 @@
 
       const closeContainer = document.getElementById('close-container');
       const resourceSlide = document.querySelectorAll('.resource-slide')[0];
-      console.log(closeContainer);
       const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (mutation.attributeName === "class") {
@@ -251,6 +250,17 @@
         transition: "fade", // none/fade/slide/convex/concave/zoom
       });
 
+      function updateVh(){ setTimeout(()=>{
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', vh + 'px');
+        }, 50);
+      }
+      
+      window.resourceSlideContainer = document.querySelector('.resource-slide .resource-slide-container');
+      updateVh();
+      window.onresize = updateVh;
+
+      // Resources
       // More info about config & dependencies:
       // - https://github.com/hakimel/reveal.js#configuration
       // - https://github.com/hakimel/reveal.js#dependenciess

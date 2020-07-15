@@ -2,6 +2,9 @@
 //  sass castle/cms/static/libs/revealjs/dist/custom.scss    castle/cms/static/libs/revealjs/dist/custom.css
 //
 // If you don't have sass installed, you can install: npm install -g sass (for global install)
+:root{
+  --hundred-vh: calc(var(--vh) * 100);
+}
 * {
   box-sizing: border-box;
 }
@@ -140,8 +143,11 @@ h2.slide-title {
 .reveal .slides > section > section {
   height: 100%;
   padding: 0;
+  top: 0 !important;
 }
-
+.reveal .slides {
+    height: var(--hundred-vh, 100vh) !important;
+}
 .row {
   height: 100%;
 }
@@ -150,20 +156,6 @@ h2.slide-title {
 .background-slide {
   padding: auto 10%;
 }
-
-// .left-slide {
-//   .text-section {
-//     &.center {
-//       text-align: center;
-//     }
-//     &.start {
-//       text-align: left;
-//     }
-//     &.end {
-//       text-align: right;
-//     }
-//   }
-// }
 
 .left-video-slide {
   .video-container {
@@ -297,8 +289,8 @@ video::-webkit-media-controls {
   .resource-slide-container {
     display: flex;
     flex-flow: column nowrap;
-    height: calc(100vh - 135px);
-    padding: 0 15px 60px;
+    height: calc(var(--hundred-vh, 100vh) - 84px);
+    padding: 0 15px;
     overflow-y: scroll;
     .resource-slide-content {
       width: 100%;
@@ -322,7 +314,7 @@ video::-webkit-media-controls {
     padding-bottom: 15px;
     display: flex;
     flex-flow: column nowrap;
-    .resource-slide-item-content-container{
+    .resource-slide-item-content-container {
       padding-bottom: 5px;
       display: flex;
       flex-flow: column nowrap;
@@ -568,8 +560,10 @@ p {
   .resource-slide {
     .resource-slide-container {
       width: 70%;
-      height: calc(100vh - 84px);
       margin: auto;
+      --safe-bottom: calc(env(safe-area-inset-bottom, 2px) * 1.5);
+      height: calc(var(--hundred-vh, 100vh) - max(var(--safe-bottom), 20px));
+
       .view-more {
         display: flex;
         align-items: flex-end;
@@ -580,7 +574,7 @@ p {
       .resource-slide-item {
         flex-flow: row nowrap;
         .resource-slide-item-content-container {
-          width: 100%;;
+          width: 100%;
           padding: 0 15px 0 20px;
         }
       }

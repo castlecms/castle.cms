@@ -1,3 +1,7 @@
+:root {
+  --hundred-vh: calc(var(--vh) * 100);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -128,6 +132,11 @@ h2.slide-title {
 .reveal .slides > section > section {
   height: 100%;
   padding: 0;
+  top: 0 !important;
+}
+
+.reveal .slides {
+  height: var(--hundred-vh, 100vh) !important;
 }
 
 .row {
@@ -269,8 +278,8 @@ video::-webkit-media-controls {
 .resource-slide .resource-slide-container {
   display: flex;
   flex-flow: column nowrap;
-  height: calc(100vh - 135px);
-  padding: 0 15px 60px;
+  height: calc(var(--hundred-vh, 100vh) - 84px);
+  padding: 0 15px;
   overflow-y: scroll;
 }
 .resource-slide .resource-slide-container .resource-slide-content {
@@ -564,8 +573,9 @@ p {
 @media (min-width: 768px) {
   .resource-slide .resource-slide-container {
     width: 70%;
-    height: calc(100vh - 84px);
     margin: auto;
+    --safe-bottom: calc(env(safe-area-inset-bottom, 2px) * 1.5);
+    height: calc(var(--hundred-vh, 100vh) - max(var(--safe-bottom), 20px));
   }
   .resource-slide .resource-slide-container .view-more {
     display: flex;
