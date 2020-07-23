@@ -5,6 +5,7 @@ from castle.cms.files import aws
 from DateTime import DateTime
 from plone import api
 from plone.app.uuid.utils import uuidToObject
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 
@@ -42,6 +43,9 @@ class Review(BaseView):
         return json.dumps(self.items())
 
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-review-archives')
+
         extend = self.request.form.get('extend')
         if extend:
             obj = uuidToObject(extend)
@@ -56,6 +60,7 @@ class AWSApi(object):
         self.site = site
         self.request = request
         bucket_name = api.portal.get_registry_record('castle.aws_s3_bucket_name')
+        self.configured_bucket_name = bucket_name
         self.s3, self.bucket = aws.get_bucket(bucket_name)
         self.archive_storage = archival.Storage(site)
 
@@ -168,26 +173,52 @@ class AWSApi(object):
                 log_exc=True)
 
     def list(self):
-        result = []
         base_path = archival.CONTENT_KEY_PREFIX + self.request.form.get('path', '')
         base_path = base_path.replace('//', '/').rstrip('/') + '/'
-        for key in self.bucket.objects.filter(prefix=base_path):
-            path = key.name[len(archival.CONTENT_KEY_PREFIX):]
-            result.append({
-                'path': path,
-                'id': path.rstrip('/').split('/')[-1],
-                'is_folder': False,
-                'url': '{endpoint_url}/{bucket}/{key}'.format(
-                    endpoint_url=self.s3.meta.endpoint_url,
-                    bucket=self.bucket.name,
-                    key=archival.CONTENT_KEY_PREFIX + path)
-            })
-        return result
+
+        if self.bucket is None:
+            logger.error('no bucket object (configured bucket name: {})'.format(self.configured_bucket_name))
+            return []
+
+        folderresults = []
+        fileresults = []
+        paginator = self.bucket.meta.client.get_paginator('list_objects')
+        for resp in paginator.paginate(Bucket=self.bucket.name, Delimiter='/', Prefix=base_path):
+            for prefix in resp.get('CommonPrefixes', []):
+                key = prefix['Prefix'][len(archival.CONTENT_KEY_PREFIX):]
+                folderresults.append({
+                    'path': key,
+                    'id': key.rstrip('/').split('/')[-1],
+                    'is_folder': True,
+                    'url': '{endpoint_url}/{bucket}/{key}'.format(
+                        endpoint_url=self.s3.meta.client.meta.endpoint_url,
+                        bucket=self.bucket.name,
+                        key=key)
+                })
+            for item in resp.get('Contents', []):
+                key = item.get('Key', None)
+                if key is None:
+                    continue
+                path = key[len(archival.CONTENT_KEY_PREFIX):]
+                fileresults.append({
+                    'path': path,
+                    'id': path.rstrip('/').split('/')[-1],
+                    'is_folder': False,
+                    'url': '{endpoint_url}/{bucket}/{key}'.format(
+                        endpoint_url=self.s3.meta.client.meta.endpoint_url,
+                        bucket=self.bucket.name,
+                        key=key)
+                })
+        folderresults = sorted(folderresults, key=lambda x: x['path'])
+        fileresults = sorted(fileresults, key=lambda x: x['path'])
+        return folderresults + fileresults
 
 
 class Manage(BaseView):
-
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-manage-archives')
+
         if self.request.form.get('api'):
             self.request.response.setHeader('Content-type', 'application/json')
             return json.dumps(AWSApi(self.context, self.request)())

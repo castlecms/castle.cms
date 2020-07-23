@@ -281,4 +281,102 @@
     handler=".upgrades.upgrade_2_5_17.upgrade"
     profile="castle.cms:default"/>
 
+  <genericsetup:registerProfile
+    name="2_5_19"
+    title="CastleCMS upgrade to 2.5.19 profile"
+    directory="profiles/2_5_19"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.5.19"
+    description=""
+    source="*"
+    destination="2519"
+    handler=".upgrades.upgrade_2_5_19.upgrade"
+    profile="castle.cms:default"/>
+
+  <genericsetup:registerProfile
+    name="2_6_2"
+    title="CastleCMS upgrade to 2.6.2 profile"
+    directory="profiles/2_6_2"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.2"
+    description=""
+    source="*"
+    destination="2602"
+    handler=".upgrades.upgrade_2_6_2.upgrade"
+    profile="castle.cms:default"/>
+
+  <genericsetup:registerProfile
+    name="2_6_11"
+    title="CastleCMS upgrade to 2.6.11 profile"
+    directory="profiles/2_6_11"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.11"
+    description=""
+    source="*"
+    destination="2611"
+    handler=".upgrades.upgrade_2_6_11.upgrade"
+    profile="castle.cms:default"/>
+  
+  <genericsetup:registerProfile
+    name="2_6_12"
+    title="CastleCMS upgrade to 2.6.12 profile"
+    directory="profiles/2_6_12"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.12"
+    description=""
+    source="*"
+    destination="2612"
+    handler=".upgrades.upgrade_2_6_12.upgrade"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="2_6_14"
+    title="CastleCMS"
+    directory="profiles/2_6_14"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.14"
+    description=""
+    source="*"
+    destination="2614"
+    handler=".upgrades.upgrade_2_6_14.upgrade"
+    profile="castle.cms:default"
+    />
+  
+  <genericsetup:registerProfile
+    name="2_6_16"
+    title="CastleCMS"
+    directory="profiles/2_6_16"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.16"
+    description=""
+    source="*"
+    destination="2616"
+    handler=".upgrades.upgrade_2_6_16.upgrade"
+    profile="castle.cms:default"
+    />
 </configure>

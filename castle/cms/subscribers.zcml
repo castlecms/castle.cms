@@ -21,6 +21,11 @@
     />
 
 
+  <subscriber
+    for="OFS.interfaces.IItem
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".subscribers.on_content_state_changed" />
+
   <!-- file events -->
   <subscriber
     for="plone.app.contenttypes.interfaces.IFile
@@ -91,11 +96,25 @@
     for=".interfaces.ITrashed
          Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
     handler=".subscribers.on_trash_transitioned" />
-  
+  <subscriber
+    for=".events.ITrashEmptiedEvent"
+    handler=".subscribers.on_trash_emptied" />
+
   <!-- initialization -->
   <subscriber
     for="castle.cms.interfaces.ICastleApplication
          .events.IAppInitializedEvent"
     handler=".authentication.install_acl_users" />
+
+  <!-- configuration registry events -->
+  <subscriber
+    for="plone.registry.interfaces.IRecordAddedEvent"
+    handler=".subscribers.on_config_modified_event" />
+  <subscriber
+    for="plone.registry.interfaces.IRecordModifiedEvent"
+    handler=".subscribers.on_config_modified_event" />
+  <subscriber
+    for="plone.registry.interfaces.IRecordRemovedEvent"
+    handler=".subscribers.on_config_modified_event" />
 
 </configure>

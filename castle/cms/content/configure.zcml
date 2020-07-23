@@ -14,4 +14,9 @@
     title="castle.cms: Add Video"
     />
 
+  <permission
+    id="castle.cms.addSlideshow"
+    title="castle.cms: Add Slideshow"
+    />
+
 </configure>

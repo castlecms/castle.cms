@@ -16,7 +16,6 @@ from castle.cms import utils
 from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
-from castle.cms.commands import gs_pdf
 from castle.cms.files import duplicates
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import get_upload_fields
@@ -380,25 +379,24 @@ class Creator(BrowserView):
         chooser_name = name.lower().replace('aq_', '')
         newid = chooser.chooseName(chooser_name, folder.aq_parent)
         # strip metadata from file
-        if (type_ in ('Image', 'File', 'Video', 'Audio') and
+        if (type_ in ('Image', 'File', 'Video') and
                 exiftool is not None and 'tmp_file' in info):
             is_pdf = ('application/pdf' in guess_type(info['tmp_file']))
-            if is_pdf and gs_pdf is not None:
-                try:
-                    gs_pdf(info['tmp_file'])
-                except Exception:
-                    logger.warn('Could not strip additional metadata with gs {}'.format(info['tmp_file']))  # noqa
-
-            try:
-                exiftool(info['tmp_file'])
-            except Exception:
-                logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
-
             if is_pdf and qpdf is not None:
                 try:
+                    # Will recursively remove the tags of the file using exiftool, linearize it.
+                    # And do it again.
+                    exiftool(info['tmp_file'])
+                    qpdf(info['tmp_file'])
+                    exiftool(info['tmp_file'])
                     qpdf(info['tmp_file'])
                 except Exception:
-                    logger.warn('Could not strip additional metadata with qpdf {}'.format(info['tmp_file']))  # noqa
+                    logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
+            else:
+                try:
+                    exiftool(info['tmp_file'])
+                except Exception:
+                    logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
         fi = open(info['tmp_file'], 'r')
         try:

@@ -1,5 +1,6 @@
 from plone.app.dexterity.behaviors.metadata import ICategorization
 from plone import api
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 import json
 
@@ -11,6 +12,9 @@ class TagsView(BrowserView):
     remove_size = 25
 
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-tag-manager')
+
         action = self.request.form.get('action')
         if action:
             self.request.response.setHeader('Content-type', 'application/json')

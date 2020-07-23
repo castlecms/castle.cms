@@ -28,6 +28,7 @@ from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import Interface
 from zope.interface import implementer
+from uuid import uuid4
 
 
 class AuthenticationException(Exception):
@@ -62,7 +63,9 @@ class Authenticator(object):
         self.context = context
         self.request = request
 
-        self.session_id = self.request.cookies.get('castle_session_id', None)
+        self.login_session_id = self.request.cookies.get('__sl__', None)
+        if not self.login_session_id:
+            self.set_login_session_id()
 
         self.valid_flow_states = [
             self.REQUESTING_AUTH_CODE,
@@ -112,8 +115,12 @@ class Authenticator(object):
                 })
         return auth_schemes
 
+    def set_login_session_id(self):
+        self.login_session_id = uuid4()
+        self.request.response.setCookie('__sl__', self.login_session_id)
+
     def get_secure_flow_key(self):
-        return '{id}-secure-state'.format(id=self.session_id)
+        return '{id}-secure-state'.format(id=self.login_session_id)
 
     def set_secure_flow_state(self, state=None):
         if state not in self.valid_flow_states:
@@ -143,6 +150,7 @@ class Authenticator(object):
             cache.delete(key)
         except Exception:
             pass
+        self.set_login_session_id()
 
     def authorize_2factor(self, username, code, offset=0):
         if not code:
@@ -181,7 +189,7 @@ class Authenticator(object):
 
     def authenticate(self, username=None, password=None,
                      country=None, login=True):
-        """return true if successfull
+        """return true if successful
         login: if a successful authentication should result in the user being
                logged in
         """
@@ -307,14 +315,22 @@ class Authenticator(object):
                     not url_tool or url_tool.isURLInPortal(came_from))):
                 success_url = came_from
             if 'login' in success_url or 'logged_out' in success_url:
-                success_url = site_url + '/@@dashboard'
+                if ISiteRoot.providedBy(self.context):
+                    success_url = site_url + '/@@dashboard'
+                else:
+                    success_url = site_url  # zope root
+            elif 'manage' in success_url:
+                if ISiteRoot.providedBy(self.context):
+                    success_url = site_url + '/@@dashboard'
+                # else zope root, allow /manage here
 
         data = {
             'supportedAuthSchemes': self.get_supported_auth_schemes(),
             'twoFactorEnabled': self.two_factor_enabled,
             'apiEndpoint': '{}/@@secure-login'.format(site_url),
             'successUrl': success_url,
-            'additionalProviders': []
+            'additionalProviders': [],
+            'state': self.get_secure_flow_state()
         }
         try:
             data['authenticator'] = createToken()

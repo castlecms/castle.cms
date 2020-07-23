@@ -30,13 +30,16 @@ log.html
 node_modules/
 report.html
 src/
+local.cfg
 zinstance/
 packages/
 pyvenv.cfg
 buildout-copy.cfg
 temp_resources/
 env
+env2
 dump.rdb
+export/
 /Makefile
 /package.json
 /watch-run.py
