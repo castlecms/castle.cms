@@ -298,15 +298,17 @@ The user requesting this access logged this information:
 
     def check_whitelist(self):
         username = self.username
-        try:
-            white_listed = api.portal.get_registry_record('whitelist_login_domains')
-            if white_listed:
-                for wl in white_listed:
-                    if wl in username:
-                        username = username.replace(wl, '')
-                        break
-        except ComponentLookupError:
-            pass
+        if '@' in username:
+            user_and_domain = username.split('@')
+            try:
+                white_listed = api.portal.get_registry_record('whitelist_login_domains')
+                if white_listed:
+                    for wl in white_listed:
+                        if user_and_domain[1] == wl:
+                            username = user_and_domain.pop(0)
+                            break
+            except ComponentLookupError:
+                pass
         return username
 
     def send_auth_email(self):
