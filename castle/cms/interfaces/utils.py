@@ -96,6 +96,9 @@ class IUtils(Interface):
     def get_path():
         pass
 
+    def get_backend_url_no_trailing_slash():
+        pass
+
 
 class IDashboardUtils(Interface):
     def get_totals():

@@ -165,6 +165,13 @@
       <value key="deps">plone-logged-in</value>
   </records>
 
+  <!-- castle-components-archives-review -->
+  <records prefix="plone.resources/castle-components-review-archives"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/review-archives.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
   <!-- castle-components-history -->
   <records prefix="plone.resources/castle-components-history"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
@@ -173,6 +180,13 @@
         <element>++plone++castle/less/misc/history.css</element>
       </value>
       <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-slide -->
+  <records prefix="plone.resources/castle-components-slide"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">++plone++castle/components/slide.js</value>
+    <value key="deps">plone-logged-in</value>
   </records>
 
 
