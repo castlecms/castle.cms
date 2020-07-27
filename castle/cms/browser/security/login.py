@@ -296,16 +296,20 @@ The user requesting this access logged this information:
             'state': new_state
         })
 
+    def email_split(self, user_email):
+        _parts = user_email.split('@')
+        return ('@'.join(_parts[0:( len(_parts) - 1)]), _parts[-1])
+
     def check_whitelist(self):
         username = self.username
         if '@' in username:
-            user_and_domain = username.split('@')
+            user, domain = self.email_split(username)
             try:
                 white_listed = api.portal.get_registry_record('whitelist_login_domains')
                 if white_listed:
                     for wl in white_listed:
-                        if user_and_domain[1] == wl:
-                            username = user_and_domain.pop(0)
+                        if domain == wl:
+                            username = user
                             break
             except ComponentLookupError:
                 pass
