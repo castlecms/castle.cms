@@ -298,7 +298,7 @@ The user requesting this access logged this information:
 
     def email_split(self, user_email):
         _parts = user_email.split('@')
-        return ('@'.join(_parts[0:( len(_parts) - 1)]), _parts[-1])
+        return ('@'.join(_parts[:-1]), _parts[-1])
 
     def check_whitelist(self):
         username = self.username
