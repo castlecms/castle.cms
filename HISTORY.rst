@@ -4,7 +4,8 @@ Changelog
 2.6.21 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix the QueryListingTile to split display_fields correctly when passed as
+  a query parameter to the @@castle.cms.querylisting view
 
 
 2.6.20 (2020-07-14)

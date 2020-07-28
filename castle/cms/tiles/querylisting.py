@@ -172,6 +172,14 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return parsed
 
     @property
+    def data(self):
+        if 'display_fields' in self.request.form:
+            if type(self.request.form['display_fields']) == str:
+                self.request.form['display_fields'] = self.request.form['display_fields'].split(',')
+        thedata = super(QueryListingTile, self).data
+        return thedata
+
+    @property
     def display_fields(self):
         df = self.data.get('display_fields', None)
         if df is None:
