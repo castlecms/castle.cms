@@ -175,7 +175,8 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     def data(self):
         if 'display_fields' in self.request.form:
             if type(self.request.form['display_fields']) == str:
-                self.request.form['display_fields'] = self.request.form['display_fields'].split(',')
+                fields = self.request.form['display_fields'].split(',')
+                self.request.form['display_fields'] = [a.strip() for a in fields if len(a.strip()) > 0]
         thedata = super(QueryListingTile, self).data
         return thedata
 
