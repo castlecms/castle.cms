@@ -3,6 +3,7 @@ import botocore
 from castle.cms import archival
 from castle.cms.files import aws
 from DateTime import DateTime
+from io import BytesIO
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFPlone.resources import add_resource_on_request
@@ -78,12 +79,15 @@ class AWSApi(object):
             return self.deletegroup()
 
     def get(self):
-        key_name = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
-        key = self.bucket.get_object(Key=key_name)
-        if 'html' not in key.content_type:
+        key = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
+        obj = self.s3.Object(self.bucket.name, key)
+        if 'html' not in obj.content_type:
             raise Exception('Must be html...')
+        fileobj = BytesIO()
+        obj.download_fileobj(fileobj)
+        fileobj.seek(0)
         return {
-            'data': key.read()
+            'data': fileobj.read()
         }
 
     def deletegroup(self):
@@ -122,19 +126,19 @@ class AWSApi(object):
 
     def delete(self):
         path = self.request.form.get('path')
-        key_name = archival.CONTENT_KEY_PREFIX + path
+        key = archival.CONTENT_KEY_PREFIX + path
         authenticator = getMultiAdapter((self.site, self.request), name=u"authenticator")
         # manually provide csrf here...
         if not authenticator.verify():
             raise Unauthorized
 
         try:
-            key = self.bucket.get_object(Key=key_name)
-            key.delete()
+            obj = self.s3.Object(self.bucket.name, key)
+            obj.delete()
         except botocore.exceptions.ClientError:
             logger.error(
                 'error deleting object {key} in bucket {name}'.format(
-                    key=key_name,
+                    key=key,
                     name=self.bucket.name),
                 log_exc=True)
 
@@ -152,7 +156,7 @@ class AWSApi(object):
             pass
 
     def save(self):
-        key_name = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
+        key = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
         authenticator = getMultiAdapter((self.site, self.request), name=u"authenticator")
         # manually provide csrf here...
         if not authenticator.verify():
@@ -160,15 +164,15 @@ class AWSApi(object):
 
         content = self.request.form.get('value')
         try:
-            key = self.bucket.get_object(Key=key_name)
-            key.put(
+            obj = self.s3.Object(self.bucket.name, key)
+            obj.put(
                 ACL='public-read',
                 Body=content,
                 ContentType="text/html; charset=utf-8")
         except botocore.exceptions.ClientError:
             logger.error(
                 'error saving object {key} in bucket {name}'.format(
-                    key=key_name,
+                    key=key,
                     name=self.bucket.name),
                 log_exc=True)
 
