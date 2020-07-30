@@ -6,6 +6,7 @@ Changelog
 
 - fix the QueryListingTile to split display_fields correctly when passed as
   a query parameter to the @@castle.cms.querylisting view
+- fix s3 integration in the edit/delete actions of the archival management view
 
 
 2.6.20 (2020-07-14)
