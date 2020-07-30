@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.21 (unreleased)
+2.6.21 (2020-07-30)
 -------------------
 
 - fix the QueryListingTile to split display_fields correctly when passed as
