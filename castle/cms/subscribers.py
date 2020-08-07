@@ -204,3 +204,12 @@ def on_youtube_video_state_changed(obj, event):
             tasks.youtube_video_state_changed.delay(obj)
         except CannotGetPortalError:
             pass
+
+
+def on_search_exclusion(obj, event):
+    try:
+        if obj.exclude_from_search:
+            # Add to list of excluded content somewhere on control panel
+            import pdb; pdb.set_trace()
+    except AttributeError:
+        pass
