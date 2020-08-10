@@ -1,6 +1,7 @@
 from castle.cms import audit
 from castle.cms import tasks
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
+from castle.cms.cron._reindex_es import index_site
 from castle.cms.lead import check_lead_image
 from plone import api
 from plone.api.exc import CannotGetPortalError
@@ -15,6 +16,7 @@ from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.component.interfaces import ComponentLookupError
 from zope.globalrequest import getRequest
 from zope.interface import Interface
@@ -214,18 +216,28 @@ def on_search_exclusion(obj, event):
     except ComponentLookupError:
         return
 
+    catalog = api.portal.get_tool('portal_catalog')
+    catalog_objects = [brain.getObject() for brain in catalog()]
+
     try:
         if obj.exclude_from_search:
             if obj.id not in registry_list:
                 registry_list.append(obj.id)
+            if obj in catalog_objects:
+                catalog.unindexObject(obj)
+
         else:
             if obj.id in registry_list:
                 registry_list.remove(obj.id)
+            if obj not in catalog_objects:
+                catalog.indexObject(obj)
     except AttributeError:
         return
 
     try:
         api.portal.set_registry_record(name='excluded_from_search', value=registry_list)
     except:
-        return
+        pass
 
+    site = getSite()
+    index_site(site)
