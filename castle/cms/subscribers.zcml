@@ -122,4 +122,9 @@
          zope.lifecycleevent.IObjectModifiedEvent"
     handler=".subscribers.on_search_exclusion" />
 
+  <subscriber
+      for="plone.registry.interfaces.IRecordModifiedEvent"
+      handler=".subscribers.on_config_search_exclusion"
+      />
+
 </configure>

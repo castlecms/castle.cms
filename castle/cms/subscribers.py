@@ -241,3 +241,38 @@ def on_search_exclusion(obj, event):
 
     site = getSite()
     index_site(site)
+
+
+def on_config_search_exclusion(obj):
+    if obj.record.__name__ == 'excluded_from_search':
+        catalog = api.portal.get_tool('portal_catalog')
+        catalog_objects = [brain.getObject() for brain in catalog()]
+
+        all_site_objects = api.portal.get().contentItems()
+        site_object_ids = [site_obj[0] for site_obj in all_site_objects]
+
+        # Invalid objects cannot be added to registry list
+        try:
+            for value in obj.newValue:
+                if value not in site_object_ids:
+                    obj.newValue.remove(value)
+
+                # Excludes from search when item is added to registry
+                elif value in catalog_objects:
+                    for cat_obj in catalog_objects:
+                        if cat_obj.id == value:
+                            cat_obj.exclude_from_search = True
+                            on_search_exclusion(cat_obj, None)
+
+            # Removes exclude from search if object not in registry list
+            for site_obj in all_site_objects:
+                name, value = site_obj
+                if name not in obj.newValue and value.exclude_from_search:
+                    value.exclude_from_search = False
+                    on_search_exclusion(value, None)
+
+        except TypeError:
+            return
+
+
+
