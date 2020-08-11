@@ -233,6 +233,8 @@ def on_search_exclusion(obj, event):
                 catalog.indexObject(obj)
     except AttributeError:
         return
+    except TypeError:
+        return
 
     try:
         api.portal.set_registry_record(name='excluded_from_search', value=registry_list)
