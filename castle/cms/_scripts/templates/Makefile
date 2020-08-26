@@ -1,5 +1,5 @@
 less-plone:
-	grunt --gruntfile=watchable-grunt.js less-plone
+	grunt --gruntfile=watchable-grunt.js less-plone --force
 
 less-plone-logged-in:
 	grunt --gruntfile=watchable-grunt.js less-plone-logged-in
