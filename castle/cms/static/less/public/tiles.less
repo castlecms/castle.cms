@@ -106,7 +106,22 @@ h3.highlight{
   .mosaic-tile-padding-top .mosaic-tile-content {
     padding-top: 10px;
   }
+  each(range(100), {
+    .mosaic-tile-padding-top-@{value} .mosaic-tile-content {
+      padding-top: @value * 1px;
+    }
+    .mosaic-tile-padding-bottom-@{value} .mosaic-tile-content {
+      padding-bottom: @value * 1px;
+    }
+    .mosaic-tile-padding-right-@{value} .mosaic-tile-content {
+      padding-right: @value * 1px;
+    }
+    .mosaic-tile-padding-left-@{value} .mosaic-tile-content {
+      padding-left: @value * 1px;
+    }
+  });
 }
+
 
 
 /* query filter stles */
