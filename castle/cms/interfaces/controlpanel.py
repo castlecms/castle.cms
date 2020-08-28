@@ -408,6 +408,18 @@ class IAPISettings(Interface):
         title=u'Cloudflare Zone ID',
         required=False)
 
+    sp_client_id =schema.TextLine(
+        title=u'StackPath Client ID',
+        required=False,
+        default=None
+    )
+
+    sp_client_secret = schema.TextLine(
+        title=u'StackPath Client Secret',
+        required=False,
+        default=None
+    )
+
     rocket_chat_front_page = schema.TextLine(
         title=u'Rocket.Chat User URL',
         description=u'URL of the Rocket.Chat server to connect to',

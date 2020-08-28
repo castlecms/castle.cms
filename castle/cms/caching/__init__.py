@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
-from . import cloudflare
+from . import cloudflare, stackpath
 from App.config import getConfiguration
 from castle.cms.linkintegrity import get_content_links
 from plone import api
@@ -103,6 +103,13 @@ def purge(event):
                 urls.extend(cf.getUrlsToPurge(path))
 
             CastlePurger.purgeAsync(urls, cf)
+
+        sp = stackpath.get()
+        if sp.enabled:
+            for path in paths:
+                urls.extend(sp.getUrlsToPurge(path))
+
+            CastlePurger.purgeAsync(urls, sp)
 
 
 class CastlePurgerFactory(object):
@@ -208,11 +215,13 @@ del addCleanUp
 
 class Purge(BrowserView):
     cf_enabled = False
+    sp_enabled = False
     proxy_enabled = False
 
     def purge(self):
         site_path = '/'.join(api.portal.get().getPhysicalPath())
         cf = cloudflare.get()
+        sp = stackpath.get()
         paths = []
         urls = []
 
@@ -235,6 +244,7 @@ class Purge(BrowserView):
 
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
+            urls.extend(sp.getUrlsToPurge(path))
 
         urls = list(set(urls))
 
@@ -251,6 +261,10 @@ class Purge(BrowserView):
         if cf.enabled:
             self.cf_enabled = True
             resp = CastlePurger.purgeSync(urls, cf)
+            success = resp.json()['success']
+        if sp.enabled:
+            self.sp_enabled = True
+            resp = CastlePurger.purgeSync(urls, sp)
             success = resp.json()['success']
 
         nice_paths = []
