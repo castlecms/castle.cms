@@ -223,7 +223,6 @@
 
       const closeContainer = document.getElementById('close-container');
       const resourceSlide = document.querySelectorAll('.resource-slide')[0];
-      console.log(closeContainer);
       const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (mutation.attributeName === "class") {
@@ -238,7 +237,9 @@
           }
         });
       });
-      observer.observe(resourceSlide, {attributes: true});
+      if(resourceSlide) {
+        observer.observe(resourceSlide, {attributes: true});
+      }
 
       Reveal.initialize({
         plugins: [ RevealMarkdown, RevealHighlight ],
