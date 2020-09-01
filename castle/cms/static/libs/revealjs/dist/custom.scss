@@ -20,6 +20,11 @@ h2.slide-title {
 }
 
 .text-container {
+  text-align: center;
+  text-align-last: center;
+  & .justify-wrap {
+    text-align: justify;
+  }
   display: flex;
   flex-flow: row nowrap;
   height: 100vh;
@@ -33,7 +38,19 @@ h2.slide-title {
     }
   }
 }
-
+// .text-section {
+//   &.align-left {
+//     text-align: left;
+//     text-align-last: left;
+//   }
+//   &.align-right {
+//     text-align: right;
+//     text-align-last: right;
+//   }
+//   & .justify-wrap {
+//     text-align: justify;
+//   }
+// }
 .background-slide {
   .text-container {
     &.vert-top {
@@ -54,32 +71,32 @@ h2.slide-title {
     &.hor-end {
       justify-content: flex-end;
     }
-    .text-section {
-      &.align-left {
-        text-align: left;
-      }
-      &.align-center {
-        text-align: center;
-      }
-      &.align-right {
-        text-align: right;
-      }
-      &.justify-wrap {
-        text-align: justify;
-        &.align-left {
-          text-align-last: left;
-        }
-        &.align-center {
-          text-align-last: center;
-        }
-        &.align-right {
-          text-align-last: right;
-        }
-      }
-    }
+    // .text-section {
+    //   text-align: center;
+      // &.align-left {
+      //   text-align: left;
+      // }
+      // &.align-center {
+      //   text-align: center;
+      // }
+      // &.align-right {
+      //   text-align: right;
+      // }
+      // &.justify-wrap {
+      //   text-align: justify;
+      //   &.align-left {
+      //     text-align-last: left;
+      //   }
+      //   &.align-center {
+      //     text-align-last: center;
+      //   }
+      //   &.align-right {
+      //     text-align-last: right;
+      //   }
+      // }
+    // }
   }
 }
-
 .left-slide {
   .text-container {
     &.mobile-vert-top {
@@ -102,26 +119,20 @@ h2.slide-title {
     }
 
     .text-section {
-      &.mobile-align-left {
-        text-align: left;
-      }
-      &.mobile-align-center {
-        text-align: center;
-      }
-      &.mobile-align-right {
-        text-align: right;
-      }
-      &.justify-wrap {
+      // &.mobile-align-left {
+      //   text-align: left;
+      //   text-align-last: left;
+      // }
+      // // &.mobile-align-center {
+      // //   text-align: center;
+      // //   text-align-last: center;
+      // // }
+      // &.mobile-align-right {
+      //   text-align: right;
+      //   text-align-last: right;
+      // }
+      & .justify-wrap {
         text-align: justify;
-        &.mobile-align-left {
-          text-align-last: left;
-        }
-        &.mobile-align-center {
-          text-align-last: center;
-        }
-        &.mobile-align-right {
-          text-align-last: right;
-        }
       }
     }
   }
@@ -475,7 +486,7 @@ p {
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1024px) {
   .d-lg-none {
     display: none !important;
   }
@@ -531,6 +542,92 @@ p {
   .text-section {
     margin-bottom: 0;
   }
+
+
+  .resource-slide {
+    .resource-slide-container {
+      width: 70%;
+      height: calc(100vh - 84px);
+      margin: auto;
+      .view-more {
+        display: flex;
+        align-items: flex-end;
+        text-align: right;
+        justify-content: flex-end;
+        flex-grow: 1;
+      }
+      .resource-slide-item {
+        flex-flow: row nowrap;
+        .resource-slide-item-content-container {
+          width: 100%;
+          padding: 0 15px 0 20px;
+        }
+      }
+    }
+  }
+
+  .left-slide {
+    .text-container {
+      position: static;
+    }
+  
+
+  } 
+  .text-container {
+    text-align: center;
+    text-align-last: center;
+    &.vert-top {
+      align-items: flex-start;
+    }
+    &.vert-middle {
+      align-items: center;
+    }
+    &.vert-bottom {
+      align-items: flex-end;
+    }
+    &.hor-start {
+      justify-content: flex-start;
+    }
+    &.hor-center {
+      justify-content: center;
+    }
+    &.hor-end {
+      justify-content: flex-end;
+    }
+    .text-section {
+      &.align-left {
+        text-align: left;
+        text-align-last: left;
+      }
+      &.align-right {
+        text-align: right;
+        text-align-last: right;
+      }
+      & .justify-wrap {
+        text-align: justify;
+      }
+    }
+  }
+  .left-slide {
+    .video-container {
+      padding: 0;
+      video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    
+    .radial-background-container {
+      background-image: none;
+    }
+  }
+.background-slide {
+  & .half-width {
+    width: calc(50% + 140px + 15px);
+  }
+}
+
 }
 
 @media (min-width: 1200px) {
@@ -562,86 +659,5 @@ p {
   .d-xl-inline-flex {
     display: -ms-inline-flexbox !important;
     display: inline-flex !important;
-  }
-}
-@media (min-width: 768px) {
-  .resource-slide {
-    .resource-slide-container {
-      width: 70%;
-      height: calc(100vh - 84px);
-      margin: auto;
-      .view-more {
-        display: flex;
-        align-items: flex-end;
-        text-align: right;
-        justify-content: flex-end;
-        flex-grow: 1;
-      }
-      .resource-slide-item {
-        flex-flow: row nowrap;
-        .resource-slide-item-content-container {
-          width: 100%;;
-          padding: 0 15px 0 20px;
-        }
-      }
-    }
-  }
-
-  .left-slide {
-    .video-container {
-      padding: 0;
-      video {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-      }
-    }
-    .text-container {
-      position: static;
-      &.vert-top {
-        align-items: flex-start;
-      }
-      &.vert-middle {
-        align-items: center;
-      }
-      &.vert-bottom {
-        align-items: flex-end;
-      }
-      &.hor-start {
-        justify-content: flex-start;
-      }
-      &.hor-center {
-        justify-content: center;
-      }
-      &.hor-end {
-        justify-content: flex-end;
-      }
-      .text-section {
-        &.align-left {
-          text-align: left;
-        }
-        &.align-center {
-          text-align: center;
-        }
-        &.align-right {
-          text-align: right;
-        }
-        &.justify-wrap {
-          text-align: justify;
-          &.align-left {
-            text-align-last: left;
-          }
-          &.align-center {
-            text-align-last: center;
-          }
-          &.align-right {
-            text-align-last: right;
-          }
-        }
-      }
-    }
-    .radial-background-container {
-      background-image: none;
-    }
   }
 }

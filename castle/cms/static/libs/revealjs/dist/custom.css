@@ -19,9 +19,14 @@ h2.slide-title {
 }
 
 .text-container {
+  text-align: center;
+  text-align-last: center;
   display: flex;
   flex-flow: row nowrap;
   height: 100vh;
+}
+.text-container .justify-wrap {
+  text-align: justify;
 }
 .text-container .text-section {
   padding: 0 3vh 7vh;
@@ -51,27 +56,6 @@ h2.slide-title {
 .background-slide .text-container.hor-end {
   justify-content: flex-end;
 }
-.background-slide .text-container .text-section.align-left {
-  text-align: left;
-}
-.background-slide .text-container .text-section.align-center {
-  text-align: center;
-}
-.background-slide .text-container .text-section.align-right {
-  text-align: right;
-}
-.background-slide .text-container .text-section.justify-wrap {
-  text-align: justify;
-}
-.background-slide .text-container .text-section.justify-wrap.align-left {
-  text-align-last: left;
-}
-.background-slide .text-container .text-section.justify-wrap.align-center {
-  text-align-last: center;
-}
-.background-slide .text-container .text-section.justify-wrap.align-right {
-  text-align-last: right;
-}
 
 .left-slide .text-container.mobile-vert-top {
   align-items: flex-start;
@@ -91,26 +75,8 @@ h2.slide-title {
 .left-slide .text-container.mobile-hor-end {
   justify-content: flex-end;
 }
-.left-slide .text-container .text-section.mobile-align-left {
-  text-align: left;
-}
-.left-slide .text-container .text-section.mobile-align-center {
-  text-align: center;
-}
-.left-slide .text-container .text-section.mobile-align-right {
-  text-align: right;
-}
-.left-slide .text-container .text-section.justify-wrap {
+.left-slide .text-container .text-section .justify-wrap {
   text-align: justify;
-}
-.left-slide .text-container .text-section.justify-wrap.mobile-align-left {
-  text-align-last: left;
-}
-.left-slide .text-container .text-section.justify-wrap.mobile-align-center {
-  text-align-last: center;
-}
-.left-slide .text-container .text-section.justify-wrap.mobile-align-right {
-  text-align-last: right;
 }
 
 .col.col,
@@ -457,7 +423,7 @@ p {
     display: inline-flex !important;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 1024px) {
   .d-lg-none {
     display: none !important;
   }
@@ -521,6 +487,80 @@ p {
 .text-section {
     margin-bottom: 0;
   }
+
+  .resource-slide .resource-slide-container {
+    width: 70%;
+    height: calc(100vh - 84px);
+    margin: auto;
+  }
+  .resource-slide .resource-slide-container .view-more {
+    display: flex;
+    align-items: flex-end;
+    text-align: right;
+    justify-content: flex-end;
+    flex-grow: 1;
+  }
+  .resource-slide .resource-slide-container .resource-slide-item {
+    flex-flow: row nowrap;
+  }
+  .resource-slide .resource-slide-container .resource-slide-item .resource-slide-item-content-container {
+    width: 100%;
+    padding: 0 15px 0 20px;
+  }
+
+  .left-slide .text-container {
+    position: static;
+  }
+
+  .text-container {
+    text-align: center;
+    text-align-last: center;
+  }
+  .text-container.vert-top {
+    align-items: flex-start;
+  }
+  .text-container.vert-middle {
+    align-items: center;
+  }
+  .text-container.vert-bottom {
+    align-items: flex-end;
+  }
+  .text-container.hor-start {
+    justify-content: flex-start;
+  }
+  .text-container.hor-center {
+    justify-content: center;
+  }
+  .text-container.hor-end {
+    justify-content: flex-end;
+  }
+  .text-container .text-section.align-left {
+    text-align: left;
+    text-align-last: left;
+  }
+  .text-container .text-section.align-right {
+    text-align: right;
+    text-align-last: right;
+  }
+  .text-container .text-section .justify-wrap {
+    text-align: justify;
+  }
+
+  .left-slide .video-container {
+    padding: 0;
+  }
+  .left-slide .video-container video {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  .left-slide .radial-background-container {
+    background-image: none;
+  }
+
+  .background-slide .half-width {
+    width: calc(50% + 140px + 15px);
+  }
 }
 @media (min-width: 1200px) {
   .d-xl-none {
@@ -559,81 +599,6 @@ p {
   .d-xl-inline-flex {
     display: -ms-inline-flexbox !important;
     display: inline-flex !important;
-  }
-}
-@media (min-width: 768px) {
-  .resource-slide .resource-slide-container {
-    width: 70%;
-    height: calc(100vh - 84px);
-    margin: auto;
-  }
-  .resource-slide .resource-slide-container .view-more {
-    display: flex;
-    align-items: flex-end;
-    text-align: right;
-    justify-content: flex-end;
-    flex-grow: 1;
-  }
-  .resource-slide .resource-slide-container .resource-slide-item {
-    flex-flow: row nowrap;
-  }
-  .resource-slide .resource-slide-container .resource-slide-item .resource-slide-item-content-container {
-    width: 100%;
-    padding: 0 15px 0 20px;
-  }
-
-  .left-slide .video-container {
-    padding: 0;
-  }
-  .left-slide .video-container video {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-  }
-  .left-slide .text-container {
-    position: static;
-  }
-  .left-slide .text-container.vert-top {
-    align-items: flex-start;
-  }
-  .left-slide .text-container.vert-middle {
-    align-items: center;
-  }
-  .left-slide .text-container.vert-bottom {
-    align-items: flex-end;
-  }
-  .left-slide .text-container.hor-start {
-    justify-content: flex-start;
-  }
-  .left-slide .text-container.hor-center {
-    justify-content: center;
-  }
-  .left-slide .text-container.hor-end {
-    justify-content: flex-end;
-  }
-  .left-slide .text-container .text-section.align-left {
-    text-align: left;
-  }
-  .left-slide .text-container .text-section.align-center {
-    text-align: center;
-  }
-  .left-slide .text-container .text-section.align-right {
-    text-align: right;
-  }
-  .left-slide .text-container .text-section.justify-wrap {
-    text-align: justify;
-  }
-  .left-slide .text-container .text-section.justify-wrap.align-left {
-    text-align-last: left;
-  }
-  .left-slide .text-container .text-section.justify-wrap.align-center {
-    text-align-last: center;
-  }
-  .left-slide .text-container .text-section.justify-wrap.align-right {
-    text-align-last: right;
-  }
-  .left-slide .radial-background-container {
-    background-image: none;
   }
 }
 
