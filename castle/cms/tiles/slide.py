@@ -65,17 +65,19 @@ class ISlideTileSchema(model.Schema):
             'hor_text_position',
             'vert_text_position',
             'text_alignment',
-            'customize_left_slide_mobile',
+            # 'customize_left_slide_mobile',
             'justify_wrapped_text',
         ]
     )
 
     hor_text_position = schema.Choice(
         title=u"Slide Text Position (Horizontal)",
+        description=u'This setting only applies to large screens. '
+                    u'On small screens, Center (Full Width) will always be deisplayed.',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('start', 'start', u'Left'),
-            SimpleTerm('center', 'center', u'Center'),
-            SimpleTerm('end', 'end', u'Right'),
+            SimpleTerm('start', 'start', u'Left (Half Width)'),
+            SimpleTerm('center', 'center', u'Center (Full Width)'),
+            SimpleTerm('end', 'end', u'Right (Half Width)'),
         ]),
         required=True,
         default=u'center'
@@ -95,22 +97,23 @@ class ISlideTileSchema(model.Schema):
     text_alignment = schema.Choice(
         title=u"Slide Text Alignment",
         description=u'The alignment of slide text relative to other text on the page. '
-                    u'This does not change the position of the text section selected above.',
+                    u'This does not change the position of the text section selected above. '
+                    u'(Note: this is ignored on smaller screens)',
         vocabulary=SimpleVocabulary([
             SimpleTerm('left', 'left', u'Left'),
             SimpleTerm('center', 'center', u'Center'),
-            SimpleTerm('right', 'right', u'Right'),
+            # SimpleTerm('right', 'right', u'Right'),
         ]),
         required=True,
         default=u'center'
     )
 
-    customize_left_slide_mobile = schema.Bool(
-        title=u'Use Different Alignment & Position Values for Mobile',
-        description=u'On small screens such as mobile devices, Left Image Right Text and Left Video Right Text slides are displayed exactly like background slides. '  # noqa
-                    u'Select this option to display the "Mobile Text Positioning" tab, which allows different position and alignment values for this slide on small screens.',  # noqa
-        default=False,
-    )
+    # customize_left_slide_mobile = schema.Bool(
+    #     title=u'Use Different Alignment & Position Values for Mobile',
+    #     description=u'On small screens such as mobile devices, Left Image Right Text and Left Video Right Text slides are displayed exactly like background slides. '  # noqa
+    #                 u'Select this option to display the "Mobile Text Positioning" tab, which allows different position and alignment values for this slide on small screens.',  # noqa
+    #     default=False,
+    # )
 
     justify_wrapped_text = schema.Bool(
         title=u'Justify Wrapped Text Lines',
@@ -120,55 +123,55 @@ class ISlideTileSchema(model.Schema):
     )
 
     #######################################################################################################
-    model.fieldset(
-        'left_slide_mobile_text_positioning',
-        label=u'Mobile Text Positioning',
-        description=u'On small screens such as mobile devices, Left Image Right Text and Left Video Right Text slides are displayed exactly like background slides. '  # noqa
-                    u'This page allows you to specify different text position and alignment values that apply to smaller displays only.', # noqa
-        fields=[
-            'left_slide_mobile_hor_text_position',
-            'left_slide_mobile_vert_text_position',
-            'left_slide_mobile_text_alignment',
-        ]
-    )
+    # model.fieldset(
+    #     'left_slide_mobile_text_positioning',
+    #     label=u'Mobile Text Positioning',
+    #     description=u'On small screens such as mobile devices, Left Image Right Text and Left Video Right Text slides are displayed exactly like background slides. '  # noqa
+    #                 u'This page allows you to specify different text position and alignment values that apply to smaller displays only.', # noqa
+    #     fields=[
+    #         'left_slide_mobile_hor_text_position',
+    #         'left_slide_mobile_vert_text_position',
+    #         'left_slide_mobile_text_alignment',
+    #     ]
+    # )
 
-    left_slide_mobile_hor_text_position = schema.Choice(
-        title=u"Slide Text Position (Horizontal)",
-        vocabulary=SimpleVocabulary([
-            SimpleTerm('default', 'default', u'Leave Unchanged'),
-            SimpleTerm('start', 'start', u'Left'),
-            SimpleTerm('center', 'center', u'Center'),
-            SimpleTerm('end', 'end', u'Right'),
-        ]),
-        required=True,
-        default=u'default'
-    )
+    # left_slide_mobile_hor_text_position = schema.Choice(
+    #     title=u"Slide Text Position (Horizontal)",
+    #     vocabulary=SimpleVocabulary([
+    #         SimpleTerm('default', 'default', u'Leave Unchanged'),
+    #         SimpleTerm('start', 'start', u'Left'),
+    #         SimpleTerm('center', 'center', u'Center'),
+    #         SimpleTerm('end', 'end', u'Right'),
+    #     ]),
+    #     required=True,
+    #     default=u'default'
+    # )
 
-    left_slide_mobile_vert_text_position = schema.Choice(
-        title=u"Slide Text Position (Vertical)",
-        vocabulary=SimpleVocabulary([
-            SimpleTerm('default', 'default', u'Leave Unchanged'),
-            SimpleTerm('top', 'top', u'Top'),
-            SimpleTerm('middle', 'middle', u'Middle'),
-            SimpleTerm('bottom', 'bottom', u'Bottom'),
-        ]),
-        required=True,
-        default=u'default'
-    )
+    # left_slide_mobile_vert_text_position = schema.Choice(
+    #     title=u"Slide Text Position (Vertical)",
+    #     vocabulary=SimpleVocabulary([
+    #         SimpleTerm('default', 'default', u'Leave Unchanged'),
+    #         SimpleTerm('top', 'top', u'Top'),
+    #         SimpleTerm('middle', 'middle', u'Middle'),
+    #         SimpleTerm('bottom', 'bottom', u'Bottom'),
+    #     ]),
+    #     required=True,
+    #     default=u'default'
+    # )
 
-    left_slide_mobile_text_alignment = schema.Choice(
-        title=u"Slide Text Alignment",
-        description=u'The alignment of slide text relative to other text on the page. '
-                    u'This does not change the position of the text section selected above.',
-        vocabulary=SimpleVocabulary([
-            SimpleTerm('default', 'default', u'Leave Unchanged'),
-            SimpleTerm('left', 'left', u'Left'),
-            SimpleTerm('center', 'center', u'Center'),
-            SimpleTerm('right', 'right', u'Right'),
-        ]),
-        required=True,
-        default=u'default'
-    )
+    # left_slide_mobile_text_alignment = schema.Choice(
+    #     title=u"Slide Text Alignment",
+    #     description=u'The alignment of slide text relative to other text on the page. '
+    #                 u'This does not change the position of the text section selected above.',
+    #     vocabulary=SimpleVocabulary([
+    #         SimpleTerm('default', 'default', u'Leave Unchanged'),
+    #         SimpleTerm('left', 'left', u'Left'),
+    #         SimpleTerm('center', 'center', u'Center'),
+    #         SimpleTerm('right', 'right', u'Right'),
+    #     ]),
+    #     required=True,
+    #     default=u'default'
+    # )
 
     #######################################################################################################
     model.fieldset(

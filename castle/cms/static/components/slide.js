@@ -9,20 +9,20 @@ require(['jquery'], function slideComponent($) {
     } catch (e) {}
     const typeAndTextFieldset = document.getElementById('fieldset-type_and_text');
     const positioningFieldset = document.getElementById('fieldset-text_positioning');
-    const mobilePositioningFieldset = document.getElementById('fieldset-left_slide_mobile_text_positioning');
+    // const mobilePositioningFieldset = document.getElementById('fieldset-left_slide_mobile_text_positioning');
     const mediaFieldset = document.getElementById('fieldset-media_settings');
     const relatedItemsFieldset = document.getElementById('fieldset-related_items');
     const formVariables = {
       form,
       typeAndTextFieldset,
       positioningFieldset,
-      mobilePositioningFieldset,
+      // mobilePositioningFieldset,
       mediaFieldset,
       relatedItemsFieldset,
       formFields: [
         ...Array.from(typeAndTextFieldset.children).filter(hasId),
         ...Array.from(positioningFieldset.children).filter(hasId),
-        ...Array.from(mobilePositioningFieldset.children).filter(hasId),
+        // ...Array.from(mobilePositioningFieldset.children).filter(hasId),
         ...Array.from(mediaFieldset.children).filter(hasId),
         ...Array.from(relatedItemsFieldset.children).filter(hasId),
       ],
@@ -77,12 +77,12 @@ require(['jquery'], function slideComponent($) {
     if (backgroundSlidetypes.includes(slideType)) {
       showAndHide.fieldIdEndingsToHide.push('widgets-customize_left_slide_mobile');
       showAndHide.hideFieldsetsWithLabels.push('Mobile Text Positioning');
-    } else if (sideSlideTypes.includes(slideType)) {
-      if ($('#form-widgets-customize_left_slide_mobile-0')[0].checked) {
-        showAndHide.unhideFieldsetsWithLabels.push('Mobile Text Positioning');
-      } else {
-        showAndHide.hideFieldsetsWithLabels.push('Mobile Text Positioning');
-      }
+    // } else if (sideSlideTypes.includes(slideType)) {
+      // if ($('#form-widgets-customize_left_slide_mobile-0')[0].checked) {
+      //   showAndHide.unhideFieldsetsWithLabels.push('Mobile Text Positioning');
+      // } else {
+      //   showAndHide.hideFieldsetsWithLabels.push('Mobile Text Positioning');
+      // }
     }
     return showAndHide;
   }
