@@ -24,7 +24,8 @@
                                   has_title_and_text  python: slide.get('title', None) and bool(slide.get('text', None));
                                   text_alignment  python: slide.get('text_alignment', 'center');
                                   justify_wrap_class  python: slide.get('justify_wrap_class', '');
-                                  related_resources  python: slide.get('related_resources', None);">
+                                  related_resources  python: slide.get('related_resources', None);
+                                  width_class  python: slide.get('width_class', '');">
 
                 <!-- Full Background Video Slide -->
                 <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
@@ -34,11 +35,11 @@
                     <div class="row vert-${vert}-xs">
                       <div class="col col-xs-12 box-row">
                         <div class="background-video-text-container text-container vert-${vert} hor-${hor}">
-                          <div class="radial-background-container">
-                            <div class="text-section align-${text_alignment} ${justify_wrap_class}">
+                          <div class="radial-background-container ${width_class}">
+                            <div class="text-section align-${text_alignment}">
                               <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
                               <div tal:condition="has_title_and_text" class="title-text-separator"></div>
-                              <p tal:condition="textlines" class="slide-text">
+                              <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
                                 <tal:textline tal:repeat="textline textlines">
                                 ${textline}
                                   <br tal:condition="not:repeat/textline/end"/>
@@ -58,11 +59,11 @@
                     <div class="row vert-${vert}-xs">
                       <div class="col col-xs-12 box-row">
                         <div class="background-image-text-container text-container vert-${vert} hor-${hor}">
-                          <div class="radial-background-container">
-                            <div class="text-section align-${text_alignment} ${justify_wrap_class}">
+                          <div class="radial-background-container ${width_class}">
+                            <div class="text-section align-${text_alignment}">
                               <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
                               <div tal:condition="has_title_and_text" class="title-text-separator"></div>
-                              <p tal:condition="textlines" class="slide-text">
+                              <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
                                 <tal:textline tal:repeat="textline textlines">
                                   <span>${textline}</span>
                                 </tal:textline>
@@ -95,11 +96,11 @@
                       <div class="col col-sm-6 text-container
                                   vert-${vert} hor-${hor}
                                   mobile-vert-${mobile_vert} mobile-hor-${mobile_hor}">
-                        <div class="radial-background-container">
-                          <div class="text-section align-${text_alignment} mobile-align-${mobile_alignment} ${justify_wrap_class}">
+                        <div class="radial-background-container ${width_class}">
+                          <div class="text-section align-${text_alignment} mobile-align-${mobile_alignment}">
                             <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
                             <div tal:condition="has_title_and_text" class="title-text-separator"></div>
-                            <p tal:condition="textlines" class="slide-text">
+                            <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
                               <tal:textline tal:repeat="textline textlines">
                                 ${textline}
                                 <br tal:condition="not:repeat/textline/end"/>
@@ -123,12 +124,12 @@
                       <div class="col col-sm-6 text-container
                                   vert-${vert} hor-${hor}
                                   mobile-vert-${mobile_vert} mobile-hor-${mobile_hor}">
-                        <div class="radial-background-container">
+                        <div class="radial-background-container ${width_class}">
 
-                          <div class="text-section align-${text_alignment} mobile-align-${mobile_alignment} ${justify_wrap_class}">
+                          <div class="text-section align-${text_alignment} mobile-align-${mobile_alignment}">
                             <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
                             <div tal:condition="has_title_and_text" class="title-text-separator"></div>
-                            <p tal:condition="textlines" class="slide-text">
+                            <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
                               <tal:textline tal:repeat="textline textlines">
                               ${textline}
                                 <br tal:condition="not:repeat/textline/end"/>
