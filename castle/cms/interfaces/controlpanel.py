@@ -420,6 +420,18 @@ class IAPISettings(Interface):
         default=None
     )
 
+    sp_stack_id = schema.TextLine(
+        title=u'StackPath Stack ID',
+        required=False,
+        default=None
+    )
+
+    fastly_key = schema.TextLine(
+        title=u'Fastly Key',
+        required=False,
+        default=None
+    )
+
     rocket_chat_front_page = schema.TextLine(
         title=u'Rocket.Chat User URL',
         description=u'URL of the Rocket.Chat server to connect to',

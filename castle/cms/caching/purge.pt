@@ -31,6 +31,7 @@
           <li tal:content="url" />
         </tal:path>
       </ul>
+      <!--Cloudflare purging-->
       <p class="discreet" tal:condition="python: view.cf_enabled and view.proxy_enabled">
         Purged cloudflare and caching proxies
       </p>
@@ -38,6 +39,28 @@
         Purged cloudflare
       </p>
       <p class="discreet" tal:condition="python: not view.cf_enabled and view.proxy_enabled">
+        Purged caching proxies
+      </p>
+
+      <!--Stackpath purging-->
+      <p class="discreet" tal:condition="python: view.sp_enabled and view.proxy_enabled">
+        Purged stackpath and caching proxies
+      </p>
+      <p class="discreet" tal:condition="python: view.sp_enabled and not view.proxy_enabled">
+        Purged stackpath
+      </p>
+      <p class="discreet" tal:condition="python: not view.sp_enabled and view.proxy_enabled">
+        Purged caching proxies
+      </p>
+
+      <!--Fastly purging-->
+      <p class="discreet" tal:condition="python: view.fastly_enabled and view.proxy_enabled">
+        Purged fastly and caching proxies
+      </p>
+      <p class="discreet" tal:condition="python: view.fastly_enabled and not view.proxy_enabled">
+        Purged fastly
+      </p>
+      <p class="discreet" tal:condition="python: not view.fastly_enabled and view.proxy_enabled">
         Purged caching proxies
       </p>
 

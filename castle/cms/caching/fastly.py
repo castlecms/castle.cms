@@ -9,13 +9,9 @@ import requests
 class PurgeManager(object):
     def __init__(self):
         registry = getUtility(IRegistry)
-        self.client_id = registry.get('castle.sp_client_id', None)
-        self.client_secret = registry.get('castle.sp_client_secret', None)
-        self.stack_id = registry.get('castle.sp_stack_id', None)
+        self.fastly_key = registry.get('castle.fastly_key', None)
         self.enabled = (
-            self.client_id is not None and
-            self.client_secret is not None and
-            self.stack_id is not None)
+            self.fastly_key is not None)
         self.site = api.portal.get()
         self.public_url = registry.get('plone.public_url', None)
         if not self.public_url:

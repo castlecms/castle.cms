@@ -222,6 +222,7 @@ class Purge(BrowserView):
         site_path = '/'.join(api.portal.get().getPhysicalPath())
         cf = cloudflare.get()
         sp = stackpath.get()
+        fastly = fastly.get()
         paths = []
         urls = []
 
@@ -245,6 +246,7 @@ class Purge(BrowserView):
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
             urls.extend(sp.getUrlsToPurge(path))
+            urls.extend(fastly.getUrlsToPurge(path))
 
         urls = list(set(urls))
 
@@ -265,6 +267,10 @@ class Purge(BrowserView):
         if sp.enabled:
             self.sp_enabled = True
             resp = CastlePurger.purgeSync(urls, sp)
+            success = resp.json()['success']
+        if fastly.enabled:
+            self.fastly_enabled = True
+            resp = CastlePurger.purgeSync(urls, fastly)
             success = resp.json()['success']
 
         nice_paths = []
