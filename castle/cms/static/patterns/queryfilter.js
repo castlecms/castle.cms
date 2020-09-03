@@ -240,9 +240,9 @@ define([
         fields.push(D.span({ className: 'and' }, ' and '));
       }
       fields.push(D.div({ className: 'field-wrapper' }, [
-        D.label({ htmlFor: 'filter-input' }, ' Search for '),
+        D.label({ htmlFor: 'filter-input' }, ' Filter by: '),
         D.input({ type: 'text', name: 'SearchableText',
-                  placeholder: 'Search for...', id: 'filter-input', value: this.state.SearchableText,
+                  placeholder: 'Filter by title and description...', id: 'filter-input', value: this.state.SearchableText,
                   onChange: this.valueChange.bind(this, 'SearchableText')})
       ]));
 
