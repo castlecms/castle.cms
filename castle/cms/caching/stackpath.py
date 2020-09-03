@@ -46,7 +46,6 @@ class PurgeManager(object):
         }
 
         this = json.dumps({'files': urls})
-        import pdb; pdb.set_trace()
 
         return requests.request("POST", url, json=json.dumps({'files': urls}), headers=headers)
 

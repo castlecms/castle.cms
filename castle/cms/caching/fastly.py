@@ -34,7 +34,7 @@ class PurgeManager(object):
         return urls
 
     def purge(self, urls):
-        url = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.stack_id
+        url = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.fastly_key
 
         headers = {
             "accept": "application/json",
@@ -42,7 +42,6 @@ class PurgeManager(object):
         }
 
         this = json.dumps({'files': urls})
-        import pdb; pdb.set_trace()
 
         return requests.request("POST", url, json=json.dumps({'files': urls}), headers=headers)
 

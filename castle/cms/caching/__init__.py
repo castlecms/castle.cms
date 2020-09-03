@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
-from . import cloudflare, stackpath
+from . import cloudflare, stackpath, fastly
 from App.config import getConfiguration
 from castle.cms.linkintegrity import get_content_links
 from plone import api
