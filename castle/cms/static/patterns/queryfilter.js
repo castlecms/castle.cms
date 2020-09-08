@@ -144,8 +144,7 @@ define([
           formData.push(self.state.singleFilter);
         }else{
           if(self.state.SearchableText){
-            // actually searching Title here...
-            formData.push({name: 'Title', value: self.state.SearchableText});
+            formData.push({name: 'SearchableText', value: self.state.SearchableText});
           }
           if(self.state['selected-year']){
             formData.push({name: 'selected-year', value: self.state['selected-year']});
@@ -242,7 +241,7 @@ define([
       fields.push(D.div({ className: 'field-wrapper' }, [
         D.label({ htmlFor: 'filter-input' }, ' Filter by: '),
         D.input({ type: 'text', name: 'SearchableText',
-                  placeholder: 'Filter by title and description...', id: 'filter-input', value: this.state.SearchableText,
+                  placeholder: 'Filter by title, description, category...', id: 'filter-input', value: this.state.SearchableText,
                   onChange: this.valueChange.bind(this, 'SearchableText')})
       ]));
 
