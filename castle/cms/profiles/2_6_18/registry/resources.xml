@@ -3,9 +3,7 @@
           i18n:domain="plone">
 
   <!-- castle-api-settings -->
-  <record name="castle.sp_client_id" interface="castle.cms.interfaces.IAPISettings" field="sp_client_id">
-  <record name="castle.sp_client_secret" interface="castle.cms.interfaces.IAPISettings" field="sp_client_secret">
-  <record name="castle.sp_stack_id" interface="castle.cms.interfaces.IAPISettings" field="sp_stack_id">
-  <record name="castle.fastly_key" interface="castle.cms.interfaces.IAPISettings" field="fastly_key">
+  <record name="castle.sp_stack_id" interface="castle.cms.interfaces.IAPISettings" field="sp_stack_id" prefix="castle">
+  <record name="castle.fastly_key" interface="castle.cms.interfaces.IAPISettings" field="fastly_key" prefix="castle">
 
  </registry>

@@ -9,12 +9,8 @@ import requests
 class PurgeManager(object):
     def __init__(self):
         registry = getUtility(IRegistry)
-        self.client_id = registry.get('castle.sp_client_id', None)
-        self.client_secret = registry.get('castle.sp_client_secret', None)
-        self.stack_id = registry.get('castle.sp_stack_id', None)
+        self.stack_id = registry.get('castle.sp_stack_id', 1234567890)
         self.enabled = (
-            self.client_id is not None and
-            self.client_secret is not None and
             self.stack_id is not None)
         self.site = api.portal.get()
         self.public_url = registry.get('plone.public_url', None)
@@ -45,9 +41,7 @@ class PurgeManager(object):
             "content-type": "application/json"
         }
 
-        this = json.dumps({'files': urls})
-
-        return requests.request("POST", url, json=json.dumps({'files': urls}), headers=headers)
+        return requests.delete(url, data=json.dumps({'files': urls}), headers=headers)
 
 
 def get():

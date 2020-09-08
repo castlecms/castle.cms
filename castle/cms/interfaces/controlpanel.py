@@ -408,18 +408,6 @@ class IAPISettings(Interface):
         title=u'Cloudflare Zone ID',
         required=False)
 
-    sp_client_id =schema.TextLine(
-        title=u'StackPath Client ID',
-        required=False,
-        default=None
-    )
-
-    sp_client_secret = schema.TextLine(
-        title=u'StackPath Client Secret',
-        required=False,
-        default=None
-    )
-
     sp_stack_id = schema.TextLine(
         title=u'StackPath Stack ID',
         required=False,

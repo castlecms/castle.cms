@@ -33,17 +33,15 @@ class PurgeManager(object):
         urls.append('%s/%s' % (self.public_url.rstrip('/'), path.lstrip('/')))
         return urls
 
-    def purge(self, urls):
-        url = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.fastly_key
+    def purge(self, url):
 
         headers = {
             "accept": "application/json",
-            "content-type": "application/json"
+            "fastly-key": self.fastly_key
         }
 
-        this = json.dumps({'files': urls})
-
-        return requests.request("POST", url, json=json.dumps({'files': urls}), headers=headers)
+        url = "https://api.fastly.com/purge/%s" % url
+        return requests.request("POST", url, headers=headers)
 
 
 def get():

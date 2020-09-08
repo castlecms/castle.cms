@@ -111,6 +111,13 @@ def purge(event):
 
             CastlePurger.purgeAsync(urls, sp)
 
+        fst = fastly.get()
+        if fst.enabled:
+            for path in paths:
+                urls.extend(fst.getUrlsToPurge(path))
+
+            CastlePurger.purgeAsync(urls, fst)
+
 
 class CastlePurgerFactory(object):
 
@@ -216,13 +223,14 @@ del addCleanUp
 class Purge(BrowserView):
     cf_enabled = False
     sp_enabled = False
+    fastly_enabled = False
     proxy_enabled = False
 
     def purge(self):
         site_path = '/'.join(api.portal.get().getPhysicalPath())
         cf = cloudflare.get()
         sp = stackpath.get()
-        fastly = fastly.get()
+        fst = fastly.get()
         paths = []
         urls = []
 
@@ -246,7 +254,7 @@ class Purge(BrowserView):
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
             urls.extend(sp.getUrlsToPurge(path))
-            urls.extend(fastly.getUrlsToPurge(path))
+            urls.extend(fst.getUrlsToPurge(path))
 
         urls = list(set(urls))
 
@@ -268,10 +276,11 @@ class Purge(BrowserView):
             self.sp_enabled = True
             resp = CastlePurger.purgeSync(urls, sp)
             success = resp.json()['success']
-        if fastly.enabled:
+        if fst.enabled:
             self.fastly_enabled = True
-            resp = CastlePurger.purgeSync(urls, fastly)
-            success = resp.json()['success']
+            for url in urls:
+                resp = CastlePurger.purgeSync(url, fst)
+                success = resp.json()['success']
 
         nice_paths = []
         for path in paths:
