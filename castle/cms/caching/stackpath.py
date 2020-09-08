@@ -9,7 +9,7 @@ import requests
 class PurgeManager(object):
     def __init__(self):
         registry = getUtility(IRegistry)
-        self.stack_id = registry.get('castle.sp_stack_id', 1234567890)
+        self.stack_id = registry.get('castle.sp_stack_id', None)
         self.enabled = (
             self.stack_id is not None)
         self.site = api.portal.get()
