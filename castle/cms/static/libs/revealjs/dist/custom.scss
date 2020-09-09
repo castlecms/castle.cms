@@ -38,19 +38,6 @@ h2.slide-title {
     }
   }
 }
-// .text-section {
-//   &.align-left {
-//     text-align: left;
-//     text-align-last: left;
-//   }
-//   &.align-right {
-//     text-align: right;
-//     text-align-last: right;
-//   }
-//   & .justify-wrap {
-//     text-align: justify;
-//   }
-// }
 .background-slide {
   .text-container {
     &.vert-top {
@@ -71,30 +58,6 @@ h2.slide-title {
     &.hor-end {
       justify-content: flex-end;
     }
-    // .text-section {
-    //   text-align: center;
-      // &.align-left {
-      //   text-align: left;
-      // }
-      // &.align-center {
-      //   text-align: center;
-      // }
-      // &.align-right {
-      //   text-align: right;
-      // }
-      // &.justify-wrap {
-      //   text-align: justify;
-      //   &.align-left {
-      //     text-align-last: left;
-      //   }
-      //   &.align-center {
-      //     text-align-last: center;
-      //   }
-      //   &.align-right {
-      //     text-align-last: right;
-      //   }
-      // }
-    // }
   }
 }
 .left-slide {
@@ -119,18 +82,6 @@ h2.slide-title {
     }
 
     .text-section {
-      // &.mobile-align-left {
-      //   text-align: left;
-      //   text-align-last: left;
-      // }
-      // // &.mobile-align-center {
-      // //   text-align: center;
-      // //   text-align-last: center;
-      // // }
-      // &.mobile-align-right {
-      //   text-align: right;
-      //   text-align-last: right;
-      // }
       & .justify-wrap {
         text-align: justify;
       }
@@ -161,20 +112,6 @@ h2.slide-title {
 .background-slide {
   padding: auto 10%;
 }
-
-// .left-slide {
-//   .text-section {
-//     &.center {
-//       text-align: center;
-//     }
-//     &.start {
-//       text-align: left;
-//     }
-//     &.end {
-//       text-align: right;
-//     }
-//   }
-// }
 
 .left-video-slide {
   .video-container {
