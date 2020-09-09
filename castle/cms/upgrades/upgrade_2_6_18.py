@@ -8,4 +8,3 @@ def upgrade(site, logger=None):
     setup = getToolByName(site, 'portal_setup')
     setup.runAllImportStepsFromProfile(PROFILE_ID)
     cookWhenChangingSettings(site)
-    
