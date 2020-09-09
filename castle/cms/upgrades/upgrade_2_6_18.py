@@ -19,7 +19,7 @@ def upgrade(context, logger=None):
 
     if not whitelist_login_domains:
         whitelist_login_domains = field.List(title=u"Whitelist Login Domains",
-                                       description=u"Allow users to login with email of these domains",
-                                       value_type=field.TextLine(title=u"Value"))
+                                             description=u"Allow users to login with email of these domains",
+                                             value_type=field.TextLine(title=u"Value"))
         whitelist_login_domains = Record(whitelist_login_domains)
         registry._records['whitelist_login_domains'] = whitelist_login_domains
