@@ -227,7 +227,7 @@ class SearchAjax(BrowserView):
                 'base_url': base_url,
                 'url': url
             })
-            if brain.getObject().exclude_from_search == True:
+            if brain.getObject().exclude_from_search is True:
                 pass
             else:
                 items.append(attrs)

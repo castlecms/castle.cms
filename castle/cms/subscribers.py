@@ -240,7 +240,7 @@ def on_search_exclusion(obj, event):
 
     try:
         api.portal.set_registry_record(name='excluded_from_search', value=registry_list)
-    except:
+    except Exception:
         pass
 
 
@@ -275,6 +275,3 @@ def on_config_search_exclusion(obj):
 
         except TypeError:
             return
-
-
-
