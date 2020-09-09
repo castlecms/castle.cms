@@ -2,6 +2,7 @@ from castle.cms import audit
 from castle.cms import tasks
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
 from castle.cms.lead import check_lead_image
+from collective.elasticsearch.es import ElasticSearchCatalog
 from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.blocks.interfaces import DEFAULT_CONTENT_LAYOUT_REGISTRY_KEY
@@ -15,9 +16,11 @@ from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
+from zope.component.interfaces import ComponentLookupError
 from zope.globalrequest import getRequest
 from zope.interface import Interface
 import logging
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -204,3 +207,71 @@ def on_youtube_video_state_changed(obj, event):
             tasks.youtube_video_state_changed.delay(obj)
         except CannotGetPortalError:
             pass
+
+
+def on_search_exclusion(obj, event):
+    try:
+        registry_list = api.portal.get_registry_record('excluded_from_search')
+    except ComponentLookupError:
+        return
+
+    uuid = IUUID(obj)
+
+    catalog = api.portal.get_tool('portal_catalog')
+    es = ElasticSearchCatalog(catalog)
+    es_objects = [brain.getObject() for brain in es.searchResults()]
+
+    try:
+        if obj.exclude_from_search:
+            if obj.id not in registry_list:
+                registry_list.append(obj.id)
+            if obj in es_objects:
+                es.uncatalog_object(uuid, obj)
+
+        else:
+            if obj.id in registry_list:
+                registry_list.remove(obj.id)
+            if obj not in es_objects:
+                es.catalog_object(obj)
+    except AttributeError:
+        return
+    except TypeError:
+        return
+
+    try:
+        api.portal.set_registry_record(name='excluded_from_search', value=registry_list)
+    except Exception:
+        pass
+
+
+def on_config_search_exclusion(obj):
+    if obj.record.__name__ == 'excluded_from_search':
+        catalog = api.portal.get_tool('portal_catalog')
+        es = ElasticSearchCatalog(catalog)
+        es_objects = [brain.getObject() for brain in es.searchResults()]
+
+        all_site_objects = api.portal.get().contentItems()
+        site_object_ids = [site_obj[0] for site_obj in all_site_objects]
+
+        # Invalid objects cannot be added to registry list
+        try:
+            for value in obj.newValue:
+                if value not in site_object_ids:
+                    obj.newValue.remove(value)
+
+                # Excludes from search when item is added to registry
+                elif value in es_objects:
+                    for es_obj in es_objects:
+                        if es_obj.id == value:
+                            es_obj.exclude_from_search = True
+                            on_search_exclusion(es_obj, None)
+
+            # Removes exclude from search if object not in registry list
+            for site_obj in all_site_objects:
+                name, value = site_obj
+                if name not in obj.newValue and value.exclude_from_search:
+                    value.exclude_from_search = False
+                    on_search_exclusion(value, None)
+
+        except TypeError:
+            return
