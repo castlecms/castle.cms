@@ -23,15 +23,13 @@ class SlideTile(BaseTile):
 class ISlideTileSchema(model.Schema):
 
     model.fieldset(
-        'Type and Text',
-        label=(u'Type and Text'),
-        fields=['display_type', 'title', 'text', 'hor_text_position', 'vert_text_position', 'related_items']
-    )
-
-    model.fieldset(
-        'Media Settings',
-        label=(u'Media Settings'),
-        fields=['image', 'video']
+        'type_and_text',
+        label=u'Type & Text',
+        fields=[
+            'display_type',
+            'title',
+            'text',
+        ]
     )
 
     display_type = schema.Choice(
@@ -59,6 +57,31 @@ class ISlideTileSchema(model.Schema):
         required=False,
         default=u'')
 
+    #######################################################################################################
+    model.fieldset(
+        'text_positioning',
+        label=u'Text Positioning',
+        fields=[
+            'hor_text_position',
+            'vert_text_position',
+            'text_alignment',
+            'justify_wrapped_text',
+        ]
+    )
+
+    hor_text_position = schema.Choice(
+        title=u"Slide Text Position (Horizontal)",
+        description=u'This setting only applies to large screens. '
+                    u'On small screens, Center (Full Width) will always be deisplayed.',
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('start', 'start', u'Left (Half Width)'),
+            SimpleTerm('center', 'center', u'Center (Full Width)'),
+            SimpleTerm('end', 'end', u'Right (Half Width)'),
+        ]),
+        required=True,
+        default=u'center'
+    )
+
     vert_text_position = schema.Choice(
         title=u"Slide Text Position (Vertical)",
         vocabulary=SimpleVocabulary([
@@ -70,15 +93,34 @@ class ISlideTileSchema(model.Schema):
         default=u'middle'
     )
 
-    hor_text_position = schema.Choice(
-        title=u"Slide Text Position (Horizontal)",
+    text_alignment = schema.Choice(
+        title=u"Slide Text Alignment",
+        description=u'The alignment of slide text relative to other text on the page. '
+                    u'This does not change the position of the text section selected above. '
+                    u'(Note: this is ignored on smaller screens)',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('start', 'start', u'Left'),
+            SimpleTerm('left', 'left', u'Left'),
             SimpleTerm('center', 'center', u'Center'),
-            SimpleTerm('end', 'end', u'Right'),
         ]),
         required=True,
         default=u'center'
+    )
+
+    justify_wrapped_text = schema.Bool(
+        title=u'Justify Wrapped Text Lines',
+        description=u'Select this option to force any text line that wraps to more than one line to take up the entire width. ' # noqa
+                    u'This will assure that there are no gaps to the left and/or right when text fills the whole line, regardless of Text Alignment Choice above.', # noqa 
+        default=False,
+    )
+
+    #######################################################################################################
+    model.fieldset(
+        'media_settings',
+        label=u'Media Settings',
+        fields=[
+            'image',
+            'video',
+        ]
     )
 
     form.widget(image=ImageRelatedItemFieldWidget)
@@ -101,6 +143,13 @@ class ISlideTileSchema(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
         )
+    )
+
+    #######################################################################################################
+    model.fieldset(
+        'related_items',
+        label=u'Related Items',
+        fields=['related_items']
     )
 
     form.widget('related_items', SlideRelatedItemsFieldWidget)

@@ -3,6 +3,7 @@ import botocore
 from castle.cms import archival
 from castle.cms.files import aws
 from DateTime import DateTime
+from io import BytesIO
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFPlone.resources import add_resource_on_request
@@ -78,12 +79,15 @@ class AWSApi(object):
             return self.deletegroup()
 
     def get(self):
-        key_name = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
-        key = self.bucket.get_object(Key=key_name)
-        if 'html' not in key.content_type:
+        key = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
+        obj = self.s3.Object(self.bucket.name, key)
+        if 'html' not in obj.content_type:
             raise Exception('Must be html...')
+        fileobj = BytesIO()
+        obj.download_fileobj(fileobj)
+        fileobj.seek(0)
         return {
-            'data': key.read()
+            'data': fileobj.read()
         }
 
     def deletegroup(self):
@@ -122,19 +126,19 @@ class AWSApi(object):
 
     def delete(self):
         path = self.request.form.get('path')
-        key_name = archival.CONTENT_KEY_PREFIX + path
+        key = archival.CONTENT_KEY_PREFIX + path
         authenticator = getMultiAdapter((self.site, self.request), name=u"authenticator")
         # manually provide csrf here...
         if not authenticator.verify():
             raise Unauthorized
 
         try:
-            key = self.bucket.get_object(Key=key_name)
-            key.delete()
+            obj = self.s3.Object(self.bucket.name, key)
+            obj.delete()
         except botocore.exceptions.ClientError:
             logger.error(
                 'error deleting object {key} in bucket {name}'.format(
-                    key=key_name,
+                    key=key,
                     name=self.bucket.name),
                 log_exc=True)
 
@@ -152,7 +156,7 @@ class AWSApi(object):
             pass
 
     def save(self):
-        key_name = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
+        key = archival.CONTENT_KEY_PREFIX + self.request.form.get('path')
         authenticator = getMultiAdapter((self.site, self.request), name=u"authenticator")
         # manually provide csrf here...
         if not authenticator.verify():
@@ -160,20 +164,19 @@ class AWSApi(object):
 
         content = self.request.form.get('value')
         try:
-            key = self.bucket.get_object(Key=key_name)
-            key.put(
+            obj = self.s3.Object(self.bucket.name, key)
+            obj.put(
                 ACL='public-read',
                 Body=content,
                 ContentType="text/html; charset=utf-8")
         except botocore.exceptions.ClientError:
             logger.error(
                 'error saving object {key} in bucket {name}'.format(
-                    key=key_name,
+                    key=key,
                     name=self.bucket.name),
                 log_exc=True)
 
     def list(self):
-        result = []
         base_path = archival.CONTENT_KEY_PREFIX + self.request.form.get('path', '')
         base_path = base_path.replace('//', '/').rstrip('/') + '/'
 
@@ -181,48 +184,41 @@ class AWSApi(object):
             logger.error('no bucket object (configured bucket name: {})'.format(self.configured_bucket_name))
             return []
 
-        try:
-            page = int(self.request.form.get('page', 1))
-        except Exception:
-            page = 1
-        if page <= 0:
-            page = 1
-        per_page = 1000
-        page_start = (page - 1) * per_page
-        page_end = page * per_page
-        s3_per_page = 1000
-
-        # this is so we don't kill the client with a large amount of objects being sent that way
-        # note: s3 api doesn't do paging like the client would expect to render. the pages defined
-        # for the api are basically equivalent to 1000 item max chunks retreived from the bucket.
-        #
-        # an improvement on this would probably be caching the list with every publish to the
-        # archive and having somewhere to manually update the cache. TODO.
-
-        object_itr = self.bucket.objects.page_size(count=s3_per_page).filter(Prefix=base_path)
-        i = 0
-        for summary in object_itr:
-            i += 1
-            if i < page_start:
-                continue
-            key = summary.key
-            path = key[len(archival.CONTENT_KEY_PREFIX):]
-            result.append({
-                'path': path,
-                'id': path.rstrip('/').split('/')[-1],
-                'is_folder': False,
-                'url': '{endpoint_url}/{bucket}/{key}'.format(
-                    endpoint_url=self.s3.meta.client.meta.endpoint_url,
-                    bucket=self.bucket.name,
-                    key=key)
-            })
-            if i >= page_end:
-                break
-        return result
+        folderresults = []
+        fileresults = []
+        paginator = self.bucket.meta.client.get_paginator('list_objects')
+        for resp in paginator.paginate(Bucket=self.bucket.name, Delimiter='/', Prefix=base_path):
+            for prefix in resp.get('CommonPrefixes', []):
+                key = prefix['Prefix'][len(archival.CONTENT_KEY_PREFIX):]
+                folderresults.append({
+                    'path': key,
+                    'id': key.rstrip('/').split('/')[-1],
+                    'is_folder': True,
+                    'url': '{endpoint_url}/{bucket}/{key}'.format(
+                        endpoint_url=self.s3.meta.client.meta.endpoint_url,
+                        bucket=self.bucket.name,
+                        key=key)
+                })
+            for item in resp.get('Contents', []):
+                key = item.get('Key', None)
+                if key is None:
+                    continue
+                path = key[len(archival.CONTENT_KEY_PREFIX):]
+                fileresults.append({
+                    'path': path,
+                    'id': path.rstrip('/').split('/')[-1],
+                    'is_folder': False,
+                    'url': '{endpoint_url}/{bucket}/{key}'.format(
+                        endpoint_url=self.s3.meta.client.meta.endpoint_url,
+                        bucket=self.bucket.name,
+                        key=key)
+                })
+        folderresults = sorted(folderresults, key=lambda x: x['path'])
+        fileresults = sorted(fileresults, key=lambda x: x['path'])
+        return folderresults + fileresults
 
 
 class Manage(BaseView):
-
     def __call__(self):
         # utility function to add resource to rendered page
         add_resource_on_request(self.request, 'castle-components-manage-archives')

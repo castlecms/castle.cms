@@ -1,10 +1,42 @@
 Changelog
 =========
 
-2.6.17 (unreleased)
+2.6.22 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.6.21 (2020-07-30)
+-------------------
+
+- fix the QueryListingTile to split display_fields correctly when passed as
+  a query parameter to the @@castle.cms.querylisting view
+- fix s3 integration in the edit/delete actions of the archival management view
+
+
+2.6.20 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.19 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.18 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.17 (2020-07-09)
+-------------------
+
+- revert manage-archives js and improve manage-archives usage of boto3 library
 
 
 2.6.16 (2020-07-07)

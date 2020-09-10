@@ -227,7 +227,10 @@ class SearchAjax(BrowserView):
                 'base_url': base_url,
                 'url': url
             })
-            items.append(attrs)
+            if brain.getObject().exclude_from_search is True:
+                pass
+            else:
+                items.append(attrs)
 
         return json.dumps({
             'count': len(raw_results),

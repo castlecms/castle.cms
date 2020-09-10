@@ -124,4 +124,13 @@
         </field>
   </record>
 
+  <record name="excluded_from_search">
+        <field type="plone.registry.field.List">
+            <title>Items Excluded From Search</title>
+            <description>These items will not show up when searching</description>
+            <value_type type="plone.registry.field.TextLine"/>
+            <required>False</required>
+        </field>
+  </record>
+
 </registry>

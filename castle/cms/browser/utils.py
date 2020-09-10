@@ -381,7 +381,7 @@ class Utils(BrowserView):
             })
 
         el = etree.Element('div')
-        el.attrib['class'] = 'focuspoint ' + className
+        el.attrib['class'] = 'focuspoint' if not className else 'focuspoint ' + className
         imEl = etree.Element('img')
         imEl.attrib.update(attrib)
         el.append(imEl)
@@ -414,6 +414,136 @@ class Utils(BrowserView):
             })
 
         return tostring(el)
+
+    def focal_cover_image_tag(self, brain, scale=None, class_name='',
+                              attributes=None, focal=None):
+        # read https://github.com/jonom/jquery-focuspoint on how to calc
+        image_info = utils.get_image_info(brain)
+
+        attrib = {}
+
+        if 'src' not in attrib:
+            try:
+                url = brain.getURL()
+                alt = brain.Title
+            except Exception:
+                url = brain.absolute_url()
+                alt = brain.Title()
+            if not isinstance(alt, basestring):
+                alt = ''
+            attrib.update({
+                'src': '{0}/@@images/image'.format(url),
+                'alt': unidecode(alt),
+                'class': 'pat-focuspoint-cover'
+            })
+
+        div_element = etree.Element('div')
+        if class_name:
+            div_element.attrib['class'] = class_name
+        imEl = etree.Element('img')
+        imEl.attrib.update(attrib)
+        div_element.append(imEl)
+
+        if not focal and image_info and 'focal_point' in image_info:
+            focal = image_info['focal_point']
+
+        if image_info and focal:
+            width = image_info['width']
+            height = image_info['height']
+            focal_x = ((float(focal[0]) - (float(width) / 2)) / float(width)) * 2
+            focal_y = -((float(focal[1]) - (float(height) / 2)) / float(height)) * 2
+
+            sizes_info = {}
+            for scale_name, scale_data in self.image_size.items():
+                scale_ratio = float(scale_data[0]) / float(width)
+                sizes_info[scale_name] = {
+                    'w': int(float(width) * float(scale_ratio)),
+                    'h': int(float(height) * float(scale_ratio))
+                }
+
+            div_element.attrib.update({
+                'data-focus-x': str(focal_x),
+                'data-focus-y': str(focal_y),
+                'data-base-url': '{0}/@@images/image/'.format(url),
+                'data-scale': scale,
+                'data-w': str(width),
+                'data-h': str(height),
+                'data-scales-info': json.dumps(sizes_info),
+            })
+        return tostring(div_element)
+
+    def focal_cover_video_tag(self, video_brain, scale=None, class_name='',
+                              attributes=None, focal=None, muted=True):
+        # read https://github.com/jonom/jquery-focuspoint on how to calc
+        image_info = utils.get_image_info(video_brain)
+        content_type = video_brain.file.contentType
+        video_url = video_brain.absolute_url()
+        download_url = '{0}/@@download/file/{1}'.format(video_url, video_brain.file.filename)
+        has_image = self.has_image(video_brain)
+        attrib = {}
+        if attributes is not None:
+            attrib.update(attributes)
+
+        div_element = etree.Element('div')
+        if class_name:
+            div_element.attrib['class'] = class_name
+
+        video_element = etree.Element('video')
+        video_element.attrib.update({
+            'class': 'pat-focuspoint-cover',
+            'preload': 'none',
+            'loop': 'true',
+            'autoplay': 'true',
+            'muted': ''
+        })
+        if has_image:
+            video_element.attrib['poster'] = self.get_scale_url(video_brain, 'large')
+        div_element.append(video_element)
+        source_element = etree.Element('source')
+        source_element.attrib.update({
+            'src': download_url,
+            'type': content_type,
+        })
+        video_element.append(source_element)
+
+        if video_brain.subtitle_file:
+            # does this work when there are subtitles?
+            track_element = etree.Element('track')
+            track_element.attrib.update({
+                'kind': 'subtitles',
+                'src': '{}/@@view/++widget++form.widgets.subtitle_file/@@download'.format(video_url),
+                'srclang': 'en',
+            })
+            video_element.append(track_element)
+
+        if not focal and image_info and 'focal_point' in image_info:
+            focal = image_info['focal_point']
+
+        if image_info and focal:
+            width = image_info['width']
+            height = image_info['height']
+            focal_x = ((float(focal[0]) - (float(width) / 2)) / float(width)) * 2
+            focal_y = -((float(focal[1]) - (float(height) / 2)) / float(height)) * 2
+
+            sizes_info = {}
+            for scale_name, scale_data in self.image_size.items():
+                scale_ratio = float(scale_data[0]) / float(width)
+                sizes_info[scale_name] = {
+                    'w': int(float(width) * float(scale_ratio)),
+                    'h': int(float(height) * float(scale_ratio))
+                }
+
+            div_element.attrib.update({
+                'data-focus-x': str(focal_x),
+                'data-focus-y': str(focal_y),
+                'data-base-url': '{0}/@@images/image/'.format(video_url),
+                'data-scale': scale,
+                'data-w': str(width),
+                'data-h': str(height),
+                'data-scales-info': json.dumps(sizes_info),
+            })
+
+        return tostring(div_element)
 
     @property
     @memoize

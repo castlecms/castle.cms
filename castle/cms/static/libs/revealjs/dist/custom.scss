@@ -20,6 +20,11 @@ h2.slide-title {
 }
 
 .text-container {
+  text-align: center;
+  text-align-last: center;
+  & .justify-wrap {
+    text-align: justify;
+  }
   display: flex;
   flex-flow: row nowrap;
   height: 100vh;
@@ -28,6 +33,9 @@ h2.slide-title {
     margin: 0;
     display: flex;
     flex-direction: column;
+    .slide-text > span {
+      display: block;
+    }
   }
 }
 .background-slide {
@@ -43,32 +51,41 @@ h2.slide-title {
     }
     &.hor-start {
       justify-content: flex-start;
-      .text-section {
-        text-align: left;
-      }
     }
     &.hor-center {
       justify-content: center;
-      .text-section {
-        text-align: center;
-      }
     }
     &.hor-end {
       justify-content: flex-end;
-      .text-section {
-        text-align: right;
-      }
     }
-
   }
 }
 .left-slide {
-  .text-container{
-    align-items: flex-start;
-    justify-content: center;
-  }
-  .text-section {
-    text-align: center;
+  .text-container {
+    &.mobile-vert-top {
+      align-items: flex-start;
+    }
+    &.mobile-vert-middle {
+      align-items: center;
+    }
+    &.mobile-vert-bottom {
+      align-items: flex-end;
+    }
+    &.mobile-hor-start {
+      justify-content: flex-start;
+    }
+    &.mobile-hor-center {
+      justify-content: center;
+    }
+    &.mobile-hor-end {
+      justify-content: flex-end;
+    }
+
+    .text-section {
+      & .justify-wrap {
+        text-align: justify;
+      }
+    }
   }
 }
 .col.col,
@@ -94,20 +111,6 @@ h2.slide-title {
 .left-slide,
 .background-slide {
   padding: auto 10%;
-}
-
-.left-slide {
-  .text-section {
-    &.center {
-      text-align: center;
-    }
-    &.start {
-      text-align: left;
-    }
-    &.end {
-      text-align: right;
-    }
-  }
 }
 
 .left-video-slide {
@@ -231,68 +234,59 @@ video::-webkit-media-controls {
     margin-right: -100%;
   }
 }
-
-/* Scollable Slide CSS */
-.scrollable-slide {
-  position: absolute;
-  top: 70px;
-  text-align: left;
-}
 .reveal img {
   padding: 0;
   margin: 0;
 }
-.resource-slide-image {
-  width: 100%;
-}
-.resource-slide-container {
-  display: flex;
-  flex-flow: column nowrap;
-  margin-right: 0;
-  padding: 0 15px;
-  width: 100%;
-  overflow-y: scroll;
-  height: calc(100% - 84px);
-  & > .stationary-top {
-    .see-also-text {
-      font-size: .6em;
-      margin: 20px 0 40px;
+
+/* Scollable Slide CSS */
+.resource-slide {
+  text-align: left;
+  .resource-slide-container {
+    display: flex;
+    flex-flow: column nowrap;
+    height: calc(100vh - 135px);
+    padding: 0 15px 60px;
+    overflow-y: scroll;
+    .resource-slide-content {
+      width: 100%;
+      .return-to-text {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        padding: 10px 0;
+        border-bottom: 1px solid white;
+        min-height: 80px;
+      }
+      .see-also-text {
+        font-size: 24px;
+        margin: 20px 0;
+      }
     }
   }
-}
-.scrollable-resource-content {
-  height: calc(100% - 134px);
-  overflow-y: scroll;
-}
-
-.return-to-text {
-  padding: 10px 70px 10px 0;
-  border-bottom: 1px solid white;
-  min-height: 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.scrollable-slide-item {
-margin-bottom: 30px;
-  border-bottom: 1px solid white;
-  padding-bottom: 15px;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: stretch;
-.title {
-  font-size: 0.75em;
-}
-  img {
-  margin-bottom: 10px;
-}
-}
-
-.scrollable-slide {
-  position: absolute;
-  top: 70px;
-  height: calc(100% - 250px);
+  .resource-slide-item {
+    margin-bottom: 30px;
+    border-bottom: 1px solid white;
+    padding-bottom: 15px;
+    display: flex;
+    flex-flow: column nowrap;
+    .resource-slide-item-content-container{
+      padding-bottom: 5px;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: flex-start;
+    }
+    .title {
+      font-size: 0.75em;
+    }
+    img.resource-slide-image {
+      width: 100%;
+      max-height: 50vh;
+      height: auto;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+  }
 }
 
 /* Reveal.js CSS Overrides */
@@ -307,8 +301,9 @@ margin-bottom: 30px;
   }
 }
 
-.text-container>.radial-background-container {
+.text-container > .radial-background-container {
   padding: 70px;
+  margin: 0 -55px;
   background-image: radial-gradient(ellipse farthest-corner, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 75%);
 }
 
@@ -334,9 +329,6 @@ margin-bottom: 30px;
     align-items: flex-start;
     justify-content: center;
     z-index: 10000;
-    .text-section {
-      text-align: center;
-    }
   }
 }
 
@@ -431,7 +423,7 @@ p {
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1024px) {
   .d-lg-none {
     display: none !important;
   }
@@ -466,13 +458,13 @@ p {
     font-size: 0.7em;
   }
   .resource-slide-container {
-   & > .stationary-top {
-    .see-also-text {
-      font-size: .85em;
+    & > .stationary-top {
+      .see-also-text {
+        font-size: 0.85em;
+      }
     }
-   }
   }
-  .scrollable-slide-item{
+  .resource-slide-item {
     .title {
       font-size: 1em;
     }
@@ -487,6 +479,92 @@ p {
   .text-section {
     margin-bottom: 0;
   }
+
+
+  .resource-slide {
+    .resource-slide-container {
+      width: 70%;
+      height: calc(100vh - 84px);
+      margin: auto;
+      .view-more {
+        display: flex;
+        align-items: flex-end;
+        text-align: right;
+        justify-content: flex-end;
+        flex-grow: 1;
+      }
+      .resource-slide-item {
+        flex-flow: row nowrap;
+        .resource-slide-item-content-container {
+          width: 100%;
+          padding: 0 15px 0 20px;
+        }
+      }
+    }
+  }
+
+  .left-slide {
+    .text-container {
+      position: static;
+    }
+  
+
+  } 
+  .text-container {
+    text-align: center;
+    text-align-last: center;
+    &.vert-top {
+      align-items: flex-start;
+    }
+    &.vert-middle {
+      align-items: center;
+    }
+    &.vert-bottom {
+      align-items: flex-end;
+    }
+    &.hor-start {
+      justify-content: flex-start;
+    }
+    &.hor-center {
+      justify-content: center;
+    }
+    &.hor-end {
+      justify-content: flex-end;
+    }
+    .text-section {
+      &.align-left {
+        text-align: left;
+        text-align-last: left;
+      }
+      &.align-right {
+        text-align: right;
+        text-align-last: right;
+      }
+      & .justify-wrap {
+        text-align: justify;
+      }
+    }
+  }
+  .left-slide {
+    .video-container {
+      padding: 0;
+      video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    
+    .radial-background-container {
+      background-image: none;
+    }
+  }
+.background-slide {
+  & .half-width {
+    width: calc(50% + 140px + 15px);
+  }
+}
+
 }
 
 @media (min-width: 1200px) {
@@ -520,69 +598,3 @@ p {
     display: inline-flex !important;
   }
 }
-@media (min-width: 768px) {
-  .scrollable-slide-item {
-    flex-flow: row nowrap;
-
-    .resource-slide-content-container {
-      padding: 0 15px 0 20px;
-    }
-  }
-  .scrollable-slide {
-    top: 0;
-    height: 100%;
-  }
-
-  .resource-slide-container {
-    width: 70%;
-    margin: auto;
-    overflow-y: scroll !important;
-    .view-more {
-      text-align: right;
-    }
-  }
-  .left-slide {
-    .video-container {
-      padding: 0;
-      video {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-      }
-    }
-    .text-container {
-      position: static;
-      &.vert-top {
-        align-items: flex-start;
-      }
-      &.vert-middle {
-        align-items: center;
-      }
-      &.vert-bottom {
-        align-items: flex-end;
-      }
-      &.hor-start {
-        justify-content: flex-start;
-        .text-section {
-          text-align: left;
-        }
-      }
-      &.hor-center {
-        justify-content: center;
-        .text-section {
-          text-align: center;
-        }
-      }
-      &.hor-end {
-        justify-content: flex-end;
-        .text-section {
-          text-align: right;
-        }
-      }
-    }
-    .radial-background-container {
-      background-image: none;
-    }
-  }
-}
-
