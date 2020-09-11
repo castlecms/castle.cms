@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.22 (unreleased)
+2.6.22 (2020-09-10)
 -------------------
 
 - slideshow refinements
