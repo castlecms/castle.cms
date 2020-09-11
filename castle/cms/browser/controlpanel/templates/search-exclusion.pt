@@ -9,7 +9,7 @@
     <body>
         This is a list of items with "Exclude From Search" selected in their properties.  You can click on an item to navigate and edit that property if you'd like it to show up in search results.
         <br><br>
-        <p tal:repeat="item view/get_excluded_content"><a href="${item/link}">${item/title}</a></p>
+        <p tal:repeat="item view/get_excluded_content"><a href="${item/getURL}">${item/Title}</a></p>
     </body>
 </metal:main>
 </html>
