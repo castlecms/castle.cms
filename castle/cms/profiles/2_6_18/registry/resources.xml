@@ -2,6 +2,14 @@
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="plone">
 
+  <record name="whitelist_login_domains">
+        <field type="plone.registry.field.List">
+            <title>Whitelist Login Domains</title>
+            <description>Allow users to login with email of these domains</description>
+            <value_type type="plone.registry.field.TextLine"/>
+        </field>
+  </record>
+
   <!-- items excluded from search -->
   <record name="excluded_from_search">
         <field type="plone.registry.field.List">

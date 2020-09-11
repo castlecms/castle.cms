@@ -199,8 +199,9 @@ The user requesting this access logged this information:
                 })
 
         try:
+            username = self.check_whitelist()
             logged_in, user = self.auth.authenticate(
-                username=self.username,
+                username=username,
                 password=self.request.form.get('password'),
                 country=self.get_country_header(),
                 login=True)
@@ -295,9 +296,35 @@ The user requesting this access logged this information:
             'state': new_state
         })
 
+    def email_split(self, user_email):
+        _parts = user_email.split('@')
+        return ('@'.join(_parts[:-1]), _parts[-1])
+
+    def check_whitelist(self):
+        username = self.username
+        if '@' in username:
+            user, domain = self.email_split(username)
+            try:
+                white_listed = api.portal.get_registry_record('whitelist_login_domains')
+                if white_listed:
+                    for wl in white_listed:
+                        if domain == wl:
+                            username = user
+                            break
+            except ComponentLookupError:
+                pass
+        return username
+
     def send_auth_email(self):
         email = None
-        user = api.user.get(username=self.username)
+        username = self.check_whitelist()
+
+        users = api.user.get_users()
+        for usr in users:
+            if usr.getUserName() == username:
+                user = usr
+                break
+
         if user:
             email = user.getProperty('email')
         if not email:
