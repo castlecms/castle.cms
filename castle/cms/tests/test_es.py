@@ -5,10 +5,12 @@ import os
 import unittest
 
 import requests
+import time
 
 import transaction
 from castle.cms.browser.search import SearchAjax
 from collective.elasticsearch.es import ElasticSearchCatalog
+from collective.elasticsearch.hook import CommitHook
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING, CASTLE_FIXTURE
 from collective.elasticsearch.interfaces import IElasticSettings
@@ -53,20 +55,8 @@ if ES_ENABLED:
             self.request = self.layer['request']
             login(self.portal, TEST_USER_NAME)
             setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
-            registry = getUtility(IRegistry)
-            settings = registry.forInterface(IElasticSettings)
-            settings.enabled = True
-            settings.sniffer_timeout = 1.0
-            # catalog = api.portal.get_tool('portal_catalog')
-            catalog = getToolByName(self.portal, 'portal_catalog')
 
-            catalog._elasticcustomindex = 'plone-test-index'
-            es = ElasticSearchCatalog(catalog)
-            es.recreateCatalog()
-            catalog.manage_catalogRebuild()
-            transaction.commit()
-
-            # have to do commit for es integration...
+            transaction.begin()
             self.folder = api.content.create(
                 type='Folder',
                 id='esfolder1',
@@ -95,12 +85,24 @@ if ES_ENABLED:
             }
             for item in [self.folder, self.esdoc1, self.esdoc2, self.esdoc3]:
                 api.content.transition(obj=item, to_state='published')
-
                 item.reindexObject()
+
+            self._es_update()
             transaction.commit()
 
             url = 'http://{}:9200/plone-test-index/_flush'.format(host)
             requests.post(url)
+
+        def _es_update(self):
+            registry = getUtility(IRegistry)
+            settings = registry.forInterface(IElasticSettings)
+            settings.enabled = True
+            settings.sniffer_timeout = 1.0
+            self.catalog = getToolByName(self.portal, 'portal_catalog')
+            self.catalog._elasticcustomindex = 'plone-test-index'
+            self.es = ElasticSearchCatalog(self.catalog)
+            self.es.recreateCatalog()
+            self.catalog.manage_catalogRebuild()
 
         def tearDown(self):
             transaction.begin()
@@ -153,36 +155,27 @@ if ES_ENABLED:
             })
             view_1 = SearchAjax(self.portal, self.request)
             result_1 = json.loads(view_1())
-            import pdb; pdb.set_trace()
-            print(result_1)
-            self.assertIn(result_1['count'], [1,2,3,4])
+            self.assertEqual(result_1['count'], 4)
+            # transaction.begin()
             api.content.transition(obj=self.esdoc2, to_state='private')
             self.esdoc2.reindexObject()
+            repr(self.es)
+            self.es.catalog_object(self.esdoc2)
             transaction.commit()
-            import time; time.sleep(3)
             view_2 = SearchAjax(self.portal, self.request)
             result_2 = json.loads(view_2())
-            print(result_2)
-            self.assertIn(result_2['count'], [1,2,3,4])
-            # self.assertEquals(result_2['count'], 0)
-            api.content.transition(obj=self.esdoc2, to_state='published')
+            import pdb; pdb.set_trace()
+            self.assertEqual(result_2['count'], 3)
             api.content.transition(obj=self.folder, to_state='private')
+            self.es.catalog_object(self.folder)
             view_3 = SearchAjax(self.portal, self.request)
             result_3 = json.loads(view_3())
-            print(result_3)
-            self.assertIn(result_3['count'], [1,2,3,4])
-            # self.assertEquals(result_3['count'], 0)
+            self.assertEqual(result_3['count'], 0)
             registry = getUtility(IRegistry)
             api.portal.set_registry_record('plone.allow_public_in_private_container', True)
             view_4 = SearchAjax(self.portal, self.request)
             result_4 = json.loads(view_4())
-            print(result_4)
-            self.assertIn(result_4['count'], [1,2,3,4])
-            # self.assertEquals(result_4['count'], 1)
-
-
-            
-
+            self.assertEqual(result_4['count'], 2)
 
 else:
     class TestEmptyES(unittest.TestCase):
