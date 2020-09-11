@@ -53,4 +53,5 @@ class ISearch(model.Schema):
         default=False
     )
 
+
 alsoProvides(ISearch, IFormFieldProvider)

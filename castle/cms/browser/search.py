@@ -186,7 +186,7 @@ class SearchAjax(BrowserView):
                 }
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
-        
+
         query['exclude_from_search'] = False
 
         try:
