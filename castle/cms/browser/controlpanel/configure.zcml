@@ -138,6 +138,16 @@
     layer="castle.cms.interfaces.ICastleLayer"
     />
 
+
+  <browser:page
+    name="search-exclusion-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".search.ExclusionPanel"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/search-exclusion.pt"
+    />
+
   <browser:page
     name="survey-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"

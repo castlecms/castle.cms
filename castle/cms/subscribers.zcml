@@ -117,14 +117,4 @@
     for="plone.registry.interfaces.IRecordRemovedEvent"
     handler=".subscribers.on_config_modified_event" />
 
-  <subscriber
-    for="plone.dexterity.interfaces.IDexterityContent
-         zope.lifecycleevent.IObjectModifiedEvent"
-    handler=".subscribers.on_search_exclusion" />
-
-  <subscriber
-      for="plone.registry.interfaces.IRecordModifiedEvent"
-      handler=".subscribers.on_config_search_exclusion"
-      />
-
 </configure>

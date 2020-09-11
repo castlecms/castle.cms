@@ -186,6 +186,8 @@ class SearchAjax(BrowserView):
                 }
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
+        
+        query['exclude_from_search'] = False
 
         try:
             page_size = int(self.request.form.get('pageSize'))
@@ -227,10 +229,7 @@ class SearchAjax(BrowserView):
                 'base_url': base_url,
                 'url': url
             })
-            if brain.getObject().exclude_from_search is True:
-                pass
-            else:
-                items.append(attrs)
+            items.append(attrs)
 
         return json.dumps({
             'count': len(raw_results),
