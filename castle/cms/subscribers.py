@@ -5,6 +5,7 @@ from castle.cms.lead import check_lead_image
 from collective.elasticsearch.es import ElasticSearchCatalog
 from plone import api
 from plone.api.exc import CannotGetPortalError
+from plone.api.exc import InvalidParameterError
 from plone.app.blocks.interfaces import DEFAULT_CONTENT_LAYOUT_REGISTRY_KEY
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.dexterity.behaviors.metadata import IOwnership
@@ -212,6 +213,8 @@ def on_youtube_video_state_changed(obj, event):
 def on_search_exclusion(obj, event):
     try:
         registry_list = api.portal.get_registry_record('excluded_from_search')
+    except InvalidParameterError:
+        return
     except ComponentLookupError:
         return
 

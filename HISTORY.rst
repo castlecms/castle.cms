@@ -4,7 +4,9 @@ Changelog
 2.6.22 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- slideshow refinements
+- add property per content item to exclude from search query
+- query filter updates, including new wording and broader search
 
 
 2.6.21 (2020-07-30)
