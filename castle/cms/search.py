@@ -89,13 +89,13 @@ class QueryAssembler(query.QueryAssembler):
                 "function_score": {
                     "query": query,
                     # "boost_mode": "sum",  # add score and modified score,
-                    # "script_score": {
-                    #     "lang": "native",
-                    #     'params': {
-                    #         'search': searchq
-                    #     },
-                    #     "script": "castlepopularity"
-                    # }
+                    "script_score": {
+                        "lang": "native",
+                        'params': {
+                            'search': searchq
+                        },
+                        "script": "castlepopularity"
+                    }
                 }
             }
         except KeyError:
