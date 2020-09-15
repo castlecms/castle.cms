@@ -187,15 +187,12 @@ class SearchAjax(BrowserView):
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
 
-<<<<<<< HEAD
         query['review_state'] = 'published'
 
         registry = getUtility(IRegistry)
         if not registry.get('plone.allow_public_in_private_container', False):
             query['has_private_parents'] = False
-=======
         query['exclude_from_search'] = False
->>>>>>> 1a0e05a0a4c3737c05554f55c643c9ca7da25f49
 
         try:
             page_size = int(self.request.form.get('pageSize'))
