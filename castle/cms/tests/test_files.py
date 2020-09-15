@@ -43,6 +43,7 @@ class TestDuplicateDetector(unittest.TestCase):
             id='folder',
             container=self.portal)
         dd.register(doc, hash_)
+        api.content.transition(obj=doc, to_state='published')
 
         self.assertEqual(IUUID(dd.get_object(hash_)), IUUID(doc))
 
