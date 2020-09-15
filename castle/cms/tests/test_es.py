@@ -91,6 +91,12 @@ if ES_ENABLED:
                 id='esdoc5',
                 container=self.folder2,
                 title='Foobar five')
+            self.esdoc6 = api.content.create(
+                type='Document',
+                id='esdoc6',
+                container=self.folder,
+                title='Foobar six',
+                exclude_from_search=True)
             ann = IAnnotations(self.esdoc2)
             ann[COUNT_ANNOTATION_KEY] = {
                 'twitter_matomo': 5,
