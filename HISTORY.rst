@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.23 (unreleased)
+2.6.23 (2020-09-15)
 -------------------
 
 - exclude_from_search and has_private_parents features for public results
