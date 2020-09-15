@@ -141,13 +141,13 @@ class TestTiles(unittest.TestCase):
 
     def test_querylisting_results(self):
         page1 = api.content.create(type='Document', id='page1', container=self.portal,
-                           subject=('foobar',), title='Foobar')
+                                   subject=('foobar',), title='Foobar')
         page2 = api.content.create(type='Document', id='page2', container=self.portal,
-                           subject=('foobar',), title='Foobar')
+                                   subject=('foobar',), title='Foobar')
         page3 = api.content.create(type='Document', id='page3', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
+                                   subject=('foobar', 'foobar2'), title='Foobar')
         page4 = api.content.create(type='Document', id='page4', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
+                                   subject=('foobar', 'foobar2'), title='Foobar')
         data = {
             'query': [{
                 'i': 'Subject',
@@ -174,13 +174,13 @@ class TestTiles(unittest.TestCase):
 
     def test_querylisting_multiple_sort(self):
         page1 = api.content.create(type='Document', id='page1', container=self.portal,
-                           subject=('foobar',), title='Foobar')
+                                   subject=('foobar',), title='Foobar')
         page2 = api.content.create(type='Document', id='page2', container=self.portal,
-                           subject=('foobar',), title='Foobar')
+                                   subject=('foobar',), title='Foobar')
         page3 = api.content.create(type='Document', id='page3', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
+                                   subject=('foobar', 'foobar2'), title='Foobar')
         page4 = api.content.create(type='Document', id='page4', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
+                                   subject=('foobar', 'foobar2'), title='Foobar')
         data = {
             'query': [{
                 'i': 'Subject',

@@ -51,7 +51,7 @@ class TestUtils(unittest.TestCase):
         login(self.portal, TEST_USER_NAME)
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
         newpage = api.content.create(type='Document', id='newpage',
-                           container=self.portal)
+                                     container=self.portal)
         api.content.transition(obj=newpage, to_state='published')
 
         cp = (0, [

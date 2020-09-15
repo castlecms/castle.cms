@@ -81,7 +81,6 @@ CASTLE_PLONE_ES_TESTING = IntegrationTesting(
     name="CastleTesting:Integration")
 
 
-
 CASTLE_BUNDLE_FIXTURE = RemoteLibraryLayer(
     bases=(PLONE_FIXTURE,),
     libraries=(

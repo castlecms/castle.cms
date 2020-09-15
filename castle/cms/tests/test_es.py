@@ -5,14 +5,12 @@ import os
 import unittest
 
 import requests
-import time
 
 import transaction
 from castle.cms.browser.search import SearchAjax
 from collective.elasticsearch.es import ElasticSearchCatalog
-from collective.elasticsearch.hook import CommitHook
 from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING, CASTLE_FIXTURE
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from collective.elasticsearch.interfaces import IElasticSettings
 from fnmatch import fnmatch
 from plone import api
@@ -22,7 +20,6 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
-from castle.cms.interfaces import ICastleLayer
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +47,7 @@ if ES_ENABLED:
     class TestES(unittest.TestCase):
 
         layer = CASTLE_PLONE_INTEGRATION_TESTING
+
         def setUp(self):
             self.portal = self.layer['portal']
             self.request = self.layer['request']
@@ -62,12 +60,17 @@ if ES_ENABLED:
                 id='esfolder1',
                 container=self.portal,
                 title='Foobar folder')
+            self.folder2 = api.content.create(
+                type='Folder',
+                id='esfolder2',
+                container=self.folder,
+                title='Foobar subfolder')
             self.esdoc1 = api.content.create(
                 type='Document',
                 id='esdoc1',
                 container=self.folder,
                 title='Foobar one')
-            self.esdoc2 = doc = api.content.create(
+            self.esdoc2 = api.content.create(
                 type='Document',
                 id='esdoc2',
                 container=self.folder,
@@ -78,12 +81,22 @@ if ES_ENABLED:
                 id='esdoc3',
                 container=self.folder,
                 title='Foobar three')
+            self.esdoc4 = api.content.create(
+                type='Document',
+                id='esdoc4',
+                container=self.folder,
+                title='Foobar four')
+            self.esdoc5 = api.content.create(
+                type='Document',
+                id='esdoc5',
+                container=self.folder2,
+                title='Foobar five')
             ann = IAnnotations(self.esdoc2)
             ann[COUNT_ANNOTATION_KEY] = {
                 'twitter_matomo': 5,
                 'facebook': 5,
             }
-            for item in [self.folder, self.esdoc1, self.esdoc2, self.esdoc3]:
+            for item in [self.folder, self.esdoc1, self.esdoc2, self.esdoc3, self.esdoc5]:
                 api.content.transition(obj=item, to_state='published')
                 item.reindexObject()
 
@@ -156,26 +169,10 @@ if ES_ENABLED:
             view_1 = SearchAjax(self.portal, self.request)
             result_1 = json.loads(view_1())
             self.assertEqual(result_1['count'], 4)
-            # transaction.begin()
-            api.content.transition(obj=self.esdoc2, to_state='private')
-            self.esdoc2.reindexObject()
-            repr(self.es)
-            self.es.catalog_object(self.esdoc2)
-            transaction.commit()
+            api.portal.set_registry_record('plone.allow_public_in_private_container', True)
             view_2 = SearchAjax(self.portal, self.request)
             result_2 = json.loads(view_2())
-            import pdb; pdb.set_trace()
-            self.assertEqual(result_2['count'], 3)
-            api.content.transition(obj=self.folder, to_state='private')
-            self.es.catalog_object(self.folder)
-            view_3 = SearchAjax(self.portal, self.request)
-            result_3 = json.loads(view_3())
-            self.assertEqual(result_3['count'], 0)
-            registry = getUtility(IRegistry)
-            api.portal.set_registry_record('plone.allow_public_in_private_container', True)
-            view_4 = SearchAjax(self.portal, self.request)
-            result_4 = json.loads(view_4())
-            self.assertEqual(result_4['count'], 2)
+            self.assertEqual(result_2['count'], 5)
 
 else:
     class TestEmptyES(unittest.TestCase):
