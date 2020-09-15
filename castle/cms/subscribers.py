@@ -19,6 +19,7 @@ from zope.globalrequest import getRequest
 from zope.interface import Interface
 import logging
 
+
 logger = logging.getLogger('castle.cms')
 
 

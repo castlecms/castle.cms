@@ -1,6 +1,5 @@
 /*global history */
 
-window.addEventListener('load', function(){
 
 require([
   'jquery',
@@ -174,7 +173,8 @@ require([
         show: null,
         searchSite: this.props.searchSite || false,
         loading: false,
-        sort_on: ''
+        sort_on: '',
+        searchHelpText: this.props.searchHelpText || '',
       };
     },
 
@@ -186,7 +186,8 @@ require([
         searchUrl: $('body').attr('data-portal-url') + '/@@searchajax',
         searchTypes: [],
         additionalSites: [],
-        searchSite: false
+        searchSite: false,
+        searchHelpText: '',
       };
     },
 
@@ -211,11 +212,12 @@ require([
       utils.loading.show();
       var state = {
         SearchableText: that.state.SearchableText,
+        searchHelpText: that.state.searchHelpText,
         pageSize: that.state.pageSize,
         page: that.state.page,
         sort_on: that.state.sort_on,
         sort_order: 'descending',
-        after: that.state.date || ''
+        after: that.state.date || '',
       };
       if(that.state.searchType !== 'all'){
         var type = that.getSearchType(that.state.searchType);
@@ -224,6 +226,9 @@ require([
       }
       if(that.state.searchSite){
         state.searchSite = that.state.searchSite;
+      }
+      if (that.state.searchHelpText) {
+        state.searchHelpText = that.state.searchHelpText;
       }
       if(that.props.Subject){
         state.Subject = that.props.Subject;
@@ -237,21 +242,27 @@ require([
       $.ajax({
         url: this.props.searchUrl,
         data: state
-      }).done(function(data){
+      }).done(function (data) {
         that.props.Subject = undefined;
         that.props['Subject:list'] = undefined;
-        that.setState({
-          results: data.results,
-          count: data.count,
-          page: data.page,
-          error: false,
-          suggestions: data.suggestions || [],
-          loading: false
-        }, function(){
-          $('html, body').animate({
-            scrollTop: 0
-          }, 100);
-        });
+        that.setState(
+          {
+            results: data.results,
+            count: data.count,
+            page: data.page,
+            error: false,
+            suggestions: data.suggestions || [],
+            loading: false,
+          },
+          function () {
+            $('html, body').animate(
+              {
+                scrollTop: 0,
+              },
+              100
+            );
+          }
+        );
 
         if(HasHistory){
           history.pushState(state, "", window.location.origin + window.location.pathname + '?' + $.param(state));
@@ -364,9 +375,13 @@ require([
           D.span({ id: "results-count" }, [
             'Page ',
             that.state.page,
+            ' (Results ',
+            (that.state.page - 1) * that.state.pageSize + 1,
+            ' to ',
+            Math.min(that.state.page * that.state.pageSize, that.state.count),
             ' of ',
             that.state.count,
-            ' results'
+            ')'
           ])
         ]),
         D.div({ id: "search-results" }, [
@@ -451,58 +466,13 @@ require([
               that.setState({
                 show: that.state.show === 'more' ? null : 'more'
               });
-            }}, 'More'),
+            }}, 'More Filters'),
             more
           ]));
         }
       }
 
-      if(that.props.additionalSites.length > 0){
-        var current = this.props.currentSiteLabel || 'current site'
-        var items = [['', current]].concat(that.props.additionalSites.map(function(v){
-          return [v, v];
-        }));
-        options.push(R.createElement(SearchOption, {
-          show: that.state.show,
-          type: 'additionalSites',
-          options: items,
-          parent: that,
-          labelPrefix: 'Search: ',
-          value: that.state.searchSite,
-          onClick: function(val) {
-            var searchType = that.state.searchType;
-            var searchSite = false;
-            if (val === current) {
-              searchType = 'all';
-            } else {
-              searchSite = val
-            }
-            that.setState({
-              searchSite: searchSite,
-              page: 1,
-              searchType: searchType
-            }, function(){
-              that.load();
-            });
-          }
-        }));
-      }
-      options.push(R.createElement(SearchOption, {
-        show: that.state.show,
-        type: 'publication',
-        parent: that,
-        options: SortOptions,
-        labelPrefix: 'Sort: ',
-        value: that.state.sort_on,
-        onClick: function(val) {
-          that.setState({
-            sort_on: val
-          }, function(){
-            that.load();
-          });
-        }
-      }));
-      options.push(R.createElement(SearchOption, {
+      options.unshift(R.createElement(SearchOption, {
         show: that.state.show,
         type: 'date',
         parent: that,
@@ -530,13 +500,61 @@ require([
           });
         }
       }));
-
-      return D.div({ className: 'search-options'}, [
-        D.ul({}, options)
-      ]);
+      options.unshift(R.createElement(SearchOption, {
+        show: that.state.show,
+        type: 'publication',
+        parent: that,
+        options: SortOptions,
+        labelPrefix: 'Sort: ',
+        value: that.state.sort_on,
+        onClick: function(val) {
+          that.setState({
+            sort_on: val
+          }, function(){
+            that.load();
+          });
+        }
+      }));
+      if(that.props.additionalSites.length > 0){
+        var current = this.props.currentSiteLabel || 'current site'
+        var items = [['', current]].concat(that.props.additionalSites.map(function(v){
+          return [v, v];
+        }));
+        options.unshift(R.createElement(SearchOption, {
+          show: that.state.show,
+          type: 'additionalSites',
+          options: items,
+          parent: that,
+          labelPrefix: 'Source: ',
+          value: that.state.searchSite,
+          onClick: function(val) {
+            var searchType = that.state.searchType;
+            var searchSite = false;
+            if (val === current) {
+              searchType = 'all';
+            } else {
+              searchSite = val
+            }
+            that.setState({
+              searchSite: searchSite,
+              page: 1,
+              searchType: searchType
+            }, function(){
+              that.load();
+            });
+          }
+        }));
+      }
+      return D.div(
+        { className: 'search-options' },
+        [
+          ...(!!that.state.searchHelpText ? [D.p({},that.state.searchHelpText )] : []),
+          D.ul({}, options),
+        ]
+      );
     },
 
-    render: function(){
+    render: function () {
       return D.form({ id: "searchform", actionName: "@@search", role: "search",
                       className: "search-form" }, [
         D.div({ className: "search-input-group" }, [
@@ -579,17 +597,22 @@ require([
   }catch(e){}
 
   var el = document.getElementById('searchComponent');
-  var component = R.render(R.createElement(
-    SearchComponent, cutils.extend(JSON.parse(el.getAttribute('data-search')), {
-      SearchableText: getParameterByName('SearchableText') || '',
-      Subject: Subject,
-      'Subject:list': Subjectlist,
-      searchUrl: el.getAttribute('data-search-url'),
-      searchType: searchType,
-      page: page,
-      searchSite: searchSite,
-      path: path
-    })), el);
+  var component = R.render(
+    R.createElement(
+      SearchComponent,
+      cutils.extend(JSON.parse(el.getAttribute('data-search')), {
+        SearchableText: getParameterByName('SearchableText') || '',
+        Subject: Subject,
+        'Subject:list': Subjectlist,
+        searchUrl: el.getAttribute('data-search-url'),
+        searchType: searchType,
+        page: page,
+        searchSite: searchSite,
+        path: path,
+      })
+    ),
+    el
+  );
 
   window.onpopstate = function(e){
     if(e.state){
@@ -603,7 +626,5 @@ require([
       show: null
     });
   });
-
-});
 
 });
