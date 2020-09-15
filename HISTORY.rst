@@ -4,7 +4,8 @@ Changelog
 2.6.23 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- exclude_from_search and has_private_parents features for public results
+- panels to list items excluded from search for admin
 
 
 2.6.22 (2020-09-10)
