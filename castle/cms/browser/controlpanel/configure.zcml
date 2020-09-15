@@ -149,6 +149,15 @@
     />
 
   <browser:page
+    name="published-with-private-parents"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".search.PublishedWithPrivateParents"
+    permission="plone.app.controlpanel.Site"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/published-with-private-parents.pt"
+    />
+
+  <browser:page
     name="survey-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".survey.SurveyControlPanel"
