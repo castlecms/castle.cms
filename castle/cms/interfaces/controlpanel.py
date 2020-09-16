@@ -290,6 +290,12 @@ class ISiteConfiguration(Interface):
         default=False
     )
 
+    alternate_domain = schema.List(
+        title=u'Configure alternate domain',
+        default=[],
+        required=False,
+        value_type=schema.TextLine())
+
 
 class IAPISettings(Interface):
     princexml_server_url = schema.TextLine(

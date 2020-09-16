@@ -152,6 +152,10 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
     return ticket_data
 
 
+def scripts(self):
+    import pdb; pdb.set_trace()
+
+
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
 # See https://github.com/celery/celery/pull/4839/
 if hasattr(AsyncResult, '__del__'):
