@@ -20,6 +20,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.ISiteConfiguration"
+           prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
@@ -27,6 +29,15 @@
         <field type="plone.registry.field.List">
             <title>Whitelisted users</title>
             <description>Users that won't have passwords expire.</description>
+            <value_type type="plone.registry.field.TextLine"/>
+        </field>
+  </record>
+
+  <record interface="castle.cms.interfaces.ISiteConfiguration"
+          field="alternate_domain"
+          prefix="castle">
+            <field type="plone.registry.field.List">
+            <title>Alternate Domain</title>
             <value_type type="plone.registry.field.TextLine"/>
         </field>
   </record>
