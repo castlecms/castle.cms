@@ -22,7 +22,6 @@ from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
 
-
 logger = logging.getLogger('castle.cms')
 
 

@@ -14,10 +14,12 @@
 
 <body>
 
+
   <div id="content-core" metal:fill-slot="main">
+    <div tal:condition="not: context/@@plone_portal_state/anonymous">Administrators can <a href="${portal_url}/@@search-exclusion-controlpanel">visit the search exclusion panel</a> and configure which items are excluded from search results.</div>
+    <div tal:condition="not: context/@@plone_portal_state/anonymous">You can also <a href="${portal_url}/@@published-with-private-parents">see published items that might be excluded from search</a> due to private parent content.</div>
     <div id="searchComponent" data-search-url="${view/search_url}"
          data-search="${view/options}"></div>
-
   </div>
 
 </body>
