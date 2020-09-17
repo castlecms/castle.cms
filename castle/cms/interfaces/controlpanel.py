@@ -290,11 +290,20 @@ class ISiteConfiguration(Interface):
         default=False
     )
 
-    alternate_domains = schema.List(
-        title=u'Configure alternate CDN domains',
-        default=[],
+    cdn_alternate_domain = schema.List(
+        title=u'Configure alternate CDN domain',
         required=False,
         value_type=schema.TextLine())
+
+    cdn_alternate_port = schema.TextLine(
+        title=u'Configure alternate CDN port',
+        required=False,
+    )
+
+    cdn_alternate_path = schema.TextLine(
+        title=u'Configure alternate CDN path',
+        required=False,
+    )
 
 
 class IAPISettings(Interface):

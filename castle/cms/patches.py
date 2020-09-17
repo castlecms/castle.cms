@@ -157,12 +157,17 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 def scripts(self):
     registry = getUtility(IRegistry)
-    alternate_domains = registry.get('castle.alternate_domains', None)
+    alternate_domain = registry.get('castle.cdn_alternate_domain', None)
+    alternate_port = registry.get('castle.cdn_alternate_port', None)
+    alternate_path = registry.get('castle.cdn_alternate_path', None)
 
     obj = cdn()
-    obj.hostname = alternate_domains
-    obj.port = 80
-    obj.path = ''
+    if alternate_domain:
+        obj.hostname = alternate_domain
+    if alternate_port:
+        obj.port = alternate_port
+    if alternate_path:
+        obj.path = alternate_path
 
     self.site_url = obj.process_url(self.site_url)
 

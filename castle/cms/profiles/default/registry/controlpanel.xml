@@ -34,13 +34,23 @@
   </record>
 
   <record interface="castle.cms.interfaces.ISiteConfiguration"
-          field="alternate_domains"
+          field="alternate_domain"
           prefix="castle">
             <field type="plone.registry.field.List">
-            <title>Alternate Domains</title>
-            <value_type type="plone.registry.field.TextLine"/>
-        </field>
+              <title>Alternate Domain</title>
+              <value_type type="plone.registry.field.TextLine"/>
+            </field>
   </record>
+
+  <record interface="castle.cms.interface.ISiteConfiguration"
+          field="alternate_port"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"/></field>
+
+  <record interface="castle.cms.interface.ISiteConfiguration"
+          field="alternate_path"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"/></field>
 
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"
