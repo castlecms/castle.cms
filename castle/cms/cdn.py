@@ -13,7 +13,7 @@ class cdn(object):
         try:
             hostname = self.hostname[0]
         except IndexError:
-            return
+            return url
         if self.port not in [80, ]:
             hostname = '%s:%s' % (hostname, self.port)
 
