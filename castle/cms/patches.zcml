@@ -60,10 +60,11 @@
     replacement=".patches.SessionPlugin_validateTicket"
     />
   <monkey:patch
-    description="change url"
+    description="change cdn url"
     class="Products.CMFPlone.resources.browser.scripts.ScriptsView"
     original="scripts"
     replacement=".patches.scripts"
+    preserveOriginal="True"
     />
 
   <!-- disable additional mosaic pattern settings config since we already do this -->

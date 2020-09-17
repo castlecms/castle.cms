@@ -1,9 +1,11 @@
 import logging
 from time import time
+from urlparse import urlparse
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from castle.cms import cache
+from castle.cms.cdn import cdn
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
@@ -14,10 +16,12 @@ from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
 from plone.keyring.interfaces import IKeyManager
+from plone.registry.interfaces import IRegistry
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
+from zope.component import getUtility
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
@@ -152,7 +156,77 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 
 def scripts(self):
-    pass
+    registry = getUtility(IRegistry)
+    alternate_domains = registry.get('castle.alternate_domains', None)
+
+    obj = cdn()
+    obj.hostname = alternate_domains
+    obj.port = 80
+    obj.path = ''
+
+    self.site_url = obj.process_url(self.site_url)
+
+    """The requirejs scripts, the ones that are not resources are loaded on
+    configjs.py
+    """
+    if self.development or not self.production_path:
+        result = self.default_resources()
+        result.extend(self.ordered_bundles_result())
+    else:
+        result = [{
+            'src': '%s/++plone++%s' % (
+                self.site_url,
+                self.production_path + '/default.js'
+            ),
+            'conditionalcomment': None,
+            'bundle': 'production'
+        }, ]
+        if not self.anonymous:
+            result.append({
+                'src': '%s/++plone++%s' % (
+                    self.site_url,
+                    self.production_path + '/logged-in.js'
+                ),
+                'conditionalcomment': None,
+                'bundle': 'production'
+            })
+        result.extend(self.ordered_bundles_result(production=True))
+
+    # Add manual added resources
+    if hasattr(self.request, 'enabled_resources'):
+        resources = self.get_resources()
+        for resource in self.request.enabled_resources:
+            if resource in resources:
+                data = resources[resource]
+                if data.js:
+                    url = urlparse(data.js)
+                    if url.netloc == '':
+                        # Local
+                        src = "%s/%s" % (self.site_url, data.js)
+                    else:
+                        src = "%s" % (data.js)
+
+                    data = {
+                        'bundle': 'none',
+                        'conditionalcomment': '',  # noqa
+                        'src': src}
+                    result.append(data)
+
+    # Add diazo url
+    origin = None
+    if self.diazo_production_js and self.development is False:
+        origin = self.diazo_production_js
+    if self.diazo_development_js and self.development is True:
+        origin = self.diazo_development_js
+    if origin:
+        result.append({
+            'bundle': 'diazo',
+            'conditionalcomment': '',
+            'src': '%s/%s' % (
+                self.site_url, origin)
+        })
+
+    return result
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
