@@ -36,10 +36,7 @@
   <record interface="castle.cms.interfaces.ISiteConfiguration"
           field="alternate_domain"
           prefix="castle">
-            <field type="plone.registry.field.List">
-              <title>Alternate Domain</title>
-              <value_type type="plone.registry.field.TextLine"/>
-            </field>
+            <field type="plone.registry.field.TextLine"></field>
   </record>
 
   <record interface="castle.cms.interface.ISiteConfiguration"

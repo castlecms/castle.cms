@@ -290,7 +290,7 @@ class ISiteConfiguration(Interface):
         default=False
     )
 
-    cdn_alternate_domain = schema.List(
+    cdn_alternate_domain = schema.TextLine(
         title=u'Configure alternate CDN domain',
         required=False,
         value_type=schema.TextLine())
