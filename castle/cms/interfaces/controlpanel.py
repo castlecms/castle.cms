@@ -305,6 +305,24 @@ class ISiteConfiguration(Interface):
         required=False,
     )
 
+    cdn_allow_js = schema.Bool(
+        title=u'Include JS in CDN Config',
+        description=u'Allow javascript files to be served from alternate CDN URL.',
+        default=False
+    )
+
+    cdn_allow_css = schema.Bool(
+        title=u'Include CSS in CDN Config',
+        description=u'Allow CSS files to be served from alternate CDN URL.',
+        default=False
+    )
+
+    cdn_allow_images = schema.Bool(
+        title=u'Include Images in CDN Config',
+        description=u'Allow images to be served from alternate CDN URL.',
+        default=False
+    )
+
 
 class IAPISettings(Interface):
     princexml_server_url = schema.TextLine(

@@ -10,10 +10,7 @@ class cdn(object):
         # splits url parts
         protocol, path = url.split('://')
         path = path.split('/')
-        try:
-            hostname = self.hostname[0]
-        except IndexError:
-            return url
+        hostname = self.hostname
         if self.port not in [80, ]:
             hostname = '%s:%s' % (hostname, self.port)
 

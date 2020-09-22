@@ -49,6 +49,21 @@
           prefix="castle">
             <field type="plone.registry.field.TextLine"/></field>
 
+  <record interface="castle.cms.interface.ISiteConfiguration"
+          field="cdn_allow_js"
+          prefix="castle">
+            <field type="plone.registry.field.Bool"/></field>
+        
+  <record interface="castle.cms.interface.ISiteConfiguration"
+          field="cdn_allow_css"
+          prefix="castle">
+            <field type="plone.registry.field.Bool"/></field>
+
+  <record interface="castle.cms.interface.ISiteConfiguration"
+          field="cdn_allow_images"
+          prefix="castle">
+            <field type="plone.registry.field.Bool"/></field>
+
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"
           field="globally_enabled">
