@@ -173,68 +173,7 @@ def scripts(self):
 
         self.site_url = obj.process_url(self.site_url)
 
-    """The requirejs scripts, the ones that are not resources are loaded on
-    configjs.py
-    """
-    if self.development or not self.production_path:
-        result = self.default_resources()
-        result.extend(self.ordered_bundles_result())
-    else:
-        result = [{
-            'src': '%s/++plone++%s' % (
-                self.site_url,
-                self.production_path + '/default.js'
-            ),
-            'conditionalcomment': None,
-            'bundle': 'production'
-        }, ]
-        if not self.anonymous:
-            result.append({
-                'src': '%s/++plone++%s' % (
-                    self.site_url,
-                    self.production_path + '/logged-in.js'
-                ),
-                'conditionalcomment': None,
-                'bundle': 'production'
-            })
-        result.extend(self.ordered_bundles_result(production=True))
-
-    # Add manual added resources
-    if hasattr(self.request, 'enabled_resources'):
-        resources = self.get_resources()
-        for resource in self.request.enabled_resources:
-            if resource in resources:
-                data = resources[resource]
-                if data.js:
-                    url = urlparse(data.js)
-                    if url.netloc == '':
-                        # Local
-                        src = "%s/%s" % (self.site_url, data.js)
-                    else:
-                        src = "%s" % (data.js)
-
-                    data = {
-                        'bundle': 'none',
-                        'conditionalcomment': '',  # noqa
-                        'src': src}
-                    result.append(data)
-
-    # Add diazo url
-    origin = None
-    if self.diazo_production_js and self.development is False:
-        origin = self.diazo_production_js
-    if self.diazo_development_js and self.development is True:
-        origin = self.diazo_development_js
-    if origin:
-        result.append({
-            'bundle': 'diazo',
-            'conditionalcomment': '',
-            'src': '%s/%s' % (
-                self.site_url, origin)
-        })
-
-    return result
-
+    return self._old_scripts()
 
 def styles(self):
     registry = getUtility(IRegistry)
@@ -254,67 +193,7 @@ def styles(self):
 
         self.site_url = obj.process_url(self.site_url)
 
-    """
-    Get all the styles
-    """
-    if self.development or not self.production_path:
-        result = self.ordered_bundles_result()
-    else:
-        result = [{
-            'src': '%s/++plone++%s' % (
-                self.site_url,
-                self.production_path + '/default.css'
-            ),
-            'conditionalcomment': None,
-            'rel': 'stylesheet',
-            'bundle': 'production'
-        }, ]
-        if not self.anonymous:
-            result.append({
-                'src': '%s/++plone++%s' % (
-                    self.site_url,
-                    self.production_path + '/logged-in.css'
-                ),
-                'conditionalcomment': None,
-                'rel': 'stylesheet',
-                'bundle': 'production'
-            })
-        result.extend(self.ordered_bundles_result(production=True))
-
-    # Add manual added resources
-    resources = self.get_resources()
-    if hasattr(self.request, 'enabled_resources'):
-        for resource in self.request.enabled_resources:
-            if resource in resources:
-                for data in self.get_urls(resources[resource], None):
-                    result.append(data)
-
-    # Add diazo css
-    origin = None
-    if self.diazo_production_css and self.development is False:
-        origin = self.diazo_production_css
-    if self.diazo_development_css and self.development is True:
-        origin = self.diazo_development_css
-    if origin:
-        url = urlparse(origin)
-        if url.netloc == '':
-            # Local
-            src = "%s/%s" % (self.site_url, origin)
-        else:
-            src = "%s" % (origin)
-
-        extension = url.path.split('.')[-1]
-        rel = 'stylesheet'
-        if extension != '' and extension != 'css':
-            rel = "stylesheet/%s" % extension
-
-        data = {'rel': rel,
-                'conditionalcomment': '',
-                'src': src,
-                'bundle': 'diazo'}
-
-        result.append(data)
-    return result
+    return self._old_styles()
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
