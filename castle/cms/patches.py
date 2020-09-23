@@ -166,12 +166,11 @@ def scripts(self):
         obj = cdn()
         if alternate_domain:
             obj.hostname = alternate_domain
-        if alternate_port:
-            obj.port = alternate_port
-        if alternate_path:
-            obj.path = alternate_path
-
-        self.site_url = obj.process_url(self.site_url)
+            if alternate_port:
+                obj.port = alternate_port
+            if alternate_path:
+                obj.path = alternate_path
+            self.site_url = obj.process_url(self.site_url)
 
     return self._old_scripts()
 
@@ -186,12 +185,11 @@ def styles(self):
         obj = cdn()
         if alternate_domain:
             obj.hostname = alternate_domain
-        if alternate_port:
-            obj.port = alternate_port
-        if alternate_path:
-            obj.path = alternate_path
-
-        self.site_url = obj.process_url(self.site_url)
+            if alternate_port:
+                obj.port = alternate_port
+            if alternate_path:
+                obj.path = alternate_path
+            self.site_url = obj.process_url(self.site_url)
 
     return self._old_styles()
 
