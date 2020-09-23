@@ -1,17 +1,14 @@
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
+from plone import api
 
 class cdn(object):
 
-    def __init__(self, hostname=[], port=80, path=''):
-        registry = getUtility(IRegistry)
-
-        self.hostname = registry.get('castle.cdn_alternate_domain', None) or hostname
-        self.port = registry.get('castle.cdn_alternate_port', None) or port
-        self.path = registry.get('castle.cdn_alternate_path', None) or  path
-        self.js_allowed = registry.get('castle.cdn_allow_js', None) or False
-        self.css_allowed = registry.get('castle.cdn_allow_css', None) or False
-        self.images_allowed = registry.get('castle.cdn_allow_images', None) or False
+    def __init__(self, hostname, port=80, path=''):
+        self.hostname = api.portal.get_registry_record('castle.cdn_alternate_domain') or hostname
+        self.port = api.portal.get_registry_record('castle.cdn_alternate_port') or port
+        self.path = api.portal.get_registry_record('castle.cdn_alternate_path') or path
+        self.js_allowed = api.portal.get_registry_record('castle.cdn_allow_js') or False
+        self.css_allowed = api.portal.get_registry_record('castle.cdn_allow_css') or False
+        self.images_allowed = api.portal.get_registry_record('castle.cdn_allow_images') or False
 
     def process_url(self, url, relative_path=''):
 
