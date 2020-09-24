@@ -66,6 +66,7 @@ class BaseTest(unittest.TestCase):
     def _get_object(self, reference=False):
         context = api.content.create(type='Document', title='foobar2',
                                      container=self.portal)
+        api.content.transition(obj=context, to_state='published')
         if reference:
             widget = self._get_widget()
             converter = self._get_converter(widget)
@@ -101,6 +102,7 @@ class TestImageWidget(BaseTest):
     def test_save_image_reference(self):
         context = api.content.create(type='Document', title='foobar2',
                                      container=self.portal)
+        api.content.transition(obj=context, to_state='published')
         widget = self._get_widget()
         converter = self._get_converter(widget)
         result = converter.toFieldValue('reference:' + IUUID(context))
@@ -123,6 +125,7 @@ class TestIndexImage(BaseTest):
     def test_index_reference(self):
         reference = api.content.create(type='Document', title='foobar2',
                                        container=self.portal)
+        api.content.transition(obj=reference, to_state='published')
         context = self._get_object(reference)
         indexer = indexers.image_info(context)
         value = indexer()

@@ -41,7 +41,9 @@ class SlideshowView(BrowserView):
                 slide['title'] = data.get('title', [None])[0]
                 slide['text'] = data.get('text:text', [None])[0]
                 slide['vert'] = data.get('vert_text_position', ['middle'])[0]
-                slide['hor'] = data.get('hor_text_position', ['center'])[0]
+                hor_text_position = data.get('hor_text_position', ['center'])[0]
+                slide['hor'] = hor_text_position
+                slide['width_class'] = 'full-width' if hor_text_position == 'center' else 'half-width'
                 justify_wrapped_text = data.get('justify_wrapped_text:boolean', [0])[0] == '1'
                 slide['justify_wrapped_text'] = justify_wrapped_text
                 slide['justify_wrap_class'] = 'justify-wrap' if justify_wrapped_text else ''

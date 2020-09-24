@@ -1,10 +1,25 @@
 Changelog
 =========
 
-2.6.22 (unreleased)
+2.6.24 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.6.23 (2020-09-15)
+-------------------
+
+- exclude_from_search and has_private_parents features for public results
+- panels to list items excluded from search for admin
+
+
+2.6.22 (2020-09-10)
+-------------------
+
+- slideshow refinements
+- add property per content item to exclude from search query
+- query filter updates, including new wording and broader search
 
 
 2.6.21 (2020-07-30)
