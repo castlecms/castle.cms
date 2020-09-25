@@ -19,7 +19,6 @@ class Fastly(PurgeManager):
         return super(Fastly, self).getUrlsToPurge(path)
 
     def purge(self, urls):
-
         headers = {
             "accept": "application/json",
             "fastly-key": self.fastly_key
@@ -30,7 +29,7 @@ class Fastly(PurgeManager):
             url = "https://api.fastly.com/purge/%s" % url
             resp = requests.request("POST", url, headers=headers, data=json.dumps({'files': urls}))
 
-        # not final
+        #! response return format?
         return resp
 
 

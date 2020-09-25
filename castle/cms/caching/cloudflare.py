@@ -23,14 +23,14 @@ class CloudFlare(PurgeManager):
         return super(CloudFlare, self).getUrlsToPurge(path)
 
     def purge(self, urls):
+        url = 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id
         headers = {
             'X-Auth-Email': self.email,
             "X-Auth-Key": self.api_key,
             'Content-Type': 'application/json'
         }
-        return requests.delete(
-            'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id,  # noqa
-            headers=headers, data=json.dumps({'files': urls}))
+        
+        return requests.delete(url, headers=headers, data=json.dumps({'files': urls}))
 
 
 def get():

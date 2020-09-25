@@ -20,12 +20,11 @@ class StackPath(PurgeManager):
 
     def purge(self, urls):
         url = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.stack_id
-
         headers = {
             "accept": "application/json",
             "content-type": "application/json"
         }
-
+        
         return requests.request("POST", url, json=json.dumps({'files': urls}), headers=headers)
 
 
