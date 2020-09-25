@@ -16,17 +16,22 @@ class Fastly(PurgeManager):
             self.fastly_key is not None)
 
     def getUrlsToPurge(self, path):
-        return super(StackPath, self).getUrlsToPurge(path)
+        return super(Fastly, self).getUrlsToPurge(path)
 
-    def purge(self, url):
+    def purge(self, urls):
 
         headers = {
             "accept": "application/json",
             "fastly-key": self.fastly_key
         }
 
-        url = "https://api.fastly.com/purge/%s" % url
-        return requests.request("POST", url, headers=headers)
+        # TODO: Get this request actually figured out, ideally without looping so response will be easier
+        for url in urls:
+            url = "https://api.fastly.com/purge/%s" % url
+            resp = requests.request("POST", url, headers=headers, data=json.dumps({'files': urls}))
+
+        # not final
+        return resp
 
 
 def get():

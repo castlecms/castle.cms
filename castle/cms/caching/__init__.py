@@ -265,23 +265,25 @@ class Purge(BrowserView):
                 for url in getURLsToPurge(path, settings.cachingProxies):
                     purger.purgeAsync(url)
 
-        success = True
+        success = []
         if cf.enabled:
             self.cf_enabled = True
             resp = CastlePurger.purgeSync(urls, cf)
-            success = resp.json()['success']
+            success.append({'name': 'Cloudflare', 'value': resp.json()['success']})
         if sp.enabled:
             self.sp_enabled = True
             resp = CastlePurger.purgeSync(urls, sp)
             if resp.status_code != 200:
-                success = False
+                success.append({'name': 'StackPatch', 'value': False})
             else:
-                success = True
+                success.append({'name': 'StackPatch', 'value': True})
         if fst.enabled:
             self.fastly_enabled = True
-            for url in urls:
-                resp = CastlePurger.purgeSync(url, fst)
-                success = resp.json()['success']
+            resp = CastlePurger.purgeSync(urls, fst)
+            if resp.status_code != 200:
+                success.append({'name': 'Fastly', 'value': False})
+            else:
+                success.append({'name': 'Fastly', 'value': True})
 
         nice_paths = []
         for path in paths:
@@ -294,7 +296,7 @@ class Purge(BrowserView):
         return nice_paths, success
 
     def __call__(self):
-        self.success = False
+        self.success = []
         self.purged = []
         authenticator = getMultiAdapter((self.context, self.request),
                                         name=u"authenticator")
