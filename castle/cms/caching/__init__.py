@@ -251,10 +251,8 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
-        for path in paths:
+        for path in paths:            
             urls.extend(cf.getUrlsToPurge(path))
-            urls.extend(sp.getUrlsToPurge(path))
-            urls.extend(fst.getUrlsToPurge(path))
 
         urls = list(set(urls))
 
@@ -275,7 +273,10 @@ class Purge(BrowserView):
         if sp.enabled:
             self.sp_enabled = True
             resp = CastlePurger.purgeSync(urls, sp)
-            success = resp.json()['success']
+            if resp.status_code != 200:
+                success = False
+            else:
+                success = True
         if fst.enabled:
             self.fastly_enabled = True
             for url in urls:
