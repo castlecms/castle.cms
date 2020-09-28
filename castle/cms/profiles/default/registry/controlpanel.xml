@@ -125,7 +125,13 @@
   </record>
 
   <record interface="castle.cms.interfaces.IAPISettings" 
-          field="fastly_key"
+          field="fastly_token"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings" 
+          field="fastly_service_id"
           prefix="castle">
             <field type="plone.registry.field.TextLine"></field>
   </record>

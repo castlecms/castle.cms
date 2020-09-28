@@ -414,8 +414,14 @@ class IAPISettings(Interface):
         default=None
     )
 
-    fastly_key = schema.TextLine(
-        title=u'Fastly Key',
+    fastly_token = schema.TextLine(
+        title=u'Fastly Token',
+        required=False,
+        default=None
+    )
+
+    fastly_service_id = schema.TextLine(
+        title=u'Fastly Service ID',
         required=False,
         default=None
     )
