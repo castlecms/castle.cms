@@ -12,8 +12,10 @@ class StackPath(PurgeManager):
         super(StackPath, self).__init__()
         registry = getUtility(IRegistry)
         self.stack_id = registry.get('castle.sp_stack_id', None)
+        self.stack_token = registry.get('castle.sp_token', None)
         self.enabled = (
-            self.stack_id is not None)
+            self.stack_id is not None and
+            self.stack_token is not None)
 
     def getUrlsToPurge(self, path):
         return super(StackPath, self).getUrlsToPurge(path)
@@ -28,7 +30,8 @@ class StackPath(PurgeManager):
         ]}
         headers = {
             "accept": "application/json",
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "authorization": "Bearer %s" % self.stack_token
         }
 
         return requests.request("POST", url, json=payload, headers=headers)

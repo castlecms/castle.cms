@@ -24,21 +24,15 @@
     <tal:purged tal:condition="view/purged">
       <h3>Purged urls</h3>
 
-      <!-- <p tal:condition="not: view.success['cf_success']" class="discreet">
-        There was an with the CloudFlare purge request
-      </p>
-      <p tal:condition="not: view.success['sp_success']" class="discreet">
-        There was an with the StackPath purge request
-      </p>
-      <p tal:condition="not: view.success['fst_success']" class="discreet">
-        There was an with the Fastly purge request
-      </p> -->
-
       <ul class='purge-paths'>
         <tal:path tal:repeat="url python: sorted(view.purged)">
           <li tal:content="url" />
         </tal:path>
       </ul>
+
+      <p class="discreet" tal:condition="python: not view.cf_enabled">Cloudflare not enabled</p>
+      <p class="discreet" tal:condition="python: not view.sp_enabled">Stackpath not enabled</p>
+      <p class="discreet" tal:condition="python: not view.fastly_enabled">Fastly not enabled</p>
 
       <tal:path tal:repeat="success view/success">
         <p class="discreet" tal:condition="python: not success['value']">

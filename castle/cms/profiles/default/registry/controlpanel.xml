@@ -124,6 +124,12 @@
             <field type="plone.registry.field.TextLine"></field>
   </record>
 
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="sp_token"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
+  </record>
+
   <record interface="castle.cms.interfaces.IAPISettings" 
           field="fastly_token"
           prefix="castle">
