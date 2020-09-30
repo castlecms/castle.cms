@@ -1,5 +1,4 @@
 from castle.cms.caching.purgemanager import PurgeManager
-from plone import api
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
@@ -29,7 +28,7 @@ class CloudFlare(PurgeManager):
             "X-Auth-Key": self.api_key,
             'Content-Type': 'application/json'
         }
-        
+
         return requests.delete(url, headers=headers, data=json.dumps({'files': urls}))
 
 

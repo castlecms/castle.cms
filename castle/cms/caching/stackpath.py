@@ -1,9 +1,7 @@
 from castle.cms.caching.purgemanager import PurgeManager
-from plone import api
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
-import json
 import requests
 
 

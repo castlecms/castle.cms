@@ -251,7 +251,7 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
-        for path in paths:            
+        for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
 
         urls = list(set(urls))
