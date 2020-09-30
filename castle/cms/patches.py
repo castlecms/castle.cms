@@ -1,6 +1,5 @@
 import logging
 from time import time
-from urlparse import urlparse
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
@@ -16,12 +15,10 @@ from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
 from plone.keyring.interfaces import IKeyManager
-from plone.registry.interfaces import IRegistry
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
-from zope.component import getUtility
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
@@ -161,6 +158,7 @@ def scripts(self):
         self.site_url = obj.process_url(self.site_url)
 
     return self._old_scripts()
+
 
 def styles(self):
     obj = cdn(hostname=self.site_url)

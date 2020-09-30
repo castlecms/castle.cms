@@ -1,5 +1,6 @@
 from plone import api
 
+
 class cdn(object):
 
     def __init__(self, hostname, port=80, path=''):
