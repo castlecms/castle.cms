@@ -33,36 +33,41 @@
         </field>
   </record>
 
-  <record interface="castle.cms.interfaces.ISiteConfiguration"
-          field="alternate_domain"
-          prefix="castle">
-            <field type="plone.registry.field.TextLine"></field>
+  <record name='castle.alternate_domain'
+          interface="castle.cms.interface.ISiteConfiguration"
+          field="alternate_domain">
+    <field type="plone.registry.field.TextLine" />
+  </record>
+          
+  <record name='castle.alternate_port'
+          interface="castle.cms.interface.ISiteConfiguration"
+          field="alternate_port">
+    <field type="plone.registry.field.TextLine" />
   </record>
 
-  <record interface="castle.cms.interface.ISiteConfiguration"
-          field="alternate_port"
-          prefix="castle">
-            <field type="plone.registry.field.TextLine"/></field>
+  <record name='castle.alternate_path'
+          interface="castle.cms.interface.ISiteConfiguration"
+          field="alternate_path">
+    <field type="plone.registry.field.TextLine" />
+  </record>
 
-  <record interface="castle.cms.interface.ISiteConfiguration"
-          field="alternate_path"
-          prefix="castle">
-            <field type="plone.registry.field.TextLine"/></field>
-
-  <record interface="castle.cms.interface.ISiteConfiguration"
-          field="cdn_allow_js"
-          prefix="castle">
-            <field type="plone.registry.field.Bool"/></field>
+  <record name='castle.cdn_allow_js'
+          interface="castle.cms.interface.ISiteConfiguration"
+          field="cdn_allow_js">
+    <field type="plone.registry.field.Bool" />        
+  </record>
         
-  <record interface="castle.cms.interface.ISiteConfiguration"
-          field="cdn_allow_css"
-          prefix="castle">
-            <field type="plone.registry.field.Bool"/></field>
+  <record name='castle.cdn_allow_css'
+          interface="castle.cms.interface.ISiteConfiguration"
+          field="cdn_allow_css">
+    <field type="plone.registry.field.Bool" />        
+  </record>
 
-  <record interface="castle.cms.interface.ISiteConfiguration"
-          field="cdn_allow_images"
-          prefix="castle">
-            <field type="plone.registry.field.Bool"/></field>
+  <record name='castle.cdn_allow_images'
+          interface="castle.cms.interface.ISiteConfiguration"
+          field="cdn_allow_images">
+    <field type="plone.registry.field.Bool" />        
+  </record>
 
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"
