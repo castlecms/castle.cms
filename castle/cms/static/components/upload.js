@@ -237,6 +237,14 @@ define([
           D.span({}, ': Using file already uploaded: ')
         ]);
       }
+      if(typeof this.state.metadata_stripped !== undefined){
+        if(this.state.metadata_stripped == false){
+          label = D.span({}, [
+              D.b({style: {color: 'red'}}, 'Warning: filetype is not compatible for document metadata stripping. '),
+              label
+          ]);
+        }
+      }
       return D.div({className: 'finished-container'}, [
         D.p({}, [
           label,

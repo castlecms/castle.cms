@@ -93,7 +93,8 @@ def dump_object_data(obj, duplicate=False):
         'workflow_state': state,
         'title': obj.Title(),
         'valid': True,
-        'duplicate': duplicate
+        'duplicate': duplicate,
+        'metadata_stripped': obj.metadata_stripped
     })
 
 
@@ -390,13 +391,16 @@ class Creator(BrowserView):
                     qpdf(info['tmp_file'])
                     exiftool(info['tmp_file'])
                     qpdf(info['tmp_file'])
+                    self.metadata_stripped = True
                 except Exception:
                     logger.warn('Could not strip additional metadata with qpdf %s' % info['tmp_file'])
             else:
                 try:
                     exiftool(info['tmp_file'])
+                    self.metadata_stripped = True
                 except Exception:
                     logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
+                    self.metadata_stripped = False
 
         fi = open(info['tmp_file'], 'r')
         try:
@@ -433,6 +437,7 @@ class Creator(BrowserView):
                     create_opts['subject'] = self.request.form.get(name).split(';')
                 else:
                     create_opts[name] = self.request.form.get(name, '')
+            create_opts['metadata_stripped'] = self.metadata_stripped
             return api.content.create(**create_opts)
         finally:
             fi.close()
