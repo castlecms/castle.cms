@@ -275,7 +275,7 @@
     title="Slide"
     class=".slide.SlideTile"
     schema=".slide.ISlideTileSchema"
-    for="*"
+    for="castle.cms.interfaces.ISlideshow"
     layer="castle.cms.interfaces.ICastleLayer"
     add_permission="cmf.ModifyPortalContent"
     permission="zope2.View"
@@ -294,7 +294,7 @@
     name="plone.app.standardtiles.lockinfo"
     class=".common.LockInfoTile"
     for="*"
-    permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
     />
   <plone:tile

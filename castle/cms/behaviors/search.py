@@ -11,7 +11,7 @@ class ISearch(model.Schema):
 
     model.fieldset(
         'settings',
-        fields=['searchterm_pins', 'robot_configuration'],
+        fields=['searchterm_pins', 'robot_configuration', 'exclude_from_search'],
     )
 
     searchterm_pins = schema.List(
@@ -44,6 +44,13 @@ class ISearch(model.Schema):
                     '(i.e. meta description) of this page on a SERP.'),
             ])
         )
+    )
+
+    exclude_from_search = schema.Bool(
+        title=u'Exclude from searches',
+        description=u'If selected, this item will not appear in searches',
+        required=True,
+        default=False
     )
 
 
