@@ -59,7 +59,7 @@ class SiteMapView(sitemap.SiteMapView):
                 }
 
         for brain in catalog.searchResults(query)[:MAX_ITEMS]:  # max of 50,000 items
-            pub_in_priv = registry.get('plone.allow_public_in_private_container')
+            pub_in_priv = registry.get('plone.allow_public_in_private_container', False)
             if root_page_uid == brain.UID or brain.id == 'Members' or \
                     (brain.has_private_parents and not pub_in_priv):
                 continue

@@ -120,6 +120,7 @@ class TestContent(unittest.TestCase):
 
     def test_update_upload(self):
         fileOb = self.test_upload()
+        api.content.transition(obj=fileOb, to_state='published')
         self.request.form.update({
             'action': 'chunk-upload',
             'chunk': '1',
@@ -139,6 +140,7 @@ class TestContent(unittest.TestCase):
 
     def test_tmp_upload(self):
         fileOb = self.test_upload()
+        api.content.transition(obj=fileOb, to_state='published')
         self.request.form.update({
             'action': 'chunk-upload',
             'chunk': '1',

@@ -146,7 +146,10 @@ class AddCastleSite(AddPloneSite):
 class Overview(Overview):
 
     def from_local_or_IP(self):
-        host = self.request.get_header('host').split(':')[0]
+        try:
+            host = self.request.get_header('host').split(':')[0]
+        except AttributeError:
+            return False  # no host header
         try:
             socket.inet_aton(host)
             return True

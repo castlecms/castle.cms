@@ -10,7 +10,8 @@
                  author_override python: utils.get_registry_value('castle.feed_author_override') or None;
                  email_override python: utils.get_registry_value('castle.feed_email_override') or None;
                  settings nocall:feed/settings|nothing;
-                 categories settings/categories">
+                 categories settings/categories;
+                 podcast_image settings/podcast_image">
     <channel>
         <atom:link href="${request/ACTUAL_URL|nothing}" rel="self" type="application/rss+xml" />
         <tal:cat tal:repeat="category categories" tal:condition="categories">
@@ -38,12 +39,22 @@
         </tal:block>
         <itunes:summary tal:content="feed/description" />
         <description tal:content="feed/description" />
-        <image>
-    			<url>${feed/logo}</url>
-          <title>${feed/title} Logo</title>
-          <link>${context/portal_url}</link>
-    		</image>
-        <itunes:image href="${feed/logo}" />
+        <tal:block tal:condition="settings/podcast_image">
+          <image>
+            <url>${python: utils.get_object(podcast_image).absolute_url()}</url>
+            <title>${feed/title} Logo</title>
+            <link>${context/portal_url}</link>
+          </image>
+          <itunes:image href="${python: utils.get_object(podcast_image).absolute_url()}" />
+        </tal:block>
+        <tal:block tal:condition="not: settings/podcast_image|nothing">
+          <image>
+            <url>${feed/logo}</url>
+            <title>${feed/title} Logo</title>
+            <link>${context/portal_url}</link>
+            <itunes:image href="${feed/logo}" />
+          </image>
+        </tal:block>
         <itunes:explicit>no</itunes:explicit>
         <item tal:repeat="item feed/items">
             <title tal:content="item/title" />

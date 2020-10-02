@@ -4,6 +4,7 @@ from cStringIO import StringIO
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import getUtility
@@ -20,6 +21,9 @@ class AuditView(BrowserView):
     error_template = ViewPageTemplateFile('templates/audit-error.pt')
 
     def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-audit')
+
         self._user_cache = {}
         self.site_path = '/'.join(self.context.getPhysicalPath())
         try:

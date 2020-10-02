@@ -11,12 +11,14 @@ from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.event.base import localized_now
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
+from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 from zope.interface import Interface
 import logging
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -26,6 +28,12 @@ try:
 except ImportError:
     class IRelationBrokenEvent(Interface):
         pass
+
+
+def on_content_state_changed(obj, event):
+    obj.reindexObject(idxs=['has_private_parents'])
+    if IFolderish.providedBy(obj):
+        tasks.reindex_children.delay(obj, ['has_private_parents'])
 
 
 def on_file_edit(obj, event):

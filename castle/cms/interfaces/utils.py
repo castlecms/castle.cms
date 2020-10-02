@@ -36,6 +36,9 @@ class IUtils(Interface):
     def clean_youtube_url(url):
         pass
 
+    def get_external_youtube_url(obj):
+        pass
+
     def get_uid(obj):
         pass
 
@@ -91,6 +94,9 @@ class IUtils(Interface):
         pass
 
     def get_path():
+        pass
+
+    def get_backend_url_no_trailing_slash():
         pass
 
 
