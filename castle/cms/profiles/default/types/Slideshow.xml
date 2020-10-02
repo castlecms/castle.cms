@@ -28,6 +28,7 @@
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes"/>
+  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
  </property>
  <property name="schema">castle.cms.interfaces.ISlideshow</property>
  <alias from="(Default)" to="(dynamic view)"/>

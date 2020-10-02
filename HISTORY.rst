@@ -1,10 +1,103 @@
 Changelog
 =========
 
-2.6.11 (unreleased)
+2.6.24 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.6.23 (2020-09-15)
+-------------------
+
+- exclude_from_search and has_private_parents features for public results
+- panels to list items excluded from search for admin
+
+
+2.6.22 (2020-09-10)
+-------------------
+
+- slideshow refinements
+- add property per content item to exclude from search query
+- query filter updates, including new wording and broader search
+
+
+2.6.21 (2020-07-30)
+-------------------
+
+- fix the QueryListingTile to split display_fields correctly when passed as
+  a query parameter to the @@castle.cms.querylisting view
+- fix s3 integration in the edit/delete actions of the archival management view
+
+
+2.6.20 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.19 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.18 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.17 (2020-07-09)
+-------------------
+
+- revert manage-archives js and improve manage-archives usage of boto3 library
+
+
+2.6.16 (2020-07-07)
+-------------------
+
+- slideshow upgrades and fixes
+- fix password reset link in registration email
+- improve scrub login at backend functionality
+
+
+2.6.15 (2020-07-01)
+-------------------
+
+- update archival-manage view to deal with a large list of objects in an s3 bucket
+  in a very basic, but functional (for now) way.
+
+
+2.6.14 (2020-07-01)
+-------------------
+
+- fix js inclusion an archival-review view, move it to a resource definition
+
+
+2.6.13 (2020-06-22)
+-------------------
+
+- js fix
+
+2.6.12 (2020-06-22)
+-------------------
+
+- slideshow and search updates
+  [bduncan137]
+- some import/export work
+  [daxxog]
+
+
+2.6.11 (2020-06-04)
+-------------------
+
+- utilize resource registry instead of metal:javascript in some places
+  [daxxog]
+- add advanced player with no image
+  [Takiyo]
+- Slideshow enhancements and configuration options
+  [bduncan137]
 
 
 2.6.10 (2020-05-20)

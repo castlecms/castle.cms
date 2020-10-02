@@ -52,6 +52,7 @@ from zope.interface import implementsOnly
 from zope.schema.interfaces import IField
 from zope.schema.interfaces import IList
 from ZPublisher.HTTPRequest import FileUpload
+from castle.cms.vocabularies import ReallyUserFriendlyTypesVocabulary as FriendlyTypesVocab
 
 
 class MultiSelectWidget(pz3c_SelectWidget):
@@ -167,6 +168,29 @@ class AudioRelatedItemsWidget(RelatedItemsWidget):
         return args
 
 
+class SlideRelatedItemsWidget(RelatedItemsWidget):
+
+    def get_friendly_types_without_folder(self):
+        friendly_portal_types_vocab = FriendlyTypesVocab()(self.context)
+        friendly_portal_types = friendly_portal_types_vocab.by_value.keys()
+        friendly_portal_types.remove('Folder')
+        return friendly_portal_types
+
+    def _base_args(self):
+        args = super(SlideRelatedItemsWidget, self)._base_args()
+
+        args['pattern_options']['selectableTypes'] = self.get_friendly_types_without_folder()
+        args['pattern_options']['baseCriteria'] = [
+            {
+                'i': 'self_or_child_has_title_description_and_image',
+                'o': 'plone.app.querystring.operation.boolean.isTrue'
+            },
+        ]
+        args['pattern_options']['allowAdd'] = False
+        args['pattern_options']['folderTypes'] = ['Folder']
+        return args
+
+
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
 def QueryFieldWidget(field, request):
@@ -212,6 +236,14 @@ def ImageRelatedItemFieldWidget(field, request):
 def FileRelatedItemsFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field,
                                          FileRelatedItemsWidget(request))
+    widget.vocabulary = 'plone.app.vocabularies.Catalog'
+    return widget
+
+
+@adapter(IField, ICastleLayer)
+@implementer(IFieldWidget)
+def SlideRelatedItemsFieldWidget(field, request):
+    widget = z3c.form.widget.FieldWidget(field, SlideRelatedItemsWidget(request))
     widget.vocabulary = 'plone.app.vocabularies.Catalog'
     return widget
 

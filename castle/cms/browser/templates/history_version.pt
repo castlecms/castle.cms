@@ -7,13 +7,6 @@
       i18n:domain="plone">
 
 <head>
-  <metal:javascript fill-slot="javascript_head_slot">
-    <script src="${portal_url}/++plone++castle/components/history.js"></script>
-  </metal:javascript>
-  <metal:block fill-slot="style_slot">
-    <link rel="stylesheet" type="text/css"
-          href="${portal_url}/++plone++castle/less/misc/history.css">
-  </metal:block>
 </head>
 
 <body>
