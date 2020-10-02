@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+<metal:main metal:fill-slot="prefs_configlet_main">
+    <body>
+        This is a list of items with "Exclude From Search" selected in their properties.  You can click on an item to navigate and edit that property if you'd like it to show up in search results.
+        <br><br>
+        <p tal:repeat="item view/get_excluded_content"><a href="${item/getURL}">${item/Title}</a></p>
+    </body>
+</metal:main>
+</html>

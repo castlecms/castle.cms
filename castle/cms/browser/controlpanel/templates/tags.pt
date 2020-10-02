@@ -7,11 +7,6 @@
       i18n:domain="plone">
 
 <body>
-
-  <metal:javascript fill-slot="javascript_head_slot">
-    <script src="${portal_url}/++plone++castle/components/tag-manager.js"></script>
-  </metal:javascript>
-
 <metal:main metal:fill-slot="prefs_configlet_main">
 
     <a href=""

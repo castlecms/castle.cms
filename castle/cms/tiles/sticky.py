@@ -11,7 +11,7 @@ class StickyFooterTile(BaseTile):
     def internal_link_url(self):
         if self.data.get('internal_link'):
             try:
-                brain = uuidToCatalogBrain(self.data.internal_link[0])
+                brain = uuidToCatalogBrain(self.data['internal_link'][0])
                 return brain.getURL()
             except Exception:
                 pass
@@ -19,10 +19,17 @@ class StickyFooterTile(BaseTile):
 
 class IStickyFooterTileSchema(Interface):
 
+    email_text = schema.TextLine(
+        title=u"Footer Title",
+        description=u"(appears next to email icon)",
+        required=False,
+        default=u"",
+    )
+
     description = schema.TextLine(
         title=u"Footer Description",
         description=u"(appears left of button)",
-        required=True,
+        required=False,
         default=u"",
     )
 
