@@ -77,6 +77,10 @@ def dump_object_data(obj, duplicate=False):
         state = api.content.get_state(obj=obj)
     except WorkflowException:
         state = 'published'
+    try:
+        metadata_stripped = obj.metadata_stripped
+    except AttributeError:
+        metadata_stripped = False
     base_url = obj.absolute_url()
     registry = getUtility(IRegistry)
     if obj.portal_type in registry.get('plone.types_use_view_action_in_listings', []):
@@ -94,7 +98,7 @@ def dump_object_data(obj, duplicate=False):
         'title': obj.Title(),
         'valid': True,
         'duplicate': duplicate,
-        'metadata_stripped': obj.metadata_stripped
+        'metadata_stripped': metadata_stripped
     })
 
 
