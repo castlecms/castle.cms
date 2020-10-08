@@ -441,7 +441,10 @@ class Creator(BrowserView):
                     create_opts['subject'] = self.request.form.get(name).split(';')
                 else:
                     create_opts[name] = self.request.form.get(name, '')
-            create_opts['metadata_stripped'] = self.metadata_stripped
+            try:
+                create_opts['metadata_stripped'] = self.metadata_stripped
+            except AttributeError:
+                pass
             return api.content.create(**create_opts)
         finally:
             fi.close()

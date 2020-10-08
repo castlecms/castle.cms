@@ -13,7 +13,7 @@
         </dd>
       </dl>
     </tal:notshow>
-    <p id="errorMsg" tal:condition="python: view.context.metadata_stripped is False">The metadata on this file was not stripped</p>
+    <p style="color:red" tal:condition="python: view.context.metadata_stripped is False">The metadata on this file was not stripped</p>
     <div id="DV-wrapper">
       <div aria-hidden="true" class="pat-documentviewer DV-container"
            data-pat-documentviewer="${view/pattern_options}">
