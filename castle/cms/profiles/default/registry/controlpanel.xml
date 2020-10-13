@@ -116,4 +116,16 @@
     </value>
   </record>
 
+  <record name="castle.es_index"
+          interface="castle.cms.interfaces.ISearchSettings"
+          field="es_index">
+    <field type="plone.registry.field.TextLine" />
+  </record>
+
+  <record name="castle.es_index_enabled"
+          interface="castle.cms.interfaces.ISearchSettings"
+          field="es_index_enabled">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
 </registry>

@@ -507,6 +507,16 @@ class ISearchSettings(Interface):
                 u'To broaden your search to other crawled sites, select a subdomain listed under "Source."' # noqa
     )
 
+    es_index_enabled = schema.Bool(
+        title=u'Enable Custom Elastic Search Index',
+        default=False
+    )
+
+    es_index = schema.TextLine(
+        title=u'Elastic Search Index',
+        description=u'The index prefix used for elastic search',
+        required=False
+    )
 
 class ISlideshowSettings(Interface):
     resource_slide_view_more_link_text = schema.TextLine(
