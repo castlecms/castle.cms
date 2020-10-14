@@ -290,35 +290,28 @@ class ISiteConfiguration(Interface):
         default=False
     )
 
-    cdn_alternate_domain = schema.TextLine(
-        title=u'Configure alternate CDN domain',
+
+class ICDNSettings(Interface):
+    cdn_alternate_url_prefix = schema.TextLine(
+        title=u'Configure Alternate CDN URL',
+        description=u'Example: https://cdn.example.site/prefix',
         required=False
     )
 
-    cdn_alternate_port = schema.TextLine(
-        title=u'Configure alternate CDN port',
-        required=False,
-    )
-
-    cdn_alternate_path = schema.TextLine(
-        title=u'Configure alternate CDN path',
-        required=False,
-    )
-
     cdn_allow_js = schema.Bool(
-        title=u'Include JS in CDN Config',
+        title=u'Enable CDN URL for JS resources',
         description=u'Allow javascript files to be served from alternate CDN URL.',
         default=False
     )
 
     cdn_allow_css = schema.Bool(
-        title=u'Include CSS in CDN Config',
+        title=u'Enable CDN URL for CSS resources',
         description=u'Allow CSS files to be served from alternate CDN URL.',
         default=False
     )
 
     cdn_allow_images = schema.Bool(
-        title=u'Include Images in CDN Config',
+        title=u'Enable CDN URL for Image resources',
         description=u'Allow images to be served from alternate CDN URL.',
         default=False
     )
@@ -557,7 +550,7 @@ class ISlideshowSettings(Interface):
 
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, ISlideshowSettings):
+                      ISearchSettings, ISlideshowSettings, ICDNSettings):
     pass
 
 

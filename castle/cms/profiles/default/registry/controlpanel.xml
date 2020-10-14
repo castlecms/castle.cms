@@ -22,6 +22,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISiteConfiguration"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.ICDNSettings"
+           prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
@@ -33,38 +35,26 @@
         </field>
   </record>
 
-  <record name='castle.alternate_domain'
-          interface="castle.cms.interface.ISiteConfiguration"
-          field="alternate_domain">
-    <field type="plone.registry.field.TextLine" />
-  </record>
-          
-  <record name='castle.alternate_port'
-          interface="castle.cms.interface.ISiteConfiguration"
-          field="alternate_port">
-    <field type="plone.registry.field.TextLine" />
-  </record>
-
-  <record name='castle.alternate_path'
-          interface="castle.cms.interface.ISiteConfiguration"
-          field="alternate_path">
+  <record name='castle.cdn_alternate_url_prefix'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_alternate_url_prefix">
     <field type="plone.registry.field.TextLine" />
   </record>
 
   <record name='castle.cdn_allow_js'
-          interface="castle.cms.interface.ISiteConfiguration"
+          interface="castle.cms.interface.ICDNSettings"
           field="cdn_allow_js">
     <field type="plone.registry.field.Bool" />        
   </record>
         
   <record name='castle.cdn_allow_css'
-          interface="castle.cms.interface.ISiteConfiguration"
+          interface="castle.cms.interface.ICDNSettings"
           field="cdn_allow_css">
     <field type="plone.registry.field.Bool" />        
   </record>
 
   <record name='castle.cdn_allow_images'
-          interface="castle.cms.interface.ISiteConfiguration"
+          interface="castle.cms.interface.ICDNSettings"
           field="cdn_allow_images">
     <field type="plone.registry.field.Bool" />        
   </record>

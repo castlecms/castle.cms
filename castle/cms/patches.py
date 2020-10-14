@@ -4,7 +4,7 @@ from time import time
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from castle.cms import cache
-from castle.cms.cdn import cdn
+from castle.cms.cdn import CDN
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
@@ -153,16 +153,16 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 
 def scripts(self):
-    obj = cdn(hostname=self.site_url)
-    if obj.js_allowed:
+    obj = CDN(self.site_url)
+    if obj.modify_js_urls:
         self.site_url = obj.process_url(self.site_url)
 
     return self._old_scripts()
 
 
 def styles(self):
-    obj = cdn(hostname=self.site_url)
-    if obj.css_allowed:
+    obj = CDN(self.site_url)
+    if obj.modify_css_urls:
         self.site_url = obj.process_url(self.site_url)
 
     return self._old_styles()

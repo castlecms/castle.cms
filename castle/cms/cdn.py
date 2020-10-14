@@ -1,31 +1,18 @@
 from plone import api
 
 
-class cdn(object):
+class CDN(object):
 
-    def __init__(self, hostname, port=80, path=''):
-        self.hostname = api.portal.get_registry_record('castle.cdn_alternate_domain') or hostname
-        self.port = api.portal.get_registry_record('castle.cdn_alternate_port') or port
-        self.path = api.portal.get_registry_record('castle.cdn_alternate_path') or path
-        self.js_allowed = api.portal.get_registry_record('castle.cdn_allow_js') or False
-        self.css_allowed = api.portal.get_registry_record('castle.cdn_allow_css') or False
-        self.images_allowed = api.portal.get_registry_record('castle.cdn_allow_images') or False
+    def __init__(self, url_prefix):
+        self.alternate_url = api.portal.get_registry_record('castle.cdn_alternate_url_prefix') or url_prefix
+        self.modify_js_urls = api.portal.get_registry_record('castle.cdn_allow_js') or False
+        self.modify_css_urls = api.portal.get_registry_record('castle.cdn_allow_css') or False
+        self.modify_image_urls = api.portal.get_registry_record('castle.cdn_allow_images') or False
 
-    def process_url(self, url, relative_path=''):
-
-        # splits url parts
+    def process_url(self, url):
         protocol, path = url.split('://')
         path = path.split('/')
-        hostname = self.hostname
-        if self.port not in [80, ]:
-            hostname = '%s:%s' % (hostname, self.port)
 
-        path[0] = hostname
-        # add path, if supplied
-        if self.path:
-            path.insert(1, self.path)
-
-        # join everything
-        path = '/'.join(path)
-        url = '%s://%s' % (protocol, path)
-        return url
+        path[0] = self.alternate_url
+        new_url = '/'.join(path)
+        return new_url
