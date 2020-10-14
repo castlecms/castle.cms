@@ -155,8 +155,8 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 
 def es_custom_index(self, catalogtool):
-    es_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
-    if es_enabled:
+    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    if es_index_enabled:
         new_index = api.portal.get_registry_record('castle.es_index')
         setattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR, new_index)
     else:
