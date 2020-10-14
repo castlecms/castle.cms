@@ -518,6 +518,7 @@ class ISearchSettings(Interface):
         required=False
     )
 
+
 class ISlideshowSettings(Interface):
     resource_slide_view_more_link_text = schema.TextLine(
         title=u"View More link text",
