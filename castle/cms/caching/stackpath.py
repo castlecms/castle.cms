@@ -16,20 +16,22 @@ class StackPath(PurgeManager):
             self.stack_token is not None)
 
     def purge(self, urls):
-        url = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.stack_id
-        payload = {"items": [
-            {
-                "url": self.public_url,
-                "recursive": True
-            }
-        ]}
+        endpoint = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.stack_id
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
             "authorization": "Bearer %s" % self.stack_token
         }
+        purge_errors = False
 
-        return requests.request("POST", url, json=payload, headers=headers)
+        for url in urls:
+            payload = {"items": [{"url": url}]}
+            response = requests.request("POST", endpoint, json=payload, headers=headers)
+
+            if response.status_code != 200:
+                purge_errors = True
+
+        return purge_errors
 
 
 def get():

@@ -280,8 +280,8 @@ class Purge(BrowserView):
 
         if sp.enabled:
             self.sp_enabled = True
-            resp = CastlePurger.purgeSync(urls, sp)
-            if resp.status_code != 200:
+            purge_errors = CastlePurger.purgeSync(urls, sp)
+            if purge_errors:
                 success.append({'name': 'StackPatch', 'value': False})
             else:
                 success.append({'name': 'StackPatch', 'value': True})
