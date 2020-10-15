@@ -3,6 +3,7 @@ from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
 from . import cloudflare, stackpath, fastly
 from App.config import getConfiguration
+from castle.cms.caching.purgemanager import PurgeManager
 from castle.cms.linkintegrity import get_content_links
 from plone import api
 from plone.app.imaging.utils import getAllowedSizes
@@ -95,26 +96,28 @@ def purge(event):
     if not settings.enabled:
         return
 
+    purge_manager = PurgeManager()
+
     if paths:
         urls = []
         cf = cloudflare.get()
         if cf.enabled:
             for path in paths:
-                urls.extend(cf.getUrlsToPurge(path))
+                urls.extend(purge_manager.getUrlsToPurge(path))
 
             CastlePurger.purgeAsync(urls, cf)
 
         sp = stackpath.get()
         if sp.enabled:
             for path in paths:
-                urls.extend(sp.getUrlsToPurge(path))
+                urls.extend(purge_manager.getUrlsToPurge(path))
 
             CastlePurger.purgeAsync(urls, sp)
 
         fst = fastly.get()
         if fst.enabled:
             for path in paths:
-                urls.extend(fst.getUrlsToPurge(path))
+                urls.extend(purge_manager.getUrlsToPurge(path))
 
             CastlePurger.purgeAsync(urls, fst)
 
@@ -231,6 +234,7 @@ class Purge(BrowserView):
         cf = cloudflare.get()
         sp = stackpath.get()
         fst = fastly.get()
+        purge_manager = PurgeManager()
         paths = []
         urls = []
 
@@ -252,7 +256,7 @@ class Purge(BrowserView):
             paths.extend(getPathsToPurge(obj, self.request))
 
         for path in paths:
-            urls.extend(cf.getUrlsToPurge(path))
+            urls.extend(purge_manager.getUrlsToPurge(path))
 
         urls = list(set(urls))
 
@@ -269,7 +273,11 @@ class Purge(BrowserView):
         if cf.enabled:
             self.cf_enabled = True
             resp = CastlePurger.purgeSync(urls, cf)
-            success.append({'name': 'Cloudflare', 'value': resp.json()['success']})
+            if resp.status_code != 200:
+                success.append({'name': 'Cloudflare', 'value': False})
+            else:
+                success.append({'name': 'Cloudflare', 'value': True})
+
         if sp.enabled:
             self.sp_enabled = True
             resp = CastlePurger.purgeSync(urls, sp)

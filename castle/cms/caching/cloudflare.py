@@ -18,9 +18,6 @@ class CloudFlare(PurgeManager):
             self.email is not None and
             self.zone_id is not None)
 
-    def getUrlsToPurge(self, path):
-        return super(CloudFlare, self).getUrlsToPurge(path)
-
     def purge(self, urls):
         url = 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache' % self.zone_id
         headers = {

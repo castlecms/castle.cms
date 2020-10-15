@@ -15,9 +15,6 @@ class Fastly(PurgeManager):
             self.fastly_token is not None and
             self.fastly_service_id is not None)
 
-    def getUrlsToPurge(self, path):
-        return super(Fastly, self).getUrlsToPurge(path)
-
     def purge(self, urls):
         url = "https://api.fastly.com/service/%s/purge_all" % self.fastly_service_id
         headers = {

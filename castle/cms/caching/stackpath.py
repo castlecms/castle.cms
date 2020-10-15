@@ -15,9 +15,6 @@ class StackPath(PurgeManager):
             self.stack_id is not None and
             self.stack_token is not None)
 
-    def getUrlsToPurge(self, path):
-        return super(StackPath, self).getUrlsToPurge(path)
-
     def purge(self, urls):
         url = "https://gateway.stackpath.com/cdn/v1/stacks/%s/purge" % self.stack_id
         payload = {"items": [
