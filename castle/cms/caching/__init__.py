@@ -287,8 +287,8 @@ class Purge(BrowserView):
                 success.append({'name': 'StackPatch', 'value': True})
         if fst.enabled:
             self.fastly_enabled = True
-            resp = CastlePurger.purgeSync(urls, fst)
-            if resp.status_code != 200:
+            purge_errors = CastlePurger.purgeSync(urls, fst)
+            if purge_errors:
                 success.append({'name': 'Fastly', 'value': False})
             else:
                 success.append({'name': 'Fastly', 'value': True})
