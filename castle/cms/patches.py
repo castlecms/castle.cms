@@ -153,17 +153,17 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 
 def scripts(self):
-    obj = CDN(self.site_url)
-    if obj.modify_js_urls:
-        self.site_url = obj.process_url(self.site_url)
+    cdn_url_tool = CDN(self.site_url)
+    if cdn_url_tool.modify_js_urls:
+        self.site_url = cdn_url_tool.process_url(self.site_url)
 
     return self._old_scripts()
 
 
 def styles(self):
-    obj = CDN(self.site_url)
-    if obj.modify_css_urls:
-        self.site_url = obj.process_url(self.site_url)
+    cdn_url_tool = CDN(self.site_url)
+    if cdn_url_tool.modify_css_urls:
+        self.site_url = cdn_url_tool.process_url(self.site_url)
 
     return self._old_styles()
 

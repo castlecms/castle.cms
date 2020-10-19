@@ -6,6 +6,7 @@ from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from castle.cms import caching
+from castle.cms.cdn import CDN
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
 from castle.cms.utils import get_chat_info
@@ -523,6 +524,12 @@ class Toolbar(BrowserView):
 
         chat_info = get_chat_info()
 
+        cdn_url_tool = CDN(self.real_context.absolute_url())
+        if cdn_url_tool.modify_image_urls:
+            cdn_url = cdn_url_tool.process_url(self.real_context.absolute_url())
+        else:
+            cdn_url = self.real_context.absolute_url()
+
         data = {
             'data-base-url': self.real_context.absolute_url(),
             'data-view-url': self.context_state.view_url(),
@@ -538,7 +545,8 @@ class Toolbar(BrowserView):
             'lock_info': self.get_lock_info(),
             'messages': list(reversed(IStatusMessage(self.request).get_all())),
             'user_id': api.user.get_current().getId(),
-            'chat_info': chat_info
+            'chat_info': chat_info,
+            'cdn_url': cdn_url
         }
 
         if '@@castle-toolbar' in self.request.URL:
