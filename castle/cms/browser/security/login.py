@@ -2,6 +2,7 @@ import json
 import time
 
 from castle.cms import _, authentication, cache, texting
+from castle.cms.cdn import CDN
 from castle.cms.interfaces import (IAuthenticator, ISecureLoginAllowedView,
                                    ISiteSchema)
 from castle.cms.utils import (get_managers, send_email, strings_differ,
@@ -358,6 +359,15 @@ The user requesting this access logged this information:
 
     def options(self):
         return json.dumps(self.auth.get_options())
+
+    def cdn_url(self, resource_type):
+        try:
+            cdn_url_tool = CDN(self.request.URL)
+            options = cdn_url_tool.configured_resources
+            if options[resource_type]:
+                return cdn_url_tool.process_url(self.request.URL)
+        except ComponentLookupError:
+            return None
 
 
 class LoginExceptionApprovalView(BrowserView):

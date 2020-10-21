@@ -16,3 +16,7 @@ class CDN(object):
         path[0] = self.alternate_url
         new_url = '/'.join(path)
         return new_url
+
+    @property
+    def configured_resources(self):
+        return {'js': self.modify_js_urls, 'css': self.modify_css_urls, 'image': self.modify_image_urls}
