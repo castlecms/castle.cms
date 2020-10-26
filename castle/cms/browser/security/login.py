@@ -206,7 +206,12 @@ The user requesting this access logged this information:
                 })
 
         try:
-            logged_in, user = self.auth.authenticate( username=self.username, password=self.request.form.get('password'), country=self.get_country_header(), login=True)
+            logged_in, user = self.auth.authenticate(
+                username=self.username,
+                password=self.request.form.get('password'),
+                country=self.get_country_header(),
+                login=True
+            )
         except authentication.AuthenticationMaxedLoginAttempts:
             return json.dumps({
                 'success': False,
