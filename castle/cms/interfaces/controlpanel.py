@@ -316,6 +316,12 @@ class ICDNSettings(Interface):
         default=False
     )
 
+    cdn_allow_theming = schema.Bool(
+        title=u'Enable CDN URL for Theming resources',
+        description=u'Allow theme resources to be served from alternate CDN URL.',
+        default=False
+    )
+
 
 class IAPISettings(Interface):
     princexml_server_url = schema.TextLine(

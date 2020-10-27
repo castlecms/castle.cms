@@ -59,6 +59,12 @@
     <field type="plone.registry.field.Bool" />        
   </record>
 
+  <record name='castle.cdn_allow_theming'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_allow_theming">
+    <field type="plone.registry.field.Bool" />        
+  </record>
+
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"
           interface="plone.app.discussion.interfaces.IDiscussionSettings"
           field="globally_enabled">

@@ -11,6 +11,7 @@ from urlparse import urljoin
 
 import Globals
 from Acquisition import aq_parent
+from castle.cms.cdn import CDN
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
@@ -173,6 +174,12 @@ class _Transform(object):
             self.rewrite(result, context.absolute_url() + '/')
             result = result.tree
 
+        cdn_url_tool = CDN(portal_url)
+        options = cdn_url_tool.configured_resources
+        if options['theming']:
+            portal_url = cdn_url_tool.process_url(portal_url)
+            context_url = cdn_url_tool.process_url(context_url)
+
         theme_base_url = '%s/++%s++%s/index.html' % (
             portal_url,
             THEME_RESOURCE_NAME,
@@ -333,7 +340,6 @@ class _Transform(object):
                 body_classes += ' ' + content_body[0].attrib.get('class', '')
 
         body = body_xpath(tree)[0]
-        from plone.app.blocks.layoutbehavior import ILayoutAware
         if ILayoutAware.providedBy(context):
             body_classes += ' template-layout'
             adapted = ILayoutAware(context, None)
