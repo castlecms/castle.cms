@@ -3,6 +3,7 @@ import json
 from Acquisition import aq_inner, aq_parent
 from borg.localrole.interfaces import IFactoryTempFolder
 from castle.cms import cache, theming
+from castle.cms.cdn import CDN
 from castle.cms.interfaces import IDashboard
 from castle.cms.utils import get_upload_fields
 from plone import api
@@ -129,6 +130,13 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             })
         image_types = settings.image_objects or []
         folder_types = settings.contains_objects or []
+
+        cdn_url_tool = CDN(generator.portal_url)
+        options = cdn_url_tool.configured_resources
+        if options['js']:
+            base_url = cdn_url_tool.process_url(generator.portal_url)
+        else:
+            base_url = generator.portal_url
         configuration = {
             'relatedItems': {
                 'vocabularyUrl':
@@ -147,7 +155,7 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             'base_url': self.context.absolute_url(),
             'tiny': generator.get_tiny_config(),
             # This is for loading the languages on tinymce
-            'loadingBaseUrl': '%s/++plone++static/components/tinymce-builded/js/tinymce' % generator.portal_url,  # noqa
+            'loadingBaseUrl': '%s/++plone++static/components/tinymce-builded/js/tinymce' % base_url,  # noqa
             'prependToUrl': 'resolveuid/',
             'linkAttribute': 'UID',
             'prependToScalePart': '/@@images/image/',

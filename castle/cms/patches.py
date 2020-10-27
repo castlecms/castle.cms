@@ -168,6 +168,14 @@ def styles(self):
     return self._old_styles()
 
 
+def mapper_cdn_settings(self):
+    cdn_url_tool = CDN(self.request.URL)
+    options = cdn_url_tool.configured_resources
+    self.cdn_url = cdn_url_tool.process_url(self.request.URL) if options['theming'] else None
+
+    return self._old___call__()
+
+
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
 # See https://github.com/celery/celery/pull/4839/
 if hasattr(AsyncResult, '__del__'):

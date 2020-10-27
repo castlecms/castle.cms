@@ -21,6 +21,7 @@ from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import alsoProvides
 from zope.lifecycleevent import ObjectRemovedEvent
+from castle.cms.cdn import CDN
 from castle.cms.events import MetaTileEditedEvent
 import urllib
 
@@ -389,6 +390,12 @@ outline: 2px dashed orange;
         portal = api.portal.get()
         portal_url = portal.absolute_url()
         context_url = self.context.absolute_url()
+
+        cdn_url_tool = CDN(portal_url)
+        options = cdn_url_tool.configured_resources
+        if options['theming']:
+            portal_url = cdn_url_tool.process_url(portal_url)
+            context_url = cdn_url_tool.process_url(context_url)
 
         theme_base_url = '%s/++%s++%s/index.html' % (
             portal_url,

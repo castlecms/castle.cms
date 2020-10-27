@@ -11,7 +11,8 @@
           view nocall:view | nocall: plone_view;
           portal_url portal_state/portal_url;
           ajax_load python:False;
-          toolbar_class python:request.cookies.get('plone-toolbar', 'plone-toolbar-left pat-toolbar')"
+          toolbar_class python:request.cookies.get('plone-toolbar', 'plone-toolbar-left pat-toolbar');
+          cdn_url python: view.cdn_url;"
       i18n:domain="plone"
       tal:attributes="lang lang;">
 
@@ -22,16 +23,16 @@
 
     <!-- provide this so menu still shows and is styled -->
     <link rel="stylesheet"
-          tal:attributes="href string:${portal_url}/++plone++castle/plone-compiled.css" />
+          tal:attributes="href string:${cdn_url|portal_url}/++plone++castle/plone-compiled.css" />
     <link rel="stylesheet"
-          tal:attributes="href string:${portal_url}/++plone++castle/plone-logged-in-compiled.css" />
+          tal:attributes="href string:${cdn_url|portal_url}/++plone++castle/plone-logged-in-compiled.css" />
 
     <link rel="stylesheet/less" type="text/css"
           tal:condition="view/development"
-          tal:attributes="href string:${portal_url}/++resource++plone.app.theming/thememapper.less" />
+          tal:attributes="href string:${cdn_url|portal_url}/++resource++plone.app.theming/thememapper.less" />
     <link rel="stylesheet"
           tal:condition="not: view/development"
-          tal:attributes="href string:${portal_url}/++resource++plone.app.theming/thememapper-compiled.css" />
+          tal:attributes="href string:${cdn_url|portal_url}/++resource++plone.app.theming/thememapper-compiled.css" />
 
     <style>
       #btn-showinspectors,

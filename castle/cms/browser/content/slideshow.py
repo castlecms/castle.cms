@@ -1,3 +1,4 @@
+from castle.cms.cdn import CDN
 from plone.dexterity.browser import edit
 from Products.Five import BrowserView
 from lxml import etree
@@ -7,6 +8,7 @@ from plone.api.portal import get as get_portal
 from plone.api.portal import get_registry_record
 from plone.api.portal import set_registry_record
 from Products.CMFPlone.resources import add_resource_on_request
+from zope.component.interfaces import ComponentLookupError
 
 
 class SlideshowView(BrowserView):
@@ -117,6 +119,15 @@ class SlideshowView(BrowserView):
             'mobile_vert': slide.get('vert', 'middle') if vert == 'default' else vert,
             'mobile_alignment': slide.get('text_alignment', 'center') if align == 'default' else align,
         }
+
+    def cdn_url(self, resource_type):
+        try:
+            cdn_url_tool = CDN(self.request.URL)
+            options = cdn_url_tool.configured_resources
+            if options[resource_type]:
+                return cdn_url_tool.process_url(self.request.URL)
+        except ComponentLookupError:
+            return None
 
 
 class SlideshowEditForm(edit.DefaultEditForm):

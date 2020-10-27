@@ -1,14 +1,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US" 
-  xmlns:tal="http://xml.zope.org/namespaces/tal">
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      tal:define="cdn_url_css python: view.cdn_url('css');
+                  cdn_url_js python: view.cdn_url('js');">
   <meta name="viewport" content="initial-scale=1, width=device-width">
     <head>
-      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/reset.css" />
-      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.css" />
-      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/theme/black.css" />
-      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
+      <link rel="stylesheet" href="${cdn_url_css|context/portal_url}/++plone++castle/libs/revealjs/dist/reset.css" />
+      <link rel="stylesheet" href="${cdn_url_css|context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.css" />
+      <link rel="stylesheet" href="${cdn_url_css|context/portal_url}/++plone++castle/libs/revealjs/dist/theme/black.css" />
+      <link rel="stylesheet" href="${cdn_url_css|context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
       <!-- Flexbox Grid -->
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
-      <script type="module" src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"/>
+      <script type="module" src="${cdn_url_js|context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"/>
     </head>
     <body>
       <div class="reveal">
@@ -213,9 +215,9 @@
         <label class="close">close</label>
       </div>
     </div>
-    <script src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"></script>
-    <script src="${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/markdown.js"></script>
-    <script src="${context/portal_url}/++plone++castle/libs/revealjs/plugin/highlight/highlight.js"></script>
+    <script src="${cdn_url_js|context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"></script>
+    <script src="${cdn_url_js|context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/markdown.js"></script>
+    <script src="${cdn_url_js|context/portal_url}/++plone++castle/libs/revealjs/plugin/highlight/highlight.js"></script>
     <script>
       function goBack(){
         window.history.back();
