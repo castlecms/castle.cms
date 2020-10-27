@@ -45,6 +45,7 @@ class SecureLoginView(BrowserView):
             else:
                 self.request.response.setStatus(403)
                 return json.dumps({
+                    'success': False,
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
         else:
@@ -52,7 +53,7 @@ class SecureLoginView(BrowserView):
                 self.auth.expire_secure_flow_state()
             self.auth.set_secure_flow_state(self.initial_state)
 
-            if self.request.cookies.get('castle_session_id', None) == 'test_session':
+            if self.request.cookies.get('castle_session_id', None) in ['test_session', 'test_session_2']:
                 return 'test-view'
 
             self.request.response.setHeader('X-Theme-Applied', True)
