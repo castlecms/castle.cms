@@ -435,3 +435,12 @@ User and location information:
 <p>You have 12 hours to use this granted login exception.</p>
 '''.format(**email_data)
         send_email(email, email_subject, html=email_html)
+
+    def cdn_url(self, resource_type):
+        try:
+            cdn_url_tool = CDN(self.request.URL)
+            options = cdn_url_tool.configured_resources
+            if options[resource_type]:
+                return cdn_url_tool.process_url(self.request.URL)
+        except ComponentLookupError:
+            return None
