@@ -69,6 +69,16 @@ class CutActionView(cut.CutActionView):
 
 
 class CopyActionView(copy.CopyActionView):
+    def action(self, obj):
+        folder_path = '/'.join(obj.getPhysicalPath())
+        trash = self.catalog(path={'query': folder_path}, trashed=True)
+        if len(trash):
+            path = trash[0].getPath()
+            self.errors.append(_(u'Please restore or permanently delete recycled \
+                contents before copying a folder: {path}'.format(path=path)))
+        else:
+            super(CopyActionView, self).action(obj)
+
     def finish(self):
         oblist = []
         for ob in self.oblist:
