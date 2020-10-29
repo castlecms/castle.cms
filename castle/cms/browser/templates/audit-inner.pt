@@ -93,7 +93,7 @@
             <span tal:condition="not: has_obj">${python: view.get_path(data)}</span>
           </td>
           <td>${user/getUserName|user/getId|data/user}</td>
-          <td>${data/summary}</td>
+          <td class="audit-summary">${data/summary}</td>
           <td class="pat-moment"
                  data-pat-moment="format:relative"
                  data-date="${data/date}Z">${data/date}</td>
