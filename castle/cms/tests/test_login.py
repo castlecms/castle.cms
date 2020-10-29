@@ -322,7 +322,7 @@ class TestTwoFactor(unittest.TestCase):
 
         result = json.loads(view())
         self.assertFalse(result['success'])
-        
+
         self.request.form.update({
             'username': TEST_USER_NAME,
             'password': TEST_USER_PASSWORD
