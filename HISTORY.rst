@@ -4,7 +4,9 @@ Changelog
 2.6.24 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- show warning instead of error if folder containing recycling is copied
+- reset secure flow state and retry before 403
+- disable autocaps for mobile logins
 
 
 2.6.23 (2020-09-15)
