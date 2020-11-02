@@ -618,7 +618,7 @@ var siteSetup = React.createClass({
       fields = this.socialMediaFields();
     }
     else if( this.state.phase == 4 ) {
-      heading = "Now let's setup some of the APIs that CastleCMS uses.";
+      heading = "Now let's set up some of the APIs that CastleCMS uses.";
       fields = this.APIFields();
     }
 
