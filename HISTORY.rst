@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.24 (unreleased)
+2.6.24 (2020-11-02)
 -------------------
 
 - show warning instead of error if folder containing recycling is copied
