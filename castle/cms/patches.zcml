@@ -59,6 +59,27 @@
     original="_validateTicket"
     replacement=".patches.SessionPlugin_validateTicket"
     />
+  <monkey:patch
+    description="change cdn url for javascript"
+    class="Products.CMFPlone.resources.browser.scripts.ScriptsView"
+    original="scripts"
+    replacement=".patches.scripts"
+    preserveOriginal="True"
+    />
+  <monkey:patch
+    description="change cdn url for css"
+    class="Products.CMFPlone.resources.browser.styles.StylesView"
+    original="styles"
+    replacement=".patches.styles"
+    preserveOriginal="True"
+    />
+  <monkey:patch
+    description="change cdn url for theme mapper"
+    class="plone.app.theming.browser.mapper.ThemeMapper"
+    original="__call__"
+    replacement=".patches.mapper_cdn_settings"
+    preserveOriginal="True"
+    />
 
   <!-- disable additional mosaic pattern settings config since we already do this -->
   <adapter

@@ -1,3 +1,4 @@
+from castle.cms.cdn import CDN
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.interfaces import IAuthenticator
 from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
@@ -5,6 +6,7 @@ from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
 from plone.protect.interfaces import IDisableCSRFProtection
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
+from zope.component.interfaces import ComponentLookupError
 from zope.interface import alsoProvides
 from zope.interface import implements
 from zope.i18n import translate
@@ -69,3 +71,12 @@ class PasswordResetView(BrowserView):
             'successUrl': api.portal.get().absolute_url() + '/@@secure-login'
         }
         return json.dumps(data)
+
+    def cdn_url(self, resource_type):
+        try:
+            cdn_url_tool = CDN(self.request.URL)
+            options = cdn_url_tool.configured_resources
+            if options[resource_type]:
+                return cdn_url_tool.process_url(self.request.URL)
+        except ComponentLookupError:
+            return None

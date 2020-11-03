@@ -291,6 +291,38 @@ class ISiteConfiguration(Interface):
     )
 
 
+class ICDNSettings(Interface):
+    cdn_alternate_url_prefix = schema.TextLine(
+        title=u'Configure Alternate CDN URL',
+        description=u'Example: https://cdn.example.site/prefix',
+        required=False
+    )
+
+    cdn_allow_js = schema.Bool(
+        title=u'Enable CDN URL for JS resources',
+        description=u'Allow javascript files to be served from alternate CDN URL.',
+        default=False
+    )
+
+    cdn_allow_css = schema.Bool(
+        title=u'Enable CDN URL for CSS resources',
+        description=u'Allow CSS files to be served from alternate CDN URL.',
+        default=False
+    )
+
+    cdn_allow_images = schema.Bool(
+        title=u'Enable CDN URL for Image resources',
+        description=u'Allow images to be served from alternate CDN URL.',
+        default=False
+    )
+
+    cdn_allow_theming = schema.Bool(
+        title=u'Enable CDN URL for Theming resources',
+        description=u'Allow theme resources to be served from alternate CDN URL.',
+        default=False
+    )
+
+
 class IAPISettings(Interface):
     princexml_server_url = schema.TextLine(
         title=u'PrinceXML server url',
@@ -524,7 +556,7 @@ class ISlideshowSettings(Interface):
 
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, ISlideshowSettings):
+                      ISearchSettings, ISlideshowSettings, ICDNSettings):
     pass
 
 

@@ -20,6 +20,10 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.ISiteConfiguration"
+           prefix="castle" />
+  <records interface="castle.cms.interfaces.ICDNSettings"
+           prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
@@ -29,6 +33,36 @@
             <description>Users that won't have passwords expire.</description>
             <value_type type="plone.registry.field.TextLine"/>
         </field>
+  </record>
+
+  <record name='castle.cdn_alternate_url_prefix'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_alternate_url_prefix">
+    <field type="plone.registry.field.TextLine" />
+  </record>
+
+  <record name='castle.cdn_allow_js'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_allow_js">
+    <field type="plone.registry.field.Bool" />        
+  </record>
+        
+  <record name='castle.cdn_allow_css'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_allow_css">
+    <field type="plone.registry.field.Bool" />        
+  </record>
+
+  <record name='castle.cdn_allow_images'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_allow_images">
+    <field type="plone.registry.field.Bool" />        
+  </record>
+
+  <record name='castle.cdn_allow_theming'
+          interface="castle.cms.interface.ICDNSettings"
+          field="cdn_allow_theming">
+    <field type="plone.registry.field.Bool" />        
   </record>
 
   <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled"

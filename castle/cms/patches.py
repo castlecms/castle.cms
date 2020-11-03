@@ -4,6 +4,7 @@ from time import time
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from castle.cms import cache
+from castle.cms.cdn import CDN
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
@@ -149,6 +150,30 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
             logger.warning(
                 'Connection state error, swallowing', exc_info=True)
     return ticket_data
+
+
+def scripts(self):
+    cdn_url_tool = CDN(self.site_url)
+    if cdn_url_tool.modify_js_urls:
+        self.site_url = cdn_url_tool.process_url(self.site_url)
+
+    return self._old_scripts()
+
+
+def styles(self):
+    cdn_url_tool = CDN(self.site_url)
+    if cdn_url_tool.modify_css_urls:
+        self.site_url = cdn_url_tool.process_url(self.site_url)
+
+    return self._old_styles()
+
+
+def mapper_cdn_settings(self):
+    cdn_url_tool = CDN(self.request.URL)
+    options = cdn_url_tool.configured_resources
+    self.cdn_url = cdn_url_tool.process_url(self.request.URL) if options['theming'] else None
+
+    return self._old___call__()
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
