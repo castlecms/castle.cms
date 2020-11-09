@@ -43,9 +43,9 @@ define([
     if( errors.length > 0 ) {
       that.props.validate(false);
 
-      //This isn't the most valid way to do this, but
-      //we need a way to synchronously communicate back
-      //the the setup form whether or not this has failed
+      // This isn't the most valid way to do this, but
+      // we need a way to synchronously communicate back
+      // the setup form whether or not this has failed
       that.state.valid = false;
       that.setState({
         touched: true,
@@ -352,7 +352,7 @@ define([
       }
       var inputs = [];
 
-      //TODO: This is currently only really setup to work with
+      //TODO: This is currently only really set up to work with
       //Fieldsets made up of checkboxes. Needs to be more flexible.
       for( var item in this.props.dataSet ) {
         var input = this.props.dataSet[item];
