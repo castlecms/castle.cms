@@ -7,15 +7,18 @@ from castle.cms import cache
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
+from collective.elasticsearch.es import CUSTOM_INDEX_NAME_ATTR
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
+from plone import api
 from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
+from Products.CMFPlone.CatalogTool import CatalogTool
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
@@ -149,6 +152,20 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
             logger.warning(
                 'Connection state error, swallowing', exc_info=True)
     return ticket_data
+
+
+def es_custom_index(self, catalogtool):
+    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    if es_index_enabled:
+        new_index = api.portal.get_registry_record('castle.es_index')
+        setattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR, new_index)
+    else:
+        try:
+            delattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR)
+        except AttributeError:
+            pass
+
+    self._old___init__(catalogtool)
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.

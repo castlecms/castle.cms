@@ -522,9 +522,24 @@ class ISlideshowSettings(Interface):
         required=False)
 
 
+class IElasticSearchSettings(Interface):
+    es_index_enabled = schema.Bool(
+        title=u'Enable Custom Elastic Search Index',
+        default=False
+    )
+
+    es_index = schema.TextLine(
+        title=u'Elastic Search Index',
+        description=u'The index prefix used for elastic search.  You must restart clients and rebuild '
+                    u'(or rename the index on ES) in order for things to work properly',
+        required=False
+    )
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, ISlideshowSettings):
+                      ISearchSettings, IElasticSearchSettings,
+                      ISlideshowSettings):
     pass
 
 
