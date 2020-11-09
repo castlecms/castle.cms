@@ -5,15 +5,15 @@
     <tal:slide tal:repeat="image images">
       <li>
         <img src="${image/large}" alt="${image/description}" />
-        <tal:condition="${image/custom_markup}">
-          <div tal:replace="structure image/custom_markup"/>
-        </tal:condition>
-        <tal:condition="not: ${image/custom_markup}">
+        <div tal:condition="image/custom_markup">
+          <div tal:replace="structure image/custom_markup/output"/>
+        </div>
+        <div tal:condition="not: image/custom_markup">
           <p class="flex-caption">
             ${image/description}:
             <a href="${image/link}">${image/title}</a>
           </p>
-        </tal:condition>
+        </div>
       </li>
     </tal:slide>
   </ul>

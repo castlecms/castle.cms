@@ -30,7 +30,7 @@
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.location.ILocation"/>
   <element value="castle.cms.behaviors.search.ISearch"/>
-  <element value="castle.cms.behaviors.search.ICustomMarkup"/>
+  <element value="castle.cms.behaviors.custommarkup.ICustomMarkup"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
  </property>
  <property name="schema"></property>

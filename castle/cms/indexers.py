@@ -208,3 +208,9 @@ def self_or_child_has_title_description_and_image(obj):
     return bool(getattr(aq_base(obj), 'title', False)) and \
         bool(getattr(aq_base(obj), 'description', False)) and \
         bool(getattr(aq_base(obj), 'image', False))
+
+
+@indexer(IImage)
+def has_custom_markup(image):
+    if image.custom_markup:
+        return True
