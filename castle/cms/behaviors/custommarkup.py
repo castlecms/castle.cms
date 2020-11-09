@@ -18,6 +18,7 @@ class ICustomMarkup(model.Schema):
         required=False,
     )
 
+
 @implementer(ICustomMarkup)
 @adapter(IDexterityContent)
 class CustomMarkup(object):
