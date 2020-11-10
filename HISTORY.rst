@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.25 (unreleased)
+2.6.25 (2020-11-10)
 -------------------
 
 - audit index name based on configured es index
