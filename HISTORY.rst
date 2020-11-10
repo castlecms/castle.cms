@@ -4,7 +4,8 @@ Changelog
 2.6.25 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- audit index name based on configured es index
+- minor english grammar fixes
 
 
 2.6.24 (2020-11-02)
