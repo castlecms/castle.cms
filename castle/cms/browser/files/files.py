@@ -166,7 +166,7 @@ class CastleImageScaling(ImageScaling):
     def publishTraverse(self, request, name):
         if name == 'image':
             if IReferenceNamedImage.providedBy(self.context.image):
-                # auth not setup yet, we just redirect and assume we'll figure the rest out
+                # auth not set up yet, we just redirect and assume we'll figure the rest out
                 catalog = api.portal.get_tool('portal_catalog')
                 brains = catalog.unrestrictedSearchResults(UID=self.context.image.reference)
                 if len(brains) > 0:

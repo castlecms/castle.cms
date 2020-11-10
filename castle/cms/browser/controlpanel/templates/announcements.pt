@@ -50,7 +50,7 @@
             <div metal:use-macro="context/@@ploneform-macros/titlelessform"
                  tal:condition="realview/hasTexting"></div>
             <p tal:condition="not: realview/hasTexting">
-              Text messaging not setup on this site.
+              Text messaging not set up on this site.
             </p>
           </div>
           <div class="tab-content">
