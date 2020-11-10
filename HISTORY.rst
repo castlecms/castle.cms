@@ -6,6 +6,7 @@ Changelog
 
 - audit index name based on configured es index
 - minor english grammar fixes
+- custom markup field behavior for images,used in slider tile
 
 
 2.6.24 (2020-11-02)
