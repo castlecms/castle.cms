@@ -134,7 +134,8 @@ define([
         'height': 400,
         // stick here because it's easier to config without
         // additional settings
-        linkTypes: ['internal', 'external', 'email', 'anchor']
+        linkTypes: ['internal', 'external', 'email', 'anchor'],
+        verify_html: false
       },
       inline: false
     },
