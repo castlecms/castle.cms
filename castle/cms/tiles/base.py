@@ -147,7 +147,6 @@ class BaseTile(Tile):
 </p></body></html>"""
 
     def render(self):
-        # import pdb; pdb.set_trace()
         return self.index()
 
 
