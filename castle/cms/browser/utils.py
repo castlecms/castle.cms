@@ -356,6 +356,13 @@ class Utils(BrowserView):
         cache.set(cache_key, sorted_tags, 60 * 5)
         return sorted_tags
 
+    def _should_set_focal(self, focal, image_info):
+        return not focal and image_info and 'focal_point' in image_info
+
+    def _get_focal(self, focal, image_info):
+        if self._should_set_focal(focal, image_info):
+            return image_info['focal_point']
+
     def focal_image_tag(self, brain, scale=None, className='', imageClassName='',
                         attributes=None, focal=None):
         # read https://github.com/jonom/jquery-focuspoint on how to calc
@@ -386,8 +393,7 @@ class Utils(BrowserView):
         imEl.attrib.update(attrib)
         el.append(imEl)
 
-        if not focal and image_info and 'focal_point' in image_info:
-            focal = image_info['focal_point']
+        focal = self._get_focal(focal, image_info)
 
         if image_info and focal:
             width = image_info['width']
@@ -444,8 +450,7 @@ class Utils(BrowserView):
         imEl.attrib.update(attrib)
         div_element.append(imEl)
 
-        if not focal and image_info and 'focal_point' in image_info:
-            focal = image_info['focal_point']
+        focal = self._get_focal(focal, image_info)
 
         if image_info and focal:
             width = image_info['width']
@@ -516,8 +521,7 @@ class Utils(BrowserView):
             })
             video_element.append(track_element)
 
-        if not focal and image_info and 'focal_point' in image_info:
-            focal = image_info['focal_point']
+        focal = self._get_focal(focal, image_info)
 
         if image_info and focal:
             width = image_info['width']
