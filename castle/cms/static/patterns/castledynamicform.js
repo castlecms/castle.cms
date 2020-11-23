@@ -63,15 +63,9 @@ define([
     },
     bind: function(){
       var self = this;
-      $('input', self.getUseQuery()).change(function(){
-        self.manipulate();
-      });
-      $('input', self.getUseDescription()).change(function(){
-        self.manipulate();
-      });
-      self.getNavType().change(function(){
-        self.manipulate();
-      });
+      $('input', self.getUseQuery()).change(self.manipulate);
+      $('input', self.getUseDescription()).change(self.manipulate);
+      self.getNavType().change(self.manipulate);
     },
     getLimit: function(){
       return $('div[id$="-limit"]', this.$form);
