@@ -12,6 +12,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 
+
 import json
 import logging
 import requests
@@ -24,7 +25,13 @@ cleaner = Cleaner(style=True, page_structure=False,
                   annoying_tags=False, remove_unknown_tags=False)
 
 
-def create_raw_from_view(context, view_name='pdf', css_files=[]):
+def create_raw_from_view(
+    context,
+    view_name='pdf',
+    css_files=[],
+    js_files=[],
+):
+    print('create_raw_from_view')
     request = getRequest()
     view = getMultiAdapter((context, request), name=view_name)
     html = view()
@@ -32,9 +39,14 @@ def create_raw_from_view(context, view_name='pdf', css_files=[]):
     site_url = portal.absolute_url()
     css = []
     for css_file in css_files:
-        ct, data = get_data_from_url(css_file)
-        if isinstance(data, basestring):
-            css.append(data)
+        _, cs_data = get_data_from_url(css_file)
+        if isinstance(cs_data, basestring):
+            css.append(cs_data)
+    js = []
+    for js_file in js_files:
+        _, js_data = get_data_from_url(js_file)
+        if isinstance(js_data, basestring):
+            js.append(js_data)
     xml = fromstring(html)
     cleaner(xml)
     inline_images_in_dom(xml, portal, site_url)
@@ -46,16 +58,17 @@ def create_raw_from_view(context, view_name='pdf', css_files=[]):
     if public_url not in ('', None):
         for anchor in xml.cssselect('a'):
             if anchor.attrib.get('href', '').startswith(site_url):
-                anchor.attrib['href'] = anchor.attrib['href'].replace(site_url, public_url)
+                anchor.attrib['href'] = anchor.attrib['href'].replace(site_url, public_url)  # noqa: E501
 
-    return tostring(xml), css
+    return tostring(xml), css, js
 
 
 class PDFGenerationError(Exception):
     pass
 
 
-def create(html, css):
+def create(html, css, js):
+    print('create')
     try:
         registry = getUtility(IRegistry)
         prince_server_url = registry.get(
@@ -69,7 +82,12 @@ def create(html, css):
         # save styles
         resp = requests.post(
             prince_server_url,
-            data={'xml': tostring(xml), 'css': json.dumps(css)})
+            data={
+                'xml': tostring(xml),
+                'css': json.dumps(css),
+                'js': json.dumps(js),
+            },
+        )
         if resp.status_code != 200:
             raise PDFGenerationError('status: {}, data: {}'.format(
                 resp.status_code, resp.text))
