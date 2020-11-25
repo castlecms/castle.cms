@@ -31,7 +31,6 @@ def create_raw_from_view(
     css_files=[],
     js_files=[],
 ):
-    print('create_raw_from_view')
     request = getRequest()
     view = getMultiAdapter((context, request), name=view_name)
     html = view()
@@ -68,7 +67,6 @@ class PDFGenerationError(Exception):
 
 
 def create(html, css, js):
-    print('create')
     try:
         registry = getUtility(IRegistry)
         prince_server_url = registry.get(
