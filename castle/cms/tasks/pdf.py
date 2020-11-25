@@ -3,7 +3,7 @@ import time
 
 from castle.cms.pdf.generator import PDFGenerationError
 from castle.cms.pdf.generator import create
-# from castle.cms.pdf.generator import create_raw_from_view
+from castle.cms.pdf.generator import create_raw_from_view
 from castle.cms.pdf.generator import screenshot
 from castle.cms.settings import PDFSetting
 from castle.cms.utils import retriable
