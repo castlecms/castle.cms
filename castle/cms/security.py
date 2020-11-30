@@ -76,7 +76,7 @@ def onUserLogsIn(event):
 @adapter(IPubAfterTraversal)
 def afterTraversal(event):
     """
-    check it should be blocked by lockout
+    check if it should be blocked by lockout
     """
     request = event.request
     if not ICastleLayer.providedBy(request):
