@@ -4,6 +4,7 @@ from castle.cms.behaviors.location import ILocation
 from castle.cms.behaviors.search import ISearch
 from castle.cms.interfaces import ILDData
 from castle.cms.utils import site_has_icon
+from pkg_resources import get_distribution
 from plone.app.layout.globals.interfaces import IViewView
 from plone.tiles import Tile
 from Products.CMFCore.interfaces import ISiteRoot
@@ -56,6 +57,14 @@ class MetaDataTile(Tile):
     def _wrap_ld(self, data):
         return '<script type="application/ld+json">' + json.dumps(data) + '</script>'
 
+    @property
+    def version(self):
+        version_number = get_distribution('castle.cms').version
+        version_parts = version_number.split('.')
+        is_dev_version = version_parts[-1].find('dev') == 0
+        return_version_parts = version_parts[:-1 if is_dev_version else None]
+        return '.'.join(return_version_parts)
+
     def get_ld_data(self):
         result = ''
         ld = ILDData(self.context, None)
@@ -84,7 +93,7 @@ class MetaDataTile(Tile):
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'CastleCMS 2.5.17',
+                'generator': 'CastleCMS ' + self.version,
                 "distribution": "Global",
                 "robots": "index,follow"
             }
