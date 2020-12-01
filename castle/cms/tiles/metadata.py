@@ -3,6 +3,7 @@ import json
 from castle.cms.behaviors.location import ILocation
 from castle.cms.behaviors.search import ISearch
 from castle.cms.interfaces import ILDData
+from castle.cms.utils import is_backend
 from castle.cms.utils import site_has_icon
 from pkg_resources import get_distribution
 from plone.app.layout.globals.interfaces import IViewView
@@ -57,6 +58,11 @@ class MetaDataTile(Tile):
     def _wrap_ld(self, data):
         return '<script type="application/ld+json">' + json.dumps(data) + '</script>'
 
+    def _get_robot_config(self, search):
+        if(is_backend(self.request)):
+            return search.backend_robot_configuration or []
+        return search.robot_configuration or []
+
     @property
     def version(self):
         version_number = get_distribution('castle.cms').version
@@ -95,7 +101,6 @@ class MetaDataTile(Tile):
                 'expirationDate': _date(context, 'expires'),
                 'generator': 'CastleCMS ' + self.version,
                 "distribution": "Global",
-                "robots": "index,follow"
             }
             ldata = ILocation(context, None)
             if ldata is not None:
@@ -107,13 +112,13 @@ class MetaDataTile(Tile):
 
             search = ISearch(context, None)
             if search is not None:
-                if search.robot_configuration:
-                    config = search.robot_configuration[:]
-                    if 'index' not in config:
-                        config.append('noindex')
-                    if 'follow' not in config:
-                        config.append('nofollow')
-                    tags['robots'] = ','.join(config)
+                robot_configuration = self._get_robot_config(search)
+                config = robot_configuration[:]
+                if 'index' not in config:
+                    config.append('noindex')
+                if 'follow' not in config:
+                    config.append('nofollow')
+                tags['robots'] = ','.join(config)
 
             return ''.join([u'<meta name="{}" content="{}">'.format(name, value)
                             for name, value in tags.items()])
@@ -129,9 +134,8 @@ class MetaDataTile(Tile):
           )
 
     def get_printcss_link(self):
-        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(  # noqa
-              url=self.root_url
-              )
+        template = ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''  # noqa:E501
+        return template.format(url=self.root_url)
 
     def get_canonical_url(self):
         context_state = getMultiAdapter(
