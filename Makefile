@@ -8,6 +8,7 @@ clean:
 	if git status | grep -q "working tree clean"; then \
 		if [ -f "local.cfg" ]; then \
 			printf "\n\033[0;31mrefusing to \`make clean\` due existance of \`local.cfg\` !\033[0m\n"; \
+			exit 1; \
 		else \
 			git clean -fdx; \
 		fi \
