@@ -4,6 +4,7 @@ from time import time
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from castle.cms import cache
+from castle.cms.constants import CASTLE_VERSION_STRING
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
@@ -168,7 +169,11 @@ def es_custom_index(self, catalogtool):
     self._old___init__(catalogtool)
 
 
+def version_overview(self):
+    return [CASTLE_VERSION_STRING] + self._old_version_overview()
+
+
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
 # See https://github.com/celery/celery/pull/4839/
-if hasattr(AsyncResult, '__del__'):
+if getattr(AsyncResult, '__del__', False):
     delattr(AsyncResult, '__del__')
