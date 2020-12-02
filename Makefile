@@ -6,7 +6,11 @@ help:
 .PHONY=clean
 clean:
 	if git status | grep -q "working tree clean"; then \
-		git clean -fdx; \
+		if [ -f "local.cfg" ]; then \
+			printf "\n\033[0;31mrefusing to \`make clean\` due existance of \`local.cfg\` !\033[0m\n"; \
+		else \
+			git clean -fdx; \
+		fi \
 	else \
 		git status; \
 		printf "\n\033[0;31mrefusing to \`make clean\` due to \`git status\` !\033[0m\n"; \
