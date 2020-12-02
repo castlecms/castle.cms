@@ -5,7 +5,6 @@ from castle.cms.behaviors.search import ISearch
 from castle.cms.interfaces import ILDData
 from castle.cms.utils import is_backend
 from castle.cms.utils import site_has_icon
-from pkg_resources import get_distribution
 from plone.app.layout.globals.interfaces import IViewView
 from plone.tiles import Tile
 from Products.CMFCore.interfaces import ISiteRoot
@@ -17,6 +16,7 @@ from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
+from castle.cms.constants import CASTLE_VERSION_STRING
 
 
 head_viewlets = {
@@ -63,14 +63,6 @@ class MetaDataTile(Tile):
             return search.backend_robot_configuration or []
         return search.robot_configuration or []
 
-    @property
-    def version(self):
-        version_number = get_distribution('castle.cms').version
-        version_parts = version_number.split('.')
-        is_dev_version = version_parts[-1].find('dev') == 0
-        return_version_parts = version_parts[:-1 if is_dev_version else None]
-        return '.'.join(return_version_parts)
-
     def get_ld_data(self):
         result = ''
         ld = ILDData(self.context, None)
@@ -99,7 +91,7 @@ class MetaDataTile(Tile):
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'CastleCMS ' + self.version,
+                'generator': CASTLE_VERSION_STRING,
                 "distribution": "Global",
             }
             ldata = ILocation(context, None)
