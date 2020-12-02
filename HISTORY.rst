@@ -4,7 +4,8 @@ Changelog
 2.6.26 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Separated backend and frontend configurations for robot instructions in html meta tags
+- Added Current Castle Version to control panel Version Overview
 
 
 2.6.25 (2020-11-10)
