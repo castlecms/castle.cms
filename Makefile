@@ -1,9 +1,9 @@
-.PHONY=help
+.PHONY: help
 help:
 	@echo "available targets -->\n"
-	@cat Makefile | grep ".PHONY" | python -c 'import sys; sys.stdout.write("".join(list(map(lambda line: line.replace(".PHONY"+"=", "") if (".PHONY"+"=") in line else "", sys.stdin))))'
+	@cat Makefile | grep ".PHONY" | python -c 'import sys; sys.stdout.write("".join(list(map(lambda line: line.replace(".PHONY"+": ", "") if (".PHONY"+": ") in line else "", sys.stdin))))'
 
-.PHONY=clean
+.PHONY: clean
 clean:
 	if git status | grep -q "working tree clean"; then \
 		if [ -f "local.cfg" ]; then \
@@ -18,13 +18,13 @@ clean:
 		exit 1; \
 	fi
 
-.PHONY=fixdocker
+.PHONY: fixdocker
 fixdocker:
 	docker-compose down
 	docker system prune -f
 	-docker kill $$(docker ps -q)
 
-.PHONY=env
+.PHONY: env
 env:
 	if [ ! -d "./bin" ]; then \
 		virtualenv -p python2.7 .; \
@@ -33,7 +33,7 @@ env:
 		make buildout; \
 	fi
 
-.PHONY=buildout
+.PHONY: buildout
 buildout: env
 	if [ -f "local.cfg" ]; then \
 		bin/buildout -c local.cfg; \
@@ -41,10 +41,10 @@ buildout: env
 		bin/buildout; \
 	fi
 
-.PHONY=docker-compose
+.PHONY: docker-compose
 docker-compose: env fixdocker
 	docker-compose up
 
-.PHONY=fg
+.PHONY: fg
 fg: env
 	bin/instance fg
