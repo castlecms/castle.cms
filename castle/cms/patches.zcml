@@ -42,6 +42,13 @@
     original="__call__"
     replacement=".vhm.traversal"
     />
+ 
+ <monkey:patch
+    description="Allow default easyform mail template to be recognized and used"
+    class="collective.easyform.actions.Mailer"
+    original="get_mail_body"
+    replacement=".patches.patched_get_mail_body"
+    />
 
   <!-- patch zope app initializer so we can setup PAS right away
     This is so we can completely get rid of basic auth

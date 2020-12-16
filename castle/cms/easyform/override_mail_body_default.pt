@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <head>
+    <title></title>
+    <style>
+    dl {
+      display: flex;
+      flex-direction: column;
+    }
+      .non-field-label {
+        font-size: 16px;
+        margin: 15px 0;
+      }
+      .field_label {
+        text-decoration: underline;
+        margin: 10px 0 0 0;
+      }
+      dd {
+        margin: 0 0 15px 20px;
+      }
+    </style>
+  </head>
+  <body>
+  <!-- <tal:definitions tal:define="label_fields mailer/label_fields" -->
+    <p tal:content="structure body_pre | nothing" />
+    <dl>
+        <tal:block repeat="field data | nothing">
+            <dt 
+              tal:content="python:fields[field]"
+              class="${python: 'non-field-label' if field in label_fields else 'field_label'}"
+            />
+            <dd tal:content="structure python:widgets[field]" />
+        </tal:block>
+    </dl>
+    <p tal:content="structure body_post | nothing" />
+    <p tal:content="structure body_footer | nothing" />
+  <!-- /> -->
+  </body>
+</html>
