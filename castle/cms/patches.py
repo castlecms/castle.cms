@@ -1,4 +1,6 @@
 import logging
+import types
+from os import path
 from time import time
 
 from AccessControl import getSecurityManager
@@ -7,6 +9,13 @@ from castle.cms import cache
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
+from collective.easyform.api import dollar_replacer
+from collective.easyform.api import filter_fields
+from collective.easyform.api import filter_widgets
+from collective.easyform.api import get_schema
+from collective.easyform.api import lnbr
+from collective.easyform.api import OrderedDict
+from collective.easyform.actions import DummyFormView
 from collective.elasticsearch.es import CUSTOM_INDEX_NAME_ATTR
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
 from OFS.CopySupport import CopyError
@@ -19,11 +28,14 @@ from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
 from Products.CMFPlone.CatalogTool import CatalogTool
+from Products.CMFPlone.utils import safe_unicode
+from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
+from zope.schema import getFieldsInOrder
 
 logger = logging.getLogger('castle.cms')
 
@@ -166,6 +178,91 @@ def es_custom_index(self, catalogtool):
             pass
 
     self._old___init__(catalogtool)
+
+
+def patched_get_mail_body(self, unsorted_data, request, context):
+    """Returns the mail-body with footer."""
+    def _get_body_part(self, body_part_name):
+        # pass both the bare_fields (fgFields only) and full fields.
+        # bare_fields for compatability with older templates,
+        # full fields to enable access to htmlValue
+        if isinstance(self.__getattribute__(body_part_name), basestring):  # noqa:F821
+            return self.__getattribute__(body_part_name)
+        else:
+            return self.__getattribute__(body_part_name).output
+
+    def _do_dollar_replacement(self, body_part, data):
+        return body_part and lnbr(dollar_replacer(body_part, data))
+
+    def _get_fields_dict(fields_in_order):
+        return OrderedDict([
+            (i, j.title)
+            for i, j in fields_in_order
+        ])
+
+    def _get_label_fields(fields_in_order):
+        return [
+            field_name for field_name, field in fields_in_order
+            if 'label' in type(field).__name__.lower()
+        ]
+
+    def _get_body_pt_file():
+        this_path = path.dirname(__file__)
+        template_path = path.join(
+            this_path,
+            'easyform',
+            "override_mail_body_default.pt"
+        )
+        return safe_unicode(
+            open(template_path).read()
+        )
+
+    def _get_updated_form(schema, context, request):
+        form = DummyFormView(context, request)
+        form.schema = schema
+        form.prefix = 'form'
+        form._update()
+        return form
+
+    def _get_body_parts(self):
+        return (
+            self._get_body_part('body_pre'),
+            self._get_body_part('body_post'),
+            self._get_body_part('body_footer'),
+        )
+
+    def _get_template(self, context):
+        template = ZopePageTemplate(self.__name__)
+        template.write(self.body_pt)
+        return template.__of__(context)
+
+    def _add_methods_to_mailer_instance(mailer):
+        mailer._get_body_part = types.MethodType(_get_body_part, mailer)
+        mailer._get_body_parts = types.MethodType(_get_body_parts, mailer)
+        mailer._do_dollar_replacement = types.MethodType(_do_dollar_replacement, mailer)
+        mailer._get_template = types.MethodType(_get_template, mailer)
+
+    _add_methods_to_mailer_instance(self)
+    self.body_pt = _get_body_pt_file()
+
+    schema = get_schema(context)
+    form = _get_updated_form(schema, context, request)
+    widgets = filter_widgets(self, form.w)
+    data = filter_fields(self, schema, unsorted_data)
+    body_pre, body_post, body_footer = _get_body_parts(self)
+    fields_in_order = getFieldsInOrder(schema)
+    extra = {
+        'data': data,
+        'fields': _get_fields_dict(fields_in_order),
+        'label_fields': _get_label_fields(fields_in_order),
+        'widgets': widgets,
+        'mailer': self,
+        'body_pre': self._do_dollar_replacement(body_pre, data),
+        'body_post': self._do_dollar_replacement(body_post, data),
+        'body_footer': self._do_dollar_replacement(body_footer, data),
+    }
+    template = self._get_template(context)
+    return template.pt_render(extra_context=extra)
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
