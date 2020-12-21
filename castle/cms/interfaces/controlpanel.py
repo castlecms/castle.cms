@@ -213,6 +213,71 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
         required=False)
 
+    nist_password_mode = schema.Bool(
+        title=u'Enables NIST password standards',
+        description=u'Sets the required minimum password length to 12 and requires at least one '
+                    u'uppercase, lowercase, and special character (overrides manual NIST settings below)',
+        default=False,
+        required=False
+    )
+
+
+    nist_require_password_length = schema.Bool(
+        title=u'Require NIST minimum password length',
+        description=u'Enables setting a minimum password length for users.',
+        default=False,
+        required=False
+    )
+
+    nist_minimum_password_length = schema.Int(
+        title=u'NIST password length',
+        description=u'Sets the minimum password length for users.',
+        default=1,
+        required=False
+    )
+
+    nist_require_password_uppercase = schema.Bool(
+        title=u'Require NIST minimum uppercase characters',
+        description=u'Enables setting required number of uppercase characters in user password.',
+        default=False,
+        required=False
+    )
+
+    nist_minimum_password_uppercase = schema.Int(
+        title=u'NIST uppercase characters',
+        description=u'Sets the minimum number of uppercase characters in user password.',
+        default=1,
+        required=False
+    )
+
+    nist_require_password_lowercase = schema.Bool(
+        title=u'Require NIST minimum lowercase characters',
+        description=u'Enables setting required number of lowercase characters in user password.',
+        default=False,
+        required=False
+    )
+
+    nist_minimum_password_lowercase = schema.Int(
+        title=u'NIST lowercase characters',
+        description=u'Sets the minimum number of lowercase characters in user password.',
+        default=1,
+        required=False
+    )
+
+    nist_require_password_special = schema.Bool(
+        title=u'Require NIST minimum special characters',
+        description=u'Enables setting required number of special characters in user password.',
+        default=False,
+        required=False
+    )
+
+    nist_minimum_password_special = schema.Int(
+        title=u'NIST special characters',
+        description=u'Sets the minimum number of special characters in user password.',
+        default=1,
+        required=False
+    )
+
 
 class IAnnouncementData(Interface):
     show_announcement = schema.Bool(
