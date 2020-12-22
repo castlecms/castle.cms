@@ -1,12 +1,15 @@
 from Acquisition import aq_inner
 from castle.cms.lockout import LockoutManager
 from castle.cms.passwordvalidation.nist import NISTPasswordValidator, NISTError
+from castle.cms.pwexpiry.password_history_validator import PasswordHistoryValidator
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
 from Products.CMFPlone.resources import add_resource_on_request
 from zExceptions import Forbidden
 
 import time
+import logging
+logger = logging.getLogger('Products.CMFPlone')
 
 
 class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPanel):
@@ -117,27 +120,26 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
     def set_password(self):
         userid = self.request.form.get('userid')
         pw = self.request.form.get('password')
+        user = api.user.get(userid)
 
         nist_enabled = api.portal.get_registry_record('plone.nist_password_mode', default=False)
         if nist_enabled:
             try:
                 nist = NISTPasswordValidator(pw)
                 nist.validate()
+                password_history = PasswordHistoryValidator(self)
+                password_history.validate(pw, user)
             #! TODO:
             except NISTError as e:
-                msg = e.msg
-                prop = e.prop
-                import pdb; pdb.set_trace()
-
-        mtool = api.portal.get_tool('portal_membership')
+                logger.warn(e.msg)
 
         # marker to tell us we need to force user to reset password later
-        user = api.user.get(userid)
         user.setMemberProperties(mapping={
             'reset_password_required': True,
             'reset_password_time': time.time()
         })
 
+        mtool = api.portal.get_tool('portal_membership')
         member = mtool.getMemberById(userid)
         member.setSecurityProfile(password=pw)
 

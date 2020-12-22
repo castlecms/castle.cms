@@ -1,5 +1,8 @@
 from plone.api.portal import get_registry_record as get_rec
 
+import re
+
+
 class NISTPasswordValidator():
 
     def __init__(self, password):
@@ -12,7 +15,6 @@ class NISTPasswordValidator():
                 self.props[key] = get_rec('plone.nist_minimum_password_%s' % key)
             else:
                 self.props[key] = default_props[key]
-
 
     def validate(self):
         for prop in self.props:
@@ -31,9 +33,13 @@ class NISTPasswordValidator():
                 actual_lowercase = sum(1 for c in self.password if c.islower())
                 if actual_lowercase < required_lowercase:
                     raise NISTError('Password must contain %s lowercase letters.' % required_lowercase, prop)
-            #! TODO:
             elif prop == 'special':
-                pass
+                required_special = self.props[prop]
+                regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+                actual_special = len(re.findall(regex, self.password))
+                if actual_special < required_special:
+                    raise NISTError('Password must contain %s special characters.' % required_special, prop)
+
 
 class NISTError(Exception):
     def __init__(self, msg, prop):
