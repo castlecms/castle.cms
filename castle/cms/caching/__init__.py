@@ -259,7 +259,7 @@ class Purge(BrowserView):
                 path = path.split('VirtualHostRoot')[-1]
             else:
                 path = path[len(site_path):]
-            nice_paths.append(path)
+            nice_paths.append(path.decode('utf-8'))
 
         return nice_paths, success
 

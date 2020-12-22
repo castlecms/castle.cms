@@ -4,7 +4,7 @@ Changelog
 2.6.26 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix cloudflare cache purge unicode issue
 
 
 2.6.25 (2020-11-10)
