@@ -214,9 +214,9 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         required=False)
 
     nist_password_mode = schema.Bool(
-        title=u'Enables NIST password standards',
+        title=u'Enables NIST password standards (required to apply custom settings below)',
         description=u'Sets the required minimum password length to 12 and requires at least one '
-                    u'uppercase, lowercase, and special character (overrides manual NIST settings below)',
+                    u'uppercase, lowercase, and special character (settings below will override default behavior)',
         default=False,
         required=False
     )

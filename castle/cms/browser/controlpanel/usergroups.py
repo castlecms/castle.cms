@@ -1,5 +1,6 @@
 from Acquisition import aq_inner
 from castle.cms.lockout import LockoutManager
+from castle.cms.passwordvalidation.nist import NISTPasswordValidator, NISTError
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
 from Products.CMFPlone.resources import add_resource_on_request
@@ -116,6 +117,17 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
     def set_password(self):
         userid = self.request.form.get('userid')
         pw = self.request.form.get('password')
+
+        nist_enabled = api.portal.get_registry_record('plone.nist_password_mode', default=False)
+        if nist_enabled:
+            try:
+                nist = NISTPasswordValidator(pw)
+                nist.validate()
+            #! TODO:
+            except NISTError as e:
+                msg = e.msg
+                prop = e.prop
+                import pdb; pdb.set_trace()
 
         mtool = api.portal.get_tool('portal_membership')
 

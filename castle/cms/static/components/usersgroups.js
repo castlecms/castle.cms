@@ -90,7 +90,7 @@ require([
       }).fail(function(){
         cutils.createModalComponent(ConfirmationModalComponent, 'castle-confirmation-modal', {
           successMsg: 'Error changing password.'
-        }).finishWithSuccess();
+        }).finishWithFailure();
       }).always(function(){
         utils.loading.hide();
       });
