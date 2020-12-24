@@ -147,7 +147,6 @@ class BaseTile(Tile):
 </p></body></html>"""
 
     def render(self):
-        # import pdb; pdb.set_trace()
         return self.index()
 
 
@@ -209,6 +208,8 @@ class BaseImagesTile(ContentTile):
     sort_limit = 0
 
     def get_image_data_from_brain(self, brain):
+        if brain.has_custom_markup:
+            return self.get_image_data(brain.getObject())
         base_url = brain.getURL()
         return {
             'high': '%s/@@images/image/high' % base_url,
@@ -218,7 +219,8 @@ class BaseImagesTile(ContentTile):
             'original': base_url,
             'title': brain.Title,
             'description': brain.Description or '',
-            'link': '%s/view' % base_url
+            'link': '%s/view' % base_url,
+            'custom_markup': False
         }
 
     def get_image_data(self, im):
@@ -232,7 +234,8 @@ class BaseImagesTile(ContentTile):
             'original': base_url,
             'title': im.Title(),
             'description': im.Description() or '',
-            'link': '%s/view' % related.absolute_url()
+            'link': '%s/view' % related.absolute_url(),
+            'custom_markup': im.custom_markup
         }
 
     def get_images_in_folder(self, brain):

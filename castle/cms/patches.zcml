@@ -59,6 +59,13 @@
     original="_validateTicket"
     replacement=".patches.SessionPlugin_validateTicket"
     />
+  <monkey:patch
+    description="change the index for elastic search"
+    class="collective.elasticsearch.es.ElasticSearchCatalog"
+    original="__init__"
+    replacement=".patches.es_custom_index"
+    preserveOriginal="True"
+    />
 
   <!-- disable additional mosaic pattern settings config since we already do this -->
   <adapter

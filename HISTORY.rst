@@ -1,10 +1,24 @@
 Changelog
 =========
 
-2.6.25 (unreleased)
+2.6.27 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.6.26 (2020-12-22)
+-------------------
+
+- fix cloudflare cache purge unicode issue
+
+
+2.6.25 (2020-11-10)
+-------------------
+
+- audit index name based on configured es index
+- minor english grammar fixes
+- custom markup field behavior for images,used in slider tile
 
 
 2.6.24 (2020-11-02)
