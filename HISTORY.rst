@@ -4,7 +4,7 @@ Changelog
 2.6.27 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- tweak audit log styling to help prevent overlap on normal sized screens
 
 
 2.6.26 (2020-12-22)
