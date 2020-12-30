@@ -171,6 +171,11 @@
                                   class="plone-btn plone-btn-default plone-btn-xs
                                          castle-btn-reset-password"
                                   type="button" tal:condition="assigned_roles"
+                                  data-nist-enabled="${python:view.nistEnabled}"
+                                  data-nist-length="${python:view.nistLength}"
+                                  data-nist-upper="${python:view.nistUpper}"
+                                  data-nist-lower="${python:view.nistLower}"
+                                  data-nist-special="${python:view.nistSpecial}"
                                   data-userid="${user/id}"
                                   data-login="${user/login}">Change password</button>
                           <button class="plone-btn plone-btn-default plone-btn-xs

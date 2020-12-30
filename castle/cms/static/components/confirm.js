@@ -51,13 +51,6 @@ define([
       });
     },
 
-    finishWithFailure: function(){
-      var that = this;
-      that.setState({
-        finished: false
-      });
-    },
-
     renderContent: function(){
       var warning = '';
       var success = '';

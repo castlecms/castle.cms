@@ -1,21 +1,25 @@
 from Acquisition import aq_inner
 from castle.cms.lockout import LockoutManager
-from castle.cms.passwordvalidation.nist import NISTPasswordValidator, NISTError
-from castle.cms.pwexpiry.password_history_validator import PasswordHistoryValidator
+from castle.cms.passwordvalidation.nist import NISTError, NISTPasswordValidator
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
 from Products.CMFPlone.resources import add_resource_on_request
 from zExceptions import Forbidden
 
 import time
-import logging
-logger = logging.getLogger('Products.CMFPlone')
 
 
 class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPanel):
     def __call__(self):
         # utility function to add resource to rendered page
         add_resource_on_request(self.request, 'castle-components-usersgroups')
+
+        # Sets properties for nist password validation if it is enabled
+        nist_enabled = api.portal.get_registry_record('plone.nist_password_mode', default=False)
+        if nist_enabled:
+            self.nistEnabled = True
+            self.get_nist_config()
+
         return super(UsersOverviewControlPanel, self).__call__()
 
     def manageUser(self, users=[], resetpassword=[], delete=[]):
@@ -122,16 +126,15 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
         pw = self.request.form.get('password')
         user = api.user.get(userid)
 
+        #! TODO:
         nist_enabled = api.portal.get_registry_record('plone.nist_password_mode', default=False)
         if nist_enabled:
             try:
                 nist = NISTPasswordValidator(pw)
                 nist.validate()
-                password_history = PasswordHistoryValidator(self)
-                password_history.validate(pw, user)
-            #! TODO:
             except NISTError as e:
-                logger.warn(e.msg)
+                self.nistFailMessage = e.msg
+                self.nistFailProp = e.prop
 
         # marker to tell us we need to force user to reset password later
         user.setMemberProperties(mapping={
@@ -162,3 +165,10 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
 
         self.context.REQUEST.form['new_password'] = pw
         regtool.mailPassword(userid, self.context.REQUEST)
+
+    def get_nist_config(self):
+        nist = NISTPasswordValidator(None)
+        self.nistLength = nist.props['length']
+        self.nistUpper = nist.props['uppercase']
+        self.nistLower = nist.props['lowercase']
+        self.nistSpecial = nist.props['special']

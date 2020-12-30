@@ -90,7 +90,7 @@ require([
       }).fail(function(){
         cutils.createModalComponent(ConfirmationModalComponent, 'castle-confirmation-modal', {
           successMsg: 'Error changing password.'
-        }).finishWithFailure();
+        }).finishWithSuccess();
       }).always(function(){
         utils.loading.hide();
       });
@@ -129,14 +129,59 @@ require([
 
     renderContent: function(){
       var error = '';
+      this.props.failedValidation = false
       if(this.state.password1 !== this.state.password2){
+        this.props.failedValidation = true
         error = D.div({className: "portalMessage warning"}, [
           D.strong({}, 'Warning'),
           'Passwords do not match']);
-      }else if(this.state.password1.length < 5){
-        error = D.div({className: "portalMessage warning"}, [
-          D.strong({}, 'Warning'),
-          'Must enter password']);
+      }
+      if(this.props.nistEnabled){
+        var password = this.state.password1
+        var nistLength = this.props.nistLength
+        var nistUpper = this.props.nistUpper
+        var nistLower = this.props.nistLower
+        var nistSpecial = this.props.nistSpecial
+        // Length
+        if(password.length < nistLength){
+          this.props.failedValidation = true
+          error = D.div({className: "portalMessage warning"}, [
+            D.strong({}, 'Warning'),
+            `Password must be longer than ${nistLength} characters`]);
+        }
+        // Uppercase
+        else if(password.replace(/[^A-Z]/g, "").length < nistUpper){
+          this.props.failedValidation = true
+          error = D.div({className: "portalMessage warning"}, [
+            D.strong({}, 'Warning'),
+            `Password must contain at least ${nistUpper} uppercase character(s)`]);
+        }
+        // Lowercase
+        else if(password.replace(/[^a-z]/g, "").length < nistLower){
+          this.props.failedValidation = true
+          error = D.div({className: "portalMessage warning"}, [
+            D.strong({}, 'Warning'),
+            `Password must contain at least ${nistLower} lowercase character(s)`]);
+        }
+        // Special characters
+        else{
+          var re = new RegExp(/[@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "g");
+          var special = password.match(re);
+          var specialLength = special ? special.length : 0
+          if(specialLength < nistSpecial){
+            this.props.failedValidation = true
+            error = D.div({className: "portalMessage warning"}, [
+              D.strong({}, 'Warning'),
+              `Password must contain at least ${nistSpecial} special character(s)`]);
+          }
+        }
+      }else{
+        if(password.length < 5){
+          this.props.failedValidation = true
+          error = D.div({className: "portalMessage warning"}, [
+            D.strong({}, 'Warning'),
+            'Password must be longer than 5 characters in length.']);
+        }
       }
       return D.div({ className: 'castle-reset-password'}, [
         D.p({}, 'Changing password for: ' + this.props.login),
@@ -160,7 +205,7 @@ require([
       var that = this;
       var buttons = [];
       var disabled = false;
-      if(this.state.password1 !== this.state.password2 || this.state.password1.length < 5){
+      if(this.props.failedValidation){
         disabled = true;
       }
       buttons.push(D.button({ className: 'plone-btn plone-btn-warning',
@@ -214,7 +259,12 @@ require([
     $('.castle-btn-reset-password').off('click').on('click', function(){
       cutils.createModalComponent(ResetPasswordModalComponent, 'castle-reset-password-modal', {
         userid: $(this).attr('data-userid'),
-        login: $(this).attr('data-login')
+        login: $(this).attr('data-login'),
+        nistEnabled: $(this).attr('data-nist-enabled'),
+        nistLength: $(this).attr('data-nist-length'),
+        nistUpper: $(this).attr('data-nist-upper'),
+        nistLower: $(this).attr('data-nist-lower'),
+        nistSpecial: $(this).attr('data-nist-special'),
       });
     });
   };

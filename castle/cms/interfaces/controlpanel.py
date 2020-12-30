@@ -221,9 +221,8 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         required=False
     )
 
-
     nist_require_password_length = schema.Bool(
-        title=u'Require NIST minimum password length',
+        title=u'Set NIST minimum password length',
         description=u'Enables setting a minimum password length for users.',
         default=False,
         required=False
@@ -237,7 +236,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
     )
 
     nist_require_password_uppercase = schema.Bool(
-        title=u'Require NIST minimum uppercase characters',
+        title=u'Set NIST minimum uppercase characters',
         description=u'Enables setting required number of uppercase characters in user password.',
         default=False,
         required=False
@@ -251,7 +250,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
     )
 
     nist_require_password_lowercase = schema.Bool(
-        title=u'Require NIST minimum lowercase characters',
+        title=u'Set NIST minimum lowercase characters',
         description=u'Enables setting required number of lowercase characters in user password.',
         default=False,
         required=False
@@ -265,7 +264,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
     )
 
     nist_require_password_special = schema.Bool(
-        title=u'Require NIST minimum special characters',
+        title=u'Set NIST minimum special characters',
         description=u'Enables setting required number of special characters in user password.',
         default=False,
         required=False
