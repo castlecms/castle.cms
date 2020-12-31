@@ -34,4 +34,11 @@
       for="zope.interface.Interface"
       />
 
+  <adapter
+      name="your_package_nist_password_validation"
+      factory="castle.cms.passwordvalidation.nist.NISTPasswordValidator"
+      provides="castle.cms.interfaces.passwordvalidation.ICustomPasswordValidator"
+      for="zope.interface.Interface"
+      />
+
 </configure>

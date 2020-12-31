@@ -15,7 +15,7 @@ class PasswordHistoryValidator(object):
     def __init__(self, context):
         self.context = context
 
-    def validate(self, password, user=None):
+    def validate(self, password, data=None, user=None):
         """
         Password validation method
         """
