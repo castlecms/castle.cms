@@ -12,8 +12,7 @@ import re
 @implementer(ICustomPasswordValidator)
 class NISTPasswordValidator(object):
 
-    def __init__(self, password):
-        self.password = password
+    def __init__(self, context):
         self.props = {}
         default_props = {'length': 12, 'uppercase': 1, 'lowercase': 1, 'special': 1}
 
@@ -24,44 +23,32 @@ class NISTPasswordValidator(object):
             else:
                 self.props[key] = default_props[key]
 
-    def validate(self, password, data=None):
-        #! PROBABLY DELETE!!!
-        # if check_history:
-        #     user = api.user.get_current()
-        #     password_history = PasswordHistoryValidator(self)
-        #     reused_password = password_history.validate(self.password, user)
+    def validate(self, password, data=None, check_history=False, user=None):
+        if check_history:
+            password_history = PasswordHistoryValidator(self)
+            reused_password = password_history.validate(password, user=user)
 
-        #     if reused_password:
-        #         raise NISTError('Password has been used previously, please create a unique password.',
-        #                         'history')
-
-        self.password = password
+            if reused_password:
+                return _('Password has been used already.  Please enter a unique password.')
         for prop in self.props:
             if prop == 'length':
                 required_length = self.props[prop]
-                actual_length = len(self.password)
+                actual_length = len(password)
                 if actual_length < required_length:
                     return _('Password must be at least %s character(s) long.' % required_length)
             elif prop == 'uppercase':
                 required_uppercase = self.props[prop]
-                actual_uppercase = sum(1 for c in self.password if c.isupper())
+                actual_uppercase = sum(1 for c in password if c.isupper())
                 if actual_uppercase < required_uppercase:
                     return _('Password must contain at least %s uppercase character(s).' % required_uppercase)
             elif prop == 'lowercase':
                 required_lowercase = self.props[prop]
-                actual_lowercase = sum(1 for c in self.password if c.islower())
+                actual_lowercase = sum(1 for c in password if c.islower())
                 if actual_lowercase < required_lowercase:
                     return _('Password must contain at least %s lowercase character(s).' % required_lowercase)
             elif prop == 'special':
                 required_special = self.props[prop]
                 regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
-                actual_special = len(re.findall(regex, self.password))
+                actual_special = len(re.findall(regex, password))
                 if actual_special < required_special:
                     return _('Password must contain at least %s special character(s).' % required_special)
-
-
-#! PROBABLY DELETE!!!
-class NISTError(Exception):
-    def __init__(self, msg, prop):
-        self.msg = msg
-        self.prop = prop

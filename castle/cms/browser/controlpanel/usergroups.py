@@ -1,6 +1,6 @@
 from Acquisition import aq_inner
 from castle.cms.lockout import LockoutManager
-from castle.cms.passwordvalidation.nist import NISTError, NISTPasswordValidator
+from castle.cms.passwordvalidation.nist import NISTPasswordValidator
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
 from Products.CMFPlone.resources import add_resource_on_request
@@ -125,16 +125,17 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
         userid = self.request.form.get('userid')
         pw = self.request.form.get('password')
         user = api.user.get(userid)
-
-        #! TODO:
         nist_enabled = api.portal.get_registry_record('plone.nist_password_mode', default=False)
+
         if nist_enabled:
-            try:
-                nist = NISTPasswordValidator(pw)
-                nist.validate()
-            except NISTError as e:
-                self.nistFailMessage = e.msg
-                self.nistFailProp = e.prop
+            nist = NISTPasswordValidator(None)
+            failed_validation = nist.validate(pw, check_history=True, user=user)
+            if failed_validation:
+                #! if the history validation fails, the password will not be changed,
+                #! but it acts as if password change was successful.
+                #TODO: Need to prevent form submission and indicate it to user.
+                import pdb; pdb.set_trace()
+                return failed_validation
 
         # marker to tell us we need to force user to reset password later
         user.setMemberProperties(mapping={
