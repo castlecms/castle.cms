@@ -4,6 +4,8 @@ Changelog
 2.6.27 (unreleased)
 -------------------
 
+- Separated backend and frontend configurations for robot instructions in html meta tags
+- Added Current Castle Version to control panel Version Overview
 - tweak audit log styling to help prevent overlap on normal sized screens
 
 
