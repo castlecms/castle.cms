@@ -131,11 +131,8 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
             nist = NISTPasswordValidator(None)
             failed_validation = nist.validate(pw, check_history=True, user=user)
             if failed_validation:
-                #! if the history validation fails, the password will not be changed,
-                #! but it acts as if password change was successful.
-                #TODO: Need to prevent form submission and indicate it to user.
-                import pdb; pdb.set_trace()
-                return failed_validation
+                self.request.response.status = 418
+                self.request.response.errmsg = failed_validation
 
         # marker to tell us we need to force user to reset password later
         user.setMemberProperties(mapping={
@@ -173,3 +170,4 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
         self.nistUpper = nist.props['uppercase']
         self.nistLower = nist.props['lowercase']
         self.nistSpecial = nist.props['special']
+        self.failureMessage = None

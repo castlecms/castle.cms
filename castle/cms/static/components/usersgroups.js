@@ -83,14 +83,18 @@ require([
         }
       }).done(function(data){
         rebind(data);
+        cutils.createModalComponent(ConfirmationModalComponent, 'castle-confirmation-modal', {
+          successMsg: 'Password successfully changed.',
+        }).finishWithSuccess();
         that.hide();
+      }).fail(function(obj, resp, message){
+        var errorMessage = 'Error changing password.'
+        if (message != 'OK'){
+          errorMessage = message
+        }
         cutils.createModalComponent(ConfirmationModalComponent, 'castle-confirmation-modal', {
-          successMsg: 'Password successfully changed.'
-        }).finishWithSuccess();
-      }).fail(function(){
-        cutils.createModalComponent(ConfirmationModalComponent, 'castle-confirmation-modal', {
-          successMsg: 'Error changing password.'
-        }).finishWithSuccess();
+          errorMsg: message
+        }).finishWithFailure();
       }).always(function(){
         utils.loading.hide();
       });
@@ -265,6 +269,7 @@ require([
         nistUpper: $(this).attr('data-nist-upper'),
         nistLower: $(this).attr('data-nist-lower'),
         nistSpecial: $(this).attr('data-nist-special'),
+        nistFailureMessage: $(this).attr('data-nist-failure-message'),
       });
     });
   };

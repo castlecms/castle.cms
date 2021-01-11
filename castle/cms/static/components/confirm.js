@@ -24,9 +24,10 @@ define([
         title: 'Confirm user action',
         msg: 'Are you certain you want to do this?',
         successMsg: 'You have successfully completed this action.',
+        errorMsg: 'There were some errors.',
         confirmBtnLabel: 'Yes',
         cancelBtnLabel: 'No',
-        finishHideDelay: 1200,
+        finishHideDelay: 2000,
         finished: false,
         onConfirm: function(cmp){
           cmp.setState({
@@ -51,12 +52,24 @@ define([
       });
     },
 
+    finishWithFailure: function(){
+      var that = this;
+      that.setState({
+        finished: false,
+        disabled: true
+      }, function(){
+        setTimeout(function(){
+          that.hide();
+        }, that.props.finishHideDelay);
+      });
+    },
+
     renderContent: function(){
       var warning = '';
       var success = '';
       if(!this.state.finished){
-        warning = D.div({className: "portalMessage warning"}, [
-          D.strong({}, 'Warning'), this.props.msg]);
+        warning = D.div({className: "portalMessage error"}, [
+          D.strong({}, 'Error'), this.props.errorMsg]);
       }else{
         success = D.div({className: "portalMessage info"}, [
           D.strong({}, 'Success'), this.props.successMsg]);

@@ -214,9 +214,12 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         required=False)
 
     nist_password_mode = schema.Bool(
-        title=u'Enables NIST password standards (required to apply custom settings below)',
-        description=u'Sets the required minimum password length to 12 and requires at least one '
-                    u'uppercase, lowercase, and special character (settings below will override default behavior)',
+        title=u'Enables NIST password standards (required to apply custom NIST overrides below)',
+        description=u'Sets the required minimum password length to 12 and requires at '
+                    u'least 1 uppercase, 1 lowercase, and 1 special character (settings below '
+                    u'will override default behavior) '
+                    u'*On this site, all passwords are saved as cryptographic hashes, '
+                    u'so "fuzzy matching" against password history is not implemented [NIST IA-5 (1)(b)]',
         default=False,
         required=False
     )

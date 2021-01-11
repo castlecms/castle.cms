@@ -176,6 +176,7 @@
                                   data-nist-upper="${python:view.nistUpper}"
                                   data-nist-lower="${python:view.nistLower}"
                                   data-nist-special="${python:view.nistSpecial}"
+                                  data-nist-failure-message="${python:view.failureMessage}"
                                   data-userid="${user/id}"
                                   data-login="${user/login}">Change password</button>
                           <button class="plone-btn plone-btn-default plone-btn-xs
