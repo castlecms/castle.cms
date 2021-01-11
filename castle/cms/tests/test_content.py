@@ -243,12 +243,12 @@ class TestContentAccess(unittest.TestCase):
     def test_modify_content_upload_permission(self):
         api.user.create(
             email='foo@bar.com', username='foobar',
-            password='foobar', roles=('Member',))
+            password='Fo0B@r!*Rab0Of', roles=('Member',))
         setRoles(self.portal, 'foobar', (
             'Member', 'Contributor', 'Reviewer'))
         api.user.create(
             email='foo2@bar.com', username='foobar2',
-            password='foobar2', roles=('Member',))
+            password='Fo0B@r!*Rab0Of-2', roles=('Member',))
         setRoles(self.portal, 'foobar2', (
             'Member', 'Reviewer'))
 
