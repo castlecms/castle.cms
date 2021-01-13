@@ -1,5 +1,8 @@
 from collections import namedtuple
 
+from castle.cms.package import CASTLE_VERSION  # noqa:F401
+from castle.cms.package import CASTLE_VERSION_STRING  # noqa:F401
+
 SHIELD = namedtuple('SHIELD', 'NONE BACKEND ALL')('', 'backend', 'all')
 MAX_PASTE_ITEMS = 40
 ALL_SUBSCRIBERS = '--SUBSCRIBERS--'

@@ -5,7 +5,7 @@ Configuration and deployment
 Cron jobs
 ---------
 
-CastleCMS uses many cron jobs that need to be setup to provide functionality.
+CastleCMS uses many cron jobs that need to be set up to provide functionality.
 
 
 Daily
@@ -15,7 +15,7 @@ Daily
 - ``bin/social-counts``: goes through all content and updates social media counts.
   Can be done at any interval. With changes/restrictions to various social media APIs,
   this is becoming less useful.
-- ``bin/content-popularity``: if Google Analytics is setup, will get content statistics
+- ``bin/content-popularity``: if Google Analytics is set up, will get content statistics
   for popularity to help search ranking.
 - ``bin/clean-drafts``: clean old draft data
 

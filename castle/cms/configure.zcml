@@ -116,6 +116,10 @@
     name="castle.cms.vocabularies.MimeTypes"
     />
   <utility
+    component=".vocabularies.RobotBehaviorVocabulary"
+    name="castle.cms.vocabularies.RobotBehaviors"
+    />
+  <utility
     component=".vocabularies.ReallyUserFriendlyTypesVocabularyFactory"
     name="castle.cms.vocabularies.ReallyUserFriendlyTypes"
     />
