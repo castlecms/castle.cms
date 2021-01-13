@@ -37,7 +37,7 @@
         <div class="portalMessage warning"
              tal:condition="python: auths['twitter']['client'] and not auths['twitter']['authorized']">
             <strong>Twitter</strong>
-            You have a twitter application setup,
+            You have a twitter application set up,
             would you like to
             <a href="${portal_url}/@@twitter-auth">authorize your twitter account</a> for this site now?
         </div>
@@ -52,7 +52,7 @@
         <div class="portalMessage warning"
              tal:condition="python: auths['google']['client'] and not auths['google']['authorized']">
             <strong>Google</strong>
-            You have a Google application setup,
+            You have a Google application set up,
             would you like to
             <a href="${portal_url}/@@google-auth">authorize your Google account</a> for this site now?
         </div>

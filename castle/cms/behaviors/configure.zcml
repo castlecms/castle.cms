@@ -54,5 +54,13 @@
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".leadimage.IRequiredLeadImage"
     />
+  <plone:behavior
+    title="Custom Markup"
+    description="Add a field for custom markup to be used in various places"
+    provides=".custommarkup.ICustomMarkup"
+    factory=".custommarkup.CustomMarkup"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".custommarkup.ICustomMarkup"
+    />
 
 </configure>

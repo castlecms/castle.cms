@@ -18,6 +18,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISlideshowSettings" 
            prefix="castle" />
+  <records interface="castle.cms.interfaces.IElasticSearchSettings"
+           prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
   <records interface="castle.cms.interfaces.IAPISettings"
@@ -119,6 +121,12 @@
   </record>
 
   <record interface="castle.cms.interfaces.IAPISettings"
+          field="cf_bearer_token"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
           field="sp_stack_id"
           prefix="castle">
             <field type="plone.registry.field.TextLine"></field>
@@ -134,6 +142,18 @@
           field="fastly_token"
           prefix="castle">
             <field type="plone.registry.field.TextLine"></field>
+  </record>
+
+  <record name="castle.es_index"
+          interface="castle.cms.interfaces.IElasticSearchSettings"
+          field="es_index">
+    <field type="plone.registry.field.TextLine" />
+  </record>
+
+  <record name="castle.es_index_enabled"
+          interface="castle.cms.interfaces.IElasticSearchSettings"
+          field="es_index_enabled">
+    <field type="plone.registry.field.Bool" />
   </record>
 
 </registry>

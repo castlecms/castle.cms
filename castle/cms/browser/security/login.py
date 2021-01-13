@@ -29,7 +29,7 @@ class SecureLoginView(BrowserView):
             self.auth.COUNTRY_BLOCKED: self.country_blocked
         }
 
-    def __call__(self):
+    def __call__(self, reset=False):
         state = self.auth.get_secure_flow_state()
         if self.request.REQUEST_METHOD == 'POST':
             self.request.response.setHeader('Content-type', 'application/json')
@@ -38,25 +38,33 @@ class SecureLoginView(BrowserView):
                 self.auth.set_secure_flow_state(state)
             if state in self.state_map:
                 return self.state_map[state]()
+            elif not reset:
+                self.auth.expire_secure_flow_state()
+                self.auth.set_secure_flow_state(self.initial_state)
+                return self.__call__(True)
             else:
                 self.request.response.setStatus(403)
                 return json.dumps({
+                    'success': False,
                     'reason': 'Something went wrong.  Try again later.'
                 })  # this shouldn't happen, state will expire.
         else:
             if state:
                 self.auth.expire_secure_flow_state()
-            if self.auth.two_factor_enabled:
-                initial_state = self.auth.REQUESTING_AUTH_CODE
-            else:
-                initial_state = self.auth.CHECK_CREDENTIALS
-            self.auth.set_secure_flow_state(initial_state)
+            self.auth.set_secure_flow_state(self.initial_state)
 
-            if self.request.cookies.get('castle_session_id', None) == 'test_session':
+            if self.request.cookies.get('castle_session_id', None) in ['test_session', 'test_session_2']:
                 return 'test-view'
 
             self.request.response.setHeader('X-Theme-Applied', True)
             return self.index()
+
+    @property
+    def initial_state(self):
+        if self.auth.two_factor_enabled:
+            return self.auth.REQUESTING_AUTH_CODE
+        else:
+            return self.auth.CHECK_CREDENTIALS
 
     @property
     def username(self):
@@ -181,7 +189,7 @@ The user requesting this access logged this information:
                     'message': 'Two Factor is enabled, code not authorized.'
                 })
 
-        if hasattr(self.context, 'portal_registry'):
+        if getattr(self.context, 'portal_registry', None):
             backend_urls = self.context.portal_registry['plone.backend_url']
             only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']  # noqa
             portal_url = api.portal.get().absolute_url()
@@ -203,7 +211,8 @@ The user requesting this access logged this information:
                 username=self.username,
                 password=self.request.form.get('password'),
                 country=self.get_country_header(),
-                login=True)
+                login=True
+            )
         except authentication.AuthenticationMaxedLoginAttempts:
             return json.dumps({
                 'success': False,

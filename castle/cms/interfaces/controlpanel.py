@@ -391,22 +391,34 @@ class IAPISettings(Interface):
         required=False
     )
 
-    cf_api_key = schema.TextLine(
-        title=u'Cloudflare API Key',
-        description=u'Setting an API Key here and enabling cache purging '
-                    u'activates purging against Cloudflare.',
-        required=False
-    )
-
-    cf_email = schema.TextLine(
-        title=u'Cloudflare Email',
-        description=u'One associated with cloudflare api key',
+    cf_bearer_token = schema.TextLine(
+        title=u'Cloudflare Bearer Token',
+        description=u'Set the bearer token used for cloudflare API authentication. '
+                    u'This is the PREFERRED METHOD over using an API key. '
+                    u'*Note: this value must be left blank if still using API key for authentication.',
         required=False
     )
 
     cf_zone_id = schema.TextLine(
         title=u'Cloudflare Zone ID',
-        required=False)
+        required=False
+    )
+
+    cf_api_key = schema.TextLine(
+        title=u'Cloudflare API Key',
+        description=u'Setting an API Key here and enabling cache purging '
+                    u'activates purging against Cloudflare. *Note: Cloudflare API '
+                    u'keys are now Legacy, in favor of bearer tokens.  They will still '
+                    u'work on this site, but using bearer tokens is recommended.',
+        required=False
+    )
+
+    cf_email = schema.TextLine(
+        title=u'Cloudflare Email',
+        description=u'One associated with cloudflare api key.  Only needed if '
+                    u'authenticating with API key instead of bearer token.',
+        required=False
+    )
 
     sp_token = schema.TextLine(
         title=u'StackPath Token',
@@ -540,9 +552,24 @@ class ISlideshowSettings(Interface):
         required=False)
 
 
+class IElasticSearchSettings(Interface):
+    es_index_enabled = schema.Bool(
+        title=u'Enable Custom Elastic Search Index',
+        default=False
+    )
+
+    es_index = schema.TextLine(
+        title=u'Elastic Search Index',
+        description=u'The index prefix used for elastic search.  You must restart clients and rebuild '
+                    u'(or rename the index on ES) in order for things to work properly',
+        required=False
+    )
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, ISlideshowSettings):
+                      ISearchSettings, IElasticSearchSettings,
+                      ISlideshowSettings):
     pass
 
 

@@ -1,10 +1,34 @@
 Changelog
 =========
 
-2.6.24 (unreleased)
+2.6.27 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Separated backend and frontend configurations for robot instructions in html meta tags
+- Added Current Castle Version to control panel Version Overview
+- tweak audit log styling to help prevent overlap on normal sized screens
+
+
+2.6.26 (2020-12-22)
+-------------------
+
+- fix cloudflare cache purge unicode issue
+
+
+2.6.25 (2020-11-10)
+-------------------
+
+- audit index name based on configured es index
+- minor english grammar fixes
+- custom markup field behavior for images,used in slider tile
+
+
+2.6.24 (2020-11-02)
+-------------------
+
+- show warning instead of error if folder containing recycling is copied
+- reset secure flow state and retry before 403
+- disable autocaps for mobile logins
 
 
 2.6.23 (2020-09-15)
