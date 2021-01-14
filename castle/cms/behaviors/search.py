@@ -4,14 +4,18 @@ from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
 from zope import schema
 from zope.interface import alsoProvides
-from zope.schema.vocabulary import SimpleVocabulary
 
 
 class ISearch(model.Schema):
 
     model.fieldset(
         'settings',
-        fields=['searchterm_pins', 'robot_configuration', 'exclude_from_search'],
+        fields=[
+            'searchterm_pins',
+            'robot_configuration',
+            'backend_robot_configuration',
+            'exclude_from_search',
+        ],
     )
 
     searchterm_pins = schema.List(
@@ -24,25 +28,27 @@ class ISearch(model.Schema):
 
     directives.widget('robot_configuration', SelectFieldWidget)
     robot_configuration = schema.List(
-        title=u'How robots should behave with this content',
-        description=u'Robot index and consume content on the web. '
+        title=u'How robots should behave with this content on frontend urls',
+        description=u'Robots index and consume content on the web. '
                     u'This allows you to remove content from search indexes.',
         required=False,
         defaultFactory=lambda: ['index', 'follow'],
+        missing_value=[],
         value_type=schema.Choice(
-            vocabulary=SimpleVocabulary([
-                SimpleVocabulary.createTerm('index', 'index', 'Index'),
-                SimpleVocabulary.createTerm('follow', 'follow', 'Follow links'),
-                SimpleVocabulary.createTerm('noimageindex', 'noimageindex', 'Do not index images'),
-                SimpleVocabulary.createTerm(
-                    'noarchive', 'noarchive',
-                    'Search engines should not show a cached link '
-                    'to this page on a SERP'),
-                SimpleVocabulary.createTerm(
-                    'nosnippet', 'nosnippet',
-                    'Tells a search engine not to show a snippet of this page '
-                    '(i.e. meta description) of this page on a SERP.'),
-            ])
+            vocabulary='castle.cms.vocabularies.RobotBehaviors',
+        ),
+    )
+
+    directives.widget('backend_robot_configuration', SelectFieldWidget)
+    backend_robot_configuration = schema.List(
+        title=u'How robots should behave with this content on backend urls',
+        description=u'Robots index and consume content on the web. '
+                    u'This allows you to remove content from search indexes.',
+        required=False,
+        defaultFactory=lambda: [],
+        missing_value=[],
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.RobotBehaviors',
         )
     )
 

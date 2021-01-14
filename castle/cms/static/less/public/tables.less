@@ -74,6 +74,20 @@ th {
   .table {
     background-color: @body-bg;
   }
+
+  &.audit-results {
+    display: -ms-grid;
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(80px, 1fr))
+      minmax(100px, auto)
+      minmax(80px , 1fr);
+    thead,
+    tbody,
+    tr {
+      display: contents;
+    }
+  }
 }
 
 
