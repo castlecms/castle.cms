@@ -413,7 +413,6 @@
     handler=".upgrades.upgrade_2_6_25.upgrade"
     profile="castle.cms:default"
     />
-</configure>
 
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.27"
@@ -431,3 +430,4 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
+</configure>
