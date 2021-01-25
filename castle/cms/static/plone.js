@@ -115,7 +115,8 @@ $(document).ready(function(){
   if (firstVisitCookie !== "acknowledged") {
     $.cookie(cookieKey, 'shown', {
       path: '/',
-      expires: 2147483647
+      expires: 2147483647,
+      secure: true
     });
     $.ajax({
       type: "GET",
@@ -131,7 +132,8 @@ $(document).ready(function(){
           document.getElementById("disclaimerOverlay").style.display = "none";
           $.cookie(cookieKey, 'acknowledged', {
             path: '/',
-            expires: 2147483647
+            expires: 2147483647,
+            secure: true
           });
          });
          // display div

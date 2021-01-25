@@ -64,6 +64,10 @@ html.print-pdf {
 		width: 100% !important;
 		height: auto !important;
 		zoom: 1 !important;
+		transform: scale(1) !important;
+		transform-origin: 0 0 !important;
+		-moz-transform: scale(1) !important;
+		-moz-transform-origin: 0 0 !important;
 		pointer-events: initial;
 
 		left: auto;
