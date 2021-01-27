@@ -9,7 +9,7 @@
     "grunt-contrib-requirejs": "^1.0.0",
     "grunt-contrib-uglify": "~2",
     "grunt-contrib-watch": "latest",
-    "grunt-sed": "~0.1.1",
+    "grunt-sed": "castlecms/grunt-sed#master",
     "less": "^3.13.1"
   },
   "dependencies": {
