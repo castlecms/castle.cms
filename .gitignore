@@ -41,6 +41,5 @@ env2
 dump.rdb
 export/
 /Makefile
-/package.json
 /watch-run.py
 /watchable-grunt.js

@@ -36,12 +36,6 @@ with open(os.path.join(SCRIPT_DIR, 'templates/watchable-grunt.js')) as fi:
         })
 
 
-with open(os.path.join(SCRIPT_DIR, 'templates/package.json')) as fi:
-    tmpl = fi.read()
-    with open('package.json', 'w') as output:
-        output.write(tmpl)
-
-
 with open(os.path.join(SCRIPT_DIR, 'templates/Makefile')) as fi:
     tmpl = fi.read()
     with open('Makefile', 'w') as output:
