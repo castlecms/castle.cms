@@ -23,24 +23,64 @@
 
     <tal:purged tal:condition="view/purged">
       <h3>Purged urls</h3>
-      <p tal:condition="not: view/success" class="discreet">
-        There was an error submitted the purge request
-      </p>
+
       <ul class='purge-paths'>
         <tal:path tal:repeat="url python: sorted(view.purged)">
           <li tal:content="url" />
         </tal:path>
       </ul>
-      <p class="discreet" tal:condition="python: view.cf_enabled and view.proxy_enabled">
-        Purged cloudflare and caching proxies
-      </p>
-      <p class="discreet" tal:condition="python: view.cf_enabled and not view.proxy_enabled">
-        Purged cloudflare
-      </p>
-      <p class="discreet" tal:condition="python: not view.cf_enabled and view.proxy_enabled">
-        Purged caching proxies
-      </p>
 
+      <p class="discreet" tal:condition="python: not view.cf_enabled">Cloudflare not enabled</p>
+      <p class="discreet" tal:condition="python: not view.sp_enabled">Stackpath not enabled</p>
+      <p class="discreet" tal:condition="python: not view.fastly_enabled">Fastly not enabled</p>
+
+      <tal:path tal:repeat="success view/success">
+        <p class="discreet" tal:condition="python: not success['value']">
+          <span tal:content="success/name"></span>
+          <span>unable to purge cache</span>
+        </p>
+        <p class="discreet" tal:condition="python: success['value']">
+
+          <!--Cloudflare purging-->
+          <span tal:condition="python: success['name'] == 'Cloudflare'">
+            <p class="discreet" tal:condition="python: view.cf_enabled and view.proxy_enabled">
+              Cloudflare and caching proxies purged
+            </p>
+            <p class="discreet" tal:condition="python: view.cf_enabled and not view.proxy_enabled">
+              Cloudflare purged
+            </p>
+            <p class="discreet" tal:condition="python: not view.cf_enabled and view.proxy_enabled">
+              Caching proxies purged
+            </p>
+          </span>
+
+          <!--Stackpath purging-->
+          <span tal:condition="python: success['name'] == 'StackPath'">
+            <p class="discreet" tal:condition="python: view.sp_enabled and view.proxy_enabled">
+              Stackpath and caching proxies purged
+            </p>
+            <p class="discreet" tal:condition="python: view.sp_enabled and not view.proxy_enabled">
+              Stackpath purged
+            </p>
+            <p class="discreet" tal:condition="python: not view.sp_enabled and view.proxy_enabled">
+              Caching proxies purged
+            </p>
+          </span>
+
+          <!--Fastly purging-->
+          <span tal:condition="python: success['name'] == 'Fastly'">
+            <p class="discreet" tal:condition="python: view.fastly_enabled and view.proxy_enabled">
+              Fastly and caching proxies purged
+            </p>
+            <p class="discreet" tal:condition="python: view.fastly_enabled and not view.proxy_enabled">
+              Fastly purged
+            </p>
+            <p class="discreet" tal:condition="python: not view.fastly_enabled and view.proxy_enabled">
+              Caching proxies purged
+            </p>
+          </span>
+        </p>
+      </tal:path>
     </tal:purged>
 
     <form method="POST"

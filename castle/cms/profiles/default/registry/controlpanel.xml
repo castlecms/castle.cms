@@ -22,6 +22,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.IAPISettings"
+           prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 
@@ -116,6 +118,30 @@
         <element key="for-file-types">video</element>
       </element>
     </value>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="cf_bearer_token"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="sp_stack_id"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="sp_token"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings" 
+          field="fastly_token"
+          prefix="castle">
+            <field type="plone.registry.field.TextLine"></field>
   </record>
 
   <record name="castle.es_index"
