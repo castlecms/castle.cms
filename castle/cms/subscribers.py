@@ -150,6 +150,10 @@ def on_trash_emptied(obj):
     audit.event(obj)
 
 
+def on_cache_invalidated(obj):
+    audit.event(obj)
+
+
 def on_pas_event(event):
     audit.event(event)
 

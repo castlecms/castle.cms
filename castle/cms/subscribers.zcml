@@ -91,6 +91,10 @@
       handler=".subscribers.on_pas_event"
       />
 
+  <subscriber
+    for=".events.ICacheInvalidatedEvent"
+    handler=".subscribers.on_cache_invalidated" />
+
   <!-- trash related events -->
   <subscriber
     for=".interfaces.ITrashed
