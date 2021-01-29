@@ -107,7 +107,8 @@ class CacheInvalidatedRecorder(DefaultRecorder):
         if self.event.object.success:
             data['summary'] = 'The following urls have been purged: %s' % self.event.object.purged
         else:
-            data['summary'] = 'Cache invalidation failure.  Make sure caching proxies are properly configured.'
+            data['summary'] = 'Cache invalidation failure. ' \
+                              'Make sure caching proxies are properly configured.'
         return data
 
 
