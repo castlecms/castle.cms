@@ -13,7 +13,6 @@
     "less": "^3.13.1"
   },
   "dependencies": {
-    "backbone.paginator": "^1.0.0",
     "bootstrap": "^3.3.6",
     "brace": "^0.8.0",
     "dropzone": "^4.2.0",
