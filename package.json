@@ -23,7 +23,6 @@
     "jquery-form": "^3.50.0",
     "jquery.browser": "^0.1.0",
     "jquery.cookie": "^1.4.1",
-    "moment": "^2.11.2",
     "select2": "^3.5.1",
     "underscore": "^1.8.3"
   }
