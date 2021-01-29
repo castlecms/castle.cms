@@ -15,7 +15,6 @@
   "dependencies": {
     "bootstrap": "^3.3.6",
     "brace": "^0.8.0",
-    "dropzone": "^4.2.0",
-    "underscore": "^1.8.3"
+    "dropzone": "^4.2.0"
   }
 }
