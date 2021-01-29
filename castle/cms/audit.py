@@ -100,6 +100,17 @@ class ConfigModifyRecorder(DefaultRecorder):
         return data
 
 
+class CacheInvalidatedRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(CacheInvalidatedRecorder, self).__call__()
+        if self.event.object.success:
+            data['summary'] = 'The following urls have been purged: %s' % self.event.object.purged
+        else:
+            data['summary'] = 'Cache invalidation failure.  Make sure caching proxies are properly configured.'
+        return data
+
+
 class AuditData(object):
 
     def __init__(self, _type, name, summary=None,
@@ -140,7 +151,7 @@ _registered = {
     IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
     IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
     ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
-    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated')
+    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder)
 }
 
 
