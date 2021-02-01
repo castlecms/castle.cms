@@ -169,13 +169,14 @@ def _create_index(es, index_name):
 def get_index_name(site_path=None):
     if site_path is None:
         site_path = '/'.join(api.portal.get().getPhysicalPath())
-
-    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
-    if es_index_enabled:
-        new_index = api.portal.get_registry_record('castle.es_index')
-        return new_index + '-audit'
-    else:
-        return site_path.replace('/', '').replace(' ', '').lower()
+    try:
+        es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+        if es_index_enabled:
+            new_index = api.portal.get_registry_record('castle.es_index')
+            return new_index + '-audit'
+    except ComponentLookupError:
+        pass
+    return site_path.replace('/', '').replace(' ', '').lower()
 
 
 def _record(conn_factory, site_path, data):
