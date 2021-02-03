@@ -2,7 +2,7 @@ import threading
 from datetime import datetime
 
 import transaction
-from castle.cms.events import IMetaTileEditedEvent, ITrashEmptiedEvent
+from castle.cms.events import ICacheInvalidatedEvent, IMetaTileEditedEvent, ITrashEmptiedEvent
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
@@ -100,6 +100,18 @@ class ConfigModifyRecorder(DefaultRecorder):
         return data
 
 
+class CacheInvalidatedRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(CacheInvalidatedRecorder, self).__call__()
+        if self.event.object.success:
+            data['summary'] = 'The following urls have been purged: %s' % self.event.object.purged
+        else:
+            data['summary'] = 'Cache invalidation failure. ' \
+                              'Make sure caching proxies are properly configured.'
+        return data
+
+
 class AuditData(object):
 
     def __init__(self, _type, name, summary=None,
@@ -139,7 +151,8 @@ _registered = {
     IRecordAddedEvent: AuditData('configuration', 'Added', recorder_class=ConfigModifyRecorder),
     IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
     IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
-    ITrashEmptiedEvent: AuditData('content', 'Trash Emptied')
+    ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
+    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder)
 }
 
 
@@ -169,13 +182,7 @@ def _create_index(es, index_name):
 def get_index_name(site_path=None):
     if site_path is None:
         site_path = '/'.join(api.portal.get().getPhysicalPath())
-
-    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
-    if es_index_enabled:
-        new_index = api.portal.get_registry_record('castle.es_index')
-        return new_index + '-audit'
-    else:
-        return site_path.replace('/', '').replace(' ', '').lower()
+    return site_path.replace('/', '').replace(' ', '').lower()
 
 
 def _record(conn_factory, site_path, data):
