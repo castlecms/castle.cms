@@ -95,6 +95,10 @@
     for=".events.ICacheInvalidatedEvent"
     handler=".subscribers.on_cache_invalidated" />
 
+  <subscriber
+    for=".events.IContentTypeChangeLogEvent"
+    handler=".subscribers.on_content_change_log_updated" />
+
   <!-- trash related events -->
   <subscriber
     for=".interfaces.ITrashed

@@ -154,6 +154,10 @@ def on_cache_invalidated(obj):
     audit.event(obj)
 
 
+def on_content_change_log_updated(obj):
+    audit.event(obj)
+
+
 def on_pas_event(event):
     audit.event(event)
 

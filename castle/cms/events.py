@@ -46,3 +46,13 @@ class ICacheInvalidatedEvent(IObjectEvent):
 class CacheInvalidatedEvent(ObjectEvent):
     def __init__(self, object):
         super(CacheInvalidatedEvent, self).__init__(object)
+
+
+class IContentTypeChangeLogEvent(IObjectEvent):
+    pass
+
+
+@implementer(IContentTypeChangeLogEvent)
+class ContentTypeChangeLogEvent(ObjectEvent):
+    def __init__(self, object):
+        super(ContentTypeChangeLogEvent, self).__init__(object)

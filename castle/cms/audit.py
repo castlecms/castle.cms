@@ -2,7 +2,7 @@ import threading
 from datetime import datetime
 
 import transaction
-from castle.cms.events import ICacheInvalidatedEvent, IMetaTileEditedEvent, ITrashEmptiedEvent
+from castle.cms.events import ICacheInvalidatedEvent, IMetaTileEditedEvent, ITrashEmptiedEvent, IContentTypeChangeLogEvent
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
@@ -111,6 +111,12 @@ class CacheInvalidatedRecorder(DefaultRecorder):
                               'Make sure caching proxies are properly configured.'
         return data
 
+class ContentTypeChangeLogRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(ContentTypeChangeLogRecorder, self).__call__()
+        data['summary'] = self.event.object.change_log_summary
+        return data
 
 class AuditData(object):
 
@@ -152,7 +158,8 @@ _registered = {
     IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
     IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
     ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
-    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder)
+    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder),
+    IContentTypeChangeLogEvent: AuditData('content', 'Change Log', recorder_class=ContentTypeChangeLogRecorder)
 }
 
 
