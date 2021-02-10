@@ -2,6 +2,7 @@ from plone.namedfile.interfaces import INamedImage
 from zope.interface import Attribute
 from OFS.interfaces import IApplication
 from plone.app.contenttypes.interfaces import IFile
+from plone.autoform import directives as form
 from plone.supermodel import model
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
 from zope.interface import Interface
@@ -55,6 +56,14 @@ class ISlideshow(Interface):
         title=u"ID for the slideshow element",
         description=u"If custom styling desired for this slideshow",
         required=False
+    )
+
+    form.order_after(change_log='*')
+    change_log = schema.Text(
+        required=True,
+        title=u"Change Log",
+        description=u"Detail any changes made to this content item.",
+        default=u''
     )
 
     show_view_more_link = schema.Bool(

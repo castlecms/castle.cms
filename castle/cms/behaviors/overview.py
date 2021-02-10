@@ -10,6 +10,7 @@ from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
 from plone.app.z3cform.widget import RichTextFieldWidget
+from zope import schema
 
 
 @provider(IFormFieldProvider)
@@ -22,6 +23,14 @@ class IOverview(model.Schema):
         required=False,
     )
     form.widget('overview', RichTextFieldWidget)
+
+    form.order_after(change_log='*')
+    change_log = schema.Text(
+        required=True,
+        title=u"Change Log",
+        description=u"Detail any changes made to this content item.",
+        default=u''
+    )
 
 
 @implementer(IOverview)
