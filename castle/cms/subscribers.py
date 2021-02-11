@@ -1,7 +1,6 @@
 from castle.cms import audit
 from castle.cms import tasks
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
-from castle.cms.events import ContentTypeChangeLogEvent
 from castle.cms.lead import check_lead_image
 from plone import api
 from plone.api.exc import CannotGetPortalError
@@ -16,7 +15,6 @@ from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
-from zope.event import notify
 from zope.globalrequest import getRequest
 from zope.interface import Interface
 import logging
@@ -30,13 +28,6 @@ try:
 except ImportError:
     class IRelationBrokenEvent(Interface):
         pass
-
-
-def change_log_to_audit(obj):
-    if obj.change_log:
-        obj.change_log_summary = 'Change Log Summary: %s' % obj.change_log
-        notify(ContentTypeChangeLogEvent(obj))
-        obj.change_log = ''
 
 
 def on_content_state_changed(obj, event):
@@ -112,6 +103,8 @@ def on_content_created(obj, event):
 
 
 def on_content_modified(obj, event):
+    obj.change_log_summary = obj.change_log
+    obj.change_log = ''
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
@@ -128,10 +121,6 @@ def on_edit_finished(obj, event):
     """
     on forms submission of done editing page...
     """
-    try:
-        change_log_to_audit(obj)
-    except AttributeError:
-        pass
     check_lead_image(obj, request=getRequest())
 
 
@@ -164,10 +153,6 @@ def on_trash_emptied(obj):
 
 
 def on_cache_invalidated(obj):
-    audit.event(obj)
-
-
-def on_content_change_log_updated(obj):
     audit.event(obj)
 
 

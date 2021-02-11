@@ -2,7 +2,7 @@ import threading
 from datetime import datetime
 
 import transaction
-from castle.cms.events import ICacheInvalidatedEvent, IMetaTileEditedEvent, ITrashEmptiedEvent, IContentTypeChangeLogEvent
+from castle.cms.events import ICacheInvalidatedEvent, IMetaTileEditedEvent, ITrashEmptiedEvent
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
@@ -115,7 +115,7 @@ class ContentTypeChangeLogRecorder(DefaultRecorder):
 
     def __call__(self):
         data = super(ContentTypeChangeLogRecorder, self).__call__()
-        data['summary'] = self.event.object.change_log_summary
+        data['summary'] = 'Change Log Summary: %s' % self.event.object.change_log_summary
         return data
 
 class AuditData(object):
@@ -139,7 +139,7 @@ _registered = {
         'working copy support', 'Working copy deleted'),
     IObjectAddedEvent: AuditData('content', 'Created'),
     IObjectCopiedEvent: AuditData('content', 'Copied'),
-    IObjectModifiedEvent: AuditData('content', 'Modified'),
+    IObjectModifiedEvent: AuditData('content', 'Modified', recorder_class=ContentTypeChangeLogRecorder),
     IObjectMovedEvent: AuditData('content', 'Moved'),
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),
@@ -158,8 +158,7 @@ _registered = {
     IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
     IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
     ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
-    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder),
-    IContentTypeChangeLogEvent: AuditData('content', 'Change Log', recorder_class=ContentTypeChangeLogRecorder)
+    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder)
 }
 
 
