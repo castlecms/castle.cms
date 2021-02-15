@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.27 (unreleased)
+2.6.27 (2021-02-15)
 -------------------
 
 - Separated backend and frontend configurations for robot instructions in html meta tags
