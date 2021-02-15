@@ -62,5 +62,11 @@
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".custommarkup.ICustomMarkup"
     />
+  <plone:behavior
+    title="Adjustable Font Size For Query Listing Tile"
+    description="allow user to customize font size for Query Listing tiles on a per object basis"
+    provides=".adjustablefont.IAdjustableFontSizeQueryListing"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
 
 </configure>
