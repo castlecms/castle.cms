@@ -13,7 +13,7 @@ def upgrade(site, logger=None):
 
 
 def recursive_index(obj):
-        if not IPloneSiteRoot.providedBy(obj):
-                obj.reindexObject(idxs=['self_or_child_has_title_description_and_image'])
-        for childID in obj.objectIds():
-                recursive_index(obj[childID])
+    if not IPloneSiteRoot.providedBy(obj):
+        obj.reindexObject(idxs=['self_or_child_has_title_description_and_image'])
+    for childID in obj.objectIds():
+        recursive_index(obj[childID])

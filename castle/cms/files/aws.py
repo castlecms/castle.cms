@@ -64,8 +64,7 @@ def get_bucket(s3_bucket=None):
         else:
             logger.error('error querying for bucket {name} (code {code})'.format(
                 name=s3_bucket,
-                code=error_code,
-                log_exc=True))
+                code=error_code))
 
     return s3, bucket
 
