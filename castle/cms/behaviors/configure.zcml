@@ -68,5 +68,25 @@
     provides=".adjustablefont.IAdjustableFontSizeQueryListing"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
+  <plone:behavior
+    name="castle.versioning"
+    title="Versioning"
+    description="Versioning support with CMFEditions"
+    provides=".versionable.IVersionable"
+    factory=".versionable.Versionable"
+    marker=".versionable.IVersioningSupport"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+  <subscriber
+    for=".versionable.IVersioningSupport
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="castle.cms.subscribers.create_version_on_save"
+    />
+
+  <subscriber
+    for=".versionable.IVersioningSupport
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="castle.cms.subscribers.create_initial_version_after_adding"
+    />
 
 </configure>

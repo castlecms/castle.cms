@@ -24,7 +24,7 @@
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore" />
   <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
-  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="castle.cms.behaviors.versionable.IVersionable" />
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes"/>

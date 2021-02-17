@@ -18,6 +18,6 @@
   <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
-  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="castle.cms.behaviors.versionable.IVersionable" />
 </property>
 </object>

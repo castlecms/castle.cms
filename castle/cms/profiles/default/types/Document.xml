@@ -15,7 +15,7 @@
     <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
     <element value="plone.app.drafts.interfaces.IDraftable" />
     <element value="plone.app.contenttypes.behaviors.richtext.IRichText" />
-    <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+    <element value="castle.cms.behaviors.versionable.IVersionable" />
     <element value="castle.cms.behaviors.location.ILocation"/>
     <element value="castle.cms.behaviors.search.ISearch"/>
     <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
