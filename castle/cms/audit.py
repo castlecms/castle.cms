@@ -112,6 +112,14 @@ class CacheInvalidatedRecorder(DefaultRecorder):
         return data
 
 
+class ContentTypeChangeNoteRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(ContentTypeChangeNoteRecorder, self).__call__()
+        data['summary'] = 'Change Note Summary: %s' % self.event.object.changeNote
+        return data
+
+
 class AuditData(object):
 
     def __init__(self, _type, name, summary=None,
@@ -133,7 +141,7 @@ _registered = {
         'working copy support', 'Working copy deleted'),
     IObjectAddedEvent: AuditData('content', 'Created'),
     IObjectCopiedEvent: AuditData('content', 'Copied'),
-    IObjectModifiedEvent: AuditData('content', 'Modified'),
+    IObjectModifiedEvent: AuditData('content', 'Modified', recorder_class=ContentTypeChangeNoteRecorder),
     IObjectMovedEvent: AuditData('content', 'Moved'),
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),

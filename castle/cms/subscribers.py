@@ -110,6 +110,7 @@ def on_content_created(obj, event):
 
 
 def on_content_modified(obj, event):
+    obj.changeNote = get_change_note(obj.REQUEST)
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
