@@ -22,6 +22,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.IAdjustableFontSizeSettings" 
+           prefix="castle" />
 
   <records interface="castle.cms.browser.survey.ICastleSurvey" />
 

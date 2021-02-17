@@ -10,6 +10,8 @@ from zope.component.hooks import getSite
 from zope.interface import implements
 from zope.security import checkPermission
 from castle.cms.tiles.views import getTileView
+from castle.cms.behaviors.adjustablefont import IAdjustableFontSizeQueryListing
+from castle.cms.behaviors.adjustablefont import get_inline_style
 
 import json
 import logging
@@ -31,6 +33,13 @@ class BaseTile(Tile):
     edit_label = 'Tile'
     edit_permission = 'cmf.ModifyPortalContent'
     wrap = True
+    font_sizes = {}
+    adjustable_font_behaviors = [
+        {
+            'interface': IAdjustableFontSizeQueryListing,
+            'tile_type': 'query_listing',
+        }
+    ]
 
     def get_focal_point(self):
         focal = self.data.get('override_focal_point')
@@ -114,6 +123,9 @@ class BaseTile(Tile):
 
     def __call__(self):
         self.request.response.setHeader('X-Theme-Disabled', '1')
+        for behavior in self.adjustable_font_behaviors:
+            if behavior['interface'].providedBy(self.context):
+                self.font_sizes[behavior['tile_type']] = get_inline_style(self.context, behavior['tile_type'])
         try:
             res = self.render()
             if self.global_editable and checkPermission('cmf.ModifyPortalContent', self.context):

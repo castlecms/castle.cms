@@ -414,6 +414,23 @@
     profile="castle.cms:default"
     />
 
+   <genericsetup:registerProfile
+    name="2_6_27"
+    title="CastleCMS upgrade to 2.6.27 profile"
+    directory="profiles/2_6_27"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.27"
+    description=""
+    source="*"
+    destination="2627"
+    handler=".upgrades.upgrade_2_6_27.upgrade"
+    profile="castle.cms:default"
+    />
+
   <genericsetup:registerProfile
     name="2_6_29"
     title="CastleCMS upgrade to 2.6.29 profile"
