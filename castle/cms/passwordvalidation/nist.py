@@ -1,6 +1,5 @@
 from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 from castle.cms.pwexpiry.password_history_validator import PasswordHistoryValidator
-from plone import api
 from plone.api.portal import get_registry_record as get_rec
 from zope.interface import implementer
 
