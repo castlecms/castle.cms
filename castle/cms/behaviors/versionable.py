@@ -16,7 +16,7 @@ from zope.publisher.interfaces.browser import IBrowserRequest
 
 class IVersionable(model.Schema):
     """ Behavior for enabling CMFEditions's versioning for dexterity
-    content types. Be shure to enable versioning in the plone types
+    content types. Be sure to enable versioning in the plone types
     control-panel for your content type.
     """
 
@@ -28,7 +28,7 @@ class IVersionable(model.Schema):
     changeNote = schema.TextLine(
         title=_(u'label_change_note', default=u'Change Note'),
         description=_(u'help_change_note',
-                      default=u'Enter a comment that describes the changes you made. (May be under properties tab)'),
+                      default=u'Enter a comment that describes the changes you made.'),
         required=True)
 
     versioning_enabled = schema.Bool(
@@ -42,6 +42,7 @@ class IVersionable(model.Schema):
     form.omitted('changeNote')
     form.no_omit(IEditForm, 'changeNote')
     form.no_omit(IAddForm, 'changeNote')
+
 
 alsoProvides(IVersionable, IFormFieldProvider)
 
@@ -70,7 +71,7 @@ class Versionable(object):
 
     @changeNote.setter
     def changeNote(self, value):
-        # store the value for later use (see events.py)
+        # store the value for later use
         annotation = IAnnotations(self.context.REQUEST)
         annotation['plone.app.versioningbehavior-changeNote'] = value
 

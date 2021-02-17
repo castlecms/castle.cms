@@ -218,6 +218,7 @@ def on_youtube_video_state_changed(obj, event):
         except CannotGetPortalError:
             pass
 
+
 def create_version_on_save(context, event):
     """Creates a new version on a versionable object when the object is saved.
     A new version is created if the type is automatic versionable and has

@@ -2,7 +2,9 @@ import threading
 from datetime import datetime
 
 import transaction
-from castle.cms.events import ICacheInvalidatedEvent, IMetaTileEditedEvent, ITrashEmptiedEvent
+from castle.cms.events import (ICacheInvalidatedEvent,
+                               IMetaTileEditedEvent,
+                               ITrashEmptiedEvent)
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
@@ -90,13 +92,15 @@ class ConfigModifyRecorder(DefaultRecorder):
     def __call__(self):
         data = super(ConfigModifyRecorder, self).__call__()
         try:
-            data['summary'] = 'Configuration Record %s modified. Old value: %s, New value: %s' % (
+            data['summary'] = 'Configuration Record '
+            '%s modified. Old value: %s, New value: %s' % (
                 self.event.record,
                 self.event.oldValue,
                 self.event.newValue
             )
         except AttributeError:
-            data['summary'] = 'Configuration Record %s modified.' % self.event.record
+            data['summary'] = 'Configuration Record '
+            '%s modified.' % self.event.record
         return data
 
 
@@ -105,10 +109,11 @@ class CacheInvalidatedRecorder(DefaultRecorder):
     def __call__(self):
         data = super(CacheInvalidatedRecorder, self).__call__()
         if self.event.object.success:
-            data['summary'] = 'The following urls have been purged: %s' % self.event.object.purged
+            data['summary'] = 'The following urls have been purged: '
+            '%s' % self.event.object.purged
         else:
-            data['summary'] = 'Cache invalidation failure. ' \
-                              'Make sure caching proxies are properly configured.'
+            data['summary'] = 'Cache invalidation failure. '
+            'Make sure caching proxies are properly configured.'
         return data
 
 
@@ -116,7 +121,8 @@ class ContentTypeChangeNoteRecorder(DefaultRecorder):
 
     def __call__(self):
         data = super(ContentTypeChangeNoteRecorder, self).__call__()
-        data['summary'] = 'Change Note Summary: %s' % self.event.object.changeNote
+        data['summary'] = 'Change Note Summary: '
+        '%s' % self.event.object.changeNote
         return data
 
 
@@ -141,26 +147,39 @@ _registered = {
         'working copy support', 'Working copy deleted'),
     IObjectAddedEvent: AuditData('content', 'Created'),
     IObjectCopiedEvent: AuditData('content', 'Copied'),
-    IObjectModifiedEvent: AuditData('content', 'Modified', recorder_class=ContentTypeChangeNoteRecorder),
+    IObjectModifiedEvent: AuditData(
+        'content', 'Modified',
+        recorder_class=ContentTypeChangeNoteRecorder),
     IObjectMovedEvent: AuditData('content', 'Moved'),
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),
     ITrashed: AuditData('content', 'Trashed'),
     IUserLoggedInEvent: AuditData(
-        'user', 'Logged in', recorder_class=LoggedInRecorder),
+        'user', 'Logged in',
+        recorder_class=LoggedInRecorder),
     IUserLoggedOutEvent: AuditData('user', 'Logged out'),
     IPrincipalDeletedEvent: AuditData('user', 'Deleted'),
     ICredentialsUpdatedEvent: AuditData('user', 'Password updated'),
     IPropertiesUpdatedEvent: AuditData('user', 'Properties updated'),
     IAfterTransitionEvent: AuditData(
-        'workflow', 'Transition', recorder_class=WorkflowRecorder),
+        'workflow', 'Transition',
+        recorder_class=WorkflowRecorder),
     IMetaTileEditedEvent: AuditData(
-        'slots', 'Slot edited', recorder_class=MetaTileRecorder),
-    IRecordAddedEvent: AuditData('configuration', 'Added', recorder_class=ConfigModifyRecorder),
-    IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
-    IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
+        'slots', 'Slot edited',
+        recorder_class=MetaTileRecorder),
+    IRecordAddedEvent: AuditData(
+        'configuration', 'Added',
+        recorder_class=ConfigModifyRecorder),
+    IRecordModifiedEvent: AuditData(
+        'configuration', 'Modified',
+        recorder_class=ConfigModifyRecorder),
+    IRecordRemovedEvent: AuditData(
+        'configuration', 'Removed',
+        recorder_class=ConfigModifyRecorder),
     ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
-    ICacheInvalidatedEvent: AuditData('content', 'Cache Invalidated', recorder_class=CacheInvalidatedRecorder)
+    ICacheInvalidatedEvent: AuditData(
+        'content', 'Cache Invalidated',
+        recorder_class=CacheInvalidatedRecorder)
 }
 
 
