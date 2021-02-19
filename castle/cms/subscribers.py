@@ -223,6 +223,9 @@ def create_version_on_save(context, event):
     """Creates a new version on a versionable object when the object is saved.
     A new version is created if the type is automatic versionable and has
     changed or if the user has entered a change note.
+
+    Pulled from:
+    https://github.com/plone/plone.app.versioningbehavior/blob/master/plone/app/versioningbehavior/subscribers.py
     """
     # according to Products.CMFEditions' update_version_on_edit script
 
@@ -279,6 +282,9 @@ def create_initial_version_after_adding(context, event):
     The initial version is created if the content type is versionable,
     automatic versioning is enabled for this type and there is no initial
     version. If a changeNote was entered it's used as comment.
+
+    Pulled from:
+    https://github.com/plone/plone.app.versioningbehavior/blob/master/plone/app/versioningbehavior/subscribers.py
     """
 
     pr = getToolByName(context, 'portal_repository', None)
