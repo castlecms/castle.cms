@@ -73,7 +73,7 @@
     title="Versioning"
     description="Versioning support with CMFEditions"
     provides=".versionable.IVersionable"
-    factory=".versionable.Versionable"
+    factory="plone.app.versioningbehavior.behaviors.Versionable"
     marker=".versionable.IVersioningSupport"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
