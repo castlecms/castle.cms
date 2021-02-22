@@ -1,6 +1,5 @@
 from castle.cms import audit
 from castle.cms import tasks
-from castle.cms.behaviors.versionable import get_change_note
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
 from castle.cms.lead import check_lead_image
 from plone import api
@@ -10,18 +9,13 @@ from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.dexterity.behaviors.metadata import IOwnership
 from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.event.base import localized_now
-from plone.app.versioningbehavior import _
+from plone.app.versioningbehavior.utils import get_change_note
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces._content import IFolderish
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFEditions.interfaces.IArchivist import ArchivistUnregisteredError
-from Products.CMFEditions.interfaces.IModifier import FileTooLargeToVersionError
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
-from Products.CMFPlone.utils import base_hasattr
 from zope.component import getUtility
-from zope.container.interfaces import IContainerModifiedEvent
 from zope.globalrequest import getRequest
 from zope.interface import Interface
 import logging

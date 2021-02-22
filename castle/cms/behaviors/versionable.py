@@ -11,7 +11,6 @@ from zope.component import adapter
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Interface
-from zope.publisher.interfaces.browser import IBrowserRequest
 
 
 class IVersionable(model.Schema):
@@ -82,22 +81,3 @@ class Versionable(object):
     @versioning_enabled.setter
     def versioning_enabled(self, value):
         setattr(self.context, 'versioning_enabled', value)
-
-
-def get_change_note(request, default=None):
-    """Returns the changeNote submitted with this request. The changeNote
-    is read from the form-field
-    """
-
-    _marker = object()
-
-    value = _marker
-    if IBrowserRequest.providedBy(request):
-        annotations = IAnnotations(request)
-        value = annotations.get(
-            'plone.app.versioningbehavior-changeNote', _marker)
-
-    if not value or value == _marker:
-        return default
-
-    return value
