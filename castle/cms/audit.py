@@ -121,8 +121,8 @@ class ContentTypeChangeNoteRecorder(DefaultRecorder):
 
     def __call__(self):
         data = super(ContentTypeChangeNoteRecorder, self).__call__()
-        data['summary'] = 'Change Note Summary: '
-        '%s' % self.event.object.changeNote
+        data['summary'] = 'Change Note Summary: %s' % \
+                          self.event.object.changeNote
         return data
 
 
