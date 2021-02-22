@@ -77,16 +77,5 @@
     marker=".versionable.IVersioningSupport"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
-  <subscriber
-    for=".versionable.IVersioningSupport
-         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-    handler="plone.app.versioningbehavior.subscribers.create_version_on_save"
-    />
-
-  <subscriber
-    for=".versionable.IVersioningSupport
-         zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler="plone.app.versioningbehavior.subscribers.create_initial_version_after_adding"
-    />
 
 </configure>
