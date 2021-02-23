@@ -14,7 +14,7 @@
     <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
     <element value="plone.app.drafts.interfaces.IDraftable" />
     <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation" />
-    <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+    <element value="castle.cms.behaviors.versionable.IVersionable" />
     <element value="plone.app.lockingbehavior.behaviors.ILocking" />
     <element value="castle.cms.behaviors.location.ILocation"/>
     <element value="castle.cms.behaviors.search.ISearch"/>

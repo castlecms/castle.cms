@@ -68,5 +68,14 @@
     provides=".adjustablefont.IAdjustableFontSizeQueryListing"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
+  <plone:behavior
+    name="castle.versioning"
+    title="Versioning"
+    description="Versioning support with CMFEditions"
+    provides=".versionable.IVersionable"
+    factory="plone.app.versioningbehavior.behaviors.Versionable"
+    marker=".versionable.IVersioningSupport"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
 
 </configure>

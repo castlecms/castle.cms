@@ -22,7 +22,7 @@
       <element>plone.app.dexterity.behaviors.metadata.IPublication.expires</element>
       <element>plone.app.dexterity.behaviors.nextprevious.INextPreviousToggle.nextPreviousEnabled</element>
       <element>plone.app.relationfield.behavior.IRelatedItems.relatedItems</element>
-      <element>plone.app.versioningbehavior.behaviors.IVersionable.changeNote</element>
+      <element>castle.cms.behaviors.versionable.IVersionable.changeNote</element>
       <element>plone.app.blocks.layoutbehavior.ILayoutAware.contentLayout</element>
       <element>castle.cms.behaviors.search.ISearch.searchterm_pins</element>
       <element>castle.cms.behaviors.location.ILocation.locations</element>
