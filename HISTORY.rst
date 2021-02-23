@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.28 (unreleased)
+2.6.28 (2021-02-23)
 -------------------
 
 - add custom IVersionable behavior to integrate better with audit log
