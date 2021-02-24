@@ -70,8 +70,8 @@
     />
   <plone:behavior
     name="castle.versioning"
-    title="Versioning"
-    description="Versioning support with CMFEditions"
+    title="Required Versioning"
+    description="Versioning support with CMFEditions (Change Notes Required) "
     provides=".versionable.IVersionable"
     factory="plone.app.versioningbehavior.behaviors.Versionable"
     marker=".versionable.IVersioningSupport"
