@@ -25,7 +25,8 @@ ABSOLUTE_FONT_UNITS = (
     'pt',
     'px',
 )
-VALID_CSS_FONT_SIZE_PATTERN = compile("^\s*\d+\s*({})\s*$".format(  # noqa:W605
+VALID_CSS_FONT_SIZE_PATTERN = compile(
+    r'^\s*\d+\s*({})\s*$'.format(
         '|'.join(ABSOLUTE_FONT_UNITS)
     )
 )

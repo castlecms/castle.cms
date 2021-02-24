@@ -230,8 +230,8 @@ class _Transform(object):
             # old style things...
             self.bbb(dom.tree, result)
 
-        self.remove_undefined_types_context_tiles(dom)
-           
+        self.remove_undefined_types_context_tiles(dom, context)
+
         dom.tree = tiles.renderTiles(request, dom.tree)
 
         self.add_body_classes(original_context, context, request,
@@ -242,7 +242,7 @@ class _Transform(object):
 
         return dom
 
-    def remove_undefined_types_context_tiles(self, dom):
+    def remove_undefined_types_context_tiles(self, dom, context):
         if ITypesContext.providedBy(context):
             data_tile_elements = dom.tree.xpath('/html/*[name()="head" or name()="body"]//*[@data-tile]')
             for data_tile_element in data_tile_elements:
