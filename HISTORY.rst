@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.29 (unreleased)
+2.6.29 (2021-02-23)
 -------------------
 
 - fix labeling for required versioning behavior
