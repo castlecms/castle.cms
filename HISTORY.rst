@@ -4,7 +4,9 @@ Changelog
 2.6.29 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix data-tiles that don't exist (for dexterity type definitions
+  in control panel) from rendering
+
 
 
 2.6.28 (2021-02-23)
