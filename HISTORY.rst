@@ -4,7 +4,7 @@ Changelog
 2.6.29 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix labeling for required versioning behavior
 
 
 2.6.28 (2021-02-23)
