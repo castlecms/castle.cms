@@ -4,7 +4,9 @@ Changelog
 2.6.30 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- changed default slideshow view to be the actual slideshow
+  (Castle/some-slideshow now renders the view from Castle/some-slideshow/view-slideshow
+  instead of from Castle/some-slideshow/view)
 
 
 2.6.29 (2021-02-23)
