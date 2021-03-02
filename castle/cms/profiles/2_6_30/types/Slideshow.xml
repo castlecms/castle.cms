@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<object name="Person" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <alias from="(Default)" to="view-slideshow"/>
+</object>
