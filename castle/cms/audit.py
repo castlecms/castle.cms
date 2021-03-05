@@ -213,10 +213,13 @@ def get_index_name(site_path=None):
     index_name = ""
     es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
     if es_custom_index_name_enabled:
-        index_name = api.portal.get_registry_record('castle.es_index') + "-audit"
-    else:
-        index_name = '/'.join(api.portal.get().getPhysicalPath())
-        index_name = index_name.replace('/', '').replace(' ', '').lower()
+        custom_index_value = api.portal.get_registry_record('castle.es_index', None)
+        if custom_index_value is not None:
+            index_name = custom_index_value + "-audit"
+            return index_name
+
+    index_name = '/'.join(api.portal.get().getPhysicalPath())
+    index_name = index_name.replace('/', '').replace(' ', '').lower()
     return index_name
 
 
