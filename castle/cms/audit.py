@@ -213,7 +213,7 @@ def get_index_name(site_path=None):
     index_name = ""
     es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
     if es_custom_index_name_enabled:
-        custom_index_value = api.portal.get_registry_record('castle.es_index', None)
+        custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
         if custom_index_value is not None:
             index_name = custom_index_value + "-audit"
             return index_name
