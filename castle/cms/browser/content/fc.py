@@ -31,6 +31,7 @@ from zope.container.interfaces import INameChooser
 from zope.event import notify
 from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
+from re import sub
 
 import json
 import transaction
@@ -350,10 +351,48 @@ FC_MINIMAL_LAYOUT = """<!doctype html>
 
 
 class FolderContentsView(BaseFolderContentsView):
+    capital_following_lowercase_pattern = r'([a-z])([A-Z])'
+    hyphen_or_underscore_pattern = r'[_-]'
+    non_capitalized_word_pattern = r'([a-zA-Z])([a-z]+)'
 
     def __call__(self):
         self.request.environ['X-CASTLE-LAYOUT'] = FC_MINIMAL_LAYOUT
         return super(FolderContentsView, self).__call__()
+    
+    def un_camel_case(self, string):
+        return sub(
+            self.capital_following_lowercase_pattern,
+            r"\1 \2",
+            string,
+        )
+
+    def remove_hyphens_and_underscores(self, string):
+        return sub(
+            self.hyphen_or_underscore_pattern,
+            ' ',
+            string,
+        )
+
+    def capitalize(self, string, title_case=False):
+        '''
+        We use this function instead of just using str.capitalize() and str.title()
+        becasue we don't want to change words with multiple sequential capital letters,
+        such as UID
+        '''
+        pattern = '{}{}'.format(
+            '' if title_case else '^',
+            self.non_capitalized_word_pattern,
+        )
+        return sub(
+            pattern,
+            lambda match: '{}{}'.format(match.group(1).upper(), match.group(2)),
+            string,
+        )
+
+    def get_normalized_column_name(self, column_name, title_case=True):
+        formatted_name = self.remove_hyphens_and_underscores(column_name)
+        formatted_name = self.un_camel_case(formatted_name)
+        return self.capitalize(formatted_name, title_case)
 
     def get_columns(self):
         columns = super(FolderContentsView, self).get_columns()
@@ -364,4 +403,6 @@ class FolderContentsView(BaseFolderContentsView):
                 'Creator': 'Creator',
                 'last_modified_by': 'Last modified by'
             })
+        for column_key, column_name in columns.items():
+            columns[column_key] = self.get_normalized_column_name(column_name)
         return columns
