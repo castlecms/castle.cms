@@ -358,7 +358,7 @@ class FolderContentsView(BaseFolderContentsView):
     def __call__(self):
         self.request.environ['X-CASTLE-LAYOUT'] = FC_MINIMAL_LAYOUT
         return super(FolderContentsView, self).__call__()
-    
+
     def un_camel_case(self, string):
         return sub(
             self.capital_following_lowercase_pattern,
