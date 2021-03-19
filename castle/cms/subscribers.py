@@ -2,6 +2,7 @@ from castle.cms import audit
 from castle.cms import tasks
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
 from castle.cms.lead import check_lead_image
+from castle.cms.tasks import template
 from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.blocks.interfaces import DEFAULT_CONTENT_LAYOUT_REGISTRY_KEY
@@ -104,6 +105,8 @@ def on_content_created(obj, event):
 
 
 def on_content_modified(obj, event):
+    if obj.convert_object_to_template:
+        template.save_as_template(obj, event)
     obj.changeNote = get_change_note(obj.REQUEST)
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!

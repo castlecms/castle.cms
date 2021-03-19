@@ -12,7 +12,12 @@ class ILocation(model.Schema):
 
     model.fieldset(
         'categorization',
-        fields=['locations', 'coordinates'],
+        fields=[
+            'locations',
+            'coordinates',
+            'convert_object_to_template',
+            'template_name',
+        ],
     )
 
     form.widget('locations', AjaxSelectFieldWidget,
@@ -32,6 +37,20 @@ class ILocation(model.Schema):
         default=u'[]',
         constraint=validate_json,
         required=False
+    )
+
+    convert_object_to_template = schema.Bool(
+        title=u'Convert object to template',
+        description=u'If selected, this item will be converted to a template',
+        default=False
+    )
+
+    template_name = schema.TextLine(
+        title=u'Template Name',
+        description=u'Specify name for template if desired.  If left blank, '
+                    u'name will be title of current object.',
+        required=False,
+        default=u''
     )
 
 
