@@ -398,8 +398,8 @@ class AllContentsVocabView(VocabularyView):
 
         try:
             vocabulary = self.get_vocabulary()
-        except VocabLookupException, e:
-            return json_dumps({'error': e.message})
+        except VocabLookupException as error:
+            return json_dumps({'error': error.message})
 
         results_are_brains = False
         if hasattr(vocabulary, 'search_catalog'):
