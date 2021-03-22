@@ -17,7 +17,7 @@ require([
       AppView,
       PagingTemplate,
       registry,
-      PagingView,
+      PagingView
     ) {
     'use strict';
   
