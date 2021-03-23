@@ -29,7 +29,6 @@
       <element>mockup-patterns-modal</element>
       <element>mockup-patterns-pickadate</element>
       <element>mockup-patterns-select2</element>
-      <element>mockup-patterns-structure</element>
       <element>mockup-router</element>
       <element>mockup-utils</element>
       <element>pat-base</element>
@@ -44,15 +43,9 @@
     </value>
   </records>
 
-
   <records prefix="plone.resources/mockup-patterns-structure"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/patterns/structure.js</value>
-      <!-- <value key="url">++plone++castle/patterns/structure</value> -->
-      <value key="deps">plone-logged-in</value>
-      <value key="css">
-        <element>++resource++mockup/structure/pattern.structure.less</element>
-      </value>
   </records>
 
 
