@@ -14,6 +14,7 @@ parser.add_argument('--skip-incomplete', dest='skip_incomplete', default=False,
                     action='store_true')
 args, _ = parser.parse_known_args()
 
+
 def run_upgrades_until_stuck(portal_setup, profile_id, original_steps_to_run=None, first_iteration=False):
     steps_to_run = portal_setup.listUpgrades(profile_id)
     if steps_to_run:
