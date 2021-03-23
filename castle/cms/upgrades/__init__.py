@@ -12,6 +12,11 @@ def cook_js_resources(context, logger=None):
     cookWhenChangingSettings(portal.get())
 
 
+def custom_upgrade_factory(profile_id):
+    upgrade_file = importlib.import_module('castle.cms.upgrades.upgrade_' + profile_id)
+    return upgrade_file.upgrade
+
+
 def default_upgrade_factory(profile_id):
     def upgrade_function(site, logger=None):
         setup = getToolByName(site, 'portal_setup')
@@ -21,9 +26,10 @@ def default_upgrade_factory(profile_id):
     return upgrade_function
 
 
-def custom_upgrade_factory(profile_id):
-    upgrade_file = importlib.import_module('castle.cms.upgrades.upgrade_' + profile_id)
-    return upgrade_file.upgrade
+def profileless_upgrade_factory():
+    def upgrade(context, logger=None):
+        cookWhenChangingSettings(portal.get())
+    return upgrade
 
 
 upgrade_2_0_12 = default_upgrade_factory('2_0_12')
@@ -40,11 +46,10 @@ upgrade_2_3_1 = custom_upgrade_factory('2_3_1')
 upgrade_2_3_2 = custom_upgrade_factory('2_3_2')
 upgrade_2_3_3 = custom_upgrade_factory('2_3_3')
 upgrade_2_3_5 = default_upgrade_factory('2_3_5')
-upgrade_2_3_7 = default_upgrade_factory('2_3_7')
+upgrade_2_3_7 = profileless_upgrade_factory()
 upgrade_2_3_8 = default_upgrade_factory('2_3_8')
 
-upgrade_2_4_0 = default_upgrade_factory('2_4_0')
-upgrade_2_4_1 = default_upgrade_factory('2_4_1')
+upgrade_2_4_0 = profileless_upgrade_factory()
 
 upgrade_2_5_0 = default_upgrade_factory('2_5_0')
 upgrade_2_5_5 = default_upgrade_factory('2_5_5')
