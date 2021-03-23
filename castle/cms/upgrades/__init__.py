@@ -18,7 +18,7 @@ def default_upgrade_factory(profile_id):
         full_profile_id = 'profile-castle.cms:{}'.format(profile_id)
         setup.runAllImportStepsFromProfile(full_profile_id)
         cookWhenChangingSettings(portal.get())
-    return upgrade_function 
+    return upgrade_function
 
 
 def custom_upgrade_factory(profile_id):
