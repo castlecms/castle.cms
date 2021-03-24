@@ -212,7 +212,8 @@ class Toolbar(BrowserView):
     def get_addable_types(self):
         """Return menu item entries in a TAL-friendly form."""
         data = {
-            'types': []
+            'types': [],
+            'templates': []
         }
         idnormalizer = queryUtility(IIDNormalizer)
 
@@ -238,6 +239,18 @@ class Toolbar(BrowserView):
         for t in self.folder.allowedContentTypes():
             typeId = t.getId()
             data['types'].append({
+                'id': typeId,
+                'safeId': idnormalizer.normalize(typeId),
+                'title': t.Title(),
+                'description': t.Description(),
+                'folderPath': folder_path
+            })
+
+        site_templates = self.folder.templates
+
+        for t in site_templates:
+            typeId = t.getId()
+            data['templates'].append({
                 'id': typeId,
                 'safeId': idnormalizer.normalize(typeId),
                 'title': t.Title(),

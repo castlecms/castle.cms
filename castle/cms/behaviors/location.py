@@ -16,7 +16,6 @@ class ILocation(model.Schema):
             'locations',
             'coordinates',
             'convert_object_to_template',
-            'template_name',
         ],
     )
 
@@ -43,14 +42,6 @@ class ILocation(model.Schema):
         title=u'Convert object to template',
         description=u'If selected, this item will be converted to a template',
         default=False
-    )
-
-    template_name = schema.TextLine(
-        title=u'Template Name',
-        description=u'Specify name for template if desired.  If left blank, '
-                    u'name will be title of current object.',
-        required=False,
-        default=u''
     )
 
 
