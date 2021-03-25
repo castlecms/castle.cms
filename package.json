@@ -1,0 +1,19 @@
+{
+  "name": "webpack-build",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^1.3.0",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-contrib-uglify": "~2",
+    "grunt-contrib-watch": "latest",
+    "grunt-sed": "castlecms/grunt-sed#master",
+    "less": "^3.13.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "brace": "^0.8.0"
+  }
+}
