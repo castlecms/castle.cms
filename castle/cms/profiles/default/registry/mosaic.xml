@@ -285,6 +285,20 @@
     <value key="rich_text">false</value>
     <value key="weight">50</value>
   </records>
+  
+  <records prefix="plone.app.mosaic.app_tiles.castle_cms_parallax_image"
+           interface="plone.app.mosaic.interfaces.ITile">
+    <value key="name">castle.cms.parallaximagetile</value>
+    <value key="label">Parallax Image</value>
+    <value key="category">media</value>
+    <value key="tile_type">app</value>
+    <value key="default_value"></value>
+    <value key="read_only">false</value>
+    <value key="settings">true</value>
+    <value key="favorite">false</value>
+    <value key="rich_text">false</value>
+    <value key="weight">50</value>
+  </records>
 
   <records prefix="plone.app.mosaic.app_tiles.castle_cms_audio"
            interface="plone.app.mosaic.interfaces.ITile">

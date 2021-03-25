@@ -81,6 +81,16 @@
     add_permission="cmf.ModifyPortalContent"
     permission="zope2.View"
     />
+  <plone:tile
+    name="castle.cms.parallaximagetile"
+    title="Parallax Image"
+    class=".parallaximage.ParallaxImageTile"
+    schema=".parallaximage.IParallaxImageTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    />
 
   <plone:tile
     name="castle.cms.maptile"
