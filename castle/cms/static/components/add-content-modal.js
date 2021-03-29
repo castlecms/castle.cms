@@ -447,7 +447,7 @@ define([
         method: 'POST',
         url: $('body').attr('data-portal-url') + '/@@content-creator',
         data: $.extend({}, true, that.state, {
-          action: 'create',
+          action: 'create-from-template',
           _authenticator: utils.getAuthenticator()
         }),
         dataType: 'json'
