@@ -633,14 +633,12 @@ content in this location."""
 
     def create_object_from_template(self):
         if self._check():
-            path = self.request.form.get('basePath', '/')
-            folder = utils.recursive_create_path(self.context, path)
-
+            site = getSite()
             template_title = self.request.form.get('selectedType[title]')
             new_id = self.request.form.get('id')
             new_title = self.request.form.get('title')
 
-            for t in folder.templates:
+            for t in site.template_list:
                 if t.title == template_title:
                     obj = api.content.copy(
                         source=t,

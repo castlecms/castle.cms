@@ -247,17 +247,20 @@ class Toolbar(BrowserView):
                 'folderPath': folder_path
             })
 
-        site_templates = self.folder.templates
+        try:
+            site_templates = self.folder.template_list
 
-        for t in site_templates:
-            typeId = t.getId()
-            data['templates'].append({
-                'id': typeId,
-                'safeId': idnormalizer.normalize(typeId),
-                'title': t.Title(),
-                'description': t.Description(),
-                'folderPath': folder_path
-            })
+            for t in site_templates:
+                typeId = t.getId()
+                data['templates'].append({
+                    'id': typeId,
+                    'safeId': idnormalizer.normalize(typeId),
+                    'title': t.Title(),
+                    'description': t.Description(),
+                    'folderPath': folder_path
+                })
+        except AttributeError:
+            pass
 
         return data
 

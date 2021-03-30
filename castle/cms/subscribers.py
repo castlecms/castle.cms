@@ -106,8 +106,11 @@ def on_content_created(obj, event):
 
 
 def on_content_modified(obj, event):
-    if obj.convert_object_to_template:
-        template.save_as_template(obj, event)
+    try:
+        if obj.convert_object_to_template:
+            template.save_as_template(obj)
+    except AttributeError:
+        pass
     obj.changeNote = get_change_note(obj.REQUEST)
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
@@ -219,5 +222,9 @@ def on_youtube_video_state_changed(obj, event):
 
 def on_template_delete(obj, event):
     site = getSite()
-    if obj in site.templates:
-        site.templates.remove(obj)
+    if obj in site.template_list:
+        site.template_list.remove(obj)
+
+
+def on_template_edit_finished(obj, event):
+    template.move_template_to_repository(obj)

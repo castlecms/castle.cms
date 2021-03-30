@@ -139,4 +139,9 @@
          zope.lifecycleevent.interfaces.IObjectRemovedEvent"
     handler=".subscribers.on_template_delete" />
 
+  <subscriber
+    for="castle.cms.interfaces.ITemplate
+         plone.dexterity.interfaces.IEditFinishedEvent"
+    handler=".subscribers.on_template_edit_finished" />
+
 </configure>

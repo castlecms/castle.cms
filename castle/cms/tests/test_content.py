@@ -5,6 +5,8 @@ from copy import deepcopy
 from io import BytesIO
 
 from castle.cms.browser import content
+from castle.cms.interfaces import ITemplate
+from castle.cms.tasks.template import save_as_template
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import TEST_USER_ID
@@ -225,6 +227,43 @@ class TestContent(unittest.TestCase):
         settings = IFeedSettings(doc)
         # should not cause TypeError
         self.assertEquals(settings.feed_types, ())
+
+    def test_content_implemented_as_template(self):
+        template_doc = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_doc.convert_object_to_template = True
+        save_as_template(template_doc)
+        self.assertEquals(ITemplate.providedBy(template_doc), True)
+        self.assertEquals(template_doc.convert_object_to_template, False)
+
+    def test_create_content_from_template(self):
+        template_doc = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_doc.convert_object_to_template = True
+        save_as_template(template_doc)
+
+        self.request.form.update({
+            'action': 'create-from-template',
+            'basePath': '/',
+            'id': 'document-from-template',
+            'title': 'Document From Template',
+            'selectedType[id]': template_doc.id,
+            'selectedType[title]': template_doc.title,
+            'transitionTo': ''
+        })
+
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertEquals(ITemplate.providedBy(data), False)
+        self.assertEquals(data['title'], u'Document From Template')
 
 
 class TestContentAccess(unittest.TestCase):
