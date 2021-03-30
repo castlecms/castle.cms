@@ -81,6 +81,12 @@ define([
     run: function(data, callback){
       return callback(data.headersOrdered);
     }
+  }, {
+    name: 'Template',
+    warning: 'This object is a template and is unpublishable.',
+    run: function(data, callback){
+      return callback(!data.template);
+    }
   }];
 
   var ATDCheck = {

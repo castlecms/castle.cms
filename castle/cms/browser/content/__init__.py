@@ -770,6 +770,10 @@ class QualityCheckContent(BrowserView):
                     break
                 last = idx
 
+        is_template = False
+        if ITemplate.providedBy(self.context):
+            is_template = True
+
         self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps({
             'title': self.context.Title(),
@@ -777,7 +781,8 @@ class QualityCheckContent(BrowserView):
             'description': self.context.Description(),
             'linksValid': valid,
             'headersOrdered': headers_ordered,
-            'html': html_parser.unescape(html)
+            'html': html_parser.unescape(html),
+            'template': is_template
         })
 
 

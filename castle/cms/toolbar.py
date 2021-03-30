@@ -8,6 +8,7 @@ from Acquisition import aq_parent
 from castle.cms import caching
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
+from castle.cms.interfaces import ITemplate
 from castle.cms.utils import get_chat_info
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
@@ -311,6 +312,10 @@ class Toolbar(BrowserView):
         if pw is not None:
             if _checkPermission(ManageWorkflowPolicies, self.real_context):
                 placeful = True
+
+        # Objects marked as templates cannot transition to published state.
+        if ITemplate.providedBy(self.context):
+            transitions = []
 
         return {
             'state': {
