@@ -111,7 +111,7 @@ def on_content_modified(obj, event):
             template.save_as_template(obj)
     except AttributeError:
         pass
-    obj.changeNote = get_change_note(obj.REQUEST)
+    obj.changeNote = get_change_note(getRequest())
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
