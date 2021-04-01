@@ -207,9 +207,20 @@ def _create_index(es, index_name):
 
 
 def get_index_name(site_path=None):
-    if site_path is None:
-        site_path = '/'.join(api.portal.get().getPhysicalPath())
-    return site_path.replace('/', '').replace(' ', '').lower()
+    if site_path is not None:
+        return site_path.replace('/', '').replace(' ', '').lower()
+
+    index_name = ""
+    es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    if es_custom_index_name_enabled:
+        custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
+        if custom_index_value is not None:
+            index_name = custom_index_value + "-audit"
+            return index_name
+
+    index_name = '/'.join(api.portal.get().getPhysicalPath())
+    index_name = index_name.replace('/', '').replace(' ', '').lower()
+    return index_name
 
 
 def _record(conn_factory, site_path, data):

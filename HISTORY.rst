@@ -1,10 +1,24 @@
 Changelog
 =========
 
-2.6.28 (unreleased)
+2.6.30 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- changed default slideshow view to be the actual slideshow
+  (Castle/some-slideshow now renders the view from Castle/some-slideshow/view-slideshow
+  instead of from Castle/some-slideshow/view)
+
+
+2.6.29 (2021-02-23)
+-------------------
+
+- fix labeling for required versioning behavior
+
+
+2.6.28 (2021-02-23)
+-------------------
+
+- add custom IVersionable behavior to integrate better with audit log
 
 
 2.6.27 (2021-02-15)
