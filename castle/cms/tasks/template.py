@@ -8,12 +8,8 @@ from zope.interface import alsoProvides
 
 def save_as_template(obj):
     alsoProvides(obj, ITemplate)
-
-    # Reset this so don't create new template each save.
     obj.convert_object_to_template = False
 
-
-def move_template_to_repository(obj):
     site = getSite()
     folder = utils.recursive_create_path(site, '/template-repository')
     lockable = ILockable(obj)

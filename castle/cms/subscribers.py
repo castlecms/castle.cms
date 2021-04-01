@@ -224,7 +224,3 @@ def on_template_delete(obj, event):
     site = getSite()
     if obj in site.template_list:
         site.template_list.remove(obj)
-
-
-def on_template_edit_finished(obj, event):
-    template.move_template_to_repository(obj)

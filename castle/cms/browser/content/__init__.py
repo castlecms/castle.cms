@@ -532,8 +532,8 @@ content in this location."""
 
             # Templates need special handling based on type_id
             try:
-                if ITemplate.providedBy(self.context[type_id]):
-                    type_id = self.context[type_id].portal_type
+                if ITemplate.providedBy(self.context['template-repository'][type_id]):
+                    type_id = self.context['template-repository'][type_id].portal_type
             except KeyError:
                 pass
 
@@ -637,12 +637,16 @@ content in this location."""
             template_title = self.request.form.get('selectedType[title]')
             new_id = self.request.form.get('id')
             new_title = self.request.form.get('title')
+            path = self.request.form.get('basePath', '/')
+            folder = utils.recursive_create_path(self.context, path)
+            template_repo = site['template-repository']
 
-            for t in site.template_list:
+            for t in template_repo.getChildNodes()._data:
                 if t.title == template_title:
                     obj = api.content.copy(
                         source=t,
                         id=new_id,
+                        target=folder
                     )
                     obj.title = new_title
                     noLongerProvides(obj, ITemplate)
