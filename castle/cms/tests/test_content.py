@@ -19,6 +19,7 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.syndication import IFeedSettings
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from zope.component.hooks import getSite
 
 
 class TestContent(unittest.TestCase):
@@ -229,6 +230,7 @@ class TestContent(unittest.TestCase):
         self.assertEquals(settings.feed_types, ())
 
     def test_content_implemented_as_template(self):
+        site = getSite()
         template_doc = api.content.create(
             type='Document',
             id='template-document',
@@ -239,8 +241,10 @@ class TestContent(unittest.TestCase):
         save_as_template(template_doc)
         self.assertEquals(ITemplate.providedBy(template_doc), True)
         self.assertEquals(template_doc.convert_object_to_template, False)
+        self.assertEquals(template_doc in site.template_list, True)
 
     def test_create_content_from_template(self):
+        site = getSite()
         template_doc = api.content.create(
             type='Document',
             id='template-document',
@@ -263,7 +267,7 @@ class TestContent(unittest.TestCase):
         cc = content.Creator(self.portal, self.request)
         data = json.loads(cc())
         self.assertEquals(ITemplate.providedBy(data), False)
-        self.assertEquals(data['title'], u'Document From Template')
+        self.assertEquals(template_doc in site.template_list and data not in site.template_list, True)
 
 
 class TestContentAccess(unittest.TestCase):
