@@ -6,7 +6,12 @@ Changelog
 
 - changed default slideshow view to be the actual slideshow
   (Castle/some-slideshow now renders the view from Castle/some-slideshow/view-slideshow
-  instead of from Castle/some-slideshow/view)
+  instead of from Castle/some-slideshow/view) (#482)
+- changeNote bugfix (#483)
+- auditlog use of customizable ES index name (#484 and #485)
+- normalize folder contents column headings (#486)
+- all-contents view for folder contents view (#487)
+- update cryptography to 3.3.2 and update cffi to 1.14.5 (#461)
 
 
 2.6.29 (2021-02-23)
