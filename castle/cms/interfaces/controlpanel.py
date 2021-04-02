@@ -522,9 +522,45 @@ class ISlideshowSettings(Interface):
         required=False)
 
 
+class IElasticSearchSettings(Interface):
+    es_index_enabled = schema.Bool(
+        title=u'Enable Custom Elastic Search Index',
+        default=False
+    )
+
+    es_index = schema.TextLine(
+        title=u'Elastic Search Index',
+        description=u'The index prefix used for elastic search.  You must restart clients and rebuild '
+                    u'(or rename the index on ES) in order for things to work properly',
+        required=False
+    )
+
+
+class IAdjustableFontSizeSettings(Interface):
+    font_size_small = schema.TextLine(
+        title=u"Small font size",
+        description=u'The font size displayed when a user selects "small" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_SMALL,
+    )
+    font_size_medium = schema.TextLine(
+        title=u"Medium font size",
+        description=u'The font size displayed when a user selects "medium" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_MEDIUM,
+    )
+    font_size_large = schema.TextLine(
+        title=u"Large font size",
+        description=u'The font size displayed when a user selects "large" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_LARGE,
+    )
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, ISlideshowSettings):
+                      ISearchSettings, IElasticSearchSettings,
+                      ISlideshowSettings, IAdjustableFontSizeSettings):
     pass
 
 

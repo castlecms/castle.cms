@@ -17,7 +17,7 @@
       </div>
     </div>
     <div tal:condition="not: view/valid">
-      Etherpad is not setup
+      Etherpad is not set up
     </div>
   </tal:b>
 </metal:b>

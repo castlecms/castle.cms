@@ -120,7 +120,7 @@ class Utils(BrowserView):
 
     def get_backend_url_no_trailing_slash(self):
         _be_url = self.get_backend_url()
-        return _be_url[0:len(_be_url) - 1] if _be_url[len(_be_url) - 1] == '/' else _be_url
+        return _be_url[:-1 if _be_url[-1] == '/' else None]
 
     def valid_date(self, date):
         if not date:

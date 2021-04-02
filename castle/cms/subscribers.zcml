@@ -91,6 +91,10 @@
       handler=".subscribers.on_pas_event"
       />
 
+  <subscriber
+    for=".events.ICacheInvalidatedEvent"
+    handler=".subscribers.on_cache_invalidated" />
+
   <!-- trash related events -->
   <subscriber
     for=".interfaces.ITrashed
@@ -116,5 +120,17 @@
   <subscriber
     for="plone.registry.interfaces.IRecordRemovedEvent"
     handler=".subscribers.on_config_modified_event" />
+
+  <!-- versioning registry events -->
+  <subscriber
+    for=".behaviors.versionable.IVersioningSupport
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="plone.app.versioningbehavior.subscribers.create_version_on_save"
+    />
+  <subscriber
+    for=".behaviors.versionable.IVersioningSupport
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="plone.app.versioningbehavior.subscribers.create_initial_version_after_adding"
+    />
 
 </configure>

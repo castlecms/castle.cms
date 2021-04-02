@@ -1,10 +1,55 @@
 Changelog
 =========
 
-2.6.24 (unreleased)
+2.6.30 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- changed default slideshow view to be the actual slideshow
+  (Castle/some-slideshow now renders the view from Castle/some-slideshow/view-slideshow
+  instead of from Castle/some-slideshow/view)
+
+
+2.6.29 (2021-02-23)
+-------------------
+
+- fix labeling for required versioning behavior
+
+
+2.6.28 (2021-02-23)
+-------------------
+
+- add custom IVersionable behavior to integrate better with audit log
+
+
+2.6.27 (2021-02-15)
+-------------------
+
+- Separated backend and frontend configurations for robot instructions in html meta tags
+- Added Current Castle Version to control panel Version Overview
+- tweak audit log styling to help prevent overlap on normal sized screens
+- add ability to customize default font sizing for tiles per object
+
+
+2.6.26 (2020-12-22)
+-------------------
+
+- fix cloudflare cache purge unicode issue
+
+
+2.6.25 (2020-11-10)
+-------------------
+
+- audit index name based on configured es index
+- minor english grammar fixes
+- custom markup field behavior for images,used in slider tile
+
+
+2.6.24 (2020-11-02)
+-------------------
+
+- show warning instead of error if folder containing recycling is copied
+- reset secure flow state and retry before 403
+- disable autocaps for mobile logins
 
 
 2.6.23 (2020-09-15)

@@ -147,6 +147,45 @@ MimeTypeVocabulary = MimeTypeVocabularyFactory()
 
 
 @implementer(IVocabularyFactory)
+class RobotBehaviorVocabularyFactory(object):
+
+    def __call__(self, context):
+        terms = [
+            {
+                'value': 'index',
+                'title': 'Index',
+            },
+            {
+                'value': 'follow',
+                'title': 'Follow links',
+            },
+            {
+                'value': 'noimageindex',
+                'title': 'Do not index images',
+            },
+            {
+                'value': 'noarchive',
+                'title': 'Search engines should not show a cached link to this page on a SERP.',
+            },
+            {
+                'value': 'nosnippet',
+                'title': 'Search engines should not show a snippet of this page (i.e. meta description) on a SERP.',  # noqa:E501
+            },
+        ]
+
+        return SimpleVocabulary([
+            SimpleTerm(
+                value=term['value'],
+                token=term['value'],
+                title=term['title'],
+            ) for term in terms
+        ])
+
+
+RobotBehaviorVocabulary = RobotBehaviorVocabularyFactory()
+
+
+@implementer(IVocabularyFactory)
 class EmailCategoryVocabularyFactory(object):
 
     def __call__(self, context):

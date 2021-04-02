@@ -1,7 +1,14 @@
-from castle.cms.interfaces import (IAPISettings, IArchivalSettings,
-                                   ICastleSettings, IContentSettings,
-                                   ISiteConfiguration, ISearchSettings,
-                                   ISlideshowSettings)
+from castle.cms.interfaces import (
+    IAdjustableFontSizeSettings,
+    IAPISettings,
+    IArchivalSettings,
+    ICastleSettings,
+    IContentSettings,
+    ISiteConfiguration,
+    ISearchSettings,
+    IElasticSearchSettings,
+    ISlideshowSettings,
+)
 from castle.cms.widgets import FileUploadFieldsFieldWidget, SelectFieldWidget
 from plone.app.registry.browser import controlpanel
 from plone.formwidget.namedfile.widget import NamedFileFieldWidget
@@ -27,7 +34,16 @@ class ContentForm(group.GroupForm):
 
 class ConfigurableTextForm(group.GroupForm):
     label = u"Configurable Text"
-    fields = field.Fields(ISearchSettings, ISlideshowSettings)
+    fields = field.Fields(
+        ISearchSettings,
+        ISlideshowSettings,
+        IAdjustableFontSizeSettings,
+    )
+
+
+class ElasticForm(group.GroupForm):
+    label = u"Elastic Search"
+    fields = field.Fields(IElasticSearchSettings)
 
 
 class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
@@ -38,7 +54,7 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
     schema = ICastleSettings
     schema_prefix = "castle"
     fields = field.Fields(ISiteConfiguration)
-    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm)
+    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm, ElasticForm)
 
     def updateFields(self):
         super(CastleSettingsControlPanelForm, self).updateFields()

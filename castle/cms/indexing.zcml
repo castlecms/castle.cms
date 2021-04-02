@@ -40,5 +40,6 @@
   <adapter name="recurrence" factory=".indexers.recurrence" />
   <adapter name="last_modified_by" factory=".indexers.last_modified_by" />
   <adapter name="image_info" factory=".indexers.image_info" />
+  <adapter name="has_custom_markup" factory=".indexers.has_custom_markup" />
 
 </configure>
