@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.30 (unreleased)
+2.6.30 (2021-04-02)
 -------------------
 
 - changed default slideshow view to be the actual slideshow
