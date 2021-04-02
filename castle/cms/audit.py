@@ -224,6 +224,11 @@ def get_index_name(site_path=None):
 
 
 def _record(conn_factory, site_path, data):
+    es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    if es_custom_index_name_enabled:
+        # when the custom index is enabled, all site path based names for
+        # indices should be discarded
+        site_path = None
     index_name = get_index_name(site_path)
     es = conn_factory()
     try:
