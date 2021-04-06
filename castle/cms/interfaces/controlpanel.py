@@ -234,7 +234,7 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
     nist_minimum_password_length = schema.Int(
         title=u'NIST password length',
         description=u'Sets the minimum password length for users.',
-        default=1,
+        default=12,
         required=False
     )
 

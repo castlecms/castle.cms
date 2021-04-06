@@ -269,7 +269,6 @@ require([
         nistUpper: $(this).attr('data-nist-upper'),
         nistLower: $(this).attr('data-nist-lower'),
         nistSpecial: $(this).attr('data-nist-special'),
-        nistFailureMessage: $(this).attr('data-nist-failure-message'),
       });
     });
   };

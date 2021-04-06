@@ -170,4 +170,3 @@ class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPan
         self.nistUpper = nist.props['uppercase']
         self.nistLower = nist.props['lowercase']
         self.nistSpecial = nist.props['special']
-        self.failureMessage = None
