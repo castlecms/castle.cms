@@ -15,6 +15,21 @@ parser.add_argument('--skip-incomplete', dest='skip_incomplete', default=False,
 args, _ = parser.parse_known_args()
 
 
+def run_upgrades_until_stuck(portal_setup, profile_id, original_steps_to_run=None, first_iteration=False):
+    steps_to_run = portal_setup.listUpgrades(profile_id)
+    if steps_to_run:
+        if first_iteration:
+            print('Running profile upgrades for {}'.format(profile_id))
+        elif steps_to_run == original_steps_to_run:
+            return steps_to_run
+        portal_setup.upgradeProfile(profile_id)
+        return run_upgrades_until_stuck(
+            portal_setup,
+            profile_id,
+            steps_to_run,
+        )
+
+
 @retriable(sync=True)
 def upgrade(site):
     setup_site(site)
@@ -28,6 +43,7 @@ def upgrade(site):
     # go through all profiles that need upgrading
     for profile_id in ps.listProfilesWithUpgrades():
         # do our best to detect good upgrades
+        print(profile_id.split(':'))
         if profile_id.split(':')[0] in (
                 'Products.CMFPlacefulWorkflow', 'plone.app.iterate',
                 'plone.app.multilingual', 'Products.PloneKeywordManager',
@@ -35,12 +51,7 @@ def upgrade(site):
             continue
         if not profile_id.endswith(':default'):
             continue
-        steps_to_run = ps.listUpgrades(profile_id)
-        if steps_to_run:
-            print('Running profile upgrades for {}'.format(profile_id))
-            ps.upgradeProfile(profile_id)
-
-        remaining = ps.listUpgrades(profile_id)
+        remaining = run_upgrades_until_stuck(ps, profile_id, first_iteration=True)
         if remaining:
             if args.skip_incomplete:
                 print(

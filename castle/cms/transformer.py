@@ -48,7 +48,7 @@ _impersonator_template = PageTemplate("""
       <span class="glyphicon glyphicon-user"></span> ${user_name}
   </span>
 </div>"""  # noqa
-)
+)  # noqa:E124
 
 
 class TransformInpersonatorOutput(object):

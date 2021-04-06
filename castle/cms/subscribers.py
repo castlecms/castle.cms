@@ -9,6 +9,7 @@ from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.dexterity.behaviors.metadata import IOwnership
 from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.event.base import localized_now
+from plone.app.versioningbehavior.utils import get_change_note
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces._content import IFolderish
@@ -103,6 +104,7 @@ def on_content_created(obj, event):
 
 
 def on_content_modified(obj, event):
+    obj.changeNote = get_change_note(getRequest())
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return

@@ -121,6 +121,10 @@
       </value>
   </records>
 
+  <records prefix="plone.resources/mockup-patterns-structure"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/structure.js</value>
+  </records>
 
   <!-- depends on plone -->
 
@@ -136,6 +140,7 @@
 
 
   <!-- depends on plone-logged-in -->
+
 
   <!-- castle-components-tag-manager -->
   <records prefix="plone.resources/castle-components-tag-manager"
