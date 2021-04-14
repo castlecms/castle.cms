@@ -1,20 +1,11 @@
-from castle.cms import defaults
-from castle.cms.tiles.base import ContentTile
 from castle.cms.tiles.image import ImageTile
 from castle.cms.tiles.image import IImageTileSchema
-from castle.cms.tiles.base import DisplayTypeTileMixin
-from castle.cms.tiles.content import IImagesTileSchema
 from castle.cms.tiles.views import BaseTileView
-from castle.cms.tiles.views import TileViewsSource
-from castle.cms.widgets import PreviewSelectFieldWidget
-from plone.autoform import directives as form
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
 
 from zope.schema.vocabulary import SimpleTerm
-
 
 
 class DefaultParallaxView(BaseTileView):
@@ -58,7 +49,7 @@ class IParallaxImageTileSchema(IImageTileSchema):
         required=True,
         default=100,
         max=200,
-        min=1, 
+        min=1,
     )
 
     heading_text = schema.TextLine(

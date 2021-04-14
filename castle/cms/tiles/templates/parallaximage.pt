@@ -6,12 +6,8 @@
                            link python: view.get_link()">
   <div class="parallax-image-tile-container ${dt}"
        tal:define="caption view/data/caption|nothing"
-       tal:condition="nocall: image">
-    <a href="${link}" tal:omit-tag="not: link"
-       tal:condition="python: dt in ('natural', 'fullwidth')">
-      <img src="${image/absolute_url}/@@images/image/${scale}"
-           alt="${image/Description}" />
-    </a>
+       tal:condition="nocall: image"
+       style="background-image: url('${image/absolute_url}/@@images/image/${scale}')">
     <a href="${link}" tal:omit-tag="not: link"
        tal:condition="python: dt not in ('natural', 'fullwidth')">
       <div tal:replace="structure python: view.utils.focal_image_tag(image, scale, focal=fp)" />
