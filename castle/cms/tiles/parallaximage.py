@@ -3,9 +3,8 @@ from castle.cms.tiles.image import IImageTileSchema
 from castle.cms.tiles.views import BaseTileView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
-from zope.schema.vocabulary import SimpleVocabulary
-
 from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 class DefaultParallaxView(BaseTileView):
@@ -28,8 +27,25 @@ class ParallaxImageTile(ImageTile):
 
 class IParallaxImageTileSchema(IImageTileSchema):
 
-    # form.widget('display_type', PreviewSelectFieldWidget,
-    #             tile_name='gallery')
+    height = schema.Choice(
+        title=u'Height of parallax image',
+        description=u'Represent the height (in pixels) that the parallax image will be.',
+        required=True,
+        default='400px',
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('100px', '100px', u'100px'),
+            SimpleTerm('200px', '200px', u'200px'),
+            SimpleTerm('300px', '300px', u'300px'),
+            SimpleTerm('400px', '400px', u'400px'),
+            SimpleTerm('500px', '500px', u'500px'),
+            SimpleTerm('600px', '600px', u'600px'),
+            SimpleTerm('700px', '700px', u'700px'),
+            SimpleTerm('800px', '800px', u'800px'),
+            SimpleTerm('900px', '900px', u'900px'),
+            SimpleTerm('1000px', '1000px', u'1000px'),
+        ])
+    )
+
     translate_z = schema.Int(
         title=u'Z-axis Setback',
         description=(
@@ -41,15 +57,6 @@ class IParallaxImageTileSchema(IImageTileSchema):
         default=-1,
         max=2,
         min=-100,
-    )
-
-    height_percentage = schema.Int(
-        title=u'Height percentage of orignal image',
-        description=u'What percentage of the image\'s height will the parallax tile take uo.',
-        required=True,
-        default=100,
-        max=200,
-        min=1,
     )
 
     heading_text = schema.TextLine(
