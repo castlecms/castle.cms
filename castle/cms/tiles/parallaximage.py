@@ -1,102 +1,146 @@
-from castle.cms.tiles.image import ImageTile
-from castle.cms.tiles.image import IImageTileSchema
-from castle.cms.tiles.views import BaseTileView
+from castle.cms.tiles.base import BaseTile
+from castle.cms.widgets import ImageRelatedItemFieldWidget
+from plone.autoform import directives as form
+from plone.supermodel import model
+from plone.tiles.interfaces import IPersistentTile
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
+from zope.component import getMultiAdapter
+from zope.component.hooks import getSite
+from zope.globalrequest import getRequest
+from zope.interface import implements
+from zope.interface import Invalid
+from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-class DefaultParallaxView(BaseTileView):
-    name = 'default_parallax_image'
-    order = 0
-    index = ViewPageTemplateFile('templates/parallaximage.pt')
-    tile_name = 'parallax_image'
-
-
-class ParallaxImageTile(ImageTile):
-    # display_type_name = 'parallax_image'
-    # display_type_default = 'default_parallax_image'
-    # display_type_fallback_view = DefaultParallaxView
-
-    # render = DisplayTypeTileMixin.render_display
+class ParallaxImageTile(BaseTile):
+    implements(IPersistentTile)
     index = ViewPageTemplateFile('templates/parallaximage.pt')
 
-    pass
+    def get_image(self):
+        image = self.data.get('image')
+        if not image:
+            return
+        return self.utils.get_object(self.data['image'][0])
 
 
-class IParallaxImageTileSchema(IImageTileSchema):
+class IParallaxImageTileSchema(model.Schema):
+
+    form.widget(image=ImageRelatedItemFieldWidget)
+    image = schema.List(
+        title=u"Image",
+        description=u"Reference image on the site.",
+        required=True,
+        default=[],
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.Catalog'
+        )
+    )
+
+    @invariant
+    def validate_image(data):
+        if data.image and len(data.image) != 1:
+            raise Invalid("Must select 1 image")
+        if data.image:
+            utils = getMultiAdapter((getSite(), getRequest()),
+                                    name="castle-utils")
+            obj = utils.get_object(data.image[0])
+            if not obj or obj.portal_type != 'Image':
+                raise Invalid('Must provide image file')
 
     height = schema.Choice(
         title=u'Height of parallax image',
         description=u'Represent the height (in pixels) that the parallax image will be.',
         required=True,
-        default='400px',
+        default=u'400px',
         vocabulary=SimpleVocabulary([
-            SimpleTerm('100px', '100px', u'100px'),
-            SimpleTerm('200px', '200px', u'200px'),
-            SimpleTerm('300px', '300px', u'300px'),
-            SimpleTerm('400px', '400px', u'400px'),
-            SimpleTerm('500px', '500px', u'500px'),
-            SimpleTerm('600px', '600px', u'600px'),
-            SimpleTerm('700px', '700px', u'700px'),
-            SimpleTerm('800px', '800px', u'800px'),
-            SimpleTerm('900px', '900px', u'900px'),
-            SimpleTerm('1000px', '1000px', u'1000px'),
+            SimpleTerm('100px', '100px', '100px'),
+            SimpleTerm('200px', '200px', '200px'),
+            SimpleTerm('300px', '300px', '300px'),
+            SimpleTerm('400px', '400px', '400px'),
+            SimpleTerm('500px', '500px', '500px'),
+            SimpleTerm('600px', '600px', '600px'),
+            SimpleTerm('700px', '700px', '700px'),
+            SimpleTerm('800px', '800px', '800px'),
+            SimpleTerm('900px', '900px', '900px'),
+            SimpleTerm('1000px', '1000px', '1000px'),
         ])
     )
 
-    translate_z = schema.Int(
-        title=u'Z-axis Setback',
-        description=(
-            u'How far behind the rest of the page the image appears to be. '
-            u'The smaller the number, the slower the image content will appear to move. '
-            u'Values can range from -100 to 2.'
-        ),
-        required=True,
-        default=-1,
-        max=2,
-        min=-100,
-    )
-
     heading_text = schema.TextLine(
-        title=u'heading text',
+        title=u'Heading Text',
         description=u'',
         required=False,
     )
 
-    heading_size = schema.TextLine(
-        title=u'heading size',
+    heading_size = schema.Choice(
+        title=u'Heading Size',
         description=u'',
-        required=False,
+        default=u'36px',
+        required=True,
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('36px', 'h1', 'h1'),
+            SimpleTerm('30px', 'h2', 'h2'),
+            SimpleTerm('24px', 'h3', 'h3'),
+            SimpleTerm('18px', 'h4', 'h4'),
+            SimpleTerm('14px', 'h5', 'h5'),
+            SimpleTerm('12px', 'h6', 'h6'),
+        ])
     )
-    body_text = schema.TextLine(
-        title=u'body text',
+
+    heading_color = schema.Choice(
+        title=u'Heading Color',
+        description=u'Select between black or white for text color',
+        default=u'black',
+        required=True,
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('black', 'black', 'Black'),
+            SimpleTerm('white', 'white', 'White'),
+        ])
+    )
+
+    body_text = schema.Text(
+        title=u'Body Text',
         description=u'',
         required=False,
     )
 
-    body_size = schema.TextLine(
-        title=u'body size',
+    body_size = schema.Choice(
+        title=u'Body Size',
         description=u'',
-        required=False,
+        default=u'12px',
+        required=True,
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('20px', '20px', '20px'),
+            SimpleTerm('18px', '18px', '18px'),
+            SimpleTerm('16px', '16px', '16px'),
+            SimpleTerm('14px', '14px', '14px'),
+            SimpleTerm('12px', '12px', '12px'),
+            SimpleTerm('10px', '10px', '10px'),
+        ])
+    )
+
+    body_color = schema.Choice(
+        title=u'Body Color',
+        description=u'Select between black or white for text color',
+        default=u'black',
+        required=True,
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('black', 'black', 'Black'),
+            SimpleTerm('white', 'white', 'White'),
+        ])
     )
 
     text_position = schema.Choice(
-        title=u'Image display type',
-        description=u'Does not apply to all display types',
-        default='n/a',
-        required=False,
+        title=u'Text Position',
+        description=u'Dictates where text will be positioned over parallax image',
+        default=u'left',
+        required=True,
         vocabulary=SimpleVocabulary([
-            SimpleTerm('n/a', 'n/a', u'N/A'),
-            SimpleTerm('upper_left', 'upper_left', u'Upper Left'),
-            SimpleTerm('upper_center', 'upper_center', u'Upper center'),
-            SimpleTerm('upper_right', 'upper_right', u'Upper right'),
-            SimpleTerm('middle_left', 'middle_left', u'Middle Left'),
-            SimpleTerm('middle_center', 'middle_center', u'Middle center'),
-            SimpleTerm('middle_right', 'middle_right', u'Middle right'),
-            SimpleTerm('lower_left', 'lower_left', u'Lower Left'),
-            SimpleTerm('lower_center', 'lower_center', u'Lower center'),
-            SimpleTerm('lower_right', 'lower_right', u'Lower right'),
+            SimpleTerm('left', 'left', 'Left'),
+            SimpleTerm('center', 'center', 'Center'),
+            SimpleTerm('right', 'right', 'Right'),
         ])
     )
