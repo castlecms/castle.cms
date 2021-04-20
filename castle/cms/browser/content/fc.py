@@ -31,6 +31,19 @@ from zope.container.interfaces import INameChooser
 from zope.event import notify
 from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
+from re import sub
+
+from plone.app.content.browser.vocabulary import (
+    VocabularyView,
+    VocabLookupException,
+    _parseJSON,
+    _unsafe_metadata,
+    _safe_callable_metadata,
+    translate,
+    safe_unicode,
+    json_dumps,
+    itertools,
+)
 
 import json
 import transaction
@@ -350,10 +363,48 @@ FC_MINIMAL_LAYOUT = """<!doctype html>
 
 
 class FolderContentsView(BaseFolderContentsView):
+    capital_following_lowercase_pattern = r'([a-z])([A-Z])'
+    hyphen_or_underscore_pattern = r'[_-]'
+    non_capitalized_word_pattern = r'([a-zA-Z])([a-z]+)'
 
     def __call__(self):
         self.request.environ['X-CASTLE-LAYOUT'] = FC_MINIMAL_LAYOUT
         return super(FolderContentsView, self).__call__()
+
+    def un_camel_case(self, string):
+        return sub(
+            self.capital_following_lowercase_pattern,
+            r"\1 \2",
+            string,
+        )
+
+    def remove_hyphens_and_underscores(self, string):
+        return sub(
+            self.hyphen_or_underscore_pattern,
+            ' ',
+            string,
+        )
+
+    def capitalize(self, string, title_case=False):
+        '''
+        We use this function instead of just using str.capitalize() and str.title()
+        becasue we don't want to change words with multiple sequential capital letters,
+        such as UID
+        '''
+        pattern = '{}{}'.format(
+            '' if title_case else '^',
+            self.non_capitalized_word_pattern,
+        )
+        return sub(
+            pattern,
+            lambda match: '{}{}'.format(match.group(1).upper(), match.group(2)),
+            string,
+        )
+
+    def get_normalized_column_name(self, column_name, title_case=True):
+        formatted_name = self.remove_hyphens_and_underscores(column_name)
+        formatted_name = self.un_camel_case(formatted_name)
+        return self.capitalize(formatted_name, title_case)
 
     def get_columns(self):
         columns = super(FolderContentsView, self).get_columns()
@@ -364,4 +415,119 @@ class FolderContentsView(BaseFolderContentsView):
                 'Creator': 'Creator',
                 'last_modified_by': 'Last modified by'
             })
+        for column_key, column_name in columns.items():
+            columns[column_key] = self.get_normalized_column_name(column_name)
         return columns
+
+    def get_options(self):
+        options = super(FolderContentsView, self).get_options()
+        options['vocabularyUrl'] = '{}/all_contents_vocab?name=plone.app.vocabularies.Catalog'.format(
+            options['upload']['baseUrl']
+        )
+        return options
+
+
+class AllContentsVocabView(VocabularyView):
+    def __call__(self):
+        """
+        All of this to remove two lines. Sigh.
+        Another reason functions shouldn't be 4000 lines long
+        """
+        context = self.get_context()
+        self.request.response.setHeader(
+            'Content-Type', 'application/json; charset=utf-8'
+        )
+
+        try:
+            vocabulary = self.get_vocabulary()
+        except VocabLookupException as error:
+            return json_dumps({'error': error.message})
+
+        results_are_brains = False
+        if hasattr(vocabulary, 'search_catalog'):
+            query = self.parsed_query()
+            results = vocabulary.search_catalog(query)
+            results_are_brains = True
+        elif hasattr(vocabulary, 'search'):
+            try:
+                query = self.parsed_query()['SearchableText']['query']
+            except KeyError:
+                results = iter(vocabulary)
+            else:
+                results = vocabulary.search(query)
+        else:
+            results = vocabulary
+
+        try:
+            total = len(results)
+        except TypeError:
+            total = 0
+
+        # get batch
+        batch = _parseJSON(self.request.get('batch', ''))
+        if batch and ('size' not in batch or 'page' not in batch):
+            batch = None  # batching not providing correct options
+        if batch:
+            page = int(batch['page'])
+            size = int(batch['size'])
+            start = (max(page - 1, 0)) * size
+            end = start + size
+            try:
+                results = results[start:end]
+            except TypeError:
+                results = itertools.islice(results, start, end)
+
+        # build result items
+        items = []
+
+        attributes = _parseJSON(self.request.get('attributes', ''))
+        if isinstance(attributes, basestring) and attributes:
+            attributes = attributes.split(',')
+
+        translate_ignored = self.get_translated_ignored()
+        if attributes:
+            base_path = self.get_base_path(context)
+            sm = getSecurityManager()
+            can_edit = sm.checkPermission(DEFAULT_PERMISSION_SECURE, context)
+            for vocab_item in results:
+                if not results_are_brains:
+                    vocab_item = vocab_item.value
+                item = {}
+                for attr in attributes:
+                    key = attr
+                    if ':' in attr:
+                        key, attr = attr.split(':', 1)
+                    if attr in _unsafe_metadata and not can_edit:
+                        continue
+                    if key == 'path':
+                        attr = 'getPath'
+                    val = getattr(vocab_item, attr, None)
+                    if callable(val):
+                        if attr in _safe_callable_metadata:
+                            val = val()
+                        else:
+                            continue
+                    if key == 'path':
+                        val = val[len(base_path):]
+                    if (
+                        key not in translate_ignored and
+                        isinstance(val, basestring)
+                    ):
+                        item[key] = translate(
+                            _(safe_unicode(val)),
+                            context=self.request
+                        )
+                    else:
+                        item[key] = val
+                items.append(item)
+        else:
+            for item in results:
+                items.append({'id': item.value, 'text': item.title})
+
+        if total == 0:
+            total = len(items)
+
+        return json_dumps({
+            'results': items,
+            'total': total
+        })

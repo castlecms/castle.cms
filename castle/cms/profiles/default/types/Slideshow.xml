@@ -31,7 +31,7 @@
   <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
  </property>
  <property name="schema">castle.cms.interfaces.ISlideshow</property>
- <alias from="(Default)" to="(dynamic view)"/>
+ <alias from="(Default)" to="view-slideshow"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>

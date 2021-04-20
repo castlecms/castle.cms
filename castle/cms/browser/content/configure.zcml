@@ -67,6 +67,14 @@
 
   <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"
+    name="all_contents_vocab"
+    class=".fc.AllContentsVocabView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-paste"
     class=".fc.PasteActionView"
     permission="cmf.ListFolderContents"
