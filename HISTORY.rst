@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6.31 (unreleased)
+2.6.31 (2021-04-20)
 -------------------
 
 - bugfix for custom index names for audit log
