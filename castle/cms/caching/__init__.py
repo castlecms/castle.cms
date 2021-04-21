@@ -252,8 +252,8 @@ class Purge(BrowserView):
         success = True
         if cf.enabled:
             self.cf_enabled = True
-            resp = CastlePurger.purgeSync(urls, cf)
-            success = resp.json()['success']
+            self.resp = CastlePurger.purgeSync(urls, cf)
+            success = self.resp.json()['success']
             notify(CacheInvalidatedEvent(self))
 
         nice_paths = []
