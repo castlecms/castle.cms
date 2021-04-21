@@ -249,7 +249,8 @@ def record(success, recorder, site_path, conn):
         return
     if recorder.valid:
         try:
-            es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+            es_custom_index_name_enabled = api.portal.get_registry_record(
+                'castle.es_index_enabled', default=False)
             custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
         except Exception:
             es_custom_index_name_enabled = False
