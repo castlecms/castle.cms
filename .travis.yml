@@ -33,7 +33,7 @@ before_install:
     export PATH=$PATH:$(pwd)/webdriver;
     npm install -g surge;
     fi
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.3.0-amd64.deb && sudo dpkg -i --force-confnew elasticsearch-7.3.0-amd64.deb
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.0-amd64.deb && sudo dpkg -i --force-confnew elasticsearch-7.6.0-amd64.deb
   - sudo service elasticsearch start
 
 install:
