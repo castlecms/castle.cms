@@ -1,4 +1,6 @@
 <tal:root define="lt string:&lt;;gt string:&gt;;
+                  utils context/@@castle-utils;
+                  backend_url python:utils.get_backend_url_no_trailing_slash();
                   member python:options['member'];
                   portal_properties context/@@plone_tools/properties;
                   view context/@@passwordreset_view;
@@ -21,7 +23,7 @@ Precedence: bulk
   Your username is <span i18n:name="member" tal:replace="python:member.getUserName()" />.
   Please activate it by visiting
 
-  ${portal_state/portal_url}/@@secure-login?pwreset=true&code=${reset/randomstring}&userid=${member/id}
+  ${backend_url}/@@password-reset?code=${reset/randomstring}&userid=${member/id}
 
     Please activate your account before <span i18n:name="expirationdate" tal:replace="python:
     context.toLocalizedTime(reset['expires'], long_format=1)" />

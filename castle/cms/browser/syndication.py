@@ -2,6 +2,7 @@ import json
 
 from castle.cms.behaviors.location import ILocation
 from castle.cms.widgets import SelectFieldWidget
+from castle.cms.widgets import ImageRelatedItemFieldWidget
 from plone import api
 from plone.app.z3cform.layout import wrap_form
 from plone.dexterity.interfaces import IDexterityItem
@@ -50,6 +51,16 @@ class IFeedSettings(IBaseFeedSettings):
         missing_value=[]
     )
 
+    podcast_image = schema.List(
+        title=u"Podcast Image",
+        description=u"Image to appear on iTunes",
+        required=False,
+        default=[],
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.Catalog'
+        )
+    )
+
 
 class FeedSettings(settings.FeedSettings):
     implements(IFeedSettings)
@@ -69,10 +80,8 @@ class FeedSettings(settings.FeedSettings):
 
 class ItemFeedSettings(settings.FeedSettings):
     '''
-    Implement basic item feed settings for static values
-    of always being disabled. This prevent any errors
-    if feed setting data is attempted to be looked against
-    a non-folder item
+    Implement default item feed settings such as always being disabled.
+    This prevents any errors if a non-folder item's feed setting data is read.
     '''
     implements(IFeedSettings)
     adapts(IDexterityItem)
@@ -94,6 +103,7 @@ class SettingsForm(views.SettingsForm):
         else:
             self.fields = field.Fields(IFeedSettings)
         self.fields['feed_types'].widgetFactory = SelectFieldWidget
+        self.fields['podcast_image'].widgetFactory = ImageRelatedItemFieldWidget
         super(SettingsForm, self).update()
 
     @button.buttonAndHandler(u'Cancel', name='cancel')

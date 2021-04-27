@@ -1,10 +1,198 @@
 Changelog
 =========
 
-2.6.6 (unreleased)
-------------------
+2.6.32 (unreleased)
+-------------------
 
 - Nothing changed yet.
+
+
+2.6.31 (2021-04-20)
+-------------------
+
+- bugfix for custom index names for audit log
+
+
+2.6.30 (2021-04-02)
+-------------------
+
+- changed default slideshow view to be the actual slideshow
+  (Castle/some-slideshow now renders the view from Castle/some-slideshow/view-slideshow
+  instead of from Castle/some-slideshow/view) (#482)
+- changeNote bugfix (#483)
+- auditlog use of customizable ES index name (#484 and #485)
+- normalize folder contents column headings (#486)
+- all-contents view for folder contents view (#487)
+- update cryptography to 3.3.2 and update cffi to 1.14.5 (#461)
+
+
+2.6.29 (2021-02-23)
+-------------------
+
+- fix labeling for required versioning behavior
+
+
+2.6.28 (2021-02-23)
+-------------------
+
+- add custom IVersionable behavior to integrate better with audit log
+
+
+2.6.27 (2021-02-15)
+-------------------
+
+- Separated backend and frontend configurations for robot instructions in html meta tags
+- Added Current Castle Version to control panel Version Overview
+- tweak audit log styling to help prevent overlap on normal sized screens
+- add ability to customize default font sizing for tiles per object
+
+
+2.6.26 (2020-12-22)
+-------------------
+
+- fix cloudflare cache purge unicode issue
+
+
+2.6.25 (2020-11-10)
+-------------------
+
+- audit index name based on configured es index
+- minor english grammar fixes
+- custom markup field behavior for images,used in slider tile
+
+
+2.6.24 (2020-11-02)
+-------------------
+
+- show warning instead of error if folder containing recycling is copied
+- reset secure flow state and retry before 403
+- disable autocaps for mobile logins
+
+
+2.6.23 (2020-09-15)
+-------------------
+
+- exclude_from_search and has_private_parents features for public results
+- panels to list items excluded from search for admin
+
+
+2.6.22 (2020-09-10)
+-------------------
+
+- slideshow refinements
+- add property per content item to exclude from search query
+- query filter updates, including new wording and broader search
+
+
+2.6.21 (2020-07-30)
+-------------------
+
+- fix the QueryListingTile to split display_fields correctly when passed as
+  a query parameter to the @@castle.cms.querylisting view
+- fix s3 integration in the edit/delete actions of the archival management view
+
+
+2.6.20 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.19 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.18 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.17 (2020-07-09)
+-------------------
+
+- revert manage-archives js and improve manage-archives usage of boto3 library
+
+
+2.6.16 (2020-07-07)
+-------------------
+
+- slideshow upgrades and fixes
+- fix password reset link in registration email
+- improve scrub login at backend functionality
+
+
+2.6.15 (2020-07-01)
+-------------------
+
+- update archival-manage view to deal with a large list of objects in an s3 bucket
+  in a very basic, but functional (for now) way.
+
+
+2.6.14 (2020-07-01)
+-------------------
+
+- fix js inclusion an archival-review view, move it to a resource definition
+
+
+2.6.13 (2020-06-22)
+-------------------
+
+- js fix
+
+2.6.12 (2020-06-22)
+-------------------
+
+- slideshow and search updates
+  [bduncan137]
+- some import/export work
+  [daxxog]
+
+
+2.6.11 (2020-06-04)
+-------------------
+
+- utilize resource registry instead of metal:javascript in some places
+  [daxxog]
+- add advanced player with no image
+  [Takiyo]
+- Slideshow enhancements and configuration options
+  [bduncan137]
+
+
+2.6.10 (2020-05-20)
+-------------------
+
+- ensure tag-manager js is run at the correct time
+
+
+2.6.9 (2020-05-11)
+------------------
+
+- try and ensure that search.js is loaded after everything else is loaded on the page.
+
+
+2.6.8 (2020-04-30)
+------------------
+
+- update archival/aws links
+- stop excessive logging about tile lockinfo
+
+
+2.6.7 (2020-04-21)
+------------------
+
+- Fix broken links for youtube video
+- Add Ability to select custom itunes image per syndication folder
+- Don't error on missing fragment used, rendering warning
+
+2.6.6 (2020-04-13)
+------------------
+
+- Sticky footer updates
+- Secure login updates
 
 
 2.6.5 (2020-03-27)

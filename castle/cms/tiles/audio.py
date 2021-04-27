@@ -109,7 +109,8 @@ class IAudioTileSchema(model.Schema):
     form.widget('player_type', PreviewSelectFieldWidget,
                 previews={
                     'simple': '++plone++castle/images/previews/audioplayers/simple.png',
-                    'advanced': '++plone++castle/images/previews/audioplayers/thumbnail.png',
+                    'advanced': '++plone++castle/images/previews/audioplayers/advanced.png',
+                    'advancedthumbnail': '++plone++castle/images/previews/audioplayers/thumbnail.png',
                     'advancedbackground': '++plone++castle/images/previews/audioplayers/background.png'
                 })
 
@@ -120,7 +121,8 @@ class IAudioTileSchema(model.Schema):
         required=False,
         vocabulary=SimpleVocabulary([
             SimpleTerm('simple', 'simple', u'Simple'),
-            SimpleTerm('advanced', 'advanced', u'Advanced with thumbnail'),
+            SimpleTerm('advanced', 'advanced', u'Advanced'),
+            SimpleTerm('advancedthumbnail', 'advancedthumbnail', u'Advanced with thumbnail'),
             SimpleTerm('advancedbackground', 'advancedbackground', u'Advanced with background image')
         ])
     )

@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 import StringIO
 from time import time
-from urllib.parse import urlparse, quote, quote_plus
+from urllib.parse import urlsplit, urlunsplit, quote, quote_plus
 
 import botocore
 import boto3
@@ -18,7 +18,6 @@ from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
-from boto.exception import S3ResponseError
 
 
 logger = logging.getLogger('castle.cms')
@@ -50,25 +49,22 @@ def get_bucket(s3_bucket=None):
 
     endpoint = registry.get('castle.aws_s3_host_endpoint', None)
     if endpoint:
-        parsed_endpoint = urlparse(endpoint)
-        if parsed_endpoint.scheme == 'https':
-            is_secure = True
+        s3args['endpoint_url'] = endpoint
+
+    s3 = boto3.resource('s3', **s3args)
+    bucket = None
+    try:
+        s3.meta.client.head_bucket(Bucket=s3_bucket)
+        bucket = s3.Bucket(s3_bucket)
+    except botocore.exceptions.ClientError as e:
+        bucket = None
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            logger.warning('bucket {name} not found'.format(name=s3_bucket))
         else:
-            is_secure = False
-        host = parsed_endpoint.netloc
-        if ':' in host:
-            host = host.split(':')[0]
-        if parsed_endpoint.port:
-            s3_conn = S3Connection(
-                s3_id, s3_key, host=host, port=parsed_endpoint.port,
-                is_secure=is_secure,
-                calling_format=ProtocolIndependentOrdinaryCallingFormat())
-        else:
-            s3_conn = S3Connection(
-                s3_id, s3_key, host=host, is_secure=is_secure,
-                calling_format=ProtocolIndependentOrdinaryCallingFormat())
-    else:
-        s3_conn = S3Connection(s3_id, s3_key)
+            logger.error('error querying for bucket {name} (code {code})'.format(
+                name=s3_bucket,
+                code=error_code))
 
     return s3, bucket
 
@@ -149,16 +145,15 @@ def set_permission(obj):
     # set aws public/private and get url
     object_acl = s3_obj.Acl()
     if public:
-        try:
-            key.make_public()
-        except S3ResponseError:
-            logger.warn('Missing private canned url for bucket')
-        expires_in = 0
+        object_acl.put(ACL='public-read')
         # a public URL is not fetchable with no expiration, apparently
-        url = '{endpoint_url}/{bucket}/{key}'.format(
-            endpoint_url=s3.meta.client.meta.endpoint_url,
-            bucket=bucket.name,
-            key=quote_plus(key))  # quote_plus usage means a safer url
+        expires_in = 0
+        scheme, netloc, path, qs, anchor = urlsplit(s3.meta.client.meta.endpoint_url)
+        # this makes sure there are no empty segments, and then appends
+        # the bucket name and quoted key value (which is fine, and usable
+        # with aws api)
+        newpath = "/".join(filter(None, path.split("/")) + [bucket.name, quote_plus(key)])
+        url = urlunsplit((scheme, netloc, newpath, qs, anchor))
     else:
         object_acl.put(ACL='private')
         expires_in = EXPIRES_IN
@@ -222,10 +217,13 @@ def swap_url(url, registry=None, base_url=None):
         base_url = registry.get('castle.aws_s3_base_url', None)
 
     if base_url:
-        parsed_url = urlparse(url)
-        url = '{}/{}'.format(base_url.strip('/'), '/'.join(parsed_url.path.split('/')[2:]))
-        if parsed_url.query:
-            url += '?' + parsed_url.query
+        basescheme, basenetloc, basepath, baseqs, baseanchor = urlsplit(base_url.decode('utf-8'))
+        scheme, netloc, path, qs, anchor = urlsplit(url.decode('utf-8'))
+        # make sure there are no empty segements
+        # and also drop the first segment -- should be the bucket, which we
+        # don't need to pass on to the final url
+        newpath = u"/".join(filter(None, path.split(u'/'))[1:])
+        url = urlunsplit((basescheme, basenetloc, newpath, qs, anchor))
 
     return url
 
@@ -274,7 +272,13 @@ def get_url(obj):
     if not url.startswith('http'):
         url = 'https:' + url
 
-    return swap_url(url)
+    # need to make sure the url is formatted correctly
+    # the main one we've seen is extra slashes in the path
+    scheme, netloc, path, qs, anchor = urlsplit(url)
+    # this will get rid of any empty segments
+    path = "/".join(filter(None, path.split('/')))
+    finalurl = urlunsplit((scheme, netloc, path, qs, anchor))
+    return swap_url(finalurl)
 
 
 def create_or_update(bucket, key, content_type, data, content_disposition=None, make_public=True):
@@ -306,3 +310,4 @@ def create_if_not_exists(bucket, key, content_type, data, content_disposition=No
             data,
             content_disposition=content_disposition,
             make_public=make_public)
+

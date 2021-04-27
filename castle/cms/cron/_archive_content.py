@@ -9,7 +9,7 @@ from castle.cms.utils import get_backend_url
 from castle.cms.utils import retriable
 from castle.cms.utils import send_email
 from plone import api
-from Products.CMFPlone.defaultpage import get_default_page
+from plone.app.layout.navigation.defaultpage import getDefaultPage
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
 
@@ -29,8 +29,8 @@ def archive(site, app):
             not api.portal.get_registry_record('castle.aws_s3_key') or
             not api.portal.get_registry_record('castle.aws_s3_secret') or
             not api.portal.get_registry_record('plone.public_url')):
-        logger.error('Can not archive content for {id}. Either not enabled, S3 API not set or no public '
-                     'url set'.format(id=site.id))
+        logger.error('Can not archive content. Either not enabled, S3 API not set or no public '
+                     'url set')
         return
 
     storage = archival.Storage(site)
@@ -42,7 +42,7 @@ def archive(site, app):
 
             container = aq_parent(ob)
             if (IPloneSiteRoot.providedBy(container) and
-                    get_default_page(container) == ob.getId()):
+                    getDefaultPage(container) == ob.getId()):
                 continue
 
             allowed = set(rolesForPermissionOn('View', ob))
@@ -122,3 +122,4 @@ def run(app):
 
 if __name__ == '__main__':
     run(app)  # noqa
+

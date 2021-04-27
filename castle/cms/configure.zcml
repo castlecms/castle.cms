@@ -116,12 +116,20 @@
     name="castle.cms.vocabularies.MimeTypes"
     />
   <utility
+    component=".vocabularies.RobotBehaviorVocabulary"
+    name="castle.cms.vocabularies.RobotBehaviors"
+    />
+  <utility
     component=".vocabularies.ReallyUserFriendlyTypesVocabularyFactory"
     name="castle.cms.vocabularies.ReallyUserFriendlyTypes"
     />
   <utility
     component=".vocabularies.CountriesVocabularyFactory"
     name="castle.cms.vocabularies.Countries"
+    />
+  <utility
+    component=".vocabularies.ProvidesTitleSummaryLeadImageVocabularyFactory"
+    name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
     />
 
   <!-- override default syndication -->

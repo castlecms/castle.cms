@@ -29,7 +29,7 @@ def image_scales(context):
     settings = registry.forInterface(IImagingSchema,
                                      prefix="plone",
                                      check=False)
-    values.append(SimpleTerm('original', 'original', 'Original'))
+    values.append(SimpleTerm('original', 'original', u'Original'))
     for allowed_size in settings.allowed_sizes:
         name = allowed_size.split()[0]
         values.append(SimpleTerm(name, name, allowed_size))

@@ -504,10 +504,7 @@ define([
       var extra = '';
       var data = this.state.social;
       var cdata= [
-        ['Platform', 'Shares'],
-        ['Facebook', data.facebook],
-        ['Linked In', data.linkedin],
-        ['Pinterest', data.pinterest]
+        ['Platform', 'Shares']
       ];
       Object.keys(this.dataMappings).forEach(function(dataKey){
         if(data[dataKey]){

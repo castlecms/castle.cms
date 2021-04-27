@@ -24,13 +24,14 @@
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore" />
   <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
-  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="castle.cms.behaviors.versionable.IVersionable" />
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes"/>
+  <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
  </property>
  <property name="schema">castle.cms.interfaces.ISlideshow</property>
- <alias from="(Default)" to="(dynamic view)"/>
+ <alias from="(Default)" to="view-slideshow"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>

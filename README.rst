@@ -71,8 +71,8 @@ In addition to Plone standard features, CastleCMS includes:
 Installation
 ============
 
-This package includes a lot of customizations to default Plone and, without an installer,
-getting it running is a bit tricky.
+There are various methods of setting up CastleCMS for production, contact Wildcard Corp for optional support.
+Our preffered local setup is laid out here.
 
 Dependencies
 ------------

@@ -1,4 +1,4 @@
-from Products.CMFPlone.defaultpage import get_default_page
+from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.layout.sitemap import sitemap
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
@@ -45,7 +45,7 @@ class SiteMapView(sitemap.SiteMapView):
             modified = date.ISO8601()
             # special case, use front-page object
             try:
-                page = self.context[get_default_page(self.context)]
+                page = self.context[getDefaultPage(self.context)]
                 root_page_uid = IUUID(page)
                 modified = page.modified().ISO8601()
                 yield {
@@ -71,3 +71,4 @@ class SiteMapView(sitemap.SiteMapView):
                 'loc': loc,
                 'lastmod': date
             }
+

@@ -2,7 +2,9 @@ import threading
 from datetime import datetime
 
 import transaction
-from castle.cms.events import IMetaTileEditedEvent, ITrashEmptiedEvent
+from castle.cms.events import (ICacheInvalidatedEvent,
+                               IMetaTileEditedEvent,
+                               ITrashEmptiedEvent)
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
@@ -90,13 +92,37 @@ class ConfigModifyRecorder(DefaultRecorder):
     def __call__(self):
         data = super(ConfigModifyRecorder, self).__call__()
         try:
-            data['summary'] = 'Configuration Record %s modified. Old value: %s, New value: %s' % (
+            data['summary'] = 'Configuration Record '
+            '%s modified. Old value: %s, New value: %s' % (
                 self.event.record,
                 self.event.oldValue,
                 self.event.newValue
             )
         except AttributeError:
-            data['summary'] = 'Configuration Record %s modified.' % self.event.record
+            data['summary'] = 'Configuration Record '
+            '%s modified.' % self.event.record
+        return data
+
+
+class CacheInvalidatedRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(CacheInvalidatedRecorder, self).__call__()
+        if self.event.object.success:
+            data['summary'] = 'The following urls have been purged: '
+            '%s' % self.event.object.purged
+        else:
+            data['summary'] = 'Cache invalidation failure. '
+            'Make sure caching proxies are properly configured.'
+        return data
+
+
+class ContentTypeChangeNoteRecorder(DefaultRecorder):
+
+    def __call__(self):
+        data = super(ContentTypeChangeNoteRecorder, self).__call__()
+        data['summary'] = 'Change Note Summary: %s' % \
+                          self.event.object.changeNote
         return data
 
 
@@ -121,25 +147,39 @@ _registered = {
         'working copy support', 'Working copy deleted'),
     IObjectAddedEvent: AuditData('content', 'Created'),
     IObjectCopiedEvent: AuditData('content', 'Copied'),
-    IObjectModifiedEvent: AuditData('content', 'Modified'),
+    IObjectModifiedEvent: AuditData(
+        'content', 'Modified',
+        recorder_class=ContentTypeChangeNoteRecorder),
     IObjectMovedEvent: AuditData('content', 'Moved'),
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),
     ITrashed: AuditData('content', 'Trashed'),
     IUserLoggedInEvent: AuditData(
-        'user', 'Logged in', recorder_class=LoggedInRecorder),
+        'user', 'Logged in',
+        recorder_class=LoggedInRecorder),
     IUserLoggedOutEvent: AuditData('user', 'Logged out'),
     IPrincipalDeletedEvent: AuditData('user', 'Deleted'),
     ICredentialsUpdatedEvent: AuditData('user', 'Password updated'),
     IPropertiesUpdatedEvent: AuditData('user', 'Properties updated'),
     IAfterTransitionEvent: AuditData(
-        'workflow', 'Transition', recorder_class=WorkflowRecorder),
+        'workflow', 'Transition',
+        recorder_class=WorkflowRecorder),
     IMetaTileEditedEvent: AuditData(
-        'slots', 'Slot edited', recorder_class=MetaTileRecorder),
-    IRecordAddedEvent: AuditData('configuration', 'Added', recorder_class=ConfigModifyRecorder),
-    IRecordModifiedEvent: AuditData('configuration', 'Modified', recorder_class=ConfigModifyRecorder),
-    IRecordRemovedEvent: AuditData('configuration', 'Removed', recorder_class=ConfigModifyRecorder),
-    ITrashEmptiedEvent: AuditData('content', 'Trash Emptied')
+        'slots', 'Slot edited',
+        recorder_class=MetaTileRecorder),
+    IRecordAddedEvent: AuditData(
+        'configuration', 'Added',
+        recorder_class=ConfigModifyRecorder),
+    IRecordModifiedEvent: AuditData(
+        'configuration', 'Modified',
+        recorder_class=ConfigModifyRecorder),
+    IRecordRemovedEvent: AuditData(
+        'configuration', 'Removed',
+        recorder_class=ConfigModifyRecorder),
+    ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
+    ICacheInvalidatedEvent: AuditData(
+        'content', 'Cache Invalidated',
+        recorder_class=CacheInvalidatedRecorder)
 }
 
 
@@ -163,14 +203,30 @@ def _create_index(es, index_name):
         index=index_name)
 
 
-def get_index_name(site_path=None):
-    if site_path is None:
-        site_path = '/'.join(api.portal.get().getPhysicalPath())
-    return site_path.replace('/', '').replace(' ', '').lower()
+def get_index_name(site_path=None, es_custom_index_name_enabled=False, custom_index_value=None):
+    if site_path is not None:
+        return site_path.replace('/', '').replace(' ', '').lower()
+
+    index_name = ""
+    if es_custom_index_name_enabled:
+        if custom_index_value is not None:
+            index_name = custom_index_value + "-audit"
+            return index_name
+
+    index_name = '/'.join(api.portal.get().getPhysicalPath())
+    index_name = index_name.replace('/', '').replace(' ', '').lower()
+    return index_name
 
 
-def _record(conn_factory, site_path, data):
-    index_name = get_index_name(site_path)
+def _record(conn_factory, site_path, data, es_custom_index_name_enabled=False, custom_index_value=None):
+    if es_custom_index_name_enabled:
+        # when the custom index is enabled, all site path based names for
+        # indices should be discarded
+        site_path = None
+    index_name = get_index_name(
+        site_path,
+        es_custom_index_name_enabled=es_custom_index_name_enabled,
+        custom_index_value=custom_index_value)
     es = conn_factory()
     try:
         es.index(index=index_name, body=data)
@@ -181,18 +237,34 @@ def _record(conn_factory, site_path, data):
             except TransportError:
                 return
             _record(conn_factory, site_path, data)
+        else:
+            raise ex
 
 
 def record(success, recorder, site_path, conn):
     if not success:
         return
     if recorder.valid:
+        try:
+            es_custom_index_name_enabled = api.portal.get_registry_record(
+                'castle.es_index_enabled', default=False)
+            custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
+        except Exception:
+            es_custom_index_name_enabled = False
+            custom_index_value = None
+
         data = recorder()
-        thread = threading.Thread(target=_record, args=(
-            conn,
-            site_path,
-            data
-        ))
+        thread = threading.Thread(
+            target=_record,
+            args=(
+                conn,
+                site_path,
+                data,
+            ),
+            kwargs={
+                "es_custom_index_name_enabled": es_custom_index_name_enabled,
+                "custom_index_value": custom_index_value,
+            })
         thread.start()
 
 

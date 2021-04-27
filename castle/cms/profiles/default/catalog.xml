@@ -39,4 +39,16 @@
  <column value="listCreators" remove="True" />
 
  -->
+  <index name="exclude_from_search" meta_type="BooleanIndex">
+    <indexed_attr value="exclude_from_search"/>
+  </index>
+
+  <column value="exclude_from_search"/>
+
+  <index name="has_custom_markup" meta_type="BooleanIndex">
+    <indexed_attr value="has_custom_markup"/>
+  </index>
+
+  <column value="has_custom_markup"/>
+
 </object>

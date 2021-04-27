@@ -1,7 +1,9 @@
 <ul class="castle-grid-block-sm-1 castle-grid-block-md-2 castle-grid-block-lg-4 dt-grid"
     tal:define="results view/tile/results;
                 utils view/tile/utils;
-                df view/tile/display_fields;">
+                df view/tile/display_fields;"
+    style="${python: view.font_sizes.get('query_listing','')}"
+>
   <tal:item tal:repeat="item python: results['items']">
   <li tal:define="base_url item/getURL;
                   url python: utils.get_object_url(item);

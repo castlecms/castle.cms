@@ -11,7 +11,7 @@ class TweetTile(BaseTile):
         content = self.data.get('url', '') or ''
         self.theme = self.data.get('theme', 'light')
 
-        urlRegEx = ".*twitter\.com/.*/status/([0-9]+)"
+        urlRegEx = r".*twitter\.com/.*/status/([0-9]+)"
         urlParser = re.compile(urlRegEx)
         matches = urlParser.match(content)
 

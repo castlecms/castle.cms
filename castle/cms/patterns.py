@@ -7,7 +7,7 @@ from castle.cms.interfaces import IDashboard
 from castle.cms.utils import get_upload_fields
 from plone import api
 from plone.app.imaging.utils import getAllowedSizes
-from Products.CMFPlone.defaultpage import get_default_page
+from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
@@ -207,7 +207,7 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         if ISiteRoot.providedBy(real_context):
             # we're at site root but actually kind of want context front page
             try:
-                real_context = real_context[get_default_page(real_context)]
+                real_context = real_context[getDefaultPage(real_context)]
             except (AttributeError, KeyError):
                 pass
         if IDashboard.providedBy(real_context):
@@ -217,7 +217,8 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         if transform is not None:
             data['data-site-layout'] = transform.get_layout_name(real_context)
 
-        data['data-site-default'] = get_default_page(self.site) or 'front-page'
+        data['data-site-default'] = getDefaultPage(self.site) or 'front-page'
         data['data-uid'] = IUUID(real_context, '')
 
         return data
+

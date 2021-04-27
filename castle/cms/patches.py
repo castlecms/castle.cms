@@ -4,24 +4,27 @@ from time import time
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from castle.cms import cache
+from castle.cms.constants import CASTLE_VERSION_STRING
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
+from collective.elasticsearch.es import CUSTOM_INDEX_NAME_ATTR
 from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
+from plone import api
 from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
+from Products.CMFPlone.CatalogTool import CatalogTool
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
-
 
 logger = logging.getLogger('castle.cms')
 
@@ -152,7 +155,25 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
     return ticket_data
 
 
+def es_custom_index(self, catalogtool):
+    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    if es_index_enabled:
+        new_index = api.portal.get_registry_record('castle.es_index')
+        setattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR, new_index)
+    else:
+        try:
+            delattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR)
+        except AttributeError:
+            pass
+
+    self._old___init__(catalogtool)
+
+
+def version_overview(self):
+    return [CASTLE_VERSION_STRING] + self._old_version_overview()
+
+
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
 # See https://github.com/celery/celery/pull/4839/
-if hasattr(AsyncResult, '__del__'):
+if getattr(AsyncResult, '__del__', False):
     delattr(AsyncResult, '__del__')

@@ -13,7 +13,7 @@ require([
   };
 
   var STATES = {
-    REQUEST_AUTH_CODE: 'request-auth-code',
+    REQUEST_AUTH_CODE: 'requesting-auth-code',
     CHECK_CREDENTIALS: 'check-credentials',
     COUNTRY_BLOCKED: 'country-blocked',
     COUNTRY_BLOCK_REQUESTED: 'country-block-requested',
@@ -21,21 +21,18 @@ require([
   };
 
   var SecureLoginComponent = R.createClass({
+
     getInitialState: function(){
-      if (this.props.twoFactorEnabled){
-        var initialState = STATES.REQUEST_AUTH_CODE;
-      } else {
-        var initialState = STATES.CHECK_CREDENTIALS;
-      }
       return {
         username: '',
         code: '',
         password: '',
         authType: 'email',
-        state: initialState,
+        state: this.props.state,
         message: null,
         messageType: 'info',
         authenticator: '',
+        last_state: STATES.REQUEST_AUTH_CODE,
       };
     },
 
@@ -46,6 +43,7 @@ require([
           label: 'Email'
         }],
         twoFactorEnabled: false,
+        state: STATES.CHECK_CREDENTIALS,
         additionalProviders: [],
       };
     },
@@ -219,12 +217,18 @@ require([
       var that = this;
 
       var disabled = that.props.twoFactorEnabled && that.state.state !== STATES.REQUEST_AUTH_CODE;
-      var nameField = D.input({type: 'text', value: that.state.username,
-               className: 'form-control username',
-               id: 'username',
-               placeholder:'Enter username', disabled: disabled,
-               onKeyUp: that.checkEnterHit.bind(that, submissionFunction),
-               onChange: that.valueChanged.bind(that, 'username')})
+      var nameField = D.input({
+        type: 'text',
+        value: that.state.username,
+        className: 'form-control username',
+        id: 'username',
+        placeholder:'Enter username',
+        disabled: disabled,
+        onKeyUp: that.checkEnterHit.bind(that, submissionFunction),
+        onChange: that.valueChanged.bind(that, 'username'),
+        autoCorrect: 'off',
+        autoCapitalize: 'none',
+      })
       return D.div({ className: 'form-group'}, [
         D.label({ htmlFor: 'username' }, 'Username'),
         nameField
@@ -237,6 +241,7 @@ require([
         D.label({ htmlFor: 'code' },'Authorization code'),
         D.input({type: 'text', value: that.state.code,
                  className: 'form-control', id: 'code', placeholder:'Enter code',
+                 onKeyUp: that.checkEnterHit.bind(that, that.login),
                  onChange: that.valueChanged.bind(that, 'code')
                })
         ])
@@ -376,7 +381,6 @@ require([
       setTimeout(function(){
         $container.height($selectedForm.height() + 20);
       }, 500);
-
       if(this.state.state !== this.state.last_state){
         var $oldForm = $('.' + getClass('form-' + this.state.last_state));
         $oldForm.hide();

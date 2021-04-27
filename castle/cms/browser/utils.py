@@ -432,3 +432,4 @@ class Utils(BrowserView):
 
     def add_resource_on_request(self, resource):
         add_resource_on_request(self.request, resource)
+
