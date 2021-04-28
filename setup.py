@@ -63,7 +63,7 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.4',
-        'collective.elasticsearch', #needs to point to new es7 branch of elasticsearch
+        'collective.elasticsearch>=4.0.0',
         'collective.celery>=1.1.4',
 
         # python
