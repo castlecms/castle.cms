@@ -1,149 +1,128 @@
+from argparse import ArgumentParser
+import csv
+from datetime import datetime
+import logging
+import os
+import sys
+
 from AccessControl.SecurityManagement import newSecurityManager
-from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-from castle.cms.cron.utils import setup_site
-from plone import api
 from collective.elasticsearch.es import ElasticSearchCatalog
+from elasticsearch import TransportError
+from plone import api
+from tendo import singleton
+from zope.component.hooks import setSite
+
 from castle.cms import audit
 from castle.cms.utils import ESConnectionFactoryFactory
-from collective.elasticsearch.hook import index_batch
 
-from elasticsearch.helpers import bulk
-from tendo import singleton
 
-from argparse import ArgumentParser
-from json import load
-import os
-from fnmatch import fnmatch
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-from datetime import datetime
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def get_args():
     parser = ArgumentParser(
-        description='Import Audit Logs from file and index in Elasticsearch')
-    parser.add_argument('--filepath', dest='filepath', default=None)
+        description='Import Audit Logs from exported CSV into ES')
+    parser.add_argument('--site-id', dest='site_id', default='Castle')
+    parser.add_argument('--filepath', dest='filepath', default='./exported-audit-data.csv')
     args, _ = parser.parse_known_args()
     return args
 
 
-def get_all_log_files(root_dir):
-    matches = []
-    for root, dirs, files in os.walk(root_dir):
-        for file in files:
-            if fnmatch(file, 'audit_log*.json'):
-                matches.append(os.path.join(root, file))
-    return matches
+def get_log_data(filepath):
+    data = []
+    with open(filepath, 'r') as fin:
+        reader = csv.reader(fin)
+        firstrow = True
+        for row in reader:
+            if firstrow:
+                firstrow = False
+                continue
+            data.append(
+                {
+                    'date': row[0],
+                    'name': row[1],
+                    'object': row[2],
+                    'path': row[3],
+                    'request_uri': row[4],
+                    'summary': row[5],
+                    'type': row[6],
+                    'user': row[7],
+                }
+            )
+    return data
 
 
-def select_file(log_files):
-    print('\nHere are some possible log files to choose from:  ')
-    for n, file in enumerate(log_files, 1):
-            print (str(n) + '  ' + file)
-    prompt = '\nEnter the number of the log file you want to import, or enter the filepath. Enter "q" to exit.:  '
-    while(True):
-        user_input = raw_input(prompt)
-        try:
-            user_input = int(user_input)
-        except:
-            pass
-        if user_input in range(1, len(log_files) + 1):
-            return log_files[user_input - 1]
-        elif os.path.isfile(user_input):
-            return user_input
-        elif user_input in ['N', 'n']:
-            return request_filepath()
-        elif user_input in ['Q', 'q']:
-            return
-        else:
-            print('\nInvalid input.')
-
-
-def request_filepath():
-    prompt = '\nEnter a filepath to the audit log you want to import. Enter "q" to exit.' 
-    while(True):
-        user_input = raw_input(prompt)
-        if os.path.isfile(user_input):
-            return user_input
-        elif user_input in ['Q', 'q']:
-            return
-        else:
-            print('\nInvalid input.')
-
-
-def import_audit_logs(site, args):
-    if not args.filepath:
-        print('\nNo filepath provided!')
-        log_files = get_all_log_files(os.getcwd())
-        filepath = request_filepath() if not log_files else select_file(log_files)
-        if not filepath:
-            print('No filepath provided. Exiting.')
-            return        
-    
+def doimport(args):
     start_time = datetime.now()
+
+    if not os.path.exists(args.filepath):
+        logger.critical("does not exist: {}".format(args.filepath))
+        sys.exit(1)
+
     try:
-        with open(filepath, 'r') as file:
-            data = load(file)
-            audit_log = data['audit_log']
-    except:
-        print ('Problem reading file.\n')
-        raise
-    
-    try:
-        setup_site(site)
         catalog = api.portal.get_tool('portal_catalog')
         es_catalog = ElasticSearchCatalog(catalog)
-    except:
-        print ('Error setting up ElasticSearchCatalog\n')
-        raise
+    except Exception:
+        logger.critical('Error setting up ElasticSearchCatalog')
+        sys.exit(1)
 
     if not es_catalog.enabled:
-        print('Elasticsearch not enabled')
+        logger.critical('Elasticsearch not enabled on site `{}`'.format(args.site_id))
         return
-    
-    index_names = set(map((lambda x: x['_index']), audit_log))
+
+    es_custom_index_name_enabled = api.portal.get_registry_record(
+        'castle.es_index_enabled', default=False)
+    custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
+    index_name = audit.get_index_name(
+        site_path=None,
+        es_custom_index_name_enabled=es_custom_index_name_enabled,
+        custom_index_value=custom_index_value)
+    logger.info('importing audit log into ES index `{}`'.format(index_name))
+
+    logger.info('creating index...')
     es = ESConnectionFactoryFactory()()
     try:
-        for index_name in index_names:
-            audit._create_index(es, index_name)
-    except:
-        print ('Error creating index {}'.format(index_name))
-        raise
-
-    for entry in audit_log:
-        entry.pop('_type', None)
-
-    try:
-        entries_indexed, errors = bulk(es_catalog.connection, audit_log, raise_on_error=False)
+        audit._create_index(es, index_name)
     except Exception:
-        print ('Problem when trying to index log entries.\n')
-        raise
-    
+        logging.critical('could not create index `{}`'.format(index_name), exc_info=True)
+        sys.exit(1)
+
+    audit_log = get_log_data(args.filepath)
+    for log in audit_log:
+        try:
+            es.index(index=index_name, body=log)
+        except TransportError as ex:
+            if 'InvalidIndexNameException' in ex.error:
+                try:
+                    audit._create_index(es, index_name)
+                except TransportError:
+                    return
+                es.index(index=index_name, body=log)
+            else:
+                raise ex
+
     end_time = datetime.now()
     elapsed_time = end_time - start_time
+    logger.info('{} entries indexed in {}'.format(len(audit_log), elapsed_time))
 
-    print ('\n{} entries indexed in {}'.format(entries_indexed, elapsed_time))
-
-    if not errors:
-        print('\nThere were no errors!')
-    elif len(errors) == 1:
-        print ('\nThere was 1 error:')
-    else:
-        print ('\nThere were {} errors'.format((len(errors))))
-        
-    for error in errors:
-        print (error)
-  
 
 def run(app):
     singleton.SingleInstance('importauditlog')
 
+    args = get_args()
+
     user = app.acl_users.getUser('admin')  # noqa
     newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+    site = app[args.site_id]
+    setSite(site)
 
-    for oid in app.objectIds():  # noqa
-        obj = app[oid]  # noqa
-        if IPloneSiteRoot.providedBy(obj):
-            import_audit_logs(obj, get_args())
+    doimport(args)
 
 
 if __name__ == '__main__':
