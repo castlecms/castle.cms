@@ -1,4 +1,3 @@
-import threading
 from datetime import datetime
 
 import transaction
@@ -6,8 +5,9 @@ from castle.cms.events import (ICacheInvalidatedEvent,
                                IMetaTileEditedEvent,
                                ITrashEmptiedEvent)
 from castle.cms.interfaces import ITrashed
-from castle.cms.utils import ESConnectionFactoryFactory
+from castle.cms.utils import ESConnectionFactoryFactory, Worker
 from elasticsearch import TransportError
+from multiprocessing import Queue
 from plone import api
 from plone.app.iterate.interfaces import (IAfterCheckinEvent,
                                           ICancelCheckoutEvent, ICheckoutEvent,
@@ -257,18 +257,20 @@ def record(success, recorder, site_path, conn):
             custom_index_value = None
 
         data = recorder()
-        thread = threading.Thread(
-            target=_record,
-            args=(
-                conn,
-                site_path,
-                data,
-            ),
-            kwargs={
-                "es_custom_index_name_enabled": es_custom_index_name_enabled,
-                "custom_index_value": custom_index_value,
-            })
-        thread.start()
+
+        process_data = {}
+        process_data['target'] = _record
+        #! conn -> function factory cannot be pickled when put into request_queue...
+        #! PicklingError: Can't pickle <type 'function'>: attribute lookup __builtin__.function failed
+        process_data['args'] = (conn, site_path, data,)
+        process_data['kwargs'] = {
+            "es_custom_index_name_enabled": es_custom_index_name_enabled,
+            "custom_index_value": custom_index_value,
+        }
+
+        request_queue = Queue()
+        Worker(request_queue).start()
+        request_queue.put(process_data)
 
 
 def event(obj, event=None):

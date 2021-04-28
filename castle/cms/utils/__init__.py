@@ -40,3 +40,4 @@ from .security import publish_content  # noqa
 from .security import is_backend  # noqa
 from .text import truncate_text  # noqa
 from .text import truncate_text as truncateText  # noqa
+from .workerprocess import Worker # noqa
