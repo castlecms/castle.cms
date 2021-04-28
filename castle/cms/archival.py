@@ -18,7 +18,6 @@ from urllib.parse import urlparse, urljoin, quote_plus
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
 from zope.interface import implements
-from boto.exception import S3ResponseError
 
 import hashlib
 import logging
@@ -387,16 +386,14 @@ class Storage(object):
         url = '{endpoint_url}/{bucket}/{key}'.format(
             endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path
-        )
-        key = self.bucket.new_key(content_path)
-        key.set_contents_from_string(content, headers={
-            'Content-Type': content_type
-        }, replace=True)
-        try:
-            key.make_public()
-        except S3ResponseError:
-            logger.warn('Missing private canned url for bucket')
+            key=quote_plus(content_path))
+
+        aws.create_or_update(
+            self.bucket,
+            content_path,
+            content_type,
+            content)
+
         return url
 
     def move_resource(self, url, keep_ext=False, use_vhm=True):
@@ -439,19 +436,14 @@ class Storage(object):
         new_url = '{endpoint_url}/{bucket}/{key}'.format(
             endpoint_url=self.s3_conn.meta.client.meta.endpoint_url,
             bucket=self.bucket.name,
-            key=content_path)
+            key=quote_plus(content_path))
 
-        # first check if already moved
-        if self.bucket.get_key(content_path) is None:
-            key = self.bucket.new_key(content_path)
-            key.set_contents_from_string(fidata, headers={
-                'Content-Type': resp['headers']['content-type'],
-                'Content-Disposition': resp['headers'].get('content-disposition')
-            }, replace=True)
-            try:
-                key.make_public()
-            except S3ResponseError:
-                logger.warn('Missing private canned url for bucket')
+        aws.create_if_not_exists(
+            self.bucket,
+            content_path,
+            resp['headers']['content-type'],
+            fidata,
+            content_disposition=resp['headers'].get('content-disposition', None))
 
         return new_url
 
@@ -575,3 +567,4 @@ class Storage(object):
             return data['view_url']
         else:
             return data['url']
+
