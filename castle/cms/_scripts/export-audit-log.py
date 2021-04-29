@@ -13,7 +13,7 @@ from castle.cms import audit
 from castle.cms.utils import ESConnectionFactoryFactory
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("castle.cms")
 logger.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)
