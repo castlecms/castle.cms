@@ -8,6 +8,7 @@ import sys
 from AccessControl.SecurityManagement import newSecurityManager
 from collective.elasticsearch.es import ElasticSearchCatalog
 from elasticsearch import TransportError
+from elasticsearch import helpers
 from plone import api
 from tendo import singleton
 from zope.component.hooks import setSite
@@ -35,7 +36,6 @@ def get_args():
 
 
 def get_log_data(filepath):
-    data = []
     with open(filepath, 'r') as fin:
         reader = csv.reader(fin)
         firstrow = True
@@ -43,19 +43,32 @@ def get_log_data(filepath):
             if firstrow:
                 firstrow = False
                 continue
-            data.append(
-                {
-                    'date': row[0],
-                    'name': row[1],
-                    'object': row[2],
-                    'path': row[3],
-                    'request_uri': row[4],
-                    'summary': row[5],
-                    'type': row[6],
-                    'user': row[7],
-                }
-            )
-    return data
+            yield {
+                'date': row[0],
+                'name': row[1],
+                'object': row[2],
+                'path': row[3],
+                'request_uri': row[4],
+                'summary': row[5],
+                'type': row[6],
+                'user': row[7],
+            }
+
+
+def bulkupdate(es, bulkdata, index_name):
+    try:
+        helpers.bulk(es, bulkdata)
+        #es.index(index=index_name, body=log)
+    except TransportError as ex:
+        if 'InvalidIndexNameException' in ex.error:
+            try:
+                audit._create_index(es, index_name)
+            except TransportError:
+                return
+            #es.index(index=index_name, body=log)
+            helpers.bulk(es, bulkdata)
+        else:
+            raise ex
 
 
 def doimport(args):
@@ -85,31 +98,33 @@ def doimport(args):
         custom_index_value=custom_index_value)
     logger.info('importing audit log into ES index `{}`'.format(index_name))
 
-    logger.info('creating index...')
     es = ESConnectionFactoryFactory()()
-    try:
-        audit._create_index(es, index_name)
-    except Exception:
-        logging.critical('could not create index `{}`'.format(index_name), exc_info=True)
-        sys.exit(1)
-
-    audit_log = get_log_data(args.filepath)
-    for log in audit_log:
+    if not es.indices.exists(index_name):
+        logger.info('creating index...')
         try:
-            es.index(index=index_name, body=log)
-        except TransportError as ex:
-            if 'InvalidIndexNameException' in ex.error:
-                try:
-                    audit._create_index(es, index_name)
-                except TransportError:
-                    return
-                es.index(index=index_name, body=log)
-            else:
-                raise ex
+            audit._create_index(es, index_name)
+        except Exception:
+            logging.critical('could not create index `{}`'.format(index_name), exc_info=True)
+            sys.exit(1)
+
+    num = 0
+    bulkdata = []
+    for log in get_log_data(args.filepath):
+        bulkdata.append({
+            "_index": index_name,
+            "_source": log,
+        })
+        num += 1
+        if num % 10000 == 0:
+            logger.info("at {}, performing bulk operation...".format(num))
+            bulkupdate(es, bulkdata, index_name)
+            bulkdata = []
+    logger.info("at {}, performing final bulk operation...".format(num))
+    bulkupdate(es, bulkdata, index_name)
 
     end_time = datetime.now()
     elapsed_time = end_time - start_time
-    logger.info('{} entries indexed in {}'.format(len(audit_log), elapsed_time))
+    logger.info('{} entries indexed in {}'.format(num, elapsed_time))
 
 
 def run(app):
