@@ -25,15 +25,20 @@ logger.addHandler(handler)
 def get_args():
     parser = argparse.ArgumentParser(
         description='Export Audit Logs to CSV for a specific site')
-    parser.add_argument('--site-id', dest='site_id', default=None,
+    parser.add_argument(
+        '--site-id', dest='site_id', default=None,
         help='site id to fetch settings from')
-    parser.add_argument('--indexname', dest='indexname', default='Castle',
+    parser.add_argument(
+        '--indexname', dest='indexname', default='Castle',
         help='if present, will override any value from the site with --site-id')
-    parser.add_argument('--filepath', dest='filepath', default='./exported-audit-data.csv',
+    parser.add_argument(
+        '--filepath', dest='filepath', default='./exported-audit-data.csv',
         help='where to export data in csv format')
-    parser.add_argument('--scrolltime', dest='scrolltime', default='2s',
+    parser.add_argument(
+        '--scrolltime', dest='scrolltime', default='2s',
         help='ES scroll time, scroll api is used for ES2.3 compat')
-    parser.add_argument('--host', dest='host', default=None,
+    parser.add_argument(
+        '--host', dest='host', default=None,
         help='ES host to use. if present, all ES settings in arguments will '
              'override site configuration from --site-id')
     parser.add_argument('--searchtimeout', dest='searchtimeout', default='10s')
@@ -43,7 +48,7 @@ def get_args():
 
 
 def convertunicode(s):
-    if isinstance(s, unicode):
+    if isinstance(s, unicode):  # noqa: F821
         return s.encode('utf-8')
     return s
 
@@ -129,8 +134,8 @@ def run(app):
 
     args = get_args()
 
-    user = app.acl_users.getUser('admin')  # noqa
-    newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+    user = app.acl_users.getUser('admin')  # noqa: F821
+    newSecurityManager(None, user.__of__(app.acl_users))  # noqa: F821
     if args.site_id is not None:
         site = app[args.site_id]
         setSite(site)
@@ -139,5 +144,4 @@ def run(app):
 
 
 if __name__ == '__main__':
-    run(app)  # noqa
-
+    run(app)  # noqa: F821

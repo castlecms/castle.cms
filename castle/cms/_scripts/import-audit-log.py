@@ -58,14 +58,12 @@ def get_log_data(filepath):
 def bulkupdate(es, bulkdata, index_name):
     try:
         helpers.bulk(es, bulkdata)
-        #es.index(index=index_name, body=log)
     except TransportError as ex:
         if 'InvalidIndexNameException' in ex.error:
             try:
                 audit._create_index(es, index_name)
             except TransportError:
                 return
-            #es.index(index=index_name, body=log)
             helpers.bulk(es, bulkdata)
         else:
             raise ex
@@ -132,8 +130,8 @@ def run(app):
 
     args = get_args()
 
-    user = app.acl_users.getUser('admin')  # noqa
-    newSecurityManager(None, user.__of__(app.acl_users))  # noqa
+    user = app.acl_users.getUser('admin')
+    newSecurityManager(None, user.__of__(app.acl_users))
     site = app[args.site_id]
     setSite(site)
 
@@ -141,4 +139,4 @@ def run(app):
 
 
 if __name__ == '__main__':
-    run(app)  # noqa
+    run(app)  # noqa: F821
