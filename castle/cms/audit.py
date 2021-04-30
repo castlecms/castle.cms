@@ -183,25 +183,20 @@ _registered = {
 }
 
 
-es_doc_type = 'entry'
-
-
 def _create_index(es, index_name):
     mapping = {'properties': {
-        'type': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'name': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'summary': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'user': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'request_uri': {'store': False, 'type': 'string',
-                        'index': 'not_analyzed'},
+        'type': {'store': False, 'type': 'text', 'index': False},
+        'name': {'store': False, 'type': 'text', 'index': False},
+        'summary': {'store': False, 'type': 'text', 'index': False},
+        'user': {'store': False, 'type': 'text', 'index': False, 'analyzer': 'keyword'},
+        'request_uri': {'store': False, 'type': 'text', 'index': False},
         'date': {'store': False, 'type': 'date'},
-        'object': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'path': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'object': {'store': False, 'type': 'text', 'index': False},
+        'path': {'store': False, 'type': 'text', 'index': False},
     }}
     if not es.indices.exists(index_name):
         es.indices.create(index_name)
     es.indices.put_mapping(
-        doc_type=es_doc_type,
         body=mapping,
         index=index_name)
 
@@ -232,7 +227,7 @@ def _record(conn_factory, site_path, data, es_custom_index_name_enabled=False, c
         custom_index_value=custom_index_value)
     es = conn_factory()
     try:
-        es.index(index=index_name, doc_type=es_doc_type, body=data)
+        es.index(index=index_name, body=data)
     except TransportError as ex:
         if 'InvalidIndexNameException' in ex.error:
             try:

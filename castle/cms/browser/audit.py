@@ -29,7 +29,7 @@ class AuditView(BrowserView):
         try:
             results = self.do_query()
             self.results = results['hits']['hits']
-            self.total = results['hits']['total']
+            self.total = results['hits']['total']['value']
 
             if 'Export' in self.request.form.get('export', ''):
                 return self.export()
@@ -81,20 +81,20 @@ class AuditView(BrowserView):
             )
         if self.user:
             filters.append(
-                {'term': {'user': api.user.get_current().getId()}}
+                {'term': {'user': api.user.get_current().getId().lower()}}
             )
         else:
             if form.get('user'):
                 filters.append(
-                    {'term': {'user': form.get('user')}}
+                    {'term': {'user': form.get('user').lower()}}
                 )
         if form.get('content'):
             items = form.get('content').split(';')
             cqueries = []
             for item in items:
-                cqueries.append({'term': {'object': item}})
+                cqueries.append(item)
             filters.append(
-                {'or': cqueries}
+                {'terms': {'object': cqueries}}
             )
         if form.get('after'):
             filters.append(
@@ -105,19 +105,12 @@ class AuditView(BrowserView):
                 {'range': {'date': {'lte': form.get('before')}}}
             )
         if len(filters) == 0:
-            query = {
-                "query": {'match_all': {}}
-            }
+            query = {"query": {'match_all': {}}}
         else:
-            if len(filters) > 1:
-                qfilter = {'and': filters}
-            else:
-                qfilter = filters[0]
             query = {
                 "query": {
-                    'filtered': {
-                        'filter': qfilter,
-                        'query': {'match_all': {}}
+                    'bool': {
+                        'filter': filters
                     }
                 }
             }
@@ -129,7 +122,6 @@ class AuditView(BrowserView):
         query = self.get_query()
         results = es.search(
             index=index_name,
-            doc_type=audit.es_doc_type,
             body=query,
             sort='date:desc',
             size=3000)
@@ -165,7 +157,6 @@ class AuditView(BrowserView):
         start = (page - 1) * self.limit
         results = es.search(
             index=index_name,
-            doc_type=audit.es_doc_type,
             body=query,
             sort='date:desc',
             from_=start,

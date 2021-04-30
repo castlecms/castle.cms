@@ -1,10 +1,31 @@
 Changelog
 =========
 
-2.6.32 (unreleased)
+3.0.0b0 (unreleased)
 -------------------
 
-- Nothing changed yet.
+BREAKING
+++++++++
+
+The 3.x series of releases will bring CastleCMS into compatibility with
+ElasticSearch 7. Practically, this means primarily updating 3 packages:
+
+* castle.cms >= 3
+* collective.elasticsearch >= 4
+* elasticsearch >= 7, <= 7.6
+
+The `elasticsearch` package is restricted between 7 and 7.6 primarily due to
+the restriction from `collective.elasticsearch` -- this is expected to be
+updated at some point, but not for the initial release of `castle.cms` 3.x.
+
+For migration, it is recommended that you setup a new ES cluster, update
+site configurations to point at the new cluster, then do the "Convert" and
+"Rebuild" actions in the ElasticSearch control panel.
+
+This will not migrate your audit log, if enabled. To migrate the audit log,
+use the `castle/cms/_scripts/export-audit-log.py` script to dump the old
+audit log into a CSV file, and then use the `castle/cms/_scripts/import-audit-log.py`
+script to import the CSV file into the new cluster.
 
 
 2.6.31 (2021-04-20)
