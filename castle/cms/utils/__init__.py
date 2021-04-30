@@ -18,6 +18,7 @@ from .content import inline_images_in_dom  # noqa
 from .content import is_max_paste_items  # noqa
 from .content import is_mosaic_edit_form  # noqa
 from .content import recursive_create_path  # noqa
+from .diskcacheutil import DequeUtil # noqa
 from .mail import get_email_from_address  # noqa
 from .mail import send_email  # noqa
 from .misc import get_ip  # noqa
@@ -40,4 +41,3 @@ from .security import publish_content  # noqa
 from .security import is_backend  # noqa
 from .text import truncate_text  # noqa
 from .text import truncate_text as truncateText  # noqa
-from .workerprocess import Worker # noqa

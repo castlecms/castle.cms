@@ -5,9 +5,8 @@ from castle.cms.events import (ICacheInvalidatedEvent,
                                IMetaTileEditedEvent,
                                ITrashEmptiedEvent)
 from castle.cms.interfaces import ITrashed
-from castle.cms.utils import ESConnectionFactoryFactory, Worker
+from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
-from multiprocessing import Queue
 from plone import api
 from plone.app.iterate.interfaces import (IAfterCheckinEvent,
                                           ICancelCheckoutEvent, ICheckoutEvent,
@@ -258,19 +257,18 @@ def record(success, recorder, site_path, conn):
 
         data = recorder()
 
-        process_data = {}
-        process_data['target'] = _record
-        #! conn -> function factory cannot be pickled when put into request_queue...
-        #! PicklingError: Can't pickle <type 'function'>: attribute lookup __builtin__.function failed
-        process_data['args'] = (conn, site_path, data,)
-        process_data['kwargs'] = {
+        from castle.cms.utils import DequeUtil
+
+        kwargs = {
             "es_custom_index_name_enabled": es_custom_index_name_enabled,
             "custom_index_value": custom_index_value,
         }
 
-        request_queue = Queue()
-        Worker(request_queue).start()
-        request_queue.put(process_data)
+        deque_util = DequeUtil()
+        if data not in deque_util.deque:
+            deque_util.add_to_deque(data)
+        for i in range(len(deque_util.deque)):
+            _record(conn, site_path, deque_util.deque[i], kwargs)
 
 
 def event(obj, event=None):

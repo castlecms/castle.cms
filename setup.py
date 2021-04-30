@@ -82,6 +82,7 @@ setup(
         'tendo',
         'pylru',
         'sqlalchemy',
+        'diskcache',
 
         # misc
         'z3c.unconfigure',
