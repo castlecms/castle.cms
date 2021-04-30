@@ -546,4 +546,3 @@ class Toolbar(BrowserView):
             self.request.response.setHeader('Content-Type', 'application/json')
 
         return json.dumps(data)
-

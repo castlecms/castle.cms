@@ -567,4 +567,3 @@ class Storage(object):
             return data['view_url']
         else:
             return data['url']
-

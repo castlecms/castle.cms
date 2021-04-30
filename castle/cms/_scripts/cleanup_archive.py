@@ -117,4 +117,3 @@ if __name__ == '__main__':
         del storage.path_to_uid[content_path]
 
     transaction.commit()
-

@@ -71,4 +71,3 @@ class SiteMapView(sitemap.SiteMapView):
                 'loc': loc,
                 'lastmod': date
             }
-

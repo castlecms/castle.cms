@@ -221,4 +221,3 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         data['data-uid'] = IUUID(real_context, '')
 
         return data
-

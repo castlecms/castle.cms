@@ -227,4 +227,3 @@ class Manage(BaseView):
             self.request.response.setHeader('Content-type', 'application/json')
             return json.dumps(AWSApi(self.context, self.request)())
         return self.index()
-

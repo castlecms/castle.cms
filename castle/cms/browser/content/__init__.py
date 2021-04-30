@@ -869,4 +869,3 @@ class ContentBody(BrowserView):
             'data': data,
             'rendered': rendered
         })
-

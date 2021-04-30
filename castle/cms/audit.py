@@ -183,8 +183,6 @@ _registered = {
 }
 
 
-
-
 def _create_index(es, index_name):
     mapping = {'properties': {
         'type': {'store': False, 'type': 'text', 'index': False},
