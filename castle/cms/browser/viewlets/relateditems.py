@@ -18,7 +18,7 @@ class ContentRelatedItems(BaseContentRelatedItems):
             # the query will return an empty list if the user
             # has no permission to see the target object
             catalog_args = {
-                'path': dict(query=path, depth=0), 
+                'path': dict(query=path, depth=0),
             }
             if not api.portal.get_registry_record(
                 'plone.display_unpublished_related_items',
