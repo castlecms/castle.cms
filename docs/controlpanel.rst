@@ -136,3 +136,12 @@ The can be configured on the environment with these environment settings:
 
 (you can also provide twitter auth key and secret through control panel; however,
 in the future, these will all be environment variables)
+
+
+Security Settings
+-----------------
+
+in /@@security-controlpanel, you can change settings for the way some content shows
+up. For example, `Allow access to published objects inside private containers` and
+`Display unpublished related items` settings can be changed there. (Both of these
+values default to False)
