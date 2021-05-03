@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b1 (unreleased)
+3.0.0b1 (2021-05-03)
 --------------------
 
 - add ES host/port override to reindex-catalog script
