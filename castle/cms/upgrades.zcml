@@ -441,7 +441,7 @@
 
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.30"
-    description="changes default slideshow view to the actual slideshow"
+    description="2630 changes default slideshow view to the actual slideshow"
     source="*"
     destination="2630"
     handler=".upgrades.upgrade_2_6_30"
@@ -458,10 +458,28 @@
 
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.31"
-    description="adds/ fixes some mockup-structure pagination functionality"
+    description="2631 adds/ fixes some mockup-structure pagination functionality"
     source="*"
     destination="2631"
     handler=".upgrades.upgrade_2_6_31"
     profile="castle.cms:default"
     />
+
+  <genericsetup:registerProfile
+    name="3_0_00"
+    title="CastleCMS upgrade to 3.0.0 profile"
+    directory="profiles/3_0_00"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.0"
+    description="3000 adds the functionality to filter out unpublished related items"
+    source="*"
+    destination="3000"
+    handler=".upgrades.upgrade_3_0_00"
+    profile="castle.cms:default"
+    />
+
 </configure>
