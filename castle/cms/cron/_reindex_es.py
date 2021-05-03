@@ -16,15 +16,18 @@ import datetime
 import logging
 import sys
 
-import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.hook import index_batch
+from collective.elasticsearch.interfaces import IMappingProvider
 from collective.elasticsearch.interfaces import IReindexActive
+from elasticsearch import Elasticsearch
 from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
+import transaction
+from zope.component import getMultiAdapter
 from zope.globalrequest import getRequest
 from zope.interface import alsoProvides
 
@@ -48,8 +51,38 @@ def get_args():
     parser.add_argument(
         '--scrolltime', dest='scrolltime', default='2s',
         help='how long to hold a scroll index')
+    parser.add_argument(
+        '--override-es-servers', dest='esservers', nargs='*',
+        help='ElasticSearch server(s) to use instead of a site-configured server(s)')
+    parser.add_argument(
+        '--create-index', dest='createindex', action='store_true',
+        help='Create an ES index if one doesn\'t exist. This WILL NOT convert the '
+             'catalog in the site to use the elasticsearch catalog, it only creates '
+             'the ES index.')
     args, _ = parser.parse_known_args()
     return args
+
+
+def set_connection(es, args):
+    servers = [a for a in args.esservers]
+    if servers is None or len(servers) <= 0:
+        return
+
+    # partially copied out of collective.elasticsearch.es
+    kwargs = dict()
+    if es.get_setting('timeout', 0):
+        kwargs['timeout'] = es.get_setting('timeout')
+    if es.get_setting('sniff_on_start', False):
+        kwargs['sniff_on_start'] = True
+    if es.get_setting('sniff_on_connection', False):
+        kwargs['sniff_on_connection'] = True
+    if es.get_setting('sniffer_timeout', 0):
+        kwargs['sniffer_timeout'] = es.get_setting('sniffer_timeout')
+    if es.get_setting('retry_on_timeout', False):
+        kwargs['retry_on_timeout'] = True
+
+    esconn = Elasticsearch(servers, **kwargs)
+    es._conn = esconn
 
 
 def index_site(site, args):
@@ -58,12 +91,25 @@ def index_site(site, args):
     es = ElasticSearchCatalog(catalog)
     if not es.enabled:
         return
+    set_connection(es, args)
 
     req = getRequest()
     if req is None:
         logger.critical("could not get fake request")
         sys.exit(1)
     alsoProvides(req, IReindexActive)
+
+    # make certain index exists, and create it if it doesn't
+    if args.createindex and not es.connection.indices.exists(index=es.index_name):
+        # basically es.convertToElastic(), without updating DB
+        # this is useful in a scenario where you want to reindex a site
+        # to an alternative cluster that the actively configured one.
+        # it is not useful to configure the site to use ES as it's catalog.
+        adapter = getMultiAdapter((getRequest(), es), IMappingProvider)
+        mapping = adapter()
+        es.connection.indices.put_mapping(
+            body=mapping,
+            index=es.index_name)
 
     # first we want to get all document ids from elastic
     indexed_uids = []
@@ -108,13 +154,13 @@ def index_site(site, args):
         try:
             ob = brain.getObject()
         except Exception:
-            logger.info('Could not get object of %s' % brain.getPath())
+            logger.info('Could not get object of {}'.format(brain.getPath()))
             continue
         try:
             uid = IUUID(ob)
             index[uid] = ob
         except TypeError:
-            logger.info('Could not get UID of %s' % brain.getPath())
+            logger.info('Could not get UID of {}'.format(brain.getPath()))
             continue
         if uid in indexed_uids:
             # remove from uids... When all said and done,
@@ -122,13 +168,14 @@ def index_site(site, args):
             # system and remove them from es
             indexed_uids.remove(uid)
         if len(index) > 300:
-            logger.info('finished indexing %i' % count)
+            logger.info('finished indexing {}'.format(count))
             index_batch([], index, [], es)
             site._p_jar.invalidateCache()
             transaction.begin()
             site._p_jar.sync()
             index = {}
     index_batch([], index, [], es)
+    logger.info('finished indexing {}'.format(count))
 
     logger.info("removing missing UID's from ES...")
     remove = []
