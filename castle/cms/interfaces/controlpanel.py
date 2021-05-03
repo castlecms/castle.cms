@@ -213,6 +213,14 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
         required=False)
 
+    display_unpublished_related_items = schema.Bool(
+        title=u'Display unpublished related items',
+        description=u'Check this box to allow Related Items that are not currently published '
+                    u'to be displayed when viewing content containing related items.',
+        default=False,
+        required=False,
+    )
+
 
 class IAnnouncementData(Interface):
     show_announcement = schema.Bool(

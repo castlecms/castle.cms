@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record
+    name="plone.display_unpublished_related_items"
+    interface="castle.cms.interfaces.ISecuritySchema"
+    field="display_unpublished_related_items"
+  >
+    <value>False</value>
+  </record>
+</registry>

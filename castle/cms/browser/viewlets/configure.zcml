@@ -23,6 +23,16 @@
       layer="castle.cms.interfaces.ICastleLayer"
       template="social_tags_body.pt"
       />
+
+    <browser:viewlet
+      name="plone.belowcontentbody.relateditems"
+      manager="plone.app.layout.viewlets.interfaces.IBelowContentBody"
+      for="plone.app.relationfield.behavior.IRelatedItems"
+      class="castle.cms.browser.viewlets.relateditems.ContentRelatedItems"
+      permission="zope2.View"
+      layer="castle.cms.interfaces.ICastleLayer"
+      />
+
   </configure>
 
 </configure>
