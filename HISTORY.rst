@@ -4,7 +4,8 @@ Changelog
 3.0.0b2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Implement functionality to hide related resource from being displayed for
+  unpublished content
 
 
 3.0.0b1 (2021-05-03)
