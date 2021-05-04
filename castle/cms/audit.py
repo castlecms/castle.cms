@@ -6,6 +6,7 @@ from castle.cms.events import (ICacheInvalidatedEvent,
                                ITrashEmptiedEvent)
 from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
+from diskcache import Cache
 from elasticsearch import TransportError
 from plone import api
 from plone.app.iterate.interfaces import (IAfterCheckinEvent,
@@ -256,19 +257,27 @@ def record(success, recorder, site_path, conn):
             custom_index_value = None
 
         data = recorder()
-
-        from castle.cms.utils import DequeUtil
-
         kwargs = {
             "es_custom_index_name_enabled": es_custom_index_name_enabled,
             "custom_index_value": custom_index_value,
         }
 
-        deque_util = DequeUtil()
-        if data not in deque_util.deque:
-            deque_util.add_to_deque(data)
-        for i in range(len(deque_util.deque)):
-            _record(conn, site_path, deque_util.deque[i], kwargs)
+        cache = Cache('cache/auditcache')
+
+        with Cache(cache.directory) as reference:
+            reference.set(data, data)
+
+            import pdb; pdb.set_trace()
+
+            for key in reference:
+                try:
+                    _record(conn, site_path, reference[key], **kwargs)
+                    del reference[key]
+                except:
+                    import logging
+                    logger = logging.getLogger('castle.cms')
+                    logger.warning('audit record failed')
+                    pass
 
 
 def event(obj, event=None):
