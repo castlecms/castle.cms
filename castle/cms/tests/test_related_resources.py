@@ -38,7 +38,7 @@ class TestRelatedResources(unittest.TestCase):
             obj=item,
             to_state='published',
         )
-        
+
     @property
     def related_items(self):
         content_related_items = ContentRelatedItems(
