@@ -33,6 +33,12 @@ class TestRelatedResources(unittest.TestCase):
             container=self.portal,
         )
 
+    def publish(self, item):
+        api.content.transition(
+            obj=item,
+            to_state='published',
+        )
+        
     @property
     def related_items(self):
         content_related_items = ContentRelatedItems(
@@ -75,13 +81,14 @@ class TestRelatedResources(unittest.TestCase):
 
     def test_content_related_items_override_when_display_unpublished_false(self):
         target_documents = self.set_up_target_documents()
+        api.portal.set_registry_record(
+            'plone.display_unpublished_related_items',
+            False,
+        )
         self.assertEqual(len(self.related_items), 0)
         for expected_related_items_count, target_document in enumerate(target_documents, start=1):
             self.assertFalse(target_document in self.related_items)
-            api.content.transition(
-                obj=target_document,
-                to_state='published',
-            )
+            self.publish(target_document)
             self.assertEqual(
                 len(self.related_items),
                 expected_related_items_count,
