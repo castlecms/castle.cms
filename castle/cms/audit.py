@@ -1,11 +1,10 @@
 from datetime import datetime
 
-import transaction
+from castle.cms.constants import AUDIT_CACHE_DIRECTORY
 from castle.cms.events import (ICacheInvalidatedEvent,
                                IMetaTileEditedEvent,
                                ITrashEmptiedEvent)
 from castle.cms.interfaces import ITrashed
-from castle.cms.utils import ESConnectionFactoryFactory
 from diskcache import Cache
 from elasticsearch import TransportError
 from plone import api
@@ -244,42 +243,6 @@ def _record(conn_factory, site_path, data, es_custom_index_name_enabled=False, c
             raise ex
 
 
-def record(success, recorder, site_path, conn):
-    if not success:
-        return
-    if recorder.valid:
-        try:
-            es_custom_index_name_enabled = api.portal.get_registry_record(
-                'castle.es_index_enabled', default=False)
-            custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
-        except Exception:
-            es_custom_index_name_enabled = False
-            custom_index_value = None
-
-        data = recorder()
-        kwargs = {
-            "es_custom_index_name_enabled": es_custom_index_name_enabled,
-            "custom_index_value": custom_index_value,
-        }
-
-        cache = Cache('cache/auditcache')
-
-        with Cache(cache.directory) as reference:
-            reference.set(data, data)
-
-            import pdb; pdb.set_trace()
-
-            for key in reference:
-                try:
-                    _record(conn, site_path, reference[key], **kwargs)
-                    del reference[key]
-                except:
-                    import logging
-                    logger = logging.getLogger('castle.cms')
-                    logger.warning('audit record failed')
-                    pass
-
-
 def event(obj, event=None):
 
     if event is None:
@@ -313,7 +276,25 @@ def event(obj, event=None):
 
         recorder = audit_data.get_recorder(event, obj)
         site_path = '/'.join(api.portal.get().getPhysicalPath())
-        transaction.get().addAfterCommitHook(record, args=(
-            recorder, site_path, ESConnectionFactoryFactory(registry)))
+        if recorder.valid:
+            try:
+                es_custom_index_name_enabled = api.portal.get_registry_record(
+                    'castle.es_index_enabled', default=False)
+                custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
+            except Exception:
+                es_custom_index_name_enabled = False
+                custom_index_value = None
+
+            data = recorder()
+            kwargs = {
+                "es_custom_index_name_enabled": es_custom_index_name_enabled,
+                "custom_index_value": custom_index_value,
+            }
+
+            cache = Cache(AUDIT_CACHE_DIRECTORY)
+            data_dict = {'site_path': site_path, 'kwargs': kwargs}
+
+            with Cache(cache.directory) as reference:
+                reference.set(data, data_dict)
     else:
         pass
