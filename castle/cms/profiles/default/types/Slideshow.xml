@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<object name="Person" meta_type="Dexterity FTI" i18n:domain="plone"
+<object name="Slideshow" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Slideshow</property>
  <property name="description" i18n:translate=""></property>
@@ -27,7 +27,6 @@
   <element value="castle.cms.behaviors.versionable.IVersionable" />
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.search.ISearch"/>
-  <element value="Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes"/>
   <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
  </property>
  <property name="schema">castle.cms.interfaces.ISlideshow</property>
