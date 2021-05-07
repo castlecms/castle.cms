@@ -7,6 +7,7 @@ from Products.CMFPlone.utils import validate_json
 from zope import schema
 from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
+from plone.app.users.schema import checkEmailAddress
 
 
 def create_term(val, label):
@@ -288,6 +289,17 @@ class ISiteConfiguration(Interface):
         description=u'Require quality check passing before content can be published. If it '
                     u'does not pass, user needs to add comment in order to override.',
         default=False
+    )
+
+    daily_audit_log_recipients = schema.List(
+        title=u'Audit Log Recipients',
+        description=u'Add Email addresses. Press enter to add another email.',
+        default=[],
+        missing_value=[],
+        required=False,
+        value_type=schema.ASCIILine(
+            constraint=checkEmailAddress
+        )
     )
 
 
