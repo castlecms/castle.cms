@@ -1,13 +1,12 @@
 import argparse
-import time
 import logging
+import os
+import time
 
 from castle.cms.audit import _record
 from castle.cms.constants import AUDIT_CACHE_DIRECTORY
 from castle.cms.utils import ESConnectionFactoryFactory
 from diskcache import Cache
-from elasticsearch import TransportError
-from plone import api
 
 
 logger = logging.getLogger(__name__)
@@ -15,15 +14,16 @@ logger = logging.getLogger(__name__)
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--site-id', dest='site_id', default='Plone')
+parser.add_argument('--cache-dir', dest='cache_dir', default=AUDIT_CACHE_DIRECTORY)
 args, _ = parser.parse_known_args()
 
 site = app[args.site_id]
+cache_dir = os.path.relpath(args.cache_dir)
 registry = site.portal_registry
 conn_factory = ESConnectionFactoryFactory(registry)
 
-
 while (True):
-    cache = Cache(AUDIT_CACHE_DIRECTORY)
+    cache = Cache(cache_dir)
     if len(cache) == 0:
         cache.close()
         logger.warn('sleeping for 5 seconds')
