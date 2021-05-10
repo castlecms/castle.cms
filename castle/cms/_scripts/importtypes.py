@@ -536,6 +536,13 @@ class ImageType(BaseImportType):
             })
         except KeyError:
             pass
+        try:
+            overview_text = self.field_data['castle.cms.behaviors.overview.IOverview']['overview']
+            data.update({
+                'overview': overview_text
+            })
+        except KeyError:
+            pass
         return data
 
 
