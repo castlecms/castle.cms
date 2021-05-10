@@ -539,7 +539,7 @@ class ImageType(BaseImportType):
         try:
             overview_text = self.field_data['castle.cms.behaviors.overview.IOverview']['overview']
             data.update({
-                'overview': overview_text
+                'custom_markup': overview_text
             })
         except KeyError:
             pass
