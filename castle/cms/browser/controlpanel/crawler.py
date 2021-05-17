@@ -1,5 +1,4 @@
 from castle.cms.constants import CRAWLED_DATA_KEY
-from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.interfaces import ICrawlerConfiguration
 from collective.elasticsearch.es import ElasticSearchCatalog
 from elasticsearch import TransportError
@@ -44,8 +43,7 @@ class CrawlerControlPanel(controlpanel.ControlPanelFormWrapper):
         try:
             es = ElasticSearchCatalog(portal_catalog)
             result = es.connection.search(
-                index=es.index_name,
-                doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+                index='{index_name}_crawler'.format(index_name=es.index_name),
                 body=query)
         except TransportError:
             return []
