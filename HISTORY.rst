@@ -1,10 +1,9 @@
 Changelog
 =========
 
+
 3.0.0b2 (unreleased)
 --------------------
-
-- Nothing changed yet.
 
 
 3.0.0b1 (2021-05-03)
@@ -39,6 +38,13 @@ This will not migrate your audit log, if enabled. To migrate the audit log,
 use the `castle/cms/_scripts/export-audit-log.py` script to dump the old
 audit log into a CSV file, and then use the `castle/cms/_scripts/import-audit-log.py`
 script to import the CSV file into the new cluster.
+
+
+2.6.34 (2021-05-17)
+-------------------
+
+- added try-catch to patterns to catch unfound tiles.
+- created test_missing_tiles_not_available_in_settings() in test_settings.py
 
 
 2.6.31 (2021-04-20)

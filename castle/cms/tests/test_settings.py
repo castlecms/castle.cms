@@ -79,6 +79,14 @@ class TestFileUploadFields(unittest.TestCase):
         self.assertEquals(
             len(json.loads(data['data-file-upload-fields'])), 5)
 
+    def test_missing_tiles_not_available_in_settings(self):
+        patterns = CastleSettingsAdapter(self.portal, self.request, None)
+        available_tiles = patterns.registry.get('castle.slot_tiles')
+        available_tiles['Fake'] = ['castle.cms.fake']
+        self.assertIn('Fake', patterns.registry.get('castle.slot_tiles'))
+        self.assertFalse('castle.cms.fake' in patterns())
+        self.assertFalse('Fake' in patterns())
+
     def test_migrate_settings(self):
         registry = getUtility(IRegistry)
         del registry.records['castle.file_upload_fields']

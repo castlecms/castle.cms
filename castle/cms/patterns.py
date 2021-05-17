@@ -1,4 +1,5 @@
 import json
+import logging
 
 from Acquisition import aq_inner, aq_parent
 from borg.localrole.interfaces import IFactoryTempFolder
@@ -21,6 +22,9 @@ from Products.CMFPlone.patterns import (PloneSettingsAdapter,
 from zope.component import getUtility
 from zope.interface import implements
 from castle.cms.services.google import youtube
+
+
+logger = logging.getLogger('castle.cms')
 
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
@@ -77,15 +81,20 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
 
         # otherwise, you're editing the value in the DB!!!!
         available_tiles = available_tiles.copy()
-
+        available_tiles['Fake'] = ['castle.cms.fake']
         for group_name, tile_ids in available_tiles.items():
             group = []
             for tile_id in tile_ids:
-                tile = getUtility(ITileType, name=tile_id)
-                group.append({
-                    'id': tile_id,
-                    'label': tile.title
-                })
+                try:
+                    tile = getUtility(ITileType, name=tile_id)
+                    group.append({
+                        'id': tile_id,
+                        'label': tile.title
+                    })
+                except Exception, e:
+                    logger.error("Couldn't load tile.")
+                    logger.exception(e)
+                    pass
             available_tiles[group_name] = group
 
         data = {
