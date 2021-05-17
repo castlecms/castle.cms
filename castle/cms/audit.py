@@ -287,9 +287,12 @@ def event(obj, event=None):
             }
 
             cache = Cache(AUDIT_CACHE_DIRECTORY)
-            data_dict = {'site_path': site_path, 'kwargs': kwargs}
+            data_dict = {'site_path': site_path, 'data': data, 'kwargs': kwargs}
 
             with Cache(cache.directory) as reference:
-                reference.set(data, data_dict)
+                if obj:
+                    reference.set(data['object'], data_dict)
+                else:
+                    reference.set(data, data_dict)
     else:
         pass

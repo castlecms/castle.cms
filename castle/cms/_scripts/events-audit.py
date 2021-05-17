@@ -31,7 +31,7 @@ while (True):
     else:
         with Cache(cache.directory) as reference:
             for key in reference:
-                args = (conn_factory, reference[key]['site_path'], key)
+                args = (conn_factory, reference[key]['site_path'], reference[key]['data'])
                 kwargs = reference[key]['kwargs']
                 try:
                     logger.warn('Audit Record: %s' % key)
