@@ -19,15 +19,29 @@ class TestAudit(unittest.TestCase):
         self.request = self.layer['request']
         login(self.portal, TEST_USER_NAME)
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
+        api.portal.set_registry_record(
+            'collective.elasticsearch.interfaces.IElasticSettings.enabled', True)
 
     def test_cache_object(self):
         obj = api.content.create(type='Document', id='doc1',
                                  container=self.portal)
-        api.portal.set_registry_record(
-            'collective.elasticsearch.interfaces.IElasticSettings.enabled', True)
         api.content.transition(obj=obj, to_state='published')
         obj.reindexObject()
         obj_id = getattr(obj, '_plone.uuid')
         cache = Cache(AUDIT_CACHE_DIRECTORY)
         self.assertTrue(obj_id in cache)
+        cache.clear()
+
+    def test_es_custom_index(self):
+        obj = api.content.create(type='Document', id='doc1',
+                                 container=self.portal)
+        api.portal.set_registry_record('castle.es_index_enabled', True)
+        api.portal.set_registry_record('castle.es_index', u'test-index')
+        api.content.transition(obj=obj, to_state='published')
+        obj.reindexObject()
+        obj_id = getattr(obj, '_plone.uuid')
+        cache = Cache(AUDIT_CACHE_DIRECTORY)
+        self.assertTrue(obj_id in cache)
+        self.assertTrue(cache[obj_id]['kwargs']['es_custom_index_name_enabled'])
+        self.assertEqual(cache[obj_id]['kwargs']['custom_index_value'], u'test-index')
         cache.clear()

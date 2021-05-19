@@ -26,15 +26,13 @@ while (True):
     cache = Cache(cache_dir)
     if len(cache) == 0:
         cache.close()
-        logger.warn('sleeping for 5 seconds')
-        time.sleep(5)
+        time.sleep(30)
     else:
         with Cache(cache.directory) as reference:
             for key in reference:
                 args = (conn_factory, reference[key]['site_path'], reference[key]['data'])
                 kwargs = reference[key]['kwargs']
                 try:
-                    logger.warn('Audit Record: %s' % key)
                     _record(*args, **kwargs)
                     del reference[key]
                 except:
