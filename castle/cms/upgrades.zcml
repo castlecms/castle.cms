@@ -464,4 +464,21 @@
     handler=".upgrades.upgrade_2_6_31"
     profile="castle.cms:default"
     />
+
+    <genericsetup:registerProfile
+    name="2_6_35"
+    title="CastleCMS upgrade to 2.6.35 profile"
+    directory="profiles/2_6_35"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.35"
+    description="Adds descriptions to content types that were missing one."
+    source="*"
+    destination="2635"
+    handler=".upgrades.upgrade_2_6_35"
+    profile="castle.cms:default"
+    />
 </configure>
