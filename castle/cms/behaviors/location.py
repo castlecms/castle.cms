@@ -15,7 +15,6 @@ class ILocation(model.Schema):
         fields=[
             'locations',
             'coordinates',
-            'convert_object_to_template',
         ],
     )
 
@@ -36,12 +35,6 @@ class ILocation(model.Schema):
         default=u'[]',
         constraint=validate_json,
         required=False
-    )
-
-    convert_object_to_template = schema.Bool(
-        title=u'Convert object to template',
-        description=u'If selected, this item will be converted to a template',
-        default=False
     )
 
 
