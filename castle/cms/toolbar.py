@@ -197,7 +197,7 @@ class Utils(object):
     def show_template(self):
         return (api.user.has_permission("Delete objects", obj=self.toolbar.folder) and
                 api.user.has_permission("Copy or Move", obj=self.toolbar.context) and
-                api.user.has_permission("Add portal content", obj=self.toolbar.context) and not 
+                api.user.has_permission("Add portal content", obj=self.toolbar.context) and not
                 self.toolbar.context_state.is_portal_root())
 
 

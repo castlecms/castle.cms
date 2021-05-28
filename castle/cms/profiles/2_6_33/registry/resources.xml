@@ -4,7 +4,7 @@
 
   <records prefix="plone.resources/add-content-modal"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
-    <value key="js">++plone++castle/components/add-content-modal.js</value>
+      <value key="js">++plone++castle/components/add-content-modal.js</value>
   </records>
 
- </registry>
+</registry>
