@@ -229,45 +229,65 @@ class TestContent(unittest.TestCase):
         # should not cause TypeError
         self.assertEquals(settings.feed_types, ())
 
-    def test_content_implemented_as_template(self):
+    def test_content_converted_to_template(self):
         site = getSite()
-        template_doc = api.content.create(
+        obj = api.content.create(
             type='Document',
             id='template-document',
             title='Template Document',
             container=self.portal)
 
-        template_doc.convert_object_to_template = True
-        save_as_template(template_doc)
-        self.assertEquals(ITemplate.providedBy(template_doc), True)
-        self.assertEquals(template_doc.convert_object_to_template, False)
-        self.assertEquals(template_doc in site.template_list, True)
+        template_obj = save_as_template(obj, 'convert')
+        self.assertTrue(ITemplate.providedBy(template_obj))
+        self.assertTrue(template_obj in site.template_list)
+        self.assertEqual(template_obj, obj)
+
+    def test_content_copied_to_template(self):
+        site = getSite()
+        obj = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_obj = save_as_template(obj, 'copy')
+        self.assertTrue(ITemplate.providedBy(template_obj))
+        self.assertTrue(template_obj in site.template_list and obj not in site.template_list)
+        self.assertNotEqual(template_obj, obj)
 
     def test_create_content_from_template(self):
         site = getSite()
-        template_doc = api.content.create(
+        obj = api.content.create(
             type='Document',
             id='template-document',
             title='Template Document',
             container=self.portal)
 
-        template_doc.convert_object_to_template = True
-        save_as_template(template_doc)
+        template_obj = save_as_template(obj, 'convert')
 
         self.request.form.update({
             'action': 'create-from-template',
             'basePath': '/',
             'id': 'document-from-template',
             'title': 'Document From Template',
-            'selectedType[id]': template_doc.id,
-            'selectedType[title]': template_doc.title,
+            'selectedType[id]': template_obj.id,
+            'selectedType[title]': template_obj.title,
             'transitionTo': ''
         })
 
         cc = content.Creator(self.portal, self.request)
         data = json.loads(cc())
-        self.assertEquals(ITemplate.providedBy(data), False)
-        self.assertEquals(template_doc in site.template_list and data not in site.template_list, True)
+        self.assertFalse(ITemplate.providedBy(data))
+        self.assertTrue(template_obj in site.template_list and data not in site.template_list)
+
+    def test_template_action_in_toolbar(self):
+        pactions = api.portal.get_tool('portal_actions')
+        actions = pactions['toolbar_menu'].listActions()
+        temp_action_in_toolbar = False
+        for a in actions:
+            if a.id == 'convert_template':
+                temp_action_in_toolbar = True
+        self.assertTrue(temp_action_in_toolbar)
 
 
 class TestContentAccess(unittest.TestCase):
