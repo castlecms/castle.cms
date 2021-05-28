@@ -287,14 +287,14 @@
    <property name="visible">True</property>
   </object>
   <object name="convert_template" meta_type="CMF Action">
-   <property name="title">Copy to Template</property>
+   <property name="title">Template</property>
    <property name="description">Copy this item to a template.</property>
    <property
       name="url_expr">string:${object/absolute_url}/@@convert_template</property>
    <property name="link_target"></property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
+      name="available_expr">object/@@castle-toolbar-utils/show_template</property>
    <property name="permissions">
     <element value="Add portal content"/>
    </property>

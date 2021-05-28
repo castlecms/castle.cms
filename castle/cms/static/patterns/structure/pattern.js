@@ -161,6 +161,9 @@ define([
       },{
         title: 'Rename',
         url: '/rename'
+      },{
+        title: 'Template',
+        url: '/convert_template'
       }],
 
       upload: {

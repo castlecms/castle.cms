@@ -175,8 +175,8 @@ class ObjectCutView(actions.ObjectCutView):
 
 class TemplateForm(form.Form):
     template = ViewPageTemplateFile('templates/convert_template.pt')
-    label = _('heading_rename_item', default='Convert to Template')
-    description = _('description_rename_item',
+    label = _('heading_convert_template', default='Convert to Template')
+    description = _('description_convert_template',
                     default='"Convert to Template" will turn current item into a template ' +
                     'and move it to repository folder, while "Copy to Template" ' +
                     'will keep current item and create a template from a copied version.')
