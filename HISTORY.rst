@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.6.32 (unreleased)
--------------------
+2.7.0 (2021-06-01)
+------------------
 
 - add ability to create templates from existing contents. templates are unpublishable
   and are managed as specially marked documents in a 'template-repository' folder.
