@@ -126,6 +126,11 @@
       <value key="js">++plone++castle/patterns/structure.js</value>
   </records>
 
+  <records prefix="plone.resources/add-content-modal"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/add-content-modal.js</value>
+  </records>
+
   <!-- depends on plone -->
 
   <!-- castle-components-search -->
@@ -193,7 +198,6 @@
     <value key="js">++plone++castle/components/slide.js</value>
     <value key="deps">plone-logged-in</value>
   </records>
-
 
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
