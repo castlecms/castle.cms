@@ -159,6 +159,13 @@
     permission="zope2.DeleteObjects"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  <browser:page
+    for="*"
+    name="convert_template"
+    class=".actions.TemplateForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
   <browser:page
     for="*"

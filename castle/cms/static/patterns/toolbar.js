@@ -686,6 +686,8 @@ define([
           invalidate: PatternModalItemFactory({}),
           aliases: PatternModalItemFactory({}),
           syndication: PatternModalItemFactory({
+            actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}}),
+          convert_template: PatternModalItemFactory({
             actionOptions: {disableAjaxFormSubmit: true, redirectOnResponse:true}})
         }
       };

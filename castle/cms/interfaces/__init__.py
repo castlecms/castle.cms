@@ -13,6 +13,7 @@ from .content import ITrashed
 from .content import IUploadedToYoutube
 from .content import IVideo
 from .content import ISlideshow
+from .content import ITemplate
 from .controlpanel import IAdjustableFontSizeSettings
 from .controlpanel import IAnnouncementData
 from .controlpanel import IAPISettings
