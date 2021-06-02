@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b2 (unreleased)
+3.0.0b2 (2021-06-01)
 --------------------
 
 - add ability to create templates from existing contents. templates are
