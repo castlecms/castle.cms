@@ -4,7 +4,9 @@ Changelog
 3.0.0b2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- add ability to create templates from existing contents. templates are
+  unpublishable and are managed as specially marked documents in a
+  'template-repository' folder.
 
 
 3.0.0b1 (2021-05-03)
