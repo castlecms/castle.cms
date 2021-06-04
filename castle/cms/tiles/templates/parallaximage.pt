@@ -11,14 +11,16 @@
        tal:condition="nocall: image"
        style="background-image: url('${image/absolute_url}');
               min-height: ${height};">
-    <p class="parallax-tile-heading-text"
-       style="font-size: ${heading_size};
-              color: ${heading_color};
-              text-align: ${text_position};">${heading_text}</p>
-    <p class="parallax-tile-body-text"
-       style="font-size: ${body_size};
-              color: ${body_color};
-              text-align: ${text_position};">${body_text}</p>
+    <div class="parallax-text-container">
+      <p class="parallax-tile-heading-text"
+        style="font-size: ${heading_size};
+                color: ${heading_color};
+                text-align: ${text_position};">${heading_text}</p>
+      <p class="parallax-tile-body-text"
+        style="font-size: ${body_size};
+                color: ${body_color};
+                text-align: ${text_position};">${body_text}</p>
+    </div>
   </div>
   <p tal:condition="python: not image and not view.utils.is_anonymous()">
     No image specified
