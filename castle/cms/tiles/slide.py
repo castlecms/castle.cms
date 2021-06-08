@@ -2,6 +2,7 @@ from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import ImageRelatedItemFieldWidget
 from castle.cms.widgets import SlideRelatedItemsFieldWidget
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
+from plone.app.uuid.utils import uuidToObject
 from plone.autoform import directives as form
 from plone.supermodel import model
 from zope import schema
@@ -18,6 +19,23 @@ class SlideTile(BaseTile):
     @property
     def slide_type(self):
         return self.data.get('display_type', 'background-image')
+
+    @property
+    def slide_title(self):
+        return self.data.get('title', '')
+
+    @property
+    def slide_text(self):
+        return self.data.get('text', '')
+
+    @property
+    def slide_media(self):
+        image = self.data.get('image', None)
+        video = self.data.get('video', None)
+        if image is not None:
+            return uuidToObject(image).absolute_url()
+        elif video is not None:
+            return uuidToObject(video).absolute_url()
 
 
 class ISlideTileSchema(model.Schema):
