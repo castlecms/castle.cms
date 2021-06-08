@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b3 (unreleased)
+3.0.0b3 (2021-06-08)
 --------------------
 
 - fix 2633 upgrade by adding metadata to action, and set default profile to 2633
