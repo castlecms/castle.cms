@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.7.1 (unreleased)
+2.7.1 (2021-06-08)
 ------------------
 
 - fix 2633 upgrade profile to have correct configuration, update default profile to 2633
