@@ -4,7 +4,7 @@ Changelog
 2.7.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- fix 2633 upgrade profile to have correct configuration, update default profile to 2633
 
 
 2.7.0 (2021-06-01)
