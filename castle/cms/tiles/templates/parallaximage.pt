@@ -1,5 +1,10 @@
 <tal:container tal:define="image python: view.get_image();
                            height python: view.data.get('height') or '400px';
+                           width_values python: view.get_width_values();
+                           img_width python: width_values['img_width'];
+                           img_margin python: width_values['img_margin'];
+                           txt_width python: width_values['txt_width'];
+                           txt_margin python: width_values['txt_margin'];
                            heading_size python: view.data.get('heading_size') or '32px';
                            heading_text python: view.data.get('heading_text') or '';
                            heading_color python: view.data.get('heading_color') or 'black';
@@ -10,8 +15,12 @@
   <div class="parallax-image-tile-container"
        tal:condition="nocall: image"
        style="background-image: url('${image/absolute_url}');
-              min-height: ${height};">
-    <div class="parallax-text-container">
+              min-height: ${height};
+              width: ${img_width};
+              margin-left: ${img_margin};">
+    <div class="parallax-text-container"
+         style="width: ${txt_width};
+                margin-left: ${txt_margin}">
       <p class="parallax-tile-heading-text"
         style="font-size: ${heading_size};
                 color: ${heading_color};

@@ -25,6 +25,18 @@ class ParallaxImageTile(BaseTile):
             return
         return self.utils.get_object(self.data['image'][0])
 
+    def get_width_values(self):
+        scale_value = self.data.get('width')
+        image_widths = ['100%', '200%', '300%', '400%', '500%']
+        image_margins = ['0%', '-50%', '-100%', '-150%', '-200%']
+        text_widths = ['100%', '50%', '33%', '25%', '20%']
+        text_margins = ['0%', '25%', '33%', '37.5%', '40%']
+        width_values = {'img_width': image_widths[scale_value],
+                        'img_margin': image_margins[scale_value],
+                        'txt_width': text_widths[scale_value],
+                        'txt_margin': text_margins[scale_value]}
+        return width_values
+
 
 class IParallaxImageTileSchema(model.Schema):
 
@@ -66,6 +78,20 @@ class IParallaxImageTileSchema(model.Schema):
             SimpleTerm('800px', '800px', '800px'),
             SimpleTerm('900px', '900px', '900px'),
             SimpleTerm('1000px', '1000px', '1000px'),
+        ])
+    )
+
+    width = schema.Choice(
+        title=u'Width of parallax image',
+        description=u'Represent the width (in percentage) that the parallax image will be.',
+        required=True,
+        default=0,
+        vocabulary=SimpleVocabulary([
+            SimpleTerm(0, '100%', '100%'),
+            SimpleTerm(1, '200%', '200%'),
+            SimpleTerm(2, '300%', '300%'),
+            SimpleTerm(3, '400%', '400%'),
+            SimpleTerm(4, '500%', '500%'),
         ])
     )
 
