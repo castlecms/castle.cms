@@ -4,7 +4,7 @@
   <record name="castle.slot_tiles">
     <value purge="false">
       <element key="Media" purge="false">
-        <element>castle.cms.parallaximagetile</element>
+        <element>castle.cms.parallaxtile</element>
       </element>
     </value>
   </record>

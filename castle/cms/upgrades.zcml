@@ -458,7 +458,7 @@
 
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.31"
-    description="2631 adds parallax image tile"
+    description="2631 adds parallax feature"
     source="*"
     destination="2631"
     handler=".upgrades.upgrade_2_6_31.upgrade"

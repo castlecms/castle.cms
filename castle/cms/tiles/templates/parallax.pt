@@ -1,0 +1,15 @@
+<tal:container>
+  <div class="parallax-image-tile-container">
+    <section class="parallax-section parallax parallax-bg1"
+             style="--bg1-image: url('https://placekitten.com/g/900/700');">
+        <h1>Cute Kitten</h1>
+    </section>
+    <section class="parallax-section parallax-static">
+        <h1>Boring</h1>
+    </section>
+    <section class="parallax-section parallax parallax-bg2"
+             style="--bg2-image: url('https://placekitten.com/g/800/600');">
+        <h1>Fluffy Kitten</h1>
+    </section>
+  </div>
+</tal:container>

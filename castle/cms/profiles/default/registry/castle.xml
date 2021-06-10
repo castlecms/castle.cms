@@ -46,7 +46,7 @@
         <element>castle.cms.slide</element>
         <element>castle.cms.videotile</element>
         <element>castle.cms.imagetile</element>
-        <element>castle.cms.parallaximagetile</element>
+        <element>castle.cms.parallaxtile</element>
       </element>
       <element key="Social">
         <element>castle.cms.facebookPage</element>

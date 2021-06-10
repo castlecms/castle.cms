@@ -92,6 +92,10 @@ class ISlideshow(Interface):
         default=False)
 
 
+class IParallax(Interface):
+    pass
+
+
 class ITrashed(Interface):
     """
     marker for object that is in the trash

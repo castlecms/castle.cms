@@ -197,4 +197,12 @@
     permission="cmf.ModifyPortalContent"
   />
 
+  <browser:page
+    for="castle.cms.interfaces.IParallax"
+    name="edit"
+    class=".parallax.ParallaxEditView"
+    layer="castle.cms.interfaces.ICastleLayer"
+    permission="cmf.ModifyPortalContent"
+  />
+
 </configure>
