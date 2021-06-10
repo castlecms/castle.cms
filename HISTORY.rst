@@ -4,7 +4,7 @@ Changelog
 3.0.0b4 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- recompile styles
 
 
 3.0.0b3 (2021-06-08)
