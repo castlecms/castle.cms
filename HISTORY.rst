@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.7.2 (unreleased)
+2.7.2 (2021-06-10)
 ------------------
 
 - rebuild styles
