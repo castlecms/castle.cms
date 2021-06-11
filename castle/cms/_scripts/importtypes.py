@@ -527,6 +527,24 @@ class ImageType(BaseImportType):
         self.field_data['id'] = _id
         self.path = '/image-repository/' + _id
 
+    def get_data(self):
+        data = super(ImageType, self).get_data()
+        try:
+            custom_markup = self.field_data['castle.cms.behaviors.custommarkup.ICustomMarkup']['custom_markup'] # noqa
+            data.update({
+                'custom_markup': custom_markup
+            })
+        except KeyError:
+            pass
+        try:
+            overview_text = self.field_data['castle.cms.behaviors.overview.IOverview']['overview']
+            data.update({
+                'custom_markup': overview_text
+            })
+        except KeyError:
+            pass
+        return data
+
 
 register_import_type('Image', ImageType)
 
