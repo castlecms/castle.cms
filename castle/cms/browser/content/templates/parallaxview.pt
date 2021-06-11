@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US" 
+  xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <body>
+    <tal:defs tal:define="tiles view/get_tiles|nothing;">
+        <div class="parallax-tiles" id="${view/get_id|nothing}" tal:condition="nocall: tiles">
+            <tal:item tal:repeat="tile tiles">
+                <tal:definitions tal:define="image python: tile.get('image', None);">
+                    <img src="${image}">
+                </tal:definitions>
+            </tal:item>
+        </div>
+    </tal:defs>
+  </body>
+</html>

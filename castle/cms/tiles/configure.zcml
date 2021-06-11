@@ -87,10 +87,11 @@
     title="Parallax"
     class=".parallax.ParallaxTile"
     schema=".parallax.IParallaxTileSchema"
-    for="*"
+    for="castle.cms.interfaces.IParallax"
     layer="castle.cms.interfaces.ICastleLayer"
     add_permission="cmf.ModifyPortalContent"
     permission="zope2.View"
+    template="templates/parallax.pt"
     />
 
   <plone:tile
