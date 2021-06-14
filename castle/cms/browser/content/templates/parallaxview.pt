@@ -3,21 +3,52 @@
   <meta name="viewport" content="initial-scale=1, width=device-width">
   <head>
     <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/parallax/css/parallax.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
   </head>
   <body>
     <div class="parallax-image-tile-container">
       <tal:defs tal:define="tiles view/get_tiles|nothing;">
         <div class="parallax-tiles" id="${view/get_id|nothing}" tal:condition="nocall: tiles">
           <tal:item tal:repeat="tile tiles">
-            <tal:defs tal:define="image python: tile.get('image', None);">
+            <tal:defs tal:define="image python: tile.get('image', None);
+                                  title python: tile.get('title', None);
+                                  title_size python: tile.get('title_size', '36px');
+                                  text python: tile.get('text', None);
+                                  text_size python: tile.get('text_size', '12px');
+                                  hor python: tile.get('hor', 'center');
+                                  vert python: tile.get('vert', 'top') ">
               <section class="parallax-section parallax parallax-bg"
                        style="--bg-image: url('${image}');">
-                <h1>Cute Kitten</h1>
+                <div class="parallax-tile-text"
+                     style="text-align: ${hor}">
+                  <p class="parallax-title text-content"
+                     style="font-size: ${title_size}">${title}</p>
+                  <p class="parallax-body text-content"
+                     style="font-size: ${text_size}">${text}</p>
+                </div>
+              </section>
+              <section class="parallax-section parallax parallax-static"
+                       style="--bg-image: url('${image}');">
+                <h1>Boring</h1>
               </section>
             </tal:defs>
           </tal:item>
         </div>
       </tal:defs>
     </div>
+    <div id="close-container" class="close-container" onclick="goBack()">
+      <div class="x-container">
+        <div class="leftright"></div>
+        <div class="rightleft"></div>
+      </div>
+      <div class="close-text-container">
+        <label class="close">close</label>
+      </div>
+    </div>
+    <script>
+      function goBack(){
+        window.history.back();
+      }
+    </script>
   </body>
 </html>

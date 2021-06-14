@@ -3,11 +3,14 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal">
   <body>
     <tal:container>
-      <tal:defs tal:define="image python: view.get_image();">
-        <div class="parallax-image-tile-container">
-          <section class="parallax-section parallax parallax-bg"
+      <tal:defs tal:define="image python: view.get_image();
+                            title python: view.data.get('title', None);
+                            text python: view.data.get('text', None);">
+        <div class="parallax-edit-tile">
+          <section class="parallax-edit-section"
                   style="background-image: url('${image/absolute_url}');">
-              <h1>Cute Kitten</h1>
+              <h1 class="parallax-header-text">${title}</h1>
+              <p class="parallax-body-text">${text}</p>
           </section>
         </div>
       </tal:defs>

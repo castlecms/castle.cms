@@ -1,18 +1,8 @@
 from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import ImageRelatedItemFieldWidget
-from castle.cms.widgets import SlideRelatedItemsFieldWidget
-from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
-from plone.tiles.interfaces import IPersistentTile
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
-from zope.component import getMultiAdapter
-from zope.component.hooks import getSite
-from zope.globalrequest import getRequest
-from zope.interface import implements
-from zope.interface import Invalid
-from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -32,13 +22,16 @@ class ParallaxTile(BaseTile):
 
 class IParallaxTileSchema(model.Schema):
 
+    # Type and Text
     model.fieldset(
         'type_and_text',
         label=u'Type & Text',
         fields=[
             'display_type',
             'title',
+            'title_size',
             'text',
+            'text_size',
         ]
     )
 
@@ -58,23 +51,48 @@ class IParallaxTileSchema(model.Schema):
     title = schema.TextLine(
         title=u'Slide Title',
         description=u'Will be omitted if blank',
-        required=False,
         default=u'')
+
+    title_size = schema.Choice(
+        title=u'Title Size',
+        description=u'',
+        default=u'36px',
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('36px', 'h1', 'h1'),
+            SimpleTerm('30px', 'h2', 'h2'),
+            SimpleTerm('24px', 'h3', 'h3'),
+            SimpleTerm('18px', 'h4', 'h4'),
+            SimpleTerm('14px', 'h5', 'h5'),
+            SimpleTerm('12px', 'h6', 'h6'),
+        ])
+    )
 
     text = schema.Text(
         title=u'Slide Text',
         description=u'Will be omitted if blank',
-        required=False,
         default=u'')
 
-    #######################################################################################################
+    text_size = schema.Choice(
+        title=u'Text Size',
+        description=u'',
+        default=u'12px',
+        vocabulary=SimpleVocabulary([
+            SimpleTerm('20px', '20px', '20px'),
+            SimpleTerm('18px', '18px', '18px'),
+            SimpleTerm('16px', '16px', '16px'),
+            SimpleTerm('14px', '14px', '14px'),
+            SimpleTerm('12px', '12px', '12px'),
+            SimpleTerm('10px', '10px', '10px'),
+        ])
+    )
+
+    # Text Positioning
     model.fieldset(
         'text_positioning',
         label=u'Text Positioning',
         fields=[
             'hor_text_position',
             'vert_text_position',
-            'text_alignment',
             'justify_wrapped_text',
         ]
     )
@@ -88,7 +106,6 @@ class IParallaxTileSchema(model.Schema):
             SimpleTerm('center', 'center', u'Center (Full Width)'),
             SimpleTerm('end', 'end', u'Right (Half Width)'),
         ]),
-        required=True,
         default=u'center'
     )
 
@@ -99,21 +116,7 @@ class IParallaxTileSchema(model.Schema):
             SimpleTerm('middle', 'middle', u'Middle'),
             SimpleTerm('bottom', 'bottom', u'Bottom'),
         ]),
-        required=True,
         default=u'middle'
-    )
-
-    text_alignment = schema.Choice(
-        title=u"Slide Text Alignment",
-        description=u'The alignment of slide text relative to other text on the page. '
-                    u'This does not change the position of the text section selected above. '
-                    u'(Note: this is ignored on smaller screens)',
-        vocabulary=SimpleVocabulary([
-            SimpleTerm('left', 'left', u'Left'),
-            SimpleTerm('center', 'center', u'Center'),
-        ]),
-        required=True,
-        default=u'center'
     )
 
     justify_wrapped_text = schema.Bool(
@@ -123,13 +126,12 @@ class IParallaxTileSchema(model.Schema):
         default=False,
     )
 
-    #######################################################################################################
+    # Media Settings
     model.fieldset(
         'media_settings',
         label=u'Media Settings',
         fields=[
             'image',
-            'video',
         ]
     )
 
@@ -137,37 +139,7 @@ class IParallaxTileSchema(model.Schema):
     image = schema.List(
         title=u"Slide Image",
         description=u"Reference image on the site.",
-        required=False,
-        default=[],
-        value_type=schema.Choice(
-            vocabulary='plone.app.vocabularies.Catalog'
-        )
-    )
-
-    form.widget(video=VideoRelatedItemsFieldWidget)
-    video = schema.List(
-        title=u"Slide Video",
-        description=u"Reference video on the site.",
-        required=False,
-        default=[],
-        value_type=schema.Choice(
-            vocabulary='plone.app.vocabularies.Catalog'
-        )
-    )
-
-    #######################################################################################################
-    model.fieldset(
-        'related_items',
-        label=u'Related Items',
-        fields=['related_items']
-    )
-
-    form.widget('related_items', SlideRelatedItemsFieldWidget)
-    related_items = schema.List(
-        title=u"Related Items",
-        description=u"Items to include on Resource Slide. "
-                    u"To be selectable, a content item must contain a Title, Description (Summary), and a Lead Image.", # noqa
-        required=False,
+        required=True,
         default=[],
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Catalog'
@@ -204,41 +176,6 @@ class IParallaxTileSchema(model.Schema):
     #     ])
     # )
 
-    # width = schema.Choice(
-    #     title=u'Width of parallax image',
-    #     description=u'Represent the width (in percentage) that the parallax image will be.',
-    #     required=True,
-    #     default=0,
-    #     vocabulary=SimpleVocabulary([
-    #         SimpleTerm(0, '100%', '100%'),
-    #         SimpleTerm(1, '200%', '200%'),
-    #         SimpleTerm(2, '300%', '300%'),
-    #         SimpleTerm(3, '400%', '400%'),
-    #         SimpleTerm(4, '500%', '500%'),
-    #     ])
-    # )
-
-    # heading_text = schema.TextLine(
-    #     title=u'Heading Text',
-    #     description=u'',
-    #     required=False,
-    # )
-
-    # heading_size = schema.Choice(
-    #     title=u'Heading Size',
-    #     description=u'',
-    #     default=u'36px',
-    #     required=True,
-    #     vocabulary=SimpleVocabulary([
-    #         SimpleTerm('36px', 'h1', 'h1'),
-    #         SimpleTerm('30px', 'h2', 'h2'),
-    #         SimpleTerm('24px', 'h3', 'h3'),
-    #         SimpleTerm('18px', 'h4', 'h4'),
-    #         SimpleTerm('14px', 'h5', 'h5'),
-    #         SimpleTerm('12px', 'h6', 'h6'),
-    #     ])
-    # )
-
     # heading_color = schema.Choice(
     #     title=u'Heading Color',
     #     description=u'Select between black or white for text color',
@@ -250,27 +187,6 @@ class IParallaxTileSchema(model.Schema):
     #     ])
     # )
 
-    # body_text = schema.Text(
-    #     title=u'Body Text',
-    #     description=u'',
-    #     required=False,
-    # )
-
-    # body_size = schema.Choice(
-    #     title=u'Body Size',
-    #     description=u'',
-    #     default=u'12px',
-    #     required=True,
-    #     vocabulary=SimpleVocabulary([
-    #         SimpleTerm('20px', '20px', '20px'),
-    #         SimpleTerm('18px', '18px', '18px'),
-    #         SimpleTerm('16px', '16px', '16px'),
-    #         SimpleTerm('14px', '14px', '14px'),
-    #         SimpleTerm('12px', '12px', '12px'),
-    #         SimpleTerm('10px', '10px', '10px'),
-    #     ])
-    # )
-
     # body_color = schema.Choice(
     #     title=u'Body Color',
     #     description=u'Select between black or white for text color',
@@ -279,17 +195,5 @@ class IParallaxTileSchema(model.Schema):
     #     vocabulary=SimpleVocabulary([
     #         SimpleTerm('black', 'black', 'Black'),
     #         SimpleTerm('white', 'white', 'White'),
-    #     ])
-    # )
-
-    # text_position = schema.Choice(
-    #     title=u'Text Position',
-    #     description=u'Dictates where text will be positioned over parallax image',
-    #     default=u'left',
-    #     required=True,
-    #     vocabulary=SimpleVocabulary([
-    #         SimpleTerm('left', 'left', 'Left'),
-    #         SimpleTerm('center', 'center', 'Center'),
-    #         SimpleTerm('right', 'right', 'Right'),
     #     ])
     # )
