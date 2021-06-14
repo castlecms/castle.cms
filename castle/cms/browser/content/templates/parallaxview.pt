@@ -1,15 +1,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US" 
   xmlns:tal="http://xml.zope.org/namespaces/tal">
   <meta name="viewport" content="initial-scale=1, width=device-width">
+  <head>
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/parallax/css/parallax.css" />
+  </head>
   <body>
-    <tal:defs tal:define="tiles view/get_tiles|nothing;">
+    <div class="parallax-image-tile-container">
+      <tal:defs tal:define="tiles view/get_tiles|nothing;">
         <div class="parallax-tiles" id="${view/get_id|nothing}" tal:condition="nocall: tiles">
-            <tal:item tal:repeat="tile tiles">
-                <tal:definitions tal:define="image python: tile.get('image', None);">
-                    <img src="${image}">
-                </tal:definitions>
-            </tal:item>
+          <tal:item tal:repeat="tile tiles">
+            <tal:defs tal:define="image python: tile.get('image', None);">
+              <section class="parallax-section parallax parallax-bg"
+                       style="--bg-image: url('${image}');">
+                <h1>Cute Kitten</h1>
+              </section>
+            </tal:defs>
+          </tal:item>
         </div>
-    </tal:defs>
+      </tal:defs>
+    </div>
   </body>
 </html>

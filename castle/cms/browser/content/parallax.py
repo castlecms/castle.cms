@@ -26,21 +26,4 @@ class ParallaxView(BrowserView):
 
                 parallax_tiles.append(parallax_tile)
 
-        import pdb; pdb.set_trace()
         return parallax_tiles
-
-
-class ParallaxEditForm(edit.DefaultEditForm):
-
-    def __call__(self, *args, **kw):
-        add_resource_on_request(self.request, 'castle-components-parallax')
-        return super(ParallaxEditForm, self).__call__(*args, **kw)
-
-    def update(self):
-        super(ParallaxEditForm, self).update()
-
-    def applyChanges(self, data):
-        super(ParallaxEditForm, self).applyChanges(data)
-
-
-ParallaxEditView = ParallaxEditForm
