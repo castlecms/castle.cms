@@ -16,8 +16,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    text-shadow: 0 0 5px #000;
 }
 
 .parallax::after {
@@ -29,25 +27,30 @@ body {
     left: 0;
     transform: translateZ(-1px) scale(1.5);
     background-size: 100%;
-    z-index: -1;
+    z-index: -100;
 }
 
 .parallax-static {
-    background: black;
-    /* background-image: var(--bg-image); */
+    background-image: var(--bg-image);
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .parallax-bg::after {
     background-image: var(--bg-image);
 }
 
-.parallax-tile-text {
-}
-
 .text-content {
     display: flex;
 }
 
-.parallax-title {}
+.parallax-title {
+    font-size: 62px;
+    justify-content: center;
+}
 
-.parallax-body {}
+.parallax-body {
+    font-size: 24px;
+}
