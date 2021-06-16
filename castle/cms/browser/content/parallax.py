@@ -40,13 +40,7 @@ class ParallaxView(BrowserView):
                     parallax_tile['hor_left'] = '10%'
                     parallax_tile['hor_right'] = '10%'
                 parallax_tile['text_color'] = data.get('text_color', ['black'])[0]
-                shadow = data.get('text_shadow', [None])[0]
-                if shadow == 'black':
-                    parallax_tile['text_shadow'] = '1px 1px 1px black'
-                elif shadow == 'white':
-                    parallax_tile['text_shadow'] = '1px 1px 1px white'
-                else:
-                    parallax_tile['text_shadow'] = 'none'
+                parallax_tile['text_shadow'] = data.get('text_shadow', [None])[0]
 
                 # Static tile properties
                 try:
@@ -71,13 +65,7 @@ class ParallaxView(BrowserView):
                     parallax_tile['static_hor_left'] = '10%'
                     parallax_tile['static_hor_right'] = '10%'
                 parallax_tile['static_text_color'] = data.get('static_text_color', ['black'])[0]
-                shadow = data.get('static_text_shadow', [None])[0]
-                if shadow == 'black':
-                    parallax_tile['static_text_shadow'] = '1px 1px 1px black'
-                elif shadow == 'white':
-                    parallax_tile['static_text_shadow'] = '1px 1px 1px white'
-                else:
-                    parallax_tile['static_text_shadow'] = 'none'
+                parallax_tile['static_text_shadow'] = data.get('static_text_shadow', [None])[0]
 
                 parallax_tiles.append(parallax_tile)
 

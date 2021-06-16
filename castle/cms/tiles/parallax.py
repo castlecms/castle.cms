@@ -13,11 +13,29 @@ class ParallaxTile(BaseTile):
     def relatedItems(self):
         return self.context.relatedItems
 
-    def get_image(self):
-        image = self.data.get('image')
-        if not image:
-            return
-        return self.utils.get_object(self.data['image'][0])
+    def get_image(self, is_static):
+        if is_static:
+            image = self.data.get('static_image')
+            if not image:
+                return
+            return self.utils.get_object(self.data['static_image'][0])
+        else:
+            image = self.data.get('image')
+            if not image:
+                return
+            return self.utils.get_object(self.data['image'][0])
+
+    def get_horizontal_align(self, margin, is_static):
+        if is_static:
+            position = self.data.get('static_hor_text_position')
+        else:
+            position = self.data.get('hor_text_position')
+        if position == 'start':
+            return '5%' if margin == 'left' else '45%'
+        elif position == 'end':
+            return '45%' if margin == 'left' else '5%'
+        else:
+            return '10%'
 
 
 class IParallaxTileSchema(model.Schema):
@@ -86,11 +104,11 @@ class IParallaxTileSchema(model.Schema):
         description=u'Adds a shadow to the text over the image.',
         required=True,
         vocabulary=SimpleVocabulary([
-            SimpleTerm('None', 'None', u'None'),
-            SimpleTerm('black', 'black', u'Black'),
-            SimpleTerm('white', 'white', u'White'),
+            SimpleTerm('none', 'None', u'None'),
+            SimpleTerm('1px 1px 1px black', 'black', u'Black'),
+            SimpleTerm('1px 1px 1px white', 'white', u'White'),
         ]),
-        default=u'None'
+        default=u'none'
     )
 
     hor_text_position = schema.Choice(
@@ -169,11 +187,11 @@ class IParallaxTileSchema(model.Schema):
         description=u'Adds a shadow to the text over the image.',
         required=True,
         vocabulary=SimpleVocabulary([
-            SimpleTerm('None', 'None', u'None'),
-            SimpleTerm('black', 'black', u'Black'),
-            SimpleTerm('white', 'white', u'White'),
+            SimpleTerm('none', 'None', u'None'),
+            SimpleTerm('1px 1px 1px black', 'black', u'Black'),
+            SimpleTerm('1px 1px 1px white', 'white', u'White'),
         ]),
-        default=u'None'
+        default=u'none'
     )
 
     static_hor_text_position = schema.Choice(
