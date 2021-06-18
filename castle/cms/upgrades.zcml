@@ -483,23 +483,6 @@
     />
 
   <genericsetup:registerProfile
-    name="2_6_31"
-    title="CastleCMS upgrade to 2.6.31 profile"
-    directory="profiles/2_6_31"
-    description=""
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 2.6.31"
-    description="2631 adds parallax feature"
-    source="*"
-    destination="2631"
-    handler=".upgrades.upgrade_2_6_31.upgrade"
-    profile="castle.cms:default"
-    />
-
-  <genericsetup:registerProfile
     name="2_6_35"
     title="CastleCMS upgrade to 2.6.35 profile"
     directory="profiles/2_6_35"
