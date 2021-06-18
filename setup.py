@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='2.6.30.dev0',
+    version='3.0.0b5.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
@@ -63,7 +63,7 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.4',
-        'collective.elasticsearch>=2.0.5<3',
+        'collective.elasticsearch>=4.0.0',
         'collective.celery>=1.1.4',
 
         # python
@@ -124,6 +124,7 @@ setup(
       empty-trash = castle.cms.cron:empty_trash
       twitter-monitor = castle.cms.cron:twitter_monitor
       reindex-elasticsearch = castle.cms.cron:reindex_es
+      upgrade-elasticsearch-in-place = castle.cms.cron:upgrade_elasticsearch_in_place
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
       clean-drafts = castle.cms.cron:clean_drafts

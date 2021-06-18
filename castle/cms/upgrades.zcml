@@ -15,7 +15,7 @@
       description=""
       source="*"
       destination="2012"
-      handler=".upgrades.upgrade_2_0_12.upgrade"
+      handler=".upgrades.upgrade_2_0_12"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -30,7 +30,7 @@
       description=""
       source="*"
       destination="2016"
-      handler=".upgrades.upgrade_2_0_16.upgrade"
+      handler=".upgrades.upgrade_2_0_16"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -45,7 +45,7 @@
       description=""
       source="*"
       destination="2041"
-      handler=".upgrades.upgrade_2_0_41.upgrade"
+      handler=".upgrades.upgrade_2_0_41"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -60,7 +60,7 @@
       description=""
       source="*"
       destination="2100"
-      handler=".upgrades.upgrade_2_1_0.upgrade"
+      handler=".upgrades.upgrade_2_1_0"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -75,7 +75,7 @@
       description=""
       source="*"
       destination="2101"
-      handler=".upgrades.upgrade_2_1_1.upgrade"
+      handler=".upgrades.upgrade_2_1_1"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -90,7 +90,7 @@
       description=""
       source="*"
       destination="2200"
-      handler=".upgrades.upgrade_2_2_0.upgrade"
+      handler=".upgrades.upgrade_2_2_0"
       profile="castle.cms:default" />
 
   <genericsetup:registerProfile
@@ -105,7 +105,7 @@
       description=""
       source="*"
       destination="2300"
-      handler=".upgrades.upgrade_2_3_0.upgrade"
+      handler=".upgrades.upgrade_2_3_0"
       profile="castle.cms:default" />
 
   <genericsetup:registerProfile
@@ -120,7 +120,7 @@
       description=""
       source="*"
       destination="2301"
-      handler=".upgrades.upgrade_2_3_1.upgrade"
+      handler=".upgrades.upgrade_2_3_1"
       profile="castle.cms:default" />
 
   <genericsetup:upgradeStep
@@ -128,7 +128,7 @@
       description=""
       source="*"
       destination="2302"
-      handler=".upgrades.upgrade_2_3_2.upgrade"
+      handler=".upgrades.upgrade_2_3_2"
       profile="castle.cms:default" />
 
   <genericsetup:registerProfile
@@ -143,7 +143,7 @@
       description=""
       source="*"
       destination="2303"
-      handler=".upgrades.upgrade_2_3_3.upgrade"
+      handler=".upgrades.upgrade_2_3_3"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -158,7 +158,7 @@
       description=""
       source="*"
       destination="2305"
-      handler=".upgrades.upgrade_2_3_5.upgrade"
+      handler=".upgrades.upgrade_2_3_5"
       profile="castle.cms:default"/>
 
   <genericsetup:upgradeStep
@@ -166,7 +166,7 @@
       description=""
       source="*"
       destination="2307"
-      handler=".upgrades.upgrade_2_3_7.upgrade"
+      handler=".upgrades.upgrade_2_3_7"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -182,7 +182,7 @@
       description=""
       source="*"
       destination="2308"
-      handler=".upgrades.upgrade_2_3_8.upgrade"
+      handler=".upgrades.upgrade_2_3_8"
       profile="castle.cms:default"/>
 
   <genericsetup:upgradeStep
@@ -190,7 +190,7 @@
       description=""
       source="*"
       destination="2400"
-      handler=".upgrades.upgrade_2_4_0.upgrade"
+      handler=".upgrades.upgrade_2_4_0"
       profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -206,7 +206,7 @@
     description=""
     source="*"
     destination="2500"
-    handler=".upgrades.upgrade_2_5_0.upgrade"
+    handler=".upgrades.upgrade_2_5_0"
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -222,7 +222,7 @@
     description=""
     source="*"
     destination="2505"
-    handler=".upgrades.upgrade_2_5_5.upgrade"
+    handler=".upgrades.upgrade_2_5_5"
     profile="castle.cms:default"/>
 
   <genericsetup:upgradeStep
@@ -246,7 +246,7 @@
     description=""
     source="*"
     destination="2507"
-    handler=".upgrades.upgrade_2_5_7.upgrade"
+    handler=".upgrades.upgrade_2_5_7"
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -262,7 +262,7 @@
     description=""
     source="*"
     destination="2515"
-    handler=".upgrades.upgrade_2_5_15.upgrade"
+    handler=".upgrades.upgrade_2_5_15"
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -278,7 +278,7 @@
     description=""
     source="*"
     destination="2517"
-    handler=".upgrades.upgrade_2_5_17.upgrade"
+    handler=".upgrades.upgrade_2_5_17"
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -294,7 +294,7 @@
     description=""
     source="*"
     destination="2519"
-    handler=".upgrades.upgrade_2_5_19.upgrade"
+    handler=".upgrades.upgrade_2_5_19"
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -310,7 +310,7 @@
     description=""
     source="*"
     destination="2602"
-    handler=".upgrades.upgrade_2_6_2.upgrade"
+    handler=".upgrades.upgrade_2_6_2"
     profile="castle.cms:default"/>
 
   <genericsetup:registerProfile
@@ -326,7 +326,7 @@
     description=""
     source="*"
     destination="2611"
-    handler=".upgrades.upgrade_2_6_11.upgrade"
+    handler=".upgrades.upgrade_2_6_11"
     profile="castle.cms:default"/>
   
   <genericsetup:registerProfile
@@ -342,7 +342,7 @@
     description=""
     source="*"
     destination="2612"
-    handler=".upgrades.upgrade_2_6_12.upgrade"
+    handler=".upgrades.upgrade_2_6_12"
     profile="castle.cms:default"
     />
 
@@ -359,7 +359,7 @@
     description=""
     source="*"
     destination="2614"
-    handler=".upgrades.upgrade_2_6_14.upgrade"
+    handler=".upgrades.upgrade_2_6_14"
     profile="castle.cms:default"
     />
   
@@ -376,7 +376,7 @@
     description=""
     source="*"
     destination="2616"
-    handler=".upgrades.upgrade_2_6_16.upgrade"
+    handler=".upgrades.upgrade_2_6_16"
     profile="castle.cms:default"
     />
 
@@ -393,7 +393,7 @@
     description=""
     source="*"
     destination="2623"
-    handler=".upgrades.upgrade_2_6_23.upgrade"
+    handler=".upgrades.upgrade_2_6_23"
     profile="castle.cms:default"
     />
 
@@ -410,7 +410,7 @@
     description=""
     source="*"
     destination="2625"
-    handler=".upgrades.upgrade_2_6_25.upgrade"
+    handler=".upgrades.upgrade_2_6_25"
     profile="castle.cms:default"
     />
 
@@ -427,7 +427,7 @@
     description=""
     source="*"
     destination="2627"
-    handler=".upgrades.upgrade_2_6_27.upgrade"
+    handler=".upgrades.upgrade_2_6_27"
     profile="castle.cms:default"
     />
 
@@ -444,7 +444,41 @@
     description="2630 changes default slideshow view to the actual slideshow"
     source="*"
     destination="2630"
-    handler=".upgrades.upgrade_2_6_30.upgrade"
+    handler=".upgrades.upgrade_2_6_30"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="2_6_31"
+    title="CastleCMS upgrade to 2.6.31 profile"
+    directory="profiles/2_6_31"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.31"
+    description="adds/ fixes some mockup-structure pagination functionality"
+    source="*"
+    destination="2631"
+    handler=".upgrades.upgrade_2_6_31"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="2_6_33"
+    title="CastleCMS upgrade to 2.6.33 profile"
+    directory="profiles/2_6_33"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.33"
+    description=""
+    source="*"
+    destination="2633"
+    handler=".upgrades.upgrade_2_6_33"
     profile="castle.cms:default"
     />
 
@@ -462,6 +496,23 @@
     source="*"
     destination="2631"
     handler=".upgrades.upgrade_2_6_31.upgrade"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="2_6_35"
+    title="CastleCMS upgrade to 2.6.35 profile"
+    directory="profiles/2_6_35"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.35"
+    description=""
+    source="*"
+    destination="2635"
+    handler=".upgrades.upgrade_2_6_35"
     profile="castle.cms:default"
     />
 </configure>

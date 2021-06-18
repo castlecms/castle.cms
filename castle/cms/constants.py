@@ -9,7 +9,6 @@ MAX_PASTE_ITEMS = 40
 ALL_SUBSCRIBERS = '--SUBSCRIBERS--'
 ALL_USERS = '--USERS--'
 DEFAULT_SITE_LAYOUT_REGISTRY_KEY = 'castle.cms.mosaic.default_site_layout'
-CRAWLED_SITE_ES_DOC_TYPE = 'website'
 CRAWLED_DATA_KEY = 'castle.cms.crawldata'
 TRASH_LOG_KEY = 'castle.cms.empty-trash-log'
 ANONYMOUS_USER = "Anonymous User"
@@ -26,6 +25,5 @@ ABSOLUTE_FONT_UNITS = (
     'px',
 )
 VALID_CSS_FONT_SIZE_PATTERN = compile("^\s*\d+\s*({})\s*$".format(  # noqa:W605
-        '|'.join(ABSOLUTE_FONT_UNITS)
-    )
-)
+    '|'.join(ABSOLUTE_FONT_UNITS)
+))
