@@ -16,6 +16,7 @@
                                   text python: tile.get('text', None);
                                   text_color python: tile.get('text_color', 'black');
                                   text_shadow python: tile.get('text_shadow', 'none');
+                                  justify_center python: tile.get('justify_center', False);
                                   hor_left python: tile.get('hor_left', '25');
                                   hor_right python: tile.get('hor_right', '25');
 
@@ -25,6 +26,7 @@
                                   static_text python: tile.get('static_text', None);
                                   static_text_color python: tile.get('static_text_color', 'black');
                                   static_text_shadow python: tile.get('static_text_shadow', 'none');
+                                  static_justify_center python: tile.get('static_justify_center', False);
                                   static_hor_left python: tile.get('static_hor_left', '25');
                                   static_hor_right python: tile.get('static_hor_right', '25');">
               <!-- Parallax section -->
@@ -36,7 +38,11 @@
                 <div class="parallax-tile-text"
                      style="margin-left: ${hor_left};
                             margin-right: ${hor_right};">
-                  <div class="parallax-title text-content">${title}</div>
+                  <div tal:condition="justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${title}</div>
+                  <div tal:condition="not: justify_center" 
+                       class="parallax-title text-content">${title}</div>
                   <div class="parallax-body text-content">${text}</div>
                 </div>
               </section>
@@ -48,33 +54,45 @@
                 <div class="parallax-tile-text"
                      style="margin-left: ${hor_left};
                             margin-right: ${hor_right};">
-                  <div class="parallax-title text-content">${title}</div>
+                  <div tal:condition="justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${title}</div>
+                  <div tal:condition="not: justify_center" 
+                       class="parallax-title text-content">${title}</div>
                   <div class="parallax-body text-content">${text}</div>
                 </div>
               </section>
 
               <!-- Static section -->
               <section tal:condition="static_image"
-                       class="parallax-section parallax parallax-static"
+                       class="parallax-section parallax-static"
                        style="--bg-image: url('${static_image}');
                               color: ${static_text_color};
                               text-shadow: ${static_text_shadow};">
                 <div class="parallax-tile-text"
                      style="margin-left: ${static_hor_left};
                             margin-right: ${static_hor_right};">
-                  <div class="parallax-title text-content">${static_title}</div>
+                  <div tal:condition="static_justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${static_title}</div>
+                  <div tal:condition="not: static_justify_center" 
+                       class="parallax-title text-content">${static_title}</div>
                   <div class="parallax-body text-content">${static_text}</div>
                 </div>
               </section>
               <section tal:condition="not: static_image"
-                       class="parallax-section parallax parallax-static"
+                       class="parallax-section parallax-static"
                        style="background: ${static_bg_color};
                               color: ${static_text_color};
                               text-shadow: ${static_text_shadow};">
                 <div class="parallax-tile-text"
                      style="margin-left: ${static_hor_left};
                             margin-right: ${static_hor_right};">
-                  <div class="parallax-title text-content">${static_title}</div>
+                  <div tal:condition="static_justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${static_title}</div>
+                  <div tal:condition="not: static_justify_center" 
+                       class="parallax-title text-content">${static_title}</div>
                   <div class="parallax-body text-content">${static_text}</div>
                 </div>
               </section>

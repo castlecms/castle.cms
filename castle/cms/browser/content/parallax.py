@@ -39,6 +39,7 @@ class ParallaxView(BrowserView):
                 else:
                     parallax_tile['hor_left'] = '10%'
                     parallax_tile['hor_right'] = '10%'
+                    parallax_tile['justify_center'] = True
                 parallax_tile['text_color'] = data.get('text_color', ['black'])[0]
                 parallax_tile['text_shadow'] = data.get('text_shadow', [None])[0]
 
@@ -64,6 +65,7 @@ class ParallaxView(BrowserView):
                 else:
                     parallax_tile['static_hor_left'] = '10%'
                     parallax_tile['static_hor_right'] = '10%'
+                    parallax_tile['static_justify_center'] = True
                 parallax_tile['static_text_color'] = data.get('static_text_color', ['black'])[0]
                 parallax_tile['static_text_shadow'] = data.get('static_text_shadow', [None])[0]
 
