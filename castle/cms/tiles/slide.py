@@ -21,14 +21,6 @@ class SlideTile(BaseTile):
         return self.data.get('display_type', 'background-image')
 
     @property
-    def slide_title(self):
-        return self.data.get('title', '')
-
-    @property
-    def slide_text(self):
-        return self.data.get('text', '')
-
-    @property
     def slide_media(self):
         image = self.data.get('image', None)
         video = self.data.get('video', None)
@@ -36,6 +28,16 @@ class SlideTile(BaseTile):
             return uuidToObject(image).absolute_url()
         elif video is not None:
             return uuidToObject(video).absolute_url()
+
+    def slide_hor_align(self, alignment):
+        hor = self.data.get('hor_text_position', 'center')
+        if 'background' in self.slide_type:
+            if hor == 'start':
+                return '50%' if alignment == 'right' else '0%'
+            elif hor == 'end':
+                return '0%' if alignment == 'right' else '50%'
+            else:
+                return '0%'
 
 
 class ISlideTileSchema(model.Schema):

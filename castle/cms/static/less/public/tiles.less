@@ -775,14 +775,55 @@ div.mejs-poster.mejs-layer {
   margin: 0;
 }
 
-//! Slideshow thumbnail styles
+// Slideshow thumbnail styles
 .slide-thumb {
-  width: 320px;
+  width: 480px;
   height: 320px;
+  background-size: cover;
   display: inline-block;
-  text-align: center;
   border: 1px solid black;
   margin: 5px;
+}
+
+.slide-thumb-left-image {
+  width: 240px;
+  height: 320px;
+  background-size: cover;
+}
+
+.slide-thumb-text {
+  color: white;
+  text-shadow: 1px 1px 1px black;
+}
+
+.slide-thumb-body-text {
+  font-size: 10px;
+}
+
+.slide-thumb-bg-video {
+  position: absolute;
+}
+
+.slide-thumb-video-text {
+  
+}
+
+.slide-thumb-center-text {
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  width: 480px;
+  height: 320px;
+  overflow: hidden;
+}
+
+.slide-thumb-right-text {
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  width: 240px;
+  height: 320px;
+  margin-left: 240px;
+  overflow: hidden;
+  background-color: black;
 }
 
 @media (min-width: 768px) {
