@@ -1,10 +1,22 @@
 Changelog
 =========
 
-3.0.0b3 (unreleased)
+3.0.0b5 (unreleased)
 --------------------
 
 - Nothing changed yet.
+
+
+3.0.0b4 (2021-06-10)
+--------------------
+
+- recompile styles
+
+
+3.0.0b3 (2021-06-08)
+--------------------
+
+- fix 2633 upgrade by adding metadata to action, and set default profile to 2633
 
 
 3.0.0b2 (2021-06-01)
