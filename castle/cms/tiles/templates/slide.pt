@@ -7,7 +7,8 @@
                           left_align python: view.slide_hor_align('left');
                           right_align python: view.slide_hor_align('right');
                           alignment python: view.data.get('text_alignment', 'center');
-                          media view/slide_media;">
+                          media view/slide_media;
+                          related_resources python: view.get_related_resources();">
       <!-- Full Background Video Slide -->
       <section class="slide-thumb slide-thumb-video-section" tal:condition="python: view.slide_type == 'background-video'">
         <div class="video-container">
@@ -84,13 +85,23 @@
       </section>
 
       <!-- Resource Slide -->
-      <div class="slide-thumb" tal:condition="python: view.slide_type == 'resource-slide'">
-        <div>${title}</div>
-        <div><img src="${media}"></div>
-        <div>
-          Resource Slide.
-        </div>
-      </div>
+      <section class="slide-thumb slide-thumb-resource-container"
+               tal:condition="python: view.slide_type == 'resource-slide'">
+        <div>Close slideshow and return to previous page on...</div>
+        <hr style="margin: 0;">
+        <div>See also:</div>
+        <tal:item tal:repeat="resource related_resources">
+          <div class="slide-thumb-resource">
+            <img src="${resource/absolute_url}/@@images/image/preview" class="resource-slide-image"/>
+            <div class="slide-thumb-resource-text">
+              <p class="slide-thumb-resource-title">${resource/Title}</p>
+              <p>${python: resource.effective_date.strftime('%B %e, %Y')}</p>
+              <p class="description">${resource/Description}</p>
+            </div>
+          </div>
+          <hr style="margin: 0;">
+        </tal:item>
+      </section>
     </tal:defs>
   </body>
 </html>

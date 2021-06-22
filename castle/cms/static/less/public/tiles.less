@@ -800,7 +800,7 @@ div.mejs-poster.mejs-layer {
   text-shadow: 1px 1px 1px black;
   width: 480px;
   height: 320px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .slide-thumb-right-text {
@@ -842,7 +842,7 @@ div.mejs-poster.mejs-layer {
   position: absolute;
   width: 480px;
   height: 320px;
-  overflow: hidden;
+  overflow: auto;
   top: 0;
   left: 0;
   z-index: 1;
@@ -855,6 +855,33 @@ div.mejs-poster.mejs-layer {
   height: 320px;
   margin-left: 240px;
   background-color: black;
+}
+
+.slide-thumb-resource-container {
+  background-color: black;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  font-size: 10px;
+  overflow: auto;
+}
+
+.slide-thumb-resource {
+  display: flex;
+  align-items: center;
+}
+
+.slide-thumb-resource-text {
+  display: block;
+  margin-left: 5px;
+}
+
+.slide-thumb-resource-title {
+  color: rgb(56, 125, 255);
+}
+
+.resource-slide-image {
+  height: 80px;
+  width: 80px;
 }
 
 @media (min-width: 768px) {

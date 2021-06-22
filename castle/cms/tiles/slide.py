@@ -39,6 +39,14 @@ class SlideTile(BaseTile):
             else:
                 return '0%'
 
+    def get_related_resources(self):
+        if self.data.get('display_type') == 'resource-slide':
+            try:
+                related_uuids = self.data.get('related_items')
+                return [uuidToObject(uuid) for uuid in related_uuids]
+            except Exception:
+                pass
+
 
 class ISlideTileSchema(model.Schema):
 
