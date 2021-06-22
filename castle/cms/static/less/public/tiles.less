@@ -791,24 +791,11 @@ div.mejs-poster.mejs-layer {
   background-size: cover;
 }
 
-.slide-thumb-text {
-  color: white;
-  text-shadow: 1px 1px 1px black;
-}
-
 .slide-thumb-body-text {
   font-size: 10px;
 }
 
-.slide-thumb-bg-video {
-  position: absolute;
-}
-
-.slide-thumb-video-text {
-  
-}
-
-.slide-thumb-center-text {
+.slide-thumb-text {
   color: white;
   text-shadow: 1px 1px 1px black;
   width: 480px;
@@ -817,12 +804,56 @@ div.mejs-poster.mejs-layer {
 }
 
 .slide-thumb-right-text {
-  color: white;
-  text-shadow: 1px 1px 1px black;
   width: 240px;
   height: 320px;
   margin-left: 240px;
+  background-color: black;
+}
+
+.video-container {
+  position: absolute; 
+  right: 0; 
+  bottom: 0;
+  max-width: 100%; 
+  max-height: 100%;
+  height: 320px; 
+  z-index: -100;
+  background-size: cover;
   overflow: hidden;
+  background-color: black;
+}
+
+.slide-thumb-video-section {
+  position: relative;
+}
+
+.slide-thumb-video-section video {
+    position: relative;
+    z-index: 0;
+}
+
+.slide-thumb-video {
+  position: absolute;
+  width: inherit;
+  height: inherit;
+}
+
+.slide-thumb-video-text {
+  position: absolute;
+  width: 480px;
+  height: 320px;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+}
+
+.slide-thumb-video-right-text {
+  width: 240px;
+  height: 320px;
+  margin-left: 240px;
   background-color: black;
 }
 

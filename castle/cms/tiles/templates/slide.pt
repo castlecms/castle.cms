@@ -9,15 +9,22 @@
                           alignment python: view.data.get('text_alignment', 'center');
                           media view/slide_media;">
       <!-- Full Background Video Slide -->
-      <section class="slide-thumb" tal:condition="python: view.slide_type == 'background-video'">
-        <div>
-          <video class="slide-thumb-bg-video" width="480" height="320" muted>
+      <section class="slide-thumb slide-thumb-video-section" tal:condition="python: view.slide_type == 'background-video'">
+        <div class="video-container">
+          <video class="slide-thumb-video" muted>
             <source src="${media}"/>
           </video>
-          <section class="slide-thumb-center-text">
-            <div>${title}</div>
-            <div class="slide-thumb-body-text">${text}</div>
-          </section>
+          <div class="slide-thumb-text-container"
+             style="text-align: ${alignment};
+                    align-items: flex-end;">
+            <section class="slide-thumb-video-text">
+              <div style="margin-right: ${right_align};
+                        margin-left: ${left_align};">${title}</div>
+              <div class="slide-thumb-body-text"
+                  style="margin-right: ${right_align};
+                          margin-left: ${left_align};">${text}</div>
+            </section>
+          </div>
         </div>
         <div tal:condition="not: view/data/video|nothing">
           Background Video Slide with no video selected.
@@ -25,17 +32,20 @@
       </section>
 
       <!-- Left Video w/ Right Text Slide-->
-      <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-video-right-text'">
-        <div>${title}</div>
-        <div>
-          <video width="240" height="320" muted>
+      <section class="slide-thumb slide-thumb-video-section" tal:condition="python: view.slide_type == 'left-video-right-text'">
+        <div class="video-container">
+          <video class="slide-thumb-video" muted>
             <source src="${media}"/>
           </video>
+          <section class=" slide-thumb-video-text slide-thumb-video-right-text">
+            <div>${title}</div>
+            <div class="slide-thumb-body-text">${text}</div>
+          </section>
         </div>
         <div tal:condition="not: view/data/video|nothing">
           Video Slide with no video selected.
         </div>
-      </div>
+      </section>
 
       <!-- Full Background Image Slide -->
       <section class="slide-thumb slide-thumb-bg-image"
@@ -47,7 +57,7 @@
         <div class="slide-thumb-text-container"
              style="text-align: ${alignment};
                     align-items: flex-end;">
-          <section class="slide-thumb-center-text">
+          <section class="slide-thumb-text">
             <div style="margin-right: ${right_align};
                         margin-left: ${left_align};">${title}</div>
             <div class="slide-thumb-body-text"
@@ -66,7 +76,7 @@
         </div>
         <div class="slide-thumb-text-container"
              style="text-align: ${alignment};">
-          <section class="slide-thumb-right-text">
+          <section class="slide-thumb-text slide-thumb-right-text">
             <div>${title}</div>
             <div class="slide-thumb-body-text">${text}</div>
           </section>
