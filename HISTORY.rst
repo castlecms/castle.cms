@@ -1,10 +1,70 @@
 Changelog
 =========
 
-2.6.31 (unreleased)
--------------------
+3.0.0b5 (unreleased)
+--------------------
 
 - Nothing changed yet.
+
+
+3.0.0b4 (2021-06-10)
+--------------------
+
+- recompile styles
+
+
+3.0.0b3 (2021-06-08)
+--------------------
+
+- fix 2633 upgrade by adding metadata to action, and set default profile to 2633
+
+
+3.0.0b2 (2021-06-01)
+--------------------
+
+- add ability to create templates from existing contents. templates are
+  unpublishable and are managed as specially marked documents in a
+  'template-repository' folder.
+
+
+3.0.0b1 (2021-05-03)
+--------------------
+
+- add ES host/port override to reindex-catalog script
+- add optional ES index creation to reindex-catalog script
+
+
+3.0.0b0 (2021-04-30)
+--------------------
+
+BREAKING
+++++++++
+
+The 3.x series of releases will bring CastleCMS into compatibility with
+ElasticSearch 7. Practically, this means primarily updating 3 packages:
+
+* castle.cms >= 3
+* collective.elasticsearch >= 4
+* elasticsearch >= 7, <= 7.6
+
+The `elasticsearch` package is restricted between 7 and 7.6 primarily due to
+the restriction from `collective.elasticsearch` -- this is expected to be
+updated at some point, but not for the initial release of `castle.cms` 3.x.
+
+For migration, it is recommended that you setup a new ES cluster, update
+site configurations to point at the new cluster, then do the "Convert" and
+"Rebuild" actions in the ElasticSearch control panel.
+
+This will not migrate your audit log, if enabled. To migrate the audit log,
+use the `castle/cms/_scripts/export-audit-log.py` script to dump the old
+audit log into a CSV file, and then use the `castle/cms/_scripts/import-audit-log.py`
+script to import the CSV file into the new cluster.
+
+
+2.6.31 (2021-04-20)
+-------------------
+
+- bugfix for custom index names for audit log
 
 
 2.6.30 (2021-04-02)

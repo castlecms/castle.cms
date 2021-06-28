@@ -17,7 +17,7 @@ from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
 from castle.cms.files import duplicates
-from castle.cms.interfaces import ITrashed
+from castle.cms.interfaces import ITemplate, ITrashed
 from castle.cms.utils import get_upload_fields
 from castle.cms.utils import publish_content
 from lxml.html import fromstring
@@ -56,6 +56,7 @@ from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from zope.interface.declarations import noLongerProvides
 
 
 try:
@@ -133,6 +134,8 @@ class Creator(BrowserView):
             return self.check()
         elif self.request.form.get('action') == 'create':
             return self.create()
+        elif self.request.form.get('action') == 'create-from-template':
+            return self.create_object_from_template()
         elif self.request.form.get('action') == 'remove':
             return self.remove_file_content()
         elif self.request.form.get('action') == 'chunk-upload':
@@ -526,6 +529,14 @@ content in this location."""
         if folder is not None:
             portal_types = getToolByName(self.context, 'portal_types')
             type_id = self.get_type_id()
+
+            # Templates need special handling based on type_id
+            try:
+                if ITemplate.providedBy(self.context['template-repository'][type_id]):
+                    type_id = self.context['template-repository'][type_id].portal_type
+            except KeyError:
+                pass
+
             pt = portal_types[type_id]
             add_perm = utils.get_permission_title(pt.add_permission)
 
@@ -619,6 +630,39 @@ content in this location."""
             'status': self.status,
             'stateInfo': info
         })
+
+    def create_object_from_template(self):
+        if self._check():
+            site = getSite()
+            template_title = self.request.form.get('selectedType[title]')
+            new_id = self.request.form.get('id')
+            new_title = self.request.form.get('title')
+            path = self.request.form.get('basePath', '/')
+            folder = utils.recursive_create_path(self.context, path)
+            template_repo = site['template-repository']
+
+            for t in template_repo.getChildNodes()._data:
+                if t.title == template_title:
+                    obj = api.content.copy(
+                        source=t,
+                        id=new_id,
+                        target=folder
+                    )
+                    obj.title = new_title
+                    noLongerProvides(obj, ITemplate)
+
+            transition_to = self.request.form.get('transitionTo')
+            if transition_to:
+                try:
+                    api.content.transition(obj=obj, transition=transition_to)
+                except Exception:
+                    pass
+            return dump_object_data(obj)
+        else:
+            return json.dumps({
+                'valid': False,
+                'status': 'Unknown error creating content'
+            })
 
 
 class WorkflowPermissionChecker(object):
@@ -728,6 +772,10 @@ class QualityCheckContent(BrowserView):
                     break
                 last = idx
 
+        is_template = False
+        if ITemplate.providedBy(self.context):
+            is_template = True
+
         self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps({
             'title': self.context.Title(),
@@ -735,7 +783,8 @@ class QualityCheckContent(BrowserView):
             'description': self.context.Description(),
             'linksValid': valid,
             'headersOrdered': headers_ordered,
-            'html': html_parser.unescape(html)
+            'html': html_parser.unescape(html),
+            'template': is_template
         })
 
 

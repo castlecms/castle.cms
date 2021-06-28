@@ -8,11 +8,25 @@ from plone.uuid.interfaces import IUUID
 from zope.component import getUtility
 
 
-def ESConnectionFactoryFactory(registry=None):
+# if 'optsoverride' is provided, 'registry' is ignored and the 'Elasticsearch' object
+# will only be created using the options from the 'optsoverride' and 'hostsoverride' params
+#
+# if 'hostsoverride' is provided, but no 'optsoverride', then the normal method for
+# fetching options will be used, but the 'host' parameter to the 'Elasticsearch' object
+# will be the 'hostoverride' value
+def ESConnectionFactoryFactory(registry=None, hostsoverride=None, optsoverride=None):
+    if optsoverride is not None:
+        def f():
+            return Elasticsearch(hostsoverride, **optsoverride)
+        return f
+
     if registry is None:
         registry = getUtility(IRegistry)
     settings = registry.forInterface(IElasticSettings, check=False)
-    hosts = settings.hosts
+    if hostsoverride is None:
+        hosts = settings.hosts
+    else:
+        hosts = hostsoverride
     opts = dict(
         timeout=getattr(settings, 'timeout', 0.5),
         sniff_on_start=getattr(settings, 'sniff_on_start', False),

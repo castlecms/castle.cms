@@ -183,37 +183,30 @@ _registered = {
 }
 
 
-es_doc_type = 'entry'
-
-
 def _create_index(es, index_name):
     mapping = {'properties': {
-        'type': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'name': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'summary': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'user': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'request_uri': {'store': False, 'type': 'string',
-                        'index': 'not_analyzed'},
+        'type': {'store': False, 'type': 'text', 'index': False},
+        'name': {'store': False, 'type': 'text', 'index': False},
+        'summary': {'store': False, 'type': 'text', 'index': False},
+        'user': {'store': False, 'type': 'text', 'index': False, 'analyzer': 'keyword'},
+        'request_uri': {'store': False, 'type': 'text', 'index': False},
         'date': {'store': False, 'type': 'date'},
-        'object': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
-        'path': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'object': {'store': False, 'type': 'text', 'index': False},
+        'path': {'store': False, 'type': 'text', 'index': False},
     }}
     if not es.indices.exists(index_name):
         es.indices.create(index_name)
     es.indices.put_mapping(
-        doc_type=es_doc_type,
         body=mapping,
         index=index_name)
 
 
-def get_index_name(site_path=None):
+def get_index_name(site_path=None, es_custom_index_name_enabled=False, custom_index_value=None):
     if site_path is not None:
         return site_path.replace('/', '').replace(' ', '').lower()
 
     index_name = ""
-    es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
     if es_custom_index_name_enabled:
-        custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
         if custom_index_value is not None:
             index_name = custom_index_value + "-audit"
             return index_name
@@ -223,16 +216,18 @@ def get_index_name(site_path=None):
     return index_name
 
 
-def _record(conn_factory, site_path, data):
-    es_custom_index_name_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+def _record(conn_factory, site_path, data, es_custom_index_name_enabled=False, custom_index_value=None):
     if es_custom_index_name_enabled:
         # when the custom index is enabled, all site path based names for
         # indices should be discarded
         site_path = None
-    index_name = get_index_name(site_path)
+    index_name = get_index_name(
+        site_path,
+        es_custom_index_name_enabled=es_custom_index_name_enabled,
+        custom_index_value=custom_index_value)
     es = conn_factory()
     try:
-        es.index(index=index_name, doc_type=es_doc_type, body=data)
+        es.index(index=index_name, body=data)
     except TransportError as ex:
         if 'InvalidIndexNameException' in ex.error:
             try:
@@ -240,18 +235,34 @@ def _record(conn_factory, site_path, data):
             except TransportError:
                 return
             _record(conn_factory, site_path, data)
+        else:
+            raise ex
 
 
 def record(success, recorder, site_path, conn):
     if not success:
         return
     if recorder.valid:
+        try:
+            es_custom_index_name_enabled = api.portal.get_registry_record(
+                'castle.es_index_enabled', default=False)
+            custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
+        except Exception:
+            es_custom_index_name_enabled = False
+            custom_index_value = None
+
         data = recorder()
-        thread = threading.Thread(target=_record, args=(
-            conn,
-            site_path,
-            data
-        ))
+        thread = threading.Thread(
+            target=_record,
+            args=(
+                conn,
+                site_path,
+                data,
+            ),
+            kwargs={
+                "es_custom_index_name_enabled": es_custom_index_name_enabled,
+                "custom_index_value": custom_index_value,
+            })
         thread.start()
 
 
