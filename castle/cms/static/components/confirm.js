@@ -24,7 +24,6 @@ define([
         title: 'Confirm user action',
         msg: 'Are you certain you want to do this?',
         successMsg: 'You have successfully completed this action.',
-        errorMsg: 'There were some errors.',
         confirmBtnLabel: 'Yes',
         cancelBtnLabel: 'No',
         finishHideDelay: 2000,
@@ -68,8 +67,8 @@ define([
       var warning = '';
       var success = '';
       if(!this.state.finished){
-        warning = D.div({className: "portalMessage error"}, [
-          D.strong({}, 'Error'), this.props.errorMsg]);
+        warning = D.div({className: "portalMessage warning"}, [
+          D.strong({}, 'Warning'), this.props.msg]);
       }else{
         success = D.div({className: "portalMessage info"}, [
           D.strong({}, 'Success'), this.props.successMsg]);

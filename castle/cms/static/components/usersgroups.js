@@ -133,6 +133,7 @@ require([
 
     renderContent: function(){
       var error = '';
+      var password = this.state.password1
       this.props.failedValidation = false
       if(this.state.password1 !== this.state.password2){
         this.props.failedValidation = true
@@ -140,8 +141,7 @@ require([
           D.strong({}, 'Warning'),
           'Passwords do not match']);
       }
-      if(this.props.nistEnabled){
-        var password = this.state.password1
+      if(this.props.nistEnabled == "True"){
         var nistLength = this.props.nistLength
         var nistUpper = this.props.nistUpper
         var nistLower = this.props.nistLower
@@ -193,12 +193,12 @@ require([
         D.div({ className: 'form-group'}, [
           D.label({}, 'Password'),
           D.input({ value: this.state.password1, onChange: this.valueChanged.bind(this, 'password1'), type: 'password',
-                    className: 'form-control'})
+                    className: 'form-control password-reset-one'})
         ]),
         D.div({ className: 'form-group'}, [
           D.label({}, 'Repeat password'),
           D.input({ value: this.state.password2, onChange: this.valueChanged.bind(this, 'password2'), type: 'password',
-                    className: 'form-control'})
+                    className: 'form-control password-reset-two'})
         ]),
         D.div({className: "portalMessage info"}, [
           D.strong({}, 'Info'),
@@ -209,14 +209,14 @@ require([
       var that = this;
       var buttons = [];
       var disabled = false;
-      if(this.props.failedValidation){
+      if(this.props.failedValidation == true){
         disabled = true;
       }
       buttons.push(D.button({ className: 'plone-btn plone-btn-warning',
                               onClick: that.sendPasswordResetEmail }, 'Send password reset email'));
       buttons.push(D.button({ className: 'plone-btn plone-btn-default',
                               onClick: this.hide }, 'Cancel'));
-      buttons.push(D.button({ className: 'plone-btn plone-btn-danger',
+      buttons.push(D.button({ className: 'plone-btn plone-btn-danger reset-password',
                               onClick: that.handle, disabled: disabled }, 'Change password'));
       return D.div({}, buttons);
     }
