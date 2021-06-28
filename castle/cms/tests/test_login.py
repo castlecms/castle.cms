@@ -8,15 +8,20 @@ from AccessControl import AuthEncoding
 from castle.cms import cache
 from castle.cms import constants
 from castle.cms import security
+from castle.cms.browser.controlpanel.usergroups import UsersOverviewControlPanel
 from castle.cms.browser.security.login import SecureLoginView
 from castle.cms.interfaces import IAuthenticator
+from castle.cms.passwordvalidation.nist import NISTPasswordValidator
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.cron._pw_expiry import update_password_expiry
 from DateTime import DateTime
 from plone import api
+from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.app.testing import login
 from plone.app.testing import logout
+from plone.app.testing import setRoles
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
@@ -628,6 +633,42 @@ class TestPwexpiry(unittest.TestCase):
     #     view = SecureLoginView(self.portal, self.request)
     #     result = json.loads(view())
     #     self.assertFalse(result['success'])
+
+
+class TestPasswordNIST(unittest.TestCase):
+
+    layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        login(self.portal, TEST_USER_NAME)
+        setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
+        api.portal.set_registry_record(
+            name='plone.nist_password_mode',
+            value=True
+        )
+        self.request.cookies['castle_session_id'] = 'test_session'
+        self.request.cookies['__sl__'] = 'test_login'
+        self.auth = self.authenticator = getMultiAdapter(
+            (self.portal, self.request), IAuthenticator)
+
+    def test_validate(self):
+        # NIST defaults -- length: 12, upper: 1, lower: 1, special: 1
+        nist = NISTPasswordValidator(None)
+        pw = 'Awe$om3P@ssw*rd'
+        failed_validation = nist.validate(pw)
+        self.assertIsNone(failed_validation)
+
+    def test_set_password(self):
+        pw = 'Awe$om3P@ssw*rd'
+        self.request.form.update({
+            'userid': TEST_USER_ID,
+            'password': pw
+        })
+        panel = UsersOverviewControlPanel(self.portal, self.request)
+        panel.set_password()
+        self.assertEquals(self.request.response.status, 200)
 
 
 if argon2 is not None:

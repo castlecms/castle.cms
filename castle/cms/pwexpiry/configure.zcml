@@ -28,8 +28,15 @@
       />
 
   <adapter
-      name="your_package_password_history"
+      name="castle_password_history_validation"
       factory="castle.cms.pwexpiry.password_history_validator.PasswordHistoryValidator"
+      provides="castle.cms.interfaces.passwordvalidation.ICustomPasswordValidator"
+      for="zope.interface.Interface"
+      />
+
+  <adapter
+      name="castle_nist_password_validation"
+      factory="castle.cms.passwordvalidation.nist.NISTPasswordValidator"
       provides="castle.cms.interfaces.passwordvalidation.ICustomPasswordValidator"
       for="zope.interface.Interface"
       />

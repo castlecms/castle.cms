@@ -26,7 +26,7 @@ define([
         successMsg: 'You have successfully completed this action.',
         confirmBtnLabel: 'Yes',
         cancelBtnLabel: 'No',
-        finishHideDelay: 1200,
+        finishHideDelay: 2000,
         finished: false,
         onConfirm: function(cmp){
           cmp.setState({
@@ -44,6 +44,18 @@ define([
       var that = this;
       that.setState({
         finished: true
+      }, function(){
+        setTimeout(function(){
+          that.hide();
+        }, that.props.finishHideDelay);
+      });
+    },
+
+    finishWithFailure: function(){
+      var that = this;
+      that.setState({
+        finished: false,
+        disabled: true
       }, function(){
         setTimeout(function(){
           that.hide();

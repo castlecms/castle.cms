@@ -166,11 +166,21 @@
                         <td class="actions"
                             tal:define="whitelisted python: pwxwhitelist and user['id'] in pwxwhitelist;
                                         togglewlbtnval python: 'remove this user from' if whitelisted else 'add this user to';
-                                        togglewlbtntxt python: 'Remove from Whitelist' if whitelisted else 'Add to Whitelist'">
+                                        togglewlbtntxt python: 'Remove from Whitelist' if whitelisted else 'Add to Whitelist';
+                                        nistEnabled python: False if 'plone.nist_password_mode' not in context.portal_registry else context.portal_registry['plone.nist_password_mode'];
+                                        nistLength python: 12 if 'plone.nist_minimum_password_length' not in context.portal_registry else context.portal_registry['plone.nist_minimum_password_length'];
+                                        nistUpper python: 1 if 'plone.nist_minimum_password_uppercase' not in context.portal_registry else context.portal_registry['plone.nist_minimum_password_uppercase'];
+                                        nistLower python: 1 if 'plone.nist_minimum_password_lowercase' not in context.portal_registry else context.portal_registry['plone.nist_minimum_password_lowercase'];
+                                        nistSpecial python: 1 if 'plone.nist_minimum_password_special' not in context.portal_registry else context.portal_registry['plone.nist_minimum_password_special']">
                           <button tal:condition="user/can_set_password|nothing"
                                   class="plone-btn plone-btn-default plone-btn-xs
                                          castle-btn-reset-password"
                                   type="button" tal:condition="assigned_roles"
+                                  data-nist-enabled="${nistEnabled}"
+                                  data-nist-length="${nistLength}"
+                                  data-nist-upper="${nistUpper}"
+                                  data-nist-lower="${nistLower}"
+                                  data-nist-special="${nistSpecial}"
                                   data-userid="${user/id}"
                                   data-login="${user/login}">Change password</button>
                           <button class="plone-btn plone-btn-default plone-btn-xs

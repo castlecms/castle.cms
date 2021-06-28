@@ -132,4 +132,60 @@
     <field type="plone.registry.field.Bool" />
   </record>
 
+  <record name="plone.nist_password_mode"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_password_mode">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="plone.nist_require_password_length"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_require_password_length">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="plone.nist_minimum_password_length"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_minimum_password_length">
+    <field type="plone.registry.field.Int" />
+  </record>
+
+  <record name="plone.nist_require_password_uppercase"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_require_password_uppercase">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="plone.nist_minimum_password_uppercase"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_minimum_password_uppercase">
+    <field type="plone.registry.field.Int" />
+  </record>
+
+  <record name="plone.nist_require_password_lowercase"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_require_password_lowercase">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="plone.nist_minimum_password_lowercase"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_minimum_password_lowercase">
+    <field type="plone.registry.field.Int" />
+  </record>
+
+  <record name="plone.nist_require_password_special"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_require_password_special">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="plone.nist_minimum_password_special"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="nist_minimum_password_special">
+    <field type="plone.registry.field.Int" />
+  </record>
+
+
+
 </registry>

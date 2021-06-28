@@ -15,7 +15,7 @@ class PasswordHistoryValidator(object):
     def __init__(self, context):
         self.context = context
 
-    def validate(self, password, data):
+    def validate(self, password, data=None, user=None):
         """
         Password validation method
         """
@@ -39,7 +39,8 @@ class PasswordHistoryValidator(object):
             # max_history_pws has been disabled.
             return None
 
-        user = api.user.get_current()
+        if not user:
+            user = api.user.get_current()
 
         # Ignore whitelisted
         whitelisted = api.portal.get_registry_record(
