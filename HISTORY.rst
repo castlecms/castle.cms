@@ -4,7 +4,7 @@ Changelog
 2.7.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- fix upgrade step version
 
 
 2.7.2 (2021-06-10)
