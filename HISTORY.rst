@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b7 (unreleased)
+3.0.0b7 (2021-07-05)
 --------------------
 
 - fix upgrade step reference
