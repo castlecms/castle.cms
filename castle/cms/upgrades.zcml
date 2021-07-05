@@ -483,19 +483,19 @@
     />
 
   <genericsetup:registerProfile
-    name="2_6_35"
-    title="CastleCMS upgrade to 2.6.35 profile"
-    directory="profiles/2_6_35"
+    name="3000"
+    title="CastleCMS upgrade to 3000 profile"
+    directory="profiles/3000"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 2.6.35"
+    title="Upgrade CastleCMS to 3000"
     description=""
     source="*"
-    destination="2635"
-    handler=".upgrades.upgrade_2_6_35"
+    destination="3000"
+    handler=".upgrades.upgrade_3000"
     profile="castle.cms:default"
     />
 </configure>
