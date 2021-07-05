@@ -4,6 +4,12 @@ Changelog
 2.7.3 (unreleased)
 ------------------
 
+- add initial implementation of a content type that supports parallax rendering
+- recompile styles
+- fix 2633 upgrade by adding metadata to action
+- add ability to create templates from existing contents. templates are
+  unpublishable and are managed as specially marked documents in a
+  'template-repository' folder.
 - switch upgrade step from 2635 to 3000
 
 
