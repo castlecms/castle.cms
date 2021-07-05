@@ -1,0 +1,67 @@
+body {
+    margin: 0;
+}
+
+.parallax-image-tile-container {
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    perspective: 2px;
+}
+
+.parallax-section { 
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.parallax::after {
+    content: " ";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateZ(-1px) scale(1.5);
+    background-size: 100%;
+    z-index: -1;
+}
+
+.parallax-static {
+    background-image: var(--bg-image);
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.parallax-bg::after {
+    background-image: var(--bg-image);
+    background-position: center;
+    background-size: cover;
+}
+
+.text-content {
+    display: flex;
+}
+
+.parallax-title {
+    font-size: 62px;
+}
+
+.parallax-body {
+    font-size: 24px;
+}
+
+@media screen and (max-width: 768px) {
+    .parallax-title {
+        font-size: 36px;
+    }
+
+    .parallax-body {
+        font-size: 16px;
+    }
+}
