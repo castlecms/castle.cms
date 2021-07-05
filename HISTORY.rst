@@ -4,7 +4,7 @@ Changelog
 2.7.3 (unreleased)
 ------------------
 
-- fix upgrade step version
+- switch upgrade step from 2635 to 3000
 
 
 2.7.2 (2021-06-10)
