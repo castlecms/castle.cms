@@ -101,7 +101,10 @@
         </div>
       </tal:defs>
     </div>
-    <div id="close-container" class="close-container" onclick="goBack()">
+    <div tal:condition="view/logged_in"
+         id="close-container"
+         class="close-container"
+         onclick="goBack()">
       <div class="x-container">
         <div class="leftright"></div>
         <div class="rightleft"></div>

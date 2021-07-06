@@ -1,10 +1,18 @@
 from lxml import etree
+from plone import api
 from plone.app.uuid.utils import uuidToObject
 from Products.Five import BrowserView
 from urlparse import urlparse, parse_qs
 
 
 class ParallaxView(BrowserView):
+
+    @property
+    def logged_in(self):
+        try:
+            return not api.user.is_anonymous()
+        except Exception:
+            return False
 
     def get_tiles(self):
         parallax_tiles = []
