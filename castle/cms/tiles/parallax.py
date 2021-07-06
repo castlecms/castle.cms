@@ -78,13 +78,13 @@ class IParallaxTileSchema(model.Schema):
     )
 
     title = schema.TextLine(
-        title=u'Slide Title',
+        title=u'Parallax Tile Title',
         description=u'Will be omitted if blank',
         required=False,
         default=u'')
 
     text = schema.Text(
-        title=u'Slide Text',
+        title=u'Parallax Tile Text',
         description=u'Will be omitted if blank',
         required=False,
         default=u'')
@@ -112,7 +112,7 @@ class IParallaxTileSchema(model.Schema):
     )
 
     hor_text_position = schema.Choice(
-        title=u'Slide Text Position (Horizontal)',
+        title=u'Text Position (Horizontal)',
         description=u'How the text will be horizontally positioned on the tile.',
         required=True,
         vocabulary=SimpleVocabulary([
@@ -140,7 +140,7 @@ class IParallaxTileSchema(model.Schema):
 
     form.widget(static_image=ImageRelatedItemFieldWidget)
     static_image = schema.List(
-        title=u'Slide Image',
+        title=u'Static Image',
         description=u'Image on static tile to create parallax effect.',
         required=False,
         default=[],
@@ -161,13 +161,13 @@ class IParallaxTileSchema(model.Schema):
     )
 
     static_title = schema.TextLine(
-        title=u'Slide Title',
+        title=u'Static Tile Title',
         description=u'Will be omitted if blank',
         required=False,
         default=u'')
 
     static_text = schema.Text(
-        title=u'Slide Text',
+        title=u'Static Tile Text',
         description=u'Will be omitted if blank',
         required=False,
         default=u'')
@@ -195,7 +195,7 @@ class IParallaxTileSchema(model.Schema):
     )
 
     static_hor_text_position = schema.Choice(
-        title=u'Slide Text Position (Horizontal)',
+        title=u'Text Position (Horizontal)',
         description=u'How the text will be horizontally positioned on the tile.',
         vocabulary=SimpleVocabulary([
             SimpleTerm('start', 'start', u'Left (Half Width)'),
