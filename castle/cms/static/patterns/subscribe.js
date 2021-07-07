@@ -21,7 +21,6 @@ define([
       var self = this;
       self.$form = self.$el.find('form');
       self.url = self.$form.attr('action');
-
       self.$form.submit(function(e) {
         e.preventDefault();
 
@@ -40,8 +39,20 @@ define([
             var message = $('.portalMessage', responseText);
             var form = $('form', responseText);
 
-            $('.documentFirstHeading', self.$el).append(message);
-            $('form', self.$el).replaceWith(form);
+            if (message.length != 0) {
+              $('.documentFirstHeading', self.$el).append(message);
+              $('form', self.$el).replaceWith(form);
+              // Removes the two extra submit fields that randomly show up.
+              $('form', self.$el).remove(".form-inline")
+              $('form', self.$el).remove(".navbar-form")
+            }
+            else {
+              // These lines were added to fix a bug where sign up
+              // field was rendered when form submitted.
+              $("p").remove(".discreet");
+              $("h1").remove(".documentFirstHeading");
+              $('form', self.$el).replaceWith('<h3><strong>Please check you email to confirm subscription(s).</strong></h3>');
+            }
 
             //When we get a valid submit, the form
             //"Disappears" off the top of the viewport sometimes

@@ -1,5 +1,6 @@
 from castle.cms import subscribe
 from castle.cms import texting
+from castle.cms.utils import get_random_string
 from castle.cms.utils import send_email
 from castle.cms.utils import verify_recaptcha
 from castle.cms.widgets import ReCaptchaFieldWidget
@@ -54,7 +55,9 @@ def check_phone_number(val):
 
 class ISubscribeForm(Interface):
     name = schema.ASCIILine(
-        title=u'Full name')
+        title=u'Full name',
+        description=u'',
+        required=True)
 
     email = schema.ASCIILine(
         title=u'E-mail',
@@ -75,7 +78,7 @@ class ISubscribeForm(Interface):
     categories = schema.List(
         title=u'Categories',
         description=u"Select the types of content you'd like to receive.",
-        required=False,
+        required=True,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
@@ -116,23 +119,25 @@ class SubscribeForm(BaseForm):
         self.has_texting = registry.get('castle.plivio_auth_id') not in (None, '')
         self.isAnon = None
 
-    def send_mail(self, email, item):
+    def send_mail(self, email, categories, username='User', code=None):
+
         registry = getUtility(IRegistry)
         site_settings = registry.forInterface(ISiteSchema,
                                               prefix="plone",
                                               check=False)
-        url = '%s/@@subscribe?confirmed_email=%s&confirmed_code=%s' % (
-            self.context.absolute_url(), email, item['code'])
+        url = '%s/@@subscribe?confirmed_email=%s&confirmed_code=%s&categories=%s' % (
+            self.context.absolute_url(), email, code, categories)
         text = """
 Copy and paste this url into your web browser to confirm your address: %s
 """ % url
         html = """
-<p>You have requested subscription, please
-<a href="%s">confirm your email address by clicking on this link</a>.
+<p>Hi %s,</p><br>
+<p>You have requested subscription to: <strong>%s</strong>.</p>
+<p>Please <a href="%s">confirm your email address by clicking on this link</a>.
 </p>
 <p>
-If that does not work, copy and paste this url into your web browser: %s
-</p>""" % (url, url)
+If that does not work, copy and paste this url into your web browser: <i>%s</i>
+</p>""" % (username, ', '.join(categories), url, url)
         send_email(
             [email], "Email Confirmation for subscription(%s)" % site_settings.site_title,
             html=html, text=text)
@@ -154,6 +159,42 @@ If that does not work, copy and paste this url into your web browser: %s
     def action_subscribe(self, action):
         data, errors = self.extractData()
 
+        # Checks if the user is already subscribed to certain categories
+        # and will show an error if so.
+        try:
+            subscriber = subscribe.get_subscriber(data.get('email'))
+            if subscriber:
+                try:
+                    already_subscribed = set(subscriber['categories']).intersection(
+                        set(self.request.form['form.widgets.categories']))
+                    if already_subscribed:
+                        notify(
+                            ActionErrorOccurred(
+                                action,
+                                WidgetActionExecutionError('email', Invalid(
+                                    'User already subscribed to %s' % ', '.join(already_subscribed)))))
+                        return
+                except KeyError:
+                    self.status = self.formErrorsMessage
+        except AttributeError:
+            self.status = self.formErrorsMessage
+
+        if 'name' not in data:
+            notify(
+                ActionErrorOccurred(
+                    action,
+                    WidgetActionExecutionError('name', Invalid('Must input a name'))))
+
+        try:
+            if data['categories'] == []:
+                notify(
+                    ActionErrorOccurred(
+                        action,
+                        WidgetActionExecutionError('categories', Invalid(
+                            'At least one category must be selected.'))))
+        except KeyError:
+            self.status = self.formErrorsMessage
+
         if self.has_captcha and self.isAnon:
             if not verify_recaptcha(self.request):
                 notify(
@@ -162,34 +203,35 @@ If that does not work, copy and paste this url into your web browser: %s
                         WidgetActionExecutionError('captcha', Invalid('Invalid Recaptcha'))))
                 return
 
-        subsciber = subscribe.get_subscriber(data.get('email'))
-        if subsciber:
-            notify(
-                ActionErrorOccurred(
-                    action,
-                    WidgetActionExecutionError('email', Invalid('User already subscribed'))))
-            return
+        if errors:
+            self.status = self.formErrorsMessage
 
-        if not errors:
-            item = subscribe.register(data['email'], data)
-            self.send_mail(data['email'], item)
-            self.sent = True
+        try:
+            # Generate a random string for the url code.
+            url_code = get_random_string(8)
+
+            # User data from the submitted form
+            email = self.request.form['form.widgets.email']
+            categories = self.request.form['form.widgets.categories']
+            name = self.request.form['form.widgets.name']
+
+            if name != '':
+                subscribe.register(email, {'categories': categories}, url_code)
+
+                self.send_mail(email, categories, name, url_code)
+
+                self.sent = True
+                api.portal.show_message(
+                    'Verification email has been sent to your email', request=self.request, type='info')
+            else:
+                api.portal.show_message(
+                    'Must enter name, email, and select at least one category',
+                    request=self.request, type='error'
+                )
+        except Exception:
             api.portal.show_message(
-                'Verification email has been sent to your email', request=self.request, type='info')
-            if self.has_texting and data.get('phone_number'):
-                if not self.send_text_message(item):
-                    api.portal.show_message('Error sending code', request=self.request,
-                                            type='error')
-                else:
-                    api.portal.show_message('Code texted to your number to verify',
-                                            request=self.request, type='info')
-                self.request.response.redirect('%s/@@subscribe-phone?%s' % (
-                    self.context.absolute_url(),
-                    urlencode({
-                        'form.widgets.email': item['email'],
-                        'form.widgets.phone_number': item.get('phone_number', '')
-                        })
-                    ))
+                'Must enter name, email, and select at least one category',
+                request=self.request, type='error')
 
     def __call__(self):
         registry = queryUtility(IRegistry)
@@ -200,14 +242,18 @@ If that does not work, copy and paste this url into your web browser: %s
 
         if not self.has_captcha or not self.subscriptions_enabled:
             api.portal.show_message(
-                'Subscriptions are not enabled on this site', request=self.request, type='error')
+                """Subscriptions are not enabled on this site. Enable them in site control panel.
+                    Recaptcha must also be enabled""",
+                request=self.request, type='error')
             return self.request.response.redirect(self.context.absolute_url())
         if 'confirmed_code' in self.request.form and 'confirmed_email' in self.request.form:
+
             try:
                 alsoProvides(self.request, IDisableCSRFProtection)
+
                 subscribe.confirm(self.request.form['confirmed_email'],
                                   self.request.form['confirmed_code'])
-                api.portal.show_message('Succussfully subscribed to portal', request=self.request)
+                api.portal.show_message('Successfully subscribed to portal', request=self.request)
                 self.subscribed = True
             except subscribe.InvalidEmailException:
                 api.portal.show_message('Invalid Email', request=self.request, type='error')

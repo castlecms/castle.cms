@@ -85,6 +85,7 @@ class TestSubscribeForm(unittest.TestCase):
         self.request.form.update({
             'form.widgets.name': u'Foobar',
             'form.widgets.email': u'foo@bar.com',
+            'form.widgets.categories': u'announcements',
             'g-recaptcha-response': u'foobar',
             'form.buttons.subscribe': 'Subscribe'
         })
