@@ -433,11 +433,10 @@ class Toolbar(BrowserView):
 
         actions = [x for x in self._get_portal_actions(name)]
 
-        if additional is not []:
-            # Include actions from the old default portal_actions to provide
-            # support for Plone 5 add-ons
-            for action in additional:
-                actions += [x for x in self._get_portal_actions(action)]
+        # Include actions from the old default portal_actions to provide
+        # support for Plone 5 add-ons
+        for action in additional:
+            actions += [x for x in self._get_portal_actions(action)]
 
         urlExpr = 'url_expr_object'
         conditionExpr = 'available_expr_object'

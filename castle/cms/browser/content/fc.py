@@ -410,7 +410,7 @@ class FolderContentsView(BaseFolderContentsView):
         columns = super(FolderContentsView, self).get_columns()
         sm = getSecurityManager()
         if sm.checkPermission(DEFAULT_PERMISSION_SECURE, self.context):
-            # if has permission, add more more columns
+            # if has permission, add more columns
             columns.update({
                 'Creator': 'Creator',
                 'last_modified_by': 'Last modified by'
