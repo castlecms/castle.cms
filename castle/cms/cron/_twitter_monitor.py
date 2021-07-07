@@ -103,11 +103,13 @@ def attempt_twitter_on_site(site):
     registry = getUtility(IRegistry)
     public_url = registry.get('plone.public_url', None)
     if not public_url:
+        logger.info('Cannot find the public_url in %s' % str(site))
         return
 
     auth = get_auth()
 
     if auth is None:
+        logger.info('Twitter, api key not found in site %s' % str(site))
         return
 
     # normlize url...
@@ -139,7 +141,7 @@ def run(app):
         except KeyError:
             pass
         logger.info('Could not find valid site to monitor')
-        time.sleep(10 * 60)
+        time.sleep(10)
 
 
 if __name__ == '__main__':
