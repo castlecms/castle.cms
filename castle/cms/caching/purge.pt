@@ -21,10 +21,11 @@
       Portal status message
     </div>
 
-    <tal:purged tal:condition="view/purged">
+    <tal:purged tal:condition="view/purged"
+                tal:define="response view/resp;">
       <h3>Purged urls</h3>
       <p tal:condition="not: view/success" class="discreet">
-        There was an error submitted the purge request
+        There was an error with the purge request. Status code: ${response/status_code}, Reason: ${response/reason}
       </p>
       <ul class='purge-paths'>
         <tal:path tal:repeat="url python: sorted(view.purged)">
