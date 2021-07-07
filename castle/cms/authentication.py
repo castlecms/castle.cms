@@ -1,5 +1,5 @@
 import time
-
+import socket
 from Acquisition import aq_parent
 from castle.cms import cache
 from castle.cms.interfaces import IAuthenticator
@@ -29,7 +29,6 @@ from zope.event import notify
 from zope.interface import Interface
 from zope.interface import implementer
 from uuid import uuid4
-
 
 class AuthenticationException(Exception):
     pass
@@ -193,10 +192,24 @@ class Authenticator(object):
         login: if a successful authentication should result in the user being
                logged in
         """
+        try:
+            registry = getUtility(IRegistry)
+        except ComponentLookupError:
+            return
+
+        blacklisted_ips = registry.get('castle.blacklisted_ips') or []
+       
+        ip = self.request.get('HTTP_X_FORWARDED_FOR') or self.request.get('REMOTE_ADDR', None)
+
+        if ip in blacklisted_ips:
+            return False, None
+
         if not self.is_zope_root:
             manager = LockoutManager(self.context, username)
 
             if manager.maxed_number_of_attempts():
+                blacklisted_ips.append(ip)
+                registry['castle.blacklisted_ips'] = blacklisted_ips
                 raise AuthenticationMaxedLoginAttempts()
 
             manager.add_attempt()

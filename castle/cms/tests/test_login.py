@@ -644,3 +644,57 @@ if argon2 is not None:
             encrypted = AuthEncoding.pw_encrypt('foobar')
             self.assertTrue('{argon2}' in encrypted)
             self.assertTrue(AuthEncoding.pw_validate(encrypted, 'foobar'))
+
+    class TestBlacklist(unittest.TestCase):
+        layer = CASTLE_PLONE_INTEGRATION_TESTING
+
+        def setUp(self):
+            self.portal = self.layer['portal']
+            self.request = self.layer['request']
+
+            self.registry = queryUtility(IRegistry)
+
+            logout()
+            # mock the session id and login session cookie
+            self.request.cookies['castle_session_id'] = 'test_session'
+            self.request.cookies['__sl__'] = 'test_login'
+            self.auth = self.authenticator = getMultiAdapter(
+                (self.portal, self.request), IAuthenticator)
+            user = api.user.get(username=TEST_USER_NAME)
+            user.setMemberProperties(mapping={'email': 'foo@bar.com', })
+
+        def test_blacklist_prevents_login(self):
+            self.request.environ['HTTP_X_FORWARDED_FOR'] = u'127.0.0.1'
+            ip = self.request.get('HTTP_X_FORWARDED_FOR')
+            
+            self.registry['castle.blacklisted_ips'] = [ip]
+
+            view = SecureLoginView(self.portal, self.request)
+            view()  # CHECK_CREDENTIALS state
+
+            self.request.form.update({
+                'username': TEST_USER_NAME,
+                'password': TEST_USER_PASSWORD
+            })
+            self.request.REQUEST_METHOD = 'POST'
+            result = json.loads(view())
+            self.assertFalse(result['success'])
+        
+        def test_unsuccessful_logins_add_to_blacklist(self):
+            self.request.environ['HTTP_X_FORWARDED_FOR'] = u'127.0.0.1'
+            
+            self.registry['castle.blacklisted_ips'] = []
+            max_number = self.registry['plone.max_failed_login_attempts'] = 5
+            view = SecureLoginView(self.portal, self.request)
+            view()  # CHECK_CREDENTIALS state
+
+            self.request.form.update({
+                'username': 'FAKE',
+                'password': 'FAKE'
+            })
+            self.request.REQUEST_METHOD = 'POST'
+            for _ in range(max_number + 1):
+                result = json.loads(view())
+            self.assertTrue(u'127.0.0.1' in self.registry['castle.blacklisted_ips'])
+            self.registry['castle.blacklisted_ips'].pop()
+            

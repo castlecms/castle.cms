@@ -132,4 +132,11 @@
     <field type="plone.registry.field.Bool" />
   </record>
 
+  <record name="castle.blacklisted_ips">
+        <field type="plone.registry.field.List">
+            <title>Blacklisted IPs</title>
+            <description>Users that may not login no matter what.</description>
+            <value_type type="plone.registry.field.TextLine"/>
+        </field>
+  </record>
 </registry>
