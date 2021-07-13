@@ -39,6 +39,15 @@ class SlideTile(BaseTile):
             else:
                 return '0%'
 
+    def slide_vert_align(self):
+        vert = self.data.get('vert_text_position', 'middle')
+        if vert == 'top':
+            return '0px'
+        elif vert == 'middle':
+            return '100px'
+        else:
+            return '200px'
+
     def get_related_resources(self):
         if self.data.get('display_type') == 'resource-slide':
             try:

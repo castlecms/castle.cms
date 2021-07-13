@@ -7,6 +7,7 @@
                           left_align python: view.slide_hor_align('left');
                           right_align python: view.slide_hor_align('right');
                           alignment python: view.data.get('text_alignment', 'center');
+                          vert_align python: view.slide_vert_align();
                           media view/slide_media;
                           related_resources python: view.get_related_resources();">
       <!-- Full Background Video Slide -->
@@ -16,11 +17,11 @@
             <source src="${media}"/>
           </video>
           <div class="slide-thumb-text-container"
-             style="text-align: ${alignment};
-                    align-items: flex-end;">
+             style="text-align: ${alignment};">
             <section class="slide-thumb-video-text">
               <div style="margin-right: ${right_align};
-                        margin-left: ${left_align};">${title}</div>
+                        margin-left: ${left_align};
+                        margin-top: ${vert_align};">${title}</div>
               <div class="slide-thumb-body-text"
                   style="margin-right: ${right_align};
                           margin-left: ${left_align};">${text}</div>
@@ -34,12 +35,13 @@
 
       <!-- Left Video w/ Right Text Slide-->
       <section class="slide-thumb slide-thumb-video-section" tal:condition="python: view.slide_type == 'left-video-right-text'">
-        <div class="video-container">
+        <div class="video-container"
+             style="text-align: ${alignment};">
           <video class="slide-thumb-video" muted>
             <source src="${media}"/>
           </video>
-          <section class=" slide-thumb-video-text slide-thumb-video-right-text">
-            <div>${title}</div>
+          <section class="slide-thumb-video-text slide-thumb-video-right-text">
+            <div style="margin-top: ${vert_align};">${title}</div>
             <div class="slide-thumb-body-text">${text}</div>
           </section>
         </div>
@@ -56,11 +58,11 @@
           Background Image slide with no image selected.
         </div>
         <div class="slide-thumb-text-container"
-             style="text-align: ${alignment};
-                    align-items: flex-end;">
+             style="text-align: ${alignment};">
           <section class="slide-thumb-text">
             <div style="margin-right: ${right_align};
-                        margin-left: ${left_align};">${title}</div>
+                        margin-left: ${left_align};
+                        margin-top: ${vert_align};">${title}</div>
             <div class="slide-thumb-body-text"
                  style="margin-right: ${right_align};
                         margin-left: ${left_align};">${text}</div>
@@ -78,7 +80,7 @@
         <div class="slide-thumb-text-container"
              style="text-align: ${alignment};">
           <section class="slide-thumb-text slide-thumb-right-text">
-            <div>${title}</div>
+            <div style="margin-top: ${vert_align};">${title}</div>
             <div class="slide-thumb-body-text">${text}</div>
           </section>
         </div>
