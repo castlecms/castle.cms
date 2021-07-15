@@ -441,7 +441,7 @@
 
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.30"
-    description="changes default slideshow view to the actual slideshow"
+    description="2630 changes default slideshow view to the actual slideshow"
     source="*"
     destination="2630"
     handler=".upgrades.upgrade_2_6_30"
@@ -462,6 +462,40 @@
     source="*"
     destination="2631"
     handler=".upgrades.upgrade_2_6_31"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="2_6_33"
+    title="CastleCMS upgrade to 2.6.33 profile"
+    directory="profiles/2_6_33"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.33"
+    description=""
+    source="*"
+    destination="2633"
+    handler=".upgrades.upgrade_2_6_33"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="3000"
+    title="CastleCMS upgrade to 3000 profile"
+    directory="profiles/3000"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3000"
+    description=""
+    source="*"
+    destination="3000"
+    handler=".upgrades.upgrade_3000"
     profile="castle.cms:default"
     />
 </configure>

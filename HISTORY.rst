@@ -1,10 +1,48 @@
 Changelog
 =========
 
-3.0.0b2 (unreleased)
+3.0.0b8 (unreleased)
 --------------------
 
 - Nothing changed yet.
+
+
+3.0.0b7 (2021-07-05)
+--------------------
+
+- fix upgrade step reference
+
+
+3.0.0b6 (2021-07-05)
+--------------------
+
+- fix upgrade step version
+
+
+3.0.0b5 (2021-07-05)
+--------------------
+
+- add initial implementation of a content type that supports parallax rendering
+
+
+3.0.0b4 (2021-06-10)
+--------------------
+
+- recompile styles
+
+
+3.0.0b3 (2021-06-08)
+--------------------
+
+- fix 2633 upgrade by adding metadata to action, and set default profile to 2633
+
+
+3.0.0b2 (2021-06-01)
+--------------------
+
+- add ability to create templates from existing contents. templates are
+  unpublishable and are managed as specially marked documents in a
+  'template-repository' folder.
 
 
 3.0.0b1 (2021-05-03)

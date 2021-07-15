@@ -92,6 +92,10 @@ class ISlideshow(Interface):
         default=False)
 
 
+class IParallax(Interface):
+    pass
+
+
 class ITrashed(Interface):
     """
     marker for object that is in the trash
@@ -111,3 +115,9 @@ class IReferenceNamedImage(INamedImage):
 
 class IUploadedToYoutube(Interface):
     """Marker interface for videos that have been uploaded to YouTube"""
+
+
+class ITemplate(Interface):
+    """
+    marker for object that has been made into template
+    """

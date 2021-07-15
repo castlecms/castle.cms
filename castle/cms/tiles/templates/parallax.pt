@@ -1,0 +1,97 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en-US" lang="en-US"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <body>
+    <tal:container>
+      <tal:defs tal:define="image python: view.get_image(False);
+                            bg_color python: view.data.get('bg_color', 'white');
+                            title python: view.data.get('title', None);
+                            text python: view.data.get('text', None);
+                            text_color python: view.data.get('text_color', None);
+                            text_shadow python: view.data.get('text_shadow', 'none');
+                            hor_align python: view.data.get('hor_text_position', 'center');
+                            hor_left python: view.get_horizontal_align('left', False);
+                            hor_right python: view.get_horizontal_align('right', False);
+                            
+                            static_image python: view.get_image(True);
+                            static_bg_color python: view.data.get('static_bg_color', 'white');
+                            static_title python: view.data.get('static_title', None);
+                            static_text python: view.data.get('static_text', None);
+                            static_text_color python: view.data.get('static_text_color', None);
+                            static_text_shadow python: view.data.get('static_text_shadow', 'none');
+                            static_hor_align python: view.data.get('static_hor_text_position', 'center');
+                            static_hor_left python: view.get_horizontal_align('left', True);
+                            static_hor_right python: view.get_horizontal_align('right', True);">
+        <div class="parallax-edit-tile">
+          <!-- Parallax edit section -->
+          <section tal:condition="image"
+                   class="parallax-edit-section"
+                   style="background-image: url('${image/absolute_url}');
+                          color: ${text_color};
+                          text-shadow: ${text_shadow};">
+            <div class="parallax-tile-text"
+                 style="margin-left: ${hor_left};
+                        margin-right: ${hor_right};">
+              <div tal:condition="python: hor_align == 'center'"
+                   class="parallax-title"
+                   style="justify-content: center;">${title}</div>
+              <div tal:condition="not: python: hor_align == 'center'"
+                   class="parallax-title">${title}</div>
+              <div class="parallax-body">${text}</div>
+            </div>
+          </section>
+          <section tal:condition="not: image"
+                   class="parallax-edit-section"
+                   style="background: ${bg_color};
+                          color: ${text_color};
+                          text-shadow: ${text_shadow};">
+            <div class="parallax-tile-text"
+                 style="margin-left: ${hor_left};
+                        margin-right: ${hor_right};">
+              <div tal:condition="python: hor_align == 'center'"
+                   class="parallax-title"
+                   style="justify-content: center;">${title}</div>
+              <div tal:condition="not: python: hor_align == 'center'"
+                   class="parallax-title">${title}</div>
+              <div class="parallax-body">${text}</div>
+            </div>
+          </section>
+
+          <!-- Static edit section -->
+          <section tal:condition="static_image"
+                   class="static-edit-section"
+                   style="background-image: url('${static_image/absolute_url}');
+                          color: ${static_text_color};
+                          text-shadow: ${static_text_shadow};">
+            <div class="parallax-tile-text"
+                 style="margin-left: ${static_hor_left};
+                        margin-right: ${static_hor_right};">
+              <div tal:condition="python: static_hor_align == 'center'"
+                   class="parallax-title"
+                   style="justify-content: center;">${static_title}</div>
+              <div tal:condition="not: python: static_hor_align == 'center'"
+                   class="parallax-title">${static_title}</div>
+              <div class="parallax-body">${static_text}</div>
+            </div>
+          </section>
+          <section tal:condition="not: static_image"
+                   class="static-edit-section"
+                   style="background: ${static_bg_color};
+                          color: ${static_text_color};
+                          text-shadow: ${static_text_shadow};">
+            <div class="parallax-tile-text"
+                 style="margin-left: ${static_hor_left};
+                        margin-right: ${static_hor_right};">
+              <div tal:condition="python: static_hor_align == 'center'"
+                   class="parallax-title"
+                   style="justify-content: center;">${static_title}</div>
+              <div tal:condition="not: python: static_hor_align == 'center'"
+                   class="parallax-title">${static_title}</div>
+              <div class="parallax-body">${static_text}</div>
+            </div>
+          </section>
+        </div>
+      </tal:defs>
+    </tal:container>
+  </body>
+</html>

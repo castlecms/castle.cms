@@ -83,6 +83,18 @@
     />
 
   <plone:tile
+    name="castle.cms.parallaxtile"
+    title="Parallax"
+    class=".parallax.ParallaxTile"
+    schema=".parallax.IParallaxTileSchema"
+    for="castle.cms.interfaces.IParallax"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/parallax.pt"
+    />
+
+  <plone:tile
     name="castle.cms.maptile"
     title="Map"
     description="With a map tiles you can select site content to show on the map or add custom markers."
