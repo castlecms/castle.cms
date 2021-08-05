@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.7.3 (unreleased)
+2.8.0 (2021-08-05)
 ------------------
 
 - add initial implementation of a content type that supports parallax rendering
