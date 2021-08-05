@@ -890,9 +890,16 @@ define([
           open: false,
           showUnread: false
         });
-        component.refs.top.refs.chat.setState({
-          open: false
-        });
+        try {
+          component.refs.top.refs.chat.setState({
+            open: false
+          });
+        }
+        catch(e) {
+          // couldn't set state for chat integration DOM element?
+          // this is likely caused by a bug somewhere -- seems to happen after the
+          // first time its done. perhaps something isn't being updated.
+        }
       });
 
       /* folder contents changes the context.
