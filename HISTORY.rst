@@ -5,12 +5,10 @@ Changelog
 ------------------
 
 - add initial implementation of a content type that supports parallax rendering
-- recompile styles
-- fix 2633 upgrade by adding metadata to action
-- add ability to create templates from existing contents. templates are
-  unpublishable and are managed as specially marked documents in a
-  'template-repository' folder.
-- switch upgrade step from 2635 to 3000
+- bug fix for custom pat-structure loading order issue
+- recompile resources
+- rename upgrade step 2635 to 3000
+- add upgrade step 3001
 
 
 2.7.2 (2021-06-10)
