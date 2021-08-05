@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b8 (unreleased)
+3.0.0b8 (2021-08-05)
 --------------------
 
 - fix edge case for folder_contents customization that causes pat-structure not to load properly
