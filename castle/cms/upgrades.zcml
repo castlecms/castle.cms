@@ -489,13 +489,28 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3000"
     description=""
     source="*"
     destination="3000"
     handler=".upgrades.upgrade_3000"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="3001"
+    title="CastleCMS upgrade to 3001 profile"
+    directory="profiles/3001"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3001"
+    description="Ensures mockup-structure-pattern-url is also pointing at ++plone++castle/patterns/structure/"
+    source="*"
+    destination="3001"
+    handler=".upgrades.upgrade_3001"
     profile="castle.cms:default"
     />
 </configure>

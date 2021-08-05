@@ -7,9 +7,5 @@ require([
     ) {
     'use strict';
 
-    // unregister existing pattern
-    delete registry.patterns.structure;
-    delete $.fn.patStructure;
-
-   return Structure;
+    return Structure;
   });

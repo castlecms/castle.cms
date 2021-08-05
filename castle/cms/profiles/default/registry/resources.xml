@@ -121,9 +121,22 @@
       </value>
   </records>
 
+  <!-- to override mockup's implementation of the 'structure' pattern so
+       that we can add an 'all' button and fix endless next paging -->
   <records prefix="plone.resources/mockup-patterns-structure"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/patterns/structure.js</value>
+  </records>
+  <records prefix="plone.resources/mockup-patterns-structure-url"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/structure/</value>
+  </records>
+  <!-- needed to redefine -->
+  <records prefix="plone"
+          interface="Products.ResourceRegistries.interfaces.settings.IResourceRegistriesSettings">
+    <value key="lessvariables" purge="False">
+      <element key="barcelonetaPath">\"{site_url}/++theme++barceloneta/\"</element>
+    </value>
   </records>
 
   <records prefix="plone.resources/add-content-modal"
