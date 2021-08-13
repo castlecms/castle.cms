@@ -72,3 +72,4 @@ upgrade_2_6_33 = default_upgrade_factory('2_6_33')
 
 upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
+upgrade_3002 = default_upgrade_factory('3002')

@@ -513,4 +513,19 @@
     handler=".upgrades.upgrade_3001"
     profile="castle.cms:default"
     />
+  <genericsetup:registerProfile
+    name="3002"
+    title="CastleCMS upgrade to 3002 profile"
+    directory="profiles/3002"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3002"
+    description="Adds ability to exclude dexterity content from search"
+    source="*"
+    destination="3002"
+    handler=".upgrades.upgrade_3002"
+    profile="castle.cms:default"
+    />
 </configure>

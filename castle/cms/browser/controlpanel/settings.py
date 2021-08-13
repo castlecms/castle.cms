@@ -6,6 +6,7 @@ from castle.cms.interfaces import (
     IContentSettings,
     ISiteConfiguration,
     ISearchSettings,
+    ISearchExclusionSettings,
     IElasticSearchSettings,
     ISlideshowSettings,
 )
@@ -46,6 +47,11 @@ class ElasticForm(group.GroupForm):
     fields = field.Fields(IElasticSearchSettings)
 
 
+class SearchExclusionForm(group.GroupForm):
+    label = u"Search Settings"
+    fields = field.Fields(ISearchExclusionSettings)
+
+
 class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
 
     id = "CastleSettingsControlPanel"
@@ -54,7 +60,7 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
     schema = ICastleSettings
     schema_prefix = "castle"
     fields = field.Fields(ISiteConfiguration)
-    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm, ElasticForm)
+    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm, ElasticForm, SearchExclusionForm)
 
     def updateFields(self):
         super(CastleSettingsControlPanelForm, self).updateFields()

@@ -131,6 +131,10 @@
     component=".vocabularies.ProvidesTitleSummaryLeadImageVocabularyFactory"
     name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
     />
+  <utility
+    component=".vocabularies.SiteTypesVocabulary"
+    name="castle.cms.vocabularies.SiteTypes"
+    />
 
   <!-- override default syndication -->
   <adapter factory=".syndication.DexterityItem"

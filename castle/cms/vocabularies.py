@@ -125,6 +125,23 @@ LocationsVocabulary = LocationsVocabularyFactory()
 
 
 @implementer(IVocabularyFactory)
+class SiteTypesVocabularyFactory(object):
+
+    def __call__(self, context):
+        site = getSite()
+        portal_types = getToolByName(site, "portal_types")
+        types = portal_types.listContentTypes()
+        terms = []
+        for type in types:
+            terms.append(SimpleVocabulary.createTerm(type, type, type))
+
+        return SimpleVocabulary(terms)
+
+
+SiteTypesVocabulary = SiteTypesVocabularyFactory()
+
+
+@implementer(IVocabularyFactory)
 class MimeTypeVocabularyFactory(object):
 
     def __call__(self, context):

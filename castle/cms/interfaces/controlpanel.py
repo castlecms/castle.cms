@@ -536,6 +536,22 @@ class IElasticSearchSettings(Interface):
     )
 
 
+class ISearchExclusionSettings(Interface):
+    exclude_from_searches = schema.Bool(
+        title=u"Exclude selected items from searches",
+        default=False
+    )
+
+    items_to_exclude = schema.List(
+        title=u'Items To Exclude',
+        required=False,
+        default=[],
+        value_type=schema.Choice(
+            vocabulary='castle.cms.vocabularies.SiteTypes'
+        )
+    )
+
+
 class IAdjustableFontSizeSettings(Interface):
     font_size_small = schema.TextLine(
         title=u"Small font size",
@@ -559,8 +575,9 @@ class IAdjustableFontSizeSettings(Interface):
 
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, IElasticSearchSettings,
-                      ISlideshowSettings, IAdjustableFontSizeSettings):
+                      ISearchSettings, ISearchExclusionSettings,
+                      IElasticSearchSettings, ISlideshowSettings,
+                      IAdjustableFontSizeSettings):
     pass
 
 

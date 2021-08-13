@@ -22,6 +22,8 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
+  <records interface="castle.cms.interfaces.ISearchExclusionSettings"
+           prefix="castle" />
   <records interface="castle.cms.interfaces.IAdjustableFontSizeSettings" 
            prefix="castle" />
 
@@ -129,6 +131,18 @@
   <record name="castle.es_index_enabled"
           interface="castle.cms.interfaces.IElasticSearchSettings"
           field="es_index_enabled">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="castle.exclude_from_searches"
+          interface="castle.cms.interfaces.ISearchExclusionForm"
+          field="exclude_from_searches">
+    <field type="plone.registry.field.Bool" />
+  </record>
+
+  <record name="castle.items_to_exclude"
+          interface="castle.cms.interfaces.ISearchExclusionForm"
+          field="items_to_exclude">
     <field type="plone.registry.field.Bool" />
   </record>
 
