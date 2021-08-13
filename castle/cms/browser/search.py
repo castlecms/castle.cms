@@ -61,7 +61,7 @@ class Search(BrowserView):
         ptypes = api.portal.get_tool('portal_types')
         allow_anyway = ['Audio']
         for type_id in ptypes.objectIds():
-            if type_id in ('Link', 'Document', 'Folder'):
+            if type_id in ('Link', 'Document', 'Folder', 'Parallax', 'Slideshow'):
                 continue
             _type = ptypes[type_id]
             if not _type.global_allow and type_id not in allow_anyway:
