@@ -58,10 +58,15 @@ class Search(BrowserView):
             }
         }]
 
+        registry = getUtility(IRegistry)
+        exclude_types_from_search = registry.get('castle.exclude_from_searches')
+        excluded_content = []
+        if exclude_types_from_search:
+            excluded_content = registry.get('castle.items_to_exclude')
         ptypes = api.portal.get_tool('portal_types')
         allow_anyway = ['Audio']
         for type_id in ptypes.objectIds():
-            if type_id in ('Link', 'Document', 'Folder', 'Parallax', 'Slideshow'):
+            if type_id in excluded_content:
                 continue
             _type = ptypes[type_id]
             if not _type.global_allow and type_id not in allow_anyway:
