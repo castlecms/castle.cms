@@ -160,10 +160,6 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
 
     def __call__(self):
         data = super(CastleSettingsAdapter, self).__call__()
-
-        if api.user.is_anonymous():
-            return data
-
         folder = self.context
         if not IDexterityContainer.providedBy(folder):
             folder = aq_parent(folder)

@@ -513,4 +513,20 @@
     handler=".upgrades.upgrade_3001"
     profile="castle.cms:default"
     />
+
+  <genericsetup:registerProfile
+    name="3003"
+    title="CastleCMS upgrade to 3003 profile"
+    directory="profiles/3003"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3003"
+    description="TinyMCE on forms for logged out users"
+    source="*"
+    destination="3003"
+    handler=".upgrades.upgrade_3003"
+    profile="castle.cms:default"
+    />
 </configure>
