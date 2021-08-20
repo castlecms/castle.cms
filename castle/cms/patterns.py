@@ -97,10 +97,6 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         return data
 
     def tinymce(self):
-        if api.user.is_anonymous():
-            return {
-                'data-pat-tinymce': '{}'
-            }
         generator = CastleTinyMCESettingsGenerator(self.context, self.request)
         settings = generator.settings
 
@@ -160,6 +156,10 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
 
     def __call__(self):
         data = super(CastleSettingsAdapter, self).__call__()
+
+        if api.user.is_anonymous():
+            return data
+
         folder = self.context
         if not IDexterityContainer.providedBy(folder):
             folder = aq_parent(folder)
