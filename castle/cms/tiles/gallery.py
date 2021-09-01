@@ -8,6 +8,7 @@ from castle.cms.widgets import PreviewSelectFieldWidget
 from plone.autoform import directives as form
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 class DefaultView(BaseTileView):
@@ -24,6 +25,10 @@ class GalleryTile(BaseImagesTile, DisplayTypeTileMixin):
 
     render = DisplayTypeTileMixin.render_display
 
+    @property
+    def gallery_height(self):
+        return self.data.get('gallery_height', 'default')
+
 
 class IGalleryTileSchema(IImagesTileSchema):
 
@@ -33,4 +38,15 @@ class IGalleryTileSchema(IImagesTileSchema):
         title=u"Display Type",
         source=TileViewsSource('gallery'),
         default=defaults.get('gallery_tile_displaytype', u'default')
+    )
+
+    gallery_height = schema.Choice(
+        title=u"Gallery Height",
+        default='default',
+        vocabulary=SimpleVocabulary([
+            SimpleVocabulary.createTerm('small', 'small', 'Small'),
+            SimpleVocabulary.createTerm('default', 'default', 'Default'),
+            SimpleVocabulary.createTerm('large', 'large', 'Large'),
+            SimpleVocabulary.createTerm('x-large', 'x-large', 'X-Large')
+        ])
     )
