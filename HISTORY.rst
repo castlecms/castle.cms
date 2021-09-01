@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b9 (unreleased)
+3.0.0b9 (2021-09-01)
 --------------------
 
 - add height property to gallery tile schema
