@@ -76,9 +76,9 @@
 
   <monkey:patch
     description="make rich text field tinymce for frontend view"
-    class="plone.app.z3cform.widget"
-    original="RichTextWidget"
-    replacement=".patches.RichTextWidget"
+    class="plone.app.z3cform.widget.RichTextWidget"
+    original="_base_args"
+    replacement=".patches.rich_text_args"
     preserveOriginal="False"
     />
 
