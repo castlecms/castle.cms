@@ -70,6 +70,14 @@ class ConvertToPNG(DownloadAsPNG):
 
 class Download(namedfile.Download):
 
+    def __init__(self, context, request):
+        '''prevents super.__init__ from stripping filename,
+        which can cause some issues in certain situations
+        '''
+        filename = getattr(self, 'filename', 'file.ext')
+        super(Download, self).__init__(context, request)
+        self.filename = unicode(filename)
+
     def serve_file(self):
         file = self._getFile()
         self.set_headers(file)
