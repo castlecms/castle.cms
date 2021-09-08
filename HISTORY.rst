@@ -4,7 +4,8 @@ Changelog
 3.0.0b10 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- enable tinymce for richtext widget on collective.easyform forms on anonymous form
+- bugfix for site-icon 500 error under certain circumstances
 
 
 3.0.0b9 (2021-09-01)
