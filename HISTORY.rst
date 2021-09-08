@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.9.1 (unreleased)
-------------------
+2.10.0 (2021-09-08)
+-------------------
 
 - enable tinymce for richtext widget on collective.easyform forms on anonymous form
 
