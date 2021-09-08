@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.10.1 (unreleased)
+2.10.1 (2021-09-08)
 -------------------
 
 - bugfix for site-icon 500 error under certain circumstances
