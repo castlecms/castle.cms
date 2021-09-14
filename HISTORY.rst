@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.10.3 (unreleased)
+2.10.3 (2021-09-14)
 -------------------
 
 - revert es7 commit that was merged to 2.x branch
