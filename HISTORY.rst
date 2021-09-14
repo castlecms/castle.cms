@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.10.2 (unreleased)
+2.10.2 (2021-09-13)
 -------------------
 
 - fix setup req for collective.elasticsearch that was updated to ES7 compat in the 2.x branch
