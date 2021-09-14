@@ -3,15 +3,16 @@ from castle.cms.tests.utils import get_tile
 import logging
 import os
 import unittest
-import time
 
 import requests
+
 import transaction
 from castle.cms.browser.search import SearchAjax
 from collective.elasticsearch.es import ElasticSearchCatalog
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from collective.elasticsearch.interfaces import IElasticSettings
+from fnmatch import fnmatch
 from plone import api
 from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login,
                                setRoles)
@@ -34,7 +35,7 @@ if 'ES_HOST' in os.environ:
         resp = requests.get(url)
         data = resp.json()
         version = data['version']['number']
-        if version in ('7.6.0'):
+        if fnmatch(version, '2.3.?') or fnmatch(version, '2.4.?'):
             ES_ENABLED = True
         else:
             logger.warning('Unsupported ES version: {}'.format(version))
@@ -138,7 +139,6 @@ if ES_ENABLED:
             self.assertEquals(result['results'][0]['path'], '/esfolder1/esdoc2')
 
         def test_ajax_search_pt(self):
-            time.sleep(1)
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'portal_type': 'Folder'
@@ -149,7 +149,6 @@ if ES_ENABLED:
             self.assertEquals(result['results'][0]['path'], '/esfolder1')
 
         def test_ajax_search_subject(self):
-            time.sleep(1)
             self.request.form.update({
                 'SearchableText': 'Foobar',
                 'Subject': 'foobar'

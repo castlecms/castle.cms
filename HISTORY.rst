@@ -4,7 +4,7 @@ Changelog
 2.10.3 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- revert es7 commit that was merged to 2.x branch
 
 
 2.10.2 (2021-09-13)

@@ -207,6 +207,7 @@ class DashboardUtils(BrowserView):
             es = ElasticSearchCatalog(portal_catalog)
             result = es.connection.search(
                 index=es.index_name,
+                doc_type=es.doc_type,
                 body=query)
         except TransportError:
             return []
@@ -231,22 +232,28 @@ class DashboardUtils(BrowserView):
             es = ElasticSearchCatalog(portal_catalog)
             return es.connection.search(
                 index=es.index_name,
+                doc_type=es.doc_type,
                 body=query)['aggregations']['totals']['buckets']
         except TransportError:
             return []
 
     def _get_creation_areas_of_interest(self, user_id):
         query = self._get_base_interest_query()
-        query['aggregations']['totals']['aggregations'] = {
-            'types': {
-                'terms': {
-                    'field': 'portal_type'
+        query['aggregations']['totals']["aggregations"] = {
+            "types": {
+                "terms": {
+                    "field": "portal_type"
                 }
             }
         }
         query['query'] = {
-            'bool': {
-                'filter': [{'term': {'Creator': user_id}}]
+            'filtered': {
+                'filter': {
+                    "and": [
+                        {'term': {'Creator': user_id}}
+                    ]
+                },
+                'query': {"match_all": {}}
             }
         }
         return self._make_query(query)
@@ -254,10 +261,15 @@ class DashboardUtils(BrowserView):
     def _get_contribution_areas_of_interest(self, user_id):
         query = self._get_base_interest_query()
         query['query'] = {
-            'bool': {
-                'filter': [{'term': {'contributors': user_id}}]
-                }
+            'filtered': {
+                'filter': {
+                    "and": [
+                        {'term': {'contributors': user_id}}
+                    ]
+                },
+                'query': {"match_all": {}}
             }
+        }
         return self._make_query(query)
 
     def is_root(self, obj):

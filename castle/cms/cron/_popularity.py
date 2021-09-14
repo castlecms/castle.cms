@@ -5,7 +5,7 @@ from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import retriable
 from collective.elasticsearch.es import ElasticSearchCatalog
 from plone import api
-from Products.CMFPlone.defaultpage import get_default_page
+from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
@@ -67,23 +67,24 @@ def get_popularity(site):
             data[key + '_shares'] = value
 
         if IPloneSiteRoot.providedBy(ob):
-            ob = ob[get_default_page(ob)]
+            ob = ob[getDefaultPage(ob)]
 
         bulk_data.extend([{
             'update': {
                 '_index': es.index_name,
+                '_type': es.doc_type,
                 '_id': IUUID(ob)
             }
         }, {'doc': data}])
 
         if len(bulk_data) % bulk_size == 0:
-            conn.bulk(index=es.index_name, body=bulk_data)
+            conn.bulk(index=es.index_name, doc_type=es.doc_type, body=bulk_data)
             bulk_data = []
             transaction.commit()
             site._p_jar.sync()
 
     if len(bulk_data) > 0:
-        conn.bulk(index=es.index_name, body=bulk_data)
+        conn.bulk(index=es.index_name, doc_type=es.doc_type, body=bulk_data)
     transaction.commit()
 
 

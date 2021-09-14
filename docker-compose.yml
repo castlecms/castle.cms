@@ -6,24 +6,9 @@ services:
         ports:
             - 6379:6379
     elasticsearch:
-        image: "elasticsearch:7.6.0"
+        image: "elasticsearch:2.4-alpine"
         ports:
           - 9200:9200
-        environment:
-          - node.name=es01
-          - discovery.type=single-node
-        networks:
-          - elastic
-    kibana:
-        image: "docker.elastic.co/kibana/kibana:7.6.0"
-        container_name: "kibana"
-        ports:
-          - 5601:5601
-        environment:
-          ELASTICSEARCH_URL: http://elasticsearch:9200
-          ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-        networks:
-          - elastic
     etherpad:
         image: "etherpad/etherpad"
         ports:
@@ -33,6 +18,3 @@ services:
         ports:
           - 1025:1025
           - 8025:8025
-networks:
-  elastic:
-    driver: bridge
