@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.10.4 (unreleased)
+2.10.4 (2021-09-17)
 -------------------
 
 - bump plone.namedfile to 3.0.11
