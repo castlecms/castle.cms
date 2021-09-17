@@ -4,7 +4,8 @@ Changelog
 2.10.4 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- bump plone.namedfile to 3.0.11
+- revert Download related changes from PR#510
 
 
 2.10.3 (2021-09-14)
