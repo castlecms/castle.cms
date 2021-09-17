@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b11 (unreleased)
+3.0.0b11 (2021-09-17)
 ---------------------
 
 - revert changes to Download class from PR#510
