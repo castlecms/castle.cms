@@ -4,7 +4,8 @@ Changelog
 3.0.0b11 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- revert changes to Download class from PR#510
+- bump plone.namedfile to 3.0.11
 
 
 3.0.0b10 (2021-09-08)
