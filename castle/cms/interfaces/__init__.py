@@ -4,6 +4,8 @@ from .archive import IArchiveContentTransformer
 from .archive import IArchiveManager
 from .authentication import IAuthenticator
 from .content import IAudio
+from .content import ICard
+from .content import ICardDeck
 from .content import ICastleApplication
 from .content import IDashboard
 from .content import IHasDefaultImage

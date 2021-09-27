@@ -76,7 +76,6 @@ class ISlideshow(Interface):
         required=True,
         default=False)
 
-    # directives.widget('make_default_text', SingleCheckBoxFieldWidget)
     view_more_link_url = schema.URI(
         title=u"View More link URL",
         description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
@@ -84,12 +83,44 @@ class ISlideshow(Interface):
         required=False,
         defaultFactory=get_default_url)
 
-    # directives.widget('make_default_text', SingleCheckBoxFieldWidget)
     update_default_link_url = schema.Bool(
         title=u"Make this the default link url for all slideshows?",
         description=u'This only changes the default value. It will not modify any existing content',
         required=True,
         default=False)
+
+
+
+class ICard(Interface):
+    image = schema.List(
+        title=u'Card Image',
+        required=True,
+        default=[],
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.Catalog'
+        )
+    )
+
+    link = schema.List(
+        title=u"Link",
+        description=u"Content to link this image to.",
+        required=False,
+        default=[],
+        value_type=schema.Choice(
+            vocabulary='plone.app.vocabularies.Catalog'
+        )
+    )
+
+    external_link = schema.URI(
+        title=u'External Link',
+        description=u'If provided, internal link is ignored',
+        required=False
+    )
+
+
+
+class ICardDeck(Interface):
+    pass
 
 
 class IParallax(Interface):

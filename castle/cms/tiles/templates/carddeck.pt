@@ -1,0 +1,41 @@
+<div class="castle-card-deck">
+  <div
+    class="castle-card"
+    tal:repeat="card view/cards"
+    tal:define="anchor_href  python: card['anchor_href'];
+                anchor_title  python: card['anchor_title'];
+                image_src python: card['image_src'];
+                image_title python: card['image_title'];
+                image_alt python: card['image_alt'];
+                title  python: card['title'];
+                read_more  python: card['read_more'];"
+  >
+    <a
+      href="${anchor_href}"
+      target="_self"
+      title="${anchor_title}"
+    ></a>
+    <div class="card-img">
+      <img
+        src="${image_src}"
+        title="${image_title}"
+        alt="${image_alt}"
+      />
+    </div>
+    <div class="lower-half">
+      <div class="card-title">
+        <h2>${card_title}</h2>
+      </div>
+      <div class="read-more-wrapper">
+        <div class="left">
+          <h3>${read_more}</h3>
+        </div>
+        <div class="right">
+          <div class="arrow">
+            <span class="material-icons">trending_flat</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -95,6 +95,29 @@
     />
 
   <plone:tile
+    name="castle.cms.carddecktile"
+    title="Card Deck"
+    class=".carddeck.CardDeckTile"
+    schema=".carddeck.ICardDeckTileSchema"
+    for="castle.cms.interfaces.ICardDeck"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/carddeck.pt"
+    />
+  <plone:tile
+    name="castle.cms.cardtile"
+    title="Card"
+    class=".carddeck.CardTile"
+    schema=".carddeck.ICardTileSchema"
+    for="castle.cms.interfaces.ICard"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/card.pt"
+    />
+
+  <plone:tile
     name="castle.cms.maptile"
     title="Map"
     description="With a map tiles you can select site content to show on the map or add custom markers."
