@@ -539,9 +539,25 @@
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3004"
     description="Fix pagination issues on content browser component"
+    description="Standardize Dexterity type icons and descriptions"
     source="*"
     destination="3004"
     handler=".upgrades.upgrade_3004"
+    profile="castle.cms:default"
+    />
+  <genericsetup:registerProfile
+    name="3005"
+    title="CastleCMS upgrade to 3005 profile"
+    directory="profiles/3005"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3005"
+    description="Standardize Dexterity type icons and descriptions"
+    source="*"
+    destination="3005"
+    handler=".upgrades.upgrade_3005"
     profile="castle.cms:default"
     />
 </configure>
