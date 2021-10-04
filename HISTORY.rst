@@ -156,6 +156,12 @@ use the `castle/cms/_scripts/export-audit-log.py` script to dump the old
 audit log into a CSV file, and then use the `castle/cms/_scripts/import-audit-log.py`
 script to import the CSV file into the new cluster.
 
+2.6.35 (2021-05-24)
+-------------------
+
+- added new icons for content types.
+- added descriptions to content types that were missing.
+
 
 2.6.31 (2021-04-20)
 -------------------
