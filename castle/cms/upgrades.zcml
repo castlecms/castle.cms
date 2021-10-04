@@ -328,7 +328,7 @@
     destination="2611"
     handler=".upgrades.upgrade_2_6_11"
     profile="castle.cms:default"/>
-  
+
   <genericsetup:registerProfile
     name="2_6_12"
     title="CastleCMS upgrade to 2.6.12 profile"
@@ -362,7 +362,7 @@
     handler=".upgrades.upgrade_2_6_14"
     profile="castle.cms:default"
     />
-  
+
   <genericsetup:registerProfile
     name="2_6_16"
     title="CastleCMS upgrade to 2.6.16 profile"
