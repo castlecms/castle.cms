@@ -220,7 +220,8 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         if query.get('sort_on', '') not in catalog._catalog.indexes:
             query['sort_on'] = 'effective'
 
-        result = catalog(**query)
+        result = [item for item in catalog(**query)]
+        result = self.query_values(query, catalog, result)
         if subject_filter is not None:
             # special case where we have to further filter...
             result = [item for item in result
@@ -238,6 +239,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             'page': page + 1,
             'items': result[start:end]
         }
+
+    def query_values(self, query, catalog, result):
+        for brain in catalog():
+            obj = brain.getObject()
+            try:
+                if query['SearchableText'] in vars(obj).values():
+                    result.append(brain)
+            except KeyError:
+                pass
+        return result
 
     def _next_url(self, url, page):
         params = {}
