@@ -1,4 +1,5 @@
 import json
+import re
 from urllib import urlencode
 from urlparse import parse_qsl
 
@@ -241,10 +242,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         }
 
     def query_values(self, query, catalog, result):
+        result_objects = [b.getObject() for b in result]
         for brain in catalog():
             obj = brain.getObject()
+            if obj in result_objects:
+                continue
             try:
-                if query['SearchableText'] in vars(obj).values():
+                values = [v for v in vars(obj).values()]
+                query_string = query['SearchableText']
+                res = [v for v in values if re.search(query_string, str(v))]
+                if res:
                     result.append(brain)
             except KeyError:
                 pass
