@@ -12,6 +12,7 @@ from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import PreviewSelectFieldWidget
 from castle.cms.widgets import QueryFieldWidget
 from DateTime import DateTime
+from plone.app.textfield.value import RichTextValue
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
 from plone.memoize.instance import memoize
@@ -248,9 +249,10 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             if obj in result_objects:
                 continue
             try:
-                values = [v for v in vars(obj).values()]
-                query_string = query['SearchableText']
-                res = [v for v in values if re.search(query_string, str(v))]
+                values = [v.raw.encode('utf-8') if type(v) == RichTextValue else v
+                          for v in vars(obj).values()]
+                query_string = query['SearchableText'].lower()
+                res = [v for v in values if re.search(query_string, str(v).lower())]
                 if res:
                     result.append(brain)
             except KeyError:
