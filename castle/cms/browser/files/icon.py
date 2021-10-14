@@ -42,7 +42,7 @@ img.save('logo.ico', sizes=icon_sizes)
     """
     implements(ISecureLoginAllowedView)
 
-    filename = 'icon.png'
+    filename = u'icon.png'
 
     allowed_sizes = (
         16,
@@ -52,6 +52,14 @@ img.save('logo.ico', sizes=icon_sizes)
         192,
         512
     )
+
+    def __init__(self, context, request):
+        '''prevents super.__init__ from stripping filename,
+        which can cause some issues in certain situations
+        '''
+        filename = getattr(self, 'filename', u'file.ext')
+        super(IconView, self).__init__(context, request)
+        self.filename = unicode(filename)
 
     def get_data(self):
         registry = getUtility(IRegistry)
@@ -90,7 +98,7 @@ img.save('logo.ico', sizes=icon_sizes)
 
 
 class FaviconView(IconView):
-    filename = 'favicon.ico'
+    filename = u'favicon.ico'
 
     def scale_data(self, data):
         result = StringIO()

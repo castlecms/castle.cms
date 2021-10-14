@@ -4,7 +4,7 @@ Changelog
 3.0.0b12 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- Reapply PR510 - icon and favicon downloads without changing functionality for other files
 
 
 3.0.0b11 (2021-09-17)
