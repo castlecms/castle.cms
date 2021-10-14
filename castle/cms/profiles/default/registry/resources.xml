@@ -225,6 +225,14 @@
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++resource++mockup/tinymce/pattern.js</value>
   </records>
+  <records prefix="plone.resources/mockup-patterns-tinymce-logged-out"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/tinymce/anonymouspattern.js</value>
+      <value key="url">++plone++castle/patterns/tinymce</value>
+      <value key="css">
+        <element>++plone++castle/patterns/tinymce/less/pattern.tinymce.less</element>
+      </value>
+  </records>
 
   <records prefix="plone.resources/castle-dashboard-welcome"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>

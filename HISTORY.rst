@@ -1,10 +1,30 @@
 Changelog
 =========
 
-3.0.0b9 (unreleased)
+3.0.0b12 (unreleased)
+---------------------
+
+- Reapply PR510 - icon and favicon downloads without changing functionality for other files
+
+
+3.0.0b11 (2021-09-17)
+---------------------
+
+- revert changes to Download class from PR#510
+- bump plone.namedfile to 3.0.11
+
+
+3.0.0b10 (2021-09-08)
+---------------------
+
+- enable tinymce for richtext widget on collective.easyform forms on anonymous form
+- bugfix for site-icon 500 error under certain circumstances
+
+
+3.0.0b9 (2021-09-01)
 --------------------
 
-- Nothing changed yet.
+- add height property to gallery tile schema
 
 
 3.0.0b8 (2021-08-05)
