@@ -28,6 +28,8 @@ def untemplate(obj):
     if ITemplate.providedBy(obj):
         noLongerProvides(obj, ITemplate)
     site = getSite()
+    if 'template-repository' in obj.getPhysicalPath():
+        obj = api.content.move(source=obj, target=site)
     if obj in site.template_list:
         site.template_list.remove(obj)
     return obj
