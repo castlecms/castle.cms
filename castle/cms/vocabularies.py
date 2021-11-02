@@ -11,7 +11,7 @@ from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from zope.interface import directlyProvides
 from zope.interface import implementer
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
@@ -94,9 +94,8 @@ def AvailableFragments(context):
 
 directlyProvides(AvailableFragments, IContextSourceBinder)
 
-
+@implementer(IContextSourceBinder)
 class RegistryValueSource(object):
-    implements(IContextSourceBinder)
 
     def __init__(self, key_name, default=[]):
         self.key_name = key_name
@@ -318,9 +317,8 @@ BAD_TYPES = ("ATBooleanCriterion", "ATDateCriteria", "ATDateRangeCriterion",
              "ATCurrentAuthorCriterion", "ATPathCriterion",
              "ATRelativePathCriterion", "Pad", 'Comment', 'Link')
 
-
+@implementer(IVocabularyFactory)
 class ReallyUserFriendlyTypesVocabulary(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         site = getSite()
@@ -338,9 +336,8 @@ class ReallyUserFriendlyTypesVocabulary(object):
 
 ReallyUserFriendlyTypesVocabularyFactory = ReallyUserFriendlyTypesVocabulary()
 
-
+@implementer(IVocabularyFactory)
 class CountriesVocabulary(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         items = []

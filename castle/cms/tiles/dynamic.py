@@ -29,7 +29,7 @@ from zope.component import queryUtility
 from zope.filerepresentation.interfaces import IRawReadFile
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.vocabulary import SimpleVocabulary
 from castle.cms.widgets import RelatedItemFieldWidget, ImageRelatedItemsFieldWidget, RelatedItemsFieldWidget
 from collections import OrderedDict

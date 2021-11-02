@@ -13,7 +13,7 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter, getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
-from zope.interface import implements
+from zope.interface import implementer
 
 
 class SecureLoginView(BrowserView):

@@ -3,7 +3,7 @@ from zope.component import getAdapters
 from plone.folder.interfaces import IOrdering
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.interface import implements
+from zope.interface import implementer
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model

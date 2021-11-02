@@ -14,7 +14,7 @@ from Products.PluggableAuthService.interfaces.plugins import (IAuthenticationPlu
                                                               IChallengePlugin)
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.statusmessages.interfaces import IStatusMessage
-from zope.interface import implements
+from zope.interface import implementer
 
 manage_addPwExpiryPluginForm = PageTemplateFile(
     'www/addPwExpiryPlugin',
@@ -36,14 +36,13 @@ def addPwExpiryPlugin(self, id, title='', REQUEST=None):
             self.absolute_url()
         )
 
-
+@implementer(IAuthenticationPlugin, IChallengePlugin, IUserManagement)
 class PwExpiryPlugin(BasePlugin):
     """
     Password expiry plugin
     """
     meta_type = 'Password Expiry Plugin'
     security = ClassSecurityInfo()
-    implements(IAuthenticationPlugin, IChallengePlugin, IUserManagement)
 
     def __init__(self, id, title=None):
         self._setId(id)

@@ -34,7 +34,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
 

@@ -17,7 +17,7 @@ from plone.uuid.interfaces import IUUID
 from urllib.parse import urlparse, urljoin, quote_plus
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 
 import hashlib
 import logging
@@ -36,9 +36,8 @@ RE_CSS_IMPORTS = re.compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))
 CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'
 
-
+@implementer(IArchiveContentTransformer)
 class BaseArchivalTransformer(object):
-    implements(IArchiveContentTransformer)
 
     def __init__(self, archiver):
         self.archiver = archiver
@@ -46,10 +45,9 @@ class BaseArchivalTransformer(object):
     def __call__(dom):
         pass
 
-
+@implementer(IArchiveManager)
 class ArchiveManager(object):
 
-    implements(IArchiveManager)
 
     def getContentToArchive(self, delta=0):
         days = api.portal.get_registry_record(

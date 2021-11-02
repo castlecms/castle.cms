@@ -103,9 +103,8 @@ class Storage(object):
         return (not os.path.exists(filepath) or
                 DateTime(self.get_modified(filename)) > DateTime(os.stat(filepath).st_mtime))
 
-
+@implementer(interfaces.ITemplateManager)
 class _TemplateManager(object):
-    interface.implements(interfaces.ITemplateManager)
 
     def __init__(self):
         self.syspaths = tuple(sys.path)
@@ -211,9 +210,8 @@ class _TemplateManager(object):
                 del self.templates[template]
                 return True
 
-
+@implementer(interfaces.ITemplateManager)
 class TemplateManagerFactory(object):
-    interface.implements(interfaces.ITemplateManager)
 
     def __init__(self):
         self.manager = _TemplateManager()

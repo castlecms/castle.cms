@@ -12,7 +12,7 @@ from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import BrowserPage
 
 import logging
@@ -83,9 +83,8 @@ class FileChangedCacheFactory(FileCacheFactory):
                 fi.close()
         return cache[filepath]['template']
 
-
+@implementer(IFragmentsDirectory)
 class FragmentsDirectory(object):
-    implements(IFragmentsDirectory)
 
     order = 10
     layer = None
@@ -126,9 +125,8 @@ class FragmentsDirectory(object):
                 res.append(name.replace('.pt', ''))
         return res
 
-
+@implementer(IFragmentsDirectory)
 class ThemeFragmentsDirectory(object):
-    implements(IFragmentsDirectory)
 
     order = 100
     layer = None

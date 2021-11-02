@@ -32,7 +32,7 @@ from zope.component import getAllUtilitiesRegisteredFor
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.interface import implements
+from zope.interface import implementer
 
 
 logger = logging.getLogger('castle.cms')

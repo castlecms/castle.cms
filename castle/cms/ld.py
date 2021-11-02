@@ -15,7 +15,7 @@ from Products.CMFPlone.utils import getSiteLogo
 from ZODB.POSException import POSKeyError
 from zope.component import adapts, getUtility, queryMultiAdapter
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 
 
 def format_date(dt):

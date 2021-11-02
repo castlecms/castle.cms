@@ -19,7 +19,7 @@ from Products.CMFPlone.interfaces import IPatternsSettings, IPloneSiteRoot
 from Products.CMFPlone.patterns import (PloneSettingsAdapter,
                                         TinyMCESettingsGenerator)
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from castle.cms.services.google import youtube
 
 

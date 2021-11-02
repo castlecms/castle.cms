@@ -7,7 +7,7 @@ from Products.CMFCore.utils import getToolByName
 from urllib import quote_plus
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
-from zope.interface import implements
+from zope.interface import implementer
 from zope.security import checkPermission
 from castle.cms.tiles.views import getTileView
 from castle.cms.behaviors.adjustablefont import IAdjustableFontSizeQueryListing

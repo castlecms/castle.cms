@@ -11,7 +11,7 @@ from plone.namedfile.file import NamedImage
 from plone.registry.interfaces import IRegistry
 from zExceptions import NotFound
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 
 
 logger = logging.getLogger('castle.cms')
