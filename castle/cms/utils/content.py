@@ -1,7 +1,7 @@
 import logging
 import os
 import types
-from urllib import unquote
+from urllib.parse import unquote
 
 import transaction
 from Acquisition import aq_base
