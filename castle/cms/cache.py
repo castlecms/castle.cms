@@ -3,7 +3,7 @@ from plone.memoize.ram import choose_cache as base_choose_cache
 from plone.memoize.ram import AbstractDict
 from zope.interface import directlyProvides
 
-import cPickle
+import _pickle as cPickle
 import os
 import redis
 import threading
