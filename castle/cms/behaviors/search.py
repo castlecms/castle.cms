@@ -28,9 +28,10 @@ class ISearch(model.Schema):
 
     directives.widget('robot_configuration', SelectFieldWidget)
     robot_configuration = schema.List(
-        title=u'How robots should behave with this content on frontend urls',
+        title=u'Frontend robot behavior',
         description=u'Robots index and consume content on the web. '
-                    u'This allows you to remove content from search indexes.',
+                    u'This allows you to remove content from search indexes.'
+                    u'This applies only to frontend urls.',
         required=False,
         defaultFactory=lambda: ['index', 'follow'],
         missing_value=[],
@@ -41,9 +42,10 @@ class ISearch(model.Schema):
 
     directives.widget('backend_robot_configuration', SelectFieldWidget)
     backend_robot_configuration = schema.List(
-        title=u'How robots should behave with this content on backend urls',
+        title=u'Backend robot behavior',
         description=u'Robots index and consume content on the web. '
-                    u'This allows you to remove content from search indexes.',
+                    u'This allows you to remove content from search indexes.'
+                    u'This applies only to backend urls.',
         required=False,
         defaultFactory=lambda: [],
         missing_value=[],
