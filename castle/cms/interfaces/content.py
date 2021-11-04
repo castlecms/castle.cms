@@ -33,12 +33,18 @@ class IAudio(IMedia):
 
 @provider(IContextAwareDefaultFactory)
 def get_default_text(context):
-    return get_registry_record('castle.resource_slide_view_more_link_text', None)
+    return get_registry_record(
+        'castle.resource_slide_view_more_link_text',
+        default=None,
+    )
 
 
 @provider(IContextAwareDefaultFactory)
 def get_default_url(context):
-    return get_registry_record('castle.resource_slide_view_more_link_url', None)
+    return get_registry_record(
+        'castle.resource_slide_view_more_link_url',
+        default=None,
+    )
 
 
 class ISlideshow(Interface):
