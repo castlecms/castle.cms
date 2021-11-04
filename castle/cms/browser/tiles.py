@@ -57,129 +57,14 @@ class MetaTileManager(BrowserView):
             'success': True,
             'locked': False
         })
-        _id = self.request.get('metaId')
-        copy_id = self.get_working_copy_meta_id()
-        annotations = IAnnotations(self.context)
-        data = annotations.get(TILE_ANNOTATIONS_KEY_PREFIX + '.' + _id)
-        if not data:
-            data = PersistentDict()
 
-        if ('locked' in data and
-                self.request.get('override', '').lower() not in ('y', 'yes', '1',
-                                                                 'true', 't') and
-                api.user.get_current().getId() != data['locked']['user']):
-            return json.dumps({
-                'locked': True,
-                'success': False,
-                'lock_data': data['locked']
-            })
-
-        if TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id in annotations:
-            # cut out, we're good, resume existing
-            return json.dumps({
-                'newId': copy_id,
-                'success': True,
-                'locked': False
-            })
-
-        version_key = self.get_working_copy_key()
-        tile_mapping = {}
-        new_tiles = []
-        for tile in data.get('tiles', []):
-            # make copies of all the tiles
-            tile_id = tile['id']
-            copy_tile_id = '{}-{}'.format(tile_id, version_key)
-            tile_data = annotations.get(TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id)
-            if tile_data:
-                annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_tile_id] = deepcopy(tile_data)
-            new_tile_info = deepcopy(tile)
-            new_tile_info['id'] = copy_tile_id
-            new_tiles.append(new_tile_info)
-            tile_mapping[tile_id] = copy_tile_id
-
-        new_data = PersistentDict(dict(data))
-        new_data.update({
-            'tiles': new_tiles,
-            'mapping': tile_mapping
-        })
-        data.update({
-            'locked': {
-                'when': DateTime().ISO8601(),
-                'user': api.user.get_current().getId()
-            }
-        })
-        annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id] = new_data
-
-        return json.dumps({
-            'newId': copy_id,
-            'success': True,
-            'locked': False
-        })
 
     def save_copy(self):
         # XXX disable working copy support
         return json.dumps({
             'success': True
         })
-        annotations = IAnnotations(self.context)
-        _id = self.request.get('metaId')
-        copy_id = self.get_working_copy_meta_id()
-        existing_data = annotations.get(TILE_ANNOTATIONS_KEY_PREFIX + '.' + _id, {})
-        new_data = annotations.get(TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id)
 
-        existing_tiles = existing_data.get('tiles', [])
-        new_tiles = new_data.get('tiles', [])
-        new_tile_ids = [t['id'] for t in new_tiles]
-        # tile id: copy tile id
-        tile_mapping = new_data.get('mapping', {})
-        # copy tile id: tile id
-        tile_mapping_reversed = {v: k for k, v in tile_mapping.items()}
-
-        # remove deleted tiles
-        for existing_tile in existing_tiles:
-            tile_id = existing_tile['id']
-            copy_tile_id = tile_mapping.get(tile_id, None)
-            if copy_tile_id not in new_tile_ids:
-                # was removed, so we delete the data associated with it
-                if TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id in annotations:
-                    del annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id]
-
-        # overwrite new tile data
-        for copy_tile in new_tiles:
-            copy_tile_id = copy_tile['id']
-            if copy_tile_id in tile_mapping_reversed:
-                tile_id = tile_mapping_reversed[copy_tile_id]
-                # move tile data onto correct key
-                if TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_tile_id in annotations:
-                    annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id] = \
-                        annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_tile_id]
-                    del annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_tile_id]
-                    copy_tile['id'] = tile_id
-
-        # now save the meta tile
-        annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + _id] = \
-            annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id]
-        del annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id]
-
-        # also, destroy any other active edits for this slot
-        for key in list(annotations.keys()):
-            if key.startswith(TILE_ANNOTATIONS_KEY_PREFIX + '.' + _id + '-copy-'):
-                # also delete tiles referenced here.
-                if key not in annotations:
-                    continue
-                data = annotations[key]
-                for tile in data.get('tiles', []):
-                    # since these are all copied tiles or new tiles, we can remove
-                    tile_id = tile['id']
-                    if TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id in annotations:
-                        del annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + tile_id]
-                del annotations[key]
-
-        notify(MetaTileEditedEvent(self.context, _id))
-
-        return json.dumps({
-            'success': True
-        })
 
     def cancel_copy(self):
         annotations = IAnnotations(self.context)
