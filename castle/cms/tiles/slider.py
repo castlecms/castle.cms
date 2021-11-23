@@ -36,6 +36,7 @@ DEFAULT_SLIDER_CONFIGURATION = {
     'animationSpeed': 600,
 }
 
+
 class ISliderTileConfiguration(model.Schema):
     animation = schema.Choice(
         title=u'Animation',
