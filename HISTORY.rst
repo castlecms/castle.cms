@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - Reapply PR510 - icon and favicon downloads without changing functionality for other files
+- slight refactor to be able to import slider config other places
 
 
 2.10.4 (2021-09-17)
