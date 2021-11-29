@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.10.5 (unreleased)
+2.11.0 (2021-11-29)
 -------------------
 
 - Reapply PR510 - icon and favicon downloads without changing functionality for other files
