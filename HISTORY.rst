@@ -1,10 +1,17 @@
 Changelog
 =========
 
-3.0.0b12 (unreleased)
+3.0.0b13 (unreleased)
+---------------------
+
+- Nothing changed yet.
+
+
+3.0.0b12 (2021-11-29)
 ---------------------
 
 - Reapply PR510 - icon and favicon downloads without changing functionality for other files
+- slight refactor to be able to import slider config other places
 
 
 3.0.0b11 (2021-09-17)
