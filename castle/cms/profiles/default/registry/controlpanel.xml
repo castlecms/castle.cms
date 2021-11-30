@@ -135,13 +135,13 @@
   </record>
 
   <record name="castle.exclude_from_searches"
-          interface="castle.cms.interfaces.ISearchExclusionForm"
+          interface="castle.cms.interfaces.ISearchExclusionSettings"
           field="exclude_from_searches">
     <field type="plone.registry.field.Bool" />
   </record>
 
   <record name="castle.items_to_exclude"
-          interface="castle.cms.interfaces.ISearchExclusionForm"
+          interface="castle.cms.interfaces.ISearchExclusionSettings"
           field="items_to_exclude">
     <field type="plone.registry.field.List" />
   </record>

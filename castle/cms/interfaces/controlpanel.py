@@ -538,12 +538,12 @@ class IElasticSearchSettings(Interface):
 
 class ISearchExclusionSettings(Interface):
     exclude_from_searches = schema.Bool(
-        title=u"Exclude selected items from searches",
+        title=u"Exclude content type from searches",
         default=False
     )
 
     items_to_exclude = schema.List(
-        title=u'Items To Exclude',
+        title=u'Content To Exclude',
         required=False,
         default=[],
         value_type=schema.Choice(
@@ -575,7 +575,7 @@ class IAdjustableFontSizeSettings(Interface):
 
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, ISearchExclusionSettings,
+                      ISearchSettings,
                       IElasticSearchSettings, ISlideshowSettings,
                       IAdjustableFontSizeSettings):
     pass

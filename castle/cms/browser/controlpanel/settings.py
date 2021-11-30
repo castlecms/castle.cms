@@ -6,7 +6,6 @@ from castle.cms.interfaces import (
     IContentSettings,
     ISiteConfiguration,
     ISearchSettings,
-    ISearchExclusionSettings,
     IElasticSearchSettings,
     ISlideshowSettings,
 )
@@ -47,11 +46,6 @@ class ElasticForm(group.GroupForm):
     fields = field.Fields(IElasticSearchSettings)
 
 
-class SearchExclusionForm(group.GroupForm):
-    label = u"Search Settings"
-    fields = field.Fields(ISearchExclusionSettings)
-
-
 class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
 
     id = "CastleSettingsControlPanel"
@@ -60,7 +54,7 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
     schema = ICastleSettings
     schema_prefix = "castle"
     fields = field.Fields(ISiteConfiguration)
-    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm, ElasticForm, SearchExclusionForm)
+    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm, ElasticForm)
 
     def updateFields(self):
         super(CastleSettingsControlPanelForm, self).updateFields()
@@ -68,7 +62,6 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
         self.groups[1].fields['archival_types_to_archive'].widgetFactory = SelectFieldWidget
         self.groups[1].fields['archival_states_to_archive'].widgetFactory = SelectFieldWidget
         self.groups[2].fields['file_upload_fields'].widgetFactory = FileUploadFieldsFieldWidget
-        self.groups[5].fields['items_to_exclude'].widgetFactory = SelectFieldWidget
 
     def update(self):
         super(CastleSettingsControlPanelForm, self).update()
