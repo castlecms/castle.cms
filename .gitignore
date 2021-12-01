@@ -18,8 +18,6 @@
 /eggs/
 /share/
 ._*
-castle/cms/static/plone-compiled.js
-castle/cms/static/plone-logged-in-compiled.js
 castle/cms/locales/en/LC_MESSAGES/plone.mo
 pip-selfcheck.json
 *.pyc
