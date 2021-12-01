@@ -100847,5 +100847,5 @@ require([
   }
 });
 
-define("/Users/brian.duncan/castle-instances/PROJ-0520-nsaf-updates/src/castle.cms/castle/cms/static/plone-logged-in.js", function(){});
+define("/Users/joel/src/github.com/castlecms/castle.cms/castle/cms/static/plone-logged-in.js", function(){});
 
