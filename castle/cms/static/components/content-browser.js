@@ -541,26 +541,112 @@ define([
       ];
     },
 
-    renderPaging: function(){
-      var that = this;
-      if(that.state.total <= that.props.query.options.batchSize){
-        return '';
+    getPageNumbers: function (currentPageNumber, totalPageCount) {
+      var maxPageButtonCount = this.props.maxPageButtonCount;
+      var maxAdditionalPageButtons = maxPageButtonCount - 4;
+      var distanceToEnd = totalPageCount - currentPageNumber;
+      //currentPageNumber is, ideally, the center
+      var desiredOffsetFromCurrent = Math.floor( ( maxAdditionalPageButtons - 1 ) / 2 );
+      var endOffsetCorrection = Math.max(desiredOffsetFromCurrent - distanceToEnd, 0);
+      var startPageNumber = Math.max(
+        currentPageNumber - desiredOffsetFromCurrent - endOffsetCorrection,
+        1
+      );
+      var endPageNumber = Math.min(
+        startPageNumber + maxAdditionalPageButtons,
+        totalPageCount + 1
+      );
+      var pageNumbers = _.range(startPageNumber, endPageNumber);
+      var pageButtonCount = pageNumbers.length;
+      if ( totalPageCount <= pageButtonCount) {
+        return pageNumbers;
       }
-      var pages = Math.ceil(that.state.total / that.props.query.options.batchSize);
-      return D.div({ className: 'pagination-centered'},
-        D.ul({ className: 'castle-pagination pagination-sm pagination-centered'},
-          _.range(pages).map(function(page){
-            var className = '';
-            page += 1;
-            if(page === that.state.page){
-              className = 'current';
-            }
-            return D.li({ key: 'page' + page, className: className},
-              D.a({ href: '#', onClick: that.pageClicked.bind(that, page)}, page));
-          })
+      if ( pageNumbers[ 0 ] !== 1 ) {
+        pageNumbers[ 0 ] = 1;
+        pageNumbers[ 1 ] = '...';
+      }
+      if ( pageNumbers[ pageButtonCount - 1 ] !== totalPageCount ) {
+        pageNumbers[ pageButtonCount - 1 ] = totalPageCount;
+        pageNumbers[ pageButtonCount - 2 ] = '...';
+      }
+      return pageNumbers;
+    },
+
+    getMapPageNumberToPageButtonFunction: function(getPagingButtonFunction){
+      return function(pageNumber, index, pageNumbers){
+        var isNumber = !!parseInt( pageNumber );
+        return getPagingButtonFunction(
+          isNumber ? pageNumber : Math.floor((pageNumbers[index - 1] + pageNumbers[index + 1]) / 2),
+          pageNumber
+        );
+      }
+    },
+
+    getPagingButton: function ( staticPageStats, targetPageNumber, buttonText ) {
+      var currentPageNumber = staticPageStats.currentPageNumber;
+      var totalPageCount = staticPageStats.totalPageCount;
+      var isNumber = !!parseInt( buttonText );
+      var isCurrent = isNumber && ( currentPageNumber === targetPageNumber );
+      var isDisabled = (
+        isCurrent ||
+        ( currentPageNumber === 1 && [ '<','«'].includes(buttonText)) ||
+        (currentPageNumber === totalPageCount && ['>','»'].includes(buttonText))
+      );
+      var className = [].concat(
+        isCurrent ? [ 'current' ] : [],
+        isDisabled ? [ 'disabled' ] : []
+      ).join( ' ' );
+      var onClick = this.pageClicked.bind( this, targetPageNumber );
+      var showToolTip = !isDisabled && [ '«', '<', '>', '»', '...' ].includes( buttonText );
+      return D.li(
+        Object.assign(
+          {key: `page-${ buttonText }-${ targetPageNumber }`},
+          showToolTip ? {title: targetPageNumber} : {},
+          className ? { className } : {}
+        ),
+        D.a(
+          Object.assign(
+            {href: '#'},
+            isDisabled ? {} : {onClick}
+          ),
+          buttonText
         )
       );
     },
+
+    renderPaging: function(){
+      var that = this;
+      var batchSize = that.props.query.options.batchSize;
+      var currentPageNumber = that.state.page;
+      var totalResults = that.state.total;
+      if ( totalResults <= batchSize){
+        return '';
+      }
+      var totalPageCount = Math.ceil( totalResults / batchSize );
+      var previousPageNumber = Math.max( 1, currentPageNumber - 1 );
+      var nextPageNumber = Math.min( totalPageCount, currentPageNumber + 1 );
+      var pageNumbers = that.getPageNumbers(currentPageNumber, totalPageCount);
+      var getPagingButton = that.getPagingButton.bind(
+        that,
+        {currentPageNumber, totalPageCount}
+      )
+      return D.div(
+        { className: 'pagination-centered'},
+        D.ul(
+          { className: 'castle-pagination pagination-sm pagination-centered'},
+          [].concat(
+            [getPagingButton( 1, '«' )],
+            [getPagingButton( previousPageNumber, '<' )],
+            pageNumbers.map(
+              that.getMapPageNumberToPageButtonFunction(getPagingButton)
+            ),
+            [getPagingButton( nextPageNumber, '>' )],
+            [getPagingButton( totalPageCount, '»' )]
+          )
+        )
+      );
+    },
+
     doneClicked: function(e){
       e.preventDefault();
       this.props.onSelectItems(this.state.selected);
@@ -586,7 +672,8 @@ define([
         selectableTypes: null,
         onSelectItem: function(){},
         onSelectItems: function(){},
-        baseCriteria: []
+        baseCriteria: [],
+        maxPageButtonCount: 11,
       });
     }
   });
