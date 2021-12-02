@@ -20,10 +20,16 @@ ul.castle-pagination{
       border-radius:0;
       line-height: 1.42857143;
 
-      &:hover, &:focus{
-        background-color:@castle-primary;
-        color:#fff;
+      &:hover,
+      &:focus{
+        &:not(.disabled>a){
+          background-color:@castle-primary;
+          color:#fff;
+        }
       }
+    }
+    &.disabled a {
+      cursor: not-allowed;
     }
   }
 
@@ -33,7 +39,9 @@ ul.castle-pagination{
     color:#fff;
 
     &:hover, &:focus{
-      background-color:darken(@castle-primary, 10%);
+      &:not(.disabled > a){
+        background-color:darken(@castle-primary, 10%);
+      }
     }
   }
 }
