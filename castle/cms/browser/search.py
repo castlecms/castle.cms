@@ -1,4 +1,5 @@
 from castle.cms.interfaces import ICrawlerConfiguration
+from castle.cms.interfaces.controlpanel import ISearchExclusionSettings
 from castle.cms.utils import get_public_url
 from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.interfaces import IQueryAssembler
@@ -59,10 +60,13 @@ class Search(BrowserView):
         }]
 
         registry = getUtility(IRegistry)
-        exclude_types_from_search = registry.get('castle.exclude_from_searches')
+        settings = registry.forInterface(ISearchExclusionSettings)
+        exclude_types_from_search = settings.exclude_from_searches
         excluded_content = []
+
         if exclude_types_from_search:
-            excluded_content = registry.get('castle.items_to_exclude')
+            excluded_content = settings.items_to_exclude or []
+
         ptypes = api.portal.get_tool('portal_types')
         allow_anyway = ['Audio']
         for type_id in ptypes.objectIds():
@@ -88,7 +92,6 @@ class Search(BrowserView):
         # search_types.sort(key=lambda type: type['label'])
 
         additional_sites = []
-        registry = getUtility(IRegistry)
         settings = registry.forInterface(
             ICrawlerConfiguration, prefix='castle')
         if settings.crawler_active and settings.crawler_site_maps:
@@ -202,6 +205,9 @@ class SearchAjax(BrowserView):
             query['has_private_parents'] = False
         query['exclude_from_search'] = False
 
+        allowed_types = self.get_allowed_types()
+        query['portal_type'] = allowed_types
+
         try:
             page_size = int(self.request.form.get('pageSize'))
         except Exception:
@@ -250,6 +256,20 @@ class SearchAjax(BrowserView):
             'page': page,
             'suggestions': []
         }, default=custom_json_handler)
+
+    def get_allowed_types(self):
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISearchExclusionSettings)
+        exclude_types_from_search = settings.exclude_from_searches
+        excluded_content = []
+
+        if exclude_types_from_search:
+            excluded_content = settings.items_to_exclude or []
+
+        ptypes = api.portal.get_tool('portal_types')
+        allowed_types = [type for type in ptypes.objectIds() if type not in excluded_content]
+
+        return tuple(allowed_types)
 
     def get_es_results(self, page, page_size, query):
         start = (page - 1) * page_size
