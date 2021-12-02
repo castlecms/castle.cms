@@ -328,7 +328,7 @@
     destination="2611"
     handler=".upgrades.upgrade_2_6_11"
     profile="castle.cms:default"/>
-  
+
   <genericsetup:registerProfile
     name="2_6_12"
     title="CastleCMS upgrade to 2.6.12 profile"
@@ -362,7 +362,7 @@
     handler=".upgrades.upgrade_2_6_14"
     profile="castle.cms:default"
     />
-  
+
   <genericsetup:registerProfile
     name="2_6_16"
     title="CastleCMS upgrade to 2.6.16 profile"
@@ -527,6 +527,21 @@
     source="*"
     destination="3003"
     handler=".upgrades.upgrade_3003"
+    profile="castle.cms:default"
+    />
+  <genericsetup:registerProfile
+    name="3004"
+    title="CastleCMS upgrade to 3004 profile"
+    directory="profiles/3004"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3004"
+    description="Fix pagination issues on content browser component"
+    source="*"
+    destination="3004"
+    handler=".upgrades.upgrade_3004"
     profile="castle.cms:default"
     />
 </configure>

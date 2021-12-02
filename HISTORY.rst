@@ -4,7 +4,7 @@ Changelog
 2.11.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix paging display for many items in Content Browser component
 
 
 2.11.0 (2021-11-29)
