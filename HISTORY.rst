@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.11.1 (unreleased)
+2.12.0 (2021-12-02)
 -------------------
 
 - Fix paging display for many items in Content Browser component
