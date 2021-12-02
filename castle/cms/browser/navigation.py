@@ -8,12 +8,24 @@ from Products.Five import BrowserView
 from zope.interface import implementer
 from plone import api
 from castle.cms.browser.utils import Utils
+from zope.component.hooks import getSite
 
 
 @implementer(INavigationBreadcrumbs)
 class PhysicalNavigationBreadcrumbs(BrowserView):
 
     def breadcrumbs(self):
+        # get actual context object if only site root is passed in as context
+        if self.context == getSite():
+            context_url = self.request.URL
+            if '/@@fragment' in context_url:
+                return []
+            site_url = api.portal.get().absolute_url()
+            path = context_url.replace(site_url, '')
+            if '/layout_view' in path:
+                path = path.replace('/layout_view', '')
+            self.context = api.content.get(path)
+
         context = aq_inner(self.context)
 
         view_utils = Utils(self.context, self.request)
