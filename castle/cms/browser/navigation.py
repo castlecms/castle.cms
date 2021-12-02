@@ -1,6 +1,7 @@
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Acquisition import aq_inner
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFPlone import utils
 from Products.CMFPlone.browser.interfaces import INavigationBreadcrumbs
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
@@ -8,7 +9,6 @@ from Products.Five import BrowserView
 from zope.interface import implementer
 from plone import api
 from castle.cms.browser.utils import Utils
-from zope.component.hooks import getSite
 
 
 @implementer(INavigationBreadcrumbs)
@@ -16,15 +16,19 @@ class PhysicalNavigationBreadcrumbs(BrowserView):
 
     def breadcrumbs(self):
         # get actual context object if only site root is passed in as context
-        if self.context == getSite():
+        site = api.portal.get()
+        if self.context == site:
             context_url = self.request.URL
-            if '/@@fragment' in context_url:
-                return []
-            site_url = api.portal.get().absolute_url()
+            site_url = site.absolute_url()
             path = context_url.replace(site_url, '')
             if '/layout_view' in path:
                 path = path.replace('/layout_view', '')
-            self.context = api.content.get(path)
+            try:
+                context = api.content.get(path)
+                if IContentish.providedBy(context):
+                    self.context = context
+            except Exception:
+                return []
 
         context = aq_inner(self.context)
 
