@@ -235,6 +235,21 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
+        pages = []
+        all_obj_count = len(context.portal_catalog())
+        if all_obj_count <= 40:
+            pages.append(1)
+        else:
+            number_of_pages = all_obj_count / 40
+            if all_obj_count % 40:
+                number_of_pages += 1
+            for i in range(1, number_of_pages + 1, 1):
+                pages.append(i)
+
+        for page in pages:
+            path = '/@@castle.cms.querylisting-1?page=%s' % page
+            paths.append(path)
+
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
 
@@ -260,8 +275,6 @@ class Purge(BrowserView):
         for path in paths:
             if 'VirtualHostRoot' in path:
                 path = path.split('VirtualHostRoot')[-1]
-            else:
-                path = path[len(site_path):]
             nice_paths.append(path.decode('utf-8'))
 
         return nice_paths, success
