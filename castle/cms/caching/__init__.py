@@ -236,7 +236,7 @@ class Purge(BrowserView):
             paths.extend(getPathsToPurge(obj, self.request))
 
         pages = []
-        all_obj_count = len(context.portal_catalog())
+        all_obj_count = len(context.contentItems())
         if all_obj_count <= 40:
             pages.append(1)
         else:
