@@ -4,7 +4,7 @@ Changelog
 3.0.0b14 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- pin plone.app.contenttypes and Products.ATContentTypes to versions that mitigate CVE-2022-25399
 
 
 3.0.0b13 (2021-12-02)
