@@ -5,6 +5,7 @@ Changelog
 ---------------------
 
 - pin plone.app.contenttypes and Products.ATContentTypes to versions that mitigate CVE-2022-25399
+- fix template issue with sticky footer
 
 
 3.0.0b13 (2021-12-02)
