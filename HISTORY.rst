@@ -4,7 +4,7 @@ Changelog
 2.12.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix bug in rendering sticky footer with a none-value internal link when trying to render an external url
 
 
 2.12.0 (2021-12-02)
