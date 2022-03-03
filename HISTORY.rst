@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.12.2 (unreleased)
+2.12.2 (2022-03-03)
 -------------------
 
 - 2.12.1 had commit missing (bad rebase)
