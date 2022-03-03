@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.12.1 (unreleased)
+2.12.1 (2022-03-03)
 -------------------
 
 - Fix bug in rendering sticky footer with a none-value internal link when trying to render an external url
