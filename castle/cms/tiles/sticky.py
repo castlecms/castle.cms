@@ -7,14 +7,24 @@ from plone.app.uuid.utils import uuidToCatalogBrain
 
 
 class StickyFooterTile(BaseTile):
+
     @property
     def internal_link_url(self):
-        if self.data.get('internal_link'):
+        internal_link = self.get_data('internal_link')
+        if internal_link:
             try:
-                brain = uuidToCatalogBrain(self.data['internal_link'][0])
-                return brain.getURL()
+                brain = uuidToCatalogBrain(internal_link[0])
+                if brain:
+                    return brain.getURL()
             except Exception:
                 pass
+
+    @property
+    def link_url(self):
+        return self.internal_link_url or self.get_data('external_link')
+
+    def get_data(self, key):
+        return (self.data or {}).get(key, None)
 
 
 class IStickyFooterTileSchema(Interface):
