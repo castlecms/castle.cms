@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b15 (unreleased)
+3.0.0b15 (2022-03-04)
 ---------------------
 
 - handle missing links in sticky footer
