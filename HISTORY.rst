@@ -4,7 +4,7 @@ Changelog
 2.12.3 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- handle missing links in sticky footer
 
 
 2.12.2 (2022-03-03)
