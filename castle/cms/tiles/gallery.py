@@ -55,7 +55,7 @@ class IGalleryTileSchema(IImagesTileSchema):
         title=u'Show Thumbnails',
         description=(
             u'Display thumbnail images below main gallery image. '
-            u'This option only used in certain add-ons. In base Castle, this is simply always true.'
+            u'This option is for advanced display types in certain add-ons.Usually, this option has no affect.'
         ),
         missing_value=True,
         required=False,
@@ -65,7 +65,7 @@ class IGalleryTileSchema(IImagesTileSchema):
         title=u'Show Image Title',
         description=(
             u'Display Image Title directly below the main gallery image. '
-            u'This option only used in certain add-ons. In base Castle, this is simply always true.'
+            u'This option is for advanced display types in certain add-ons. Usually, this option has no affect.'
         ),
         missing_value=True,
         required=False,
@@ -75,7 +75,7 @@ class IGalleryTileSchema(IImagesTileSchema):
         title=u'Show Image Captions',
         description=(
             u'Display a small caption (the image\'s summary field) below either the image title (if visible) or the main image. '
-            u'This option only used in certain add-ons. In base Castle, this is simply always true.'
+            u'This option is for advanced display types in certain add-ons. Usually, this option has no affect.'
         ),
         missing_value=True,
         required=False,
@@ -85,7 +85,7 @@ class IGalleryTileSchema(IImagesTileSchema):
         title=u'Show Image Counter',
         description=(
             u'Display a small indicator above the main image indicating which image is being viewed (ex: "Image 15 of 22"). '
-            u'This option only used in certain add-ons. In base Castle, this is simply always false.'
+            u'This option is for advanced display types in certain add-ons. Usually, this option has no affect.'
         ),
         missing_value=False,
         required=False,
@@ -95,7 +95,7 @@ class IGalleryTileSchema(IImagesTileSchema):
         title=u'Show Link to Original Image',
         description=(
             u'When the gallery image is highlighted, show a link to the original image. '
-            u'This option only used in certain add-ons. In base Castle, this is simply always false.'
+            u'This option is for advanced display types in certain add-ons. Usually, this option has no affect.'
         ),
         missing_value=False,
         required=False,
