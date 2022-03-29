@@ -4,7 +4,7 @@ Changelog
 3.0.0b16 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- Added some gallery options that will be used in some other add-ons.
 
 
 3.0.0b15 (2022-03-04)
