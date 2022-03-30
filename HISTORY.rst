@@ -4,7 +4,7 @@ Changelog
 2.12.4 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Added some gallery options that will be used in some other add-ons.
 
 
 2.12.3 (2022-03-04)
