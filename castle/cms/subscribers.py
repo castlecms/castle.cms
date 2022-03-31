@@ -32,7 +32,19 @@ except ImportError:
         pass
 
 
+def _update_modification_date(obj):
+    try:
+        workflow_history = obj.workflow_history['simple_publication_workflow']
+        final_index = len(workflow_history) - 1
+        modification_datetime = workflow_history[final_index]['time']
+        obj.setModificationDate(modification_datetime)
+        obj.reindexObject(idxs=['modified'])
+    except Exception:
+        return
+
+
 def on_content_state_changed(obj, event):
+    _update_modification_date(obj)
     obj.reindexObject(idxs=['has_private_parents'])
     if IFolderish.providedBy(obj):
         tasks.reindex_children.delay(obj, ['has_private_parents'])

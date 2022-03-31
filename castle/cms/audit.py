@@ -9,29 +9,38 @@ from castle.cms.interfaces import ITrashed
 from castle.cms.utils import ESConnectionFactoryFactory
 from elasticsearch import TransportError
 from plone import api
-from plone.app.iterate.interfaces import (IAfterCheckinEvent,
-                                          ICancelCheckoutEvent, ICheckoutEvent,
-                                          IWorkingCopyDeletedEvent)
-from plone.registry.interfaces import (IRegistry,
-                                       IRecordAddedEvent,
-                                       IRecordRemovedEvent,
-                                       IRecordModifiedEvent)
+from plone.app.iterate.interfaces import (
+    IAfterCheckinEvent,
+    ICancelCheckoutEvent,
+    ICheckoutEvent,
+    IWorkingCopyDeletedEvent
+)
+from plone.registry.interfaces import (
+    IRegistry,
+    IRecordAddedEvent,
+    IRecordRemovedEvent,
+    IRecordModifiedEvent
+)
 from plone.uuid.interfaces import IUUID
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
-from Products.PluggableAuthService.interfaces.events import (ICredentialsUpdatedEvent,  # noqa
-                                                             IPrincipalCreatedEvent,  # noqa
-                                                             IPrincipalDeletedEvent,  # noqa
-                                                             IPropertiesUpdatedEvent,  # noqa
-                                                             IUserLoggedInEvent,  # noqa
-                                                             IUserLoggedOutEvent)  # noqa
+from Products.PluggableAuthService.interfaces.events import (
+    ICredentialsUpdatedEvent,
+    IPrincipalCreatedEvent,
+    IPrincipalDeletedEvent,
+    IPropertiesUpdatedEvent,
+    IUserLoggedInEvent,
+    IUserLoggedOutEvent,
+)
 from zope.component import ComponentLookupError, getUtility
 from zope.globalrequest import getRequest
 from zope.interface import providedBy
-from zope.lifecycleevent.interfaces import (IObjectAddedEvent,
-                                            IObjectCopiedEvent,
-                                            IObjectModifiedEvent,
-                                            IObjectMovedEvent,
-                                            IObjectRemovedEvent)
+from zope.lifecycleevent.interfaces import (
+    IObjectAddedEvent,
+    IObjectCopiedEvent,
+    IObjectModifiedEvent,
+    IObjectMovedEvent,
+    IObjectRemovedEvent
+)
 
 
 class DefaultRecorder(object):
