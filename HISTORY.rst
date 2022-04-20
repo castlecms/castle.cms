@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b17 (unreleased)
+3.0.0b17 (2022-04-20)
 ---------------------
 
 - Allow unrestricted traverse to be selected when creating a pdf.
