@@ -4,7 +4,7 @@ Changelog
 2.13.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Allow unrestricted traverse to be selected when creating a pdf.
 
 
 2.13.0 (2022-03-30)
