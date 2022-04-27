@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b18 (unreleased)
+3.0.0b18 (2022-04-27)
 ---------------------
 
 - handle error case in es_custom_index patch
