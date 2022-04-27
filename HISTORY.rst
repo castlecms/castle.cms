@@ -4,7 +4,7 @@ Changelog
 3.0.0b18 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- handle error case in es_custom_index patch
 
 
 3.0.0b17 (2022-04-20)
