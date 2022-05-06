@@ -4,7 +4,8 @@ Changelog
 2.14.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix dates while importing
+- fix querylisting as folder view results bug
 
 
 2.14.0 (2022-04-20)
