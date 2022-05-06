@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b19 (unreleased)
+3.0.0b19 (2022-05-06)
 ---------------------
 
 - fix dates while importing
