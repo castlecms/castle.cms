@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.14.1 (unreleased)
+2.14.1 (2022-05-06)
 -------------------
 
 - add GELF logging handler
