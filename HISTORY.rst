@@ -4,7 +4,8 @@ Changelog
 3.0.0b19 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- fix dates while importing
+- fix querylisting as folder view results bug
 
 
 3.0.0b18 (2022-04-27)
