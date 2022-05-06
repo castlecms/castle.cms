@@ -248,7 +248,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return url + '?' + urlencode(params)
 
     def next_url(self, page):
-        return self._next_url(self.this_url, page)
+        return self._next_url(self.view_url, page)
 
     def get_form(self):
         try:
@@ -299,7 +299,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         out = '{}'
         try:
             config['ajaxResults'] = {
-                'url': self.this_url,
+                'url': self.view_url,
                 'selector': '#query-results-%s' % self.id or ''
             }
 
