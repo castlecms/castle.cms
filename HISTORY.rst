@@ -6,6 +6,8 @@ Changelog
 
 - add GELF logging handler
 - add script for report on user/role/permissions
+- fix dates while importing
+- fix querylisting as folder view results bug
 
 
 2.14.0 (2022-04-20)
