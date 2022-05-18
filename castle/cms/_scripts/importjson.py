@@ -46,6 +46,7 @@ parser.add_argument(
     '--stop-if-exception', dest='stop_if_exception', default=False)
 parser.add_argument(
     '--pdb-if-exception', dest='pdb_if_exception', default=False)
+parser.add_argument('--resumable', dest='resumable', default=False)
 parser.add_argument('--skip-existing', dest='skip_existing', default=True)
 parser.add_argument(
     '--skip-transitioning', dest='skip_transitioning', default=False)
@@ -73,6 +74,9 @@ ignore_uuids = args.ignore_uuids
 stop_if_exception = args.stop_if_exception
 pdb_if_exception = args.pdb_if_exception
 retain_paths = args.retain_paths
+resumable = args.resumable
+successfully_imported_paths = []
+imported_but_not_committed = []
 
 if args.import_paths:
     import_paths = args.import_paths.split(',')
@@ -179,6 +183,9 @@ class CastleImporter(object):
         self.import_folder(args.export_directory, container=site)
 
     def import_object(self, filepath, container=None):
+        if resumable and filepath in successfully_imported_paths:
+            print("Skipping {}; Already successfully imported and resuming is enabled".format(filepath))
+            return
         fi = open(filepath)
         file_read = fi.read()
         fi.close()
@@ -280,14 +287,18 @@ class CastleImporter(object):
                     if self.imported_count % 50 == 0:
                         print('%i processed, committing' % self.imported_count)
                         transaction.commit()
+                        successfully_imported_paths.extend(imported_but_not_committed)
+                        with open('./.successfullyimportedpaths', 'a') as fout:
+                            fout.writelines(imported_but_not_committed)
+                            fout.flush()
+                        del imported_but_not_committed[0:]
                 except api.exc.InvalidParameterError:
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
                             import pdb; pdb.set_trace()
                         raise
-                    logger.error('Error creating content {}'
-                                                .format(filepath), exc_info=True)
+                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
                     return
     # TODO check default folder pages came over as folder with rich text tile
     # TODO any folder pages without default page should have content listing tile
@@ -417,10 +428,17 @@ class CastleImporter(object):
 
 
 if __name__ == '__main__':
-
     print('------------------------------')
     print('Start importing')
     print('------------------------------')
+    if resumable:
+        print('------------------------------')
+        print('Resuming enabled, checking for ./.successfullyimportedpaths and loading')
+        with open('.successfullyimportedpaths', 'r') as fin:
+            for line in fin.readlines():
+                successfully_imported_paths.append(line)
+        print('{} paths loaded'.format(len(successfully_imported_paths)))
+        print('------------------------------')
     if args.overwrite:
         print('------------------------------')
         print('Importing with overwrite enabled')
