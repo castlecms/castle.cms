@@ -46,7 +46,9 @@ parser.add_argument(
     '--stop-if-exception', dest='stop_if_exception', default=False)
 parser.add_argument(
     '--pdb-if-exception', dest='pdb_if_exception', default=False)
-parser.add_argument('--resumable', dest='resumable', default=False)
+parser.add_argument('--resumable', dest='resumable', default=False, action='store_true')
+parser.add_argument(
+    '--delete-resumable-file', dest='delete_resumable_file', default=False, action='store_true')
 parser.add_argument('--skip-existing', dest='skip_existing', default=True)
 parser.add_argument(
     '--skip-transitioning', dest='skip_transitioning', default=False)
@@ -75,6 +77,7 @@ stop_if_exception = args.stop_if_exception
 pdb_if_exception = args.pdb_if_exception
 retain_paths = args.retain_paths
 resumable = args.resumable
+delete_resumable_file = args.delete_resumable_file
 successfully_imported_paths = []
 imported_but_not_committed = []
 
@@ -178,19 +181,23 @@ class CastleImporter(object):
         ('expiration_date', 'setExpirationDate'),
     ]
 
+    @property
+    def successfully_imported_paths(self):
+        return [
+            args.export_directory + successfully_imported_path
+            for successfully_imported_path in successfully_imported_paths
+        ]
 
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
 
     def import_object(self, filepath, container=None):
-        if resumable and filepath in successfully_imported_paths:
+        if resumable and filepath in self.successfully_imported_paths:
             print("Skipping {}; Already successfully imported and resuming is enabled".format(filepath))
             return
-        fi = open(filepath)
-        file_read = fi.read()
-        fi.close()
         try:
-            data = mjson.loads(file_read)
+            with open(filepath, 'r') as import_file:
+                data = mjson.loads(import_file.read())
         except Exception:
             print("Skipping {}; Unable to read JSON data".format(filepath))
             return
@@ -283,13 +290,14 @@ class CastleImporter(object):
                 try:
                     obj = api.content.create(safe_id=True, **creation_data)
                     print('Created {path}'.format(path=path))
+                    imported_but_not_committed.append(path)
                     self.imported_count += 1
                     if self.imported_count % 50 == 0:
                         print('%i processed, committing' % self.imported_count)
                         transaction.commit()
                         successfully_imported_paths.extend(imported_but_not_committed)
                         with open('./.successfullyimportedpaths', 'a') as fout:
-                            fout.writelines(imported_but_not_committed)
+                            fout.writelines('\n'.join(imported_but_not_committed) + '\n')
                             fout.flush()
                         del imported_but_not_committed[0:]
                 except api.exc.InvalidParameterError:
@@ -348,7 +356,6 @@ class CastleImporter(object):
             self.fix_dates(obj, data)
             return obj
 
-
     def fix_dates(self, obj, data):
         for key, index_function_name in self.date_functions:
             indexed_date = data['data'].get(key, None)
@@ -369,7 +376,6 @@ class CastleImporter(object):
                         obj=obj,
                     )
                     logger.warn(warn_message)
-
 
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
@@ -434,9 +440,12 @@ if __name__ == '__main__':
     if resumable:
         print('------------------------------')
         print('Resuming enabled, checking for ./.successfullyimportedpaths and loading')
+        # create if it doesn't exist:
+        with open('.successfullyimportedpaths', 'a+'):
+            pass
         with open('.successfullyimportedpaths', 'r') as fin:
             for line in fin.readlines():
-                successfully_imported_paths.append(line)
+                successfully_imported_paths.append(line.replace('\n', ''))
         print('{} paths loaded'.format(len(successfully_imported_paths)))
         print('------------------------------')
     if args.overwrite:
@@ -447,3 +456,7 @@ if __name__ == '__main__':
     importer.do_import()
     print('Created {count} Content Items'.format(count=importer.imported_count))
     transaction.commit()
+    print('Import completed')
+    if delete_resumable_file:
+        print('Deleting .successfullyimportedpaths')
+        os.remove('.successfullyimportedpaths')
