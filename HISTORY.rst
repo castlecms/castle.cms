@@ -9,6 +9,7 @@ Changelog
 - added a resumable option for importjson script
 - fixed folder-contents paging button bugs
 - fixed mapselect to allow strings or floats for lat and lng
+- fixed style bug making "toggle advanced options" button on /@@dexterity-types match the other buttons
 
 
 3.0.0b19 (2022-05-06)
