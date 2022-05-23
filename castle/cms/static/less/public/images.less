@@ -14,12 +14,12 @@
 
 
 .focuspoint, .pat-focuspoint-cover {
-	position: relative; /*Any position but static should work*/
+  position: relative; /*Any position but static should work*/
 	overflow: hidden;
   width: 100%;
 
   img, video {
-  	position: absolute;
+    position: absolute;
   	left: 0;
   	top: 0;
   	margin: 0;
@@ -46,17 +46,22 @@
 }
 
 .generate-image-size(@modifier){
+  --base_height: @base_height;
+  --modifier: @modifier;
+  --landscape_ratio: @landscape_ratio;
+  --portrait_ratio: @portrait_ratio;
+  --short_ratio: @short_ratio;
   .image-tile-container.landscape .focuspoint {
-    height: max(((@base_height * @modifier) * @landscape_ratio), 150px);
+    height: ~"max(((var(--base_height) * var(--modifier)) * var(--landscape_ratio)), 150px)";
   }
   .image-tile-container.portrait .focuspoint {
-    height: max(((@base_height * @modifier) * @portrait_ratio), 150px);
+    height: ~"max(((var(--base_height) * var(--modifier)) * var(--portrait_ratio)), 150px)";
   }
   .image-tile-container.square .focuspoint {
-    height: max((@base_height * @modifier), 150px);
+    height: ~"max((var(--base_height) * var(--modifier)), 150px)";
   }
 	.image-tile-container.short .focuspoint {
-    height: max((@base_height * @modifier) * @short_ratio, 150px);
+    height: ~"max((var(--base_height) * var(--modifier)) * var(--short_ratio), 150px)";
   }
 }
 
