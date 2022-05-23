@@ -6,6 +6,9 @@ Changelog
 
 - fix manifest.json credentials bug: added crossorigin="use-credentials"
 - fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
+- added a resumable option for importjson script
+- fixed folder-contents paging button bugs
+- fixed mapselect to allow strings or floats for lat and lng
 
 
 3.0.0b19 (2022-05-06)
