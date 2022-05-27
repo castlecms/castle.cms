@@ -539,7 +539,6 @@
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3004"
     description="Fix pagination issues on content browser component"
-    description="Standardize Dexterity type icons and descriptions"
     source="*"
     destination="3004"
     handler=".upgrades.upgrade_3004"
