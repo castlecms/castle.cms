@@ -45,23 +45,22 @@
   }
 }
 
-.generate-image-size(@modifier){
-  --base_height: @base_height;
-  --modifier: @modifier;
-  --landscape_ratio: @landscape_ratio;
-  --portrait_ratio: @portrait_ratio;
-  --short_ratio: @short_ratio;
+
+.generate-image-size(@modifier) {
   .image-tile-container.landscape .focuspoint {
-    height: ~"max(((var(--base_height) * var(--modifier)) * var(--landscape_ratio)), 150px)";
+    height: max(~'calc(@{base_height} * @{modifier} * @{landscape_ratio}), 150px');
   }
+
   .image-tile-container.portrait .focuspoint {
-    height: ~"max(((var(--base_height) * var(--modifier)) * var(--portrait_ratio)), 150px)";
+    height: max(~'calc(@{base_height} * @{modifier} * @{portrait_ratio}), 150px');
   }
+
   .image-tile-container.square .focuspoint {
-    height: ~"max((var(--base_height) * var(--modifier)), 150px)";
+    height: max(~'calc(@{base_height} * @{modifier}), 150px');
   }
-	.image-tile-container.short .focuspoint {
-    height: ~"max((var(--base_height) * var(--modifier)) * var(--short_ratio), 150px)";
+
+  .image-tile-container.short .focuspoint {
+    height: max(~'calc(@{base_height} * @{modifier} * @{short_ratio}), 150px');
   }
 }
 
