@@ -2,7 +2,7 @@
 ERROR_MESSAGE = You must run ./bin/plone-compile-resources --site-id <YOUR_SITE_ID> before these targets will work
 
 verify-gruntfile-exists:
-	test -f Gruntfile2.js || ( echo "\n\n$(ERROR_MESSAGE)\n\n"; exit 1 )
+	test -f Gruntfile.js || ( echo "\n\n$(ERROR_MESSAGE)\n\n"; exit 1 )
 
 less-plone:
 	make verify-gruntfile-exists && grunt less:plone
