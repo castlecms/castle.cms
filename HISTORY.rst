@@ -10,6 +10,8 @@ Changelog
 - fixed folder-contents paging button bugs
 - fixed mapselect to allow strings or floats for lat and lng
 - fixed style bug making "toggle advanced options" button on /@@dexterity-types match the other buttons
+- updated dependencies for compilation of resources and documented process for compilation.
+- removed init-dev.py script and unneeded /_scripts/templates/ folder
 
 
 3.0.0b19 (2022-05-06)
