@@ -553,7 +553,7 @@
     />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3005"
-    description="pagination on folder_contents and mapselect js bug fix"
+    description="pagination on folder_contents, mapselect js bug fix, conteenttypes descriptions and icons"
     source="*"
     destination="3005"
     handler=".upgrades.upgrade_3005"
