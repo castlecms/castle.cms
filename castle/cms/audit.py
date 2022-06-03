@@ -1,37 +1,89 @@
-import threading
 from datetime import datetime
+import json
+import logging
+import logging.config
+import os
+import threading
 
-import transaction
-from castle.cms.events import (ICacheInvalidatedEvent,
-                               IMetaTileEditedEvent,
-                               ITrashEmptiedEvent)
-from castle.cms.interfaces import ITrashed
-from castle.cms.utils import ESConnectionFactoryFactory
-from elasticsearch import TransportError
+
 from plone import api
-from plone.app.iterate.interfaces import (IAfterCheckinEvent,
-                                          ICancelCheckoutEvent, ICheckoutEvent,
-                                          IWorkingCopyDeletedEvent)
-from plone.registry.interfaces import (IRegistry,
-                                       IRecordAddedEvent,
-                                       IRecordRemovedEvent,
-                                       IRecordModifiedEvent)
+from plone.app.iterate.interfaces import IAfterCheckinEvent
+from plone.app.iterate.interfaces import ICancelCheckoutEvent
+from plone.app.iterate.interfaces import ICheckoutEvent
+from plone.app.iterate.interfaces import IWorkingCopyDeletedEvent
+from plone.registry.interfaces import IRecordAddedEvent
+from plone.registry.interfaces import IRecordRemovedEvent
+from plone.registry.interfaces import IRecordModifiedEvent
 from plone.uuid.interfaces import IUUID
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
-from Products.PluggableAuthService.interfaces.events import (ICredentialsUpdatedEvent,  # noqa
-                                                             IPrincipalCreatedEvent,  # noqa
-                                                             IPrincipalDeletedEvent,  # noqa
-                                                             IPropertiesUpdatedEvent,  # noqa
-                                                             IUserLoggedInEvent,  # noqa
-                                                             IUserLoggedOutEvent)  # noqa
-from zope.component import ComponentLookupError, getUtility
+from Products.PluggableAuthService.interfaces.events import ICredentialsUpdatedEvent
+from Products.PluggableAuthService.interfaces.events import IPrincipalCreatedEvent
+from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
+from Products.PluggableAuthService.interfaces.events import IPropertiesUpdatedEvent
+from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
+from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
+import transaction
 from zope.globalrequest import getRequest
 from zope.interface import providedBy
-from zope.lifecycleevent.interfaces import (IObjectAddedEvent,
-                                            IObjectCopiedEvent,
-                                            IObjectModifiedEvent,
-                                            IObjectMovedEvent,
-                                            IObjectRemovedEvent)
+from zope.lifecycleevent.interfaces import IObjectAddedEvent
+from zope.lifecycleevent.interfaces import IObjectCopiedEvent
+from zope.lifecycleevent.interfaces import IObjectModifiedEvent
+from zope.lifecycleevent.interfaces import IObjectMovedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
+
+
+from castle.cms.events import ICacheInvalidatedEvent
+from castle.cms.events import IMetaTileEditedEvent
+from castle.cms.events import ITrashEmptiedEvent
+from castle.cms.interfaces import ITrashed
+from castle.cms.indexing.hps import add_to_index
+from castle.cms.indexing.hps import create_index_if_not_exists
+from castle.cms.indexing.hps import is_enabled as hps_is_enabled
+
+
+logger = logging.getLogger("Plone")
+
+DEFAULT_AUDIT_LOGGER_CONFIG = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'auditlog': {
+            'format': '%(asctime)s %(message)s %(type)s "%(name)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.Streamhandler',
+            'formatter': 'auditlog',
+        },
+    },
+    'loggers': {
+        'auditlogger': {
+            'handlers': ['console'],
+            'propagate': False,
+            'level': 'INFO',
+        },
+    },
+}
+
+# if this path exists, and loads fine as json, then apply the json as logging
+# config -- otherwise just pump to stdout
+logging_config_file = os.getenv("CASTLE_CMS_AUDIT_LOG_CONFIG_FILE", None)
+if logging_config_file is not None and os.path.exists(logging_config_file):
+    try:
+        with open(logging_config_file, "r") as fin:
+            configdict = json.load(fin)
+    except Exception:
+        configdict = DEFAULT_AUDIT_LOGGER_CONFIG
+        logger.error(
+            "Couldn't load configuration for auditlogger python logger, "
+            "defaulting to stdout", exc_info=True)
+else:
+    configdict = DEFAULT_AUDIT_LOGGER_CONFIG
+
+logging.config.dictConfig(configdict)
+auditlogger = logging.getLogger("auditlogger")
 
 
 class DefaultRecorder(object):
@@ -183,7 +235,7 @@ _registered = {
 }
 
 
-def _create_index(es, index_name):
+def _check_for_index(index_name):
     mapping = {'properties': {
         'type': {'store': False, 'type': 'text', 'index': False},
         'name': {'store': False, 'type': 'text', 'index': False},
@@ -194,112 +246,66 @@ def _create_index(es, index_name):
         'object': {'store': False, 'type': 'text', 'index': False},
         'path': {'store': False, 'type': 'text', 'index': False},
     }}
-    if not es.indices.exists(index_name):
-        es.indices.create(index_name)
-    es.indices.put_mapping(
-        body=mapping,
-        index=index_name)
+    create_index_if_not_exists(index_name, mapping)
 
 
-def get_index_name(site_path=None, es_custom_index_name_enabled=False, custom_index_value=None):
+def get_audit_index_name(site_path=None):
     if site_path is not None:
-        return site_path.replace('/', '').replace(' ', '').lower()
-
-    index_name = ""
-    if es_custom_index_name_enabled:
-        if custom_index_value is not None:
-            index_name = custom_index_value + "-audit"
-            return index_name
-
-    index_name = '/'.join(api.portal.get().getPhysicalPath())
-    index_name = index_name.replace('/', '').replace(' ', '').lower()
-    return index_name
+        index_name = site_path
+    else:
+        index_name = '/'.join(api.portal.get().getPhysicalPath())
+    return "{}-audit".format(index_name.replace('/', '').replace(' ', '').lower())
 
 
-def _record(conn_factory, site_path, data, es_custom_index_name_enabled=False, custom_index_value=None):
-    if es_custom_index_name_enabled:
-        # when the custom index is enabled, all site path based names for
-        # indices should be discarded
-        site_path = None
-    index_name = get_index_name(
-        site_path,
-        es_custom_index_name_enabled=es_custom_index_name_enabled,
-        custom_index_value=custom_index_value)
-    es = conn_factory()
-    try:
-        es.index(index=index_name, body=data)
-    except TransportError as ex:
-        if 'InvalidIndexNameException' in ex.error:
-            try:
-                _create_index(es, index_name)
-            except TransportError:
-                return
-            _record(conn_factory, site_path, data)
-        else:
-            raise ex
+def _record(site_path, data):
+    auditlogger.info(site_path, data)
+    index_name = get_audit_index_name(site_path)
+    add_to_index(index_name, data, create_on_exception=_check_for_index)
 
 
-def record(success, recorder, site_path, conn):
+def record(success, recorder, site_path):
     if not success:
         return
     if recorder.valid:
-        try:
-            es_custom_index_name_enabled = api.portal.get_registry_record(
-                'castle.es_index_enabled', default=False)
-            custom_index_value = api.portal.get_registry_record('castle.es_index', default=None)
-        except Exception:
-            es_custom_index_name_enabled = False
-            custom_index_value = None
-
         data = recorder()
+        auditlogger.info(site_path, data)
         thread = threading.Thread(
             target=_record,
             args=(
-                conn,
                 site_path,
                 data,
-            ),
-            kwargs={
-                "es_custom_index_name_enabled": es_custom_index_name_enabled,
-                "custom_index_value": custom_index_value,
-            })
+            ))
         thread.start()
 
 
 def event(obj, event=None):
-
     if event is None:
         # some events don't include object
         event = obj
         obj = None
 
     iface = providedBy(event).declared[0]
-    if iface in _registered:
-        try:
-            registry = getUtility(IRegistry)
-        except ComponentLookupError:
-            return
-        if not registry.get('collective.elasticsearch.interfaces.IElasticSettings.enabled', False):  # noqa
-            return
+    if iface not in _registered:
+        return
 
-        if obj is not None and ITrashed.providedBy(obj):
-            # special handling for ITrashed...
-            # we don't want to record transition events for trashing
-            # and we want a special psuedo trash event
-            # then, we still want an event when it gets deleted for good
-            if iface not in (IAfterTransitionEvent, IObjectRemovedEvent):
-                # dive out if not IAfterTransitionEvent or object removed event
-                return
-            if iface == IObjectRemovedEvent:
-                audit_data = _registered[iface]
-            else:
-                audit_data = _registered[ITrashed]
-        else:
+    if not hps_is_enabled():
+        return
+
+    if obj is not None and ITrashed.providedBy(obj):
+        # special handling for ITrashed...
+        # we don't want to record transition events for trashing
+        # and we want a special psuedo trash event
+        # then, we still want an event when it gets deleted for good
+        if iface not in (IAfterTransitionEvent, IObjectRemovedEvent):
+            # dive out if not IAfterTransitionEvent or object removed event
+            return
+        if iface == IObjectRemovedEvent:
             audit_data = _registered[iface]
-
-        recorder = audit_data.get_recorder(event, obj)
-        site_path = '/'.join(api.portal.get().getPhysicalPath())
-        transaction.get().addAfterCommitHook(record, args=(
-            recorder, site_path, ESConnectionFactoryFactory(registry)))
+        else:
+            audit_data = _registered[ITrashed]
     else:
-        pass
+        audit_data = _registered[iface]
+
+    recorder = audit_data.get_recorder(event, obj)
+    site_path = '/'.join(api.portal.get().getPhysicalPath())
+    transaction.get().addAfterCommitHook(record, args=(recorder, site_path))

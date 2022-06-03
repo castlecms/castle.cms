@@ -1,8 +1,8 @@
 from castle.cms.behaviors.search import ISearch
 from castle.cms.social import COUNT_ANNOTATION_KEY
-from collective.elasticsearch import mapping
-from collective.elasticsearch import query
-from collective.elasticsearch.interfaces import IAdditionalIndexDataProvider
+from wildcard.hps import mapping
+from wildcard.hps import query
+from wildcard.hps.interfaces import IAdditionalIndexDataProvider
 from plone import api
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import implements
@@ -34,7 +34,7 @@ class AdditionalIndexDataProvider(object):
     def __init__(self, obj):
         self.obj = obj
 
-    def __call__(self, es, existing_data):
+    def __call__(self, hpscatalog, existing_data):
         annotations = IAnnotations(self.obj)
         data = {}
         counts = annotations.get(COUNT_ANNOTATION_KEY, {})

@@ -96,14 +96,6 @@ def twitter_monitor(argv=sys.argv):
     return run_it('_twitter_monitor')
 
 
-def reindex_es(argv=sys.argv):
-    return run_it('_reindex_es')
-
-
-def upgrade_elasticsearch_in_place(argv=sys.argv):
-    return run_it('_upgrade_elasticsearch_in_place')
-
-
 def forced_publish_alert(argv=sys.argv):
     return run_it('_forced_publish_alert')
 

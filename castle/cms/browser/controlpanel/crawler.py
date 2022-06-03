@@ -1,7 +1,8 @@
 from castle.cms.constants import CRAWLED_DATA_KEY
 from castle.cms.interfaces import ICrawlerConfiguration
-from collective.elasticsearch.es import ElasticSearchCatalog
-from elasticsearch import TransportError
+from wildcard.hps.opensearch import WildcardHPSCatalog
+from castle.cms.indexing import hps
+from opensearchpy import TransportError
 from plone import api
 from plone.app.registry.browser import controlpanel
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -29,24 +30,8 @@ class CrawlerControlPanel(controlpanel.ControlPanelFormWrapper):
         return annotations[CRAWLED_DATA_KEY]
 
     def get_index_summary(self):
-        query = {
-            "size": 0,
-            "aggregations": {
-                "totals": {
-                    "terms": {
-                        "field": "domain"
-                    }
-                }
-            }
-        }
-        portal_catalog = api.portal.get_tool('portal_catalog')
-        try:
-            es = ElasticSearchCatalog(portal_catalog)
-            result = es.connection.search(
-                index='{index_name}_crawler'.format(index_name=es.index_name),
-                body=query)
-        except TransportError:
-            return []
-
-        data = result['aggregations']['totals']['buckets']
-        return data
+        hpscatalog = hps.get_connection()
+        idx = '{}_crawler'.format(hpscatalog.index_name)
+        terms = dict(field="domain")
+        result = hps.get_index_summary(idx, terms)
+        return result

@@ -9,23 +9,24 @@
     xmlns:z3c="http://namespaces.zope.org/z3c"
     i18n_domain="castle.cms">
 
-  <include package="collective.elasticsearch" />
+  <!-- dependencies -->
+  <include package="wildcard.hps" />
 
   <!-- search overrides -->
   <adapter
-    for=".interfaces.ICastleLayer
-         collective.elasticsearch.interfaces.IElasticSearchCatalog"
+    for="castle.cms.interfaces.ICastleLayer
+         wildcard.hps.interfaces.IWildcardHPSCatalog"
     factory=".search.QueryAssembler"
-    provides="collective.elasticsearch.interfaces.IQueryAssembler" />
+    provides="wildcard.hps.interfaces.IQueryAssembler" />
   <adapter
-    for=".interfaces.ICastleLayer
-         collective.elasticsearch.interfaces.IElasticSearchCatalog"
+    for="castle.cms.interfaces.ICastleLayer
+         wildcard.hps.interfaces.IWildcardHPSCatalog"
     factory=".search.MappingAdapter"
-    provides="collective.elasticsearch.interfaces.IMappingProvider" />
+    provides="wildcard.hps.interfaces.IMappingProvider" />
   <adapter
     for="plone.dexterity.interfaces.IDexterityContent"
     factory=".search.AdditionalIndexDataProvider"
-    provides="collective.elasticsearch.interfaces.IAdditionalIndexDataProvider" />
+    provides="wildcard.hps.interfaces.IAdditionalIndexDataProvider" />
 
 
   <adapter name="getRawRelatedItems" factory=".indexers.getRawRelatedItems" />

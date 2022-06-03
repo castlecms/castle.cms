@@ -8,6 +8,10 @@ Changelog
 - fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
 - add GELF logging handler
 - add script for generating user/role/permission reports
+- remove 'reindex_es' script -- functionality is now in wildcard.hps
+- remove 'upgrade_elasticsearch_in_place' script reference -- was invalid at this point
+- refactor elasticsearch integration
+- make wildcard.hps integration explicit
 
 
 3.0.0b19 (2022-05-06)

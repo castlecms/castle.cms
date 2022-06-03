@@ -60,13 +60,6 @@
     replacement=".patches.SessionPlugin_validateTicket"
     />
   <monkey:patch
-    description="change the index for elastic search"
-    class="collective.elasticsearch.es.ElasticSearchCatalog"
-    original="__init__"
-    replacement=".patches.es_custom_index"
-    preserveOriginal="True"
-    />
-  <monkey:patch
     description="include castle version in Version Overview"
     class="Products.CMFPlone.controlpanel.browser.overview.OverviewControlPanel"
     original="version_overview"

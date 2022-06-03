@@ -1,21 +1,23 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_parent
-from castle.cms.behaviors.location import ILocation
-from castle.cms.interfaces import (IHasDefaultImage, IReferenceNamedImage,
-                                   ITrashed)
-from collective.elasticsearch.interfaces import IReindexActive
+from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
 from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
+from plone.event.interfaces import IEvent
 from plone.indexer.decorator import indexer
 from plone.uuid.interfaces import IUUID
-from ZODB.POSException import POSKeyError
-from zope.globalrequest import getRequest
-from plone.event.interfaces import IEvent
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
+from ZODB.POSException import POSKeyError
+from zope.globalrequest import getRequest
+
+from castle.cms.behaviors.location import ILocation
+from castle.cms.interfaces import IHasDefaultImage
+from castle.cms.interfaces import IReferenceNamedImage
+from castle.cms.interfaces import ITrashed
 
 
 @indexer(IItem)

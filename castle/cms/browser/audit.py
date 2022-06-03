@@ -1,5 +1,5 @@
-from castle.cms import audit
-from castle.cms.utils import ESConnectionFactoryFactory
+import csv
+
 from cStringIO import StringIO
 from plone import api
 from plone.app.uuid.utils import uuidToObject
@@ -9,7 +9,11 @@ from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import getUtility
 
-import csv
+from castle.cms import audit
+from castle.cms.indexing.hps import gen_query
+from castle.cms.indexing.hps import health_is_good
+from castle.cms.indexing.hps import hps_get_data
+from castle.cms.indexing.hps import is_enabled as hps_is_enabled
 
 
 class AuditView(BrowserView):
@@ -27,12 +31,10 @@ class AuditView(BrowserView):
         self._user_cache = {}
         self.site_path = '/'.join(self.context.getPhysicalPath())
         try:
-            results = self.do_query()
-            self.results = results['hits']['hits']
-            self.total = results['hits']['total']['value']
+            self.results, self.total, _ = self.do_query()
 
             if 'Export' in self.request.form.get('export', ''):
-                return self.export()
+                return self.export(data=self.results)
         except Exception:
             self.inner_template = self.error_template
         return super(AuditView, self).__call__()
@@ -51,15 +53,11 @@ class AuditView(BrowserView):
         return user
 
     @property
-    def el_connected(self):
-        registry = getUtility(IRegistry)
-        if not registry.get('collective.elasticsearch.interfaces.IElasticSettings.enabled', False):
+    def can_connect_to_index(self):
+        if not hps_is_enabled():
             return False
-        es = ESConnectionFactoryFactory()()
-        try:
-            return es.cluster.health()['status'] in ('green', 'yellow')
-        except Exception:
-            return False
+
+        return health_is_good()
 
     def get_obj(self, uid):
         return uuidToObject(uid)
@@ -73,81 +71,52 @@ class AuditView(BrowserView):
         return path
 
     def get_query(self):
-        filters = []
         form = self.request.form
-        if form.get('type'):
-            filters.append(
-                {'term': {'type': form.get('type')}}
-            )
+
         if self.user:
-            filters.append(
-                {'term': {'user': api.user.get_current().getId().lower()}}
-            )
+            user = api.user.get_current().getId().lower()
         else:
-            if form.get('user'):
-                filters.append(
-                    {'term': {'user': form.get('user').lower()}}
-                )
-        if form.get('content'):
-            items = form.get('content').split(';')
-            cqueries = []
-            for item in items:
-                cqueries.append(item)
-            filters.append(
-                {'terms': {'object': cqueries}}
-            )
-        if form.get('after'):
-            filters.append(
-                {'range': {'date': {'gte': form.get('after')}}}
-            )
-        if form.get('before'):
-            filters.append(
-                {'range': {'date': {'lte': form.get('before')}}}
-            )
-        if len(filters) == 0:
-            query = {"query": {'match_all': {}}}
-        else:
-            query = {
-                "query": {
-                    'bool': {
-                        'filter': filters
-                    }
-                }
-            }
+            user = form.get('user', '').lower()
+
+        if len(user.strip()) <= 0:
+            user = None
+
+        query = gen_query(
+            typeval=form.get("type", None),
+            user=user,
+            content=form.get('content', None),
+            after=form.get('after', None),
+            before=form.get('before', None))
+
         return query
 
-    def export(self):
-        index_name = audit.get_index_name()
-        es = ESConnectionFactoryFactory()()
-        query = self.get_query()
-        results = es.search(
-            index=index_name,
-            body=query,
-            sort='date:desc',
-            size=3000)
+    def export(self, data=None):
+        if data is None:
+            index_name = audit.get_index_name()
+            query = self.get_query()
+            data, _, _ = hps_get_data(index_name, query, sort='date:desc', size=3000)
+
         output = StringIO()
         writer = csv.writer(output)
-
         writer.writerow(['Action', 'Path', 'User', 'Summary', 'Date'])
-        for result in results['hits']['hits']:
-            data = result['_source']
+        for result in data:
+            rowdata = result['_source']
             writer.writerow([
-                data['name'],
-                self.get_path(data),
-                data['user'],
-                data['summary'],
-                data['date']
+                rowdata['name'],
+                self.get_path(rowdata),
+                rowdata['user'],
+                rowdata['summary'],
+                rowdata['date']
             ])
+        output.seek(0)
 
         resp = self.request.response
         resp.setHeader('Content-Disposition', 'attachment; filename=export.csv')
         resp.setHeader('Content-Type', 'text/csv')
-        output.seek(0)
         return output.read()
 
     def do_query(self):
         index_name = audit.get_index_name()
-        es = ESConnectionFactoryFactory()()
         query = self.get_query()
 
         try:
@@ -155,11 +124,7 @@ class AuditView(BrowserView):
         except Exception:
             page = 1
         start = (page - 1) * self.limit
-        results = es.search(
-            index=index_name,
-            body=query,
-            sort='date:desc',
-            from_=start,
-            size=self.limit)
+
+        results = hps_get_data(index_name, query, sort='date:desc', from_=start, size=self.limit)
 
         return results
