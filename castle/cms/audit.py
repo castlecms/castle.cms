@@ -3,7 +3,6 @@ import json
 import logging
 import logging.config
 import os
-import threading
 
 
 from plone import api
@@ -36,9 +35,6 @@ from castle.cms.events import ICacheInvalidatedEvent
 from castle.cms.events import IMetaTileEditedEvent
 from castle.cms.events import ITrashEmptiedEvent
 from castle.cms.interfaces import ITrashed
-from castle.cms.indexing.hps import add_to_index
-from castle.cms.indexing.hps import create_index_if_not_exists
-from castle.cms.indexing.hps import is_enabled as hps_is_enabled
 
 
 logger = logging.getLogger("Plone")
@@ -68,7 +64,7 @@ DEFAULT_AUDIT_LOGGER_CONFIG = {
 }
 
 # if this path exists, and loads fine as json, then apply the json as logging
-# config -- otherwise just pump to stdout
+# config (or try to) -- otherwise just pump to stdout
 logging_config_file = os.getenv("CASTLE_CMS_AUDIT_LOG_CONFIG_FILE", None)
 if logging_config_file is not None and os.path.exists(logging_config_file):
     try:
@@ -82,7 +78,12 @@ if logging_config_file is not None and os.path.exists(logging_config_file):
 else:
     configdict = DEFAULT_AUDIT_LOGGER_CONFIG
 
-logging.config.dictConfig(configdict)
+try:
+    # note: with 'disable_existing_loggers' set to False, this shouldn't wipeout
+    # the config from Plone, etc
+    logging.config.dictConfig(configdict)
+except Exception:
+    logger.error("failed to configure audit logger", exc_info=True)
 auditlogger = logging.getLogger("auditlogger")
 
 
@@ -157,7 +158,6 @@ class ConfigModifyRecorder(DefaultRecorder):
 
 
 class CacheInvalidatedRecorder(DefaultRecorder):
-
     def __call__(self):
         data = super(CacheInvalidatedRecorder, self).__call__()
         if self.event.object.success:
@@ -170,7 +170,6 @@ class CacheInvalidatedRecorder(DefaultRecorder):
 
 
 class ContentTypeChangeNoteRecorder(DefaultRecorder):
-
     def __call__(self):
         data = super(ContentTypeChangeNoteRecorder, self).__call__()
         data['summary'] = 'Change Note Summary: %s' % \
@@ -179,7 +178,6 @@ class ContentTypeChangeNoteRecorder(DefaultRecorder):
 
 
 class AuditData(object):
-
     def __init__(self, _type, name, summary=None,
                  recorder_class=DefaultRecorder):
         self._type = _type
@@ -235,47 +233,12 @@ _registered = {
 }
 
 
-def _check_for_index(index_name):
-    mapping = {'properties': {
-        'type': {'store': False, 'type': 'text', 'index': False},
-        'name': {'store': False, 'type': 'text', 'index': False},
-        'summary': {'store': False, 'type': 'text', 'index': False},
-        'user': {'store': False, 'type': 'text', 'index': False, 'analyzer': 'keyword'},
-        'request_uri': {'store': False, 'type': 'text', 'index': False},
-        'date': {'store': False, 'type': 'date'},
-        'object': {'store': False, 'type': 'text', 'index': False},
-        'path': {'store': False, 'type': 'text', 'index': False},
-    }}
-    create_index_if_not_exists(index_name, mapping)
-
-
-def get_audit_index_name(site_path=None):
-    if site_path is not None:
-        index_name = site_path
-    else:
-        index_name = '/'.join(api.portal.get().getPhysicalPath())
-    return "{}-audit".format(index_name.replace('/', '').replace(' ', '').lower())
-
-
-def _record(site_path, data):
-    auditlogger.info(site_path, data)
-    index_name = get_audit_index_name(site_path)
-    add_to_index(index_name, data, create_on_exception=_check_for_index)
-
-
 def record(success, recorder, site_path):
     if not success:
         return
     if recorder.valid:
         data = recorder()
         auditlogger.info(site_path, data)
-        thread = threading.Thread(
-            target=_record,
-            args=(
-                site_path,
-                data,
-            ))
-        thread.start()
 
 
 def event(obj, event=None):
@@ -286,9 +249,6 @@ def event(obj, event=None):
 
     iface = providedBy(event).declared[0]
     if iface not in _registered:
-        return
-
-    if not hps_is_enabled():
         return
 
     if obj is not None and ITrashed.providedBy(obj):

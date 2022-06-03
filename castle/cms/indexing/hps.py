@@ -109,61 +109,6 @@ def gen_query(typeval=None, user=None, content=None, after=None, before=None):
     return query
 
 
-def bulk_add_to_index(index_name, bulkdata, create_with=None):
-    conn = get_connection()
-    index_prefix = conn.index_prefix
-    if index_prefix is not None:
-        index_prefix += "-"
-    else:
-        index_prefix = ""
-    final_index_name = "{prefix}{name}".format(prefix=index_prefix, name=index_name)
-
-    if create_with is not None:
-        create_with(final_index_name)
-
-    finaldata = []
-    for item in bulkdata:
-        finaldata.append({
-            '_source': item,
-            '_index': final_index_name,
-        })
-
-    chunked_list = []
-    for i in range(0, len(finaldata), 10000):
-        chunked_list.append(finaldata[i:i+10000])  # noqa
-
-    for chunk in chunked_list:
-        helpers.bulk(conn, chunk)
-
-
-def add_to_index(index_name, data, create_on_exception=None):
-    conn = get_connection()
-    index_prefix = conn.index_prefix
-    if index_prefix is not None:
-        index_prefix += "-"
-    else:
-        index_prefix = ""
-    final_index_name = "{prefix}{name}".format(prefix=index_prefix, name=index_name)
-    try:
-        conn.index(index=final_index_name, body=data)
-    except TransportError as ex:
-        if 'InvalidIndexNameException' in ex.error and create_on_exception is not None:
-            try:
-                create_on_exception(index_name)
-                add_to_index(index_name, data)
-            except TransportError as exc:
-                raise exc
-        else:
-            raise ex
-
-
-def create_index_if_not_exists(index_name, mapping):
-    conn = get_connection()
-    if not conn.indices.exists(index_name):
-        conn.indices.create(index_name)
-    conn.indices.put_mapping(body=mapping, index=index_name)
-
-
 def index_in_es(obj):
     catalog = api.portal.get_tool('portal_catalog')
     es = ElasticSearchCatalog(catalog)
