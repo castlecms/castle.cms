@@ -839,6 +839,15 @@ a:hover [class^="icon-controlpanel-"]::before {
   margin-right: 0.9375em;
 }
 
+[class^="contenttype-"][class$="-container"] {
+  >[class^="contenttype"]:not([class$="-container"]) {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
 /* document used as default for some so present it first */
 .contenttype-document::before {
   content: url("../../svg/contenttypes/contenttype-document.svg");
