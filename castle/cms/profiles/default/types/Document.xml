@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object name="Document" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="description" i18n:translate="">Pages are the foundation of a website.</property>
+ <property name="description" i18n:translate="">Represents a single webpage</property>
  <property name="default_view">layout_view</property>
  <property name="view_methods">
   <element value="layout_view"/>

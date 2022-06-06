@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object name="Pad" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="description"
+    i18n:translate="">A multi-user simaltaneously-editable document</property>
+</object>

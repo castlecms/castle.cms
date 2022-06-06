@@ -3,7 +3,7 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Pad</property>
  <property name="description"
-    i18n:translate="">Etherpad collaborative space.</property>
+    i18n:translate="">A multi-user simaltaneously-editable document</property>
  <property name="icon_expr"></property>
  <property name="factory">Pad</property>
  <property name="add_view_expr">string:${folder_url}/++add++Pad</property>

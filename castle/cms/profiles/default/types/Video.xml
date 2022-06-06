@@ -3,7 +3,7 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Video</property>
  <property name="description"
-    i18n:translate="">Videos can be used to build pages.</property>
+    i18n:translate="">A video that can be used sitewide</property>
  <property name="icon_expr"></property>
  <property name="factory">Video</property>
  <property name="add_view_expr">string:${folder_url}/++add++Video</property>
