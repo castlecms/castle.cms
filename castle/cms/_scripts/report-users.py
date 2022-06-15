@@ -3,6 +3,7 @@ The data submitted to a GELF endpoint logger for this is using a schema that
 looks something like this:
 
 class UserAccess(BaseModel):
+    schemaversion: str
     appname: str
     site: str
     logid: str
@@ -40,6 +41,7 @@ from castle.cms.gelf import GELFHandler
 logger = logging.getLogger("Plone")
 
 
+SCHEMA_VERSION = "1"
 APP_NAME = "castle.cms"
 LOG_ID = "UserGroupMatrix"
 gelflogger = logging.getLogger(LOG_ID)
@@ -59,6 +61,7 @@ def get_args():
 
 def report_on_users(site):
     extras = {
+        "schemaversion": SCHEMA_VERSION,
         "appname": APP_NAME,
         "site": site.id,
         "logid": LOG_ID,
@@ -95,7 +98,8 @@ def report_on_users(site):
                     roleperms[role].append(perm)
 
         for rp in roleperms.keys():
-            msg = "{appname} {site} {logid} {reportid} {username} {rolename} {permissions}".format(
+            msg = "{schemaversion} {appname} {site} {logid} {reportid} {username} {rolename} {permissions}".format(
+                schemaversion=extras["schemaversion"],
                 appname=extras["appname"],
                 site=extras["site"]
                 logid=extras["logid"],
