@@ -58,12 +58,12 @@ def get_args():
 
 
 def report_on_users(site):
-    extras = {}
-
-    extras["appname"] = APP_NAME
-    extras["site"] = site.id
-    extras["logid"] = LOG_ID
-    extras["reportid"] = uuid.uuid4()
+    extras = {
+        "appname": APP_NAME,
+        "site": site.id,
+        "logid": LOG_ID,
+        "reportid": uuid.uuid4(),
+    }
 
     users = api.user.get_users()
     for user in users:
