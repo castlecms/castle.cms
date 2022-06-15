@@ -3,11 +3,11 @@ The data submitted to a GELF endpoint logger for this is using a schema that
 looks something like this:
 
 class UserAccess(BaseModel):
-    schemaversion: str
-    appname: str
+    schema_version: str
+    schema_type: str
+    app_name: str
     site: str
-    logid: str
-    reportid: str
+    report_id: str
     username: str
     group: str
     permissions: list[str]
@@ -18,7 +18,14 @@ to *roles*, and *roles* to *users* in a 3-layer approach.
 Therefore, in the above model, the following are mapped to an individual record:
 
     - username == user.getUserName()
-    - group == a single 
+    - group == a single role
+    - permissions == all permissions associated with the Role that are active for the user
+
+    - schema_version == SCHEMA_VERSION variable
+    - schema_type == SCHEMA_TYPE variable
+    - app_name == APP_NAME variable
+    - site == app[site].id value
+    - report_id == UUID4 unique per-site and per-execution of this script
 """
 from argparse import ArgumentParser
 import csv
@@ -42,9 +49,9 @@ logger = logging.getLogger("Plone")
 
 
 SCHEMA_VERSION = "1"
+SCHEMA_TYPE = "UserGroupMatrix"
 APP_NAME = "castle.cms"
-LOG_ID = "UserGroupMatrix"
-gelflogger = logging.getLogger(LOG_ID)
+gelflogger = logging.getLogger(SCHEMA_TYPE)
 gelfhandler = GELFHandler()
 gelfformatter = logging.Formatter("%(asctime)s %(name)s [%(levelname)s] %(message)s")
 gelfhandler.setFormatter(gelfformatter)
@@ -61,21 +68,16 @@ def get_args():
 
 def report_on_users(site):
     extras = {
-        "schemaversion": SCHEMA_VERSION,
-        "appname": APP_NAME,
+        "schema_version": SCHEMA_VERSION,
+        "schema_type": SCHEMA_TYPE,
+        "app_name": APP_NAME,
         "site": site.id,
-        "logid": LOG_ID,
-        "reportid": uuid.uuid4(),
+        "report_id": uuid.uuid4(),
     }
 
     users = api.user.get_users()
     for user in users:
         extras["username"] = user.getUserName()
-
-        # for each role
-        # - for each permission
-        # -- is the permission selected for the role?
-        # --- add permission to role's permission list
 
         perms = api.user.get_permissions(user=user)
         roles = api.user.get_roles(user=user)
@@ -98,12 +100,12 @@ def report_on_users(site):
                     roleperms[role].append(perm)
 
         for rp in roleperms.keys():
-            msg = "{schemaversion} {appname} {site} {logid} {reportid} {username} {rolename} {permissions}".format(
-                schemaversion=extras["schemaversion"],
-                appname=extras["appname"],
+            msg = "{schemaversion} {schematype} {appname} {site} {reportid} {username} {rolename} {permissions}".format(
+                schemaversion=extras["schema_version"],
+                schematype=extras["schema_type"],
+                appname=extras["app_name"],
                 site=extras["site"]
-                logid=extras["logid"],
-                reportid=extras["reportid"],
+                reportid=extras["report_id"],
                 username=extras["username"],
                 rolename=rp,
                 permissions=",".join(roleperms[rp]))
@@ -113,7 +115,7 @@ def report_on_users(site):
 
 
 def run(app):
-    singleton.SingleInstance('importauditlog')
+    singleton.SingleInstance('reportusers')
 
     args = get_args()
 
