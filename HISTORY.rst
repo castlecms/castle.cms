@@ -4,7 +4,8 @@ Changelog
 2.14.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- add GELF logging handler
+- add script for report on user/role/permissions
 
 
 2.14.0 (2022-04-20)
