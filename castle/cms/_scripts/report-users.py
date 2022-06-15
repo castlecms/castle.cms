@@ -104,7 +104,7 @@ def report_on_users(site):
                 schemaversion=extras["schema_version"],
                 schematype=extras["schema_type"],
                 appname=extras["app_name"],
-                site=extras["site"]
+                site=extras["site"],
                 reportid=extras["report_id"],
                 username=extras["username"],
                 rolename=rp,
@@ -132,6 +132,27 @@ def run(app):
         site = app[args.site_id]
         setSite(site)
         report_on_users(site)
+
+
+def setup_and_run():
+    conf_path = os.getenv("ZOPE_CONF_PATH", "parts/instance/zope.conf")
+    if conf_path is None or not os.path.exists(conf_path):
+        raise Exception('Could not find zope.conf at {}'.format(conf_path))
+
+    from Zope2 import configure
+    configure(conf_path)
+    import Zope2
+    app = Zope2.app()
+    from Testing.ZopeTestCase.utils import makerequest
+    app = makerequest(app)
+    app.REQUEST['PARENTS'] = [app]
+    from zope.globalrequest import setRequest
+    setRequest(app.REQUEST)
+    from AccessControl.SpecialUsers import system as user
+    from AccessControl.SecurityManagement import newSecurityManager
+    newSecurityManager(None, user)
+
+    run(app)
 
 
 if __name__ == '__main__':

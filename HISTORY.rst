@@ -6,6 +6,8 @@ Changelog
 
 - fix manifest.json credentials bug: added crossorigin="use-credentials"
 - fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
+- add GELF logging handler
+- add script for generating user/role/permission reports
 
 
 3.0.0b19 (2022-05-06)
