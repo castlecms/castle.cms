@@ -83,7 +83,6 @@
   <include file="patches.zcml" />
   <include file="unconfigure.zcml" />
   <include file="widgets.zcml" />
-  <include file="indexing.zcml" />
   <include file="static.zcml" />
   <include file="theming.zcml" />
   <include file="meta.zcml" />

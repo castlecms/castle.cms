@@ -41,16 +41,16 @@ logger = logging.getLogger("Plone")
 
 DEFAULT_AUDIT_LOGGER_CONFIG = {
     'version': 1,
-    'disable_existing_loggers': False,
+    #'disable_existing_loggers': False,
     'formatters': {
         'auditlog': {
-            'format': '%(asctime)s %(message)s %(type)s "%(name)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
+            'format': '%(asctime)s %(levelname)s %(name)s %(schema_version)s %(schema_type)s %(site) %(type)s "%(objname)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
         }
     },
     'handlers': {
         'console': {
             'level': 'INFO',
-            'class': 'logging.Streamhandler',
+            'class': 'logging.StreamHandler',
             'formatter': 'auditlog',
         },
     },
@@ -96,17 +96,27 @@ class DefaultRecorder(object):
         self.obj = obj
 
     def __call__(self):
+        try:
+            user = api.user.get_current().getId()
+        except api.exc.CannotGetPortalError:
+            # likely means that we are logged in on the zope root, not through a site
+            from AccessControl import getSecurityManager
+            userobj = getSecurityManager().getUser()
+            user = userobj.getUserName()
         data = {
             'type': self.data._type,
-            'name': self.data.name,
+            'objname': self.data.name,
             'summary': self.data.summary,
-            'user': api.user.get_current().getId(),
+            'user': user,
             'date': datetime.utcnow().isoformat(),
             'request_uri': getRequest().URL
         }
         if self.obj is not None:
             data['object'] = IUUID(self.obj)
             data['path'] = '/'.join(self.obj.getPhysicalPath())
+        else:
+            data['object'] = ''
+            data['path'] = ''
         return data
 
 
@@ -141,7 +151,6 @@ class MetaTileRecorder(DefaultRecorder):
 
 
 class ConfigModifyRecorder(DefaultRecorder):
-
     def __call__(self):
         data = super(ConfigModifyRecorder, self).__call__()
         try:
@@ -178,8 +187,7 @@ class ContentTypeChangeNoteRecorder(DefaultRecorder):
 
 
 class AuditData(object):
-    def __init__(self, _type, name, summary=None,
-                 recorder_class=DefaultRecorder):
+    def __init__(self, _type, name, summary=None, recorder_class=DefaultRecorder):
         self._type = _type
         self.name = name
         self.summary = summary
@@ -238,7 +246,10 @@ def record(success, recorder, site_path):
         return
     if recorder.valid:
         data = recorder()
-        auditlogger.info(site_path, data)
+        data["schema_version"] = "1"
+        data["schema_type"] = "castle.cms.audit"
+        data["site"] = site_path
+        auditlogger.info(site_path, extra=data)
 
 
 def event(obj, event=None):
@@ -267,5 +278,8 @@ def event(obj, event=None):
         audit_data = _registered[iface]
 
     recorder = audit_data.get_recorder(event, obj)
-    site_path = '/'.join(api.portal.get().getPhysicalPath())
+    try:
+        site_path = '/'.join(api.portal.get().getPhysicalPath())
+    except api.exc.CannotGetPortalError:
+        site_path = '(zoperoot)'
     transaction.get().addAfterCommitHook(record, args=(recorder, site_path))

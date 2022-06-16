@@ -1,7 +1,7 @@
 import logging
 
-from opensearch import helpers
-from opensearch import TransportError
+# from opensearch import helpers
+from opensearchpy import TransportError
 from plone import api
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
