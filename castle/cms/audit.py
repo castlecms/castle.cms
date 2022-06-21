@@ -1,3 +1,27 @@
+"""
+Env Vars used:
+
+CASTLE_CMS_AUDIT_LOG_CONFIG_FILE  # specifies a path to a json/dict formatted config for logging
+CASTLE_CMS_AUDIT_LOG_INSTANCE     # specifies 'instance' value in audit log schema
+
+
+Full schema for an audit log message:
+
+schema_version: str  # schema version of log message
+schema_type: str     # schema type ("castle.cms.audit")
+instance: str        # determined by env var CASTLE_CMS_AUDIT_LOG_INSTANCE
+site: str            # either '(zope root)' or the root site path (e.g. '/Castle')
+type: str            # audit log type (e.g. 'content', 'workflow', etc)
+actionname: str      # previously specified as just 'name', specifies which action for the type
+summary: str         # optional short string describing the action
+user: str            # username of the account that performed the action
+request_uri: str     # the URI of the request that initiated the action
+date: str            # ISO date/time the action was performed
+object: str          # UUID of object that was affected by action
+path: str            # path of object that was affected by action
+es2id: Optional[str] # original ES2.x assigned _id -- only present in records migrated from ES2.x storage
+
+"""
 from datetime import datetime
 import json
 import logging
@@ -41,10 +65,10 @@ logger = logging.getLogger("Plone")
 
 DEFAULT_AUDIT_LOGGER_CONFIG = {
     'version': 1,
-    #'disable_existing_loggers': False,
+    'disable_existing_loggers': False,
     'formatters': {
         'auditlog': {
-            'format': '%(asctime)s %(levelname)s %(name)s %(schema_version)s %(schema_type)s %(site) %(type)s "%(objname)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
+            'format': '%(asctime)s %(levelname)s %(name)s %(schema_version)s %(schema_type)s "%(instance)s" "%(site)s" %(type)s "%(actionname)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
         }
     },
     'handlers': {
@@ -105,7 +129,7 @@ class DefaultRecorder(object):
             user = userobj.getUserName()
         data = {
             'type': self.data._type,
-            'objname': self.data.name,
+            'actionname': self.data.name,
             'summary': self.data.summary,
             'user': user,
             'date': datetime.utcnow().isoformat(),
@@ -248,6 +272,7 @@ def record(success, recorder, site_path):
         data = recorder()
         data["schema_version"] = "1"
         data["schema_type"] = "castle.cms.audit"
+        data["instance"] = os.getenv("CASTLE_CMS_AUDIT_LOG_INSTANCE", "(not configured)")
         data["site"] = site_path
         auditlogger.info(site_path, extra=data)
 

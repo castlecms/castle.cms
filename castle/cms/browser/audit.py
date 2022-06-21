@@ -1,16 +1,28 @@
-import csv
+"""
+Environment Variables:
 
+# see castle.cms.audit
+CASTLE_CMS_AUDIT_LOG_INSTANCE
+
+# we assume all logs are submitted to the same index per-instance
+# we assume that specific site audit logs can be fetched by including
+#   'schema_type', 'schema_version', 'instance', and 'site' as attributes
+#   to the search query to this index
+CASTLE_CMS_AUDIT_LOG_INDEXNAME
+
+"""
+import csv
 from cStringIO import StringIO
+import os
+
 from plone import api
 from plone.app.uuid.utils import uuidToObject
-from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getUtility
 
 from castle.cms import audit
-from castle.cms.indexing.hps import gen_query
+from castle.cms.indexing.hps import gen_audit_query
 from castle.cms.indexing.hps import health_is_good
 from castle.cms.indexing.hps import hps_get_data
 from castle.cms.indexing.hps import is_enabled as hps_is_enabled
@@ -81,7 +93,14 @@ class AuditView(BrowserView):
         if len(user.strip()) <= 0:
             user = None
 
-        query = gen_query(
+        try:
+            site_path = '/'.join(api.portal.get().getPhysicalPath())
+        except api.exc.CannotGetPortalError:
+            site_path = '(zoperoot)'
+
+        query = gen_audit_query(
+            instance=os.getenv("CASTLE_CMS_AUDIT_LOG_INSTANCE"),
+            site=site_path,
             typeval=form.get("type", None),
             user=user,
             content=form.get('content', None),

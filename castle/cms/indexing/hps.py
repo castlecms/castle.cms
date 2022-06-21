@@ -73,7 +73,9 @@ def hps_get_scroll(scroll_id, **kwargs):
         return [], -1, None
 
 
-def gen_query(typeval=None, user=None, content=None, after=None, before=None):
+def gen_audit_query(
+        schema_version="1", schema_type="castle.cms.audit", instance=None, site=None,
+        typeval=None, user=None, content=None, after=None, before=None):
     filters = []
 
     if typeval is not None:
