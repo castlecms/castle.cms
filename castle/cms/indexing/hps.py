@@ -74,32 +74,64 @@ def hps_get_scroll(scroll_id, **kwargs):
 
 
 def gen_audit_query(
+        field_map_prefix=None, sort=None, sortdir=None,
         schema_version="1", schema_type="castle.cms.audit", instance=None, site=None,
         typeval=None, user=None, content=None, after=None, before=None):
-    filters = []
 
-    if typeval is not None:
-        filters.append({'term': {'type': typeval}})
+    sortfield = sort
+    schemaversionfield = "schema_version"
+    schematypefield = "schema_type"
+    instancefield = "instance"
+    sitefield = "site"
+    typefield = "type"
+    userfield = "user"
+    objectfield = "object"
+    datefield = "date"
+    if field_map_prefix is not None:
+        sortfield = "{}.{}".format(field_map_prefix, sortfield)
+        schemaversionfield = "{}.{}".format(field_map_prefix, schemaversionfield)
+        schematypefield = "{}.{}".format(field_map_prefix, schematypefield)
+        instancefield = "{}.{}".format(field_map_prefix, instancefield)
+        sitefield = "{}.{}".format(field_map_prefix, sitefield)
+        typefield = "{}.{}".format(field_map_prefix, typefield)
+        userfield = "{}.{}".format(field_map_prefix, userfield)
+        objectfield = "{}.{}".format(field_map_prefix, objectfield)
+        datefield = "{}.{}".format(field_map_prefix, datefield)
 
-    if user is not None:
-        filters.append({'term': {'user': user}})
+    filters = [
+        {'match_phrase': {schemaversionfield: schema_version}},
+        {'match_phrase': {schematypefield: schema_type}},
+        {'match_phrase': {instancefield: instance}},
+        {'match_phrase': {sitefield: site}},
+    ]
 
-    if content is not None:
+    if typeval is not None and len(typeval) > 0:
+        filters.append({'match_phrase': {typefield: typeval}})
+
+    if user is not None and len(user) > 0:
+        filters.append({'match_phrase': {userfield: user}})
+
+    if content is not None and len(content) > 0:
         items = content.split(';')
         cqueries = []
         for item in items:
             cqueries.append(item)
-        filters.append({'terms': {'object': cqueries}})
+        if len(cqueries) > 0:
+            filters.append({'terms': {objectfield: cqueries}})
 
-    if after is not None:
-        filters.append({'range': {'date': {'gte': after}}})
-
-    if before is not None:
-        filters.append({'range': {'date': {'lte': before}}})
+    if (after is not None and len(after) > 0) or (before is not None and len(before) > 0):
+        rangefilter = {'range': {}}
+        if after is not None:
+            rangefilter['range'][datefield] = {'gte': after}
+        if before is not None:
+            rangefilter['range'][datefield] = {'lte': before}
+        rangefilter['range'][datefield]['format'] = "strict_date_optional_time"
+        filters.append(rangefilter)
 
     if len(filters) == 0:
         query = {"query": {'match_all': {}}}
     else:
+        filters.append({"match_all": {}})
         query = {
             "query": {
                 'bool': {
@@ -107,6 +139,11 @@ def gen_audit_query(
                 }
             }
         }
+
+    if sort is not None:
+        sortdir = sortdir or "desc"
+        sortquery = [{sortfield: {"order": sortdir, "unmapped_type": "boolean"}}]
+        query["sort"] = sortquery
 
     return query
 

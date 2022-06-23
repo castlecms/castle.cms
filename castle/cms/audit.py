@@ -68,7 +68,7 @@ DEFAULT_AUDIT_LOGGER_CONFIG = {
     'disable_existing_loggers': False,
     'formatters': {
         'auditlog': {
-            'format': '%(asctime)s %(levelname)s %(name)s %(schema_version)s %(schema_type)s "%(instance)s" "%(site)s" %(type)s "%(actionname)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
+            'format': '%(asctime)s %(levelname)s %(name)s %(es2id)s %(schema_version)s %(schema_type)s "%(instance)s" "%(site)s" %(type)s "%(actionname)s" "%(summary)s" %(user)s %(request_uri)s %(date)s %(object)s %(path)s',  # noqa
         }
     },
     'handlers': {
@@ -111,6 +111,10 @@ except Exception:
 auditlogger = logging.getLogger("auditlogger")
 
 
+def get_index_name():
+    return os.getenv("CASTLE_CMS_AUDIT_LOG_INDEXNAME", "gelfs-*")
+
+
 class DefaultRecorder(object):
     valid = True
 
@@ -128,6 +132,7 @@ class DefaultRecorder(object):
             userobj = getSecurityManager().getUser()
             user = userobj.getUserName()
         data = {
+            'es2id': None,  # this is from es2.x conversion. new logs should not have this.
             'type': self.data._type,
             'actionname': self.data.name,
             'summary': self.data.summary,
