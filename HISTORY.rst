@@ -10,8 +10,11 @@ Changelog
 - add script for generating user/role/permission reports
 - remove 'reindex_es' script -- functionality is now in wildcard.hps
 - remove 'upgrade_elasticsearch_in_place' script reference -- was invalid at this point
-- refactor elasticsearch integration
+- refactor elasticsearch/opensearch integration
 - make wildcard.hps integration explicit
+- remove old upgrade steps for castle.cms 2.x (upgrade to latest 2.x version, then upgrade to 3.x version)
+- remove custom elasticsearch index name (use wildcard.hps for customizing prefix, etc)
+
 
 
 3.0.0b19 (2022-05-06)
