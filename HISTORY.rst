@@ -14,6 +14,10 @@ Changelog
 - make wildcard.hps integration explicit
 - remove old upgrade steps for castle.cms 2.x (upgrade to latest 2.x version, then upgrade to 3.x version)
 - remove custom elasticsearch index name (use wildcard.hps for customizing prefix, etc)
+- change crawler to use wildcard.hps and optimize some queries
+- remove infinite loop from crawler -- rely on system cron to actually perform loop behavior
+- make crawler usable in an RO-Client context (as long as it has access to writable redis)
+- use python argparse for crawler arguments
 
 
 
