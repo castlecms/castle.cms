@@ -40,11 +40,15 @@ def create_pdf(obj, html, css):
 
 
 @task.as_admin()
-def create_pdf_from_view(obj, css_files=[]):
+def create_pdf_from_view(obj, css_files=[], unrestricted_traverse=False):
     # this completes so fast we get conflict errors on save sometimes.
     # just cool it a bit
     time.sleep(2)
     if not getCelery().conf.task_always_eager:
         obj._p_jar.sync()
-    html, css = create_raw_from_view(obj, css_files=css_files)
+    html, css = create_raw_from_view(
+        obj,
+        css_files=css_files,
+        unrestricted_traverse=unrestricted_traverse,
+    )
     return _create_pdf(obj, html, css)

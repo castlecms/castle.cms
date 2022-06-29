@@ -1,4 +1,5 @@
 import logging
+import os
 from time import time
 
 from AccessControl import getSecurityManager
@@ -27,6 +28,7 @@ from Products.CMFPlone.resources import add_resource_on_request
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
+from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import implementer
 
@@ -161,7 +163,13 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
 
 
 def es_custom_index(self, catalogtool):
-    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    try:
+        es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
+    except ComponentLookupError:
+        # if we can't load the IRegistry tool for some reason, just move forward with es index disabled
+        es_index_enabled = False
+        logger.error("failed to load IRegistry tool, forcing es to be disabled")
+
     if es_index_enabled:
         new_index = api.portal.get_registry_record('castle.es_index')
         setattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR, new_index)

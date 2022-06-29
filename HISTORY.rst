@@ -1,10 +1,51 @@
 Changelog
 =========
 
-3.0.0b14 (unreleased)
+3.0.0b110 (unreleased)
+----------------------
+
+- fix manifest.json credentials bug: added crossorigin="use-credentials"
+- fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
+- add GELF logging handler
+- add script for generating user/role/permission reports
+
+
+3.0.0b19 (2022-05-06)
+---------------------
+
+- fix dates while importing
+- fix querylisting as folder view results bug
+
+
+3.0.0b18 (2022-04-27)
+---------------------
+
+- handle error case in es_custom_index patch
+
+
+3.0.0b17 (2022-04-20)
+---------------------
+
+- Allow unrestricted traverse to be selected when creating a pdf.
+
+
+3.0.0b16 (2022-03-30)
+---------------------
+
+- Added some gallery options that will be used in some other add-ons.
+
+
+3.0.0b15 (2022-03-04)
+---------------------
+
+- handle missing links in sticky footer
+
+
+3.0.0b14 (2022-03-03)
 ---------------------
 
 - pin plone.app.contenttypes and Products.ATContentTypes to versions that mitigate CVE-2022-25399
+- fix template issue with sticky footer
 
 
 3.0.0b13 (2021-12-02)
