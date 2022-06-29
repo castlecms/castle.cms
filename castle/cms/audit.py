@@ -131,6 +131,13 @@ class DefaultRecorder(object):
             from AccessControl import getSecurityManager
             userobj = getSecurityManager().getUser()
             user = userobj.getUserName()
+
+        try:
+            requri = getRequest().URL
+        except AttributeError:
+            # this might occur on, e.g., tests that don't set up a fake request well
+            requri = "(none)"
+
         data = {
             'es2id': None,  # this is from es2.x conversion. new logs should not have this.
             'type': self.data._type,
@@ -138,7 +145,7 @@ class DefaultRecorder(object):
             'summary': self.data.summary,
             'user': user,
             'date': datetime.utcnow().isoformat(),
-            'request_uri': getRequest().URL
+            'request_uri': requri
         }
         if self.obj is not None:
             data['object'] = IUUID(self.obj)

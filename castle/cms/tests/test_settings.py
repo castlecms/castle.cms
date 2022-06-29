@@ -5,7 +5,6 @@ from copy import deepcopy
 
 from castle.cms.patterns import CastleSettingsAdapter
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.upgrades import upgrade_2_2_0
 from castle.cms.utils import get_upload_fields
 from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
 from plone.registry.field import List
@@ -79,36 +78,3 @@ class TestFileUploadFields(unittest.TestCase):
         self.assertEquals(
             len(json.loads(data['data-file-upload-fields'])), 5)
 
-    def test_migrate_settings(self):
-        registry = getUtility(IRegistry)
-        del registry.records['castle.file_upload_fields']
-        record = Record(List(), [u'title'])
-        registry.records['castle.required_file_upload_fields'] = record
-
-        self.assertIn('castle.required_file_upload_fields', registry.records._fields)
-        self.assertIn('castle.required_file_upload_fields', registry.records._values)
-
-        upgrade_2_2_0(self.portal)
-        self.assertEquals(len(registry['castle.file_upload_fields']), 4)
-
-        self.assertTrue(registry['castle.file_upload_fields'] is not None)
-        self.assertTrue(registry.get('castle.required_file_upload_fields') is None)
-
-        # check registry cleaned up as well
-        self.assertIn('castle.file_upload_fields', registry.records._fields)
-        self.assertIn('castle.file_upload_fields', registry.records._values)
-        self.assertNotIn('castle.required_file_upload_fields', registry.records._fields)
-        self.assertNotIn('castle.required_file_upload_fields', registry.records._values)
-
-        # also, test we can safely run it again without overwritting existing values
-        fields = deepcopy(registry['castle.file_upload_fields'])
-        fields.append({
-            u'name': u'foobar',
-            u'label': u'Foobar',
-            u'widget': u'text',
-            u'required': u'false',
-            u'for-file-types': u'*'
-        })
-        registry['castle.file_upload_fields'] = fields
-        upgrade_2_2_0(self.portal)
-        self.assertEquals(len(registry['castle.file_upload_fields']), 5)

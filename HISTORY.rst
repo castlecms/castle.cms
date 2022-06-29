@@ -18,6 +18,7 @@ Changelog
 - remove infinite loop from crawler -- rely on system cron to actually perform loop behavior
 - make crawler usable in an RO-Client context (as long as it has access to writable redis)
 - use python argparse for crawler arguments
+- initial update to .travis.cfg
 
 
 3.0.0b19 (2022-05-06)

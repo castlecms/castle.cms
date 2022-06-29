@@ -24,21 +24,23 @@ def get_catalog():
 
 
 def get_connection():
-    catalog = api.portal.get_tool('portal_catalog')
-    hps = WildcardHPSCatalog(catalog)
-    return hps.connection
+    hpscat = get_catalog()
+    return hpscat.connection
 
 
 def get_index_name():
-    catalog = api.portal.get_tool('portal_catalog')
-    hps = WildcardHPSCatalog(catalog)
-    return hps.index_name
+    hpscat = get_catalog()
+    return hpscat.index_name
+
+
+def get_bulk_size():
+    hpscat = get_catalog()
+    return hpscat.get_setting("bulk_size", 50)
 
 
 def is_enabled():
-    catalog = api.portal.get_tool('portal_catalog')
-    hps = WildcardHPSCatalog(catalog)
-    return hps.enabled
+    hpscat = get_catalog()
+    return hpscat.enabled
 
 
 def health_is_good():
