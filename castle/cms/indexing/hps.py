@@ -17,6 +17,12 @@ from zope.component import getUtility
 logger = logging.getLogger("Plone")
 
 
+def get_catalog():
+    catalog = api.portal.get_tool('portal_catalog')
+    hps = WildcardHPSCatalog(catalog)
+    return hps
+
+
 def get_connection():
     catalog = api.portal.get_tool('portal_catalog')
     hps = WildcardHPSCatalog(catalog)

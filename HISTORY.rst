@@ -20,7 +20,6 @@ Changelog
 - use python argparse for crawler arguments
 
 
-
 3.0.0b19 (2022-05-06)
 ---------------------
 

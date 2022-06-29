@@ -1,20 +1,18 @@
 import argparse
 import gzip
+import logging
 import sys
 import time
 
 from DateTime import DateTime
 from lxml import etree
 from lxml import html
-from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-from Products.CMFPlone.log import logger
 import requests
 from StringIO import StringIO
 from tendo import singleton
 from urlparse import urlparse
-from wildcard.hps.opensearch import WildcardHPSCatalog
 from zope.component import getUtility
 
 from castle.cms import archival
@@ -24,13 +22,21 @@ from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 from castle.cms.cron.utils import spoof_request
 from castle.cms.files import aws
+from castle.cms.indexing import hps
 from castle.cms.indexing import crawler as hpscrawl
 from castle.cms.interfaces import ICrawlerConfiguration
 from castle.cms.utils import clear_object_cache
 
 
-def index_name(site_index_name):
-    return '{site_index_name}_crawler'.format(site_index_name=site_index_name)
+# override normal plone logging and use a configured root logger here
+# to capture output to stdout since this is a script that will need to render
+# output of logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 class Crawler(object):
@@ -71,15 +77,15 @@ class Crawler(object):
         '#content p,#content h2,#content h3,#content ul li'
     ])
 
-    def __init__(self, site, settings, hps):
+    def __init__(self, site, settings, hpscatalog):
         self.site = site
         self.settings = settings
-        self.hps = hps
-        self.index_name = index_name(hps.index_name)
+        self.hpscatalog = hpscatalog
+        self.index_name = hpscrawl.index_name(hps.get_index_name())
 
         self.site._p_jar.sync()  # sync transactions
 
-        self.tracking = cache.get_client(CRAWLED_DATA_KEY)
+        self.data = cache.get_client(CRAWLED_DATA_KEY)
 
     def crawl_page(self, url):
         logger.info('Indexing ' + url)
@@ -137,7 +143,7 @@ class Crawler(object):
     def crawl_archive_url(self, url):
         # archive urls don't need to be reindexed ever, they
         # are in a RO archive
-        if hpscrawl.url_is_indexed(self.hps, self.index_name, url):
+        if hpscrawl.url_is_indexed(self.hpscatalog, self.index_name, url):
             return
 
         data = self.crawl_page(url)
@@ -145,7 +151,7 @@ class Crawler(object):
             return
 
         data['sitemap'] = 'archives'
-        hpscrawl.index_doc(self.hps, self.index_name, url, data)
+        hpscrawl.index_doc(self.hpscatalog, self.index_name, url, data)
 
     def crawl_archives(self):
         registry = getUtility(IRegistry)
@@ -158,7 +164,7 @@ class Crawler(object):
             url = archive_data.get('view_url', None) or archive_data['url']
             urls.append(aws.swap_url(url, base_url=base_url))
 
-        existing_urls = hpscrawl.get_all_ids(self.hps, self.index_name, "archives")
+        existing_urls = hpscrawl.get_all_ids(self.hpscatalog, self.index_name, "archives")
         for _id in set(urls) - set(existing_urls):
             # pages that have not yet been crawled
             try:
@@ -168,14 +174,14 @@ class Crawler(object):
 
         for _id in set(existing_urls) - set(urls):
             # pages that have been removed from the archive
-            hpscrawl.delete_from_index(self.hps, self.index_name, _id)
+            hpscrawl.delete_from_index(self.hpscatalog, self.index_name, _id)
 
     def clean_removed_pages(self, sitemap, crawled_urls):
         parsed = urlparse(sitemap)
         domain = parsed.netloc
-        ids = hpscrawl.get_all_ids(self.hps, self.index_name, domain)
+        ids = hpscrawl.get_all_ids(self.hpscatalog, self.index_name, domain)
         for _id in set(ids) - set(crawled_urls):
-            hpscrawl.delete_from_index(self.hps, self.index_name, _id)
+            hpscrawl.delete_from_index(self.hpscatalog, self.index_name, _id)
 
     def crawl_site_map(self, sitemap, full=False):
         resp = requests.get(sitemap, headers={
@@ -239,10 +245,10 @@ class Crawler(object):
             data = self.crawl_page(url)
             if data is False:
                 crawled_urls.remove(url)
-                hpscrawl.remove_doc_from_index(self.hps, self.index_name, url)
+                hpscrawl.remove_doc_from_index(self.hpscatalog, self.index_name, url)
             else:
                 data['sitemap'] = sitemap
-                hpscrawl.index_doc(self.hps, self.index_name, url, data)
+                hpscrawl.index_doc(self.hpscatalog, self.index_name, url, data)
                 crawled_urls.append(url)
 
         self.clean_removed_pages(sitemap, crawled_urls)
@@ -255,15 +261,13 @@ def crawl_site(site, full=False):
         logger.info("Crawler must first be enabled in Site Setup")
         return False
 
-    catalog = api.portal.get_tool('portal_catalog')
-    hps = WildcardHPSCatalog(catalog)
-    if not hps.enabled:
+    if not hps.is_enabled():
         logger.info("WildcardHPS must be enabled in Site Setup to use Crawler")
         return False
 
-    hpscrawl.ensure_index_exists(hps, index_name(hps.index_name))
-
-    crawler = Crawler(site, settings, hps)
+    hpscatalog = hps.get_catalog()
+    hpscrawl.ensure_index_exists(hpscatalog, hpscrawl.index_name(hps.get_index_name()))
+    crawler = Crawler(site, settings, hpscatalog)
 
     if settings.crawler_index_archive:
         crawler.crawl_archives()

@@ -28,6 +28,10 @@ CRAWLER_MAPPING = {
 }
 
 
+def index_name(site_index_name):
+    return '{site_index_name}_crawler'.format(site_index_name=site_index_name)
+
+
 def ensure_index_exists(hps, index_name):
     """
     A) make sure index exists
