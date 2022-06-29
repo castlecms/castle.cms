@@ -24,8 +24,12 @@ def get_ga_service(ga_scope=['https://www.googleapis.com/auth/analytics.readonly
 def get_ga_profile(service):
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
+    ua_id = registry.get('castle.universal_analytics_id', None)
     if not ga_id:
-        return
+        if ua_id:
+            ga_id = ua_id
+        else:
+            return
 
     # Use the Analytics service object to get the first profile id.
 
