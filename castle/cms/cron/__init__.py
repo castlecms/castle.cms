@@ -47,6 +47,9 @@ def run_it(module):
         os.path.join(cwd, 'parts/instance/etc/zope.conf'),
         os.path.join(cwd, 'parts/client1/etc/zope.conf'),
     ]
+    env_conf_path = os.getenv("ZOPE_CONF_PATH", None)
+    if env_conf_path is not None:
+        lookup_paths.append(env_conf_path)
     for path in lookup_paths:
         if os.path.exists(path):
             conf_path = path
