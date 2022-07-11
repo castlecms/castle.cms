@@ -20,6 +20,14 @@ Changelog
 - use python argparse for crawler arguments
 - initial update to .travis.cfg
 
+Update note(s):
+
+- After upgrading to 3.0.0b110, you will still have several ES related registry settings in your site that were not removed.
+  This is to be non-destructive to configuration that you may want to reference, and to facilitate easier rollbacks if you must rollback for some reason.
+  If they are no longer necessary, you can manually remove registry values related to `castle.cms.interfaces.IElasticSearchSettings`,
+  Also, `castle.es_index` and `castle.es_index_enabled`.
+  Leaving them will not affect the performance or operation of your site, however.
+
 
 3.0.0b19 (2022-05-06)
 ---------------------

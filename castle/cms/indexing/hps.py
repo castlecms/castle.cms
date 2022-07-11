@@ -121,18 +121,15 @@ def gen_audit_query(
 
     if content is not None and len(content) > 0:
         items = content.split(';')
-        cqueries = []
-        for item in items:
-            cqueries.append(item)
-        if len(cqueries) > 0:
-            filters.append({'terms': {objectfield: cqueries}})
+        if len(items) > 0:
+            filters.append({'terms': {objectfield: items}})
 
     if (after is not None and len(after) > 0) or (before is not None and len(before) > 0):
-        rangefilter = {'range': {}}
+        rangefilter = {'range': { datefield: {}}}
         if after is not None:
-            rangefilter['range'][datefield] = {'gte': after}
+            rangefilter['range'][datefield]['gte'] = after
         if before is not None:
-            rangefilter['range'][datefield] = {'lte': before}
+            rangefilter['range'][datefield]['lte'] = before
         rangefilter['range'][datefield]['format'] = "strict_date_optional_time"
         filters.append(rangefilter)
 

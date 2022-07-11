@@ -19,7 +19,7 @@
     Connected to the index, but there was an error fetching audit log data.
     <p>
         An administrator may need to make sure that appropriate instance configuration and
-        an appropriate logging configuration file has been setup.
+        an appropriate logging configuration file has been set up.
     </p>
     <p>
         If this is a new site, there may not be any data populating the audit log yet.
