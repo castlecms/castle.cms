@@ -6,7 +6,6 @@ from castle.cms.interfaces import (
     IContentSettings,
     ISiteConfiguration,
     ISearchSettings,
-    IElasticSearchSettings,
     ISlideshowSettings,
 )
 from castle.cms.widgets import FileUploadFieldsFieldWidget, SelectFieldWidget
@@ -41,11 +40,6 @@ class ConfigurableTextForm(group.GroupForm):
     )
 
 
-class ElasticForm(group.GroupForm):
-    label = u"Elastic Search"
-    fields = field.Fields(IElasticSearchSettings)
-
-
 class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
 
     id = "CastleSettingsControlPanel"
@@ -54,7 +48,7 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
     schema = ICastleSettings
     schema_prefix = "castle"
     fields = field.Fields(ISiteConfiguration)
-    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm, ElasticForm)
+    groups = (APIForm, ArchivalForm, ContentForm, ConfigurableTextForm)
 
     def updateFields(self):
         super(CastleSettingsControlPanelForm, self).updateFields()

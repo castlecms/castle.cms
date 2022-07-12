@@ -2,10 +2,10 @@ import os
 import subprocess
 
 import celery.bin.celery
-import elasticsearch
+import opensearchpy
 import redis
 from collective.celery.utils import getCelery
-from collective.elasticsearch.es import ElasticSearchCatalog
+from wildcard.hps.opensearch import WildcardHPSCatalog
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 
@@ -44,12 +44,12 @@ class StatusView(BrowserView):
         except Exception as e:
             return False, str(e)
 
-    def elasticsearch(self):
+    def wildcardhps(self):
         catalog = getToolByName(self.context, 'portal_catalog')
-        es = ElasticSearchCatalog(catalog)
-        conn = es.connection
+        hpscatalog = WildcardHPSCatalog(catalog)
+        conn = hpscatalog.connection
         try:
             (conn.cluster.health())
             return True, 'ok'
-        except elasticsearch.ConnectionError as e:
+        except opensearchpy.ConnectionError as e:
             return False, str(e)
