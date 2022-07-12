@@ -272,7 +272,7 @@
 
   <plone:tile
     name="castle.cms.globalsitetag"
-    title="Google Tag Manager"
+    title="Global Tag Manager"
     class=".gtm.GlobalSiteTagTile"
     schema=".gtm.GlobalSiteTagTileSchema"
     for="*"

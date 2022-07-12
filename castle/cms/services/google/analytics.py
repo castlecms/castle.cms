@@ -11,7 +11,7 @@ def get_ga_service(ga_scope=['https://www.googleapis.com/auth/analytics.readonly
     ga_id = registry.get('castle.google_analytics_id', None)
     ua_id = registry.get('castle.universal_analytics_id', None)
 
-    if not api_key or not api_email or not ga_id and not ua_id:
+    if not api_key or not api_email or (not ga_id and not ua_id):
         return
     if ga_id:
         return get_service(
