@@ -8,6 +8,25 @@ Changelog
 - fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
 - add GELF logging handler
 - add script for generating user/role/permission reports
+- remove 'reindex_es' script -- functionality is now in wildcard.hps
+- remove 'upgrade_elasticsearch_in_place' script reference -- was invalid at this point
+- refactor elasticsearch/opensearch integration
+- make wildcard.hps integration explicit
+- remove old upgrade steps for castle.cms 2.x (upgrade to latest 2.x version, then upgrade to 3.x version)
+- remove custom elasticsearch index name (use wildcard.hps for customizing prefix, etc)
+- change crawler to use wildcard.hps and optimize some queries
+- remove infinite loop from crawler -- rely on system cron to actually perform loop behavior
+- make crawler usable in an RO-Client context (as long as it has access to writable redis)
+- use python argparse for crawler arguments
+- initial update to .travis.cfg
+
+Update note(s):
+
+- After upgrading to 3.0.0b110, you will still have several ES related registry settings in your site that were not removed.
+  This is to be non-destructive to configuration that you may want to reference, and to facilitate easier rollbacks if you must rollback for some reason.
+  If they are no longer necessary, you can manually remove registry values related to `castle.cms.interfaces.IElasticSearchSettings`,
+  Also, `castle.es_index` and `castle.es_index_enabled`.
+  Leaving them will not affect the performance or operation of your site, however.
 
 
 3.0.0b19 (2022-05-06)

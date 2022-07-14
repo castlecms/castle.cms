@@ -9,7 +9,7 @@
 <body>
 
 <metal:main metal:fill-slot="prefs_configlet_main"
-            tal:define="connected view/el_connected;
+            tal:define="connected view/can_connect_to_index;
                         site_path python: '/'.join(context.getPhysicalPath())">
 
     <a href=""

@@ -18,8 +18,6 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISlideshowSettings" 
            prefix="castle" />
-  <records interface="castle.cms.interfaces.IElasticSearchSettings"
-           prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
   <records interface="castle.cms.interfaces.IAdjustableFontSizeSettings" 

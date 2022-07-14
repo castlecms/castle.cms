@@ -7,6 +7,6 @@
     <dependency>profile-Products.PloneKeywordManager:default</dependency>
     <dependency>profile-collective.documentviewer:default</dependency>
     <dependency>profile-castle.theme:default</dependency>
-    <dependency>profile-collective.elasticsearch:default</dependency>
+    <dependency>profile-wildcard.hps:default</dependency>
   </dependencies>
 </metadata>
