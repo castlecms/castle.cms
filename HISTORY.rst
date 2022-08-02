@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.14.2 (unreleased)
+2.14.2 (2022-08-02)
 -------------------
 
 - more forgiving coordinate parsing
