@@ -4,6 +4,7 @@ Changelog
 3.0.0b110 (unreleased)
 ----------------------
 
+- more forgiving coordinate parsing
 - fix manifest.json credentials bug: added crossorigin="use-credentials"
 - fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
 - add GELF logging handler
