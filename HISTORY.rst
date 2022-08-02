@@ -4,7 +4,7 @@ Changelog
 2.14.2 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- more forgiving coordinate parsing
 
 
 2.14.1 (2022-05-06)
