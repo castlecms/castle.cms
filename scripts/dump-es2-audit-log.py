@@ -30,6 +30,7 @@ import logging
 import logging.config
 import os
 import sys
+import sqlite3
 
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -105,6 +106,22 @@ ES2_INDEX = os.getenv("ES2_INDEX", "audit")
 ES2_SCROLLTIME = os.getenv("ES2_SCROLLTIME", "1m")
 
 SKIP_DUPLICATES_ON_IMPORT = os.getenv("SKIP_DUPLICATES_ON_IMPORT", "true").strip().lower() in ("yes", "1", "true", "on")
+DUPCONN = None
+DUPCUR = None
+if SKIP_DUPLICATES_ON_IMPORT:
+    DUPLICATE_SQLITE3_PATH = os.getenv("DUPLICATE_SQLITE3_PATH", None)
+    if DUPLICATE_SQLITE3_PATH is None:
+        logger.warn("no DUPLICATE_SQLITE3_PATH set, will use OS lookup")
+    if DUPLICATE_SQLITE3_PATH is not None and os.path.isdir(DUPLICATE_SQLITE3_PATH):
+        logger.warn("DUPLICATE_SQLITE3_PATH seems to be a folder, will use OS lookup")
+    if DUPLICATE_SQLITE3_PATH is not None and not os.path.isdir(DUPLICATE_SQLITE3_PATH):
+        logger.info(f"will be using db at {DUPLICATE_SQLITE3_PATH} for checking duplicates")
+        DUPCONN = sqlite3.connect(DUPLICATE_SQLITE3_PATH)
+        DUPCUR = DUPCONN.cursor()
+        DUPCUR.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='duplicates' ''')
+        if DUPCUR.fetchone()[0] < 1:
+            DUPCUR.execute(''' CREATE TABLE duplicates (es2id text) ''')
+            DUPCONN.commit()
 OS_HOST = os.getenv("OS_HOST", "https://127.0.0.1:9200")
 OS_INDEX = os.getenv("OS_INDEX", "gelfs")
 OS_VERIFY_SSL = os.getenv("OS_VERIFY_SSL", "true").strip().lower() in ("yes", "1", "true", "on")
@@ -161,25 +178,31 @@ for entry in entries:
     es2id = entry.get("_id", hashlib.sha256(json.dumps(entry["_source"]).encode()).hexdigest())
 
     if SKIP_DUPLICATES_ON_IMPORT:
-        existsurl = "{}/{}/_search".format(OS_HOST, OS_INDEX)
-        searchquery = {
-            "query": {
-                "match": {
-                    "full_message.es2id": es2id,
+        if DUPCONN is not None:
+            DUPCUR.execute(''' SELECT count(es2id) FROM duplicates WHERE es2id=? ''', (es2id,))
+            if DUPCUR.fetchone()[0] >= 1:
+                logger.info(f"found es2id ({es2id}) in sqlite3 duplicates db, skipping")
+                continue
+        else:
+            existsurl = "{}/{}/_search".format(OS_HOST, OS_INDEX)
+            searchquery = {
+                "query": {
+                    "match": {
+                        "full_message.es2id": es2id,
+                    },
                 },
-            },
-        }
-        resp = requests.get(existsurl, json=searchquery, verify=OS_VERIFY_SSL)
-        if resp.status_code < 200 or resp.status_code >= 300:
-            logger.error("error when querying opensearch for match, skipping. HTTP {} : {}".format(resp.status_code, resp.text))
-            continue
+            }
+            resp = requests.get(existsurl, json=searchquery, verify=OS_VERIFY_SSL)
+            if resp.status_code < 200 or resp.status_code >= 300:
+                logger.error("error when querying opensearch for match, skipping. HTTP {} : {}".format(resp.status_code, resp.text))
+                continue
 
-        respjson = resp.json()
-        totalhits = respjson.get("hits", {}).get("total", {}).get("value", -1)
-        if totalhits > 0:
-            _id = respjson["hits"]["hits"][0]["_id"]
-            logger.info("found es2id ({}) in opensearch (_id {}), skipping".format(es2id, _id))
-            continue
+            respjson = resp.json()
+            totalhits = respjson.get("hits", {}).get("total", {}).get("value", -1)
+            if totalhits > 0:
+                _id = respjson["hits"]["hits"][0]["_id"]
+                logger.info("found es2id ({}) in opensearch (_id {}), skipping".format(es2id, _id))
+                continue
 
     # the first part of the object path should be equivalent to the site_path
     site_path = "/".join(entry["_source"].get("path", "/").split("/")[0:1])
@@ -205,3 +228,10 @@ for entry in entries:
             es2id=es2id,
         )
     )
+
+    # if we've logged it, and we have a DUPCONN, we should record the es2id for the dup checker
+    DUPCUR.execute(''' INSERT INTO duplicates VALUES (?) ''', (es2id,))
+    DUPCONN.commit()
+
+if DUPCONN is not None:
+    DUPCONN.close()
