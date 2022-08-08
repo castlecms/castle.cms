@@ -39,8 +39,6 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # no need for warnings with verify=False on requests
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-logger = logging.getLogger(__name__)
-
 DEFAULT_AUDIT_LOGGER_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -86,7 +84,7 @@ if logging_config_file is not None and os.path.exists(logging_config_file):
             configdict = json.load(fin)
     except Exception:
         configdict = DEFAULT_AUDIT_LOGGER_CONFIG
-        logger.error(
+        logging.error(
             "Couldn't load configuration for auditlogger python logger, "
             "defaulting to stdout", exc_info=True)
 else:
@@ -97,7 +95,9 @@ try:
     # the config from Plone, etc
     logging.config.dictConfig(configdict)
 except Exception:
-    logger.error("failed to configure audit logger", exc_info=True)
+    logging.error("failed to configure audit logger", exc_info=True)
+
+logger = logging.getLogger("app")
 auditlogger = logging.getLogger("auditlogger")
 
 
