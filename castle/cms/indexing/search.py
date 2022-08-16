@@ -72,7 +72,7 @@ class AdditionalIndexDataProvider(object):
                 existing_searchable_text = unicode(existing_searchable_text, 'utf-8')
             data['SearchableText'] = u'%s %s' % (existing_searchable_text, u' '.join(data['searchterm_pins']))
         except UnicodeError:
-            pass
+            logger.error("unicode error when generating SearchableText", exc_info=True)
 
         try:
             data['contributors'] = list(
