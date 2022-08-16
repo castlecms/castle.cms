@@ -4,7 +4,7 @@ Changelog
 3.0.0b111 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- make sure searchabletext for additionalsearchabletext implementation is entirely generated with unicode strings
 
 
 3.0.0b110 (2022-08-08)
