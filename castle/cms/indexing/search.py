@@ -54,7 +54,7 @@ class AdditionalIndexDataProvider(object):
                 data[key + '_shares'] = value
         sdata = ISearch(self.obj, None)
         if sdata:
-            pins = sdata.searchterm_pins or []
+            pins = getattr(sdata, 'searchterm_pins', []) or []
             for i, pin in enumerate(pins):
                 if not pin:
                     continue
