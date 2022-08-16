@@ -1,11 +1,17 @@
+import logging
+
 from castle.cms.behaviors.search import ISearch
 from castle.cms.social import COUNT_ANNOTATION_KEY
+
 from wildcard.hps import mapping
 from wildcard.hps import query
 from wildcard.hps.interfaces import IAdditionalIndexDataProvider
 from plone import api
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import implements
+
+
+logger = logging.getLogger("Plone")
 
 
 class MappingAdapter(mapping.MappingAdapter):
@@ -48,15 +54,23 @@ class AdditionalIndexDataProvider(object):
                 data[key + '_shares'] = value
         sdata = ISearch(self.obj, None)
         if sdata:
-            data['searchterm_pins'] = [
-                t.lower() for t in sdata.searchterm_pins or [] if t]
+            pins = sdata.searchterm_pins or []
+            for i, pin in enumerate(pins):
+                if not pin:
+                    continue
+                p = pin.lower()
+                if type(p) != unicode:
+                    p = unicode(p, 'utf-8')
+                pins[i] = p
+            data['searchterm_pins'] = pins
         else:
             data['searchterm_pins'] = []
 
         try:
-            data['SearchableText'] = u'%s %s' % (
-                existing_data.get('SearchableText', ''),
-                u' '.join(data['searchterm_pins']))
+            existing_searchable_text = existing_data.get('SearchableText', u'')
+            if type(existing_searchable_text) != unicode:
+                existing_searchable_text = unicode(existing_searchable_text, 'utf-8')
+            data['SearchableText'] = u'%s %s' % (existing_searchable_text, u' '.join(data['searchterm_pins']))
         except UnicodeError:
             pass
 
