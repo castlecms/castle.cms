@@ -5,13 +5,14 @@ from castle.cms.browser.files.files import NamedFileDownload
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.utils import site_has_icon
 from PIL import Image
-from plone import api
+import plone.api as api
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.namedfile.file import NamedImage
 from plone.registry.interfaces import IRegistry
 from zExceptions import NotFound
 from zope.component import getUtility
 from zope.interface import implements
+
 
 
 logger = logging.getLogger('castle.cms')
@@ -134,12 +135,12 @@ class ManifestView(NamedFileDownload):
         {
             "src": "%(url)s/site-icon.png?scale=192",
             "sizes": "192x192",
-            "type": "image\/png"
+            "type": "image/png"
         },
         {
             "src": "%(url)s/site-icon.png?scale=512",
             "sizes": "512x512",
-            "type": "image\/png"
+            "type": "image/png"
         }
     ],
     "theme_color": "#ffffff",

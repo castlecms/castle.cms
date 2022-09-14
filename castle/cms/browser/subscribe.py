@@ -3,7 +3,6 @@ from castle.cms import texting
 from castle.cms.utils import send_email
 from castle.cms.utils import verify_recaptcha
 from castle.cms.widgets import ReCaptchaFieldWidget
-from plone import api
 from plone.app.users.schema import checkEmailAddress
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.directives import widget
@@ -21,7 +20,6 @@ from z3c.form import interfaces
 from z3c.form.action import ActionErrorOccurred
 from z3c.form.interfaces import WidgetActionExecutionError
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from zope import schema
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.event import notify
@@ -30,13 +28,19 @@ from zope.interface import Interface
 from zope.interface import Invalid
 
 import phonenumbers
+import plone.api as api
 import string
+import zope.schema as schema
 
 
 def check_phone_number(val):
     if not val:
         return
-    number = ''.join([l for l in val if l in string.digits])
+    number = ''.join([
+        character
+        for character in val
+        if character in string.digits
+    ])
 
     if len(number) == 10:
         number = '1' + number

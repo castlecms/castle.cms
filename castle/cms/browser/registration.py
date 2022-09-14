@@ -20,12 +20,13 @@ from z3c.form import form
 from z3c.form import interfaces
 from z3c.form.action import ActionErrorOccurred
 from z3c.form.interfaces import WidgetActionExecutionError
-from zope import schema
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import Interface
 from zope.interface import Invalid
+
+import zope.schema as schema
 
 
 class IEmailConfirmation(Interface):
@@ -196,7 +197,7 @@ You can review the request at %(url)s
 
 A new user with the email %(email)s has signed up.
 
-Please <a href="%s">review the request</a>
+Please <a href="%(url)s">review the request</a>
 
 </p>""" % {
             'url': url,

@@ -5,12 +5,12 @@ from castle.cms import linkintegrity
 from castle.cms import utils
 from castle.cms.utils import retriable
 from collective.celery import task
-from plone import api
 from Products.CMFPlone.utils import pretty_title_or_id
 from Products.CMFCore.interfaces._content import IFolderish
 from collective.celery.utils import getCelery
 
 import logging
+import plone.api as api
 import transaction
 
 
@@ -122,8 +122,7 @@ def delete_error_handle(where, op, mdatas):
 
 <p>The site has failed to delete the items.</p>
 
-<p>Please contact your administrator.</p>""" % (
-                    name, where.lstrip('/')))
+<p>Please contact your administrator.</p>""" % (name))
         except Exception:
             logger.warn('Could not send status email ', exc_info=True)
 

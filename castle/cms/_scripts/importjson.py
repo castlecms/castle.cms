@@ -4,7 +4,6 @@ from castle.cms._scripts.importtypes import get_import_type
 from lxml.html import fromstring
 from lxml.html import tostring
 from OFS.interfaces import IFolder
-import plone.api as api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.textfield.value import RichTextValue
@@ -15,6 +14,7 @@ from zope.component.hooks import setSite
 import argparse
 import logging
 import os
+import plone.api as api
 import transaction
 
 logger = logging.getLogger('castle.cms')
@@ -174,7 +174,6 @@ class CastleImporter(object):
         ('expiration_date', 'setExpirationDate'),
     ]
 
-
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
 
@@ -284,7 +283,7 @@ class CastleImporter(object):
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
-                            import pdb; pdb.set_trace()
+                            import pdb; pdb.set_trace()  # noqa: E702
                         raise
                     logger.error('Error creating content {}'
                                                 .format(filepath), exc_info=True)
@@ -319,7 +318,7 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
-                                import pdb; pdb.set_trace()
+                                import pdb; pdb.set_trace()  # noqa: E702
                             raise
 
             # set workflow / review history
@@ -336,7 +335,6 @@ class CastleImporter(object):
             obj.reindexObject()
             self.fix_dates(obj, data)
             return obj
-
 
     def fix_dates(self, obj, data):
         for key, index_function_name in self.date_functions:
@@ -358,7 +356,6 @@ class CastleImporter(object):
                         obj=obj,
                     )
                     logger.warn(warn_message)
-
 
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
@@ -396,7 +393,7 @@ class CastleImporter(object):
                                                                 exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb; pdb.set_trace()
+                        import pdb; pdb.set_trace()  # noqa: E702
                     raise
 
 #    app._p_jar.invalidateCache()  # noqa

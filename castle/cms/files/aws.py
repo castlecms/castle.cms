@@ -3,21 +3,21 @@
 from future.standard_library import install_aliases
 install_aliases()  # noqa
 
-import logging
-from datetime import datetime
-import StringIO
-from time import time
-from urllib.parse import urlsplit, urlunsplit, quote, quote_plus
+import logging  # noqa: E402
+from datetime import datetime  # noqa: E402
+import StringIO  # noqa: E402
+from time import time  # noqa: E402
+from urllib.parse import urlsplit, urlunsplit, quote, quote_plus  # noqa: E402
 
-import botocore
-import boto3
-from collective.celery.utils import getCelery
-from persistent.mapping import PersistentMapping
-from plone.namedfile.file import NamedBlobFile
-from plone.registry.interfaces import IRegistry
-from plone.uuid.interfaces import IUUID
-from zope.annotation.interfaces import IAnnotations
-from zope.component import getUtility
+import botocore  # noqa: E402
+import boto3  # noqa: E402
+from collective.celery.utils import getCelery  # noqa: E402
+from persistent.mapping import PersistentMapping  # noqa: E402
+from plone.namedfile.file import NamedBlobFile  # noqa: E402
+from plone.registry.interfaces import IRegistry  # noqa: E402
+from plone.uuid.interfaces import IUUID  # noqa: E402
+from zope.annotation.interfaces import IAnnotations  # noqa: E402
+from zope.component import getUtility  # noqa: E402
 
 
 logger = logging.getLogger('castle.cms')

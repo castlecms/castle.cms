@@ -8,7 +8,7 @@ from time import sleep
 import six
 
 import requests
-from plone import api
+import plone.api as api
 from plone.registry.interfaces import IRegistry
 from requests.exceptions import Timeout
 from requests_oauthlib import OAuth1
@@ -352,9 +352,9 @@ class Stream(object):
         if resp.raw.closed:
             self.on_closed(resp)
 
-    def _start(self, async):
+    def _start(self, async):  # noqa: W606
         self.running = True
-        if async:
+        if async:  # noqa: W606
             self._thread = Thread(target=self._run)
             self._thread.start()
         else:
@@ -370,7 +370,7 @@ class Stream(object):
                    replies=None,
                    track=None,
                    locations=None,
-                   async=False,
+                   async=False,  # noqa: W606
                    encoding='utf8'):
         self.session.params = {'delimited': 'length'}
         if self.running:
@@ -387,38 +387,38 @@ class Stream(object):
             if len(locations) % 4 != 0:
                 raise Exception("Wrong number of locations points, "
                                 "it has to be a multiple of 4")
-            self.session.params['locations'] = ','.join(['%.2f' % l for l in locations])
+            self.session.params['locations'] = ','.join(['%.2f' % location for location in locations])
         if track:
             self.session.params['track'] = u','.join(track).encode(encoding)
 
-        self._start(async)
+        self._start(async)  # noqa: W606
 
-    def firehose(self, count=None, async=False):
+    def firehose(self, count=None, async=False):  # noqa: W606
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/firehose.json' % STREAM_VERSION
         if count:
             self.url += '&count=%s' % count
-        self._start(async)
+        self._start(async)  # noqa: W606
 
-    def retweet(self, async=False):
+    def retweet(self, async=False):  # noqa: W606
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/retweet.json' % STREAM_VERSION
-        self._start(async)
+        self._start(async)  # noqa: W606
 
-    def sample(self, async=False, languages=None):
+    def sample(self, async=False, languages=None):  # noqa: W606
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/sample.json' % STREAM_VERSION
         if languages:
             self.session.params['language'] = ','.join(map(str, languages))
-        self._start(async)
+        self._start(async)  # noqa: W606
 
-    def filter(self, follow=None, track=None, async=False, locations=None,
+    def filter(self, follow=None, track=None, async=False, locations=None,  # noqa: W606
                stall_warnings=False, languages=None, encoding='utf8', filter_level=None):
         self.body = {}
         self.session.headers['Content-type'] = "application/x-www-form-urlencoded"
@@ -433,7 +433,7 @@ class Stream(object):
             if len(locations) % 4 != 0:
                 raise Exception("Wrong number of locations points, "
                                 "it has to be a multiple of 4")
-            self.body['locations'] = u','.join(['%.4f' % l for l in locations])
+            self.body['locations'] = u','.join(['%.4f' % location for location in locations])
         if stall_warnings:
             self.body['stall_warnings'] = stall_warnings
         if languages:
@@ -442,10 +442,10 @@ class Stream(object):
             self.body['filter_level'] = unicode(filter_level, encoding)
         self.session.params = {'delimited': 'length'}
         self.host = 'stream.twitter.com'
-        self._start(async)
+        self._start(async)  # noqa: W606
 
     def sitestream(self, follow, stall_warnings=False,
-                   with_='user', replies=False, async=False):
+                   with_='user', replies=False, async=False):  # noqa: W606
         self.body = {}
         if self.running:
             raise Exception('Stream object already connected!')
@@ -458,7 +458,7 @@ class Stream(object):
             self.body['with'] = with_
         if replies:
             self.body['replies'] = replies
-        self._start(async)
+        self._start(async)  # noqa: W606
 
     def disconnect(self):
         if self.running is False:

@@ -147,9 +147,13 @@ class LinksControlPanel(BrowserView):
 
     def get_broken(self):
         offset = self.page * self.page_size
-        items = [l[0] for l in self.get_broken_query().order_by(
-                 Url.last_checked_date.desc()).offset(offset).limit(self.page_size)]
+        broken_links = (
+            self.get_broken_query()
+            .order_by(Url.last_checked_date.desc())
+            .offset(offset)
+            .limit(self.page_size)
+        )
         return {
-            'items': items,
+            'items': [broken_link[0] for broken_link in broken_links],
             'total': self.broken_count
         }
