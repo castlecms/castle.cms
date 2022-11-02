@@ -4,7 +4,7 @@ Changelog
 3.0.0b113 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Allow expired results in querylisting
 
 
 3.0.0b112 (2022-11-02)
