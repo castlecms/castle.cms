@@ -4,7 +4,10 @@ Changelog
 3.0.0b112 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- move HISTORY.rst to CHANGES.md
+- re-add dependency on collective.elasticsearch for use of IElasticSearchLayer in case
+  a site has collective.elasticsearch installed as an add-on, ensuring, eg, that the 'search'
+  view remains correctly overridden
 
 
 3.0.0b111 (2022-08-16)

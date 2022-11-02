@@ -17,7 +17,7 @@ setup(
     version='3.0.0b112.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
-        read('HISTORY.rst')
+        read('CHANGES.md')
     ),
     keywords="plone cms castle",
     classifiers=[
@@ -65,6 +65,10 @@ setup(
         'collective.documentviewer>=5.0.4',
         'wildcard.hps>=1.2.0',
         'collective.celery>=1.1.4',
+
+        # the use of collective.elasticsearch in the 3.x+ version of castle.cms
+        # is limited and should not be relied on.
+        'collective.elasticsearch>=4.0.0<5.0.0',
 
         # python
         'boto3>=1.9.222',
