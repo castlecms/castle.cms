@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.14.3 (unreleased)
+2.15.0 (2022-11-02)
 -------------------
 
 - Allow expired results in querylisting
