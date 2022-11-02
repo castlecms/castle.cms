@@ -4,7 +4,7 @@ Changelog
 2.14.3 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Allow expired results in querylisting
 
 
 2.14.2 (2022-08-02)
