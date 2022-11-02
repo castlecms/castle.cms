@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b112 (unreleased)
+3.0.0b112 (2022-11-02)
 ----------------------
 
 - move HISTORY.rst to CHANGES.md
