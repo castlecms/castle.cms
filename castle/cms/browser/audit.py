@@ -88,7 +88,7 @@ class AuditView(BrowserView):
 
     @property
     def can_connect_to_index(self):
-        if not hps_is_enabled():
+        if not hps_is_enabled(foraudit=True):
             return False
 
         return health_is_good(foraudit=True)

@@ -4,7 +4,7 @@ Changelog
 3.0.0b116 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- health check for audit log fix
 
 
 3.0.0b115 (2022-11-04)

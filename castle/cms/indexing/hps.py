@@ -41,8 +41,8 @@ def get_bulk_size():
     return hpscat.get_setting("bulk_size", 50)
 
 
-def is_enabled():
-    hpscat = get_catalog()
+def is_enabled(foraudit=False):
+    hpscat = get_catalog(foraudit=foraudit)
     return hpscat.enabled
 
 
