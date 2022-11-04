@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b114 (unreleased)
+3.0.0b114 (2022-11-04)
 ----------------------
 
 - update wildcard.hps to min 1.4.0 for custom env prefix for opensearch settings
