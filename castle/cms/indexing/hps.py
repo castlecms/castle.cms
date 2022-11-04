@@ -17,14 +17,17 @@ from zope.component import getUtility
 logger = logging.getLogger("Plone")
 
 
-def get_catalog():
+def get_catalog(foraudit=False):
     catalog = api.portal.get_tool('portal_catalog')
-    hps = WildcardHPSCatalog(catalog)
+    if foraudit:
+        hps = WildcardHPSCatalog(catalog)
+    else:
+        hps = WildcardHPSCatalog(catalog, envprefix='AUDIT_OPENSEARCH_')
     return hps
 
 
-def get_connection():
-    hpscat = get_catalog()
+def get_connection(foraudit=False):
+    hpscat = get_catalog(foraudit=foraudit)
     return hpscat.connection
 
 
@@ -43,8 +46,8 @@ def is_enabled():
     return hpscat.enabled
 
 
-def health_is_good():
-    conn = get_connection()
+def health_is_good(foraudit=False):
+    conn = get_connection(foraudit=foraudit)
     try:
         return conn.cluster.health()['status'] in ('green', 'yellow')
     except Exception:
@@ -57,8 +60,8 @@ def hps_get_number_of_matches(index_name, query):
     return results.get('count', -1)
 
 
-def hps_get_data(index_name, query, **kwargs):
-    conn = get_connection()
+def hps_get_data(index_name, query, foraudit=True, **kwargs):
+    conn = get_connection(foraudit=foraudit)
     results = conn.search(index=index_name, body=query, **kwargs)
     try:
         data = results['hits']['hits']

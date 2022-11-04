@@ -15,6 +15,14 @@ CASTLE_CMS_AUDIT_LOG_INDEXNAME
 # an attribute like 'full_message' in the _source results
 CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX
 
+# opensearch connections are made using the WildcardHPSCatalog object,
+# ultimately, but do not necessarily sit on the same instance of opensearch,
+# and therefore the connection settings used for the audit log have a
+# different prefix, which is AUDIT_OPENSEARCH_ instead of just OPENSEARCH_
+#
+# see wildcard.hps.opensearch for the details of the connection settings
+AUDIT_OPENSEARCH_*
+
 """
 import csv
 from cStringIO import StringIO
@@ -83,7 +91,7 @@ class AuditView(BrowserView):
         if not hps_is_enabled():
             return False
 
-        return health_is_good()
+        return health_is_good(foraudit=True)
 
     def get_obj(self, uid):
         return uuidToObject(uid)
@@ -130,7 +138,7 @@ class AuditView(BrowserView):
         if data is None:
             index_name = audit.get_index_name()
             query = self.get_query()
-            data, _, _ = hps_get_data(index_name, query, size=3000)
+            data, _, _ = hps_get_data(index_name, query, foraudit=True, size=3000)
 
         output = StringIO()
         writer = csv.writer(output)
@@ -160,7 +168,7 @@ class AuditView(BrowserView):
             page = 1
         start = (page - 1) * self.limit
 
-        results = hps_get_data(index_name, query, from_=start, size=self.limit)
+        results = hps_get_data(index_name, query, foraudit=True, from_=start, size=self.limit)
 
         # process results into something a little less complex to handle within the template
         finalresults = []

@@ -63,7 +63,7 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.4',
-        'wildcard.hps>=1.2.0',
+        'wildcard.hps>=1.4.0',
         'collective.celery>=1.1.4',
 
         # the use of collective.elasticsearch in the 3.x+ version of castle.cms

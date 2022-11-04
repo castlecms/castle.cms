@@ -4,7 +4,11 @@ Changelog
 3.0.0b114 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- update wildcard.hps to min 1.4.0 for custom env prefix for opensearch settings
+  in wildcard.hps.opensearch.WildcardHPSCatalog usage
+- update audit browser to use custom prefix so that audit log entries can be
+  queried from a separate opensearch instance as the generally used instance
+  for site search operations
 
 
 3.0.0b113 (2022-11-02)
