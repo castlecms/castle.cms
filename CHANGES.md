@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b116 (unreleased)
+3.0.0b116 (2022-11-04)
 ----------------------
 
 - health check for audit log fix
