@@ -4,7 +4,7 @@ Changelog
 3.0.0b115 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- fix some logic in envprefix selection for hps config
 
 
 3.0.0b114 (2022-11-04)

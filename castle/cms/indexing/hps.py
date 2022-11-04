@@ -19,7 +19,7 @@ logger = logging.getLogger("Plone")
 
 def get_catalog(foraudit=False):
     catalog = api.portal.get_tool('portal_catalog')
-    if foraudit:
+    if not foraudit:
         hps = WildcardHPSCatalog(catalog)
     else:
         hps = WildcardHPSCatalog(catalog, envprefix='AUDIT_OPENSEARCH_')
@@ -60,7 +60,7 @@ def hps_get_number_of_matches(index_name, query):
     return results.get('count', -1)
 
 
-def hps_get_data(index_name, query, foraudit=True, **kwargs):
+def hps_get_data(index_name, query, foraudit=False, **kwargs):
     conn = get_connection(foraudit=foraudit)
     results = conn.search(index=index_name, body=query, **kwargs)
     try:
