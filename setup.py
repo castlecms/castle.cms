@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='2.5.17.dev0',
+    version='2.15.1.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('HISTORY.rst')
@@ -59,7 +59,7 @@ setup(
         'plone.api',
 
         # castle
-        'castle.theme>=1.0.4',
+        'castle.theme>=1.0.6',
 
         # add-ons
         'collective.documentviewer>=5.0.4',
@@ -69,7 +69,6 @@ setup(
         # python
         'boto3>=1.9.222',
         'google-api-python-client>=1.4.2<2',
-        'redis>=2.10.3<3',
         'requests>=2.7.0<3',
         'requests_oauthlib>=0.5.0<1',
         'oauth2client>=1.5.1<2',
@@ -130,6 +129,7 @@ setup(
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
+      report-users = castle.cms._scripts.report_users:setup_and_run
       """,
     include_package_data=True,
     zip_safe=False,

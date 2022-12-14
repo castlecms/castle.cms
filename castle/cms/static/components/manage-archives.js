@@ -305,7 +305,7 @@ require([
       return D.div({}, [
         that.renderButtons(),
         that.renderTable(),
-        that.renderSelected()
+        that.renderSelected(),
       ]);
     }
   });

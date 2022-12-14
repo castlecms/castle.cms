@@ -12,6 +12,7 @@ from collective.elasticsearch.es import ElasticSearchCatalog
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from collective.elasticsearch.interfaces import IElasticSettings
+from fnmatch import fnmatch
 from plone import api
 from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login,
                                setRoles)
@@ -19,7 +20,6 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
-
 logger = logging.getLogger(__name__)
 
 
@@ -35,7 +35,7 @@ if 'ES_HOST' in os.environ:
         resp = requests.get(url)
         data = resp.json()
         version = data['version']['number']
-        if version in ('2.3.2', '2.3.3', '2.3.5'):
+        if fnmatch(version, '2.3.?') or fnmatch(version, '2.4.?'):
             ES_ENABLED = True
         else:
             logger.warning('Unsupported ES version: {}'.format(version))
@@ -53,50 +53,75 @@ if ES_ENABLED:
             self.request = self.layer['request']
             login(self.portal, TEST_USER_NAME)
             setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
-            registry = getUtility(IRegistry)
-            settings = registry.forInterface(IElasticSettings)
-            settings.enabled = True
-            settings.sniffer_timeout = None
-            catalog = getToolByName(self.portal, 'portal_catalog')
-            catalog._elasticcustomindex = 'plone-test-index'
-            es = ElasticSearchCatalog(catalog)
-            es.recreateCatalog()
-            catalog.manage_catalogRebuild()
-            transaction.commit()
 
-            # have to do commit for es integration...
-            folder = api.content.create(
+            transaction.begin()
+            self.folder = api.content.create(
                 type='Folder',
                 id='esfolder1',
                 container=self.portal,
                 title='Foobar folder')
-            api.content.create(
+            self.folder2 = api.content.create(
+                type='Folder',
+                id='esfolder2',
+                container=self.folder,
+                title='Foobar subfolder')
+            self.esdoc1 = api.content.create(
                 type='Document',
                 id='esdoc1',
-                container=folder,
+                container=self.folder,
                 title='Foobar one')
-            doc = api.content.create(
+            self.esdoc2 = api.content.create(
                 type='Document',
                 id='esdoc2',
-                container=folder,
+                container=self.folder,
                 subject=('foobar',),
                 title='Foobar two')
-            api.content.create(
+            self.esdoc3 = api.content.create(
                 type='Document',
                 id='esdoc3',
-                container=folder,
+                container=self.folder,
                 title='Foobar three')
-
-            ann = IAnnotations(doc)
+            self.esdoc4 = api.content.create(
+                type='Document',
+                id='esdoc4',
+                container=self.folder,
+                title='Foobar four')
+            self.esdoc5 = api.content.create(
+                type='Document',
+                id='esdoc5',
+                container=self.folder2,
+                title='Foobar five')
+            self.esdoc6 = api.content.create(
+                type='Document',
+                id='esdoc6',
+                container=self.folder,
+                title='Foobar six',
+                exclude_from_search=True)
+            ann = IAnnotations(self.esdoc2)
             ann[COUNT_ANNOTATION_KEY] = {
                 'twitter_matomo': 5,
                 'facebook': 5,
             }
-            doc.reindexObject()
+            for item in [self.folder, self.esdoc1, self.esdoc2, self.esdoc3, self.esdoc5]:
+                api.content.transition(obj=item, to_state='published')
+                item.reindexObject()
+
+            self._es_update()
             transaction.commit()
 
             url = 'http://{}:9200/plone-test-index/_flush'.format(host)
             requests.post(url)
+
+        def _es_update(self):
+            registry = getUtility(IRegistry)
+            settings = registry.forInterface(IElasticSettings)
+            settings.enabled = True
+            settings.sniffer_timeout = 1.0
+            self.catalog = getToolByName(self.portal, 'portal_catalog')
+            self.catalog._elasticcustomindex = 'plone-test-index'
+            self.es = ElasticSearchCatalog(self.catalog)
+            self.es.recreateCatalog()
+            self.catalog.manage_catalogRebuild()
 
         def tearDown(self):
             transaction.begin()
@@ -141,6 +166,19 @@ if ES_ENABLED:
             })
             self.assertTrue(tile.filter_pattern_config != '{}')
             tile()
+
+        def test_ajax_search_with_private_parents(self):
+            self.request.form.update({
+                'SearchableText': 'Foobar',
+                # 'Subject': 'foobar'
+            })
+            view_1 = SearchAjax(self.portal, self.request)
+            result_1 = json.loads(view_1())
+            self.assertEqual(result_1['count'], 4)
+            api.portal.set_registry_record('plone.allow_public_in_private_container', True)
+            view_2 = SearchAjax(self.portal, self.request)
+            result_2 = json.loads(view_2())
+            self.assertEqual(result_2['count'], 5)
 
 else:
     class TestEmptyES(unittest.TestCase):

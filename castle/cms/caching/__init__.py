@@ -3,6 +3,7 @@ from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
 from . import cloudflare
 from App.config import getConfiguration
+from castle.cms.events import CacheInvalidatedEvent
 from castle.cms.linkintegrity import get_content_links
 from plone import api
 from plone.app.imaging.utils import getAllowedSizes
@@ -17,6 +18,7 @@ from Products.CMFPlone.defaultpage import get_default_page
 from Products.Five import BrowserView
 from z3c.caching.interfaces import IPurgeEvent
 from z3c.caching.interfaces import IPurgePaths
+from zope.event import notify
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import adapts
@@ -252,6 +254,7 @@ class Purge(BrowserView):
             self.cf_enabled = True
             resp = CastlePurger.purgeSync(urls, cf)
             success = resp.json()['success']
+            notify(CacheInvalidatedEvent(self))
 
         nice_paths = []
         for path in paths:
@@ -259,7 +262,7 @@ class Purge(BrowserView):
                 path = path.split('VirtualHostRoot')[-1]
             else:
                 path = path[len(site_path):]
-            nice_paths.append(path)
+            nice_paths.append(path.decode('utf-8'))
 
         return nice_paths, success
 

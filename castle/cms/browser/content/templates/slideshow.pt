@@ -1,0 +1,260 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US" 
+  xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+    <head>
+      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/reset.css" />
+      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.css" />
+      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/theme/black.css" />
+      <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
+      <!-- Flexbox Grid -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
+      <script type="module" src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"/>
+    </head>
+    <body>
+      <div class="reveal">
+        <tal:defs tal:define="slides view/get_slides|nothing;">
+          <div class="slides" id="${view/get_id|nothing}" tal:condition="nocall: slides">
+            <tal:item tal:repeat="slide slides">
+              <tal:definitions tal:define="video  python: slide.get('video', None);
+                                  image  python: slide.get('image', None);
+                                  vert  python: slide.get('vert', None);
+                                  hor  python: slide.get('hor', None);
+                                  title  python: slide.get('title', None);
+                                  textlines  python: view.get_textlines(slide);
+                                  has_title_and_text  python: slide.get('title', None) and bool(slide.get('text', None));
+                                  text_alignment  python: slide.get('text_alignment', 'center');
+                                  justify_wrap_class  python: slide.get('justify_wrap_class', '');
+                                  related_resources  python: slide.get('related_resources', None);
+                                  width_class  python: slide.get('width_class', '');">
+
+                <!-- Full Background Video Slide -->
+                <tal:container tal:condition="python: slide['displayType'] == 'background-video'">
+                  <section class="background-video-slide background-slide" data-background-video="${video}" data-background-color="#000000"
+                  data-background-video-loop
+                  data-background-video-muted data-transition="fade">
+                    <div class="row vert-${vert}-xs">
+                      <div class="col col-xs-12 box-row">
+                        <div class="background-video-text-container text-container vert-${vert} hor-${hor}">
+                          <div class="radial-background-container ${width_class}">
+                            <div class="text-section align-${text_alignment}">
+                              <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                              <div tal:condition="has_title_and_text" class="title-text-separator"></div>
+                              <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
+                                <tal:textline tal:repeat="textline textlines">
+                                ${textline}
+                                  <br tal:condition="not:repeat/textline/end"/>
+                                </tal:textline>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </tal:container>
+
+                <!-- Full Background Image Slide -->
+                <tal:container tal:condition="python: slide['displayType'] == 'background-image'">
+                  <section tal:condition="image" class="background-image-slide background-slide" data-background="${image}" data-transition="fade">
+                    <div class="row vert-${vert}-xs">
+                      <div class="col col-xs-12 box-row">
+                        <div class="background-image-text-container text-container vert-${vert} hor-${hor}">
+                          <div class="radial-background-container ${width_class}">
+                            <div class="text-section align-${text_alignment}">
+                              <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                              <div tal:condition="has_title_and_text" class="title-text-separator"></div>
+                              <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
+                                <tal:textline tal:repeat="textline textlines">
+                                  <span>${textline}</span>
+                                </tal:textline>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div tal:condition="not: image">
+                    Image slide with no image selected.
+                    </div>
+                  </section>
+                </tal:container>
+
+                <tal:definitions tal:define="mobile_options  python: view.get_left_slide_mobile_options(slide);
+                                    mobile_vert  python: mobile_options.get('mobile_vert', 'default');
+                                    mobile_hor  python: mobile_options.get('mobile_hor', 'default');
+                                    mobile_alignment  python: mobile_options.get('mobile_alignment', 'default');">
+
+                  <!-- Left Video w/ Right Text Slide-->
+                  <tal:container tal:condition="python: slide['displayType'] == 'left-video-right-text'">
+                    <section class="left-video-slide left-slide">
+                      <div class="row vert-${vert}-xs">
+                        <div class="col col-xs-12 col-md-6 video-container">
+                          <video data-autoplay muted loop playsinline>
+<source src="${video}"/>
+                        </video>
+                      </div>
+                      <div class="col col-md-6 text-container
+                                  vert-${vert} hor-${hor}
+                                  mobile-vert-${mobile_vert} mobile-hor-${mobile_hor}">
+                        <div class="radial-background-container ${width_class}">
+                          <div class="text-section align-${text_alignment} mobile-align-${mobile_alignment}">
+                            <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                            <div tal:condition="has_title_and_text" class="title-text-separator"></div>
+                            <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
+                              <tal:textline tal:repeat="textline textlines">
+                                ${textline}
+                                <br tal:condition="not:repeat/textline/end"/>
+                              </tal:textline>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </tal:container>
+
+
+                <!-- Left Image w/ Right Text Slide -->
+                <tal:container tal:condition="python: slide['displayType'] == 'left-image-right-text'">
+                  <section class="left-image-slide left-slide">
+                    <div class="row">
+                      <div class="col col-xs-12 col-md-6 image-container" style="height:100%; background: url('${image}'); background-size:cover; background-position: center;">
+                      </div>
+                      <div class="col col-md-6 text-container
+                                  vert-${vert} hor-${hor}
+                                  mobile-vert-${mobile_vert} mobile-hor-${mobile_hor}">
+                        <div class="radial-background-container ${width_class}">
+
+                          <div class="text-section align-${text_alignment} mobile-align-${mobile_alignment}">
+                            <h2 tal:condition="title" class="slide-title">${python: slide['title']}</h2>
+                            <div tal:condition="has_title_and_text" class="title-text-separator"></div>
+                            <p tal:condition="textlines" class="slide-text ${justify_wrap_class}">
+                              <tal:textline tal:repeat="textline textlines">
+                              ${textline}
+                                <br tal:condition="not:repeat/textline/end"/>
+                              </tal:textline>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </tal:container>
+              </tal:definitions>
+
+              <!-- Resource Slide -->
+              <tal:container tal:condition="python: slide['displayType'] == 'resource-slide'">
+                <section class="resource-slide" data-transition="fade">
+
+                  <div class="resource-slide-container">
+                    <div class="resource-slide-content">
+
+                      <div class="top-content">
+                        <div class="return-to-text">
+                          <p tal:condition="view/get_domain">
+                        Close slideshow and return to
+                            <a href="#" onclick="goBack()">previous page on ${view/get_domain}</a>
+                          </p>
+                        </div>
+                        <p class="see-also-text">
+                      See also:
+                        </p>
+                      </div>
+                      <!-- List Item -->
+                      <tal:item tal:repeat="resource related_resources">
+                        <div class="resource-slide-item">
+                          <div class="resource-slide-item-image-container">
+                            <!-- Lead Image -->
+                            <img src="${resource/absolute_url}/@@images/image/preview" class="resource-slide-image"/>
+                          </div>
+                          <div class="resource-slide-item-content-container">
+                            <!-- Slideshow Title -->
+                            <p class="title">
+                              <a href="${python: view.get_resource_view_url(resource)}">${resource/Title}</a>
+                            </p>
+                            <!-- Slideshow Date -->
+                            <p>
+                            ${python: resource.effective_date.strftime('%B %e, %Y')}
+                            </p>
+                            <!-- Summary/Description -->
+                            <p class="description">
+                            ${resource/Description}
+                            </p>
+                            <p class="view-more">
+                              <a href="${python: view.get_resource_view_url(resource)}">View</a>
+                            </p>
+                          </div>
+                        </div>
+                      </tal:item>
+                      <div tal:condition="view/display_view_more_link">
+                        <div class="col col-xs-12">
+                          <p class="view-more">
+                            <a href="${view/get_view_more_link_url}">${view/get_view_more_link_text}</a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </section>
+              </tal:container>
+
+            </tal:definitions>
+          </tal:item>
+        </div>
+      </tal:defs>
+    </div>
+    <div id="close-container" class="close-container" onclick="goBack()">
+      <div class="x-container">
+        <div class="leftright"></div>
+        <div class="rightleft"></div>
+      </div>
+      <div class="close-text-container">
+        <label class="close">close</label>
+      </div>
+    </div>
+    <script src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"></script>
+    <script src="${context/portal_url}/++plone++castle/libs/revealjs/plugin/markdown/markdown.js"></script>
+    <script src="${context/portal_url}/++plone++castle/libs/revealjs/plugin/highlight/highlight.js"></script>
+    <script>
+      function goBack(){
+        window.history.back();
+      }
+
+      const closeContainer = document.getElementById('close-container');
+      const resourceSlide = document.querySelectorAll('.resource-slide')[0];
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (mutation.attributeName === "class") {
+            var classList = mutation.target.classList;
+            closeContainer.style.transition = 'opacity .7s linear'
+            if(classList.value.includes('present')){
+              closeContainer.style.opacity = 0; setTimeout(()=>{closeContainer.style.visibility = 'hidden'}, 700);
+            } else {
+              closeContainer.style.visibility = 'visible';
+              closeContainer.style.opacity = 1;
+            }
+          }
+        });
+      });
+      if(resourceSlide) {
+        observer.observe(resourceSlide, {attributes: true});
+      }
+
+      Reveal.initialize({
+        plugins: [ RevealMarkdown, RevealHighlight ],
+        width: "100%",
+        height: "100%",
+        margin: 0,
+        minScale: 1,
+        maxScale: 1,
+        transitionSpeed: "default", // default/fast/slow
+        transition: "fade", // none/fade/slide/convex/concave/zoom
+      });
+
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependenciess
+    </script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<object name="portal_catalog" meta_type="Plone Catalog Tool">
+    <index name="exclude_from_search" meta_type="BooleanIndex">
+        <indexed_attr value="exclude_from_search"/>
+    </index>
+
+ <column value="exclude_from_search"/>
+</object>

@@ -38,7 +38,7 @@
     <value key="enabled">True</value>
     <value key="jscompilation">++plone++castle/plone-compiled.min.js</value>
     <value key="csscompilation">++plone++castle/plone-compiled.css</value>
-    <value key="last_compilation">2015-05-02 00:00:00</value>
+    <value key="last_compilation">2021-12-01 00:00:00</value>
     <value key="stub_js_modules">
       <element>jquery</element>
     </value>
@@ -53,7 +53,7 @@
     <value key="expression">python: member is not None</value>
     <value key="jscompilation">++plone++castle/plone-logged-in-compiled.min.js</value>
     <value key="csscompilation">++plone++castle/plone-logged-in-compiled.css</value>
-    <value key="last_compilation">2015-05-07 00:00:00</value>
+    <value key="last_compilation">2021-12-01 00:00:00</value>
     <value key="depends">mosaic</value>
     <value key="stub_js_modules">
       <element>backbone</element>
@@ -121,6 +121,97 @@
       </value>
   </records>
 
+  <!-- to override mockup's implementation of the 'structure' pattern so
+       that we can add an 'all' button and fix endless next paging -->
+  <records prefix="plone.resources/mockup-patterns-structure"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/structure.js</value>
+  </records>
+  <records prefix="plone.resources/mockup-patterns-structure-url"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/structure/</value>
+  </records>
+  <!-- needed to redefine -->
+  <records prefix="plone"
+          interface="Products.ResourceRegistries.interfaces.settings.IResourceRegistriesSettings">
+    <value key="lessvariables" purge="False">
+      <element key="barcelonetaPath">\"{site_url}/++theme++barceloneta/\"</element>
+    </value>
+  </records>
+
+  <records prefix="plone.resources/add-content-modal"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/add-content-modal.js</value>
+  </records>
+
+  <!-- depends on plone -->
+
+  <!-- castle-components-search -->
+  <records prefix="plone.resources/castle-components-search"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/search.js</value>
+      <value key="css">
+        <element>++plone++castle/less/misc/search.css</element>
+      </value>
+      <value key="deps">plone</value>
+  </records>
+
+
+  <!-- depends on plone-logged-in -->
+
+
+  <!-- castle-components-tag-manager -->
+  <records prefix="plone.resources/castle-components-tag-manager"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/tag-manager.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-usersgroups -->
+  <records prefix="plone.resources/castle-components-usersgroups"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/usersgroups.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-audit -->
+  <records prefix="plone.resources/castle-components-audit"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/audit.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-archives-manage -->
+  <records prefix="plone.resources/castle-components-manage-archives"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/manage-archives.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-archives-review -->
+  <records prefix="plone.resources/castle-components-review-archives"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/review-archives.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-history -->
+  <records prefix="plone.resources/castle-components-history"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/history.js</value>
+      <value key="css">
+        <element>++plone++castle/less/misc/history.css</element>
+      </value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-slide -->
+  <records prefix="plone.resources/castle-components-slide"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">++plone++castle/components/slide.js</value>
+    <value key="deps">plone-logged-in</value>
+  </records>
+
   <!-- need to override tinymce pattern... -->
   <records prefix="plone.resources/mockup-patterns-tinymce"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
@@ -133,6 +224,14 @@
   <records prefix="plone.resources/mockup-patterns-tinymce-original"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++resource++mockup/tinymce/pattern.js</value>
+  </records>
+  <records prefix="plone.resources/mockup-patterns-tinymce-logged-out"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/tinymce/anonymouspattern.js</value>
+      <value key="url">++plone++castle/patterns/tinymce</value>
+      <value key="css">
+        <element>++plone++castle/patterns/tinymce/less/pattern.tinymce.less</element>
+      </value>
   </records>
 
   <records prefix="plone.resources/castle-dashboard-welcome"
@@ -167,4 +266,5 @@
       }</element>
     </value>
   </record>
-</registry>
+
+ </registry>

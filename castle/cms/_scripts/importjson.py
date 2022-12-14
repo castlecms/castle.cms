@@ -4,7 +4,7 @@ from castle.cms._scripts.importtypes import get_import_type
 from lxml.html import fromstring
 from lxml.html import tostring
 from OFS.interfaces import IFolder
-from plone import api
+import plone.api as api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.textfield.value import RichTextValue
@@ -16,7 +16,6 @@ import argparse
 import logging
 import os
 import transaction
-import pdb
 
 logger = logging.getLogger('castle.cms')
 
@@ -169,6 +168,12 @@ def fix_html_images(obj):
 
 class CastleImporter(object):
     imported_count = 0
+    date_functions = [
+        ('modification_date', 'setModificationDate'),
+        ('effective_date', 'setEffectiveDate'),
+        ('expiration_date', 'setExpirationDate'),
+    ]
+
 
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
@@ -279,7 +284,7 @@ class CastleImporter(object):
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
-                            pdb.set_trace()
+                            import pdb; pdb.set_trace()
                         raise
                     logger.error('Error creating content {}'
                                                 .format(filepath), exc_info=True)
@@ -314,7 +319,7 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
-                                pdb.set_trace()
+                                import pdb; pdb.set_trace()
                             raise
 
             # set workflow / review history
@@ -329,15 +334,31 @@ class CastleImporter(object):
 
             fix_html_images(obj)
             obj.reindexObject()
-            try:
-                modification_date = data['data']['modification_date']
-                obj.setModificationDate(modification_date)
-                obj.reindexObject(idxs=['modified'])
-                logger.info('    set modification date to %s' % modification_date)
-            except Exception:
-                logger.info('Could not set modification date on {obj}'
-                                                                .format(obj=obj))
+            self.fix_dates(obj, data)
             return obj
+
+
+    def fix_dates(self, obj, data):
+        for key, index_function_name in self.date_functions:
+            indexed_date = data['data'].get(key, None)
+            indexer = getattr(obj, index_function_name, None)
+            if indexed_date and indexer:
+                formatted_attribute = key.replace('_', ' ')
+                try:
+                    indexer(indexed_date)
+                    obj.reindexObject([key])
+                    info_message = '    set {attribute} to {date}'.format(
+                        attribute=formatted_attribute,
+                        date=indexed_date,
+                    )
+                    logger.info(info_message)
+                except Exception:
+                    warn_message = 'Could not set {attribute} on {obj}'.format(
+                        attribute=formatted_attribute,
+                        obj=obj,
+                    )
+                    logger.warn(warn_message)
+
 
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
@@ -375,7 +396,7 @@ class CastleImporter(object):
                                                                 exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        pdb.set_trace()
+                        import pdb; pdb.set_trace()
                     raise
 
 #    app._p_jar.invalidateCache()  # noqa

@@ -1,15 +1,18 @@
 import logging
 
-import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from castle.cms.cron.utils import setup_site
 from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.hook import index_batch
+from collective.elasticsearch.interfaces import IMappingProvider
 from collective.elasticsearch.interfaces import IReindexActive
+from elasticsearch import Elasticsearch
 from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
+import transaction
+from zope.component import getMultiAdapter
 from zope.globalrequest import getRequest
 from zope.interface import alsoProvides
 
@@ -81,6 +84,7 @@ def index_site(site):
             site._p_jar.sync()  # noqa
             index = {}
     index_batch([], index, [], es)
+    logger.info('finished indexing {}'.format(count))
 
     remove = []
     for uid in ids:

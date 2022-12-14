@@ -10,6 +10,8 @@ from zope.component.hooks import getSite
 from zope.interface import implements
 from zope.security import checkPermission
 from castle.cms.tiles.views import getTileView
+from castle.cms.behaviors.adjustablefont import IAdjustableFontSizeQueryListing
+from castle.cms.behaviors.adjustablefont import get_inline_style
 
 import json
 import logging
@@ -31,6 +33,13 @@ class BaseTile(Tile):
     edit_label = 'Tile'
     edit_permission = 'cmf.ModifyPortalContent'
     wrap = True
+    font_sizes = {}
+    adjustable_font_behaviors = [
+        {
+            'interface': IAdjustableFontSizeQueryListing,
+            'tile_type': 'query_listing',
+        }
+    ]
 
     def get_focal_point(self):
         focal = self.data.get('override_focal_point')
@@ -114,6 +123,9 @@ class BaseTile(Tile):
 
     def __call__(self):
         self.request.response.setHeader('X-Theme-Disabled', '1')
+        for behavior in self.adjustable_font_behaviors:
+            if behavior['interface'].providedBy(self.context):
+                self.font_sizes[behavior['tile_type']] = get_inline_style(self.context, behavior['tile_type'])
         try:
             res = self.render()
             if self.global_editable and checkPermission('cmf.ModifyPortalContent', self.context):
@@ -208,6 +220,8 @@ class BaseImagesTile(ContentTile):
     sort_limit = 0
 
     def get_image_data_from_brain(self, brain):
+        if brain.has_custom_markup:
+            return self.get_image_data(brain.getObject())
         base_url = brain.getURL()
         return {
             'high': '%s/@@images/image/high' % base_url,
@@ -217,7 +231,8 @@ class BaseImagesTile(ContentTile):
             'original': base_url,
             'title': brain.Title,
             'description': brain.Description or '',
-            'link': '%s/view' % base_url
+            'link': '%s/view' % base_url,
+            'custom_markup': False
         }
 
     def get_image_data(self, im):
@@ -231,7 +246,8 @@ class BaseImagesTile(ContentTile):
             'original': base_url,
             'title': im.Title(),
             'description': im.Description() or '',
-            'link': '%s/view' % related.absolute_url()
+            'link': '%s/view' % related.absolute_url(),
+            'custom_markup': im.custom_markup
         }
 
     def get_images_in_folder(self, brain):

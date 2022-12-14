@@ -76,7 +76,7 @@ def onUserLogsIn(event):
 @adapter(IPubAfterTraversal)
 def afterTraversal(event):
     """
-    check it should be blocked by lockout
+    check if it should be blocked by lockout
     """
     request = event.request
     if not ICastleLayer.providedBy(request):
@@ -92,12 +92,15 @@ def afterTraversal(event):
 
     context = get_context_from_request(request)
 
-    # make sure content in private folders remains private
     if api.user.is_anonymous():
         if hasattr(context, 'UID'):
-            brain = api.portal.get_tool('portal_catalog')(UID=context.UID())[0]
-            if getattr(brain, 'has_private_parents', False):
-                raise NotFound
+            if not api.portal.get_registry_record('plone.allow_public_in_private_container', default=False):
+                try:
+                    brain = api.portal.get_tool('portal_catalog')(UID=context.UID())[0]
+                    if getattr(brain, 'has_private_parents', False):
+                        raise NotFound
+                except IndexError:
+                    pass  # brain 0 was not found by its UID
 
     cache_tags = set([
         getattr(context, 'portal_type', '').lower().replace(' ', '-'),

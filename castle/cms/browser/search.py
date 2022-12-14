@@ -6,6 +6,7 @@ from DateTime import DateTime
 from elasticsearch import TransportError
 from plone import api
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.resources import add_resource_on_request
 from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.Five import BrowserView
 from urlparse import urljoin
@@ -36,12 +37,16 @@ def _one(val):
 
 
 class Search(BrowserView):
+    def __call__(self):
+        # utility function to add resource to rendered page
+        add_resource_on_request(self.request, 'castle-components-search')
+        return super(Search, self).__call__()
 
     @property
     def options(self):
         search_types = [{
             'id': 'images',
-            'label': 'Images',
+            'label': 'Image',
             'query': {
                 'portal_type': 'Image'
             }
@@ -54,11 +59,12 @@ class Search(BrowserView):
         }]
 
         ptypes = api.portal.get_tool('portal_types')
+        allow_anyway = ['Audio']
         for type_id in ptypes.objectIds():
             if type_id in ('Link', 'Document', 'Folder'):
                 continue
             _type = ptypes[type_id]
-            if not _type.global_allow:
+            if not _type.global_allow and type_id not in allow_anyway:
                 continue
             search_types.append({
                 'id': type_id.lower(),
@@ -67,19 +73,14 @@ class Search(BrowserView):
                     'portal_type': type_id
                 }
             })
-        search_types.extend([{
-            'id': 'video',
-            'label': 'Video',
-            'query': {
-                'portal_type': 'Video'
-            }
-        }, {
-            'id': 'audio',
-            'label': 'Audio',
-            'query': {
-                'portal_type': 'Audio'
-            }
-        }])
+        # search_types.append({
+        #     'id': 'audio',
+        #     'label': 'Audio',
+        #     'query': {
+        #         'portal_type': 'Audio'
+        #     }
+        # })
+        # search_types.sort(key=lambda type: type['label'])
 
         additional_sites = []
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
@@ -108,11 +109,11 @@ class Search(BrowserView):
                 pass
 
         parsed = urlparse(get_public_url())
-
         return json.dumps({
-            'searchTypes': search_types,
-            'additionalSites': [s for s in sorted(additional_sites)],
-            'currentSiteLabel': parsed.netloc
+            'searchTypes': sorted(search_types, key=lambda st: st['label']),
+            'additionalSites': sorted(additional_sites),
+            'currentSiteLabel': parsed.netloc,
+            'searchHelpText': api.portal.get_registry_record('castle.search_page_help_text', None),
         })
 
     @property
@@ -186,6 +187,14 @@ class SearchAjax(BrowserView):
                 }
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
+
+        query['review_state'] = 'published'
+
+        registry = getUtility(IRegistry)
+        if not registry.get('plone.allow_public_in_private_container', False):
+            query['has_private_parents'] = False
+        query['exclude_from_search'] = False
+
         try:
             page_size = int(self.request.form.get('pageSize'))
         except Exception:

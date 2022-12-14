@@ -10,7 +10,7 @@ class FacebookPageTile(BaseTile):
     def render(self):
         content = self.data.get('href', '') or ''
 
-        urlRegEx = ".*facebook\.com/([a-zA-Z0-9]+)/?"
+        urlRegEx = r".*facebook\.com/([a-zA-Z0-9]+)/?"
         urlParser = re.compile(urlRegEx)
         matches = urlParser.match(content)
 

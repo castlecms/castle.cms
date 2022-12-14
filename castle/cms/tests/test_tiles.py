@@ -118,7 +118,8 @@ class TestTiles(unittest.TestCase):
 
         # create an event for today to make sure the calendar reflects
         # current events
-        api.content.create(type='Event', id='event1', container=self.portal)
+        event = api.content.create(type='Event', id='event1', container=self.portal)
+        api.content.transition(obj=event, to_state='published')
 
         page = render_tile(self.request, self.portal, name, data)
         self.assertTrue('data-pat-fullcalendar=' in page)
@@ -139,14 +140,14 @@ class TestTiles(unittest.TestCase):
         self.assertTrue(embedCode in page)
 
     def test_querylisting_results(self):
-        api.content.create(type='Document', id='page1', container=self.portal,
-                           subject=('foobar',), title='Foobar')
-        api.content.create(type='Document', id='page2', container=self.portal,
-                           subject=('foobar',), title='Foobar')
-        api.content.create(type='Document', id='page3', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
-        api.content.create(type='Document', id='page4', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
+        page1 = api.content.create(type='Document', id='page1', container=self.portal,
+                                   subject=('foobar',), title='Foobar')
+        page2 = api.content.create(type='Document', id='page2', container=self.portal,
+                                   subject=('foobar',), title='Foobar')
+        page3 = api.content.create(type='Document', id='page3', container=self.portal,
+                                   subject=('foobar', 'foobar2'), title='Foobar')
+        page4 = api.content.create(type='Document', id='page4', container=self.portal,
+                                   subject=('foobar', 'foobar2'), title='Foobar')
         data = {
             'query': [{
                 'i': 'Subject',
@@ -155,6 +156,9 @@ class TestTiles(unittest.TestCase):
             }],
             'available_tags': ('foobar2',)
         }
+        for item in [page1, page2, page3, page4]:
+            api.content.transition(obj=item, to_state='published')
+
         tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', data)
         self.assertEqual(tile.results()['total'], 2)
 
@@ -169,14 +173,14 @@ class TestTiles(unittest.TestCase):
         self.assertTrue('Foobar' in page)
 
     def test_querylisting_multiple_sort(self):
-        api.content.create(type='Document', id='page1', container=self.portal,
-                           subject=('foobar',), title='Foobar')
-        api.content.create(type='Document', id='page2', container=self.portal,
-                           subject=('foobar',), title='Foobar')
-        api.content.create(type='Document', id='page3', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
-        api.content.create(type='Document', id='page4', container=self.portal,
-                           subject=('foobar', 'foobar2'), title='Foobar')
+        page1 = api.content.create(type='Document', id='page1', container=self.portal,
+                                   subject=('foobar',), title='Foobar')
+        page2 = api.content.create(type='Document', id='page2', container=self.portal,
+                                   subject=('foobar',), title='Foobar')
+        page3 = api.content.create(type='Document', id='page3', container=self.portal,
+                                   subject=('foobar', 'foobar2'), title='Foobar')
+        page4 = api.content.create(type='Document', id='page4', container=self.portal,
+                                   subject=('foobar', 'foobar2'), title='Foobar')
         data = {
             'query': [{
                 'i': 'Subject',
@@ -189,6 +193,9 @@ class TestTiles(unittest.TestCase):
             'Subject': 'foobar',
             'sort_on': 'foobar'
         })
+        for item in [page1, page2, page3, page4]:
+            api.content.transition(obj=item, to_state='published')
+
         tile = get_tile(self.request, self.portal, 'castle.cms.querylisting', data)
         self.assertEqual(tile.results()['total'], 4)
 
@@ -196,6 +203,8 @@ class TestTiles(unittest.TestCase):
         page = api.content.create(
             type='Document', id='page1', container=self.portal,
             subject=('foobar',), title='Foobar', description='Some foobar stuff')
+        api.content.transition(obj=page, to_state='published')
+
         data = {
             'content': [IUUID(page)]
         }
