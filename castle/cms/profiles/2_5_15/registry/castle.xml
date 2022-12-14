@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <record name="castle.slot_tiles">
+    <value purge="false">
+      <element key="Advanced" purge="false">
+        <element>castle.cms.stickyfooter</element>
+      </element>
+    </value>
+  </record>
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gtm_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Google Tag Manager Container ID</title>
+      <required>False</required>
+    </field>
+  </record>
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gtm_enabled" prefix="castle" purge="False">
+    <field type="plone.registry.field.Bool">
+      <title>Enable Google Tag Manager Throughout Site</title>
+      <required>False</required>
+    </field>
+  </record>
+</registry>

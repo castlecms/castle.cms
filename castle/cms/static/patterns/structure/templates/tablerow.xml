@@ -1,0 +1,29 @@
+<td class="selection"><input type="checkbox" <% if(selected){ %> checked="checked" <% } %>/></td>
+
+<td class="title">
+  <div class="pull-left">
+    <a href="<%- viewURL %>"
+        class="manage state-<%- review_state %> contenttype-<%- contenttype %>"
+        title="<%- portal_type %>">
+      <% if(Title){ %>
+        <%- Title %>
+      <% } else { %>
+        <em><%- id %></em>
+      <% } %>
+    </a>
+    <% if(expired){ %>
+      <span class="plone-item-expired"><%- _t('Expired') %></span>
+    <% } %>
+  </div>
+  <% if(attributes["getIcon"] ){ %>
+  <img class="image-<%- iconSize %> pull-right" src="<%- getURL %>/@@images/image/<%- iconSize %>">
+  <% } %>
+</td>
+
+<% _.each(activeColumns, function(column) { %>
+  <% if(_.has(availableColumns, column)) { %>
+    <td class="<%- column %>"><%- attributes[column] %></td>
+  <% } %>
+<% }); %>
+
+<td class="actionmenu-container"></td>

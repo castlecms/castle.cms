@@ -161,7 +161,7 @@ class MetaTileManager(BrowserView):
             annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id]
         del annotations[TILE_ANNOTATIONS_KEY_PREFIX + '.' + copy_id]
 
-        # also, destory any other active edits for this slot
+        # also, destroy any other active edits for this slot
         for key in list(annotations.keys()):
             if key.startswith(TILE_ANNOTATIONS_KEY_PREFIX + '.' + _id + '-copy-'):
                 # also delete tiles referenced here.

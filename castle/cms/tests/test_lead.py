@@ -34,6 +34,8 @@ class TestLeadImages(unittest.TestCase):
             type='Image', container=self.folder_obj, id='testimage',
             image=NamedBlobImage(zptlogo, contentType='image/jpeg'))
         self.img_uid = IUUID(self.image_obj)
+        for item in [self.folder_obj, self.page_obj, self.image_obj]:
+            api.content.transition(obj=item, to_state='published')
 
     def test_find_lead_image_in_text(self):
         self.page_obj.text = RichTextValue('''

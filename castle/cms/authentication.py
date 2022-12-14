@@ -28,6 +28,7 @@ from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import Interface
 from zope.interface import implementer
+from uuid import uuid4
 
 
 class AuthenticationException(Exception):
@@ -54,20 +55,46 @@ class AuthenticationPasswordResetWindowExpired(AuthenticationException):
 @adapter(IItem, Interface)
 class Authenticator(object):
 
+    REQUESTING_AUTH_CODE = 'requesting-auth-code'
+    CHECK_CREDENTIALS = 'check-credentials'
+    COUNTRY_BLOCKED = 'country-blocked'
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
+
+        self.login_session_id = self.request.cookies.get('__sl__', None)
+        if not self.login_session_id:
+            self.set_login_session_id()
+
+        self.valid_flow_states = [
+            self.REQUESTING_AUTH_CODE,
+            self.CHECK_CREDENTIALS,
+            self.COUNTRY_BLOCKED,
+        ]
+
         try:
             self.registry = getUtility(IRegistry)
-            self.two_factor_enabled = self.registry.get(
-                'plone.two_factor_enabled', False)
         except ComponentLookupError:
             self.registry = None
-            self.two_factor_enabled = False
 
     @property
     def is_zope_root(self):
         return ICastleApplication.providedBy(self.context)
+
+    @property
+    def two_factor_enabled(self):
+        enabled = False
+        if not self.is_zope_root and self.registry:
+            enabled = self.registry.get('plone.two_factor_enabled', False)
+        return enabled
+
+    @property
+    def expire(self):
+        expire = 120
+        if not self.is_zope_root and self.registry:
+            expire = self.registry.get('plone.auth_step_timeout', 120)
+        return expire
 
     def get_tool(self, name):
         if self.is_zope_root:
@@ -88,7 +115,47 @@ class Authenticator(object):
                 })
         return auth_schemes
 
+    def set_login_session_id(self):
+        self.login_session_id = uuid4()
+        self.request.response.setCookie('__sl__', self.login_session_id)
+
+    def get_secure_flow_key(self):
+        return '{id}-secure-state'.format(id=self.login_session_id)
+
+    def set_secure_flow_state(self, state=None):
+        if state not in self.valid_flow_states:
+            return False
+
+        cache_key = self.get_secure_flow_key()
+        new_state = {
+            'state': state,
+            'timestamp': time.time()
+        }
+        cache.set(cache_key, new_state, expire=self.expire)
+        return True
+
+    def get_secure_flow_state(self):
+        key = self.get_secure_flow_key()
+        try:
+            state_with_timestamp = cache.get(key)
+            state = state_with_timestamp['state']
+        except KeyError:
+            state = None
+
+        return state
+
+    def expire_secure_flow_state(self):
+        key = self.get_secure_flow_key()
+        try:
+            cache.delete(key)
+        except Exception:
+            pass
+        self.set_login_session_id()
+
     def authorize_2factor(self, username, code, offset=0):
+        if not code:
+            return False
+
         try:
             value = cache.get(self.get_2factor_code_key(username))
         except Exception:
@@ -122,7 +189,7 @@ class Authenticator(object):
 
     def authenticate(self, username=None, password=None,
                      country=None, login=True):
-        """return true if successfull
+        """return true if successful
         login: if a successful authentication should result in the user being
                logged in
         """
@@ -215,7 +282,7 @@ class Authenticator(object):
             userid
         )
 
-    def issue_country_exception(self, user, country):
+    def issue_country_exception_request(self, user, country):
         # capture information about the request
         data = {
             'referrer': self.request.get_header('REFERER'),
@@ -234,14 +301,6 @@ class Authenticator(object):
 
         return data
 
-    def change_password(self, member, new_password):
-        user = api.user.get(member.getId())
-        user.setMemberProperties(mapping={
-            'reset_password_required': False,
-            'reset_password_time': time.time()
-        })
-        member.setSecurityProfile(password=new_password)
-
     def get_options(self):
         site_url = success_url = self.context.absolute_url()
         if ISiteRoot.providedBy(self.context):
@@ -255,13 +314,23 @@ class Authenticator(object):
             if (came_from.startswith(site_url) and (
                     not url_tool or url_tool.isURLInPortal(came_from))):
                 success_url = came_from
+            if 'login' in success_url or 'logged_out' in success_url:
+                if ISiteRoot.providedBy(self.context):
+                    success_url = site_url + '/@@dashboard'
+                else:
+                    success_url = site_url  # zope root
+            elif 'manage' in success_url:
+                if ISiteRoot.providedBy(self.context):
+                    success_url = site_url + '/@@dashboard'
+                # else zope root, allow /manage here
 
         data = {
             'supportedAuthSchemes': self.get_supported_auth_schemes(),
             'twoFactorEnabled': self.two_factor_enabled,
             'apiEndpoint': '{}/@@secure-login'.format(site_url),
             'successUrl': success_url,
-            'additionalProviders': []
+            'additionalProviders': [],
+            'state': self.get_secure_flow_state()
         }
         try:
             data['authenticator'] = createToken()
@@ -269,20 +338,6 @@ class Authenticator(object):
             # zope root related issue here...
             pass
 
-        username = None
-        pwreset = self.request.form.get('pwreset') == 'true'
-        if pwreset:
-            try:
-                user = api.user.get(self.request.form.get('userid'))
-                username = user.getUserName()
-                data.update({
-                    'passwordReset': pwreset,
-                    'username': username,
-                    'code': self.request.form.get('code'),
-                    'userid': self.request.form.get('userid')
-                })
-            except Exception:
-                pass
         return data
 
 

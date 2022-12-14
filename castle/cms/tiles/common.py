@@ -4,15 +4,15 @@ from plone.app.standardtiles import common
 from plone.locking.browser.info import LockInfoViewlet
 from plone.locking.interfaces import ITTWLockable
 from plone.tiles import Tile
+from zope.security import checkPermission
 
 
 class LockInfoTile(Tile):
     def __call__(self):
-        if not ITTWLockable.providedBy(self.context):
-            return
-
-        viewlet = LockInfoViewlet(self.context, self.request, None, None)
-        return viewlet.render()
+        if checkPermission("cmf.ModifyPortalContent", self.context) and \
+           ITTWLockable.providedBy(self.context):
+            viewlet = LockInfoViewlet(self.context, self.request, None, None)
+            return viewlet.render()
 
 
 class GlobalStatusMessageTile(common.GlobalStatusMessageTile):

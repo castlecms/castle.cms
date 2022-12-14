@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <!-- depends on plone -->
+
+  <!-- castle-components-search -->
+  <records prefix="plone.resources/castle-components-search"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/search.js</value>
+      <value key="css">
+        <element>++plone++castle/less/misc/search.css</element>
+      </value>
+      <value key="deps">plone</value>
+  </records>
+
+
+  <!-- depends on plone-logged-in -->
+
+  <!-- castle-components-tag-manager -->
+  <records prefix="plone.resources/castle-components-tag-manager"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/tag-manager.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-usersgroups -->
+  <records prefix="plone.resources/castle-components-usersgroups"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/usersgroups.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-audit -->
+  <records prefix="plone.resources/castle-components-audit"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/audit.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-archives-manage -->
+  <records prefix="plone.resources/castle-components-manage-archives"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/manage-archives.js</value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+  <!-- castle-components-history -->
+  <records prefix="plone.resources/castle-components-history"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/components/history.js</value>
+      <value key="css">
+        <element>++plone++castle/less/misc/history.css</element>
+      </value>
+      <value key="deps">plone-logged-in</value>
+  </records>
+
+
+</registry>

@@ -160,7 +160,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/tSwQ6XkSvgU',
+                'youtube_url': u'https://youtu.be/R5uff7Spv0c',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-content-mgmt.png',
                 'title': 'Intuitive Content Management',
                 'text': RichTextValue("""<p>Creating, editing, and managing large amounts of content is easier than ever before with CastleCMS's newly-designed toolbar. Use drag and drop to upload and organize content effortlessly on your website. Filter content, apply tags, set publication and expiry dates, review and publish items, and grant specific permissions to users and groups, all using our powerful content management view.</p>
@@ -175,7 +175,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/wjRNcsxSShQ',
+                'youtube_url': u'https://youtu.be/NoeAhSke0uQ',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-security.png',
                 'title': 'High Security',
                 'text': RichTextValue("""<p>CastleCMS is based&nbsp;on Plone, which has&nbsp;the best security track record of any enterprise-scale content management system, but we have gone further, adding many&nbsp;security features to CastleCMS:</p>
@@ -198,7 +198,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/ZJR_9Zqup2k',
+                'youtube_url': u'https://youtu.be/mGMJvETNXPA',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-social-media.png',
                 'title': 'Superior Social Media Integration',
                 'text': RichTextValue("""<p>Embed tweets, Facebook statuses, timelines, and more as tiles that you can drag anywhere onto a page. CastleCMS&nbsp;includes &ldquo;Share on Facebook&rdquo; and &ldquo;Share on Twitter&rdquo; buttons that you can place anywhere on&nbsp;a&nbsp;site. CastleCMS&nbsp;even supports Twitter Cards, which allow you&mdash;and those that link to you&mdash;to attach rich photos, videos, and media to tweets. The best part about these features is that they are all available on any CastleCMS site right out of the box.</p>
@@ -212,7 +212,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/80bxHq-XmnY',
+                'youtube_url': u'https://youtu.be/WXqcBczngjM',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-page-preview.png',
                 'title': 'Content Previews',
                 'text': RichTextValue("""<p>If one of your pages doesn&#39;t look right, you can find out before it&#39;s too late. Page Preview allows you to see what your published pages will look like while they&#39;re still private, which could save you lots of embarrassment.</p>
@@ -225,7 +225,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/w8KuF06T608',
+                'youtube_url': u'https://youtu.be/ic5oelM1zLM',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-layout-engine.png',
                 'title': 'Dynamic Layout Engine',
                 'text': RichTextValue("""<p>Create new layouts quickly and on a per&mdash;page basis. You can save and reuse&nbsp;them&nbsp;elsewhere on your site&nbsp;whenever you need to. Add columns as tiles that you can drag and drop into place.</p>
@@ -238,7 +238,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/Hj9qW34Hv4o',
+                'youtube_url': u'https://youtu.be/bXcOhKxEXjc',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-easy-theming.png',
                 'title': 'Easy Theming',
                 'text': RichTextValue("""<p>CastleCMS is extremely flexible for designers: its&nbsp;themes and designs are created&nbsp;using just&nbsp;a&nbsp;web browser, and you can&nbsp;set each individual page's design, or you can set a default design for sections of a site, or both. A CastleCMS site can be themed to match any existing website and&nbsp;to fit into an integrated suite of web services, making it easy to integrate&nbsp;CastleCMS-hosted content seamlessly.</p>
@@ -251,7 +251,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/zOVI65-TOI8',
+                'youtube_url': u'https://youtu.be/-HWzO6YpR78',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-adv-toolbar.png',
                 'title': 'Intuitive Toolbar',
                 'text': RichTextValue("""<p>CastleCMS&#39;s toolbar was created in&mdash;house by our user experience team. It is&nbsp;designed to place all editing&nbsp;controls at your fingertips, intuitively and effectively.</p>
@@ -264,7 +264,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/VakRVBIChOc',
+                'youtube_url': u'https://youtu.be/LLOF3eACK7c',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-search.png',
                 'title': 'Comprehensive Built-in Search',
                 'text': RichTextValue("""<p>Every item in your site&mdash;whether a page, Office document, PDF, news item, event, video, or audio&mdash;is automatically and instantly searchable from the built&mdash;in search bar. Integrated optical character recognition (OCR) for all PDF, Word, Excel,&nbsp;PowerPoint, and TIFF image&nbsp;files automatically makes all your uploaded documents searchable using&nbsp;the&nbsp;built in Elasticsearch engine, which is robust&nbsp;and&nbsp;fast&nbsp;enough to handle sites with millions of content items.</p>
@@ -277,7 +277,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/SnOId_MT5H0',
+                'youtube_url': u'https://youtu.be/VsF_ttbW_rE',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-seo.png',
                 'title': 'Search Engine Optimization',
                 'text': RichTextValue("""<p>CastleCMS generates semantic&nbsp;HTML5, ensuring that Google and other search engines correctly interpret the structure and content of your&nbsp;website. You can&nbsp;achieve higher organic search results&nbsp;for any given page&nbsp;by&nbsp;setting&nbsp;SEO keywords and meta tags, which give hints to&nbsp;search engines as to what a web page is about.</p>
@@ -291,7 +291,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/N3z9d76Wk1E',
+                'youtube_url': u'https://youtu.be/aASgv4W1Z50',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-doc-viewer.png',
                 'title': 'A Viewer for All File Types',
                 'text': RichTextValue("""<p>CastleCMS's built-in&nbsp;document viewer works much like Adobe Reader, allowing&nbsp;you to view PDF, Word, Excel, and many other file types without ever leaving your browser. Your users won&#39;t need any locally installed programs to view or search through documents on your website.</p>
@@ -304,7 +304,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/zacn1repAFk',
+                'youtube_url': u'https://youtu.be/iijhnZD8S1I',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-quality-check.png',
                 'title': 'Content Quality Assurance',
                 'text': RichTextValue("""<p>Like your own personal proofreader, CastleCMS can suggest content edits and provide inline content analysis checks. CastleCMS includes&nbsp;a spell-check feature, a must&mdash;have&nbsp;for creating and maintaining high quality website content.</p>
@@ -318,7 +318,7 @@ def getTileData():
         },
         {
             'data': {
-                'youtube_url': u'https://youtu.be/7U29U7KmlNI',
+                'youtube_url': u'https://youtu.be/qAmabfSfAMk',
                 'icon_link': u'/++theme++castle.theme/img/frontpage/icon-rich-content.png',
                 'title': 'Rich Content Editing',
                 'text': RichTextValue("""<p>CastleCMS uses TinyMCE, the state of the art in what-you-see-is-what-you-get (WYSIWYG) web editors. Change formatting, bold text, italicize text, edit images, and even embed videos right from the editor. Your videos are automatically converted to a web compatible video format. You don&#39;t need to know CSS or HTML to&nbsp;write beautiful content. Everything is in plain English for your convenience.</p>

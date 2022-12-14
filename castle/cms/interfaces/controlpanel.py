@@ -141,6 +141,12 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    auth_step_timeout = schema.Int(
+        title=u'(Seconds) This amount of inactivity will reset the login process',
+        description=u'Between each step, the allowed time is reset to this amount',
+        default=120,
+    )
+
     restrict_logins_to_countries = schema.Tuple(
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
@@ -196,6 +202,24 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
         required=False)
 
+    scrub_title_logo_to_backend_login = schema.Bool(
+        title=u'Do not show identifying customizations (logo/text) at backend login view',
+        description=u'If set, backend visitors will see a generic login view.',
+        default=False,
+        required=False)
+
+    login_footer_message = schema.TextLine(
+        title=u'Login Footer Message',
+        description=u'Display a message or warning below the secure login form',
+        required=False)
+
+    allow_public_in_private_container = schema.Bool(
+        title=u'Allow access to published objects inside private containers',
+        description=u'Check this box to allow public access to Published content '
+                    u'inside of private containers.',
+        default=False,
+        required=False)
+
 
 class IAnnouncementData(Interface):
     show_announcement = schema.Bool(
@@ -207,6 +231,19 @@ class IAnnouncementData(Interface):
         title=u"Site announcement",
         default=u'<p><strong>Breaking News:</strong> '
                 u'<em>Replace this text with your own site announcement</em></p>',
+        required=False
+    )
+
+    show_disclaimer = schema.Bool(
+        title=u'Show disclaimer for first time a user visits a site. '
+              u'To comply with ePrivacy Directive, use this feature to notify about cookie use.',
+        default=False,
+        required=False)
+
+    site_disclaimer = schema.Text(
+        title=u"Disclaimer",
+        default=u'<p><strong>Disclaimer</strong> '
+                u'<em>You are seeing this because this is your first time visiting the site.</em></p>',
         required=False
     )
 
@@ -288,6 +325,17 @@ class IAPISettings(Interface):
         title=u'Google Analytics ID',
         description=u'for use with gathering content statistics',
         required=False)
+
+    gtm_id = schema.TextLine(
+        title=u'Google Tag Manager Container ID',
+        description=u'Provided by Google',
+        required=False
+    )
+
+    gtm_enabled = schema.Bool(
+        title=u'Enable Google Tag Manager Throughout Site',
+        default=False
+    )
 
     recaptcha_public_key = schema.TextLine(
         title=u'Recaptcha 3 Public Key',
@@ -456,8 +504,70 @@ class IContentSettings(Interface):
     # but will require a custom widget
 
 
+class ISearchSettings(Interface):
+    search_page_help_text = schema.TextLine(
+        title=u'Search Page Help Text',
+        description=u'The help text a user sees between the search bar and search results at /@@search. '
+                    u'This text element will be omitted if blank',
+        required=False,
+        default=u'To narrow your search, select a content type option shown in the toolbar below or listed under "More Filters". ' # noqa
+                u'To broaden your search to other crawled sites, select a subdomain listed under "Source."' # noqa
+    )
+
+
+class ISlideshowSettings(Interface):
+    resource_slide_view_more_link_text = schema.TextLine(
+        title=u"View More link text",
+        description=u'The text a user sees for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False)
+
+    resource_slide_view_more_link_url = schema.URI(
+        title=u"View More link URL",
+        description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False)
+
+
+class IElasticSearchSettings(Interface):
+    es_index_enabled = schema.Bool(
+        title=u'Enable Custom Elastic Search Index',
+        default=False
+    )
+
+    es_index = schema.TextLine(
+        title=u'Elastic Search Index',
+        description=u'The index prefix used for elastic search.  You must restart clients and rebuild '
+                    u'(or rename the index on ES) in order for things to work properly',
+        required=False
+    )
+
+
+class IAdjustableFontSizeSettings(Interface):
+    font_size_small = schema.TextLine(
+        title=u"Small font size",
+        description=u'The font size displayed when a user selects "small" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_SMALL,
+    )
+    font_size_medium = schema.TextLine(
+        title=u"Medium font size",
+        description=u'The font size displayed when a user selects "medium" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_MEDIUM,
+    )
+    font_size_large = schema.TextLine(
+        title=u"Large font size",
+        description=u'The font size displayed when a user selects "large" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_LARGE,
+    )
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
-                      IArchivalSettings, IContentSettings):
+                      IArchivalSettings, IContentSettings,
+                      ISearchSettings, IElasticSearchSettings,
+                      ISlideshowSettings, IAdjustableFontSizeSettings):
     pass
 
 

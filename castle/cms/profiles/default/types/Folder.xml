@@ -25,7 +25,7 @@
   <element value="castle.cms.behaviors.location.ILocation"/>
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
-  <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+  <element value="castle.cms.behaviors.versionable.IVersionable" />
   <element value="plone.app.lockingbehavior.behaviors.ILocking" />
   <element value="castle.cms.behaviors.order.IFolderOrder"/>
  </property>

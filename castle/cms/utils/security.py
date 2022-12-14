@@ -1,6 +1,6 @@
-from plone import api
 from zope.component import queryUtility
 from zope.security.interfaces import IPermission
+from plone import api
 
 
 def get_managers():
@@ -32,3 +32,11 @@ def publish_content(obj):
         except api.exc.InvalidParameterError:
             # not a valid transition, move on I guess...
             pass
+
+
+def is_backend(request):
+    backend_urls = api.portal.get_registry_record('plone.backend_url', default=[]) or []
+    for backend_url in backend_urls:
+        if backend_url.startswith(request.SERVER_URL):
+            return True
+    return False

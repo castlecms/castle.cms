@@ -103,7 +103,7 @@
     class=".files.Download"
     permission="zope2.View"
     />
-  
+
   <browser:page
     name="file_view"
     for="plone.app.contenttypes.interfaces.IFile"

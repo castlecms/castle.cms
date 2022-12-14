@@ -2,7 +2,7 @@ from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.layout.sitemap import sitemap
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
-from Products.CMFCore.utils import getToolByName
+from plone import api
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import getUtility
@@ -16,18 +16,19 @@ class SiteMapView(sitemap.SiteMapView):
 
     def objects(self):
         """Returns the data to create the sitemap."""
-        catalog = getToolByName(self.context, 'portal_catalog')
+        registry = getUtility(IRegistry)
+        catalog = api.portal.get_tool('portal_catalog')
         query = {
             'sort_on': 'modified',
             'sort_limit': MAX_ITEMS,
-            'sort_order': 'reverse'
+            'sort_order': 'reverse',
+            'review_state': 'published'
         }
-        utils = getToolByName(self.context, 'plone_utils')
+        utils = api.portal.get_tool('plone_utils')
         types = utils.getUserFriendlyTypes()
         if 'Image' in types:
             types.remove('Image')
         query['portal_type'] = types
-        registry = getUtility(IRegistry)
         typesUseViewActionInListings = frozenset(
             registry.get('plone.types_use_view_action_in_listings', []))
 
@@ -57,12 +58,14 @@ class SiteMapView(sitemap.SiteMapView):
                     'lastmod': modified,
                 }
 
-        for item in catalog.searchResults(query)[:MAX_ITEMS]:  # max of 50,000 items
-            if root_page_uid == item.UID or item.id == 'Members':
+        for brain in catalog.searchResults(query)[:MAX_ITEMS]:  # max of 50,000 items
+            pub_in_priv = registry.get('plone.allow_public_in_private_container', False)
+            if root_page_uid == brain.UID or brain.id == 'Members' or \
+                    (brain.has_private_parents and not pub_in_priv):
                 continue
-            loc = item.getURL()
-            date = item.modified.ISO8601()
-            if item.portal_type in typesUseViewActionInListings:
+            loc = brain.getURL()
+            date = brain.modified.ISO8601()
+            if brain.portal_type in typesUseViewActionInListings:
                 loc += '/view'
             yield {
                 'loc': loc,

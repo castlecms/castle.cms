@@ -1,6 +1,9 @@
-<ul class="dt-compact" tal:define="results view/tile/results;
-                                   utils view/tile/utils;
-                                   df view/tile/display_fields">
+<ul class="dt-compact"
+    tal:define="results view/tile/results;
+                utils view/tile/utils;
+                df view/tile/display_fields"
+    style="${python: view.font_sizes.get('query_listing','')}"
+>
   <tal:item tal:repeat="item python: results['items']">
   <li tal:define="obj python: item.getObject();
                   url python: utils.get_object_url(obj);

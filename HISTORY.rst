@@ -1,10 +1,468 @@
 Changelog
 =========
 
-2.5.12 (unreleased)
+2.15.1 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.15.0 (2022-11-02)
+-------------------
+
+- Allow expired results in querylisting
+
+
+2.14.2 (2022-08-02)
+-------------------
+
+- more forgiving coordinate parsing
+
+
+2.14.1 (2022-05-06)
+-------------------
+
+- add GELF logging handler
+- add script for report on user/role/permissions
+- fix dates while importing
+- fix querylisting as folder view results bug
+
+
+2.14.0 (2022-04-20)
+-------------------
+
+- Allow unrestricted traverse to be selected when creating a pdf.
+
+
+2.13.0 (2022-03-30)
+-------------------
+
+- Added some gallery options that will be used in some other add-ons.
+
+
+2.12.3 (2022-03-04)
+-------------------
+
+- handle missing links in sticky footer
+
+
+2.12.2 (2022-03-03)
+-------------------
+
+- 2.12.1 had commit missing (bad rebase)
+
+
+2.12.1 (2022-03-03)
+-------------------
+
+- Fix bug in rendering sticky footer with a none-value internal link when trying to render an external url
+
+
+2.12.0 (2021-12-02)
+-------------------
+
+- Fix paging display for many items in Content Browser component
+
+
+2.11.0 (2021-11-29)
+-------------------
+
+- Reapply PR510 - icon and favicon downloads without changing functionality for other files
+- slight refactor to be able to import slider config other places
+
+
+2.10.4 (2021-09-17)
+-------------------
+
+- bump plone.namedfile to 3.0.11
+- revert Download related changes from PR#510
+
+
+2.10.3 (2021-09-14)
+-------------------
+
+- revert es7 commit that was merged to 2.x branch
+
+
+2.10.2 (2021-09-13)
+-------------------
+
+- fix setup req for collective.elasticsearch that was updated to ES7 compat in the 2.x branch
+
+
+2.10.1 (2021-09-08)
+-------------------
+
+- bugfix for site-icon 500 error under certain circumstances
+
+
+2.10.0 (2021-09-08)
+-------------------
+
+- enable tinymce for richtext widget on collective.easyform forms on anonymous form
+
+
+2.9.0 (2021-09-01)
+------------------
+
+- add height property to gallery tile schema
+
+
+2.8.0 (2021-08-05)
+------------------
+
+- add initial implementation of a content type that supports parallax rendering
+- bug fix for custom pat-structure loading order issue
+- recompile resources
+- rename upgrade step 2635 to 3000
+- add upgrade step 3001
+
+
+2.7.2 (2021-06-10)
+------------------
+
+- rebuild styles
+
+
+2.7.1 (2021-06-08)
+------------------
+
+- fix 2633 upgrade profile to have correct configuration, update default profile to 2633
+
+
+2.7.0 (2021-06-01)
+------------------
+
+- add ability to create templates from existing contents. templates are unpublishable
+  and are managed as specially marked documents in a 'template-repository' folder.
+
+
+2.6.31 (2021-04-20)
+-------------------
+
+- bugfix for custom index names for audit log
+
+
+2.6.30 (2021-04-02)
+-------------------
+
+- changed default slideshow view to be the actual slideshow
+  (Castle/some-slideshow now renders the view from Castle/some-slideshow/view-slideshow
+  instead of from Castle/some-slideshow/view) (#482)
+- changeNote bugfix (#483)
+- auditlog use of customizable ES index name (#484 and #485)
+- normalize folder contents column headings (#486)
+- all-contents view for folder contents view (#487)
+- update cryptography to 3.3.2 and update cffi to 1.14.5 (#461)
+
+
+2.6.29 (2021-02-23)
+-------------------
+
+- fix labeling for required versioning behavior
+
+
+2.6.28 (2021-02-23)
+-------------------
+
+- add custom IVersionable behavior to integrate better with audit log
+
+
+2.6.27 (2021-02-15)
+-------------------
+
+- Separated backend and frontend configurations for robot instructions in html meta tags
+- Added Current Castle Version to control panel Version Overview
+- tweak audit log styling to help prevent overlap on normal sized screens
+- add ability to customize default font sizing for tiles per object
+
+
+2.6.26 (2020-12-22)
+-------------------
+
+- fix cloudflare cache purge unicode issue
+
+
+2.6.25 (2020-11-10)
+-------------------
+
+- audit index name based on configured es index
+- minor english grammar fixes
+- custom markup field behavior for images,used in slider tile
+
+
+2.6.24 (2020-11-02)
+-------------------
+
+- show warning instead of error if folder containing recycling is copied
+- reset secure flow state and retry before 403
+- disable autocaps for mobile logins
+
+
+2.6.23 (2020-09-15)
+-------------------
+
+- exclude_from_search and has_private_parents features for public results
+- panels to list items excluded from search for admin
+
+
+2.6.22 (2020-09-10)
+-------------------
+
+- slideshow refinements
+- add property per content item to exclude from search query
+- query filter updates, including new wording and broader search
+
+
+2.6.21 (2020-07-30)
+-------------------
+
+- fix the QueryListingTile to split display_fields correctly when passed as
+  a query parameter to the @@castle.cms.querylisting view
+- fix s3 integration in the edit/delete actions of the archival management view
+
+
+2.6.20 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.19 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.18 (2020-07-14)
+-------------------
+
+- slideshow refinements
+
+
+2.6.17 (2020-07-09)
+-------------------
+
+- revert manage-archives js and improve manage-archives usage of boto3 library
+
+
+2.6.16 (2020-07-07)
+-------------------
+
+- slideshow upgrades and fixes
+- fix password reset link in registration email
+- improve scrub login at backend functionality
+
+
+2.6.15 (2020-07-01)
+-------------------
+
+- update archival-manage view to deal with a large list of objects in an s3 bucket
+  in a very basic, but functional (for now) way.
+
+
+2.6.14 (2020-07-01)
+-------------------
+
+- fix js inclusion an archival-review view, move it to a resource definition
+
+
+2.6.13 (2020-06-22)
+-------------------
+
+- js fix
+
+2.6.12 (2020-06-22)
+-------------------
+
+- slideshow and search updates
+  [bduncan137]
+- some import/export work
+  [daxxog]
+
+
+2.6.11 (2020-06-04)
+-------------------
+
+- utilize resource registry instead of metal:javascript in some places
+  [daxxog]
+- add advanced player with no image
+  [Takiyo]
+- Slideshow enhancements and configuration options
+  [bduncan137]
+
+
+2.6.10 (2020-05-20)
+-------------------
+
+- ensure tag-manager js is run at the correct time
+
+
+2.6.9 (2020-05-11)
+------------------
+
+- try and ensure that search.js is loaded after everything else is loaded on the page.
+
+
+2.6.8 (2020-04-30)
+------------------
+
+- update archival/aws links
+- stop excessive logging about tile lockinfo
+
+
+2.6.7 (2020-04-21)
+------------------
+
+- Fix broken links for youtube video
+- Add Ability to select custom itunes image per syndication folder
+- Don't error on missing fragment used, rendering warning
+
+2.6.6 (2020-04-13)
+------------------
+
+- Sticky footer updates
+- Secure login updates
+
+
+2.6.5 (2020-03-27)
+------------------
+
+- Don't show overview page without host header.
+  [lucid-0]
+- Pass on private_parents check when brain not found
+  [lucid-0]
+
+2.6.4 (2020-03-26)
+------------------
+
+- go to zope root rather than dashboard for root logins coming from logged_out
+  [lucid-0]
+
+
+2.6.3 (2020-03-25)
+------------------
+
+- allow people logging in at zope root to go straight to /manage
+  [lucid-0]
+
+
+2.6.2 (2020-03-25)
+------------------
+
+- Remove Audio type from metadata stripping on upload (exiftool does not support)
+  [lucid-0]
+- Add security panel option to allow access to published content inside a private container
+  (this behavior used to be default, now defaults to false but option requested)
+  [lucid-0]
+- Add empty-trash log to site annotations, and to the @@trash view
+  Users can see which, and how many items were removed by the script.
+  [lucid-0]
+- Add audit logging for changes to configuration registry, theme selection,
+  and manual trash emptying.
+  [OdiumSpeck]
+- Updates to audio tile schema and template, advanced player in castle.advantage
+  [Takiyo]
+
+2.6.1 (2020-03-02)
+------------------
+
+- secure-login fixes, test updates
+  [lucid-0]
+
+
+2.6.0 (2020-02-27)
+------------------
+
+- a couple sticky footer tweaks and static build
+  [lucid-0, OdiumSpeck]
+
+
+2.5.19 (2020-02-20)
+-------------------
+
+- Building static and fixing profile
+  [lucid-0]
+
+
+2.5.18 (2020-02-20)
+-------------------
+
+- add initial slideshow support
+  [lucid-0]
+
+- change pdf metadata removal to be more particular so that form fillable pdfs will still be usable
+  [alphaomega325]
+
+- move adapter override to override.zcml
+  [zombified]
+
+- fix for history version template to correctly check for associated image
+  [zombified]
+
+
+2.5.17 (2020-02-17)
+-------------------
+
+- add preliminary support for category subscriber emails to be used in content rules
+  [zombified]
+
+- upgrade to boto3 library
+  [zombified]
+
+- add first visit / disclaimer message options
+  [cmher]
+
+- move authentication flow to backend
+  [lucid-0]
+
+- fix news item tiles without names, catch querylisting url error
+  [alphaomega325]
+
+- improve loading and error message for google analytics
+  [lucid-0]
+
+- add index and logic to hide published items contained in private folders
+  [lucid-0]
+
+
+2.5.16 (2019-10-07)
+-------------------
+
+- Fix upgrade step
+  [lucid-0]
+
+2.5.15 (2019-10-07)
+-------------------
+
+- add sticky footer tile
+  [lucid-0]
+
+- integrate Google Tag Manager
+  [lucid-0]
+
+- Redirect to /@@secure-login if it's in request path
+  [lucid-0]
+
+- Serve strict robots.txt to backend URL
+  [lucid-0, Chue Her]
+
+2.5.14 (2019-07-18)
+-------------------
+
+- fix search.js for ie 10/11
+
+
+2.5.13 (2019-06-27)
+-------------------
+
+- fix og:image tag duplication issue
+
+
+2.5.12 (2019-05-28)
+-------------------
+
+- unicode fix
 
 
 2.5.11 (2019-05-21)

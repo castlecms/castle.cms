@@ -51,7 +51,7 @@ TEST_ARCHIVE_PAGE = '''
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Plone - http://plone.org"/>
+<meta name="generator" content="CastleCMS - http://www.wildcardcorp.com"/>
 
 
 <!--[if IE]>

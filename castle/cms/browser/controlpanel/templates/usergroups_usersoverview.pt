@@ -6,9 +6,6 @@
     metal:use-macro="context/prefs_main_template/macros/master"
     i18n:domain="plone">
 
-<metal:javascript fill-slot="javascript_head_slot">
-<script src="${portal_url}/++plone++castle/components/usersgroups.js"></script>
-</metal:javascript>
 
 <body>
 

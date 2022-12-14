@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <records prefix="plone.resources/mockup-patterns-structure"
+            interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+      <value key="js">++plone++castle/patterns/structure.js</value>
+  </records>
+
+</registry>

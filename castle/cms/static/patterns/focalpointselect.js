@@ -173,11 +173,48 @@ define([
           });
         }
       }
-      $relatedItems.on('change', getImageData);
 
-      var uid = $relatedItems.val();
+      function getMediaData() {
+        try {
+          var imageUID = $relatedItems[0].value;
+          var videoUID = $relatedItems[1].value;
+        } catch (err) {}
+        
+        var that = self;
+        if (!imageUID && !videoUID) {
+          self.component.setState({
+            exists: false
+          });
+          $parent.hide();
+          return;
+        }
+
+        $parent.show();
+        that.component.loadImage(portalUrl + "/resolveuid/" + (imageUID ? imageUID : videoUID) + "/@@images/image?_=" + utils.generateId());
+
+        if (imageUID) {
+          $.ajax({
+            url: portalUrl + "/resolveuid/" + imageUID + "/@@imageinfo",
+            dataType: "JSON",
+            type: "GET"
+          }).done(function(data) {
+            that.component.setState({ image_focal_point: data.focal_point });
+          });
+        }
+      } 
+
+      $relatedItems.on('change', getMediaData);
+            
+      var uid = $relatedItems.val()
+      if(!uid) {
+        try{
+          uid = $relatedItems[1].value;
+        } catch (err) {
+        }
+      } 
+      
       if(uid){
-        getImageData({target:{value: uid}});
+        getMediaData();
       }
 
       if(focal_point_val){

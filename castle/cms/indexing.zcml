@@ -31,6 +31,8 @@
   <adapter name="getRawRelatedItems" factory=".indexers.getRawRelatedItems" />
   <adapter name="location" factory=".indexers.getLocation" />
   <adapter name="hasImage" factory=".indexers.hasImage" />
+  <adapter name="has_private_parents" factory=".indexers.has_private_parents" />
+  <adapter name="self_or_child_has_title_description_and_image" factory=".indexers.self_or_child_has_title_description_and_image" />
   <adapter name="contentType" factory=".indexers.getContentTypeFile" />
   <adapter name="contentType" factory=".indexers.getContentTypeImage" />
   <adapter name="contentType" factory=".indexers.getContentTypeContent" />
@@ -38,5 +40,6 @@
   <adapter name="recurrence" factory=".indexers.recurrence" />
   <adapter name="last_modified_by" factory=".indexers.last_modified_by" />
   <adapter name="image_info" factory=".indexers.image_info" />
+  <adapter name="has_custom_markup" factory=".indexers.has_custom_markup" />
 
 </configure>

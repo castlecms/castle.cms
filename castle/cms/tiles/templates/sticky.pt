@@ -1,0 +1,32 @@
+<div class="pat-sticky"/>
+<div class="sticky-footer alert alert-dismissible footer" role="alert">
+  <div>
+    <p class="footer-block"
+       tal:define="description  python: view.get_data('description');
+                   email_text  python: view.get_data('email_text');
+                   button_text  python: view.get_data('button_text') or '';
+                   link_url  view/link_url;"
+    >
+      <span class="email-alerts-text"><i class="material-icons">email</i><span tal:condition="email_text">${email_text}</span></span>
+      <span tal:condition="description" class="email-alerts-description">${description}</span>
+      <span class="subscribe-button">
+        <a tal:condition="link_url" class="plone-btn plone-btn-primary" href="${link_url}" role="button">${button_text}</a>
+        <a tal:condition="python: not link_url" class="plone-btn plone-btn-primary disabled" href="#" role="button" disabled>${button_text}</a>
+      </span>
+      <span class="no-thanks-button close-footer" id="no-thanks-button"><a href="#" data-dismiss="alert" aria-label="Close">No Thanks</a></span>
+      <button
+        type="button"
+        class="close close-footer"
+        id="footer-close-button"
+        data-dismiss="alert"
+        aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </p>
+  </div>
+</div>
+
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>

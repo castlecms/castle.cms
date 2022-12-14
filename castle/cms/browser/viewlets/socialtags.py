@@ -12,7 +12,6 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
     @memoize
     def _get_tags(self):
         tags = super(SocialTagsViewlet, self)._get_tags()
-
         site = getSite()
         add_site_title = api.portal.get_registry_record('plone.social_site_title', default=True)
         site_title = api.portal.get_registry_record('plone.site_title', default=None)
@@ -20,32 +19,31 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
         item = queryMultiAdapter((self.context, feed), IFeedItem, default=None)
         if item is None:
             item = DexterityItem(self.context, feed)
-
+        finaltags = []
         for tag in tags:
             if add_site_title and site_title and (tag.get('property', '') == 'og:title' or
                                                     tag.get('name', '') == 'twitter:title'):
                 tag['content'] = '{} | {}'.format(tag['content'], site_title)
 
             if item.has_image:
+                if tag.get('name', '') == 'twitter:card':
+                    # change to large summary
+                    tag['content'] = 'summary_large_image'
                 if ('image' in tag.get('property', '') or
                         'image' in tag.get('itemprop', '') or
                         'image' in tag.get('name', '')):
-                    tags.remove(tag)
-                elif tag.get('name', '') == 'twitter:card':
-                    # change to large summary
-                    tag['content'] = 'summary_large_image'
-
+                    continue
+                finaltags.append(tag)
         if item.has_image:
-            tags.extend([
+            finaltags.extend([
                 dict(property="og:image", content=item.image_url),
                 dict(itemprop="image", content=item.image_url),
                 dict(property="og:image:type", content=item.image_type),
                 dict(name="twitter:image", content=item.image_url)
             ])
-
         if item.has_enclosure and item.file_length > 0:
             if item.file_type.startswith('audio'):
-                tags.extend([
+                finaltags.extend([
                     dict(name="twitter:card", content="player"),
                     dict(name="twitter:player:width", content="480"),
                     dict(name="twitter:player:height", content="55"),
@@ -56,7 +54,7 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
                     dict(name="twitter:player:stream:content_type", content=item.file_type)
                 ])
             elif item.file_type.startswith('video'):
-                tags.extend([
+                finaltags.extend([
                     dict(name="twitter:card", content="player"),
                     dict(name="twitter:player:width", content="480"),
                     dict(name="twitter:player:height", content="225"),
@@ -67,7 +65,7 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
                     dict(name="twitter:player:stream:content_type", content=item.file_type)
                 ])
 
-        return tags
+        return finaltags
 
     def get_https_url(self):
         # Twitter Player Cards require HTTPS resource URLs

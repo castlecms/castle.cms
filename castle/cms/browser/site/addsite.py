@@ -15,6 +15,7 @@ except ImportError:
 
 import json
 import logging
+import socket
 import transaction
 
 
@@ -143,6 +144,19 @@ class AddCastleSite(AddPloneSite):
 
 
 class Overview(Overview):
+
+    def from_local_or_IP(self):
+        try:
+            host = self.request.get_header('host').split(':')[0]
+        except AttributeError:
+            return False  # no host header
+        try:
+            socket.inet_aton(host)
+            return True
+        except Exception:
+            if host.lower() == 'localhost':
+                return True
+        return False
 
     def __call__(self):
         return self.index()
