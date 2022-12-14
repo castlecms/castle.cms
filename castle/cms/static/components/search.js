@@ -174,6 +174,8 @@ require([
         searchSite: this.props.searchSite || false,
         loading: false,
         sort_on: '',
+	      after: that.state.date || '',
+	      fullsitesearch: that.state.fullsitesearch,
         searchHelpText: this.props.searchHelpText || '',
       };
     },
@@ -218,6 +220,7 @@ require([
         sort_on: that.state.sort_on,
         sort_order: 'descending',
         after: that.state.date || '',
+	fullsitesearch: that.state.fullsitesearch
       };
       if(that.state.searchType !== 'all'){
         var type = that.getSearchType(that.state.searchType);
@@ -500,6 +503,27 @@ require([
           });
         }
       }));
+	options.push(R.createElement(SearchOption, {
+	    show: that.state.show,
+	    type: 'fullsitesearch',
+	    parent: that,
+	    value: that.state.fullsitesearch,
+	    options:[
+		[true, 'True'],
+		[false, 'False'],
+	    ],
+	    labelPrefix: 'Show Entire Site If Failed Search: ',
+	    onClick: function(val){
+		that.setState({
+		    fullsitesearch: val
+		}, function(){
+		    that.load();
+		});
+	    }
+	}));
+      return D.div({ className: 'search-options'}, [
+        D.ul({}, options)
+      ]);
       options.unshift(R.createElement(SearchOption, {
         show: that.state.show,
         type: 'publication',
