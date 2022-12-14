@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en-US" lang="en-US"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <body>
+    <!-- Full Background Video Slide -->
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-video'">
+      <div tal:condition="view/data/video|nothing">
+        Background Video Slide
+      </div>
+      <div tal:condition="not: view/data/video|nothing">
+        Background Video Slide with no video selected.
+      </div>
+    </div>
+
+    <!-- Left Video w/ Right Text Slide-->
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-video-right-text'">
+      <div tal:condition="view/data/video|nothing">
+        Video Slide with right text
+      </div>
+      <div tal:condition="not: view/data/video|nothing">
+        Video Slide with no video selected.
+      </div>
+    </div>
+
+    <!-- Full Background Image Slide -->
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-image'">
+      <div tal:condition="view/data/image|nothing">
+        Background Image slide
+      </div>
+      <div tal:condition="not: view/data/image|nothing">
+        Background Image slide with no image selected.
+      </div>
+    </div>
+
+    <!-- Left Image w/ Right Text Slide -->
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-image-right-text'">
+      <div tal:condition="view/data/image|nothing">
+        Image slide with right text.
+      </div>
+      <div tal:condition="not: view/data/image|nothing">
+        Image slide with no image selected.
+      </div>
+    </div>
+
+    <!-- Resource Slide -->
+    <div class="slide-thumb" tal:condition="python: view.slide_type == 'resource-slide'">
+      <div>
+        Resource Slide.
+      </div>
+    </div>
+  </body>
+</html>

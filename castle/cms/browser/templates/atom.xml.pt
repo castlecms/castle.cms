@@ -26,7 +26,7 @@
   <id tal:content="string:urn:syndication:${feed/uid}"/>
   <logo tal:content="feed/logo" />
   <icon tal:content="feed/icon" />
-  <generator uri="http://www.plone.org" version="1.0">plone</generator>
+  <generator uri="http://www.wildcardcorp.com" version="2.5.17">CastleCMS</generator>
   <rights tal:content="feed/rights"
           tal:condition="feed/rights"/>
   <author tal:condition="python:feed.show_about and feed.author_name and feed.author_email">

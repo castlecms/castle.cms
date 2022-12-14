@@ -43,8 +43,10 @@
         <element>castle.cms.maptile</element>
         <element>castle.cms.gallerytile</element>
         <element>castle.cms.slidertile</element>
+        <element>castle.cms.slide</element>
         <element>castle.cms.videotile</element>
         <element>castle.cms.imagetile</element>
+        <element>castle.cms.parallaxtile</element>
       </element>
       <element key="Social">
         <element>castle.cms.facebookPage</element>
@@ -61,6 +63,7 @@
         <element>plone.app.standardtiles.contentlisting</element>
         <element>castle.cms.navigation</element>
         <element>castle.cms.search</element>
+        <element>castle.cms.stickyfooter</element>
       </element>
     </value>
   </record>

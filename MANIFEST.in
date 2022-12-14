@@ -38,3 +38,19 @@ recursive-include castle *.xml
 recursive-include castle *.yml
 recursive-include castle *.zcml
 recursive-include castle Makefile
+
+# added by check_manifest.py
+include *.json
+include *.py
+include *.yml
+include versions.cfg
+recursive-include castle *.mp3
+recursive-include castle *.mp4
+recursive-include castle *.pot
+recursive-include castle *.robot
+recursive-include castle *.sh
+recursive-include castle *.zip
+recursive-include castle *.zpt
+recursive-include docs *.jpg
+recursive-include docs *.png
+recursive-include docs *.rst

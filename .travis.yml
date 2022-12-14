@@ -1,5 +1,5 @@
 language: python
-python: 2.7
+python: 2.7.17
 services:
   - redis-server
 matrix:
@@ -12,14 +12,15 @@ matrix:
       env: TEST_SUITE=robot ROBOT_BROWSER=firefox BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
     - name: 'Robot: Chrome'
       env: TEST_SUITE=robot ROBOT_BROWSER=chrome BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
+dist: xenial
+services:
+  - xvfb
 addons:
   chrome: stable
   firefox: latest
 
 before_script:
   - export ROBOT_SELENIUM2LIBRARY_RUN_ON_FAILURE="Capture Page Screenshot"
-  - 'export DISPLAY=:99.0'
-  - 'sh -e /etc/init.d/xvfb start'
   - sleep 3
 
 before_install:

@@ -7,6 +7,7 @@ from castle.cms.utils import retriable
 from collective.celery import task
 from plone import api
 from Products.CMFPlone.utils import pretty_title_or_id
+from Products.CMFCore.interfaces._content import IFolderish
 from collective.celery.utils import getCelery
 
 import logging
@@ -256,3 +257,19 @@ def _trash_tree(obj):
         # we just want to reindex because trashed should get picked up
         # for indexing now
         ob.reindexObject(idxs=['trashed', 'modified'])
+
+
+@task.as_admin()
+def reindex_children(obj, indices=None):
+    _reindex_children(obj)
+
+
+@retriable()
+def _reindex_children(obj, indices=None):
+    for childId in obj.objectIds():
+        if indices:
+            obj[childId].reindexObject(idxs=indices)
+        else:
+            obj[childId].reindexObject()
+        if IFolderish.providedBy(obj[childId]):
+            reindex_children.delay(obj[childId], indices)

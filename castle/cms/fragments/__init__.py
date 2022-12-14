@@ -232,9 +232,9 @@ class ThemeFragmentsDirectory(object):
 
 
 class FragmentView(BrowserPage):
-    """View class for template-based views defined in the theme.
-    When you traverse to ``..../@@fragment/foobar`` to render the view
-    defined in ``fragments/foobar.pt`` in the theme, this becomes the ``view``.
+    """The 'view' for template-based fragments defined in the theme.
+    Traverse to ``..../@@fragment/foobar`` to render ``fragments/foobar.pt``
+    in the theme as the template with this view class.
     """
 
     def __init__(self, context, request, name, permission, template):

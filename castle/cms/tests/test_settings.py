@@ -88,7 +88,7 @@ class TestFileUploadFields(unittest.TestCase):
         self.assertIn('castle.required_file_upload_fields', registry.records._fields)
         self.assertIn('castle.required_file_upload_fields', registry.records._values)
 
-        upgrade_2_2_0.upgrade(self.portal)
+        upgrade_2_2_0(self.portal)
         self.assertEquals(len(registry['castle.file_upload_fields']), 4)
 
         self.assertTrue(registry['castle.file_upload_fields'] is not None)
@@ -110,5 +110,5 @@ class TestFileUploadFields(unittest.TestCase):
             u'for-file-types': u'*'
         })
         registry['castle.file_upload_fields'] = fields
-        upgrade_2_2_0.upgrade(self.portal)
+        upgrade_2_2_0(self.portal)
         self.assertEquals(len(registry['castle.file_upload_fields']), 5)

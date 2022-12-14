@@ -1,4 +1,10 @@
-*** Keywords *****************************************************************
+*** Settings ***
+
+Resource  plone/app/robotframework/variables.robot
+
+Library  Remote  ${PLONE_URL}/RobotRemote
+
+*** Keywords ***
 
 # --- SETUP ------------------------------------------------------------------
 
@@ -11,6 +17,9 @@ Refresh JS/CSS resources
   Disable Autologin
 
 # --- GIVEN ------------------------------------------------------------------
+
+a slideshow '${title}'
+  Create content  type=Slideshow  title=${title}
 
 a logged-in site administrator
   Enable autologin as  Site Administrator  Contributor  Reviewer

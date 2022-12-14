@@ -12,6 +12,10 @@ from .content import IReferenceNamedImage
 from .content import ITrashed
 from .content import IUploadedToYoutube
 from .content import IVideo
+from .content import ISlideshow
+from .content import IParallax
+from .content import ITemplate
+from .controlpanel import IAdjustableFontSizeSettings
 from .controlpanel import IAnnouncementData
 from .controlpanel import IAPISettings
 from .controlpanel import IArchivalSettings
@@ -22,6 +26,9 @@ from .controlpanel import ICrawlerConfiguration
 from .controlpanel import ISecuritySchema
 from .controlpanel import ISiteConfiguration
 from .controlpanel import ISiteSchema
+from .controlpanel import ISearchSettings
+from .controlpanel import IElasticSearchSettings
+from .controlpanel import ISlideshowSettings
 from .controlpanel import ISocialMediaSchema
 from .layers import ICastleLayer
 from .layers import IVersionViewLayer

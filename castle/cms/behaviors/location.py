@@ -12,7 +12,10 @@ class ILocation(model.Schema):
 
     model.fieldset(
         'categorization',
-        fields=['locations', 'coordinates'],
+        fields=[
+            'locations',
+            'coordinates',
+        ],
     )
 
     form.widget('locations', AjaxSelectFieldWidget,

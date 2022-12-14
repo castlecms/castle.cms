@@ -25,9 +25,7 @@
             tal:define="description widget/field/description"
             i18n:translate=""
             tal:content="structure description"
-            tal:condition="python:description and not hidden and
-                           hasattr(request, 'AUTHENTICATED_USER') and
-                           hasattr(request.AUTHENTICATED_USER, '_roles')"
+            tal:condition="python:description and not hidden"
             >field description
         </span>
     </label>

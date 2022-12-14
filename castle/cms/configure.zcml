@@ -116,12 +116,20 @@
     name="castle.cms.vocabularies.MimeTypes"
     />
   <utility
+    component=".vocabularies.RobotBehaviorVocabulary"
+    name="castle.cms.vocabularies.RobotBehaviors"
+    />
+  <utility
     component=".vocabularies.ReallyUserFriendlyTypesVocabularyFactory"
     name="castle.cms.vocabularies.ReallyUserFriendlyTypes"
     />
   <utility
     component=".vocabularies.CountriesVocabularyFactory"
     name="castle.cms.vocabularies.Countries"
+    />
+  <utility
+    component=".vocabularies.ProvidesTitleSummaryLeadImageVocabularyFactory"
+    name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
     />
 
   <!-- override default syndication -->
@@ -176,7 +184,7 @@
     factory=".jbot.TemplateManager"
     name="theme_manager"
   />
-  
+
   <subscriber
     for="Products.CMFCore.interfaces.ISiteRoot
          zope.traversing.interfaces.IBeforeTraverseEvent"
@@ -200,5 +208,16 @@
  <adapter factory=".locking.TTWLockable" />
 
  <adapter factory=".authentication.Authenticator" />
+
+ <adapter
+       factory=".traverser.IsolatedSiteTraverser"
+       provides="zope.publisher.interfaces.IPublishTraverse"/>
+ <!-- content rules -->
+ <adapter
+     for="*"
+     provides="plone.stringinterp.interfaces.IStringSubstitution"
+     factory=".stringinterp.SubscriberCategoryEmailSubstitution"
+     name="category_emails_for_x"
+ />
 
 </configure>

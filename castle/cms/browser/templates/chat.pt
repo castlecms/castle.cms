@@ -8,7 +8,7 @@
   <body>
 
     <metal:content-core fill-slot="content-core">
-      <script src="/++plone++castle/asteroid.js"></script>
+      <script src="/++plone++castle/libs/asteroid.js"></script>
       <div id="castle-chat-data" style="display: none;" tal:content="view/chatInfo"></div>
       <div id="castle-chat" class="pat-chat"></div>
     </metal:content-core>

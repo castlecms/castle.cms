@@ -9,11 +9,6 @@
 <body>
 
 
-  <metal:javascript fill-slot="javascript_head_slot">
-    <script src="${portal_url}/++plone++castle/components/manage-archives.js?v=3"></script>
-  </metal:javascript>
-
-
 <metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
 
     <a href=""

@@ -20,6 +20,7 @@ from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from ZPublisher.interfaces import IPubAfterTraversal
 from ZPublisher.interfaces import IPubBeforeCommit
+from zExceptions import NotFound
 
 import binascii
 import logging
@@ -75,17 +76,32 @@ def onUserLogsIn(event):
 @adapter(IPubAfterTraversal)
 def afterTraversal(event):
     """
-    check it should be blocked by lockout
+    check if it should be blocked by lockout
     """
     request = event.request
     if not ICastleLayer.providedBy(request):
         return
 
-    shield.protect(request)
+    robot_view = shield.protect(request)
 
     resp = request.response
 
+    if robot_view:
+        resp.setBody(robot_view, lock=True)
+        resp.setHeader('X-Robots-Tag', 'noindex')
+
     context = get_context_from_request(request)
+
+    if api.user.is_anonymous():
+        if hasattr(context, 'UID'):
+            if not api.portal.get_registry_record('plone.allow_public_in_private_container', default=False):
+                try:
+                    brain = api.portal.get_tool('portal_catalog')(UID=context.UID())[0]
+                    if getattr(brain, 'has_private_parents', False):
+                        raise NotFound
+                except IndexError:
+                    pass  # brain 0 was not found by its UID
+
     cache_tags = set([
         getattr(context, 'portal_type', '').lower().replace(' ', '-'),
         getattr(context, 'meta_type', '').lower().replace(' ', '-'),

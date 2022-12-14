@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object name="portal_catalog" meta_type="Plone Catalog Tool">
+    <column value="self_or_child_has_title_description_and_image"/>
+</object>

@@ -26,8 +26,27 @@ class TestSiteMap(unittest.TestCase):
             self.portal.setDefaultPage('front-page')
 
     def test_get_objects(self):
-        site_size = len(self.portal.portal_catalog())
         view = SiteMapView(self.portal, self.request)
         paths = [o for o in view.objects()]
-        self.assertEquals(len(paths), site_size)
         self.assertEquals(paths[0]['loc'], self.portal.absolute_url())
+
+    def test_no_private_content(self):
+        folder = api.content.create(
+            type='Folder',
+            id='test-folder',
+            container=self.portal
+        )
+        page = api.content.create(
+            type='Document',
+            id='test-page',
+            container=folder
+        )
+        api.content.transition(obj=page, to_state='published')
+        view = SiteMapView(self.portal, self.request)
+        locations = [object['loc'] for object in view.objects()]
+        self.assertFalse('http://nohost/plone/test-folder' in locations)
+        self.assertFalse('http://nohost/plone/test-folder/test-page' in locations)
+        api.content.transition(obj=folder, to_state='published')
+        locations = [object['loc'] for object in view.objects()]
+        self.assertTrue('http://nohost/plone/test-folder' in locations)
+        self.assertTrue('http://nohost/plone/test-folder/test-page' in locations)

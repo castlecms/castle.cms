@@ -11,8 +11,10 @@
 <metal:block define-macro="content-core"
     tal:define="content_type view/content_type|string:;
                 download_url string:${context/absolute_url}/@@download/file/${view/filename|nothing};
+                utils context/@@castle-utils;
+                external_youtube_url python: utils.get_external_youtube_url(context);
                 subtitles nocall: context/subtitle_file|nothing;">
-  <p>
+  <p tal:condition="context/file|nothing">
     <a tal:attributes="href download_url">
       <img tal:attributes="src view/get_mimetype_icon|nothing;
                            alt content_type;" border="0" />
@@ -22,6 +24,11 @@
         tal:define="size view/size|python:0;
                     kb python:size/1024">
       &mdash; <span tal:replace="kb" /> KB</span>
+  </p>
+  <p tal:condition="external_youtube_url|nothing">
+      <ul>
+        <li><a href="${external_youtube_url}">View Video Source</a></li>
+      </ul>
   </p>
 
   <div tal:condition="view/is_videotype|nothing" tal:omit-tag="">
@@ -33,10 +40,24 @@
         <div tal:replace="structure context/transcript/output|nothing" />
       </div>
   </div>
+  <div tal:condition="context/youtube_url|nothing" tal:omit-tag="">
+    <div tal:attributes="
+      data-tile string:./@@castle.cms.videotile?video:list=${context/@@uuid}&show_controls=1&autoplay=1;" />
+      <div class="transcript" tal:condition="context/transcript|nothing">
+        <hr />
+        <h3>Video Transcript</h3>
+        <div tal:replace="structure context/transcript/output|nothing" />
+      </div>
+  </div>
 
-  <div tal:condition="view/is_audiotype|nothing" class="foobar">
+  <div tal:condition="view/is_audiotype|nothing">
     <div tal:attributes="
       data-tile string:./@@castle.cms.audiotile?audio_files:list=${context/@@uuid};" />
+      <div class="transcript" tal:condition="context/transcript|nothing">
+        <hr />
+        <h2>Audio Transcript</h2>
+        <div tal:replace="structure context/transcript/output|nothing" />
+      </div>
   </div>
 
   <div tal:condition="python: content_type.startswith('text') and not view.moved">
