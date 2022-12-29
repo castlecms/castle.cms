@@ -2,7 +2,7 @@ from castle.cms import utils
 from castle.cms.interfaces import ITemplate
 from plone import api
 from zope.component.hooks import getSite
-from zope.interface import alsoProvides
+from zope.interface import alsoProvides, noLongerProvides
 
 
 def save_as_template(obj, action):
@@ -22,3 +22,14 @@ def save_as_template(obj, action):
         site.template_list = [template_obj]
 
     return template_obj
+
+
+def untemplate(obj):
+    if ITemplate.providedBy(obj):
+        noLongerProvides(obj, ITemplate)
+    site = getSite()
+    if 'template-repository' in obj.getPhysicalPath():
+        obj = api.content.move(source=obj, target=site)
+    if obj in site.template_list:
+        site.template_list.remove(obj)
+    return obj

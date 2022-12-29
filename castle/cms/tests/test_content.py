@@ -6,7 +6,7 @@ from io import BytesIO
 
 from castle.cms.browser import content
 from castle.cms.interfaces import ITemplate
-from castle.cms.tasks.template import save_as_template
+from castle.cms.tasks.template import save_as_template, untemplate
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import TEST_USER_ID
@@ -288,6 +288,22 @@ class TestContent(unittest.TestCase):
             if a.id == 'convert_template':
                 temp_action_in_toolbar = True
         self.assertTrue(temp_action_in_toolbar)
+
+    def test_untemplate(self):
+        site = getSite()
+        obj = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_obj = save_as_template(obj, 'convert')
+        self.assertTrue(ITemplate.providedBy(template_obj))
+        self.assertTrue(template_obj in site.template_list)
+
+        untemplated_obj = untemplate(template_obj)
+        self.assertFalse(ITemplate.providedBy(untemplated_obj))
+        self.assertFalse(untemplated_obj in site.template_list)
 
 
 class TestContentAccess(unittest.TestCase):

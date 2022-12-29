@@ -6,6 +6,7 @@ from Acquisition import aq_parent
 from castle.cms import tasks
 from castle.cms import trash
 from castle.cms.browser.utils import Utils
+from castle.cms.interfaces import ITemplate
 from castle.cms.tasks import template
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
@@ -179,7 +180,9 @@ class TemplateForm(form.Form):
     description = _('description_convert_template',
                     default='"Convert to Template" will turn current item into a template ' +
                     'and move it to repository folder, while "Copy to Template" ' +
-                    'will keep current item and create a template from a copied version.')
+                    'will keep current item and create a template from a copied version.  ' +
+                    'If the current object is already a template, you will have the option ' +
+                    'to "Untemplate" and revert to a regular object.')
 
     @button.buttonAndHandler(_(u'Convert To Template'), name='Convert')
     def handle_convert(self, action):
@@ -193,6 +196,12 @@ class TemplateForm(form.Form):
         IStatusMessage(self.request).add(u'%s has been copied to template.' % template_obj.title)
         return self.do_redirect(template_obj)
 
+    @button.buttonAndHandler(_(u'Untemplate'), name='Untemplate')
+    def handle_untemplate(self, action):
+        template_obj = template.untemplate(self.context)
+        IStatusMessage(self.request).add(u'%s is no longer a template.' % template_obj.title)
+        return self.do_redirect(template_obj)
+
     @button.buttonAndHandler(u'Cancel', name='Cancel')
     def handle_cancel(self, action):
         return self.do_redirect(self.context)
@@ -201,3 +210,11 @@ class TemplateForm(form.Form):
         utils = Utils(self.context, self.request)
         target = utils.get_object_url(context)
         return self.request.response.redirect(target)
+
+    def updateActions(self):
+        super(TemplateForm, self).updateActions()
+        if ITemplate.providedBy(self.context):
+            del self.actions["Copy"]
+            del self.actions["Convert"]
+        else:
+            del self.actions["Untemplate"]
