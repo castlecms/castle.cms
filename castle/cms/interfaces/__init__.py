@@ -3,6 +3,7 @@
 from .archive import IArchiveContentTransformer
 from .archive import IArchiveManager
 from .authentication import IAuthenticator
+from .cache import ICastleThemingCacheReset
 from .content import IAudio
 from .content import ICastleApplication
 from .content import IDashboard

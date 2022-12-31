@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+    <record interface="castle.cms.interfaces.IAPISettings"
+          field="va_address" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Varnish URL Address</title>
+      <description>Enter the URL or IP address to your varnish servers here</description>
+      <required>False</required>
+    </field>
+  </record>
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="va_port" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Varnish Port</title>
+      <required>False</required>
+    </field>
+  </record>
+
+</registry>

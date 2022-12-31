@@ -441,6 +441,19 @@ class IAPISettings(Interface):
         required=False
     )
 
+    va_address = schema.TextLine(
+        title=u"Varnish URL Address",
+        description=u"Enter the URL or IP address to your varnish servers here",
+        default=None,
+        required=False
+    )
+
+    va_port = schema.TextLine(
+        title=u"Varnish Port",
+        default=u'6081',
+        required=False
+    )
+
 
 class IArchivalSettings(Interface):
     archival_enabled = schema.Bool(
