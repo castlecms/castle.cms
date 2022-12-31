@@ -64,9 +64,15 @@ TEST_VERSIONS = {
     '2.5.19': {
         'packages': {
             'Products.CMFPlone': '5.0.8',
-            'plone.app.upgrade': '2.0.4'
+            'plone.app.upgrade': '2.0.4',
         }
-    }
+    },
+    '2.6.2': {
+        'packages': {
+            'Products.CMFPlone': '5.0.10',
+            'plone.app.upgrade': '2.0.17',
+        }
+    },
 }
 PKG_EXTRA = '-py2.7.egg'
 

@@ -5,6 +5,8 @@ from copy import deepcopy
 from io import BytesIO
 
 from castle.cms.browser import content
+from castle.cms.interfaces import ITemplate
+from castle.cms.tasks.template import save_as_template
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import TEST_USER_ID
@@ -17,6 +19,7 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.syndication import IFeedSettings
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from zope.component.hooks import getSite
 
 
 class TestContent(unittest.TestCase):
@@ -120,6 +123,7 @@ class TestContent(unittest.TestCase):
 
     def test_update_upload(self):
         fileOb = self.test_upload()
+        api.content.transition(obj=fileOb, to_state='published')
         self.request.form.update({
             'action': 'chunk-upload',
             'chunk': '1',
@@ -139,6 +143,7 @@ class TestContent(unittest.TestCase):
 
     def test_tmp_upload(self):
         fileOb = self.test_upload()
+        api.content.transition(obj=fileOb, to_state='published')
         self.request.form.update({
             'action': 'chunk-upload',
             'chunk': '1',
@@ -223,6 +228,66 @@ class TestContent(unittest.TestCase):
         settings = IFeedSettings(doc)
         # should not cause TypeError
         self.assertEquals(settings.feed_types, ())
+
+    def test_content_converted_to_template(self):
+        site = getSite()
+        obj = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_obj = save_as_template(obj, 'convert')
+        self.assertTrue(ITemplate.providedBy(template_obj))
+        self.assertTrue(template_obj in site.template_list)
+        self.assertEqual(template_obj, obj)
+
+    def test_content_copied_to_template(self):
+        site = getSite()
+        obj = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_obj = save_as_template(obj, 'copy')
+        self.assertTrue(ITemplate.providedBy(template_obj))
+        self.assertTrue(template_obj in site.template_list and obj not in site.template_list)
+        self.assertNotEqual(template_obj, obj)
+
+    def test_create_content_from_template(self):
+        site = getSite()
+        obj = api.content.create(
+            type='Document',
+            id='template-document',
+            title='Template Document',
+            container=self.portal)
+
+        template_obj = save_as_template(obj, 'convert')
+
+        self.request.form.update({
+            'action': 'create-from-template',
+            'basePath': '/',
+            'id': 'document-from-template',
+            'title': 'Document From Template',
+            'selectedType[id]': template_obj.id,
+            'selectedType[title]': template_obj.title,
+            'transitionTo': ''
+        })
+
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertFalse(ITemplate.providedBy(data))
+        self.assertTrue(template_obj in site.template_list and data not in site.template_list)
+
+    def test_template_action_in_toolbar(self):
+        pactions = api.portal.get_tool('portal_actions')
+        actions = pactions['toolbar_menu'].listActions()
+        temp_action_in_toolbar = False
+        for a in actions:
+            if a.id == 'convert_template':
+                temp_action_in_toolbar = True
+        self.assertTrue(temp_action_in_toolbar)
 
 
 class TestContentAccess(unittest.TestCase):

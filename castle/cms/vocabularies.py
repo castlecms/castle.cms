@@ -21,17 +21,20 @@ from plone.app.content.browser import vocabulary
 import requests
 import json
 
+
 # XXX needs updating in 5.1
 try:
     vocabulary.PERMISSIONS['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
     vocabulary.PERMISSIONS['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary.PERMISSIONS['plone.app.vocabularies.Keywords'] = 'View'
+    vocabulary.PERMISSIONS['castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'] = 'View'
 except KeyError:
     vocabulary._permissions['plone.app.vocabularies.Groups'] = 'Modify portal content'
     vocabulary._permissions['castle.cms.vocabularies.EmailCategories'] = 'Modify portal content'
     vocabulary._permissions['castle.cms.vocabularies.Surveys'] = 'Modify portal content'
     vocabulary._permissions['plone.app.vocabularies.Keywords'] = 'View'
+    vocabulary._permissions['castle.cms.vocabularies.ProvidesTitleSummaryLeadImage'] = 'View'
 vocabulary._unsafe_metadata.append('last_modified_by')
 
 
@@ -141,6 +144,45 @@ class MimeTypeVocabularyFactory(object):
 
 
 MimeTypeVocabulary = MimeTypeVocabularyFactory()
+
+
+@implementer(IVocabularyFactory)
+class RobotBehaviorVocabularyFactory(object):
+
+    def __call__(self, context):
+        terms = [
+            {
+                'value': 'index',
+                'title': 'Index',
+            },
+            {
+                'value': 'follow',
+                'title': 'Follow links',
+            },
+            {
+                'value': 'noimageindex',
+                'title': 'Do not index images',
+            },
+            {
+                'value': 'noarchive',
+                'title': 'Search engines should not show a cached link to this page on a SERP.',
+            },
+            {
+                'value': 'nosnippet',
+                'title': 'Search engines should not show a snippet of this page (i.e. meta description) on a SERP.',  # noqa:E501
+            },
+        ]
+
+        return SimpleVocabulary([
+            SimpleTerm(
+                value=term['value'],
+                token=term['value'],
+                title=term['title'],
+            ) for term in terms
+        ])
+
+
+RobotBehaviorVocabulary = RobotBehaviorVocabularyFactory()
 
 
 @implementer(IVocabularyFactory)
@@ -309,3 +351,32 @@ class CountriesVocabulary(object):
 
 
 CountriesVocabularyFactory = CountriesVocabulary()
+
+
+@implementer(IVocabularyFactory)
+class ProvidesTitleSummaryLeadImageVocabulary(object):
+
+    def __call__(self, context):
+        catalog = api.portal.get_tool('portal_catalog')
+        title_description_image_brains = catalog(self_or_child_has_title_description_and_image=True)
+        folderish_brains = catalog(is_folderish=True)
+        items = make_terms(title_description_image_brains, folderish_brains)
+
+        return SimpleVocabulary(items)
+
+
+ProvidesTitleSummaryLeadImageVocabularyFactory = ProvidesTitleSummaryLeadImageVocabulary()
+
+
+def make_terms(brains1, brains2):
+    results = []
+    included_brains = []
+    for brain in brains1:
+        results.append((brain['UID'], brain['Title']))
+        included_brains.append(brain['UID'])
+    for brain in brains2:
+        if brain['UID'] not in included_brains:
+            results.append((brain['UID'], brain['Title']))
+            included_brains.append(brain['UID'])
+
+    return [SimpleTerm(value=result[0], token=result[0], title=result[1]) for result in results]

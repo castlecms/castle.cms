@@ -67,6 +67,14 @@
 
   <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"
+    name="all_contents_vocab"
+    class=".fc.AllContentsVocabView"
+    permission="cmf.ListFolderContents"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+
+  <browser:page
+    for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-paste"
     class=".fc.PasteActionView"
     permission="cmf.ListFolderContents"
@@ -151,6 +159,13 @@
     permission="zope2.DeleteObjects"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  <browser:page
+    for="*"
+    name="convert_template"
+    class=".actions.TemplateForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
   <browser:page
     for="*"
@@ -187,6 +202,23 @@
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/slideshow.pt"
+  />
+
+  <browser:page
+    for="castle.cms.interfaces.ISlideshow"
+    name="edit"
+    class=".slideshow.SlideshowEditView"
+    layer="castle.cms.interfaces.ICastleLayer"
+    permission="cmf.ModifyPortalContent"
+  />
+
+  <browser:page
+    for="castle.cms.interfaces.IParallax"
+    name="view-parallax"
+    class=".parallax.ParallaxView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/parallaxview.pt"
   />
 
 </configure>

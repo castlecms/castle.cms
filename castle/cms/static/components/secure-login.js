@@ -217,12 +217,18 @@ require([
       var that = this;
 
       var disabled = that.props.twoFactorEnabled && that.state.state !== STATES.REQUEST_AUTH_CODE;
-      var nameField = D.input({type: 'text', value: that.state.username,
-               className: 'form-control username',
-               id: 'username',
-               placeholder:'Enter username', disabled: disabled,
-               onKeyUp: that.checkEnterHit.bind(that, submissionFunction),
-               onChange: that.valueChanged.bind(that, 'username')})
+      var nameField = D.input({
+        type: 'text',
+        value: that.state.username,
+        className: 'form-control username',
+        id: 'username',
+        placeholder:'Enter username',
+        disabled: disabled,
+        onKeyUp: that.checkEnterHit.bind(that, submissionFunction),
+        onChange: that.valueChanged.bind(that, 'username'),
+        autoCorrect: 'off',
+        autoCapitalize: 'none',
+      })
       return D.div({ className: 'form-group'}, [
         D.label({ htmlFor: 'username' }, 'Username'),
         nameField

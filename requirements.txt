@@ -1,3 +1,4 @@
-cryptography==2.3
-setuptools==40.5.0
-zc.buildout==2.13.3
+cryptography==3.3.2
+setuptools==44.0.0
+zc.buildout==2.13.7
+Pillow==6.2.2

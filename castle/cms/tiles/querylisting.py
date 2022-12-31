@@ -169,7 +169,20 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
 
+        if self.show_expired:
+            parsed['show_all'] = 1
+            parsed['show_inactive'] = 1
+
         return parsed
+
+    @property
+    def data(self):
+        if 'display_fields' in self.request.form:
+            if type(self.request.form['display_fields']) == str:
+                fields = self.request.form['display_fields'].split(',')
+                self.request.form['display_fields'] = [a.strip() for a in fields if len(a.strip()) > 0]
+        thedata = super(QueryListingTile, self).data
+        return thedata
 
     @property
     def display_fields(self):
@@ -181,6 +194,11 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     @property
     def limit(self):
         return self.data.get('limit', 20) or 20
+
+    @property
+    def show_expired(self):
+        should_show = self.data.get('show_expired', False) or None
+        return should_show if should_show in [True, False] else False
 
     @memoize
     def results(self):
@@ -239,7 +257,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return url + '?' + urlencode(params)
 
     def next_url(self, page):
-        return self._next_url(self.this_url, page)
+        return self._next_url(self.view_url, page)
 
     def get_form(self):
         try:
@@ -290,7 +308,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         out = '{}'
         try:
             config['ajaxResults'] = {
-                'url': self.this_url,
+                'url': self.view_url,
                 'selector': '#query-results-%s' % self.id or ''
             }
 
@@ -335,6 +353,13 @@ class IQueryListingTileSchema(model.Schema):
         description=u'Sort the results in reverse order',
         required=False,
         default=True
+    )
+
+    show_expired = schema.Bool(
+        title=u'Show Expired',
+        description=u'Include all results, even expired ones',
+        required=False,
+        default=False,
     )
 
     limit = schema.Int(

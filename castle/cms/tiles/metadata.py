@@ -3,6 +3,7 @@ import json
 from castle.cms.behaviors.location import ILocation
 from castle.cms.behaviors.search import ISearch
 from castle.cms.interfaces import ILDData
+from castle.cms.utils import is_backend
 from castle.cms.utils import site_has_icon
 from plone.app.layout.globals.interfaces import IViewView
 from plone.tiles import Tile
@@ -15,6 +16,7 @@ from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
+from castle.cms.constants import CASTLE_VERSION_STRING
 
 
 head_viewlets = {
@@ -50,11 +52,16 @@ class MetaDataTile(Tile):
 <link rel="apple-touch-icon" sizes="180x180" href="{url}/site-icon.png">
 <link rel="icon" type="image/png" href="{url}/site-icon.png?scale=32" sizes="32x32">
 <link rel="icon" type="image/png" href="{url}/site-icon.png?scale=16" sizes="16x16">
-<link rel="manifest" href="{url}/manifest.json">
+<link rel="manifest" href="{url}/manifest.json" crossorigin="use-credentials">
 <meta name="theme-color" content="#ffffff">'''.format(url=self.root_url)
 
     def _wrap_ld(self, data):
         return '<script type="application/ld+json">' + json.dumps(data) + '</script>'
+
+    def _get_robot_config(self, search):
+        if(is_backend(self.request)):
+            return search.backend_robot_configuration or []
+        return search.robot_configuration or []
 
     def get_ld_data(self):
         result = ''
@@ -84,9 +91,8 @@ class MetaDataTile(Tile):
                 'modificationDate': _date(context, 'modified'),
                 'publicationDate': _date(context, 'effective'),
                 'expirationDate': _date(context, 'expires'),
-                'generator': 'CastleCMS 2.5.17',
+                'generator': CASTLE_VERSION_STRING,
                 "distribution": "Global",
-                "robots": "index,follow"
             }
             ldata = ILocation(context, None)
             if ldata is not None:
@@ -98,13 +104,13 @@ class MetaDataTile(Tile):
 
             search = ISearch(context, None)
             if search is not None:
-                if search.robot_configuration:
-                    config = search.robot_configuration[:]
-                    if 'index' not in config:
-                        config.append('noindex')
-                    if 'follow' not in config:
-                        config.append('nofollow')
-                    tags['robots'] = ','.join(config)
+                robot_configuration = self._get_robot_config(search)
+                config = robot_configuration[:]
+                if 'index' not in config:
+                    config.append('noindex')
+                if 'follow' not in config:
+                    config.append('nofollow')
+                tags['robots'] = ','.join(config)
 
             return ''.join([u'<meta name="{}" content="{}">'.format(name, value)
                             for name, value in tags.items()])
@@ -120,9 +126,8 @@ class MetaDataTile(Tile):
           )
 
     def get_printcss_link(self):
-        return ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''.format(  # noqa
-              url=self.root_url
-              )
+        template = ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''  # noqa:E501
+        return template.format(url=self.root_url)
 
     def get_canonical_url(self):
         context_state = getMultiAdapter(

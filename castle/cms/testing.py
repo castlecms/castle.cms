@@ -29,6 +29,7 @@ from zope.configuration import xmlconfig
 from zope.globalrequest import clearRequest
 from zope.globalrequest import setRequest
 from ZPublisher import HTTPResponse
+from wildcard.hps.interfaces import IWildcardHPSLayer
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -74,6 +75,9 @@ CASTLE_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
     name="CastleTesting:Functional")
 CASTLE_PLONE_INTEGRATION_TESTING = IntegrationTesting(
     bases=(CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE),
+    name="CastleTesting:Integration")
+CASTLE_PLONE_ES_TESTING = IntegrationTesting(
+    bases=(CASTLE_FIXTURE, MOCK_MAILHOST_FIXTURE, IWildcardHPSLayer),
     name="CastleTesting:Integration")
 
 

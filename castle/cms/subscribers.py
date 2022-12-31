@@ -9,15 +9,18 @@ from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.dexterity.behaviors.metadata import IOwnership
 from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.app.event.base import localized_now
+from plone.app.versioningbehavior.utils import get_change_note
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from zope.interface import Interface
 import logging
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -102,6 +105,7 @@ def on_content_created(obj, event):
 
 
 def on_content_modified(obj, event):
+    obj.changeNote = get_change_note(getRequest())
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
@@ -146,6 +150,10 @@ def on_theme_event(event):
 
 
 def on_trash_emptied(obj):
+    audit.event(obj)
+
+
+def on_cache_invalidated(obj):
     audit.event(obj)
 
 
@@ -204,3 +212,9 @@ def on_youtube_video_state_changed(obj, event):
             tasks.youtube_video_state_changed.delay(obj)
         except CannotGetPortalError:
             pass
+
+
+def on_template_delete(obj, event):
+    site = getSite()
+    if obj in site.template_list:
+        site.template_list.remove(obj)

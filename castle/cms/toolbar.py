@@ -8,6 +8,7 @@ from Acquisition import aq_parent
 from castle.cms import caching
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
+from castle.cms.interfaces import ITemplate
 from castle.cms.utils import get_chat_info
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
@@ -193,6 +194,12 @@ class Utils(object):
         cf = caching.cloudflare.get()
         return cf.enabled or settings.cachingProxies
 
+    def show_template(self):
+        return (api.user.has_permission("Delete objects", obj=self.toolbar.folder) and
+                api.user.has_permission("Copy or Move", obj=self.toolbar.context) and
+                api.user.has_permission("Add portal content", obj=self.toolbar.context) and not
+                self.toolbar.context_state.is_portal_root())
+
 
 class Toolbar(BrowserView):
     """
@@ -212,7 +219,8 @@ class Toolbar(BrowserView):
     def get_addable_types(self):
         """Return menu item entries in a TAL-friendly form."""
         data = {
-            'types': []
+            'types': [],
+            'templates': []
         }
         idnormalizer = queryUtility(IIDNormalizer)
 
@@ -244,6 +252,21 @@ class Toolbar(BrowserView):
                 'description': t.Description(),
                 'folderPath': folder_path
             })
+
+        try:
+            site_templates = self.folder.template_list
+
+            for t in site_templates:
+                typeId = t.getId()
+                data['templates'].append({
+                    'id': typeId,
+                    'safeId': idnormalizer.normalize(typeId),
+                    'title': t.Title(),
+                    'description': t.Description(),
+                    'folderPath': folder_path
+                })
+        except AttributeError:
+            pass
 
         return data
 
@@ -298,6 +321,10 @@ class Toolbar(BrowserView):
         if pw is not None:
             if _checkPermission(ManageWorkflowPolicies, self.real_context):
                 placeful = True
+
+        # Objects marked as templates cannot transition to published state.
+        if ITemplate.providedBy(self.context):
+            transitions = []
 
         return {
             'state': {

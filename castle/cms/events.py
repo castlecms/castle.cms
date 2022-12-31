@@ -36,3 +36,13 @@ class ITrashEmptiedEvent(IObjectEvent):
 class TrashEmptiedEvent(ObjectEvent):
     def __init__(self, object):
         super(TrashEmptiedEvent, self).__init__(object)
+
+
+class ICacheInvalidatedEvent(IObjectEvent):
+    pass
+
+
+@implementer(ICacheInvalidatedEvent)
+class CacheInvalidatedEvent(ObjectEvent):
+    def __init__(self, object):
+        super(CacheInvalidatedEvent, self).__init__(object)

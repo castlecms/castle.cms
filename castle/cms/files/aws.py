@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 import StringIO
 from time import time
-from urllib.parse import urlparse, quote, quote_plus
+from urllib.parse import urlsplit, urlunsplit, quote, quote_plus
 
 import botocore
 import boto3
@@ -64,8 +64,7 @@ def get_bucket(s3_bucket=None):
         else:
             logger.error('error querying for bucket {name} (code {code})'.format(
                 name=s3_bucket,
-                code=error_code,
-                log_exc=True))
+                code=error_code))
 
     return s3, bucket
 
@@ -147,12 +146,14 @@ def set_permission(obj):
     object_acl = s3_obj.Acl()
     if public:
         object_acl.put(ACL='public-read')
-        expires_in = 0
         # a public URL is not fetchable with no expiration, apparently
-        url = '{endpoint_url}/{bucket}/{key}'.format(
-            endpoint_url=s3.meta.client.meta.endpoint_url,
-            bucket=bucket.name,
-            key=quote_plus(key))  # quote_plus usage means a safer url
+        expires_in = 0
+        scheme, netloc, path, qs, anchor = urlsplit(s3.meta.client.meta.endpoint_url)
+        # this makes sure there are no empty segments, and then appends
+        # the bucket name and quoted key value (which is fine, and usable
+        # with aws api)
+        newpath = "/".join(filter(None, path.split("/")) + [bucket.name, quote_plus(key)])
+        url = urlunsplit((scheme, netloc, newpath, qs, anchor))
     else:
         object_acl.put(ACL='private')
         expires_in = EXPIRES_IN
@@ -216,10 +217,13 @@ def swap_url(url, registry=None, base_url=None):
         base_url = registry.get('castle.aws_s3_base_url', None)
 
     if base_url:
-        parsed_url = urlparse(url)
-        url = '{}/{}'.format(base_url.strip('/'), '/'.join(parsed_url.path.split('/')[2:]))
-        if parsed_url.query:
-            url += '?' + parsed_url.query
+        basescheme, basenetloc, basepath, baseqs, baseanchor = urlsplit(base_url.decode('utf-8'))
+        scheme, netloc, path, qs, anchor = urlsplit(url.decode('utf-8'))
+        # make sure there are no empty segements
+        # and also drop the first segment -- should be the bucket, which we
+        # don't need to pass on to the final url
+        newpath = u"/".join(filter(None, path.split(u'/'))[1:])
+        url = urlunsplit((basescheme, basenetloc, newpath, qs, anchor))
 
     return url
 
@@ -268,7 +272,13 @@ def get_url(obj):
     if not url.startswith('http'):
         url = 'https:' + url
 
-    return swap_url(url)
+    # need to make sure the url is formatted correctly
+    # the main one we've seen is extra slashes in the path
+    scheme, netloc, path, qs, anchor = urlsplit(url)
+    # this will get rid of any empty segments
+    path = "/".join(filter(None, path.split('/')))
+    finalurl = urlunsplit((scheme, netloc, path, qs, anchor))
+    return swap_url(finalurl)
 
 
 def create_or_update(bucket, key, content_type, data, content_disposition=None, make_public=True):

@@ -191,7 +191,7 @@ class Reporter(object):
             self.threads.append(thread)
 
         try:
-            # just make sure db is setup
+            # just make sure db is set up
             self.get_next()
         except sqlalchemy.exc.OperationalError as ex:
             if 'no such table' in ex.message:

@@ -14,10 +14,10 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='2.6.7.dev0',
+    version='3.0.0b117.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
-        read('HISTORY.rst')
+        read('CHANGES.md')
     ),
     keywords="plone cms castle",
     classifiers=[
@@ -63,13 +63,16 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.4',
-        'collective.elasticsearch>=2.0.5<3',
+        'wildcard.hps>=1.4.0',
         'collective.celery>=1.1.4',
+
+        # the use of collective.elasticsearch in the 3.x+ version of castle.cms
+        # is limited and should not be relied on.
+        'collective.elasticsearch>=4.0.0<5.0.0',
 
         # python
         'boto3>=1.9.222',
         'google-api-python-client>=1.4.2<2',
-        'redis>=2.10.3<3',
         'requests>=2.7.0<3',
         'requests_oauthlib>=0.5.0<1',
         'oauth2client>=1.5.1<2',
@@ -124,12 +127,12 @@ setup(
       content-popularity = castle.cms.cron:ga_popularity
       empty-trash = castle.cms.cron:empty_trash
       twitter-monitor = castle.cms.cron:twitter_monitor
-      reindex-elasticsearch = castle.cms.cron:reindex_es
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
+      report-users = castle.cms._scripts.report_users:setup_and_run
       """,
     include_package_data=True,
     zip_safe=False,

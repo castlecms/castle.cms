@@ -1,13 +1,13 @@
 *** Settings ***
 
- Force Tags  wip-not_in_docs
+Force Tags  wip-not_in_docs
 
- Resource  plone/app/robotframework/selenium.robot
- Resource   keywords.robot
- Resource   common.robot
+Resource  plone/app/robotframework/selenium.robot
+Resource   keywords.robot
+Resource   common.robot
 
- Test Setup  Open test browser
- Test Teardown  Close all browsers
+Test Setup  Open test browser
+Test Teardown  Close all browsers
 
 *** Test Cases ***
 

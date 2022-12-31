@@ -22,6 +22,7 @@ from io import BytesIO
 import json
 from time import time
 import unittest
+from urllib.parse import quote_plus
 
 
 class TestDuplicateDetector(unittest.TestCase):
@@ -42,6 +43,7 @@ class TestDuplicateDetector(unittest.TestCase):
             id='folder',
             container=self.portal)
         dd.register(doc, hash_)
+        api.content.transition(obj=doc, to_state='published')
 
         self.assertEqual(IUUID(dd.get_object(hash_)), IUUID(doc))
 
@@ -260,8 +262,9 @@ class TestAWS(unittest.TestCase):
     @mock_s3
     def test_get_url_public_or_notexpired(self):
         # this is creating a bucket in the moto/mock s3 service
+        bucket = 'castletest'
         s3conn = boto3.resource('s3')
-        s3conn.create_bucket(Bucket='castletest')
+        s3conn.create_bucket(Bucket=bucket)
 
         fileOb = upload_file_to_castle(self)
         api.content.transition(fileOb, 'publish')
@@ -269,7 +272,16 @@ class TestAWS(unittest.TestCase):
         fileOb = api.content.get(path='/file-repository/foobar.bin')
 
         resulturl = aws.get_url(fileOb)
-        self.assertTrue(resulturl.startswith(self.test_base_url))
+        # the url should be the configured base url (from configuration registry)
+        # with the key appended to it.
+        # the bucketname should not be a part of the url. this should be stripped.
+        # the key should also be sent through quote_plus, which basically makes it
+        # a single path segment... this is okay with boto3 and the aws s3 api, and
+        # possibly recommended to make sure your key's are passed to the api safely.
+        key = quote_plus(aws.KEY_PREFIX + IUUID(fileOb))
+        # wrap this in str before decode because of futures import
+        expectedurl = str(self.test_base_url + key).decode('utf-8')
+        self.assertEqual(resulturl, expectedurl)
 
     @mock_s3
     def test_get_url_private_expired(self):

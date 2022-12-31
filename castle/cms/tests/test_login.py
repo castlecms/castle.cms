@@ -307,6 +307,29 @@ class TestTwoFactor(unittest.TestCase):
         self.assertTrue(result['success'])
         self.assertTrue(result['changePasswordRequired'])
 
+    def test_login_after_wrong_username_login_attempt(self):
+        self.request.form.update({
+            'username': 'WRONG_USER_NAME',
+            'password': TEST_USER_PASSWORD
+        })
+        self.request.method = self.request.REQUEST_METHOD = 'POST'
+        self.request.cookies['castle_session_id'] = 'test_session_2'
+        self.request.cookies['__sl__'] = 'wrong_test_login'
+        registry = getUtility(IRegistry)
+        registry['plone.two_factor_enabled'] = False
+        view = SecureLoginView(self.portal, self.request)
+        view()  # CHECK_CREDENTIALS state
+
+        result = json.loads(view())
+        self.assertFalse(result['success'])
+
+        self.request.form.update({
+            'username': TEST_USER_NAME,
+            'password': TEST_USER_PASSWORD
+        })
+        result = json.loads(view())
+        self.assertTrue(result['success'])
+
     # These "reset" tests were actually testing the removed pwexpiry form...
     # def test_password_reset(self):
     #     registry = getUtility(IRegistry)

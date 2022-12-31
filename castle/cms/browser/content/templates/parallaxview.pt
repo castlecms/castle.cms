@@ -1,0 +1,119 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US" 
+  xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <head>
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/parallax/css/parallax.css" />
+    <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
+  </head>
+  <body>
+    <div class="parallax-image-tile-container">
+      <tal:defs tal:define="tiles view/get_tiles|nothing;">
+        <div class="parallax-tiles" id="${view/get_id|nothing}" tal:condition="nocall: tiles">
+          <tal:item tal:repeat="tile tiles">
+            <tal:defs tal:define="image python: tile.get('image', None);
+                                  bg_color python: tile.get('bg_color', 'white');
+                                  title python: tile.get('title', None);
+                                  text python: tile.get('text', None);
+                                  text_color python: tile.get('text_color', 'black');
+                                  text_shadow python: tile.get('text_shadow', 'none');
+                                  justify_center python: tile.get('justify_center', False);
+                                  hor_left python: tile.get('hor_left', '25');
+                                  hor_right python: tile.get('hor_right', '25');
+
+                                  static_image python: tile.get('static_image', None);
+                                  static_bg_color python: tile.get('static_bg_color', 'white');
+                                  static_title python: tile.get('static_title', None);
+                                  static_text python: tile.get('static_text', None);
+                                  static_text_color python: tile.get('static_text_color', 'black');
+                                  static_text_shadow python: tile.get('static_text_shadow', 'none');
+                                  static_justify_center python: tile.get('static_justify_center', False);
+                                  static_hor_left python: tile.get('static_hor_left', '25');
+                                  static_hor_right python: tile.get('static_hor_right', '25');">
+              <!-- Parallax section -->
+              <section tal:condition="image"
+                       class="parallax-section parallax parallax-bg"
+                       style="--bg-image: url('${image}');
+                              color: ${text_color};
+                              text-shadow: ${text_shadow};">
+                <div class="parallax-tile-text"
+                     style="margin-left: ${hor_left};
+                            margin-right: ${hor_right};">
+                  <div tal:condition="justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${title}</div>
+                  <div tal:condition="not: justify_center" 
+                       class="parallax-title text-content">${title}</div>
+                  <div class="parallax-body text-content">${text}</div>
+                </div>
+              </section>
+              <section tal:condition="not: image"
+                       class="parallax-section parallax parallax-bg"
+                       style="background: ${bg_color};
+                              color: ${text_color};
+                              text-shadow: ${text_shadow};">
+                <div class="parallax-tile-text"
+                     style="margin-left: ${hor_left};
+                            margin-right: ${hor_right};">
+                  <div tal:condition="justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${title}</div>
+                  <div tal:condition="not: justify_center" 
+                       class="parallax-title text-content">${title}</div>
+                  <div class="parallax-body text-content">${text}</div>
+                </div>
+              </section>
+
+              <!-- Static section -->
+              <section tal:condition="static_image"
+                       class="parallax-section parallax-static"
+                       style="--bg-image: url('${static_image}');
+                              color: ${static_text_color};
+                              text-shadow: ${static_text_shadow};">
+                <div class="parallax-tile-text"
+                     style="margin-left: ${static_hor_left};
+                            margin-right: ${static_hor_right};">
+                  <div tal:condition="static_justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${static_title}</div>
+                  <div tal:condition="not: static_justify_center" 
+                       class="parallax-title text-content">${static_title}</div>
+                  <div class="parallax-body text-content">${static_text}</div>
+                </div>
+              </section>
+              <section tal:condition="not: static_image"
+                       class="parallax-section parallax-static"
+                       style="background: ${static_bg_color};
+                              color: ${static_text_color};
+                              text-shadow: ${static_text_shadow};">
+                <div class="parallax-tile-text"
+                     style="margin-left: ${static_hor_left};
+                            margin-right: ${static_hor_right};">
+                  <div tal:condition="static_justify_center" 
+                       class="parallax-title text-content"
+                       style="justify-content: center;">${static_title}</div>
+                  <div tal:condition="not: static_justify_center" 
+                       class="parallax-title text-content">${static_title}</div>
+                  <div class="parallax-body text-content">${static_text}</div>
+                </div>
+              </section>
+            </tal:defs>
+          </tal:item>
+        </div>
+      </tal:defs>
+    </div>
+    <div id="close-container" class="close-container" onclick="goBack()">
+      <div class="x-container">
+        <div class="leftright"></div>
+        <div class="rightleft"></div>
+      </div>
+      <div class="close-text-container">
+        <label class="close">close</label>
+      </div>
+    </div>
+    <script>
+      function goBack(){
+        window.history.back();
+      }
+    </script>
+  </body>
+</html>

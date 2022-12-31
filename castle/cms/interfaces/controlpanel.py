@@ -510,8 +510,56 @@ class IContentSettings(Interface):
     # but will require a custom widget
 
 
+class ISearchSettings(Interface):
+    search_page_help_text = schema.TextLine(
+        title=u'Search Page Help Text',
+        description=u'The help text a user sees between the search bar and search results at /@@search. '
+                    u'This text element will be omitted if blank',
+        required=False,
+        default=u'To narrow your search, select a content type option shown in the toolbar below or listed under "More Filters". ' # noqa
+                u'To broaden your search to other crawled sites, select a subdomain listed under "Source."' # noqa
+    )
+
+
+class ISlideshowSettings(Interface):
+    resource_slide_view_more_link_text = schema.TextLine(
+        title=u"View More link text",
+        description=u'The text a user sees for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False)
+
+    resource_slide_view_more_link_url = schema.URI(
+        title=u"View More link URL",
+        description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
+                    u'This link will be omitted if the link text or link URL is empty.',
+        required=False)
+
+
+class IAdjustableFontSizeSettings(Interface):
+    font_size_small = schema.TextLine(
+        title=u"Small font size",
+        description=u'The font size displayed when a user selects "small" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_SMALL,
+    )
+    font_size_medium = schema.TextLine(
+        title=u"Medium font size",
+        description=u'The font size displayed when a user selects "medium" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_MEDIUM,
+    )
+    font_size_large = schema.TextLine(
+        title=u"Large font size",
+        description=u'The font size displayed when a user selects "large" on content that allows a font size choice', # noqa
+        required=True,
+        default=constants.DEFAULT_FONT_SIZE_LARGE,
+    )
+
+
 class ICastleSettings(ISiteConfiguration, IAPISettings,
-                      IArchivalSettings, IContentSettings):
+                      IArchivalSettings, IContentSettings,
+                      ISearchSettings,
+                      ISlideshowSettings, IAdjustableFontSizeSettings):
     pass
 
 
