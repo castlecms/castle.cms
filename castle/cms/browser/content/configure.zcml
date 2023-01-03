@@ -159,6 +159,13 @@
     permission="zope2.DeleteObjects"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  <browser:page
+    for="*"
+    name="convert_template"
+    class=".actions.TemplateForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
   <browser:page
     for="*"
@@ -203,6 +210,15 @@
     class=".slideshow.SlideshowEditView"
     layer="castle.cms.interfaces.ICastleLayer"
     permission="cmf.ModifyPortalContent"
+  />
+
+  <browser:page
+    for="castle.cms.interfaces.IParallax"
+    name="view-parallax"
+    class=".parallax.ParallaxView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/parallaxview.pt"
   />
 
 </configure>

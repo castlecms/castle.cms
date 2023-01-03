@@ -24,7 +24,7 @@
       1 - ${showing} of ${python: results['total']} Results
       <button href="${python: view.next_url(page)}" class="load-more"
          tal:condition="python: (page * limit) < total"
-         data-page="${python: page + 1}">Show ${python: view.limit} More Articles</button>
+         data-page="${python: page + 1}">Show ${python: view.limit} More Items</button>
     </p>
   </div>
 </div>

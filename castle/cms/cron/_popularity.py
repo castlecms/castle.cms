@@ -1,18 +1,18 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
-from castle.cms.services.google import analytics
-from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.utils import retriable
-from collective.elasticsearch.es import ElasticSearchCatalog
 from plone import api
-from Products.CMFPlone.defaultpage import get_default_page
 from plone.uuid.interfaces import IUUID
+from Products.CMFPlone.defaultpage import get_default_page
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
+import transaction
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import setSite
 
-import transaction
+from castle.cms.indexing import hps
+from castle.cms.services.google import analytics
+from castle.cms.social import COUNT_ANNOTATION_KEY
+from castle.cms.utils import retriable
 
 
 def get_results(service, profile_id):
@@ -29,10 +29,7 @@ def get_results(service, profile_id):
 
 @retriable(sync=True)
 def get_popularity(site):
-    setSite(site)
-    catalog = api.portal.get_tool('portal_catalog')
-    es = ElasticSearchCatalog(catalog)
-    if not es.enabled:
+    if not hps.is_enabled():
         return
 
     service = analytics.get_ga_service()
@@ -44,8 +41,8 @@ def get_popularity(site):
         return
 
     bulk_data = []
-    bulk_size = es.get_setting('bulk_size', 50)
-    conn = es.connection
+    bulk_size = hps.get_bulk_size()
+    conn = hps.get_connection()
 
     site._p_jar.sync()
     for path, page_views in get_results(service, profile)['rows']:
@@ -71,19 +68,19 @@ def get_popularity(site):
 
         bulk_data.extend([{
             'update': {
-                '_index': es.index_name,
+                '_index': conn.get_index_name(),
                 '_id': IUUID(ob)
             }
         }, {'doc': data}])
 
         if len(bulk_data) % bulk_size == 0:
-            conn.bulk(index=es.index_name, body=bulk_data)
+            conn.bulk(index=hps.get_index_name(), body=bulk_data)
             bulk_data = []
             transaction.commit()
             site._p_jar.sync()
 
     if len(bulk_data) > 0:
-        conn.bulk(index=es.index_name, body=bulk_data)
+        conn.bulk(index=hps.get_index_name(), body=bulk_data)
     transaction.commit()
 
 
@@ -96,6 +93,7 @@ def run(app):
     for oid in app.objectIds():  # noqa
         obj = app[oid]  # noqa
         if IPloneSiteRoot.providedBy(obj):
+            setSite(obj)
             get_popularity(obj)
 
 

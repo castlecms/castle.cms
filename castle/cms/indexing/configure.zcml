@@ -1,0 +1,46 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    i18n_domain="castle.cms">
+
+  <!-- dependencies -->
+  <include package="wildcard.hps" />
+
+  <!-- search overrides -->
+  <adapter
+    for="castle.cms.interfaces.ICastleLayer
+         wildcard.hps.interfaces.IWildcardHPSCatalog"
+    factory=".search.QueryAssembler"
+    provides="wildcard.hps.interfaces.IQueryAssembler" />
+  <adapter
+    for="castle.cms.interfaces.ICastleLayer
+         wildcard.hps.interfaces.IWildcardHPSCatalog"
+    factory=".search.MappingAdapter"
+    provides="wildcard.hps.interfaces.IMappingProvider" />
+  <adapter
+    for="plone.dexterity.interfaces.IDexterityContent"
+    factory=".search.AdditionalIndexDataProvider"
+    provides="wildcard.hps.interfaces.IAdditionalIndexDataProvider" />
+
+
+  <adapter name="getRawRelatedItems" factory=".indexers.getRawRelatedItems" />
+  <adapter name="location" factory=".indexers.getLocation" />
+  <adapter name="hasImage" factory=".indexers.hasImage" />
+  <adapter name="has_private_parents" factory=".indexers.has_private_parents" />
+  <adapter name="self_or_child_has_title_description_and_image" factory=".indexers.self_or_child_has_title_description_and_image" />
+  <adapter name="contentType" factory=".indexers.getContentTypeFile" />
+  <adapter name="contentType" factory=".indexers.getContentTypeImage" />
+  <adapter name="contentType" factory=".indexers.getContentTypeContent" />
+  <adapter name="trashed" factory=".indexers.trashed" />
+  <adapter name="recurrence" factory=".indexers.recurrence" />
+  <adapter name="last_modified_by" factory=".indexers.last_modified_by" />
+  <adapter name="image_info" factory=".indexers.image_info" />
+  <adapter name="has_custom_markup" factory=".indexers.has_custom_markup" />
+
+</configure>
