@@ -522,20 +522,6 @@ class ISlideshowSettings(Interface):
         required=False)
 
 
-class IElasticSearchSettings(Interface):
-    es_index_enabled = schema.Bool(
-        title=u'Enable Custom Elastic Search Index',
-        default=False
-    )
-
-    es_index = schema.TextLine(
-        title=u'Elastic Search Index',
-        description=u'The index prefix used for elastic search.  You must restart clients and rebuild '
-                    u'(or rename the index on ES) in order for things to work properly',
-        required=False
-    )
-
-
 class ISearchExclusionSettings(Interface):
     exclude_from_searches = schema.Bool(
         title=u"Exclude content type from searches",
@@ -576,8 +562,7 @@ class IAdjustableFontSizeSettings(Interface):
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
                       ISearchSettings,
-                      IElasticSearchSettings, ISlideshowSettings,
-                      IAdjustableFontSizeSettings):
+                      ISlideshowSettings, IAdjustableFontSizeSettings):
     pass
 
 

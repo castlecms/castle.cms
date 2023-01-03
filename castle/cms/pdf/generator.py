@@ -24,7 +24,7 @@ cleaner = Cleaner(style=True, page_structure=False,
                   annoying_tags=False, remove_unknown_tags=False)
 
 
-def create_raw_from_view(context, view_name='pdf', css_files=[]):
+def create_raw_from_view(context, view_name='pdf', css_files=[], unrestricted_traverse=False):
     request = getRequest()
     view = getMultiAdapter((context, request), name=view_name)
     html = view()
@@ -32,16 +32,23 @@ def create_raw_from_view(context, view_name='pdf', css_files=[]):
     site_url = portal.absolute_url()
     css = []
     for css_file in css_files:
-        ct, data = get_data_from_url(css_file)
+        ct, data = get_data_from_url(
+            url=css_file,
+            unrestricted_traverse=unrestricted_traverse,
+        )
         if isinstance(data, basestring):
             css.append(data)
     xml = fromstring(html)
     cleaner(xml)
-    inline_images_in_dom(xml, portal, site_url)
+    inline_images_in_dom(
+        dom=xml,
+        portal=portal,
+        site_url=site_url,
+        unrestricted_traverse=unrestricted_traverse,
+    )
 
     registry = getUtility(IRegistry)
-    public_url = registry.get(
-        'plone.public_url', '')
+    public_url = registry.get('plone.public_url', '')
 
     if public_url not in ('', None):
         for anchor in xml.cssselect('a'):
