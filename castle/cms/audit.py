@@ -29,6 +29,10 @@ import logging.config
 import os
 
 
+from castle.cms.events import (ICacheInvalidatedEvent,
+                               IMetaTileEditedEvent,
+                               ITrashEmptiedEvent)
+from castle.cms.interfaces import ITrashed
 from plone import api
 from plone.app.iterate.interfaces import IAfterCheckinEvent
 from plone.app.iterate.interfaces import ICancelCheckoutEvent
@@ -53,12 +57,6 @@ from zope.lifecycleevent.interfaces import IObjectCopiedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.lifecycleevent.interfaces import IObjectMovedEvent
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
-
-
-from castle.cms.events import ICacheInvalidatedEvent
-from castle.cms.events import IMetaTileEditedEvent
-from castle.cms.events import ITrashEmptiedEvent
-from castle.cms.interfaces import ITrashed
 
 
 logger = logging.getLogger("Plone")

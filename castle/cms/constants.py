@@ -27,3 +27,4 @@ ABSOLUTE_FONT_UNITS = (
 VALID_CSS_FONT_SIZE_PATTERN = compile("^\s*\d+\s*({})\s*$".format(  # noqa:W605
     '|'.join(ABSOLUTE_FONT_UNITS)
 ))
+AUDIT_CACHE_DIRECTORY = 'cache/auditcache'
