@@ -19,4 +19,9 @@
     title="castle.cms: Add Slideshow"
     />
 
+  <permission
+    id="castle.cms.addParallax"
+    title="castle.cms: Add Parallax"
+    />
+
 </configure>

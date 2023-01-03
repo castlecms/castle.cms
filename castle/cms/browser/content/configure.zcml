@@ -212,4 +212,13 @@
     permission="cmf.ModifyPortalContent"
   />
 
+  <browser:page
+    for="castle.cms.interfaces.IParallax"
+    name="view-parallax"
+    class=".parallax.ParallaxView"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/parallaxview.pt"
+  />
+
 </configure>
