@@ -30,7 +30,8 @@ class VideoTile(ContentTile):
 
     @property
     def show_controls(self):
-        return self.data.get('show_controls', True)
+        show_controls = self.data.get('show_controls', True)
+        return True if show_controls is None else show_controls
 
     @property
     def autoplay(self):
