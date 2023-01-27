@@ -77,4 +77,3 @@ class TestFileUploadFields(unittest.TestCase):
         self.assertEquals(data['data-required-file-upload-fields'], json.dumps([u'title']))
         self.assertEquals(
             len(json.loads(data['data-file-upload-fields'])), 5)
-
