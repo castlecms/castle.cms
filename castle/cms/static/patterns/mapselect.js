@@ -46,7 +46,7 @@ define([
     if(!lat || !lng){
       return 'No point selected';
     }
-    return address + '(' + lat.toFixed(6) + ',' + lng.toFixed(6) + ')';
+    return address + '(' + parseFloat( lat ).toFixed( 6 ) + ',' + parseFloat( lng ).toFixed( 6 ) + ')';
   };
 
   var MapSearchComponent = R.createClass({

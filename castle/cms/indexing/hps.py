@@ -19,14 +19,17 @@ from collective.elasticsearch.hook import index_batch
 logger = logging.getLogger("Plone")
 
 
-def get_catalog():
+def get_catalog(foraudit=False):
     catalog = api.portal.get_tool('portal_catalog')
-    hps = WildcardHPSCatalog(catalog)
+    if not foraudit:
+        hps = WildcardHPSCatalog(catalog)
+    else:
+        hps = WildcardHPSCatalog(catalog, envprefix='AUDIT_OPENSEARCH_')
     return hps
 
 
-def get_connection():
-    hpscat = get_catalog()
+def get_connection(foraudit=False):
+    hpscat = get_catalog(foraudit=foraudit)
     return hpscat.connection
 
 
@@ -40,13 +43,13 @@ def get_bulk_size():
     return hpscat.get_setting("bulk_size", 50)
 
 
-def is_enabled():
-    hpscat = get_catalog()
+def is_enabled(foraudit=False):
+    hpscat = get_catalog(foraudit=foraudit)
     return hpscat.enabled
 
 
-def health_is_good():
-    conn = get_connection()
+def health_is_good(foraudit=False):
+    conn = get_connection(foraudit=foraudit)
     try:
         return conn.cluster.health()['status'] in ('green', 'yellow')
     except Exception:
@@ -59,8 +62,8 @@ def hps_get_number_of_matches(index_name, query):
     return results.get('count', -1)
 
 
-def hps_get_data(index_name, query, **kwargs):
-    conn = get_connection()
+def hps_get_data(index_name, query, foraudit=False, **kwargs):
+    conn = get_connection(foraudit=foraudit)
     results = conn.search(index=index_name, body=query, **kwargs)
     try:
         data = results['hits']['hits']

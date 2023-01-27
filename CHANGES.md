@@ -1,9 +1,59 @@
 Changelog
 =========
 
-3.0.0b110 (unreleased)
+3.0.0b117 (unreleased)
 ----------------------
 
+- Nothing changed yet.
+
+
+3.0.0b116 (2022-11-04)
+----------------------
+
+- health check for audit log fix
+
+
+3.0.0b115 (2022-11-04)
+----------------------
+
+- fix some logic in envprefix selection for hps config
+
+
+3.0.0b114 (2022-11-04)
+----------------------
+
+- update wildcard.hps to min 1.4.0 for custom env prefix for opensearch settings
+  in wildcard.hps.opensearch.WildcardHPSCatalog usage
+- update audit browser to use custom prefix so that audit log entries can be
+  queried from a separate opensearch instance as the generally used instance
+  for site search operations
+
+
+3.0.0b113 (2022-11-02)
+----------------------
+
+- Allow expired results in querylisting
+
+
+3.0.0b112 (2022-11-02)
+----------------------
+
+- move HISTORY.rst to CHANGES.md
+- re-add dependency on collective.elasticsearch for use of IElasticSearchLayer in case
+  a site has collective.elasticsearch installed as an add-on, ensuring, eg, that the 'search'
+  view remains correctly overridden
+
+
+3.0.0b111 (2022-08-16)
+----------------------
+
+- make sure searchabletext for additionalsearchabletext implementation is entirely generated with unicode strings
+
+
+3.0.0b110 (2022-08-08)
+----------------------
+
+- more forgiving coordinate parsing
 - fix manifest.json credentials bug: added crossorigin="use-credentials"
 - fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
 - add GELF logging handler
