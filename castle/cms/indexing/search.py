@@ -15,16 +15,16 @@ class MappingAdapter(mapping.MappingAdapter):
         'facebook_shares': {'store': True, 'type': 'integer', 'null_value': 0},
         'twitter_shares': {'store': True, 'type': 'integer', 'null_value': 0},
         'linkedin_shares': {'store': True, 'type': 'integer', 'null_value': 0},
-        'pinterest_shares': {'store': True, 'type': 'integer',
+        'pinterist_shares': {'store': True, 'type': 'integer',
                              'null_value': 0},
-        'searchterm_pins': {'store': True, 'type': 'text',
-                            'index': False},
-        'contributors': {'store': False, 'type': 'text',
-                         'index': True},
-        'immediate_folder': {'store': True, 'type': 'text',
-                             'index': False},
-        'parent_folder': {'store': True, 'type': 'keyword',
-                          'index': False}
+        'searchterm_pins': {'store': True, 'type': 'string',
+                            'index': 'not_analyzed', 'null_value': '[]'},
+        'contributors': {'store': False, 'type': 'string',
+                         'index': 'not_analyzed', 'null_value': '[]'},
+        'immediate_folder': {'store': True, 'type': 'string',
+                             'index': 'not_analyzed', 'null_value': ''},
+        'parent_folder': {'store': True, 'type': 'string',
+                          'index': 'not_analyzed', 'null_value': ''}
     })
 
 
@@ -86,38 +86,15 @@ class QueryAssembler(query.QueryAssembler):
                 searchq = searchq.get('query', '')
             searchq = searchq.lower().strip('*')
             query = {
-                'script_score': {
-                    'query': query,
+                "function_score": {
+                    "query": query,
                     # "boost_mode": "sum",  # add score and modified score,
-                    'script': {
-                        'lang': 'painless',
-                        'source': '''int max_shares = 5000;
-                                        int max_popularity = 200000;
-                                        String[] socialFields = new String[4];
-                                        socialFields[0] = 'twitter';
-                                        socialFields[1] = 'facebook';
-                                        socialFields[2] = 'pinterest';
-                                        socialFields[3] = 'linkedin';
-
-                                        float boost = 1.0f;
-                                        float max_boost = 2.5f;
-                                        long shareCount = 0;
-
-                                        for (int i=0; i<socialFields.length; i++) {
-                                        String key = socialFields[i] + '_shares';
-                                        if(doc[key].size() != 0){
-                                            long docValue = doc[key].value;
-                                            shareCount += docValue;
-                                        }
-                                        }
-
-                                        boost += (shareCount / max_shares);
-                                        if (doc['page_views'].size() != 0) {
-                                        long docValue = doc['page_views'].value;
-                                        boost += (docValue / max_popularity);
-                                        }
-                                        boost = (float)Math.min(boost, max_boost);
-                                        return boost;'''
+                    "script_score": {
+                        "lang": "native",
+                        'params': {
+                            'search': searchq
+                        },
+                        "script": "castlepopularity"
                     }
                 }
             }

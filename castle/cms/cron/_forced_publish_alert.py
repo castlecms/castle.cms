@@ -1,8 +1,8 @@
+from AccessControl.SecurityManagement import newSecurityManager
 from castle.cms import audit
 from castle.cms import utils
-from castle.cms.indexing import hps
-
-from AccessControl.SecurityManagement import newSecurityManager
+from castle.cms.utils import ESConnectionFactoryFactory
+from collective.elasticsearch.es import ElasticSearchCatalog
 from DateTime import DateTime
 from plone import api
 from plone.app.uuid.utils import uuidToObject
@@ -34,11 +34,13 @@ def check_site(site):
     # XXX will store when last check was so we always only look back
     # to previous check time
     setSite(site)
-
-    if not hps.is_enabled():
+    catalog = api.portal.get_tool('portal_catalog')
+    es = ElasticSearchCatalog(catalog)
+    if not es.enabled:
         return
 
-    index_name = audit.get_audit_index_name()
+    index_name = audit.get_index_name()
+    es = ESConnectionFactoryFactory()()
 
     sannotations = IAnnotations(site)
     last_checked = sannotations.get(LAST_CHECKED_KEY)
@@ -50,15 +52,25 @@ def check_site(site):
         {'range': {'date': {'gt': last_checked.ISO8601()}}}
     ]
 
+    if len(filters) > 1:
+        qfilter = {'and': filters}
+    else:
+        qfilter = filters[0]
     query = {
-        'query': {
-            'bool': {
-                'filter': filters
+        "query": {
+            'filtered': {
+                'filter': qfilter,
+                'query': {'match_all': {}}
             }
         }
     }
-
-    hits, _, _ = hps.hps_get_data(index_name, query, sort='date:desc', size=1000)
+    results = es.search(
+        index=index_name,
+        doc_type=audit.es_doc_type,
+        body=query,
+        sort='date:desc',
+        size=1000)
+    hits = results['hits']['hits']
 
     workflow = api.portal.get_tool('portal_workflow')
     forced = []
@@ -83,8 +95,7 @@ def check_site(site):
                         not r.get('comments', '').startswith('OVERRIDE:')):
                     continue
                 if r['time'] < last_checked:
-                    # quit now,
-                    # getting to older history that we don't care about
+                    # just quit now, we're getting to older history that we don't care about
                     break
                 forced.append({
                     'ob': ob,

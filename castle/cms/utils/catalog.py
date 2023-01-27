@@ -1,4 +1,37 @@
+from collective.elasticsearch.es import ElasticSearchCatalog
+from collective.elasticsearch.hook import index_batch
+from collective.elasticsearch.interfaces import IElasticSettings
+from elasticsearch import Elasticsearch
 from plone import api
+from plone.registry.interfaces import IRegistry
+from plone.uuid.interfaces import IUUID
+from zope.component import getUtility
+
+
+def ESConnectionFactoryFactory(registry=None):
+    if registry is None:
+        registry = getUtility(IRegistry)
+    settings = registry.forInterface(IElasticSettings, check=False)
+    hosts = settings.hosts
+    opts = dict(
+        timeout=getattr(settings, 'timeout', 0.5),
+        sniff_on_start=getattr(settings, 'sniff_on_start', False),
+        sniff_on_connection_fail=getattr(
+            settings, 'sniff_on_connection_fail', False),
+        sniffer_timeout=getattr(settings, 'sniffer_timeout', 0.1),
+        retry_on_timeout=getattr(settings, 'retry_on_timeout', False)
+    )
+
+    def factory():
+        return Elasticsearch(hosts, **opts)
+    return factory
+
+
+def index_in_es(obj):
+    catalog = api.portal.get_tool('portal_catalog')
+    es = ElasticSearchCatalog(catalog)
+    if es.enabled:
+        index_batch([], {IUUID(obj): obj}, [], es)
 
 
 def add_indexes(indexes):

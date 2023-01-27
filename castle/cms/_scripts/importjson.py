@@ -283,8 +283,7 @@ class CastleImporter(object):
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
-                            import pdb
-                            pdb.set_trace()
+                            import pdb; pdb.set_trace()
                         raise
                     logger.error('Error creating content {}'
                                                 .format(filepath), exc_info=True)
@@ -319,8 +318,7 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
-                                import pdb
-                                pdb.set_trace()
+                                import pdb; pdb.set_trace()
                             raise
 
             # set workflow / review history
@@ -395,8 +393,7 @@ class CastleImporter(object):
                                                                 exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb
-                        pdb.set_trace()
+                        import pdb; pdb.set_trace()
                     raise
 
 #    app._p_jar.invalidateCache()  # noqa

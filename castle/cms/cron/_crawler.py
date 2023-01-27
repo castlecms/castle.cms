@@ -1,45 +1,67 @@
-import argparse
-import gzip
-import logging
-import sys
-import time
-
-from DateTime import DateTime
-from lxml import etree
-from lxml import html
-from plone.registry.interfaces import IRegistry
-from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-import requests
-from StringIO import StringIO
-from tendo import singleton
-from urlparse import urlparse
-from zope.component import getUtility
-
+from BTrees.OOBTree import OOBTree
 from castle.cms import archival
-from castle.cms import cache
 from castle.cms.constants import CRAWLED_DATA_KEY
+from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 from castle.cms.cron.utils import spoof_request
 from castle.cms.files import aws
-from castle.cms.indexing import hps
-from castle.cms.indexing import crawler as hpscrawl
 from castle.cms.interfaces import ICrawlerConfiguration
+from collective.elasticsearch.es import ElasticSearchCatalog
+from collective.elasticsearch.interfaces import IMappingProvider
+from DateTime import DateTime
+from elasticsearch import NotFoundError
+from lxml import etree
+from lxml import html
+from persistent.dict import PersistentDict
+from plone import api
+from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from Products.CMFPlone.log import logger
+from StringIO import StringIO
+from tendo import singleton
+from urlparse import urlparse
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.globalrequest import getRequest
 from castle.cms.utils import clear_object_cache
 
+import gzip
+import requests
+import sys
+import time
+import transaction
 
-# override normal plone logging and use a configured root logger here
-# to capture output to stdout since this is a script that will need to render
-# output of logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+
+CRAWLER_ES_MAPPING = {
+    'domain': {
+        'type': 'string',
+        'index': 'not_analyzed',
+        'store': False
+    },
+    'sitemap': {
+        'type': 'string',
+        'index': 'not_analyzed',
+        'store': False
+    },
+    'url': {
+        'type': 'string',
+        'index': 'not_analyzed',
+        'store': False
+    },
+    'image_url': {
+        'type': 'string',
+        'index': 'not_analyzed',
+        'store': False
+    }
+}
+
+MAX_PAGE_SIZE = 500000000
 
 
 class Crawler(object):
+
     _meta_properties = {
         'Title': [
             'meta[property="og:title"]',
@@ -77,33 +99,31 @@ class Crawler(object):
         '#content p,#content h2,#content h3,#content ul li'
     ])
 
-    def __init__(self, site, settings, hpscatalog):
+    def __init__(self, site, settings, es):
         self.site = site
         self.settings = settings
-        self.hpscatalog = hpscatalog
-        self.index_name = hpscrawl.index_name(hps.get_index_name())
-
-        self.site._p_jar.sync()  # sync transactions
-
-        self.data = cache.get_client(CRAWLED_DATA_KEY)
+        self.es = es
+        self.site._p_jar.sync()
+        annotations = IAnnotations(site)
+        if CRAWLED_DATA_KEY not in annotations:
+            annotations[CRAWLED_DATA_KEY] = OOBTree({
+                'tracking': PersistentDict()
+            })
+            transaction.commit()
+        self.data = annotations[CRAWLED_DATA_KEY]
 
     def crawl_page(self, url):
         logger.info('Indexing ' + url)
-        try:
-            resp = requests.get(url, headers={
-                'User-Agent': self.settings.crawler_user_agent
-            })
-        except Exception:
-            # unable to access the page, remove for now
-            return False
-        if resp.status_code == 404 or 'html' not in resp.headers.get('content-type', ''):
+        resp = requests.get(url, stream=True, headers={
+            'User-Agent': self.settings.crawler_user_agent
+        })
+        if resp.status_code == 404 or \
+          'html' not in resp.headers.get('content-type', '') or \
+          int(resp.headers.get('content-length', 0)) \
+              >= MAX_PAGE_SIZE:
             # remove from index
             return False
-        try:
-            dom = html.fromstring(resp.content)
-        except etree.XMLSyntaxError:
-            # unable to parse html, remove for now
-            return False  # lxml has been known to throw this as a bug, maybe use BeautifulSoup
+        dom = html.fromstring(resp.content)
         parsed = urlparse(url)
         data = {
             'url': url,
@@ -140,18 +160,29 @@ class Crawler(object):
 
         return data
 
-    def crawl_archive_url(self, url):
-        # archive urls don't need to be reindexed ever, they
-        # are in a RO archive
-        if hpscrawl.url_is_indexed(self.hpscatalog, self.index_name, url):
-            return
+    def exists_in_index(self, url):
+        try:
+            self.es.connection.get(
+                index=self.es.index_name,
+                doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+                id=url)
+            return True
+        except NotFoundError:
+            return False
 
+    def crawl_archive_url(self, url):
+        if self.exists_in_index(url):
+            return
         data = self.crawl_page(url)
         if not data:
             return
-
         data['sitemap'] = 'archives'
-        hpscrawl.index_doc(self.hpscatalog, self.index_name, url, data)
+        self.es.connection.index(
+            index=self.es.index_name,
+            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+            id=url,
+            body=data
+        )
 
     def crawl_archives(self):
         registry = getUtility(IRegistry)
@@ -159,12 +190,24 @@ class Crawler(object):
 
         storage = archival.Storage(self.site)
         urls = []
-        for _, archive_data in storage.archives.items():
-            # archives never need to be re-indexed
-            url = archive_data.get('view_url', None) or archive_data['url']
+        for key, archive_data in storage.archives.items():
+            # archives do not need to be re-indexed ever.
+            # see if the key is in ES, if it is move on
+            url = archive_data.get('view_url', archive_data['url'])
             urls.append(aws.swap_url(url, base_url=base_url))
 
-        existing_urls = hpscrawl.get_all_ids(self.hpscatalog, self.index_name, "archives")
+        query = {
+            "filtered": {
+                "filter": {
+                    "term": {
+                        "sitemap": 'archives'
+                    }
+                },
+                "query": {"match_all": {}}
+            }
+        }
+        existing_urls = self.get_all_from_es(query)
+
         for _id in set(urls) - set(existing_urls):
             # pages that have not yet been crawled
             try:
@@ -174,14 +217,56 @@ class Crawler(object):
 
         for _id in set(existing_urls) - set(urls):
             # pages that have been removed from the archive
-            hpscrawl.delete_from_index(self.hpscatalog, self.index_name, _id)
+            self.delete_from_index(_id)
+
+    def get_all_from_es(self, query):
+        _ids = []
+        page_size = 700
+        result = self.es.connection.search(
+            index=self.es.index_name,
+            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+            scroll='30s',
+            size=page_size,
+            fields=[],
+            body={
+                "query": query
+            })
+        _ids.extend([r['_id'] for r in result['hits']['hits']])
+        scroll_id = result['_scroll_id']
+        while scroll_id:
+            result = self.es.connection.scroll(
+                scroll_id=scroll_id,
+                scroll='30s'
+            )
+            if len(result['hits']['hits']) == 0:
+                break
+            _ids.extend([r['_id'] for r in result['hits']['hits']])
+            scroll_id = result['_scroll_id']
+        return _ids
 
     def clean_removed_pages(self, sitemap, crawled_urls):
         parsed = urlparse(sitemap)
         domain = parsed.netloc
-        ids = hpscrawl.get_all_ids(self.hpscatalog, self.index_name, domain)
+        query = {
+            "filtered": {
+                "filter": {
+                    "term": {
+                        "domain": domain
+                    }
+                },
+                "query": {"match_all": {}}
+            }
+        }
+        ids = self.get_all_from_es(query)
         for _id in set(ids) - set(crawled_urls):
-            hpscrawl.delete_from_index(self.hpscatalog, self.index_name, _id)
+            # what's left are pages we don't care about anymore
+            self.delete_from_index(_id)
+
+    def delete_from_index(self, url):
+        self.es.connection.delete(
+            index=self.es.index_name,
+            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+            id=url)
 
     def crawl_site_map(self, sitemap, full=False):
         resp = requests.get(sitemap, headers={
@@ -191,22 +276,14 @@ class Crawler(object):
             logger.error('Not a valid sitemap response for %s' % sitemap)
             return
 
-        self.site._p_jar.sync()  # sync transactions
-
-        try:
-            last_crawled = DateTime(self.data[sitemap])
-        except Exception:
-            # KeyError or date parsing issue just revert to old time
+        self.site._p_jar.sync()
+        if sitemap in self.data['tracking']:
+            last_crawled = DateTime(self.data['tracking'][sitemap])
+        else:
             last_crawled = DateTime('1999/01/01')
 
-        try:
-            self.data[sitemap] = DateTime().ISO8601().decode('utf8')
-        except Exception:
-            # maybe a storage error or something -- we'll just not set a new time
-            # if that happens, and the crawler should pick up crawling the object
-            # again
-            pass
-
+        self.data['tracking'][sitemap] = DateTime().ISO8601().decode('utf8')
+        transaction.commit()
         clear_object_cache(self.site)
 
         if sitemap.lower().endswith('.gz'):
@@ -245,10 +322,21 @@ class Crawler(object):
             data = self.crawl_page(url)
             if data is False:
                 crawled_urls.remove(url)
-                hpscrawl.remove_doc_from_index(self.hpscatalog, self.index_name, url)
+                try:
+                    self.es.connection.delete(
+                        index=self.es.index_name,
+                        doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+                        id=url)
+                except NotFoundError:
+                    pass
             else:
                 data['sitemap'] = sitemap
-                hpscrawl.index_doc(self.hpscatalog, self.index_name, url, data)
+                self.es.connection.index(
+                    index=self.es.index_name,
+                    doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+                    id=url,
+                    body=data
+                )
                 crawled_urls.append(url)
 
         self.clean_removed_pages(sitemap, crawled_urls)
@@ -258,16 +346,29 @@ def crawl_site(site, full=False):
     registry = getUtility(IRegistry)
     settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
     if not settings.crawler_active or not settings.crawler_site_maps:
-        logger.info("Crawler must first be enabled in Site Setup")
         return False
 
-    if not hps.is_enabled():
-        logger.info("WildcardHPS must be enabled in Site Setup to use Crawler")
+    catalog = api.portal.get_tool('portal_catalog')
+    es = ElasticSearchCatalog(catalog)
+    if not es.enabled:
         return False
 
-    hpscatalog = hps.get_catalog()
-    hpscrawl.ensure_index_exists(hpscatalog, hpscrawl.index_name(hps.get_index_name()))
-    crawler = Crawler(site, settings, hpscatalog)
+    # check index type is mapped, create if not
+    try:
+        es.connection.indices.get_mapping(
+            index=es.index_name,
+            doc_type=CRAWLED_SITE_ES_DOC_TYPE)
+    except NotFoundError:
+        # need to add it
+        adapter = getMultiAdapter((getRequest(), es), IMappingProvider)
+        mapping = adapter()
+        mapping['properties'].update(CRAWLER_ES_MAPPING)
+        es.connection.indices.put_mapping(
+            doc_type=CRAWLED_SITE_ES_DOC_TYPE,
+            body=mapping,
+            index=es.index_name)
+
+    crawler = Crawler(site, settings, es)
 
     if settings.crawler_index_archive:
         crawler.crawl_archives()
@@ -277,7 +378,6 @@ def crawl_site(site, full=False):
             crawler.crawl_site_map(sitemap, full)
         except Exception:
             logger.error('Error crawling site map: %s' % sitemap, exc_info=True)
-
     return True
 
 
@@ -287,31 +387,32 @@ def run(app):
     app = spoof_request(app)  # noqa
     login_as_admin(app)  # noqa
 
-    parser = argparse.ArgumentParser(
-        description="Index configured sites, archives, and sitemaps for high performance search")
-    parser.add_argument('--site-id', dest='site_id', default=None)
-    parser.add_argument('--partial', dest='partial', action='store_false')
+    count = 0
 
-    args, _ = parser.parse_known_args()
+    while True:
+        try:
+            if 'site-id' in sys.argv:
+                siteid = sys.argv['site-id']
+                setup_site(app[siteid])
+                crawl_site(app[siteid])  # noqa
+            else:
+                for oid in app.objectIds():  # noqa
+                    obj = app[oid]  # noqa
+                    if IPloneSiteRoot.providedBy(obj):
+                        try:
+                            setup_site(obj)
+                            obj._p_jar.sync()
+                            crawl_site(obj, count % 10 == 0)
+                        except Exception:
+                            logger.error('Error crawling site %s' % oid, exc_info=True)
+        except KeyError:
+            pass
+        except Exception:
+            logger.error('Error setting up crawling', exc_info=True)
 
-    try:
-        if args.site_id is not None:
-            setup_site(app[args.site_id])
-            crawl_site(app[args.site_id])
-        else:
-            for oid in app.objectIds():
-                obj = app[oid]
-                if IPloneSiteRoot.providedBy(obj):
-                    try:
-                        setup_site(obj)
-                        obj._p_jar.sync()  # sync transactions
-                        crawl_site(obj, not args.partial)
-                    except Exception:
-                        logger.error('Error crawling site %s' % oid, exc_info=True)
-    except KeyError:
-        pass
-    except Exception:
-        logger.error('Error setting up crawling', exc_info=True)
+        logger.info('Waiting to crawl again')
+        time.sleep(10 * 60)
+        count += 1
 
 
 if __name__ == '__main__':

@@ -69,9 +69,6 @@ class IGalleryTileSchema(IImagesTileSchema):
             u'This option is for advanced display types in certain add-ons. \
                 Usually, this option has no affect.'
         ),
-        missing_value=True,
-        required=False,
-    )
 
     show_image_captions = schema.Bool(
         title=u'Show Image Captions',

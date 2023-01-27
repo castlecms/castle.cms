@@ -35,9 +35,9 @@ before_install:
     export PATH=$PATH:$(pwd)/webdriver;
     npm install -g surge;
     fi
-  - curl https://artifacts.opensearch.org/releases/bundle/opensearch/2.0.1/opensearch-2.0.1-linux-x64.tar.gz
-  - tar -zxf opensearch-2.0.1-linux-x64.tar.gz
-  - cd opensearch-2.0.1 && ./opensearch-tar-install.sh -Ediscovery.type=single-node && ./bin/opensearch &
+  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.5/elasticsearch-2.3.5.deb && sudo dpkg -i --force-confnew elasticsearch-2.3.5.deb
+  - sudo /usr/share/elasticsearch/bin/plugin install https://github.com/castlecms/elasticsearch-castle-scoring/raw/master/dist/elasticsearch-castle-script-2.3.5.zip
+  - sudo service elasticsearch start
 
 install:
   - mkdir -p {eggs,downloads}

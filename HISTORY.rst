@@ -1,36 +1,8 @@
 Changelog
 =========
 
-3.0.0b110 (unreleased)
-----------------------
-
-- fix manifest.json credentials bug: added crossorigin="use-credentials"
-- fixed WARNING plone.behavior Specifying 'for' in behavior 'Adjustable Font Size For Feature Tile' if no 'factory' is given has no effect and is superfluous.
-- add GELF logging handler
-- add script for generating user/role/permission reports
-- remove 'reindex_es' script -- functionality is now in wildcard.hps
-- remove 'upgrade_elasticsearch_in_place' script reference -- was invalid at this point
-- refactor elasticsearch/opensearch integration
-- make wildcard.hps integration explicit
-- remove old upgrade steps for castle.cms 2.x (upgrade to latest 2.x version, then upgrade to 3.x version)
-- remove custom elasticsearch index name (use wildcard.hps for customizing prefix, etc)
-- change crawler to use wildcard.hps and optimize some queries
-- remove infinite loop from crawler -- rely on system cron to actually perform loop behavior
-- make crawler usable in an RO-Client context (as long as it has access to writable redis)
-- use python argparse for crawler arguments
-- initial update to .travis.cfg
-
-Update note(s):
-
-- After upgrading to 3.0.0b110, you will still have several ES related registry settings in your site that were not removed.
-  This is to be non-destructive to configuration that you may want to reference, and to facilitate easier rollbacks if you must rollback for some reason.
-  If they are no longer necessary, you can manually remove registry values related to `castle.cms.interfaces.IElasticSearchSettings`,
-  Also, `castle.es_index` and `castle.es_index_enabled`.
-  Leaving them will not affect the performance or operation of your site, however.
-
-
-3.0.0b19 (2022-05-06)
----------------------
+2.15.1 (unreleased)
+-------------------
 
 - fix dates while importing
 - fix querylisting as folder view results bug
@@ -80,102 +52,134 @@ Update note(s):
 - slight refactor to be able to import slider config other places
 
 
-3.0.0b11 (2021-09-17)
----------------------
+2.15.0 (2022-11-02)
+-------------------
 
-- revert changes to Download class from PR#510
+- Allow expired results in querylisting
+
+
+2.14.2 (2022-08-02)
+-------------------
+
+- more forgiving coordinate parsing
+
+
+2.14.1 (2022-05-06)
+-------------------
+
+- add GELF logging handler
+- add script for report on user/role/permissions
+- fix dates while importing
+- fix querylisting as folder view results bug
+
+
+2.14.0 (2022-04-20)
+-------------------
+
+- Allow unrestricted traverse to be selected when creating a pdf.
+
+
+2.13.0 (2022-03-30)
+-------------------
+
+- Added some gallery options that will be used in some other add-ons.
+
+
+2.12.3 (2022-03-04)
+-------------------
+
+- handle missing links in sticky footer
+
+
+2.12.2 (2022-03-03)
+-------------------
+
+- 2.12.1 had commit missing (bad rebase)
+
+
+2.12.1 (2022-03-03)
+-------------------
+
+- Fix bug in rendering sticky footer with a none-value internal link when trying to render an external url
+
+
+2.12.0 (2021-12-02)
+-------------------
+
+- Fix paging display for many items in Content Browser component
+
+
+2.11.0 (2021-11-29)
+-------------------
+
+- Reapply PR510 - icon and favicon downloads without changing functionality for other files
+- slight refactor to be able to import slider config other places
+
+
+2.10.4 (2021-09-17)
+-------------------
+
 - bump plone.namedfile to 3.0.11
+- revert Download related changes from PR#510
 
 
-3.0.0b10 (2021-09-08)
----------------------
+2.10.3 (2021-09-14)
+-------------------
 
-- enable tinymce for richtext widget on collective.easyform forms on anonymous form
+- revert es7 commit that was merged to 2.x branch
+
+
+2.10.2 (2021-09-13)
+-------------------
+
+- fix setup req for collective.elasticsearch that was updated to ES7 compat in the 2.x branch
+
+
+2.10.1 (2021-09-08)
+-------------------
+
 - bugfix for site-icon 500 error under certain circumstances
 
 
-3.0.0b9 (2021-09-01)
---------------------
+2.10.0 (2021-09-08)
+-------------------
+
+- enable tinymce for richtext widget on collective.easyform forms on anonymous form
+
+
+2.9.0 (2021-09-01)
+------------------
 
 - add height property to gallery tile schema
 
 
-3.0.0b8 (2021-08-05)
---------------------
-
-- fix edge case for folder_contents customization that causes pat-structure not to load properly
-
-
-3.0.0b7 (2021-07-05)
---------------------
-
-- fix upgrade step reference
-
-
-3.0.0b6 (2021-07-05)
---------------------
-
-- fix upgrade step version
-
-
-3.0.0b5 (2021-07-05)
---------------------
+2.8.0 (2021-08-05)
+------------------
 
 - add initial implementation of a content type that supports parallax rendering
+- bug fix for custom pat-structure loading order issue
+- recompile resources
+- rename upgrade step 2635 to 3000
+- add upgrade step 3001
 
 
-3.0.0b4 (2021-06-10)
---------------------
+2.7.2 (2021-06-10)
+------------------
 
-- recompile styles
-
-
-3.0.0b3 (2021-06-08)
---------------------
-
-- fix 2633 upgrade by adding metadata to action, and set default profile to 2633
+- rebuild styles
 
 
-3.0.0b2 (2021-06-01)
---------------------
+2.7.1 (2021-06-08)
+------------------
 
-- add ability to create templates from existing contents. templates are
-  unpublishable and are managed as specially marked documents in a
-  'template-repository' folder.
+- fix 2633 upgrade profile to have correct configuration, update default profile to 2633
 
 
-3.0.0b1 (2021-05-03)
---------------------
+2.7.0 (2021-06-01)
+------------------
 
-- add ES host/port override to reindex-catalog script
-- add optional ES index creation to reindex-catalog script
-
-
-3.0.0b0 (2021-04-30)
---------------------
-
-BREAKING
-++++++++
-
-The 3.x series of releases will bring CastleCMS into compatibility with
-ElasticSearch 7. Practically, this means primarily updating 3 packages:
-
-* castle.cms >= 3
-* collective.elasticsearch >= 4
-* elasticsearch >= 7, <= 7.6
-
-The `elasticsearch` package is restricted between 7 and 7.6 primarily due to
-the restriction from `collective.elasticsearch` -- this is expected to be
-updated at some point, but not for the initial release of `castle.cms` 3.x.
-
-For migration, it is recommended that you setup a new ES cluster, update
-site configurations to point at the new cluster, then do the "Convert" and
-"Rebuild" actions in the ElasticSearch control panel.
-
-This will not migrate your audit log, if enabled. To migrate the audit log,
-use the `castle/cms/_scripts/export-audit-log.py` script to dump the old
-audit log into a CSV file, and then use the `castle/cms/_scripts/import-audit-log.py`
-script to import the CSV file into the new cluster.
+- add ability to create templates from existing contents. templates are unpublishable
+  and are managed as specially marked documents in a 'template-repository' folder.
 
 
 2.6.31 (2021-04-20)

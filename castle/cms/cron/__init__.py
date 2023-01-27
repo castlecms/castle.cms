@@ -99,6 +99,10 @@ def twitter_monitor(argv=sys.argv):
     return run_it('_twitter_monitor')
 
 
+def reindex_es(argv=sys.argv):
+    return run_it('_reindex_es')
+
+
 def forced_publish_alert(argv=sys.argv):
     return run_it('_forced_publish_alert')
 

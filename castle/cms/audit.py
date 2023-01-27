@@ -277,7 +277,68 @@ _registered = {
 }
 
 
-def record(success, recorder, site_path):
+es_doc_type = 'entry'
+
+
+def _create_index(es, index_name):
+    mapping = {'properties': {
+        'type': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'name': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'summary': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'user': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'request_uri': {'store': False, 'type': 'string',
+                        'index': 'not_analyzed'},
+        'date': {'store': False, 'type': 'date'},
+        'object': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+        'path': {'store': False, 'type': 'string', 'index': 'not_analyzed'},
+    }}
+    if not es.indices.exists(index_name):
+        es.indices.create(index_name)
+    es.indices.put_mapping(
+        doc_type=es_doc_type,
+        body=mapping,
+        index=index_name)
+
+
+def get_index_name(site_path=None, es_custom_index_name_enabled=False, custom_index_value=None):
+    if site_path is not None:
+        return site_path.replace('/', '').replace(' ', '').lower()
+
+    index_name = ""
+    if es_custom_index_name_enabled:
+        if custom_index_value is not None:
+            index_name = custom_index_value + "-audit"
+            return index_name
+
+    index_name = '/'.join(api.portal.get().getPhysicalPath())
+    index_name = index_name.replace('/', '').replace(' ', '').lower()
+    return index_name
+
+
+def _record(conn_factory, site_path, data, es_custom_index_name_enabled=False, custom_index_value=None):
+    if es_custom_index_name_enabled:
+        # when the custom index is enabled, all site path based names for
+        # indices should be discarded
+        site_path = None
+    index_name = get_index_name(
+        site_path,
+        es_custom_index_name_enabled=es_custom_index_name_enabled,
+        custom_index_value=custom_index_value)
+    es = conn_factory()
+    try:
+        es.index(index=index_name, doc_type=es_doc_type, body=data)
+    except TransportError as ex:
+        if 'InvalidIndexNameException' in ex.error:
+            try:
+                _create_index(es, index_name)
+            except TransportError:
+                return
+            _record(conn_factory, site_path, data)
+        else:
+            raise ex
+
+
+def record(success, recorder, site_path, conn):
     if not success:
         return
     if recorder.valid:
