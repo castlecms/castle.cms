@@ -140,9 +140,9 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=120,
     )
 
-    disable_country_check = schema.Bool(
+    disable_country_restriction = schema.Bool(
         title=u'Disable Country Access Restriction',
-        description=u'Allow all logins, ignoring country restriciton field below.',
+        description=u'Allow all logins, ignoring country restriction field below.',
         default=False
     )
 

@@ -217,10 +217,10 @@ class Authenticator(object):
             raise AuthenticationUserDisabled()
 
         if self.registry:
-            disable_country_check = self.registry.get(
-                'plone.disable_country_check'
+            disable_country_restriction = self.registry.get(
+                'plone.disable_country_restriction'
             )
-            if not disable_country_check:
+            if not disable_country_restriction:
                 allowed_countries = self.registry.get(
                     'plone.restrict_logins_to_countries')
                 if allowed_countries and country:
