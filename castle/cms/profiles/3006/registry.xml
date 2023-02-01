@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record name="plone.disable_country_check"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="disable_country_check">
+    <value>False</value>
+  </record>
+
+</registry>

@@ -140,12 +140,17 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=120,
     )
 
+    disable_country_check = schema.Bool(
+        title=u'Disable Country Access Restriction',
+        description=u'Allow all logins, ignoring country restriciton field below.',
+        default=False
+    )
+
     restrict_logins_to_countries = schema.Tuple(
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
                     u'This feature only works if your proxy server is '
-                    u'forwarding the user country code to the CastleCMS server. '
-                    u'Leave empty to allow all logins.',
+                    u'forwarding the user country code to the CastleCMS server. ',
         missing_value=(),
         default=(),
         required=False,
