@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.15.1 (unreleased)
+2.16.0 (2023-02-01)
 -------------------
 
 - update pdf functionality to work with prince server 15
