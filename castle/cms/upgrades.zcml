@@ -482,6 +482,15 @@
     profile="castle.cms:default"
     />
 
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.34"
+    description="Update api control panel settings to add prince server username and password"
+    source="*"
+    destination="2634"
+    handler=".upgrades.upgrade_2_6_34"
+    profile="castle.cms:default"
+  />
+
   <genericsetup:registerProfile
     name="3000"
     title="CastleCMS upgrade to 3000 profile"

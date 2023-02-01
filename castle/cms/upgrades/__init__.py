@@ -71,6 +71,14 @@ upgrade_2_6_30 = default_upgrade_factory('2_6_30')
 upgrade_2_6_31 = default_upgrade_factory('2_6_31')
 upgrade_2_6_33 = default_upgrade_factory('2_6_33')
 
+def upgrade_2_6_34(site, logger=None):
+    registry = api.portal.get_tool('portal_registry')
+    registry.registerInterface(
+        IAPISettings,
+        prefix='castle',
+    )
+
+
 upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
 upgrade_3003 = default_upgrade_factory('3003')
