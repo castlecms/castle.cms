@@ -21,6 +21,7 @@ from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityEditForm
 from plone.subrequest import subrequest
+from re import match as re_match
 from ZODB.POSException import POSKeyError
 
 
@@ -94,18 +95,19 @@ def inline_images_in_dom(dom, portal=None, site_url=None, unrestricted_traverse=
         site_url = portal.absolute_url()
     for img in dom.cssselect('img'):
         src = img.attrib.get('src', '')
-        if src.startswith(site_url):
-            ctype, data = get_data_from_url(
+        is_resource_url = re_match(r'^/?\+\+resource\+\+', src) is not None
+        if src.startswith(site_url) or is_resource_url:
+            content_type, data = get_data_from_url(
                 url=src,
                 portal=portal,
                 site_url=site_url,
                 unrestricted_traverse=unrestricted_traverse,
             )
-            if not ctype or not data or 'image' not in ctype:
+            if not content_type or not data or 'image' not in content_type:
                 img.attrib['src'] = ''
                 continue
             data = data.encode("base64").replace("\n", "")
-            data_uri = 'data:{0};base64,{1}'.format(ctype, data)
+            data_uri = 'data:{0};base64,{1}'.format(content_type, data)
             img.attrib['src'] = data_uri
 
 
@@ -170,6 +172,9 @@ def get_data_from_url(url, portal=None, site_url=None, unrestricted_traverse=Fal
             except ValueError:
                 ct = resp.getHeader('content-type').split(';')[0]
                 data = resp.getBody()
+
+    if ct == 'image/svg':
+        ct = 'image/svg+xml'
 
     return ct, data
 

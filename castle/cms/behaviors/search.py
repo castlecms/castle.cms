@@ -10,6 +10,7 @@ class ISearch(model.Schema):
 
     model.fieldset(
         'settings',
+        label=u'Settings',
         fields=[
             'searchterm_pins',
             'robot_configuration',

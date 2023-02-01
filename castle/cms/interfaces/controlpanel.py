@@ -296,17 +296,34 @@ class IAPISettings(Interface):
         title=u'PrinceXML server url',
         description=u'required in order to convert documents',
         default=u'http://localhost:6543/convert',
-        required=False)
+        required=False,
+    )
+
+    princexml_server_auth_username = schema.TextLine(
+        title=u'PrinceXML server auth username',
+        description=u'The basic auth username (if enabled) for PrinceXML server',
+        default=None,
+        required=False,
+    )
+
+    princexml_server_auth_password = schema.TextLine(
+        title=u'PrinceXML server auth password',
+        description=u'The basic auth password (if enabled) for PrinceXML server',
+        default=None,
+        required=False,
+    )
 
     google_maps_api_key = schema.TextLine(
         title=u'Google Maps API Key',
         default=None,
-        required=False)
+        required=False,
+    )
 
     google_api_email = schema.TextLine(
         title=u'Google API Email',
         default=None,
-        required=False)
+        required=False,
+    )
 
     google_api_service_key_file = schema.ASCII(
         title=u"Google API Service Key File",
