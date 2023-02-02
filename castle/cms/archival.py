@@ -1,6 +1,7 @@
 # for compat with python3, specifically the urllib.parse includes
 # noqa because these need to precede other imports
 from future.standard_library import install_aliases
+install_aliases()  # noqa
 
 from BTrees.OOBTree import OOBTree
 from castle.cms import theming
@@ -23,8 +24,6 @@ import logging
 import re
 import requests
 
-
-install_aliases()  # noqa
 
 logger = logging.getLogger('castle.cms')
 
