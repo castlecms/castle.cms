@@ -2,6 +2,7 @@
 # for compat with python3, specifically the urllib.parse includes
 # noqa because these need to precede other imports
 from future.standard_library import install_aliases
+install_aliases()  # noqa
 
 from lxml.html import fromstring
 import unittest
@@ -21,8 +22,6 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
 
-
-install_aliases()  # noqa
 
 
 class TestArchiveManager(unittest.TestCase):
