@@ -1,10 +1,19 @@
 Changelog
 =========
 
-3.0.0b117 (unreleased)
+3.0.0b118 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b117 (2023-02-01)
+----------------------
+
+- update pdf functionality to work with prince server 15
+- add ability to provide simple auth to prince server
+- handle svg images correctly in inline_dom_images for pdf generation
+- handle ++resource++ and /++resource++ urls correctly in inline_dom_images
 
 
 3.0.0b116 (2022-11-04)
