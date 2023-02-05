@@ -37,7 +37,6 @@ upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
 upgrade_3003 = default_upgrade_factory('3003')
 upgrade_3004 = default_upgrade_factory('3004')
-upgrade_3006 = default_upgrade_factory('3006')
 
 
 def upgrade_3005(site, logger=None):
@@ -46,3 +45,9 @@ def upgrade_3005(site, logger=None):
         IAPISettings,
         prefix='castle',
     )
+
+def upgrade_3006(site, logger=None):
+    old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
+    if old_ga_id:
+        api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
+        api.portal.set_registry_record('castle.google_analytics_id', None)
