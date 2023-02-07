@@ -47,7 +47,12 @@ def upgrade_3005(site, logger=None):
     )
 
 def upgrade_3006(site, logger=None):
+    registry = api.portal.get_tool('portal_registry')
+    registry.registerInterface(
+        IAPISettings,
+        prefix='castle',
+    )
     old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
     if old_ga_id:
         api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
-        api.portal.set_registry_record('castle.google_analytics_id', None)
+        api.portal.set_registry_record('castle.google_analytics_id', u'')
