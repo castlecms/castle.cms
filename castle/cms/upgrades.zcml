@@ -482,6 +482,15 @@
     profile="castle.cms:default"
     />
 
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.34"
+    description="Update api control panel settings to add prince server username and password"
+    source="*"
+    destination="2634"
+    handler=".upgrades.upgrade_2_6_34"
+    profile="castle.cms:default"
+  />
+
   <genericsetup:registerProfile
     name="3000"
     title="CastleCMS upgrade to 3000 profile"
@@ -544,19 +553,27 @@
     handler=".upgrades.upgrade_3004"
     profile="castle.cms:default"
     />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3005"
+    description="Update api control panel settings to add prince server username and password"
+    source="*"
+    destination="3005"
+    handler=".upgrades.upgrade_3005"
+    profile="castle.cms:default"
+    />
   <genericsetup:registerProfile
-    name="3005"
-    title="CastleCMS upgrade to 3005 profile"
-    directory="profiles/3005"
+    name="3006"
+    title="CastleCMS upgrade to 3006 profile"
+    directory="profiles/3006"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3005"
+    title="Upgrade CastleCMS to 3006"
     description="Add functionality for Google Analytics 4"
     source="*"
-    destination="3005"
-    handler=".upgrades.upgrade_3005"
+    destination="3006"
+    handler=".upgrades.upgrade_3006"
     profile="castle.cms:default"
     />
 </configure>
