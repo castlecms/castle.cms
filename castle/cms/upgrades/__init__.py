@@ -13,6 +13,14 @@ def cook_js_resources(context, logger=None):
     cookWhenChangingSettings(api.portal.get())
 
 
+def re_register_profile(interface, prefix):
+    registry = api.portal.get_tool('portal_registry')
+    registry.registerInterface(
+        interface,
+        prefix=prefix,
+    )
+
+
 def custom_upgrade_factory(profile_id):
     upgrade_file = importlib.import_module('castle.cms.upgrades.upgrade_' + profile_id)
     return upgrade_file.upgrade
@@ -86,8 +94,10 @@ upgrade_3004 = default_upgrade_factory('3004')
 
 
 def upgrade_3005(site, logger=None):
-    registry = api.portal.get_tool('portal_registry')
-    registry.registerInterface(
-        IAPISettings,
-        prefix='castle',
-    )
+    re_register_profile(IAPISettings, 'castle')
+
+def upgrade_3006(site, logger=None):
+    re_register_profile(IAPISettings, 'castle')
+    old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
+    if old_ga_id:
+        api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
