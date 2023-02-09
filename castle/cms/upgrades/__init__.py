@@ -37,7 +37,7 @@ upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
 upgrade_3003 = default_upgrade_factory('3003')
 upgrade_3004 = default_upgrade_factory('3004')
-upgrade_3006 = default_upgrade_factory('3006')
+upgrade_3007 = default_upgrade_factory('3007')
 
 
 def upgrade_3005(site, logger=None):
