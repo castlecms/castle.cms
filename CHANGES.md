@@ -5,6 +5,7 @@ Changelog
 ----------------------
 
 - Update cffi pin
+- add site-id command-line argument to script_runner\
 
 
 3.0.0b117 (2023-02-01)
