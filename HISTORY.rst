@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - Bump a few pins
+- add site-id command-line argument to script_runner
 
 
 2.16.0 (2023-02-01)
