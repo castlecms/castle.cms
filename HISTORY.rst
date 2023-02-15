@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.16.1 (unreleased)
+2.16.1 (2023-02-15)
 -------------------
 
 - Bump a few pins
