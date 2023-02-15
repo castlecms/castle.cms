@@ -97,8 +97,9 @@ def get_text(text='', html=''):
 
 def get_sender(sender=None):
     if sender is None:
-        return get_email_from_address()
-    return sender
+        sender = get_email_from_address()
+    users = get_all_users()
+    return users.get(sender, sender)
 
 
 def get_message(subject, sender, text, html):

@@ -152,3 +152,23 @@ class StatusTest(unittest.TestCase):
         self.create_users(1, True)
         send_email(recipients=[ALL_USERS, 'user0@fake.com'])
         self.assertMailCount(1)
+
+    def test_format_sender_if_possible(self):
+        self.create_users(1, True)
+        user = api.user.get_users()[0]
+        user.setMemberProperties({'fullname': 'User 0'})
+        send_email(
+            recipients=['email@fake.com'],
+            sender='user0@fake.com',
+        )
+        self.assertIn('From: User 0<user0@fake.com>', self.mail_messages[0])
+        self.assertNotIn('From: user0@fake.com', self.mail_messages[0])
+
+    def test_do_not_format_sender_if_not_possible(self):
+        self.create_users(1, True)
+        send_email(
+            recipients=['email@fake.com'],
+            sender='user0@fake.com',
+        )
+        self.assertIn('From: user0@fake.com', self.mail_messages[0])
+        self.assertNotIn('From: User 0<user0@fake.com>', self.mail_messages[0])
