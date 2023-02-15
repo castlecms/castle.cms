@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b118 (unreleased)
+3.0.0b118 (2023-02-15)
 ----------------------
 
 - Update cffi pin
