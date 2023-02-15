@@ -33,7 +33,9 @@ def script_runner(script, argv=sys.argv):
         script_path = os.path.join(this_dir, script)
     else:
         script_path = script
-    cmd = [instance, 'run', script_path]
+
+    command_line_args = ['--site-id="{}"'.format(args.siteid)] if args.siteid is not None else []
+    cmd = [instance, 'run', script_path] + command_line_args
 
     print('Running command: %s' % ' '.join(cmd))
     subprocess.check_call(cmd, env=os.environ)
