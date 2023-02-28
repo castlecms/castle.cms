@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b119 (unreleased)
+3.0.0b119 (2023-02-28)
 ----------------------
 
 - update focal_image_tag to allow for overlays
