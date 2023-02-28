@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.16.2 (unreleased)
+2.17.0 (2023-02-28)
 -------------------
 
 - update focal_image_tag to allow for overlays
