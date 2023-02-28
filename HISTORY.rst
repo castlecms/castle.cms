@@ -4,7 +4,8 @@ Changelog
 2.16.2 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- update focal_image_tag to allow for overlays
+- add overlay support into query listings
 
 
 2.16.1 (2023-02-15)
