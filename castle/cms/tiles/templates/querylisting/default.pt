@@ -1,3 +1,15 @@
+<style>
+  .dt-default li .focuspoint.overlay-image-container img.overlay-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: unset;
+    height: 20%;
+    width: 100%;
+    min-height: 25px;
+    max-height: 50px;
+  }
+</style>
 <ul class="dt-default"
     tal:define="results view/tile/results;
                 utils view/tile/utils;
@@ -15,7 +27,7 @@
     <div class="row">
       <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
         <a href="${url}">
-          <div tal:replace="structure python: utils.focal_image_tag(item, 'mini')" />
+          <div tal:replace="structure python: utils.focal_image_tag(item, 'mini', attempt_overlay=True)"></div>
         </a>
       </div>
       <div class="col-lg-10 col-md-9 col-sm-8"

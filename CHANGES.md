@@ -4,7 +4,8 @@ Changelog
 3.0.0b119 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- update focal_image_tag to allow for overlays
+- add overlay support into query listings
 
 
 3.0.0b118 (2023-02-15)

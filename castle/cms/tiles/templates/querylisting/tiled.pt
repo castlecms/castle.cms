@@ -1,3 +1,20 @@
+<style>
+  .dt-tiled li .overlay-image-container {
+    position: relative;
+    display: block;
+    width: fit-content;
+  }
+
+  .dt-tiled li .overlay-image-container img.overlay-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: unset;
+    height: 20%;
+    width: 100%;
+    min-height: 25px;
+  }
+</style>
 <ul class="pat-masonry dt-tiled"
     data-pat-masonry="itemSelector:.grid-item"
     tal:define="results view/tile/results;
@@ -10,11 +27,22 @@
                   url python: utils.get_object_url(item);
                   has_image python: utils.has_image(item);
                   desc python: item.Description or item.Title;
-                  title python: item.Title or item.Description;">
+                   title python: item.Title or item.Description;
+                  item_object item/getObject|nothing;
+                  status_overlay_url python:getattr(item_object, 'status_overlay_url', None);">
   <li class="portal-type-${item/portal_type} grid-item"
       tal:condition="has_image">
-    <a href="${url}">
+    <a
+      href="${url}"
+      class="overlay-image-container"
+    >
       <img src="${base_url}/@@images/image/large"  alt="${title}" />
+      <img
+        tal:condition="status_overlay_url"
+        src="${status_overlay_url}"
+        class="overlay-image"
+        alt="Status Overlay Banner"
+      />
     </a>
     <p class="description">${desc}</p>
   </li>
