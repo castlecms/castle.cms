@@ -1,17 +1,19 @@
+import logging
+
+import six
+import transaction
 from AccessControl import Unauthorized
 from Acquisition import aq_parent
+from collective.celery import task
+from collective.celery.utils import getCelery
+from plone import api
+from Products.CMFCore.interfaces._content import IFolderish
+from Products.CMFPlone.utils import pretty_title_or_id
+
 from castle.cms import cache
 from castle.cms import linkintegrity
 from castle.cms import utils
 from castle.cms.utils import retriable
-from collective.celery import task
-from plone import api
-from Products.CMFPlone.utils import pretty_title_or_id
-from Products.CMFCore.interfaces._content import IFolderish
-from collective.celery.utils import getCelery
-
-import logging
-import transaction
 
 
 logger = logging.getLogger('castle.cms')
@@ -221,7 +223,7 @@ def delete_items(uids):
 
 @task()
 def scan_links(obj):
-    if isinstance(obj, basestring):
+    if isinstance(obj, six.string_types):
         obj = api.portal.get().restrictedTraverse(obj, None)
         if obj is None:
             return

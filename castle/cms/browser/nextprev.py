@@ -1,12 +1,13 @@
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms.interfaces import ITrashed
 from plone import api
 from plone.app.dexterity.behaviors.nextprevious import NextPreviousBase
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from zope.component import getUtility
+
+from castle.cms.interfaces import ITrashed
 
 
 class NextPrevious(NextPreviousBase):

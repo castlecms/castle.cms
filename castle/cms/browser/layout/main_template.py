@@ -1,7 +1,8 @@
-from plone.memoize.view import memoize
 from plone.app.theming.utils import theming_policy
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.memoize.view import memoize
 from Products.CMFPlone.browser.main_template import MainTemplate as BaseMainTemplate
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from castle.cms.theming import isPloneTheme
 
 

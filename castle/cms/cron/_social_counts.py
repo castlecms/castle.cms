@@ -1,26 +1,30 @@
+from __future__ import print_function
+
 import json
 import logging
 import time
 from multiprocessing import Pool
-from urllib import urlencode
 
 import requests
-
 import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
-from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.utils import clear_object_cache, index_in_es, retriable
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import defaultpage
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from six.moves.urllib.parse import urlencode
 from tendo import singleton
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
+
+from castle.cms.social import COUNT_ANNOTATION_KEY
+from castle.cms.utils import clear_object_cache
+from castle.cms.utils import index_in_es
+from castle.cms.utils import retriable
 
 
 USE_MULTIPROCESSING = True
@@ -177,7 +181,7 @@ def get_social_counts(site, obj, site_url, count_types, count=0):
     site_path = '/'.join(site.getPhysicalPath())
     obj_path = '/'.join(obj.getPhysicalPath())
     rel_path = obj_path[len(site_path):].strip('/')
-    print('Looking up ' + obj_path)
+    print(('Looking up ' + obj_path))
 
     urls = [site_url.rstrip('/') + '/' + rel_path]
     registry = getUtility(IRegistry)

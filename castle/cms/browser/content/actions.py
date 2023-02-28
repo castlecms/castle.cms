@@ -1,16 +1,9 @@
-from OFS.CopySupport import CopyError
-from zope.component import queryMultiAdapter
-from plone.locking.interfaces import ILockable
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from castle.cms import tasks
-from castle.cms import trash
-from castle.cms.browser.utils import Utils
-from castle.cms.tasks import template
-from castle.cms.utils import get_paste_data
-from castle.cms.utils import is_max_paste_items
+from OFS.CopySupport import CopyError
 from plone import api
 from plone.app.content.browser import actions
+from plone.locking.interfaces import ILockable
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
@@ -20,6 +13,14 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import form
+from zope.component import queryMultiAdapter
+
+from castle.cms import tasks
+from castle.cms import trash
+from castle.cms.browser.utils import Utils
+from castle.cms.tasks import template
+from castle.cms.utils import get_paste_data
+from castle.cms.utils import is_max_paste_items
 
 
 class ObjectPasteView(actions.ObjectPasteView):

@@ -1,7 +1,10 @@
-import os
+from __future__ import print_function
+
 import argparse
-import sys
+import os
 import subprocess
+import sys
+
 
 parser = argparse.ArgumentParser(description='Run a script')
 parser.add_argument('--instance', dest='instance',
@@ -36,7 +39,7 @@ def script_runner(script, argv=sys.argv):
     command_line_args = ['--site-id="{}"'.format(args.siteid)] if args.siteid is not None else []
     cmd = [instance, 'run', script_path] + command_line_args
 
-    print('Running command: %s' % ' '.join(cmd))
+    print(('Running command: %s' % ' '.join(cmd)))
     subprocess.check_call(cmd, env=os.environ)
 
 
@@ -67,8 +70,8 @@ def run_it(module):
     app.REQUEST['PARENTS'] = [app]
     from zope.globalrequest import setRequest
     setRequest(app.REQUEST)
-    from AccessControl.SpecialUsers import system as user
     from AccessControl.SecurityManagement import newSecurityManager
+    from AccessControl.SpecialUsers import system as user
     newSecurityManager(None, user)
 
     from zope.dottedname.resolve import resolve

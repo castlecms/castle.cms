@@ -8,6 +8,8 @@
 #  - create sites based on different versions
 #  - run `upgrade-sites` script
 #
+from __future__ import print_function
+
 import json
 import os
 import shutil
@@ -78,7 +80,7 @@ PKG_EXTRA = '-py2.7.egg'
 
 
 def output(txt):
-    print('[\033[1;33mCastle Test\033[0m]: {}'.format(txt))
+    print(('[\033[1;33mCastle Test\033[0m]: {}'.format(txt)))
 
 
 def download_package(name, version, env):

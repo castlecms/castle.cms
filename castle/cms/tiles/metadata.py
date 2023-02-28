@@ -1,10 +1,5 @@
 import json
 
-from castle.cms.behaviors.location import ILocation
-from castle.cms.behaviors.search import ISearch
-from castle.cms.interfaces import ILDData
-from castle.cms.utils import is_backend
-from castle.cms.utils import site_has_icon
 from plone.app.layout.globals.interfaces import IViewView
 from plone.tiles import Tile
 from Products.CMFCore.interfaces import ISiteRoot
@@ -16,7 +11,13 @@ from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
+
+from castle.cms.behaviors.location import ILocation
+from castle.cms.behaviors.search import ISearch
 from castle.cms.constants import CASTLE_VERSION_STRING
+from castle.cms.interfaces import ILDData
+from castle.cms.utils import is_backend
+from castle.cms.utils import site_has_icon
 
 
 head_viewlets = {

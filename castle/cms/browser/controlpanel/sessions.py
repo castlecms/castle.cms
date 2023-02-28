@@ -1,8 +1,9 @@
-from castle.cms import ua
-from castle.cms.lockout import get_active_sessions
-from castle.cms.lockout import SessionManager
 from plone import api
 from Products.Five import BrowserView
+
+from castle.cms import ua
+from castle.cms.lockout import SessionManager
+from castle.cms.lockout import get_active_sessions
 
 
 class SessionsView(BrowserView):

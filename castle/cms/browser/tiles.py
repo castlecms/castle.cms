@@ -1,19 +1,22 @@
-from DateTime import DateTime
+import json
 from copy import deepcopy
-from persistent.dict import PersistentDict
+
+import six.moves.urllib.error
+import six.moves.urllib.parse
+import six.moves.urllib.request
+from DateTime import DateTime
 from lxml import etree
 from lxml.html import tostring
-from repoze.xmliter.utils import getHTMLSerializer
-from castle.cms import theming
-from plone.app.theming.interfaces import THEME_RESOURCE_NAME
-from castle.cms.tiles import meta
+from persistent.dict import PersistentDict
 from plone import api
+from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.tiles.data import ANNOTATIONS_KEY_PREFIX as TILE_ANNOTATIONS_KEY_PREFIX
 from plone.tiles.interfaces import IPersistentTile
 from plone.tiles.interfaces import ITileDataManager
 from plone.tiles.interfaces import ITileType
 from plone.uuid.interfaces import IUUIDGenerator
 from Products.Five import BrowserView
+from repoze.xmliter.utils import getHTMLSerializer
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -21,10 +24,10 @@ from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import alsoProvides
 from zope.lifecycleevent import ObjectRemovedEvent
-from castle.cms.events import MetaTileEditedEvent
-import urllib
 
-import json
+from castle.cms import theming
+from castle.cms.events import MetaTileEditedEvent
+from castle.cms.tiles import meta
 
 
 class MetaTileManager(BrowserView):

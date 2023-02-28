@@ -1,7 +1,5 @@
-from castle.cms import audit
-from castle.cms import tasks
-from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
-from castle.cms.lead import check_lead_image
+import logging
+
 from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.blocks.interfaces import DEFAULT_CONTENT_LAYOUT_REGISTRY_KEY
@@ -19,7 +17,11 @@ from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from zope.interface import Interface
-import logging
+
+from castle.cms import audit
+from castle.cms import tasks
+from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
+from castle.cms.lead import check_lead_image
 
 
 logger = logging.getLogger('castle.cms')

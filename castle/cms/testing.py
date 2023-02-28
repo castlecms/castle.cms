@@ -3,10 +3,9 @@ import json
 import re
 import sys
 import unittest
-from cStringIO import StringIO
 
 import transaction
-from castle.cms import install
+from cStringIO import StringIO
 from plone.app.robotframework import AutoLogin
 from plone.app.robotframework import RemoteLibraryLayer
 from plone.app.robotframework.content import Content
@@ -25,11 +24,13 @@ from plone.app.testing import applyProfile
 # from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.testing import z2
 from Products.CMFPlone.resources.browser.combine import combine_bundles
+from wildcard.hps.interfaces import IWildcardHPSLayer
 from zope.configuration import xmlconfig
 from zope.globalrequest import clearRequest
 from zope.globalrequest import setRequest
 from ZPublisher import HTTPResponse
-from wildcard.hps.interfaces import IWildcardHPSLayer
+
+from castle.cms import install
 
 
 class CastleLayer(PloneSandboxLayer):
@@ -160,9 +161,9 @@ class BaseTest(unittest.TestCase):
         """
         Mostly pulled from Testing.functional
         """
+        from ZPublisher.Publish import publish_module
         from ZPublisher.Request import Request
         from ZPublisher.Response import Response
-        from ZPublisher.Publish import publish_module
 
         transaction.commit()
 

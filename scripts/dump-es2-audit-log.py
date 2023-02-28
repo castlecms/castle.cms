@@ -29,8 +29,8 @@ import json
 import logging
 import logging.config
 import os
-import sys
 import sqlite3
+import sys
 
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning

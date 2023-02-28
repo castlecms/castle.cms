@@ -1,19 +1,18 @@
 import base64
 import logging
-from cStringIO import StringIO
 from os import fstat
 
+import six
 import zope.publisher.interfaces
 from Acquisition import aq_inner
-from castle.cms.files import aws
-from castle.cms.interfaces import IReferenceNamedImage
+from cStringIO import StringIO
 from PIL import Image
 from plone import api
 from plone.app.blob.download import handleRequestRange
 from plone.app.blob.iterators import BlobStreamIterator
 from plone.app.blob.utils import openBlob
 from plone.app.contenttypes.browser import file
-from plone.app.imaging.utils import getAllowedSizes
+# from plone.app.imaging.utils import getAllowedSizes
 from plone.namedfile import browser as namedfile
 from plone.namedfile.interfaces import INamedBlobFile
 from plone.namedfile.scaling import ImageScaling
@@ -24,6 +23,9 @@ from webdav.common import rfc1123_date
 from zExceptions import NotFound
 from ZODB.POSException import POSKeyError
 from zope.component import getMultiAdapter
+
+from castle.cms.files import aws
+from castle.cms.interfaces import IReferenceNamedImage
 
 
 logger = logging.getLogger('castle.cms')
@@ -111,7 +113,7 @@ class DownloadBlob(BrowserView):
 
         if data:
             is_blob = False
-            if isinstance(data, basestring):
+            if isinstance(data, six.string_types):
                 length = len(data)
             else:
                 is_blob = True
@@ -150,7 +152,7 @@ class EmptyRedirect(BrowserView):
 
     def __init__(self, *args):
         super(EmptyRedirect, self).__init__(*args)
-        self.sizes = getAllowedSizes()
+        self.sizes = {"small": ["100", "100"]}
 
     def __call__(self):
         return self

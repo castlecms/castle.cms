@@ -27,13 +27,13 @@ Therefore, in the above model, the following are mapped to an individual record:
     - site == app[site].id value
     - report_id == UUID4 unique per-site and per-execution of this script
 """
-from argparse import ArgumentParser
 import csv
-from datetime import datetime
 import logging
 import os
 import sys
 import uuid
+from argparse import ArgumentParser
+from datetime import datetime
 
 from AccessControl.SecurityManagement import newSecurityManager
 from plone import api
@@ -42,7 +42,6 @@ from tendo import singleton
 from zope.component.hooks import setSite
 
 from castle.cms.gelf import GELFHandler
-
 
 
 logger = logging.getLogger("Plone")
@@ -148,8 +147,8 @@ def setup_and_run():
     app.REQUEST['PARENTS'] = [app]
     from zope.globalrequest import setRequest
     setRequest(app.REQUEST)
-    from AccessControl.SpecialUsers import system as user
     from AccessControl.SecurityManagement import newSecurityManager
+    from AccessControl.SpecialUsers import system as user
     newSecurityManager(None, user)
 
     run(app)

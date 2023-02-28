@@ -1,9 +1,7 @@
 import logging
-from cStringIO import StringIO
 
-from castle.cms.browser.files.files import NamedFileDownload
-from castle.cms.interfaces import ISecureLoginAllowedView
-from castle.cms.utils import site_has_icon
+import six
+from cStringIO import StringIO
 from PIL import Image
 from plone import api
 from plone.formwidget.namedfile.converter import b64decode_file
@@ -11,12 +9,16 @@ from plone.namedfile.file import NamedImage
 from plone.registry.interfaces import IRegistry
 from zExceptions import NotFound
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms.browser.files.files import NamedFileDownload
+from castle.cms.interfaces import ISecureLoginAllowedView
+from castle.cms.utils import site_has_icon
 
 
 logger = logging.getLogger('castle.cms')
 
-
+@implementer(ISecureLoginAllowedView)
 class IconView(NamedFileDownload):
     """
     a bit insane all the icon sizes we need but this is the world we live in...
@@ -40,7 +42,6 @@ icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
 img.save('logo.ico', sizes=icon_sizes)
 
     """
-    implements(ISecureLoginAllowedView)
 
     filename = u'icon.png'
 
@@ -59,7 +60,7 @@ img.save('logo.ico', sizes=icon_sizes)
         '''
         filename = getattr(self, 'filename', u'file.ext')
         super(IconView, self).__init__(context, request)
-        self.filename = unicode(filename)
+        self.filename = six.text_type(filename)
 
     def get_data(self):
         registry = getUtility(IRegistry)

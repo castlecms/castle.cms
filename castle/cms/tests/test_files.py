@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
+import json
+import unittest
+from io import BytesIO
+from time import time
+from urllib.parse import quote_plus
+
 import boto3
 import botocore
-from castle.cms.browser import content
-import castle.cms.files.aws as aws
-from castle.cms.files.duplicates import DuplicateDetector
-from castle.cms.testing import (
-    CASTLE_PLONE_INTEGRATION_TESTING,
-    CASTLE_PLONE_FUNCTIONAL_TESTING,
-)
+from moto import mock_s3
 from persistent.mapping import PersistentMapping
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.uuid.interfaces import IUUID
-from moto import mock_s3
+from six.moves import range
 from zope.annotation.interfaces import IAnnotations
 
-from io import BytesIO
-import json
-from time import time
-import unittest
-from urllib.parse import quote_plus
+import castle.cms.files.aws as aws
+from castle.cms.browser import content
+from castle.cms.files.duplicates import DuplicateDetector
+from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestDuplicateDetector(unittest.TestCase):

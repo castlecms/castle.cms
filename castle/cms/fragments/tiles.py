@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from plone.supermodel import model
 from plone.tiles import Tile
 from zope import schema
 from zope.i18nmessageid import MessageFactory
-import logging
+
 from castle.cms.fragments.utils import getFragment
+
 
 _ = MessageFactory('castle.cms')
 

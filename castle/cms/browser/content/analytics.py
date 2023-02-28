@@ -1,11 +1,12 @@
-from castle.cms import cache
-from castle.cms import social
-from castle.cms.services.google import analytics
+import json
+
 from plone import api
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 
-import json
+from castle.cms import cache
+from castle.cms import social
+from castle.cms.services.google import analytics
 
 
 class AnalyticsView(BrowserView):

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import pytz
-from castle.cms.pwexpiry.config import _
 from plone import api
 from Products.CMFPlone.utils import safe_unicode
 from zope.component import getMultiAdapter
 from zope.i18n import translate
+
+from castle.cms.pwexpiry.config import _
 
 
 def send_notification_email(user, days_to_expire,

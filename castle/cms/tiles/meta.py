@@ -2,24 +2,25 @@ import logging
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from castle.cms.interfaces import IGlobalTile
-from castle.cms.interfaces import IMetaTile
 from plone.supermodel import model
 from plone.tiles import Tile
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.interfaces import IGlobalTile
+from castle.cms.interfaces import IMetaTile
 
 
 logger = logging.getLogger('castle.cms')
 
 
+@implementer(IGlobalTile)
 class MetaTile(Tile):
-    implements(IGlobalTile)
 
     _template = """<section class="meta-tile-container"
                         id="meta-tile-%(id)s" aria-label="%(id)s">%(content)s</section>"""

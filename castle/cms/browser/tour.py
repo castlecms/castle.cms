@@ -1,6 +1,7 @@
-from Products.Five import BrowserView
-from plone import api
 import json
+
+from plone import api
+from Products.Five import BrowserView
 
 
 class FinishView(BrowserView):

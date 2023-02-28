@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-from castle.cms._scripts.cleanup_archive import is_s3_url
-from castle.cms import archival
-from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
+import unittest
+
+from moto import mock_s3
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from moto import mock_s3
+from plone.app.testing import login
+from plone.app.testing import setRoles
+from six.moves.urllib.parse import urlparse
 
-import unittest
-from urlparse import urlparse
+from castle.cms import archival
+from castle.cms._scripts.cleanup_archive import is_s3_url
+from castle.cms.testing import CASTLE_PLONE_FUNCTIONAL_TESTING
 
 
 class TestCleanupArchive(unittest.TestCase):

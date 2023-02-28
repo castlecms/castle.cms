@@ -1,6 +1,8 @@
-from Products.Five import BrowserView
+import six
 from celery.task.control import inspect
 from plone import api
+from Products.Five import BrowserView
+
 from castle.cms import taskinfo
 
 
@@ -43,7 +45,7 @@ class CeleryControlPanel(BrowserView):
         obj_path = ''
         obj = None
         args = info['args']
-        if len(args) > 0 and isinstance(args[0], basestring):
+        if len(args) > 0 and isinstance(args[0], six.string_types):
             obj_path = args[0].replace('object://', '')
             obj = self.site.unrestrictedTraverse(str(obj_path), None)
 

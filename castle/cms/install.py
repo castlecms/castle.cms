@@ -1,7 +1,3 @@
-from castle.cms.exportimport.frontpagecontent import getTileData
-from castle.cms.interfaces import ICastleLayer
-from castle.cms.interfaces import IGlobalTile
-from castle.cms.tiles.meta import MetaTile
 from DateTime import DateTime
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.tiles.interfaces import IPersistentTile
@@ -9,11 +5,16 @@ from plone.tiles.interfaces import ITileDataManager
 from Products.CMFPlone.interfaces import INonInstallable
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms.exportimport.frontpagecontent import getTileData
+from castle.cms.interfaces import ICastleLayer
+from castle.cms.interfaces import IGlobalTile
+from castle.cms.tiles.meta import MetaTile
 
 
+@implementer(INonInstallable)
 class HiddenProducts(object):
-    implements(INonInstallable)
 
     def getNonInstallableProducts(self):
         return []

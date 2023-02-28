@@ -1,6 +1,7 @@
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+
 from . import get_service
 
 

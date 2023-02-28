@@ -1,12 +1,15 @@
+import six
+
+
 # python 3 compatible stuff
 
 
 try:
-    unicode = unicode
+    six.text_type = six.text_type
 except NameError:
-    unicode = str
+    six.text_type = str
 
 try:
-    basestring = basestring
+    six.string_types = six.string_types
 except NameError:
-    basestring = str
+    six.string_types = str

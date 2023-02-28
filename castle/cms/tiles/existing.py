@@ -1,3 +1,11 @@
+import six
+from plone.autoform import directives as form
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from zope import schema
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+
 from castle.cms import defaults
 from castle.cms.tiles.base import ContentTile
 from castle.cms.tiles.base import DisplayTypeTileMixin
@@ -6,12 +14,6 @@ from castle.cms.tiles.views import BaseTileView
 from castle.cms.tiles.views import TileViewsSource
 from castle.cms.widgets import FocalPointSelectFieldWidget
 from castle.cms.widgets import PreviewSelectFieldWidget
-from plone.autoform import directives as form
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from zope import schema
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
 
 
 DISPLAY_TYPE_KEY = 'existing'
@@ -63,7 +65,7 @@ class ExistingTile(ContentTile, DisplayTypeTileMixin):
             return ''
         if type(val) in (set, list, tuple):
             val = joiner.join(val)
-        if isinstance(val, basestring) and '\n' in val:
+        if isinstance(val, six.string_types) and '\n' in val:
             val = joiner.join(val.splitlines())
         return val
 

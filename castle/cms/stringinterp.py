@@ -1,12 +1,15 @@
-from castle.cms import subscribe
+import string
+
 from plone.stringinterp import _
 from plone.stringinterp.adapters import BaseSubstitution
 from plone.stringinterp.dollarReplace import LazyDict
 from plone.stringinterp.interfaces import IStringInterpolator
 from Products.CMFCore.interfaces import IContentish
-import string
-from zope.component import adapts, adapter
+from zope.component import adapter
+from zope.component import adapts
 from zope.interface import implementer
+
+from castle.cms import subscribe
 
 
 @adapter(IContentish)

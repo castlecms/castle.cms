@@ -1,8 +1,5 @@
 import json
 
-from castle.cms.behaviors.location import ILocation
-from castle.cms.widgets import SelectFieldWidget
-from castle.cms.widgets import ImageRelatedItemFieldWidget
 from plone import api
 from plone.app.z3cform.layout import wrap_form
 from plone.dexterity.interfaces import IDexterityItem
@@ -17,11 +14,15 @@ from Products.Five import BrowserView
 from z3c.form import button
 from z3c.form import field
 from zope import schema
-from zope.component import adapts
+from zope.component import adapter
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.behaviors.location import ILocation
+from castle.cms.widgets import ImageRelatedItemFieldWidget
+from castle.cms.widgets import SelectFieldWidget
 
 
 class IFeedSettings(IBaseFeedSettings):
@@ -61,10 +62,9 @@ class IFeedSettings(IBaseFeedSettings):
         )
     )
 
-
+@implementer(IFeedSettings)
+@adapter(ISyndicatable)
 class FeedSettings(settings.FeedSettings):
-    implements(IFeedSettings)
-    adapts(ISyndicatable)
 
     def __getattr__(self, name):
         default = None
@@ -78,13 +78,13 @@ class FeedSettings(settings.FeedSettings):
         return self._metadata.get(name, default)
 
 
+@implementer(IFeedSettings)
+@adapter(IDexterityItem)
 class ItemFeedSettings(settings.FeedSettings):
     '''
     Implement default item feed settings such as always being disabled.
     This prevents any errors if a non-folder item's feed setting data is read.
     '''
-    implements(IFeedSettings)
-    adapts(IDexterityItem)
 
     enabled = False
     sort_on = 'effective'

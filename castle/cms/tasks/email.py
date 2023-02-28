@@ -1,10 +1,11 @@
+from collective.celery import task
+from plone import api
+from six.moves.urllib.parse import urlencode
+from zope.globalrequest import getRequest
+
 from castle.cms import subscribe
 from castle.cms import utils
 from castle.cms.browser.utils import Utils
-from collective.celery import task
-from plone import api
-from urllib import urlencode
-from zope.globalrequest import getRequest
 
 
 @task.as_admin()

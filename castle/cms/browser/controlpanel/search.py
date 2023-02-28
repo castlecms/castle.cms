@@ -1,5 +1,5 @@
-from Products.Five import BrowserView
 from plone import api
+from Products.Five import BrowserView
 
 
 class ExclusionPanel(BrowserView):

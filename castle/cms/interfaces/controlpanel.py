@@ -1,5 +1,4 @@
-from castle.cms import constants
-from castle.cms.vocabularies import BusinessTypesVocabulary
+import six
 from plone.autoform import directives
 from plone.keyring import django_random
 from Products.CMFPlone.interfaces import controlpanel
@@ -7,6 +6,9 @@ from Products.CMFPlone.utils import validate_json
 from zope import schema
 from zope.interface import Interface
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms import constants
+from castle.cms.vocabularies import BusinessTypesVocabulary
 
 
 def create_term(val, label):
@@ -435,7 +437,7 @@ class IAPISettings(Interface):
         title=u'Rocket.Chat secret',
         description=u'Text string used to salt Rocket.Chat authentication tokens',
         required=False,
-        default=unicode(django_random.get_random_string(64))
+        default=six.text_type(django_random.get_random_string(64))
     )
 
     matomo_base_url = schema.URI(

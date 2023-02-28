@@ -1,11 +1,12 @@
+import time
+
 from Acquisition import aq_inner
-from castle.cms.lockout import LockoutManager
 from plone import api
 from Products.CMFPlone.controlpanel.browser import usergroups_usersoverview
 from Products.CMFPlone.resources import add_resource_on_request
 from zExceptions import Forbidden
 
-import time
+from castle.cms.lockout import LockoutManager
 
 
 class UsersOverviewControlPanel(usergroups_usersoverview.UsersOverviewControlPanel):

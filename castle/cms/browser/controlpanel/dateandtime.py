@@ -1,5 +1,6 @@
-from castle.cms.widgets import SelectFieldWidget
 from Products.CMFPlone.controlpanel.browser import dateandtime
+
+from castle.cms.widgets import SelectFieldWidget
 
 
 class DateAndTimeControlPanelForm(dateandtime.DateAndTimeControlPanelForm):

@@ -1,7 +1,10 @@
-import os
+from __future__ import print_function
+
 import argparse
-import time
 import hashlib
+import os
+import time
+
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--command', dest='command')
@@ -35,7 +38,7 @@ def check(directory):
             times[filepath] = hashed
 
             if hashed != current_hash:
-                print(filepath + ' has changed!')
+                print((filepath + ' has changed!'))
                 changed = True
 
     return changed

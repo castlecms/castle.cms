@@ -1,19 +1,20 @@
-from castle.cms.interfaces import (
-    IAdjustableFontSizeSettings,
-    IAPISettings,
-    IArchivalSettings,
-    ICastleSettings,
-    IContentSettings,
-    ISiteConfiguration,
-    ISearchSettings,
-    ISlideshowSettings,
-)
-from castle.cms.widgets import FileUploadFieldsFieldWidget, SelectFieldWidget
 from plone.app.registry.browser import controlpanel
 from plone.formwidget.namedfile.widget import NamedFileFieldWidget
 from Products.CMFPlone import PloneMessageFactory as _
-from z3c.form import field, group
+from z3c.form import field
+from z3c.form import group
 from z3c.form.interfaces import HIDDEN_MODE
+
+from castle.cms.interfaces import IAdjustableFontSizeSettings
+from castle.cms.interfaces import IAPISettings
+from castle.cms.interfaces import IArchivalSettings
+from castle.cms.interfaces import ICastleSettings
+from castle.cms.interfaces import IContentSettings
+from castle.cms.interfaces import ISearchSettings
+from castle.cms.interfaces import ISiteConfiguration
+from castle.cms.interfaces import ISlideshowSettings
+from castle.cms.widgets import FileUploadFieldsFieldWidget
+from castle.cms.widgets import SelectFieldWidget
 
 
 class APIForm(group.GroupForm):

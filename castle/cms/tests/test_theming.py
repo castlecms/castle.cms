@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from castle.cms import theming
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from plone.registry import field as registry_field
+import unittest
+
 from plone.registry import Record
+from plone.registry import field as registry_field
 from plone.registry.interfaces import IRegistry
 from repoze.xmliter.utils import getHTMLSerializer
 from zope.component import getUtility
 
-import unittest
+from castle.cms import theming
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 MINIMAL_LAYOUT = """<!doctype html>

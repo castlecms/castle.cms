@@ -1,6 +1,10 @@
-from castle.cms.commands import docsplit
-from castle.cms.utils import get_data_from_url
-from castle.cms.utils import inline_images_in_dom
+import json
+import logging
+import traceback
+
+import plone.api as api
+import requests
+import six
 from lxml.etree import tostring
 from lxml.html import fromstring
 from lxml.html.clean import Cleaner
@@ -12,11 +16,9 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 
-import json
-import logging
-import plone.api as api
-import requests
-import traceback
+from castle.cms.commands import docsplit
+from castle.cms.utils import get_data_from_url
+from castle.cms.utils import inline_images_in_dom
 
 
 logger = logging.getLogger('castle.cms')
@@ -45,7 +47,7 @@ def create_raw_from_view(context, view_name='pdf', css_files=None, unrestricted_
             url=css_file,
             unrestricted_traverse=unrestricted_traverse,
         )
-        if isinstance(data, basestring):
+        if isinstance(data, six.string_types):
             css.append(data.replace('\n', ''))
     xml = cleaner.clean_html(fromstring(html))
     inline_images_in_dom(

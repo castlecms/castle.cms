@@ -1,8 +1,11 @@
 # Dynamic fragment template support for simple tiles
-from AccessControl import getSecurityManager
+import logging
+import os
+import threading
+import time
+
 from AccessControl import Unauthorized
-from castle.cms.fragments.interfaces import FRAGMENTS_DIRECTORY
-from castle.cms.fragments.interfaces import IFragmentsDirectory
+from AccessControl import getSecurityManager
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.utils import theming_policy
@@ -12,13 +15,11 @@ from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import BrowserPage
 
-import logging
-import os
-import threading
-import time
+from castle.cms.fragments.interfaces import FRAGMENTS_DIRECTORY
+from castle.cms.fragments.interfaces import IFragmentsDirectory
 
 
 logger = logging.getLogger('castle')
@@ -83,9 +84,9 @@ class FileChangedCacheFactory(FileCacheFactory):
                 fi.close()
         return cache[filepath]['template']
 
-
+@implementer(IFragmentsDirectory)
 class FragmentsDirectory(object):
-    implements(IFragmentsDirectory)
+    # @implementer(IFragmentsDirectory)
 
     order = 10
     layer = None
@@ -127,8 +128,8 @@ class FragmentsDirectory(object):
         return res
 
 
+@implementer(IFragmentsDirectory)
 class ThemeFragmentsDirectory(object):
-    implements(IFragmentsDirectory)
 
     order = 100
     layer = None

@@ -1,16 +1,17 @@
-from castle.cms.tiles.base import BaseTile
-from castle.cms.utils import parse_query_from_data
-from castle.cms.widgets import QueryFieldWidget
+import json
 from datetime import timedelta
+
 from plone.autoform import directives as form
+from plone.event.recurrence import recurrence_sequence_ical as recurrences
 from plone.event.utils import is_datetime
 from plone.event.utils import pydt
-from plone.event.recurrence import recurrence_sequence_ical as recurrences
 from Products.CMFCore.utils import getToolByName
 from zope import schema
 from zope.interface import Interface
 
-import json
+from castle.cms.tiles.base import BaseTile
+from castle.cms.utils import parse_query_from_data
+from castle.cms.widgets import QueryFieldWidget
 
 
 def format_date(dt):

@@ -1,12 +1,12 @@
+import logging
+import time
+
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
+from plone import api
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
 from zope.component.hooks import setSite
-from plone import api
-
-import logging
-import transaction
-import time
 
 
 logger = logging.getLogger('castle.cms')

@@ -7,11 +7,10 @@
 import json
 import logging
 import re
-from urlparse import urljoin
 
 import Globals
+import six
 from Acquisition import aq_parent
-from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
@@ -29,10 +28,13 @@ from plone.resource.utils import queryResourceDirectory
 from Products.CMFCore.interfaces import ISiteRoot
 from repoze.xmliter.serializer import XMLSerializer
 from repoze.xmliter.utils import getHTMLSerializer
+from six.moves.urllib.parse import urljoin
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
+
+from castle.cms.utils import get_context_from_request
 
 
 logger = logging.getLogger('castle.cms')
@@ -101,9 +103,9 @@ class ThemeTemplateLoader(PageTemplateLoader):
         if filename in self.file_cache:
             return self.file_cache[filename]
         try:
-            if isinstance(filename, unicode):
+            if isinstance(filename, six.text_type):
                 filename = filename.encode('utf8')
-            result = unicode(self.folder.readFile(filename), 'utf8')
+            result = six.text_type(self.folder.readFile(filename), 'utf8')
             self.file_cache[filename] = result
             return result
         except (NotFound, IOError):
@@ -167,7 +169,7 @@ class _Transform(object):
         portal_url = portal.absolute_url()
 
         raw = False
-        if isinstance(result, basestring):
+        if isinstance(result, six.string_types):
             raw = True
         else:
             self.rewrite(result, context.absolute_url() + '/')

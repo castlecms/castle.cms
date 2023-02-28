@@ -1,8 +1,9 @@
-from castle.cms import utils
-from castle.cms.interfaces import ITemplate
 from plone import api
 from zope.component.hooks import getSite
 from zope.interface import alsoProvides
+
+from castle.cms import utils
+from castle.cms.interfaces import ITemplate
 
 
 def save_as_template(obj, action):

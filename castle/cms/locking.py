@@ -1,7 +1,7 @@
 # always want to be able to steal lock
-from plone.protect.auto import safeWrite
 from plone.locking import lockable
 from plone.locking.interfaces import STEALABLE_LOCK
+from plone.protect.auto import safeWrite
 
 
 class TTWLockable(lockable.TTWLockable):

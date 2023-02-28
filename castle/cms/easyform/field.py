@@ -1,12 +1,11 @@
 import ast
-from plone.uuid.interfaces import IUUID
 
-from castle.cms.utils import parse_query_from_data
-from castle.cms.widgets import QueryFieldWidget
+import six
 from plone.autoform import directives as form
 from plone.schemaeditor.fields import FieldFactory
 from plone.schemaeditor.fields import TextLineChoiceField
 from plone.schemaeditor.interfaces import IFieldEditFormSchema
+from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 from zope import schema
 from zope.component import adapter
@@ -18,6 +17,9 @@ from zope.schema.interfaces import IChoice
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IField
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.utils import parse_query_from_data
+from castle.cms.widgets import QueryFieldWidget
 
 
 _ = MessageFactory('castle.cms')
@@ -68,7 +70,7 @@ class QueryChoice(schema.Choice):
         # does not save data properly often here
         for item in (self.query or []):
             if (item['v'] and
-                    isinstance(item['v'], basestring) and
+                    isinstance(item['v'], six.string_types) and
                     item['v'][0] in ('[', '{') and
                     item['v'][-1] in (']', '}')):
                 item['v'] = ast.literal_eval(item['v'])

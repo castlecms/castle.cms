@@ -1,6 +1,4 @@
-from castle.cms import defaults
-from castle.cms.tiles.base import ContentTile
-from castle.cms.widgets import VideoRelatedItemsFieldWidget
+import six.moves.urllib.parse
 from plone.autoform import directives as form
 from plone.supermodel import model
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
@@ -13,7 +11,9 @@ from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
-import urlparse
+from castle.cms import defaults
+from castle.cms.tiles.base import ContentTile
+from castle.cms.widgets import VideoRelatedItemsFieldWidget
 
 
 class VideoTile(ContentTile):
@@ -46,9 +46,9 @@ class VideoTile(ContentTile):
         parts = url.split('/')
 
         # gets the 't=' start time value before cleaning the url
-        parsed = urlparse.urlparse(url)
+        parsed = six.moves.urllib.parse.urlparse(url)
         try:
-            start_time = urlparse.parse_qs(parsed.query)['t'][0]
+            start_time = six.moves.urllib.parse.parse_qs(parsed.query)['t'][0]
         except KeyError:
             start_time = None
 

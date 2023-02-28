@@ -1,8 +1,8 @@
-from ZServer.medusa import http_server
-
-import App
 import logging
 import time
+
+import App
+from ZServer.medusa import http_server
 
 
 logger = logging.getLogger('castle.cms')

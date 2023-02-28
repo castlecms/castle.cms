@@ -1,11 +1,12 @@
+from plone import api
+from plone.app.theming.browser.mapper import ThemeMapper as BaseThemeMapper
+from plone.app.theming.interfaces import MANIFEST_FORMAT
+from plone.app.theming.utils import getTheme
 from plone.resource.manifest import MANIFEST_FILENAME
 from plone.resource.manifest import getManifest
 from plone.subrequest import subrequest
-from plone.app.theming.browser.mapper import ThemeMapper as BaseThemeMapper
+
 from castle.cms import theming
-from plone import api
-from plone.app.theming.utils import getTheme
-from plone.app.theming.interfaces import MANIFEST_FORMAT
 
 
 class ThemeMapper(BaseThemeMapper):

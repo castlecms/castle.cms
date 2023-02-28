@@ -3,15 +3,16 @@ import json
 import unittest
 
 import mock
-from castle.cms.browser.content.analytics import AnalyticsView
-from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
 from zope.annotation.interfaces import IAnnotations
+
+from castle.cms.browser.content.analytics import AnalyticsView
+from castle.cms.social import COUNT_ANNOTATION_KEY
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestAnalytics(unittest.TestCase):

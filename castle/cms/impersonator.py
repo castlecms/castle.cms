@@ -1,7 +1,7 @@
+from AccessControl.SecurityManagement import noSecurityManager
 from plone import api
 from Products.PluggableAuthService.PluggableAuthService import _noroles
 from zope.security import checkPermission
-from AccessControl.SecurityManagement import noSecurityManager
 
 
 ORIGINAL_USER_KEY = 'castle.cms.original_user'

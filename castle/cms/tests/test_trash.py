@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from castle.cms import trash
-from castle.cms.interfaces import ITrashed
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
+
+from castle.cms import trash
+from castle.cms.interfaces import ITrashed
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestTrash(unittest.TestCase):

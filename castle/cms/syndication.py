@@ -1,5 +1,3 @@
-from castle.cms.theming import contentpanel_xpath
-from castle.cms.utils import has_image
 from lxml.html import tostring
 from plone.app.blocks import gridsystem
 from plone.app.blocks import tiles
@@ -16,6 +14,9 @@ from ZODB.POSException import POSKeyError
 from zope.component import adapts
 from zope.component import getAdapters
 from zope.globalrequest import getRequest
+
+from castle.cms.theming import contentpanel_xpath
+from castle.cms.utils import has_image
 
 
 class DexterityItem(adapters.DexterityItem):

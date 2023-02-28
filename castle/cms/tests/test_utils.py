@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-from castle.cms.browser.utils import Utils
-from castle.cms import utils
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+import unittest
+
+from OFS.CopySupport import _cb_encode
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from OFS.CopySupport import _cb_encode
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from ZODB.POSException import ConflictError
 
-import unittest
+from castle.cms import utils
+from castle.cms.browser.utils import Utils
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestUtils(unittest.TestCase):

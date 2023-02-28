@@ -4,14 +4,8 @@ import time
 import unittest
 
 import responses
+import six
 from AccessControl import AuthEncoding
-from castle.cms import cache
-from castle.cms import constants
-from castle.cms import security
-from castle.cms.browser.security.login import SecureLoginView
-from castle.cms.interfaces import IAuthenticator
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.cron._pw_expiry import update_password_expiry
 from DateTime import DateTime
 from plone import api
 from plone.app.testing import TEST_USER_NAME
@@ -22,6 +16,14 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
+
+from castle.cms import cache
+from castle.cms import constants
+from castle.cms import security
+from castle.cms.browser.security.login import SecureLoginView
+from castle.cms.cron._pw_expiry import update_password_expiry
+from castle.cms.interfaces import IAuthenticator
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 try:
@@ -399,7 +401,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         )
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(''),)
+            value=(six.text_type(''),)
         )
         view = SecureLoginView(self.portal, self.request)
         view()  # call the view once to set initial state
@@ -418,7 +420,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         )
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(''),)
+            value=(six.text_type(''),)
         )
         view = SecureLoginView(self.portal, self.request)
         view()  # CHECK_CREDENTIALS state
@@ -438,9 +440,9 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         api.portal.set_registry_record(
             name='plone.backend_url',
             value=(
-                unicode('http://dummydomain/castle'),
-                unicode('http://nohost/plone'),
-                unicode('http://vpn.example.com')
+                six.text_type('http://dummydomain/castle'),
+                six.text_type('http://nohost/plone'),
+                six.text_type('http://vpn.example.com')
             )
         )
         view = SecureLoginView(self.portal, self.request)

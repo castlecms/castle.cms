@@ -1,8 +1,9 @@
-from castle.cms.tiles.base import BaseTile
 from plone.autoform import directives as form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.interface import Interface
+
+from castle.cms.tiles.base import BaseTile
 
 
 class SearchTile(BaseTile):

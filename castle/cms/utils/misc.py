@@ -10,6 +10,8 @@ from DateTime import DateTime
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from plone import api
+from six.moves import range
+from six.moves import zip
 from ZODB.POSException import ConflictError
 
 

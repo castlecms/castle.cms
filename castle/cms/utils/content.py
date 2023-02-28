@@ -1,28 +1,28 @@
 import logging
 import os
 import types
-from urllib import unquote
+from re import match as re_match
+from urllib import parse
 
+import plone.api as api
 import transaction
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from castle.cms import cache
-from castle.cms.constants import MAX_PASTE_ITEMS
-from castle.cms.interfaces import IHasDefaultImage
-from castle.cms.interfaces import IReferenceNamedImage
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
-from OFS.CopySupport import eInvalid
-import plone.api as api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contentlisting.interfaces import IContentListingObject
 from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityEditForm
 from plone.subrequest import subrequest
-from re import match as re_match
 from ZODB.POSException import POSKeyError
+
+from castle.cms import cache
+from castle.cms.constants import MAX_PASTE_ITEMS
+from castle.cms.interfaces import IHasDefaultImage
+from castle.cms.interfaces import IReferenceNamedImage
 
 
 logger = logging.getLogger('castle.cms')
@@ -32,7 +32,7 @@ def get_paste_data(req):
     try:
         op, mdatas = _cb_decode(req['__cp'])
     except Exception:
-        raise CopyError(eInvalid)
+        raise CopyError('Invalid')
 
     try:
         if mdatas[0][0].startswith('cache:'):
@@ -160,7 +160,7 @@ def get_data_from_url(url, portal=None, site_url=None, unrestricted_traverse=Fal
             fi.close()
             ct = 'image/' + file_path.split('.')[-1].lower()
         else:
-            resp = subrequest(unquote(url))
+            resp = subrequest(parse(url))
             if resp.status != 200:
                 return None, None
             try:
@@ -272,7 +272,7 @@ def get_folder_contents(folder, **query):
 def get_context_from_request(request):
     published = request.get('PUBLISHED')
     if isinstance(published, types.MethodType):
-        return published.im_self
+        return published.__self__
     return aq_parent(published)
 
 

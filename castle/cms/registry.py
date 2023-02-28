@@ -1,13 +1,14 @@
-from plone.app.mosaic.interfaces import IMosaicRegistryAdapter
-from Products.CMFPlone.interfaces import ITinyMCESchema
-from zope.component import getUtility
-from castle.cms.tiles.dynamic import get_tile_manager
-from plone.registry.interfaces import IRegistry
-from plone.app.mosaic.registry import MosaicRegistry
 from plone import api
-from zope.interface import implementer
+from plone.app.mosaic.interfaces import IMosaicRegistryAdapter
+from plone.app.mosaic.registry import MosaicRegistry
+from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.interfaces import ITinyMCESchema
 from zope.component import adapter
+from zope.component import getUtility
+from zope.interface import implementer
+
 from castle.cms import cache
+from castle.cms.tiles.dynamic import get_tile_manager
 
 
 MOSAIC_CACHE_DURATION = 1 * 60

@@ -1,13 +1,7 @@
 import time
+from uuid import uuid4
 
 from Acquisition import aq_parent
-from castle.cms import cache
-from castle.cms.interfaces import IAuthenticator
-from castle.cms.interfaces import ICastleApplication
-from castle.cms.lockout import LockoutManager
-from castle.cms.utils import get_ip
-from castle.cms.utils import get_random_string
-from castle.cms.utils import strings_differ
 from OFS.interfaces import IItem
 from plone import api
 from plone.keyring.interfaces import IKeyManager
@@ -28,7 +22,14 @@ from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import Interface
 from zope.interface import implementer
-from uuid import uuid4
+
+from castle.cms import cache
+from castle.cms.interfaces import IAuthenticator
+from castle.cms.interfaces import ICastleApplication
+from castle.cms.lockout import LockoutManager
+from castle.cms.utils import get_ip
+from castle.cms.utils import get_random_string
+from castle.cms.utils import strings_differ
 
 
 class AuthenticationException(Exception):

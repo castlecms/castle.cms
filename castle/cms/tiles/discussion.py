@@ -1,9 +1,10 @@
-from zope.component import getUtility
-from plone import api
 from Acquisition import aq_inner
+from plone import api
+from plone.app.standardtiles import discussion
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
-from plone.app.standardtiles import discussion
+from zope.component import getUtility
+
 
 DISQUS_CODE = """
 <div id="disqus_thread"></div>

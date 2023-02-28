@@ -1,3 +1,8 @@
+import zope.schema as schema
+from plone.autoform import directives as form
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from zope.schema.vocabulary import SimpleVocabulary
+
 from castle.cms import defaults
 from castle.cms.tiles.base import BaseImagesTile
 from castle.cms.tiles.base import DisplayTypeTileMixin
@@ -5,10 +10,6 @@ from castle.cms.tiles.content import IImagesTileSchema
 from castle.cms.tiles.views import BaseTileView
 from castle.cms.tiles.views import TileViewsSource
 from castle.cms.widgets import PreviewSelectFieldWidget
-from plone.autoform import directives as form
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-import zope.schema as schema
-from zope.schema.vocabulary import SimpleVocabulary
 
 
 class DefaultView(BaseTileView):

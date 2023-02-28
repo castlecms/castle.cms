@@ -1,5 +1,13 @@
+import logging
+
+import transaction
 from AccessControl.PermissionRole import rolesForPermissionOn
 from Acquisition import aq_parent
+from plone import api
+from plone.app.layout.navigation.defaultpage import getDefaultPage
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from tendo import singleton
+
 from castle.cms import archival
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
@@ -8,13 +16,6 @@ from castle.cms.interfaces import IArchiveManager
 from castle.cms.utils import get_backend_url
 from castle.cms.utils import retriable
 from castle.cms.utils import send_email
-from plone import api
-from plone.app.layout.navigation.defaultpage import getDefaultPage
-from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-from tendo import singleton
-
-import logging
-import transaction
 
 
 logger = logging.getLogger('castle.cms')

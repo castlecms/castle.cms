@@ -3,13 +3,11 @@
 # this should be considered deprecated behavior, and will be removed in a
 # future release.
 from collective.elasticsearch.interfaces import IElasticSearchLayer
-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.mosaic.interfaces import IMosaicLayer
 from plone.app.tiles.interfaces import ITilesFormLayer
-from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-
 from wildcard.hps.interfaces import IWildcardHPSLayer
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 
 class ICastleLayer(

@@ -1,10 +1,11 @@
-from castle.cms.interfaces import ISecuritySchema
-from castle.cms.widgets import SelectFieldWidget
+from plone import api
 from plone.app.registry.browser import controlpanel
 from Products.CMFPlone.controlpanel.browser import security
 from z3c.form.field import Fields
 from zope.schema import Int
-from plone import api
+
+from castle.cms.interfaces import ISecuritySchema
+from castle.cms.widgets import SelectFieldWidget
 
 
 class SecurityControlPanelForm(security.SecurityControlPanelForm):

@@ -1,14 +1,15 @@
-from castle.cms import trash
-from castle.cms.interfaces import ITrashed
-from castle.cms.constants import TRASH_LOG_KEY
 from plone import api
 from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
 from plone.locking.interfaces import ILockable
-from zope.annotation.interfaces import IAnnotations
 from Products.Five import BrowserView
 from unidecode import unidecode
+from zope.annotation.interfaces import IAnnotations
 from zope.event import notify
+
+from castle.cms import trash
+from castle.cms.constants import TRASH_LOG_KEY
 from castle.cms.events import TrashEmptiedEvent
+from castle.cms.interfaces import ITrashed
 
 
 class TrashView(BrowserView):

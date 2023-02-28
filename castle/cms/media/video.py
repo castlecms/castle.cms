@@ -1,15 +1,18 @@
 import os
 from logging import getLogger
-from shutil import copyfile, rmtree
+from shutil import copyfile
+from shutil import rmtree
 from tempfile import mkdtemp
 
-from castle.cms.commands import avconv, md5
-from castle.cms.files import aws
-from castle.cms.services.google import youtube
 from collective.celery.utils import getCelery
 from plone.app.blob.utils import openBlob
 from plone.namedfile import NamedBlobImage
 from plone.namedfile.file import NamedBlobFile
+
+from castle.cms.commands import avconv
+from castle.cms.commands import md5
+from castle.cms.files import aws
+from castle.cms.services.google import youtube
 
 
 logger = getLogger(__name__)

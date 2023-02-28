@@ -1,7 +1,8 @@
-from castle.cms.interfaces import IBusinessData
-from castle.cms.widgets import MapPointFieldWidget
 from plone.app.registry.browser import controlpanel
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+
+from castle.cms.interfaces import IBusinessData
+from castle.cms.widgets import MapPointFieldWidget
 
 
 class BusinessControlPanelForm(controlpanel.RegistryEditForm):

@@ -1,16 +1,20 @@
-import argparse
-import transaction
-import tempfile
-import logging
-import shutil
-import os
+from __future__ import print_function
 
-from zope.component.hooks import setSite
-from castle.cms.commands import exiftool
-from castle.cms.commands import qpdf
-from castle.cms.commands import gs_pdf
+import argparse
+import logging
+import os
+import shutil
+import tempfile
+
+import transaction
 from plone.namedfile.file import NamedBlobFile
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from zope.component.hooks import setSite
+
+from castle.cms.commands import exiftool
+from castle.cms.commands import gs_pdf
+from castle.cms.commands import qpdf
+
 
 # PDFs uploaded to CastleCMS 2.5.9 or earlier might have unwanted metadata
 # Run this to reprocess them
@@ -28,7 +32,7 @@ args, _ = parser.parse_known_args()
 def process_PDFs(site):
     cat = site.portal_catalog
     filebrains = cat(portal_type='File', contentType='application/pdf')
-    print('Processing {} PDFs'.format(len(filebrains)))
+    print(('Processing {} PDFs'.format(len(filebrains))))
     count = 0
     for brain in filebrains:
         obj = brain.getObject()
@@ -63,7 +67,7 @@ def process_PDFs(site):
             file.close()
             count += 1
             if count % 50 == 0:
-                print('Processed {} PDFs'.format(count))
+                print(('Processed {} PDFs'.format(count)))
                 transaction.commit()
         else:
             logger.warn('{sitepath} will not be modified because an exception occured.'.format(sitepath=brain.getURL()))  # noqa
@@ -77,7 +81,7 @@ if __name__ == '__main__':
         for oid in app.objectIds():  # noqa
             site = app[oid]  # noqa
             if IPloneSiteRoot.providedBy(site):
-                print('Processing site: {}'.format(oid))
+                print(('Processing site: {}'.format(oid)))
                 setSite(site)
                 process_PDFs(site)
     else:

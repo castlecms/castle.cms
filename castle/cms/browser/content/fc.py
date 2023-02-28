@@ -1,15 +1,16 @@
-from AccessControl import getSecurityManager
+import json
+from re import sub
+from uuid import uuid4
+
+import six
+import transaction
 from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from castle.cms import cache
-from castle.cms import tasks
-from castle.cms import trash
-from castle.cms.utils import get_paste_data
-from castle.cms.utils import is_max_paste_items
+from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import cookie_path
-from OFS.CopySupport import CopyError
 from OFS.Moniker import Moniker
 from plone import api
 from plone.app.content.browser.contents import FolderContentsView as BaseFolderContentsView
@@ -18,35 +19,33 @@ from plone.app.content.browser.contents import cut
 from plone.app.content.browser.contents import delete
 from plone.app.content.browser.contents import paste
 from plone.app.content.browser.contents import rename
+from plone.app.content.browser.vocabulary import VocabLookupException
+from plone.app.content.browser.vocabulary import VocabularyView
+from plone.app.content.browser.vocabulary import _parseJSON
+from plone.app.content.browser.vocabulary import _safe_callable_metadata
+from plone.app.content.browser.vocabulary import _unsafe_metadata
+from plone.app.content.browser.vocabulary import itertools
+from plone.app.content.browser.vocabulary import json_dumps
+from plone.app.content.browser.vocabulary import safe_unicode
+from plone.app.content.browser.vocabulary import translate
 from plone.app.content.interfaces import IStructureAction
 from plone.locking.interfaces import ILockable
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.log import logger
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from uuid import uuid4
 from ZODB.POSException import ConflictError
 from zope.component import getMultiAdapter
 from zope.container.interfaces import INameChooser
 from zope.event import notify
 from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
-from re import sub
 
-from plone.app.content.browser.vocabulary import (
-    VocabularyView,
-    VocabLookupException,
-    _parseJSON,
-    _unsafe_metadata,
-    _safe_callable_metadata,
-    translate,
-    safe_unicode,
-    json_dumps,
-    itertools,
-)
-
-import json
-import transaction
+from castle.cms import cache
+from castle.cms import tasks
+from castle.cms import trash
+from castle.cms.utils import get_paste_data
+from castle.cms.utils import is_max_paste_items
 
 
 try:
@@ -481,7 +480,7 @@ class AllContentsVocabView(VocabularyView):
         items = []
 
         attributes = _parseJSON(self.request.get('attributes', ''))
-        if isinstance(attributes, basestring) and attributes:
+        if isinstance(attributes, six.string_types) and attributes:
             attributes = attributes.split(',')
 
         translate_ignored = self.get_translated_ignored()
@@ -511,7 +510,7 @@ class AllContentsVocabView(VocabularyView):
                         val = val[len(base_path):]
                     if (
                         key not in translate_ignored and
-                        isinstance(val, basestring)
+                        isinstance(val, six.string_types)
                     ):
                         item[key] = translate(
                             _(safe_unicode(val)),

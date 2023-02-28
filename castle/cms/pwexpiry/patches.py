@@ -1,17 +1,16 @@
 import logging
+from hashlib import sha1 as sha
 
 from AccessControl import AuthEncoding
-from castle.cms.pwexpiry.events import (InvalidPasswordEntered,
-                                        ValidPasswordEntered)
-from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 from plone import api
 from Products.CMFPlone.RegistrationTool import RegistrationTool
-from Products.PluggableAuthService.plugins.ZODBUserManager import \
-    ZODBUserManager
+from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager
 from zope.component import getAdapters
 from zope.event import notify
 
-from hashlib import sha1 as sha
+from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
+from castle.cms.pwexpiry.events import InvalidPasswordEntered
+from castle.cms.pwexpiry.events import ValidPasswordEntered
 
 
 logger = logging.getLogger(__file__)

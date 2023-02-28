@@ -1,8 +1,9 @@
-from castle.cms.interfaces import ISiteSchema
 from plone.app.registry.browser import controlpanel
 from plone.formwidget.namedfile.widget import NamedFileFieldWidget
 from Products.CMFPlone.controlpanel.browser import site
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+
+from castle.cms.interfaces import ISiteSchema
 
 
 class SiteControlPanelForm(site.SiteControlPanelForm):

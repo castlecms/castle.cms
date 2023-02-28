@@ -1,6 +1,22 @@
 import json
-from urllib import urlencode
-from urlparse import parse_qsl
+
+import six
+from DateTime import DateTime
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.autoform import directives as form
+from plone.memoize.instance import memoize
+from plone.supermodel import model
+from plone.tiles.interfaces import IPersistentTile
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from six.moves.urllib.parse import parse_qsl
+from six.moves.urllib.parse import urlencode
+from unidecode import unidecode
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from zope import schema
+from zope.interface import implementer
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 from castle.cms import defaults
 from castle.cms.tiles.base import BaseTile
@@ -10,20 +26,6 @@ from castle.cms.tiles.views import TileViewsSource
 from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import PreviewSelectFieldWidget
 from castle.cms.widgets import QueryFieldWidget
-from DateTime import DateTime
-from plone.app.z3cform.widget import AjaxSelectFieldWidget
-from plone.autoform import directives as form
-from plone.memoize.instance import memoize
-from plone.supermodel import model
-from plone.tiles.interfaces import IPersistentTile
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from unidecode import unidecode
-from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from zope import schema
-from zope.interface import implements
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
 
 
 def _list(val):
@@ -112,8 +114,8 @@ class BlogView(BaseTileView):
     tile_name = 'querylisting'
 
 
+@implementer(IPersistentTile)
 class QueryListingTile(BaseTile, DisplayTypeTileMixin):
-    implements(IPersistentTile)
 
     display_type_name = 'querylisting'
     display_type_default = 'default'
@@ -300,7 +302,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             if form.get(attr):
                 config['query'][attr] = form.get(attr)
         if ('Subject' in config['query'] and
-                isinstance(config['query']['Subject'], basestring)):
+                isinstance(config['query']['Subject'], six.string_types)):
             config['query']['Subject'] = [config['query']['Subject']]
 
         config['display_type'] = self.data.get('display_type', None)

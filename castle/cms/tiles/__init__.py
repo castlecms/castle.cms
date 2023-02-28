@@ -1,8 +1,3 @@
-from castle.cms import utils
-from castle.cms.interfaces import ICastleLayer
-from castle.cms.interfaces import IGlobalTile
-from castle.cms.interfaces import IMetaTile
-from castle.cms.interfaces import IVersionViewLayer
 from plone import api
 from plone.app.standardtiles.contentlisting import ContentListingTile
 from plone.resource.interfaces import IResourceDirectory
@@ -14,6 +9,12 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import classImplements
 from zope.interface import implementer
+
+from castle.cms import utils
+from castle.cms.interfaces import ICastleLayer
+from castle.cms.interfaces import IGlobalTile
+from castle.cms.interfaces import IMetaTile
+from castle.cms.interfaces import IVersionViewLayer
 
 
 # make ContentListing persistent

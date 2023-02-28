@@ -1,10 +1,11 @@
-from castle.cms.tiles.base import BaseImagesTile
-from castle.cms.tiles.content import IImagesTileSchema
-from zope import schema
+import json
+
 from plone.supermodel import model
+from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
 
-import json
+from castle.cms.tiles.base import BaseImagesTile
+from castle.cms.tiles.content import IImagesTileSchema
 
 
 class SliderTile(BaseImagesTile):

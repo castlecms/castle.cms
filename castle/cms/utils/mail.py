@@ -1,13 +1,15 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from castle.cms.constants import ALL_SUBSCRIBERS
-from castle.cms.constants import ALL_USERS
+import six
 from html2text import html2text
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from zope.component import getUtility
+
+from castle.cms.constants import ALL_SUBSCRIBERS
+from castle.cms.constants import ALL_USERS
 
 
 def get_email_from_address():
@@ -17,7 +19,7 @@ def get_email_from_address():
 
 
 def send_email(recipients=None, subject=None, html='', text='', sender=None):
-    if isinstance(recipients, basestring):
+    if isinstance(recipients, six.string_types):
         recipients = [recipients]
 
     cleaned_recipients = []

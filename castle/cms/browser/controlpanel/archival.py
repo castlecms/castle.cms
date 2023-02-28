@@ -1,17 +1,18 @@
-from AccessControl import Unauthorized
-import botocore
-from castle.cms import archival
-from castle.cms.files import aws
-from DateTime import DateTime
+import json
+import logging
 from io import BytesIO
+
+import botocore
+from AccessControl import Unauthorized
+from DateTime import DateTime
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 
-import json
-import logging
+from castle.cms import archival
+from castle.cms.files import aws
 
 
 logger = logging.getLogger('castle.cms')
@@ -41,7 +42,7 @@ class Review(BaseView):
         return [self.dump(i) for i in man.getContentToArchive(30)]
 
     def json_dump(self):
-        return json.dumps(self.items())
+        return json.dumps(list(self.items()))
 
     def __call__(self):
         # utility function to add resource to rendered page

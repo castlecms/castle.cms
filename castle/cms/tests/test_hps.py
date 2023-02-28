@@ -3,10 +3,13 @@ import logging
 import time
 import unittest
 
-from plone import api
-from plone.app.testing import (TEST_USER_ID, TEST_USER_NAME, login, setRoles)
-from Products.CMFCore.utils import getToolByName
 import transaction
+from plone import api
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
+from Products.CMFCore.utils import getToolByName
 from zope.annotation.interfaces import IAnnotations
 
 from castle.cms.browser.search import SearchAjax

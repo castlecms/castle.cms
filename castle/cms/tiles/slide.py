@@ -1,12 +1,13 @@
-from castle.cms.tiles.base import BaseTile
-from castle.cms.widgets import ImageRelatedItemFieldWidget
-from castle.cms.widgets import SlideRelatedItemsFieldWidget
-from castle.cms.widgets import VideoRelatedItemsFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.tiles.base import BaseTile
+from castle.cms.widgets import ImageRelatedItemFieldWidget
+from castle.cms.widgets import SlideRelatedItemsFieldWidget
+from castle.cms.widgets import VideoRelatedItemsFieldWidget
 
 
 class SlideTile(BaseTile):

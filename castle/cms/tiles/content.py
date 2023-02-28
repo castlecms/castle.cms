@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-from castle.cms.tiles.base import ContentTile  # noqa b/w
-from castle.cms.widgets import ImageRelatedItemsFieldWidget
-from castle.cms.widgets import QueryFieldWidget
-from castle.cms.widgets import RelatedItemFieldWidget
-from castle.cms.widgets import UseQueryWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
 from zope import schema
 from zope.interface import Invalid
 from zope.interface import invariant
+
+from castle.cms.tiles.base import ContentTile  # noqa b/w
+from castle.cms.widgets import ImageRelatedItemsFieldWidget
+from castle.cms.widgets import QueryFieldWidget
+from castle.cms.widgets import RelatedItemFieldWidget
+from castle.cms.widgets import UseQueryWidget
 
 
 class IContentTileSchema(model.Schema):

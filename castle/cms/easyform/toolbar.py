@@ -1,9 +1,10 @@
-from castle.cms.toolbar import BaseToolbarModifier
 from collective.easyform.interfaces import IEasyForm
 from collective.easyform.interfaces import IEasyFormLayer
 from plone import api
 from plone.schemaeditor.interfaces import IFieldContext
 from plone.schemaeditor.interfaces import ISchemaContext
+
+from castle.cms.toolbar import BaseToolbarModifier
 
 
 class ToolbarModifier(BaseToolbarModifier):

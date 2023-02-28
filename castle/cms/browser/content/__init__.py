@@ -5,21 +5,11 @@ import os
 import shutil
 import tempfile
 import time
-
 from mimetypes import guess_type
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from castle.cms import cache
-from castle.cms import commands
-from castle.cms import utils
-from castle.cms.browser.utils import Utils
-from castle.cms.commands import exiftool
-from castle.cms.commands import qpdf
-from castle.cms.files import duplicates
-from castle.cms.interfaces import ITemplate, ITrashed
-from castle.cms.utils import get_upload_fields
-from castle.cms.utils import publish_content
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
@@ -58,10 +48,22 @@ from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.interface.declarations import noLongerProvides
 
+from castle.cms import cache
+from castle.cms import commands
+from castle.cms import utils
+from castle.cms.browser.utils import Utils
+from castle.cms.commands import exiftool
+from castle.cms.commands import qpdf
+from castle.cms.files import duplicates
+from castle.cms.interfaces import ITemplate
+from castle.cms.interfaces import ITrashed
+from castle.cms.utils import get_upload_fields
+from castle.cms.utils import publish_content
+
 
 try:
     # Python 2.6-2.7
-    from HTMLParser import HTMLParser
+    from six.moves.html_parser import HTMLParser
 except ImportError:
     # Python 3
     from html.parser import HTMLParser

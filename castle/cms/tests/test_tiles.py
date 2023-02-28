@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+import unittest
+
+from plone import api
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
+from plone.uuid.interfaces import IUUID
+
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.tests.utils import get_tile
 from castle.cms.tests.utils import render_tile
-from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-from plone.uuid.interfaces import IUUID
-
-import unittest
 
 
 class TestTiles(unittest.TestCase):

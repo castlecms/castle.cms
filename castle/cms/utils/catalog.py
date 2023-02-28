@@ -31,7 +31,7 @@ def add_metadata(metadata):
             # override how this works normally to not cause a reindex
             schema = _catalog.schema
             names = list(_catalog.names)
-            values = schema.values()
+            values = list(schema.values())
             if values:
                 schema[name] = max(values) + 1
             else:

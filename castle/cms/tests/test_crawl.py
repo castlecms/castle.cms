@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from plone.registry.interfaces import IRegistry
 import responses
+from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
 from castle.cms.cron._crawler import Crawler

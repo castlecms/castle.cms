@@ -1,9 +1,11 @@
-from collective.documentviewer.convert import DUMP_FILENAME
-from tempfile import mkdtemp
-from logging import getLogger
 import os
-import subprocess
 import shutil
+import subprocess
+from logging import getLogger
+from tempfile import mkdtemp
+
+import six
+from collective.documentviewer.convert import DUMP_FILENAME
 
 
 TMP_PDF_FILENAME = 'dump.pdf'
@@ -42,7 +44,7 @@ class BaseSubProcess(object):
         return None
 
     def _run_command(self, cmd, or_error=False):
-        if isinstance(cmd, basestring):
+        if isinstance(cmd, six.string_types):
             cmd = cmd.split()
         cmdformatted = ' '.join(cmd)
         logger.info("Running command %s" % cmdformatted)

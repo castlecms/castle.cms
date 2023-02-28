@@ -1,7 +1,4 @@
 from Acquisition import aq_parent
-from castle.cms.interfaces import ITileView
-from castle.cms.behaviors.adjustablefont import IAdjustableFontSizeQueryListing
-from castle.cms.behaviors.adjustablefont import get_inline_style
 from plone.dexterity.interfaces import IDexterityContent
 from Products.Five import BrowserView
 from zope.component import getAdapters
@@ -10,6 +7,10 @@ from zope.interface import implementer
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.behaviors.adjustablefont import IAdjustableFontSizeQueryListing
+from castle.cms.behaviors.adjustablefont import get_inline_style
+from castle.cms.interfaces import ITileView
 
 
 def getTileViews(context, request, tile_name):

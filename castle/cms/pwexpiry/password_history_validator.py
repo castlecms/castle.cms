@@ -1,7 +1,8 @@
 from AccessControl import AuthEncoding
-from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 from plone import api
 from zope.interface import implementer
+
+from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 
 from .config import _
 

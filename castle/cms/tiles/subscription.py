@@ -1,8 +1,9 @@
-from castle.cms.browser.subscribe import SubscribeForm
-from castle.cms.tiles.base import BaseTile
 from plone import api
 from plone.supermodel import model
 from zope import schema
+
+from castle.cms.browser.subscribe import SubscribeForm
+from castle.cms.tiles.base import BaseTile
 
 
 class SubscriptionTile(BaseTile, SubscribeForm):

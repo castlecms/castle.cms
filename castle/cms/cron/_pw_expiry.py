@@ -1,13 +1,16 @@
-from tendo import singleton
-from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-from plone import api
-from .utils import setup_site
-from castle.cms.pwexpiry.utils import days_since_event
-from castle.cms.pwexpiry.utils import send_notification_email
-from DateTime import DateTime
+import logging
 import time
 
-import logging
+from DateTime import DateTime
+from plone import api
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from tendo import singleton
+
+from castle.cms.pwexpiry.utils import days_since_event
+from castle.cms.pwexpiry.utils import send_notification_email
+
+from .utils import setup_site
+
 
 # loop through acl users of each site, making sure they have the pwexpiry related
 # data on them and send out expiration emails/warnings

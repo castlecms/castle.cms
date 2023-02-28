@@ -1,36 +1,37 @@
-from castle.cms import subscribe
-from castle.cms import texting
-from castle.cms.utils import send_email
-from castle.cms.utils import verify_recaptcha
-from castle.cms.widgets import ReCaptchaFieldWidget
+import string
+
+import phonenumbers
 from plone import api
 from plone.app.users.schema import checkEmailAddress
-from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.directives import widget
+from plone.autoform.form import AutoExtensibleForm
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import ISiteSchema
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
 from z3c.form import interfaces
 from z3c.form.action import ActionErrorOccurred
-from z3c.form.interfaces import WidgetActionExecutionError
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from z3c.form.interfaces import WidgetActionExecutionError
 from zope import schema
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.event import notify
-from zope.interface import alsoProvides
 from zope.interface import Interface
 from zope.interface import Invalid
+from zope.interface import alsoProvides
 
-import phonenumbers
-import string
+from castle.cms import subscribe
+from castle.cms import texting
+from castle.cms.utils import send_email
+from castle.cms.utils import verify_recaptcha
+from castle.cms.widgets import ReCaptchaFieldWidget
 
 
 def check_phone_number(val):

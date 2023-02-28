@@ -1,6 +1,7 @@
+import logging
+
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
-from castle.cms.utils import retriable
-from castle.cms.constants import TRASH_LOG_KEY
 from DateTime import DateTime
 from plone import api
 from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
@@ -10,8 +11,8 @@ from tendo import singleton
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import setSite
 
-import transaction
-import logging
+from castle.cms.constants import TRASH_LOG_KEY
+from castle.cms.utils import retriable
 
 
 logger = logging.getLogger('castle.cms')

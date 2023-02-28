@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
-from zope.annotation.interfaces import IAnnotations
-from castle.cms import utils
+import json
+import unittest
+
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone.tiles.data import ANNOTATIONS_KEY_PREFIX as TILE_ANNOTATIONS_KEY_PREFIX  # noqa
+from six.moves import range
+from zope.annotation.interfaces import IAnnotations
 
-import unittest
-import json
+from castle.cms import utils
 from castle.cms.browser import tiles as tile_views
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestSlots(unittest.TestCase):

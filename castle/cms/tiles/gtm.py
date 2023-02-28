@@ -1,7 +1,8 @@
-from castle.cms.tiles.base import BaseTile
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 from zope.interface import Interface
+
+from castle.cms.tiles.base import BaseTile
 
 
 class GoogleTagManagerTile(BaseTile):

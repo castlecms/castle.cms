@@ -1,5 +1,5 @@
-from castle.cms.interfaces import IReferenceNamedImage
-from castle.cms.interfaces import IVersionViewLayer
+import json
+
 from DateTime import DateTime
 from lxml.html import fromstring
 from lxml.html import tostring
@@ -14,11 +14,13 @@ from Products.CMFPlone.interfaces.syndication import IFeedItem
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from six.moves import range
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 from zope.interface import noLongerProvides
 
-import json
+from castle.cms.interfaces import IReferenceNamedImage
+from castle.cms.interfaces import IVersionViewLayer
 
 
 class HistoryView(HistoryByLineView):
@@ -75,7 +77,7 @@ class HistoryVersionView(DiffView):
         getId = history.getVersionId
 
         # Count backwards from most recent to least recent
-        for i in xrange(history.getLength(countPurged=False) - 1, -1, -1):
+        for i in range(history.getLength(countPurged=False) - 1, -1, -1):
             version_id = getId(i, countPurged=False)
             data = retrieve(i, countPurged=False)
             meta = data["metadata"]["sys_metadata"]

@@ -3,14 +3,19 @@ import json
 import unittest
 from copy import deepcopy
 
-from castle.cms.patterns import CastleSettingsAdapter
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.utils import get_upload_fields
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
+import six
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.registry.field import List
 from plone.registry.interfaces import IRegistry
 from plone.registry.record import Record
 from zope.component import getUtility
+
+from castle.cms.patterns import CastleSettingsAdapter
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.utils import get_upload_fields
 
 
 class TestFileUploadFields(unittest.TestCase):
@@ -37,7 +42,7 @@ class TestFileUploadFields(unittest.TestCase):
         registry = getUtility(IRegistry)
         fields = deepcopy(registry['castle.file_upload_fields'])
         for field in fields:
-            field['required'] = unicode(field['required']).lower()
+            field['required'] = six.text_type(field['required']).lower()
         self.assertEquals(len(get_upload_fields(registry)), 5)
         fields.append({
             u'name': u'foobar',

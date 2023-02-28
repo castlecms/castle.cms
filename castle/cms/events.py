@@ -1,5 +1,6 @@
+from zope.component.interfaces import IObjectEvent
+from zope.component.interfaces import ObjectEvent
 from zope.interface import implementer
-from zope.component.interfaces import ObjectEvent, IObjectEvent
 
 
 class IMetaTileEditedEvent(IObjectEvent):

@@ -1,24 +1,23 @@
+from plone.api.portal import get_registry_record
+from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
+from plone.supermodel import directives
 from plone.supermodel import model
 from zope.component import adapter
+from zope.interface import Invalid
 from zope.interface import implementer
+from zope.interface import invariant
 from zope.interface import provider
-from castle.cms.constants import (
-    DEFAULT_FONT_SIZE_SMALL,
-    DEFAULT_FONT_SIZE_MEDIUM,
-    DEFAULT_FONT_SIZE_LARGE,
-    VALID_CSS_FONT_SIZE_PATTERN,
-)
-from plone.app.contenttypes import _
-from plone.supermodel import directives
 from zope.schema import Choice
 from zope.schema import TextLine
-from zope.interface import invariant
-from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from plone.api.portal import get_registry_record
+
+from castle.cms.constants import DEFAULT_FONT_SIZE_LARGE
+from castle.cms.constants import DEFAULT_FONT_SIZE_MEDIUM
+from castle.cms.constants import DEFAULT_FONT_SIZE_SMALL
+from castle.cms.constants import VALID_CSS_FONT_SIZE_PATTERN
 
 
 adjustable_font_size_fieldset_description = _(

@@ -1,9 +1,12 @@
-from Products.CMFCore.FSFile import FSFile
+from __future__ import print_function
+
+import os
+
 from plone.resource.directory import FilesystemResourceDirectory
+from plone.resource.file import FilesystemFile
+from Products.CMFCore.FSFile import FSFile
 from Products.Five.browser.resource import DirectoryResource
 from Products.Five.browser.resource import FileResource
-from plone.resource.file import FilesystemFile
-import os
 
 
 def get_js_resource_object(site, resource):

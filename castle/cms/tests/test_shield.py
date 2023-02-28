@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-from castle.cms import constants
-from castle.cms import shield
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+import unittest
+
+from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import logout
-from plone.app.testing import TEST_USER_NAME
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import queryUtility
 
-import unittest
+from castle.cms import constants
+from castle.cms import shield
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 SHIELD = constants.SHIELD

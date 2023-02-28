@@ -4,15 +4,15 @@ import logging
 import sys
 import time
 
+import requests
 from DateTime import DateTime
 from lxml import etree
 from lxml import html
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-import requests
+from six.moves.urllib.parse import urlparse
 from StringIO import StringIO
 from tendo import singleton
-from urlparse import urlparse
 from zope.component import getUtility
 
 from castle.cms import archival
@@ -22,8 +22,8 @@ from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 from castle.cms.cron.utils import spoof_request
 from castle.cms.files import aws
-from castle.cms.indexing import hps
 from castle.cms.indexing import crawler as hpscrawl
+from castle.cms.indexing import hps
 from castle.cms.interfaces import ICrawlerConfiguration
 from castle.cms.utils import clear_object_cache
 

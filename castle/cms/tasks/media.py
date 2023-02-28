@@ -1,6 +1,7 @@
+from collective.celery import task
+
 from castle.cms.media import video
 from castle.cms.utils import retriable
-from collective.celery import task
 
 
 @retriable()

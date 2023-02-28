@@ -5,11 +5,6 @@ import logging
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from castle.cms import caching
-from castle.cms.interfaces import IDashboard
-from castle.cms.interfaces import IToolbarModifier
-from castle.cms.interfaces import ITemplate
-from castle.cms.utils import get_chat_info
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.layout.navigation.defaultpage import getDefaultPage
@@ -32,16 +27,22 @@ from zope.component import getAllUtilitiesRegisteredFor
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms import caching
+from castle.cms.interfaces import IDashboard
+from castle.cms.interfaces import ITemplate
+from castle.cms.interfaces import IToolbarModifier
+from castle.cms.utils import get_chat_info
 
 
 logger = logging.getLogger('castle.cms')
 
 
+@implementer(IToolbarModifier)
 class BaseToolbarModifier(object):
     order = 0
     layer = None
-    implements(IToolbarModifier)
 
     def __init__(self, context, request):
         self.context = context

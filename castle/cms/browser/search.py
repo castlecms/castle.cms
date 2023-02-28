@@ -1,19 +1,19 @@
-from castle.cms.interfaces import ICrawlerConfiguration
-from castle.cms.utils import get_public_url
-from castle.cms.indexing import hps
+import datetime
+import json
 
+import dateutil.parser
+import Missing
 from DateTime import DateTime
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 from zope.component import getUtility
-import dateutil.parser
 
-import datetime
-import json
-import Missing
+from castle.cms.indexing import hps
+from castle.cms.interfaces import ICrawlerConfiguration
+from castle.cms.utils import get_public_url
 
 
 def custom_json_handler(obj):

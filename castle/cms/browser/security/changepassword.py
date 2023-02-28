@@ -1,11 +1,11 @@
-from Products.CMFCore.utils import getToolByName
-from plone import api
-from Products.CMFPlone import PloneMessageFactory as _
-from plone.app.users.browser.passwordpanel import PasswordPanel
-from Products.statusmessages.interfaces import IStatusMessage
-from z3c.form import button
 import six
 from DateTime import DateTime
+from plone import api
+from plone.app.users.browser.passwordpanel import PasswordPanel
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.statusmessages.interfaces import IStatusMessage
+from z3c.form import button
 
 
 class ChangePassword(PasswordPanel):

@@ -1,11 +1,11 @@
 import json
-from plone.app.textfield import RichText
 import logging
 import time
+from collections import OrderedDict
 
-from castle.cms.tiles.base import BaseTile
-from castle.cms.widgets import ImageRelatedItemFieldWidget
+import six
 from plone import api
+from plone.app.textfield import RichText
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.utils import getCurrentTheme
 from plone.app.tiles import MessageFactory as _
@@ -29,10 +29,15 @@ from zope.component import queryUtility
 from zope.filerepresentation.interfaces import IRawReadFile
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.vocabulary import SimpleVocabulary
-from castle.cms.widgets import RelatedItemFieldWidget, ImageRelatedItemsFieldWidget, RelatedItemsFieldWidget
-from collections import OrderedDict
+
+from castle.cms.tiles.base import BaseTile
+from castle.cms.widgets import ImageRelatedItemFieldWidget
+from castle.cms.widgets import ImageRelatedItemsFieldWidget
+from castle.cms.widgets import RelatedItemFieldWidget
+from castle.cms.widgets import RelatedItemsFieldWidget
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -136,8 +141,8 @@ FIELD_TYPE_MAPPING = {
 }
 
 
+@implementer(IPersistentTile)
 class DynamicTile(BaseTile):
-    implements(IPersistentTile)
 
     def get_object(self, val):
         if isinstance(val, list):
@@ -237,7 +242,7 @@ class TileManager(object):
                 continue
             for name in ('title', 'description'):
                 if name in field:
-                    field[name] = unicode(field[name])
+                    field[name] = six.text_type(field[name])
             for name in list(field.keys())[:]:
                 if name not in ('title', 'description', 'required', 'vocabulary',
                                 'default', 'name'):
@@ -368,7 +373,7 @@ class AddForm(add.DefaultAddForm):
     def update(self):
         super(AddForm, self).update()
         if not self.widgets['tile_id'].value:
-            self.widgets['tile_id'].value = unicode(
+            self.widgets['tile_id'].value = six.text_type(
                 self.widgets['tile_id'].extract() or self.tile_id)
 
 
@@ -377,7 +382,7 @@ class AddView(add.DefaultAddView):
 
     def __init__(self, context, request, tileType):
         super(AddView, self).__init__(context, request, tileType)
-        self.form_instance.tile_id = unicode(self.request.get(
+        self.form_instance.tile_id = six.text_type(self.request.get(
             'castle.cms.dynamic.tile_id', ''))
         # weird bug where it isn't passing in as unicode?
         self.request['castle.cms.dynamic.tile_id'] = self.form_instance.tile_id

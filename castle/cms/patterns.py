@@ -1,12 +1,10 @@
 import json
 
-from Acquisition import aq_inner, aq_parent
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from borg.localrole.interfaces import IFactoryTempFolder
-from castle.cms import cache, theming
-from castle.cms.interfaces import IDashboard
-from castle.cms.utils import get_upload_fields
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
+# from plone.app.imaging.utils import getAllowedSizes
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.memoize.view import memoize
@@ -15,12 +13,18 @@ from plone.tiles.interfaces import ITileType
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
-from Products.CMFPlone.interfaces import IPatternsSettings, IPloneSiteRoot
-from Products.CMFPlone.patterns import (PloneSettingsAdapter,
-                                        TinyMCESettingsGenerator)
+from Products.CMFPlone.interfaces import IPatternsSettings
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.CMFPlone.patterns import PloneSettingsAdapter
+from Products.CMFPlone.patterns import TinyMCESettingsGenerator
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms import cache
+from castle.cms import theming
+from castle.cms.interfaces import IDashboard
 from castle.cms.services.google import youtube
+from castle.cms.utils import get_upload_fields
 
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
@@ -45,13 +49,13 @@ class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
         return config
 
 
+@implementer(IPatternsSettings)
 class CastleSettingsAdapter(PloneSettingsAdapter):
     """
     This adapter will handle all default plone settings.
 
     Right now, it only does tinymce
     """
-    implements(IPatternsSettings)
 
     def __init__(self, context, request, field):
         super(CastleSettingsAdapter, self).__init__(context, request, field)
@@ -114,7 +118,7 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
         current_path = folder.absolute_url()[len(generator.portal_url):]
 
         scales = []
-        for name, info in sorted(getAllowedSizes().items(), key=lambda x: x[1][0]):
+        for name, info in {"small": ["100", "100"]}:
             scales.append({
                 'part': name,
                 'name': name,

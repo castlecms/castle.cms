@@ -1,3 +1,16 @@
+import json
+
+from plone import api
+from plone.autoform import directives as form
+from plone.registry.interfaces import IRegistry
+from plone.supermodel import model
+from plone.tiles.interfaces import IPersistentTile
+from zope import schema
+from zope.component import getUtility
+from zope.interface import Invalid
+from zope.interface import implementer
+from zope.interface import invariant
+
 from castle.cms.behaviors.location import ILocation
 from castle.cms.tiles.base import BaseTile
 from castle.cms.utils import parse_query_from_data
@@ -6,18 +19,6 @@ from castle.cms.widgets import MapPointFieldWidget
 from castle.cms.widgets import QueryFieldWidget
 from castle.cms.widgets import RelatedItemsFieldWidget
 from castle.cms.widgets import UseQueryWidget
-from plone import api
-from plone.autoform import directives as form
-from plone.registry.interfaces import IRegistry
-from plone.supermodel import model
-from plone.tiles.interfaces import IPersistentTile
-from zope import schema
-from zope.component import getUtility
-from zope.interface import implements
-from zope.interface import Invalid
-from zope.interface import invariant
-
-import json
 
 
 ITEM_TEMPLATE = """
@@ -26,8 +27,8 @@ ITEM_TEMPLATE = """
 """
 
 
+@implementer(IPersistentTile)
 class MapTile(BaseTile):
-    implements(IPersistentTile)
 
     def render(self):
         return self.index()

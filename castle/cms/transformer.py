@@ -1,5 +1,5 @@
-from castle.cms import impersonator
-from castle.cms.theming import body_xpath
+import time
+
 from chameleon import PageTemplate
 from lxml.html import fromstring
 from plone import api
@@ -7,12 +7,13 @@ from plone.transformchain.interfaces import ITransform
 from Products.CMFPlone.log import logger
 from repoze.xmliter.serializer import XMLSerializer
 from zope.component import adapter
-from zope.interface import implements
+from zope.interface import implementer
 from ZPublisher.interfaces import IPubEnd
 from ZPublisher.interfaces import IPubStart
-from castle.cms.logger import log_request
 
-import time
+from castle.cms import impersonator
+from castle.cms.logger import log_request
+from castle.cms.theming import body_xpath
 
 
 @adapter(IPubStart)
@@ -51,8 +52,8 @@ _impersonator_template = PageTemplate("""
 )  # noqa:E124
 
 
+@implementer(ITransform)
 class TransformInpersonatorOutput(object):
-    implements(ITransform)
 
     order = 10000
 

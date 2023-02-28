@@ -1,6 +1,7 @@
-from castle.cms.utils import is_mosaic_edit_form
 from plone.app.layout.viewlets import toolbar
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from castle.cms.utils import is_mosaic_edit_form
 
 
 class ToolbarViewletManager(toolbar.ToolbarViewletManager):

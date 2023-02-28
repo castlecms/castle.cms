@@ -1,14 +1,17 @@
-from castle.cms._scripts.utils import get_module_dir
-from castle.cms.cron.utils import get_sites
-from castle.cms.cron.utils import setup_site
+from __future__ import print_function
+
+import os
+
+import Products.CMFPlone
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces import IBundleRegistry
 from Products.CMFPlone.interfaces import IResourceRegistry
 from zope.component import getUtility
 
 import castle.cms
-import os
-import Products.CMFPlone
+from castle.cms._scripts.utils import get_module_dir
+from castle.cms.cron.utils import get_sites
+from castle.cms.cron.utils import setup_site
 
 
 SCRIPT_DIR = os.path.join(get_module_dir(castle.cms), '_scripts')

@@ -1,4 +1,3 @@
-from castle.cms import utils
 from collective.documentviewer.settings import GlobalSettings as DVGlobalSettings
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -6,6 +5,8 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
 from zope.component import getUtility
+
+from castle.cms import utils
 
 
 INDEXES = {

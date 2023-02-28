@@ -1,12 +1,12 @@
-from plone.namedfile.interfaces import INamedImage
-from zope.interface import Attribute
 from OFS.interfaces import IApplication
+from plone.api.portal import get_registry_record
 from plone.app.contenttypes.interfaces import IFile
+from plone.namedfile.interfaces import INamedImage
 from plone.supermodel import model
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
-from zope.interface import Interface
 from zope import schema
-from plone.api.portal import get_registry_record
+from zope.interface import Attribute
+from zope.interface import Interface
 from zope.interface import provider
 from zope.schema.interfaces import IContextAwareDefaultFactory
 

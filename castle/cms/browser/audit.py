@@ -25,10 +25,10 @@ AUDIT_OPENSEARCH_*
 
 """
 import csv
-from cStringIO import StringIO
 import logging
 import os
 
+from cStringIO import StringIO
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFPlone.resources import add_resource_on_request

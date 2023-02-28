@@ -1,4 +1,3 @@
-from castle.cms import install
 from plone import api
 from plone.protect.interfaces import IDisableCSRFProtection
 from Products.CMFPlone.browser.admin import AddPloneSite
@@ -8,6 +7,9 @@ from Products.CMFPlone.factory import addPloneSite
 from Products.CMFPlone.resources.browser.combine import combine_bundles
 from zope.interface import alsoProvides
 
+from castle.cms import install
+
+
 try:
     from sites import get_site_container
 except ImportError:
@@ -16,6 +18,7 @@ except ImportError:
 import json
 import logging
 import socket
+
 import transaction
 
 

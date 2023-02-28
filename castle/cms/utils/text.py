@@ -1,5 +1,6 @@
 import re
 
+import six
 from lxml.html import fromstring
 from lxml.html import tostring
 from lxml.html.clean import Cleaner
@@ -17,12 +18,12 @@ def truncate_text(text, max_words=30, more_link=None, clean=False):
     adapted from Django
     """
 
-    if not isinstance(text, basestring):
+    if not isinstance(text, six.string_types):
         return ''
 
     if clean:
         try:
-            if not isinstance(text, unicode):
+            if not isinstance(text, six.text_type):
                 text = text.decode('utf8')
             xml = fromstring(text)
             _truncate_cleaner(xml)

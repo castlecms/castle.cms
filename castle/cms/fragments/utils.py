@@ -1,9 +1,10 @@
-from zope.component import getAllUtilitiesRegisteredFor
-from castle.cms.fragments.interfaces import IFragmentsDirectory
-from castle.cms.fragments import FragmentView
-from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-
 import logging
+
+from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+from zope.component import getAllUtilitiesRegisteredFor
+
+from castle.cms.fragments import FragmentView
+from castle.cms.fragments.interfaces import IFragmentsDirectory
 
 
 logger = logging.getLogger('castle.cms')

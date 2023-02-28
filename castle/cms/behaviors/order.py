@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
-from zope.component import getAdapters
-from plone.folder.interfaces import IOrdering
-from zope.schema.interfaces import IContextSourceBinder
-from zope.schema.vocabulary import SimpleVocabulary
-from zope.interface import implements
+import six
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
-from plone.supermodel import model
 from plone.dexterity.interfaces import IDexterityContainer
+from plone.folder.interfaces import IOrdering
+from plone.supermodel import model
+from zope import schema
 from zope.component import adapter
+from zope.component import getAdapters
 from zope.interface import implementer
 from zope.interface import provider
-from zope import schema
+from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.vocabulary import SimpleVocabulary
 
 
+@implementer(IContextSourceBinder)
 class AvailableOrderSource(object):
-    implements(IContextSourceBinder)
 
     ignored = (
         'partial',
@@ -66,7 +66,7 @@ class FolderOrder(object):
         self.context = context
 
     def _set_folder_order(self, value):
-        if isinstance(value, unicode):
+        if isinstance(value, six.text_type):
             value = value.encode('utf8')
         self.context._ordering = value
 

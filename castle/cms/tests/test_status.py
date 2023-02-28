@@ -1,9 +1,9 @@
-from plone.app.testing import login
-from plone.app.testing import setRoles
+import unittest
+
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-
-import unittest
+from plone.app.testing import login
+from plone.app.testing import setRoles
 
 from castle.cms.browser import controlpanel
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING

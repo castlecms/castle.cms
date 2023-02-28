@@ -1,10 +1,11 @@
-from castle.cms.interfaces import ICastleLayer
 from z3c.form.interfaces import ITerms
 from z3c.form.interfaces import IWidget
 from z3c.form.term import ChoiceTerms
 from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
+
+from castle.cms.interfaces import ICastleLayer
 
 from .field import IQueryChoice
 

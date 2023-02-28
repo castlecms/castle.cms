@@ -1,7 +1,4 @@
-from castle.cms import audit
-from castle.cms import utils
-from castle.cms.indexing import hps
-
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from DateTime import DateTime
 from plone import api
@@ -14,7 +11,9 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
 
-import transaction
+from castle.cms import audit
+from castle.cms import utils
+from castle.cms.indexing import hps
 
 
 LAST_CHECKED_KEY = 'castle.forced-publish-last-checked'

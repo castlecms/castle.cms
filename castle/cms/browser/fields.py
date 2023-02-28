@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import pkg_resources
-
 from plone.app.dexterity.browser import fields
 from plone.schemaeditor.browser.schema.listing import ReadOnlySchemaListing
-from zope.event import notify
 from z3c.form.events import DataExtractedEvent
+from zope.event import notify
 
 
 class EnhancedSchemaListing(fields.EnhancedSchemaListing):

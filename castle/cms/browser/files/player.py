@@ -1,7 +1,8 @@
-from castle.cms.theming import renderLayout
 from plone.uuid.interfaces import IUUID
 from Products.Five import BrowserView
 from zope.component.hooks import getSite
+
+from castle.cms.theming import renderLayout
 
 
 class AudioPlayerView(BrowserView):

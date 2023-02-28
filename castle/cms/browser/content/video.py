@@ -1,7 +1,8 @@
-from castle.cms.interfaces import IUploadedToYoutube
 from plone.dexterity.browser import edit
 from plone.z3cform import layout
 from z3c.form.interfaces import HIDDEN_MODE
+
+from castle.cms.interfaces import IUploadedToYoutube
 from castle.cms.services.google import youtube
 
 

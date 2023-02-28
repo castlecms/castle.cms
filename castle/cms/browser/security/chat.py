@@ -1,13 +1,14 @@
 import hmac
 import json
 
-from castle.cms.utils import get_chat_info
 from plone import api
 from plone.keyring.interfaces import IKeyManager
 from plone.protect.authenticator import _getKeyring
 from plone.protect.authenticator import _is_equal
 from Products.Five import BrowserView
 from zope.component import getUtility
+
+from castle.cms.utils import get_chat_info
 
 
 try:

@@ -1,26 +1,34 @@
-from castle.cms.behaviors.location import ILocation
+import base64
+import logging
+import pdb
+import re
 from imghdr import what
 from mimetypes import guess_type
+
+import OFS
+import six
 from OFS.Image import Image
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contenttypes.behaviors.richtext import IRichText
-from plone.app.dexterity.behaviors.metadata import (IBasic, ICategorization,
-                                                    IDublinCore, IPublication)
-from plone.app.event.dx.behaviors import (IEventAttendees, IEventBasic,
-                                          IEventContact, IEventLocation)
+from plone.app.dexterity.behaviors.metadata import IBasic
+from plone.app.dexterity.behaviors.metadata import ICategorization
+from plone.app.dexterity.behaviors.metadata import IDublinCore
+from plone.app.dexterity.behaviors.metadata import IPublication
+from plone.app.event.dx.behaviors import IEventAttendees
+from plone.app.event.dx.behaviors import IEventBasic
+from plone.app.event.dx.behaviors import IEventContact
+from plone.app.event.dx.behaviors import IEventLocation
 from plone.app.textfield.value import RichTextValue
 from plone.event.utils import pydt
-from plone.namedfile.file import NamedBlobFile, NamedBlobImage
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 from StringIO import StringIO
-
+from zope.component import getGlobalSiteManager
+from zope.component import getUtilitiesFor
 from zope.interface import Interface
-from zope.component import getUtilitiesFor, getGlobalSiteManager
 
-import logging
-import base64
-import OFS
-import re
-import pdb
+from castle.cms.behaviors.location import ILocation
+
 
 logger = logging.getLogger('castle.cms')
 
@@ -101,7 +109,7 @@ def decode_file_data(data):
 
 
 def to_unicode(s):
-    if not isinstance(s, unicode):
+    if not isinstance(s, six.text_type):
         s = s.decode('utf8')
     return s
 
@@ -328,7 +336,7 @@ class BaseImportType(object):
                 if 'rendered_layout' in self.data['data']:
                     bdata.rendered_layout = self.data['data']['rendered_layout']
 
-        inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
+        inv_field_mapping = {v: k for k, v in six.iteritems(self.fields_mapping)}
         for IBehavior, field_name in self.behavior_data_mappers:
 
             original_field_name = inv_field_mapping.get(field_name, field_name)
@@ -384,7 +392,7 @@ class BaseImportType(object):
                         logger.info("    lead image is type %s" % type(im_obj))
                     obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
-                if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
+                if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, six.text_type):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
                 else:
                     if isinstance(im_obj, Image):

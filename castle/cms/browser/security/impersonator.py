@@ -1,9 +1,10 @@
-from castle.cms import impersonator
 from plone import api
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zExceptions import NotFound
 from zope.component import getMultiAdapter
+
+from castle.cms import impersonator
 
 
 class ImpersonatorView(BrowserView):

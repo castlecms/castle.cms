@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import json
+import unittest
+
+from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone import api
 from plone.app.testing import login
 from plone.app.testing import setRoles
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms import toolbar
 
-import unittest
-import json
+from castle.cms import toolbar
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestToolbar(unittest.TestCase):

@@ -1,12 +1,13 @@
+from Acquisition import aq_inner
+from plone import api
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Acquisition import aq_inner
 from Products.CMFPlone import utils
 from Products.CMFPlone.browser.interfaces import INavigationBreadcrumbs
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
 from Products.Five import BrowserView
 from zope.interface import implementer
-from plone import api
+
 from castle.cms.browser.utils import Utils
 
 

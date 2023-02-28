@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 
-from castle.cms.interfaces import ISocialMediaSchema
-from castle.cms.services.google import GOOGLE_CLIENT_ID
-from castle.cms.services.google import GOOGLE_CLIENT_SECRET
-from castle.cms.services import twitter
-from castle.cms.services.google import youtube
 from oauth2client.client import OAuth2WebServerFlow
 from plone import api
 from plone.app.registry.browser import controlpanel
@@ -17,6 +12,12 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form.interfaces import HIDDEN_MODE
 from zope.component import getUtility
 from zope.interface import alsoProvides
+
+from castle.cms.interfaces import ISocialMediaSchema
+from castle.cms.services import twitter
+from castle.cms.services.google import GOOGLE_CLIENT_ID
+from castle.cms.services.google import GOOGLE_CLIENT_SECRET
+from castle.cms.services.google import youtube
 
 
 class AuthorizeTwitter(BrowserView):

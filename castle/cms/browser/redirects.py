@@ -1,3 +1,5 @@
+import csv
+
 from cStringIO import StringIO
 from plone import api
 from plone.app.redirector.interfaces import IRedirectionStorage
@@ -8,13 +10,11 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 from zExceptions import NotFound
 from zope.component import getUtility
 from zope.component.hooks import setSite
 from zope.i18nmessageid import MessageFactory
-
-import csv
 
 
 _ = MessageFactory('RedirectionTool')

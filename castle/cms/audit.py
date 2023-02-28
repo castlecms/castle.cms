@@ -22,21 +22,21 @@ path: str            # path of object that was affected by action
 es2id: Optional[str] # original ES2.x assigned _id -- only present in records migrated from ES2.x storage
 
 """
-from datetime import datetime
 import json
 import logging
 import logging.config
 import os
+from datetime import datetime
 
-
+import transaction
 from plone import api
 from plone.app.iterate.interfaces import IAfterCheckinEvent
 from plone.app.iterate.interfaces import ICancelCheckoutEvent
 from plone.app.iterate.interfaces import ICheckoutEvent
 from plone.app.iterate.interfaces import IWorkingCopyDeletedEvent
 from plone.registry.interfaces import IRecordAddedEvent
-from plone.registry.interfaces import IRecordRemovedEvent
 from plone.registry.interfaces import IRecordModifiedEvent
+from plone.registry.interfaces import IRecordRemovedEvent
 from plone.uuid.interfaces import IUUID
 from Products.DCWorkflow.interfaces import IAfterTransitionEvent
 from Products.PluggableAuthService.interfaces.events import ICredentialsUpdatedEvent
@@ -45,7 +45,6 @@ from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEve
 from Products.PluggableAuthService.interfaces.events import IPropertiesUpdatedEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
-import transaction
 from zope.globalrequest import getRequest
 from zope.interface import providedBy
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
@@ -53,7 +52,6 @@ from zope.lifecycleevent.interfaces import IObjectCopiedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.lifecycleevent.interfaces import IObjectMovedEvent
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
-
 
 from castle.cms.events import ICacheInvalidatedEvent
 from castle.cms.events import IMetaTileEditedEvent

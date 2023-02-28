@@ -1,9 +1,10 @@
-from castle.cms.interfaces import IAPISettings
-from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
-from Products.CMFCore.utils import getToolByName
-
 import importlib
+
 import plone.api as api
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
+
+from castle.cms.interfaces import IAPISettings
 
 
 PROFILE_ID = 'profile-castle.cms:default'

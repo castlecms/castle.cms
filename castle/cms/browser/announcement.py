@@ -1,7 +1,8 @@
+import json
+
 from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
 from zope.component import getUtility
-import json
 
 
 class FirstVisitMessage(BrowserView):

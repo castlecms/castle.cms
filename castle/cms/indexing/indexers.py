@@ -1,16 +1,18 @@
 from AccessControl import Unauthorized
-from Acquisition import aq_base, aq_parent
-from wildcard.hps.interfaces import IReindexActive
+from Acquisition import aq_base
+from Acquisition import aq_parent
 from OFS.interfaces import IItem
 from plone import api
+from plone.app.contenttypes.interfaces import IFile
+from plone.app.contenttypes.interfaces import IImage
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
-from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEvent
 from plone.indexer.decorator import indexer
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
+from wildcard.hps.interfaces import IReindexActive
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
 

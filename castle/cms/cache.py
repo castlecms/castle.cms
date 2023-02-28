@@ -1,15 +1,21 @@
-from plone.memoize.interfaces import ICacheChooser
-from plone.memoize.ram import choose_cache as base_choose_cache
-from plone.memoize.ram import AbstractDict
-from zope.interface import directlyProvides
-
-import cPickle
+import logging
 import os
-import redis
+import sys
 import threading
 
+import redis
+import six
+from plone.memoize.interfaces import ICacheChooser
+from plone.memoize.ram import AbstractDict
+from plone.memoize.ram import choose_cache as base_choose_cache
 from zope import ramcache
-import logging
+from zope.interface import directlyProvides
+
+
+if sys.version_info.major == 3:
+    import pickle as cPickle
+else:
+    import six.moves.cPickle
 
 logger = logging.getLogger(__name__)
 
@@ -38,12 +44,12 @@ class RedisAdapter(AbstractDict):
         self.globalkey = globalkey and '%s:' % globalkey or ''
 
     def _make_key(self, source):
-        if isinstance(source, unicode):
+        if isinstance(source, six.text_type):
             source = source.encode('utf-8')
         return source
 
     def keys(self):
-        keyslist = self.client.keys()
+        keyslist = list(self.client.keys())
         return [a for a in keyslist if a.startswith(self.globalkey)]
 
     def get_key(self, key):
@@ -61,15 +67,15 @@ class RedisAdapter(AbstractDict):
         if cached_value is None:
             raise KeyError(key)
         else:
-            val = cPickle.loads(cached_value)
+            val = six.moves.cPickle.loads(cached_value)
             return val
 
     def __setitem__(self, key, value):
         cache_key = self.get_key(key)
         try:
-            cached_value = cPickle.dumps(value)
+            cached_value = six.moves.cPickle.dumps(value)
             self.client.set(cache_key, cached_value)
-        except cPickle.PicklingError:
+        except six.moves.cPickle.PicklingError:
             pass
         except redis.exceptions.ConnectionError:
             # Try again in getting a redis connection or use a alternative

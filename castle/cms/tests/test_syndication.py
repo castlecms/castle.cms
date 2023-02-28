@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from castle.cms.testing import BaseTest
+import json
+
 from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.tests.test_image import zptlogo
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 
-import json
+from castle.cms.testing import BaseTest
 
 
 class TestSyndication(BaseTest):

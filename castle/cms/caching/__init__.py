@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from plone.uuid.interfaces import IUUID
-from plone.app.contenttypes.interfaces import IFile
-from . import cloudflare
+import atexit
+import logging
+import threading
+
+import six.moves.queue
 from App.config import getConfiguration
-from castle.cms.events import CacheInvalidatedEvent
-from castle.cms.linkintegrity import get_content_links
+from collective.documentviewer.settings import Settings as DocViewerSettings
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
+from plone.app.contenttypes.interfaces import IFile
+# from plone.app.imaging.utils import getAllowedSizes
 from plone.cachepurging.hooks import KEY
 from plone.cachepurging.interfaces import ICachePurgingSettings
 from plone.cachepurging.interfaces import IPurger
@@ -14,27 +16,28 @@ from plone.cachepurging.utils import getPathsToPurge
 from plone.cachepurging.utils import getURLsToPurge
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.registry.interfaces import IRegistry
+from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.defaultpage import get_default_page
 from Products.Five import BrowserView
+from six.moves import range
 from z3c.caching.interfaces import IPurgeEvent
 from z3c.caching.interfaces import IPurgePaths
-from zope.event import notify
 from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import adapts
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
+from zope.event import notify
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 from zope.testing.cleanup import addCleanUp
 from ZPublisher.interfaces import IPubSuccess
-from collective.documentviewer.settings import Settings as DocViewerSettings
 
-import atexit
-import logging
-import Queue
-import threading
+from castle.cms.events import CacheInvalidatedEvent
+from castle.cms.linkintegrity import get_content_links
+
+from . import cloudflare
 
 
 logger = logging.getLogger('castle.cms')
@@ -107,9 +110,8 @@ def purge(event):
             CastlePurger.purgeAsync(urls, cf)
 
 
+@implementer(IPurger)
 class CastlePurgerFactory(object):
-
-    implements(IPurger)
 
     def __init__(self, backlog=200):
         self.worker = None
@@ -119,13 +121,13 @@ class CastlePurgerFactory(object):
 
     def purgeAsync(self, urls, purger):
         if self.worker is None:
-            self.queue = Queue.Queue(self.backlog)
+            self.queue = six.moves.queue.Queue(self.backlog)
             self.worker = Worker(self.queue, self)
             self.worker.start()
         try:
             self.queue.put((urls, purger), block=False)
             logger.debug('Queued %s' % ','.join(urls))
-        except Queue.Full:
+        except six.moves.queue.Full:
             # Make a loud noise. Ideally the queue size would be
             # user-configurable - but the more likely case is that the purge
             # host is down.
@@ -146,7 +148,7 @@ class CastlePurgerFactory(object):
         self.worker.stopping = True
         try:
             self.queue.put(None, block=False)
-        except Queue.Full:
+        except six.moves.queue.Full:
             # no problem - self.stopping should be seen.
             pass
         ok = True
@@ -276,6 +278,8 @@ class Purge(BrowserView):
         return self.index()
 
 
+@implementer(IPurgePaths)
+@adapter(IImageScaleTraversable)
 class LeadImagePurgePaths(object):
     """Paths to purge for lead images
 
@@ -285,9 +289,6 @@ class LeadImagePurgePaths(object):
     * ${object_path}/@@images/image/mini etc
 
     """
-
-    implements(IPurgePaths)
-    adapts(IImageScaleTraversable)
 
     def __init__(self, context):
         self.context = context
@@ -299,7 +300,7 @@ class LeadImagePurgePaths(object):
         prefix = '/' + self.context.virtual_url_path()
         paths = [prefix + '/@@images/image']
 
-        for scale_name in getAllowedSizes().keys():
+        for scale_name in {"small": ["100", "100"]}.keys():
             paths.append(prefix + '/@@images/image/' + scale_name)
 
         return paths
@@ -308,6 +309,8 @@ class LeadImagePurgePaths(object):
         return []
 
 
+@implementer(IPurgePaths)
+@adapter(IFile)
 class DocViewerPurgePaths(object):
     """
     Paths to purge for person objects
@@ -316,9 +319,6 @@ class DocViewerPurgePaths(object):
     - and all objects inside folder
 
     """
-
-    implements(IPurgePaths)
-    adapts(IFile)
 
     def __init__(self, context):
         self.context = context

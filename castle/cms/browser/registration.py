@@ -1,8 +1,3 @@
-from castle.cms import registration
-from castle.cms.utils import get_email_from_address
-from castle.cms.utils import send_email
-from castle.cms.utils import verify_recaptcha
-from castle.cms.widgets import ReCaptchaFieldWidget
 from plone.app.users.browser.register import RegistrationForm as BaseRegistrationForm
 from plone.app.users.schema import checkEmailAddress
 from plone.autoform.form import AutoExtensibleForm
@@ -26,6 +21,12 @@ from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import Interface
 from zope.interface import Invalid
+
+from castle.cms import registration
+from castle.cms.utils import get_email_from_address
+from castle.cms.utils import send_email
+from castle.cms.utils import verify_recaptcha
+from castle.cms.widgets import ReCaptchaFieldWidget
 
 
 class IEmailConfirmation(Interface):

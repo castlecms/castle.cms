@@ -1,7 +1,8 @@
-from castle.cms.browser.survey import ICastleSurvey
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from castle.cms.browser.survey import ICastleSurvey
 
 
 class SurveyControlPanelForm(RegistryEditForm):

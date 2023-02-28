@@ -1,5 +1,3 @@
-from castle.cms.tiles.base import ContentTile
-from castle.cms.widgets import AudioRelatedItemsFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
@@ -11,6 +9,9 @@ from zope.interface import Invalid
 from zope.interface import invariant
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.tiles.base import ContentTile
+from castle.cms.widgets import AudioRelatedItemsFieldWidget
 from castle.cms.widgets import PreviewSelectFieldWidget
 
 

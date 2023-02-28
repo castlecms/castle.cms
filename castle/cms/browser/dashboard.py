@@ -1,9 +1,4 @@
-from castle.cms import ua
-from castle.cms.interfaces import IDashboardUtils
-from castle.cms.lockout import get_active_sessions
-from castle.cms.lockout import SessionManager
-from castle.cms.utils import publish_content
-from castle.cms.indexing import hps
+import socket
 
 from plone import api
 from plone.app.blocks.interfaces import IBlocksTransformEnabled
@@ -16,10 +11,15 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.security import checkPermission
 
-import socket
+from castle.cms import ua
+from castle.cms.indexing import hps
+from castle.cms.interfaces import IDashboardUtils
+from castle.cms.lockout import SessionManager
+from castle.cms.lockout import get_active_sessions
+from castle.cms.utils import publish_content
 
 
 class Dashboard(BrowserView):
@@ -82,8 +82,8 @@ class Dashboard(BrowserView):
         return dashboard
 
 
+@implementer(IDashboardUtils)
 class DashboardUtils(BrowserView):
-    implements(IDashboardUtils)
 
     default_interests = (
         'Document',

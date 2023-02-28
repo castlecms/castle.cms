@@ -1,10 +1,11 @@
 from plone import api
-from plone.memoize.view import memoize
-from castle.cms.browser.syndication import FolderFeed
 from plone.app.layout.viewlets.social import SocialTagsViewlet as BaseSocialTagsViewlet
-from zope.component.hooks import getSite
+from plone.memoize.view import memoize
 from Products.CMFPlone.interfaces.syndication import IFeedItem
 from zope.component import queryMultiAdapter
+from zope.component.hooks import getSite
+
+from castle.cms.browser.syndication import FolderFeed
 from castle.cms.syndication import DexterityItem
 
 

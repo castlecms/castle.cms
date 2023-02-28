@@ -1,5 +1,6 @@
 from zope.annotation.interfaces import IAnnotations
 
+
 PDF_KEY = 'castle.cms.pdf'
 SCREENSHOT_KEY = 'castle.cms.pdfscreenshot'
 

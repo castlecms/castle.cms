@@ -3,8 +3,8 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from castle.cms import cache
 from castle.cms.constants import CRAWLED_DATA_KEY
-from castle.cms.indexing import hps
 from castle.cms.indexing import crawler
+from castle.cms.indexing import hps
 from castle.cms.interfaces import ICrawlerConfiguration
 
 

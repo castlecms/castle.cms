@@ -1,15 +1,18 @@
-from castle.cms.tiles.base import BaseTile
-from castle.cms.browser.survey import ICastleSurvey
-from zope import schema
-from zope.interface import Interface
-from Products.CMFPlone.utils import getSiteLogo
-from plone.autoform.directives import widget
-from z3c.form.browser.select import SelectWidget
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 import json
 from base64 import b64encode
+
+from plone.autoform.directives import widget
+from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.utils import getSiteLogo
+from z3c.form.browser.select import SelectWidget
+from zope import schema
+from zope.component import getUtility
+from zope.interface import Interface
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.browser.survey import ICastleSurvey
+from castle.cms.tiles.base import BaseTile
 
 
 class SurveyTile(BaseTile):

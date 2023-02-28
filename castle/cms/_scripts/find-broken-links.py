@@ -1,12 +1,10 @@
+from __future__ import print_function
+
 import argparse
 import datetime
 import logging
 
 import requests
-
-from castle.cms.cron.utils import login_as_admin
-from castle.cms.cron.utils import setup_site
-from castle.cms.utils import clear_object_cache
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.utils import getLayout
@@ -15,6 +13,10 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from repoze.xmliter.utils import getHTMLSerializer
 from unidecode import unidecode
 from zope.globalrequest import getRequest
+
+from castle.cms.cron.utils import login_as_admin
+from castle.cms.cron.utils import setup_site
+from castle.cms.utils import clear_object_cache
 
 
 logger = logging.getLogger(__name__)
@@ -62,7 +64,7 @@ def find_url(ob, url):
     elif (('https://' in url or 'http://' in url) and
             'http://nohost' not in url):
         try:
-            print('checking ' + url)
+            print(('checking ' + url))
             resp = requests.get(url, stream=True, timeout=5)
         except Exception:
             resp = BadResponse()
@@ -104,7 +106,7 @@ def find_broken(site):
             if url in good_urls:
                 continue
             if url in checked_urls:
-                print('skipping already checked {}'.format(url))
+                print(('skipping already checked {}'.format(url)))
                 continue
             checked_urls.append(url)
             if find_url(ob, url):
@@ -129,7 +131,7 @@ def find_broken(site):
             if url[0] == '#' or url.startswith('data:'):
                 continue
             if url in checked_urls:
-                print('skipping already checked {}'.format(url))
+                print(('skipping already checked {}'.format(url)))
                 continue
             checked_urls.append(url)
             if find_url(ob, url):

@@ -2,8 +2,8 @@
 
 import os
 
-from setuptools import setup
 from setuptools import find_packages
+from setuptools import setup
 
 
 def read(*rnames):
@@ -41,7 +41,7 @@ setup(
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
-        'plone.app.blocks>=10.0.0',
+        'plone.app.blocks>=5.2.1',
         'Products.PloneKeywordManager>=2.2.1',
         'plone.schemaeditor>=2.0.18',
         'plone.namedfile>=3.0.10',

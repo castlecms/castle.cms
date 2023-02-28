@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import argparse
 import json
 import os
@@ -6,10 +8,11 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from DateTime import DateTime
 from Persistence.mapping import PersistentMapping as PM1  # noqa
-from Products.CMFCore.tests.base.security import (OmnipotentUser,
-                                                  PermissiveSecurityPolicy)
+from Products.CMFCore.tests.base.security import OmnipotentUser
+from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
 from Testing.makerequest import makerequest
 from zope.component.hooks import setSite
+
 
 parser = argparse.ArgumentParser(
     description='...')
@@ -52,7 +55,7 @@ def runExport(brains):
             'uid': brain.UID
         })
         if len(items) % 100 == 0:
-            print('exported %i' % len(items))
+            print(('exported %i' % len(items)))
     fi = open(export_path, 'w')
     fi.write(json.dumps(items))
     fi.close()

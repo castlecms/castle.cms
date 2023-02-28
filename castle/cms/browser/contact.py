@@ -1,10 +1,8 @@
+from plone import api
+from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.browser import contact_info
 from Products.CMFPlone.browser.interfaces import IContactForm as IBaseContactForm
 from Products.statusmessages.interfaces import IStatusMessage
-from castle.cms.utils import verify_recaptcha
-from castle.cms.widgets import ReCaptchaFieldWidget
-from plone import api
-from plone.registry.interfaces import IRegistry
 from z3c.form import button
 from z3c.form import field
 from z3c.form.action import ActionErrorOccurred
@@ -14,6 +12,9 @@ from zope import schema
 from zope.component import getUtility
 from zope.event import notify
 from zope.interface import Invalid
+
+from castle.cms.utils import verify_recaptcha
+from castle.cms.widgets import ReCaptchaFieldWidget
 
 
 class IContactForm(IBaseContactForm):

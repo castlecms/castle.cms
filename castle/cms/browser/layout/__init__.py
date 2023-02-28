@@ -1,5 +1,3 @@
-from castle.cms.interfaces import IDashboard
-from castle.cms.utils import is_mosaic_edit_form
 from plone import api
 from plone.app.blocks.browser import ContentLayoutView
 from plone.app.layout.globals.layout import LayoutPolicy as BaseLayoutPolicy
@@ -13,6 +11,9 @@ from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile as ZopeVi
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
+
+from castle.cms.interfaces import IDashboard
+from castle.cms.utils import is_mosaic_edit_form
 
 
 class LayoutView(ContentLayoutView):

@@ -1,8 +1,5 @@
-from castle.cms import utils
-from castle.cms.behaviors.location import ILocation
-from castle.cms.interfaces import IFieldTileRenderer
-from castle.cms.interfaces import IVersionViewLayer
 from datetime import datetime
+
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.dexterity.behaviors.metadata import IDublinCore
 from plone.app.dexterity.behaviors.metadata import IOwnership
@@ -18,6 +15,11 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form.field import Fields
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
+
+from castle.cms import utils
+from castle.cms.behaviors.location import ILocation
+from castle.cms.interfaces import IFieldTileRenderer
+from castle.cms.interfaces import IVersionViewLayer
 
 
 # optimize lookups

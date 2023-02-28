@@ -1,9 +1,10 @@
+from plone.app.uuid.utils import uuidToCatalogBrain
+from plone.autoform import directives as form
 from zope import schema
 from zope.interface import Interface
-from plone.autoform import directives as form
+
 from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import RelatedItemFieldWidget
-from plone.app.uuid.utils import uuidToCatalogBrain
 
 
 class StickyFooterTile(BaseTile):

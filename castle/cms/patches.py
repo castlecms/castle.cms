@@ -4,10 +4,6 @@ from time import time
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from castle.cms import cache
-from castle.cms.constants import CASTLE_VERSION_STRING
-from castle.cms.events import AppInitializedEvent
-from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
@@ -29,6 +25,11 @@ from zope.component import queryUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import implementer
+
+from castle.cms import cache
+from castle.cms.constants import CASTLE_VERSION_STRING
+from castle.cms.events import AppInitializedEvent
+from castle.cms.interfaces import ICastleApplication
 
 
 logger = logging.getLogger('castle.cms')

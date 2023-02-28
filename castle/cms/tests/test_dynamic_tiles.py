@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-from castle.cms.tests.utils import render_tile
 import json
 import unittest
 
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.tiles.dynamic import CACHE_KEY
-from castle.cms.tiles.dynamic import FIELD_TYPE_MAPPING
-from castle.cms.tiles.dynamic import get_tile_manager
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
@@ -18,6 +13,12 @@ from plone.app.theming.utils import getTheme
 from plone.registry.interfaces import IRegistry
 from plone.resource.utils import queryResourceDirectory
 from zope.component import getUtility
+
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+from castle.cms.tests.utils import render_tile
+from castle.cms.tiles.dynamic import CACHE_KEY
+from castle.cms.tiles.dynamic import FIELD_TYPE_MAPPING
+from castle.cms.tiles.dynamic import get_tile_manager
 
 
 class TestDynamicTiles(unittest.TestCase):

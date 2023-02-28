@@ -1,5 +1,6 @@
-from lxml.html import tostring
 from lxml.html import fromstring
+from lxml.html import tostring
+
 from castle.cms.archival import BaseArchivalTransformer
 
 

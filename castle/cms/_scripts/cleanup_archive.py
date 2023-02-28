@@ -1,19 +1,22 @@
 # remove bad archives
 # rewrite archive links and images to reference base url
-from castle.cms import archival
-from castle.cms.cron.utils import login_as_admin
-from castle.cms.files import aws
+from __future__ import print_function
+
+import argparse
+
+import requests
+import transaction
 from lxml.html import fromstring
 from lxml.html import tostring
 from plone import api
 from plone.registry.interfaces import IRegistry
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 from zope.component import getUtility
 from zope.component.hooks import setSite
 
-import argparse
-import requests
-import transaction
+from castle.cms import archival
+from castle.cms.cron.utils import login_as_admin
+from castle.cms.files import aws
 
 
 parser = argparse.ArgumentParser(
@@ -70,7 +73,7 @@ if __name__ == '__main__':
             resp = requests.get(url)
             if 'html' not in resp.headers.get('content-type'):
                 continue
-            print('processing ' + url)
+            print(('processing ' + url))
             dom = fromstring(resp.content)
             prop = dom.cssselect('meta[property="og:url"]')
 
@@ -81,7 +84,7 @@ if __name__ == '__main__':
                 # no changes, carry out
                 continue
 
-            print('saving new version of ' + url)
+            print(('saving new version of ' + url))
 
             path = get_key_from_url(url)
 
@@ -95,7 +98,7 @@ if __name__ == '__main__':
             }, replace=True)
             key.make_public()
     app._p_jar.sync()  # noqa
-    print('%i needing to be deleted' % len(toremove))
+    print(('%i needing to be deleted' % len(toremove)))
     for uid, content_path in toremove.items():
         data = storage.archives[uid]
         view_url = data.get('view_url')

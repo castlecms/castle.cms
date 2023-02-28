@@ -1,7 +1,7 @@
-from zope.interface import Interface
-from zope import schema
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import form
+from zope import schema
+from zope.interface import Interface
 
 
 class ICastleSurvey(Interface):

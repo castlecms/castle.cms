@@ -5,10 +5,11 @@ from datetime import datetime
 from io import BytesIO
 
 import sqlalchemy.exc
+from Products.Five import BrowserView
+
 from castle.cms import linkreporter
 from castle.cms.linkreporter import Link
 from castle.cms.linkreporter import Url
-from Products.Five import BrowserView
 
 
 class LinksControlPanel(BrowserView):

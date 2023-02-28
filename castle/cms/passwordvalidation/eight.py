@@ -1,8 +1,8 @@
-from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 from plone import api
 from zope.interface import implementer
 
 from castle.cms import _
+from castle.cms.interfaces.passwordvalidation import ICustomPasswordValidator
 
 
 @implementer(ICustomPasswordValidator)

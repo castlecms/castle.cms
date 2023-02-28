@@ -1,7 +1,8 @@
-from castle.cms.tiles.base import BaseTile
 from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms.tiles.base import BaseTile
 
 
 class TwitterTimelineTile(BaseTile):

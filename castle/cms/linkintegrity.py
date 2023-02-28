@@ -1,19 +1,21 @@
-from castle.cms.interfaces import IReferenceNamedImage
-from plone.app.uuid.utils import uuidToObject
-from persistent.mapping import PersistentMapping
-from persistent.dict import PersistentDict
+import six
 from lxml.html import fromstring
 from lxml.html import tostring
+from persistent.dict import PersistentDict
+from persistent.mapping import PersistentMapping
 from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.linkintegrity import handlers as li
 from plone.app.linkintegrity.parser import extractLinks
+from plone.app.uuid.utils import uuidToObject
 from plone.tiles.data import ANNOTATIONS_KEY_PREFIX
 from z3c.relationfield import RelationValue
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
+
+from castle.cms.interfaces import IReferenceNamedImage
 
 
 def scan(obj):
@@ -81,7 +83,7 @@ def get_tile_data_links(obj, data):
             if field_name not in data:
                 continue
             val = data.get(field_name)
-            if isinstance(val, basestring):
+            if isinstance(val, six.string_types):
                 links = extractLinks(val)
                 refs |= li.getObjectsFromLinks(obj, links)
             elif isinstance(val, list):

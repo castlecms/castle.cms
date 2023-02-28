@@ -1,13 +1,15 @@
-from zope.publisher.interfaces import IPublishTraverse
-from ZPublisher.BaseRequest import DefaultPublishTraverse
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from zope.publisher.interfaces.http import IHTTPRequest
-from zope.component import adapts
-from zope.interface import implements
-from plone.memoize.forever import memoize
 from plone import api
+from plone.memoize.forever import memoize
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from zope.component import adapter
+from zope.interface import implementer
+from zope.publisher.interfaces import IPublishTraverse
+from zope.publisher.interfaces.http import IHTTPRequest
+from ZPublisher.BaseRequest import DefaultPublishTraverse
 
 
+@adapter(IPloneSiteRoot, IHTTPRequest)
+@implementer(IPublishTraverse)
 class IsolatedSiteTraverser(DefaultPublishTraverse):
     """
     This traverser is applied only once you traverse an IIsolatedObject.
@@ -18,8 +20,6 @@ class IsolatedSiteTraverser(DefaultPublishTraverse):
           request and check if the first name we are traversing is one of the
           isolated objects.
     """
-    adapts(IPloneSiteRoot, IHTTPRequest)
-    implements(IPublishTraverse)
 
     @memoize
     def get_site_objects(self):

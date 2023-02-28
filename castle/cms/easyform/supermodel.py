@@ -3,7 +3,6 @@ from plone.supermodel.utils import valueToElement
 from zope.dottedname.resolve import resolve
 from zope.schema.interfaces import IBaseVocabulary
 from zope.schema.interfaces import IContextSourceBinder
-
 from zope.schema.interfaces import ISource
 
 from .field import QueryChoice

@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+import unittest
+
+from plone import api
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import setRoles
+
 from castle.cms.behaviors.order import AvailableOrderSource
 from castle.cms.behaviors.order import FolderOrder
 from castle.cms.ordering.reversed import ReversedOrdering
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-
-import unittest
 
 
 class TestOrdering(unittest.TestCase):

@@ -4,6 +4,7 @@ import datetime
 import logging
 import sys
 
+import six
 from AccessControl.SecurityManagement import newSecurityManager
 from tendo import singleton
 from zope.component.hooks import setSite
@@ -40,7 +41,7 @@ def get_args():
 
 
 def convertunicode(s):
-    if isinstance(s, unicode):  # noqa: F821
+    if isinstance(s, six.text_type):  # noqa: F821
         return s.encode('utf-8')
     return s
 

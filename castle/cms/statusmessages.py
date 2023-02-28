@@ -1,10 +1,11 @@
-from castle.cms import cache
-from castle.cms.utils import get_context_from_request
+import time
+
 from plone import api
 from Products.statusmessages.adapter import StatusMessage
 from zope.i18n import translate
 
-import time
+from castle.cms import cache
+from castle.cms.utils import get_context_from_request
 
 
 class CastleStatusMessage(StatusMessage):

@@ -1,6 +1,6 @@
+from plone import api
 from zope.component import queryUtility
 from zope.security.interfaces import IPermission
-from plone import api
 
 
 def get_managers():

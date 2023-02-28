@@ -1,8 +1,9 @@
-from castle.cms import archival
-from castle.cms.utils import retriable
 from collective.celery import task
 from plone.uuid.interfaces import IUUID
 from zope.component.hooks import getSite
+
+from castle.cms import archival
+from castle.cms.utils import retriable
 
 
 def _sync_and_store(storage, uid):

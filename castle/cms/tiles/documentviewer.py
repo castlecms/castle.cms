@@ -1,17 +1,17 @@
-from castle.cms.tiles.base import BaseTile
+from plone import api
 from plone.autoform import directives as form
 from plone.supermodel import model
-from zope import schema
-from plone import api
-from castle.cms.widgets import RelatedItemFieldWidget
-from zope.component import getMultiAdapter
-
-from zope.interface import implements
 from plone.tiles.interfaces import IPersistentTile
+from zope import schema
+from zope.component import getMultiAdapter
+from zope.interface import implementer
+
+from castle.cms.tiles.base import BaseTile
+from castle.cms.widgets import RelatedItemFieldWidget
 
 
+@implementer(IPersistentTile)
 class DocumentViewerTile(BaseTile):
-    implements(IPersistentTile)
 
     def __call__(self):
         if self.data.get('documentUID') is None:

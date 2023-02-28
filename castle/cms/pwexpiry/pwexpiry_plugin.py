@@ -2,19 +2,23 @@
 
 import time
 
-from AccessControl import AuthEncoding, ClassSecurityInfo, Unauthorized
-from castle.cms.pwexpiry.config import _
-from castle.cms.pwexpiry.utils import days_since_event
+from AccessControl import AuthEncoding
+from AccessControl import ClassSecurityInfo
+from AccessControl import Unauthorized
 from DateTime import DateTime
 from Globals import InitializeClass
 from plone import api
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PlonePAS.interfaces.plugins import IUserManagement
-from Products.PluggableAuthService.interfaces.plugins import (IAuthenticationPlugin,
-                                                              IChallengePlugin)
+from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.statusmessages.interfaces import IStatusMessage
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms.pwexpiry.config import _
+from castle.cms.pwexpiry.utils import days_since_event
+
 
 manage_addPwExpiryPluginForm = PageTemplateFile(
     'www/addPwExpiryPlugin',
@@ -37,13 +41,13 @@ def addPwExpiryPlugin(self, id, title='', REQUEST=None):
         )
 
 
+@implementer(IAuthenticationPlugin, IChallengePlugin, IUserManagement)
 class PwExpiryPlugin(BasePlugin):
     """
     Password expiry plugin
     """
     meta_type = 'Password Expiry Plugin'
     security = ClassSecurityInfo()
-    implements(IAuthenticationPlugin, IChallengePlugin, IUserManagement)
 
     def __init__(self, id, title=None):
         self._setId(id)

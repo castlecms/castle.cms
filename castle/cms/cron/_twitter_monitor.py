@@ -1,11 +1,11 @@
+import json
+import sys
+import time
+from datetime import datetime
+
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
-from castle.cms.services import twitter
-from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.utils import index_in_es
-from castle.cms.utils import retriable
-from castle.cms.services.twitter import get_auth
-from datetime import datetime
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
@@ -15,10 +15,11 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import setSite
 
-import json
-import sys
-import time
-import transaction
+from castle.cms.services import twitter
+from castle.cms.services.twitter import get_auth
+from castle.cms.social import COUNT_ANNOTATION_KEY
+from castle.cms.utils import index_in_es
+from castle.cms.utils import retriable
 
 
 def record_tweet_stats(site, ob, tweet):

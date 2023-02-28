@@ -1,8 +1,10 @@
-import unittest
 import os
+import unittest
+
 import robotsuite
-from castle.cms.testing import CASTLE_ROBOT_TESTING
 from plone.testing import layered
+
+from castle.cms.testing import CASTLE_ROBOT_TESTING
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))

@@ -1,28 +1,36 @@
 # for compat with python3, specifically the urllib.parse includes
 # noqa because these need to precede other imports
+from __future__ import print_function
+
 from future.standard_library import install_aliases
+
+
 install_aliases()  # noqa
 
+import hashlib
+import logging
+import re
+from urllib.parse import quote_plus
+from urllib.parse import urljoin
+from urllib.parse import urlparse
+
+import requests
 from BTrees.OOBTree import OOBTree
-from castle.cms import theming
-from castle.cms.files import aws
-from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager
-from castle.cms.utils import normalize_url
 from DateTime import DateTime
 from lxml.html import fromstring
 from lxml.html import tostring
 from plone import api
 from plone.subrequest import subrequest
 from plone.uuid.interfaces import IUUID
-from urllib.parse import urlparse, urljoin, quote_plus
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 
-import hashlib
-import logging
-import re
-import requests
+from castle.cms import theming
+from castle.cms.files import aws
+from castle.cms.interfaces import IArchiveContentTransformer
+from castle.cms.interfaces import IArchiveManager
+from castle.cms.utils import normalize_url
 
 
 logger = logging.getLogger('castle.cms')
@@ -37,8 +45,8 @@ CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'
 
 
+@implementer(IArchiveContentTransformer)
 class BaseArchivalTransformer(object):
-    implements(IArchiveContentTransformer)
 
     def __init__(self, archiver):
         self.archiver = archiver
@@ -47,9 +55,8 @@ class BaseArchivalTransformer(object):
         pass
 
 
+@implementer(IArchiveManager)
 class ArchiveManager(object):
-
-    implements(IArchiveManager)
 
     def getContentToArchive(self, delta=0):
         days = api.portal.get_registry_record(
@@ -400,7 +407,7 @@ class Storage(object):
         if 'data:' in url:
             return
         if url in self.errors:
-            print('skipping because of error %s' % url)
+            print(('skipping because of error %s' % url))
             return
         resp = self.url_opener(url, use_vhm=use_vhm)
         if resp is None:

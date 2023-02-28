@@ -1,7 +1,6 @@
-from AccessControl.Permissions import add_user_folders
-from Products.PluggableAuthService.PluggableAuthService import \
-    registerMultiPlugin
 import pwexpiry_plugin
+from AccessControl.Permissions import add_user_folders
+from Products.PluggableAuthService.PluggableAuthService import registerMultiPlugin
 
 
 def initialize(context):

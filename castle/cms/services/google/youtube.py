@@ -4,11 +4,12 @@ import mimetypes
 import time
 
 from apiclient.http import MediaFileUpload
-from castle.cms.interfaces import IUploadedToYoutube
 from collective.celery.utils import getCelery
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 from zope.interface import alsoProvides
+
+from castle.cms.interfaces import IUploadedToYoutube
 
 from . import get_service
 
@@ -94,7 +95,7 @@ def upload(obj, filepath, privacy=PRIVATE_VIDEO_STATUS,
 
     insert_request = video_service.insert(
         body=body,
-        part=",".join(body.keys()),
+        part=",".join(list(body.keys())),
         media_body=media_body)
 
     resumable_upload(obj, service, insert_request)

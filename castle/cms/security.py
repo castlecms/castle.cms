@@ -1,29 +1,30 @@
 # login/lockout and shield integration
-from AccessControl.AuthEncoding import pw_encrypt
-from AccessControl.AuthEncoding import registerScheme
-from AccessControl.AuthEncoding import SSHADigestScheme
+import binascii
+import logging
 from binascii import a2b_base64
 from binascii import b2a_base64
-from castle.cms import shield
-from castle.cms.interfaces import ICastleLayer
-from castle.cms.lockout import LOGGED_IN_MARKER_KEY
-from castle.cms.lockout import SessionManager
-from castle.cms.utils import get_context_from_request
+
+from AccessControl.AuthEncoding import SSHADigestScheme
+from AccessControl.AuthEncoding import pw_encrypt
+from AccessControl.AuthEncoding import registerScheme
 from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
+from zExceptions import NotFound
 from zExceptions import Redirect
 from zope.component import adapter
 from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from ZPublisher.interfaces import IPubAfterTraversal
 from ZPublisher.interfaces import IPubBeforeCommit
-from zExceptions import NotFound
 
-import binascii
-import logging
+from castle.cms import shield
+from castle.cms.interfaces import ICastleLayer
+from castle.cms.lockout import LOGGED_IN_MARKER_KEY
+from castle.cms.lockout import SessionManager
+from castle.cms.utils import get_context_from_request
 
 
 try:
@@ -209,4 +210,4 @@ if argon2 is not None:
 
     registerScheme('argon2', Argon2Scheme())
     # we patch this to be default because plone doesn't provide a param
-    pw_encrypt.func_defaults = ('argon2',)
+    pw_encrypt.__defaults__ = ('argon2',)

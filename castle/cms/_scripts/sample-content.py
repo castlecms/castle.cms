@@ -1,5 +1,11 @@
-from plone.namedfile.file import NamedBlobImage
-from unidecode import unidecode
+from __future__ import print_function
+
+import argparse
+import random
+import re
+
+import requests
+import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from lxml.html import fromstring
 from lxml.html import tostring
@@ -7,14 +13,10 @@ from plone import api
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.textfield.value import RichTextValue
 from plone.i18n.normalizer.interfaces import IIDNormalizer
+from plone.namedfile.file import NamedBlobImage
+from unidecode import unidecode
 from zope.component import getUtility
 from zope.component.hooks import setSite
-
-import argparse
-import random
-import re
-import requests
-import transaction
 
 
 url_regex = re.compile(
@@ -70,13 +72,13 @@ while len(parsed) < args.limit:
             type='Folder', title='Folder', container=container,
             exclude_from_nav=True)
 
-    print('parsing ' + found_url)
+    print(('parsing ' + found_url))
     resp = requests.get(found_url)
     dom = fromstring(resp.content)
     try:
         title = unidecode(dom.cssselect('h1')[0].text_content())
     except IndexError:
-        print('bad url: ' + found_url)
+        print(('bad url: ' + found_url))
         continue
     _id = normalizer.normalize(found_url.split('/')[-1])
     if _id in container.objectIds():

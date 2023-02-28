@@ -5,14 +5,14 @@ import ssl
 from threading import Thread
 from time import sleep
 
-import six
-
 import requests
+import six
 from plone import api
 from plone.registry.interfaces import IRegistry
 from requests.exceptions import Timeout
 from requests_oauthlib import OAuth1
 from requests_oauthlib import OAuth1Session
+from six.moves import map
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 
@@ -72,8 +72,8 @@ def get_auth():
             return None
     try:
         return OAuth1(
-            unicode(client_id).encode('utf8'),
-            client_secret=unicode(client_secret).encode('utf8'),
+            six.text_type(client_id).encode('utf8'),
+            client_secret=six.text_type(client_secret).encode('utf8'),
             resource_owner_key=registry['plone.twitter_oauth_token'].encode('utf8'),
             resource_owner_secret=registry['plone.twitter_oauth_secret'].encode('utf8'),
             decoding=None)
@@ -439,7 +439,7 @@ class Stream(object):
         if languages:
             self.body['language'] = u','.join(map(str, languages))
         if filter_level:
-            self.body['filter_level'] = unicode(filter_level, encoding)
+            self.body['filter_level'] = six.text_type(filter_level, encoding)
         self.session.params = {'delimited': 'length'}
         self.host = 'stream.twitter.com'
         self._start(async)

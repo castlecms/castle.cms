@@ -1,8 +1,9 @@
 from zope import schema
 from zope.interface import Interface
+
+from castle.cms.fragments.utils import getFragment
 from castle.cms.tiles.base import BaseTile
 from castle.cms.vocabularies import AvailableFragments
-from castle.cms.fragments.utils import getFragment
 
 
 class FragmentTile(BaseTile):

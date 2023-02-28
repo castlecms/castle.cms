@@ -1,23 +1,31 @@
 import json
 import time
 
-from castle.cms import _, authentication, cache, texting
-from castle.cms.interfaces import (IAuthenticator, ISecureLoginAllowedView,
-                                   ISiteSchema)
-from castle.cms.utils import (get_managers, send_email, strings_differ,
-                              is_backend)
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
-from zope.component import getMultiAdapter, getUtility
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms import _
+from castle.cms import authentication
+from castle.cms import cache
+from castle.cms import texting
+from castle.cms.interfaces import IAuthenticator
+from castle.cms.interfaces import ISecureLoginAllowedView
+from castle.cms.interfaces import ISiteSchema
+from castle.cms.utils import get_managers
+from castle.cms.utils import is_backend
+from castle.cms.utils import send_email
+from castle.cms.utils import strings_differ
 
 
+@implementer(ISecureLoginAllowedView)
 class SecureLoginView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     def __init__(self, context, request):
         super(SecureLoginView, self).__init__(context, request)
@@ -369,8 +377,8 @@ The user requesting this access logged this information:
         return json.dumps(self.auth.get_options())
 
 
+@implementer(ISecureLoginAllowedView)
 class LoginExceptionApprovalView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     message = 'Incorrect code for country exception.'
     success = False

@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-from castle.cms import subscribe
-from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm  # noqa
-from castle.cms.browser.subscribe import SubscribeForm
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.browser.controlpanel.announcements import ImportSubscribersForm, reg_key
-from plone.app.testing import logout
-from plone.registry.interfaces import IRegistry
-from plone import api
-from zope.component import queryUtility
+import unittest
 
 import responses
 import transaction
-import unittest
+from plone import api
+from plone.app.testing import logout
+from plone.registry.interfaces import IRegistry
+from zope.component import queryUtility
+
+from castle.cms import subscribe
+from castle.cms.browser.controlpanel.announcements import ImportSubscribersForm
+from castle.cms.browser.controlpanel.announcements import SendEmailSubscribersForm  # noqa
+from castle.cms.browser.controlpanel.announcements import reg_key
+from castle.cms.browser.subscribe import SubscribeForm
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestSubscribe(unittest.TestCase):

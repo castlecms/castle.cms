@@ -1,21 +1,21 @@
 import logging
 import math
 import os
-import Queue
 import threading
 import time
 import traceback
-import urlparse
 from datetime import datetime
 from datetime import timedelta
 
 import requests
 import requests.exceptions
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-
+import six.moves.queue
+import six.moves.urllib.parse
 import sqlalchemy.exc
 from lxml import html
 from pylru import lrudecorator
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from six.moves import range
 from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -100,8 +100,8 @@ def get_session():
     return _local.session
 
 
-_worker_queue = Queue.Queue()
-_consumer_queue = Queue.Queue()
+_worker_queue = six.moves.queue.Queue()
+_consumer_queue = six.moves.queue.Queue()
 _exiting = threading.Event()
 
 
@@ -109,7 +109,7 @@ def parse_url_worker():
     while True:
         try:
             url = _worker_queue.get(timeout=0.5)
-        except Queue.Empty:
+        except six.moves.queue.Empty:
             if _exiting.is_set():
                 return
             continue
@@ -314,7 +314,7 @@ class Reporter(object):
             base_tag = base_tag[0]
             base = base_tag.attrib('href')
             if not base.startswith('http://') and not base.startswith('https://'):
-                base = urlparse.urljoin(resp.url, base)
+                base = six.moves.urllib.parse.urljoin(resp.url, base)
 
         for anchor in dom.cssselect('a,img'):
             if 'href' not in anchor.attrib and 'src' not in anchor:
@@ -325,7 +325,7 @@ class Reporter(object):
                 continue
             if not url.startswith('http://') and not url.startswith('https://'):
                 # make absolute url
-                url = urlparse.urljoin(base, url)
+                url = six.moves.urllib.parse.urljoin(base, url)
 
             drop = False
             for ignore in _ignored:
@@ -381,7 +381,7 @@ class Reporter(object):
 
         if url[0] == '/':
             # make full url
-            url = urlparse.urljoin(from_url, url)
+            url = six.moves.urllib.parse.urljoin(from_url, url)
 
         url = url.rstrip('/')
         self.add_url(url)

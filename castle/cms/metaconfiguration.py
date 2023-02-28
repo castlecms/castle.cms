@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 import os.path
 
-from castle.cms.fragments import FragmentsDirectory
-from castle.cms.fragments.interfaces import IFragmentsDirectory
-
-from zope.interface import Interface
 from zope.component import getGlobalSiteManager
 from zope.configuration.exceptions import ConfigurationError
 from zope.configuration.fields import PythonIdentifier
+from zope.interface import Interface
 from zope.schema import TextLine
+
+from castle.cms.fragments import FragmentsDirectory
+from castle.cms.fragments.interfaces import IFragmentsDirectory
 
 
 class IFragmentDirectoryDirective(Interface):

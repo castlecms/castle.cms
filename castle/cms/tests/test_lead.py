@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-from zope.annotation.interfaces import IAnnotations
-from plone.namedfile.file import NamedBlobImage
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+import unittest
+
 from plone import api
-from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone.uuid.interfaces import IUUID
-from castle.cms.interfaces import IReferenceNamedImage
-from castle.cms import lead
+from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.app.textfield.value import RichTextValue
+from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.tests.test_image import zptlogo
 from plone.tiles.data import ANNOTATIONS_KEY_PREFIX
+from plone.uuid.interfaces import IUUID
+from zope.annotation.interfaces import IAnnotations
 
-import unittest
+from castle.cms import lead
+from castle.cms.interfaces import IReferenceNamedImage
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestLeadImages(unittest.TestCase):

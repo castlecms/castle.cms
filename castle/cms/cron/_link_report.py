@@ -1,7 +1,8 @@
 from AccessControl.SecurityManagement import newSecurityManager
-from castle.cms.linkreporter import Reporter
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
+
+from castle.cms.linkreporter import Reporter
 
 
 def run_link_report(site):

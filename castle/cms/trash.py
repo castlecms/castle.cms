@@ -1,9 +1,10 @@
-from castle.cms import tasks
-from castle.cms.interfaces import ITrashed
 from plone import api
 from plone.dexterity.interfaces import IDexterityContainer
 from zope.interface import alsoProvides
 from zope.interface import noLongerProvides
+
+from castle.cms import tasks
+from castle.cms.interfaces import ITrashed
 
 
 def object(ob):

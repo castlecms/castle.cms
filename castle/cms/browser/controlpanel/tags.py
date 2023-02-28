@@ -1,8 +1,9 @@
-from plone.app.dexterity.behaviors.metadata import ICategorization
+import json
+
 from plone import api
+from plone.app.dexterity.behaviors.metadata import ICategorization
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
-import json
 
 
 class TagsView(BrowserView):

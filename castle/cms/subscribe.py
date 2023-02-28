@@ -2,9 +2,10 @@
 from time import time
 
 from BTrees.OOBTree import OOBTree
-from castle.cms.utils import make_random_key
 from persistent.mapping import PersistentMapping
 from plone import api
+
+from castle.cms.utils import make_random_key
 
 
 class InvalidEmailException(KeyError):
@@ -101,7 +102,7 @@ def get_page(page_num):
     start = (page_num - 1) * per_page
     end = start + per_page
     storage = SubscriptionStorage()
-    return storage._data.items()[start:end]
+    return list(storage._data.items())[start:end]
 
 
 def get_phone_numbers():

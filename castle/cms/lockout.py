@@ -1,16 +1,24 @@
 # check failed login attempts
 # lockout user if more than 5 for 15 minutes, send system message
-from castle.cms import cache
-from castle.cms.utils import get_ip
+import sys
 from datetime import datetime
+from time import time
+from uuid import uuid4
+
 from plone import api
 from plone.memoize.instance import memoize
 from plone.registry.interfaces import IRegistry
-from time import time
-from uuid import uuid4
 from zope.component import getUtility
 
-import cPickle
+from castle.cms import cache
+from castle.cms.utils import get_ip
+
+
+if sys.version_info.major == 3:
+    import pickle as cPickle
+else:
+    import six.moves.cPickle
+
 import logging
 
 
@@ -149,7 +157,7 @@ def get_active_sessions(sessions_key=None):
         if keys:
             for session in cclient.client.mget(keys):
                 try:
-                    session = cPickle.loads(session)
+                    session = six.moves.cPickle.loads(session)
                 except Exception:
                     continue
                 sessions.append(session)

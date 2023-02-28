@@ -1,8 +1,9 @@
-from castle.cms import cache
 from plone import api
 from plone.protect.authenticator import createToken
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+
+from castle.cms import cache
 
 
 def get_backend_url():

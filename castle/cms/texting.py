@@ -1,18 +1,20 @@
-from castle.cms import subscribe
-from castle.cms.constants import ALL_SUBSCRIBERS
+import json
+import string
+
+import requests
+import six
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
-import json
-import requests
-import string
+from castle.cms import subscribe
+from castle.cms.constants import ALL_SUBSCRIBERS
 
 
 def send(message, numbers):
     if numbers == ALL_SUBSCRIBERS:
         numbers = subscribe.get_phone_numbers()
 
-    if isinstance(numbers, basestring):
+    if isinstance(numbers, six.string_types):
         numbers = [numbers]
 
     clean_numbers = []

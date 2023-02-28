@@ -1,6 +1,7 @@
-from castle.cms.interfaces import ICastleApplication
 from plone import api
 from Products.Five import BrowserView
+
+from castle.cms.interfaces import ICastleApplication
 
 
 class ErrorView(BrowserView):

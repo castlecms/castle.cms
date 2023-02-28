@@ -5,9 +5,9 @@ import celery.bin.celery
 import opensearchpy
 import redis
 from collective.celery.utils import getCelery
-from wildcard.hps.opensearch import WildcardHPSCatalog
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
+from wildcard.hps.opensearch import WildcardHPSCatalog
 
 
 class StatusView(BrowserView):

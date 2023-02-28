@@ -4,10 +4,7 @@ import unittest
 from copy import deepcopy
 from io import BytesIO
 
-from castle.cms.browser import content
-from castle.cms.interfaces import ITemplate
-from castle.cms.tasks.template import save_as_template
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
+import six
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -17,9 +14,15 @@ from plone.app.testing import setRoles
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces.syndication import IFeedSettings
+from six.moves import range
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import getSite
+
+from castle.cms.browser import content
+from castle.cms.interfaces import ITemplate
+from castle.cms.tasks.template import save_as_template
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestContent(unittest.TestCase):
@@ -192,7 +195,7 @@ class TestContent(unittest.TestCase):
         registry = getUtility(IRegistry)
         fields = deepcopy(registry['castle.file_upload_fields'])
         for f in fields:
-            f['required'] = unicode(f['required']).lower()
+            f['required'] = six.text_type(f['required']).lower()
         fields.append({
             u'name': u'foobar',
             u'label': u'Foobar',

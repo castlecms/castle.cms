@@ -2,9 +2,9 @@ import base64
 import json
 import re
 from datetime import datetime
-from StringIO import StringIO
 
 import OFS
+import six
 from BTrees.OOBTree import OOBTree
 from DateTime import DateTime
 from Persistence.mapping import PersistentMapping as PM1
@@ -15,13 +15,15 @@ from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
 from plone.app.contentlisting.contentlisting import ContentListing
 from plone.app.textfield.value import RichTextValue
-from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.file import NamedFile
 from Products.ZCatalog.Lazy import LazyCat
+from StringIO import StringIO
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
+
 
 _filedata_marker = 'filedata://'
 _deferred_marker = 'deferred://'
@@ -320,10 +322,10 @@ def custom_decoder(d):
     if isinstance(d, list):
         pairs = enumerate(d)
     elif isinstance(d, dict):
-        pairs = d.items()
+        pairs = list(d.items())
     result = []
     for k, v in pairs:
-        if isinstance(v, basestring):
+        if isinstance(v, six.string_types):
             if v.startswith(_filedata_marker):
                 if v == _filedata_marker + _deferred_marker:
                     v = Deferred

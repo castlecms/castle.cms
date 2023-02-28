@@ -1,13 +1,4 @@
 from Acquisition import aq_inner
-from castle.cms import texting
-from castle.cms import subscribe
-from castle.cms.browser.utils import Utils
-from castle.cms.constants import ALL_SUBSCRIBERS
-from castle.cms.interfaces import IAnnouncementData
-from castle.cms.tasks import send_email
-from castle.cms.tasks import send_email_to_subscribers
-from castle.cms.widgets import AjaxSelectFieldWidget
-from castle.cms.widgets import SelectFieldWidget, TinyMCETextFieldWidget
 from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.app.textfield import RichText
@@ -19,7 +10,9 @@ from plone.outputfilters.interfaces import IFilter
 from plone.registry.interfaces import IRegistry
 from plone.supermodel import model
 from Products.CMFPlone.utils import safe_unicode
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from six.moves import map
 from z3c.form import button
 from z3c.form import form
 from z3c.form.browser.file import FileWidget
@@ -28,8 +21,20 @@ from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
 from zope.interface import Invalid
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from Products.Five import BrowserView
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+
+from castle.cms import subscribe
+from castle.cms import texting
+from castle.cms.browser.utils import Utils
+from castle.cms.constants import ALL_SUBSCRIBERS
+from castle.cms.interfaces import IAnnouncementData
+from castle.cms.tasks import send_email
+from castle.cms.tasks import send_email_to_subscribers
+from castle.cms.widgets import AjaxSelectFieldWidget
+from castle.cms.widgets import SelectFieldWidget
+from castle.cms.widgets import TinyMCETextFieldWidget
+
 
 reg_key = 'castle.subscriber_categories'
 
@@ -305,7 +310,7 @@ class ImportSubscribersForm(AutoExtensibleForm, form.Form):
                 if len(cols) <= 1:
                     continue
                 subscriber = {
-                    'categories': map(safe_unicode, cols[categoryindex].strip('"').split(';')),
+                    'categories': list(map(safe_unicode, cols[categoryindex].strip('"').split(';'))),
                     'email': cols[emailindex]
                 }
                 match = subscribe.get_subscriber(subscriber['email'])

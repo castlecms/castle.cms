@@ -1,20 +1,21 @@
-from castle.cms.interfaces import ISecureLoginAllowedView
-from castle.cms.interfaces import IAuthenticator
-from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
-from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
-from plone.protect.interfaces import IDisableCSRFProtection
-from Products.Five import BrowserView
-from zope.component import getMultiAdapter
-from zope.interface import alsoProvides
-from zope.interface import implements
-from zope.i18n import translate
-from plone import api
-
 import json
 
+from plone import api
+from plone.protect.interfaces import IDisableCSRFProtection
+from Products.Five import BrowserView
+from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
+from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
+from zope.component import getMultiAdapter
+from zope.i18n import translate
+from zope.interface import alsoProvides
+from zope.interface import implementer
 
+from castle.cms.interfaces import IAuthenticator
+from castle.cms.interfaces import ISecureLoginAllowedView
+
+
+@implementer(ISecureLoginAllowedView)
 class PasswordResetView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     def __init__(self, context, request):
         super(PasswordResetView, self).__init__(context, request)

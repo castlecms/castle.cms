@@ -1,6 +1,8 @@
-from AccessControl.SecurityManagement import newSecurityManager
-from castle.cms.utils import retriable
+import logging
 from datetime import datetime
+
+import transaction
+from AccessControl.SecurityManagement import newSecurityManager
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -10,8 +12,7 @@ from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.component.hooks import setSite
 
-import logging
-import transaction
+from castle.cms.utils import retriable
 
 
 logger = logging.getLogger('castle.cms')

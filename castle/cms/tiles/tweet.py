@@ -1,9 +1,10 @@
-from castle.cms.tiles.base import BaseTile
+import re
+
 from plone.supermodel import model
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
 
-import re
+from castle.cms.tiles.base import BaseTile
 
 
 class TweetTile(BaseTile):

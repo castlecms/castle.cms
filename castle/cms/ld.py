@@ -1,21 +1,26 @@
 import json
 
 from Acquisition import aq_base
-from castle.cms.browser.utils import Utils
-from castle.cms.interfaces import IAudio, ILDData, IVideo
 from plone import api
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFPlone.browser.syndication.adapters import (DexterityItem,
-                                                            FolderFeed)
+from Products.CMFPlone.browser.syndication.adapters import DexterityItem
+from Products.CMFPlone.browser.syndication.adapters import FolderFeed
 from Products.CMFPlone.interfaces import ISiteSchema
 from Products.CMFPlone.interfaces.syndication import IFeedItem
 from Products.CMFPlone.utils import getSiteLogo
 from ZODB.POSException import POSKeyError
-from zope.component import adapts, getUtility, queryMultiAdapter
+from zope.component import adapter
+from zope.component import getUtility
+from zope.component import queryMultiAdapter
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
+
+from castle.cms.browser.utils import Utils
+from castle.cms.interfaces import IAudio
+from castle.cms.interfaces import ILDData
+from castle.cms.interfaces import IVideo
 
 
 def format_date(dt):
@@ -33,9 +38,9 @@ class NoFileDexterityItem(DexterityItem):
         self.file = None
 
 
+@implementer(ILDData)
+@adapter(IDexterityContent)
 class LDData(object):
-    implements(ILDData)
-    adapts(IDexterityContent)
 
     type_ = 'WebPage'
 
@@ -109,8 +114,8 @@ class LDVideoData(LDAudioData):
 
 
 class LDSiteData(object):
-    implements(ILDData)
-    adapts(ISiteRoot)
+    @implementer(ILDData)
+    @adapter(ISiteRoot)
 
     def __init__(self, context):
         self.context = context

@@ -1,15 +1,17 @@
+from __future__ import print_function
+
 import argparse
 import base64
 import errno
 import logging
-import time
 import os
 import re
+import time
 from datetime import datetime
 from fnmatch import fnmatch
-from StringIO import StringIO
 
 import OFS
+import six
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManager import setSecurityPolicy
 from Acquisition import ImplicitAcquisitionWrapper
@@ -24,11 +26,12 @@ from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
-from Products.Archetypes import Field
+# from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
 from Products.ZCatalog.Lazy import LazyCat
+from StringIO import StringIO
 from Testing.makerequest import makerequest
 from ZODB.blob import Blob
 from zope.annotation.interfaces import IAnnotations
@@ -229,8 +232,8 @@ class OFSFileSerializer(BaseTypeSerializer):
         try:
             data = str(obj.data)
         except Exception:
-            print('Error in OFSFileSerializer while serializing {}'.format(
-                '/'.join(obj.getPhysicalPath())))
+            print(('Error in OFSFileSerializer while serializing {}'.format(
+                '/'.join(obj.getPhysicalPath()))))
             data = str(obj.data.data)
         return {
             'data': base64.b64encode(data),
@@ -414,7 +417,7 @@ _serializers = {
     PersistentList: PersistentListSerializer,
     set: setSerializer,
     OFS.Image.Image: OFSImageSerializer,
-    Field.Image: OFSImageSerializer,
+    # Field.Image: OFSImageSerializer,
     OFS.Image.File: OFSFileSerializer,
     DateTime: DateTimeSerializer,
     datetime: datetimeSerializer,
@@ -460,7 +463,7 @@ def custom_handler(obj):
         serializer = _serializers[_type]
         return serializer.serialize(obj)
     else:
-        print('NOT SERIALIZING {}'.format(obj))
+        print(('NOT SERIALIZING {}'.format(obj)))
         return None
     return obj
 
@@ -509,7 +512,7 @@ class ContentExporter(object):
     def get_referenced_images(self, data):
         images = []
         for key, value in data.items():
-            if not isinstance(value, basestring):
+            if not isinstance(value, six.string_types):
                 continue
             try:
                 dom = fromstring(value)
@@ -573,7 +576,7 @@ class ArchetypesExporter(ContentExporter):
     def get_field_data(self):
         data = {}
         if not hasattr(self.obj, 'Schema'):
-            print('No schema on {}'.format(self.obj))
+            print(('No schema on {}'.format(self.obj)))
             return {}
         for field in self.obj.Schema().fields():
             try:
@@ -614,8 +617,8 @@ class ArchetypesExporter(ContentExporter):
 class DexterityExporter(ContentExporter):
 
     def get_field_data(self):
-        from plone.dexterity.interfaces import IDexterityFTI
         from plone.behavior.interfaces import IBehaviorAssignable
+        from plone.dexterity.interfaces import IDexterityFTI
 
         data = {}
 
@@ -643,12 +646,12 @@ class DexterityExporter(ContentExporter):
             data[behavior.interface.__identifier__] = bdata
 
         if ILayoutAware.providedBy(self.obj):
-            from plone.tiles.data import ANNOTATIONS_KEY_PREFIX
-            from plone.app.blocks.utils import getLayout
-            from repoze.xmliter.utils import getHTMLSerializer
-            from plone.app.blocks import tiles
-            from plone.app.blocks import gridsystem
             from lxml.html import tostring
+            from plone.app.blocks import gridsystem
+            from plone.app.blocks import tiles
+            from plone.app.blocks.utils import getLayout
+            from plone.tiles.data import ANNOTATIONS_KEY_PREFIX
+            from repoze.xmliter.utils import getHTMLSerializer
             tdata = {}
             annotations = IAnnotations(self.obj, {})
             for key in annotations.keys():
@@ -716,10 +719,10 @@ def export_dexterity_obj(obj):
 
 def export_obj(obj):
     if IDexterityContent.providedBy(obj):
-        print("--> Dexterity: %s" % obj.Title())
+        print(("--> Dexterity: %s" % obj.Title()))
         func = export_dexterity_obj
     else:
-        print("--> Archetypes: %s" % obj.Title())
+        print(("--> Archetypes: %s" % obj.Title()))
         func = export_archetype_obj
     for result in func(obj):
         yield result
@@ -743,7 +746,7 @@ def write_export(obj, data):
         fi.write(dumps(data))
         fi.close()
     except UnicodeDecodeError:
-        print('Error exporting {}'.format(objpath))
+        print(('Error exporting {}'.format(objpath)))
 
 
 def run_export(brains):
@@ -757,22 +760,22 @@ def run_export(brains):
         path = brain.getPath()
         if (args.path_filter and
                 not fnmatch(path, args.path_filter)):
-            print('skipping(filtered), ', path,
-                  ' ', str(idx + 1) + '/' + str(size))
+            print(('skipping(filtered), ', path,
+                  ' ', str(idx + 1) + '/' + str(size)))
             continue
-        print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
+        print(('processing, ', path, ' ', str(idx + 1) + '/' + str(size)))
         try:
             obj = brain.getObject()
         except Exception:
-            print('skipping - error getting object, ', path, ' ',
-                  str(idx + 1) + '/' + str(size))
+            print(('skipping - error getting object, ', path, ' ',
+                  str(idx + 1) + '/' + str(size)))
             continue
         for obj, data in export_obj(obj):
             write_export(obj, data)
 
 
 if args.createdsince:
-    print('exporting items created since %s' % args.createdsince)
+    print(('exporting items created since %s' % args.createdsince))
     date_range = {
         'query': (
             DateTime(args.createdsince),
@@ -782,7 +785,7 @@ if args.createdsince:
     }
     query = catalog(created=date_range)
 elif args.modifiedsince:
-    print('exporting items modified since %s' % args.modifiedsince)
+    print(('exporting items modified since %s' % args.modifiedsince))
     date_range = {
         'query': (
             DateTime(args.modifiedsince),

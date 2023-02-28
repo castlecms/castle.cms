@@ -1,6 +1,7 @@
-from zope import schema
-from castle.cms.tiles.base import BaseTile
 from plone.supermodel import model
+from zope import schema
+
+from castle.cms.tiles.base import BaseTile
 
 
 class PinTile(BaseTile):

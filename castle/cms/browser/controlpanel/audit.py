@@ -1,4 +1,5 @@
 from Products.CMFPlone.resources import add_resource_on_request
+
 from castle.cms.browser.audit import AuditView as BaseAuditView
 
 

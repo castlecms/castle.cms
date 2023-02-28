@@ -10,6 +10,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from pwexpiry_plugin import addPwExpiryPlugin
+from six.moves import range
+
 
 logger = logging.getLogger('castle.cms.pwexpiry')
 

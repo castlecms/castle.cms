@@ -3,11 +3,11 @@ import logging
 from plone import api
 from plone.app.redirector.browser import FourOhFourView
 from plone.app.redirector.interfaces import IRedirectionStorage
+from six.moves import urllib
+from six.moves.urllib.parse import parse
+from six.moves.urllib.parse import quote
 from zExceptions import Redirect
 from zope.component import queryUtility
-from six.moves import urllib
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import unquote
 
 from castle.cms import archival
 from castle.cms import shield
@@ -111,7 +111,7 @@ class FourOhFour(FourOhFourView):
         if url.netloc:
             # External URL
             # avoid double quoting
-            url_path = unquote(url.path)
+            url_path = parse(url.path)
             url_path = quote(url_path)
             url = urllib.parse.SplitResult(
                 *(url[:2] + (url_path, ) + url[3:])).geturl()

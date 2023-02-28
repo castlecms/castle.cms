@@ -1,10 +1,11 @@
-from Products.CMFPlone.controlpanel.browser import quickinstaller
-from Products.CMFCore.utils import getToolByName
-import Products.CMFPlone
 import logging
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.statusmessages.interfaces import IStatusMessage
+
+import Products.CMFPlone
 from plone.memoize import view
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.controlpanel.browser import quickinstaller
+from Products.statusmessages.interfaces import IStatusMessage
 
 
 class ManageProductsView(quickinstaller.ManageProductsView):

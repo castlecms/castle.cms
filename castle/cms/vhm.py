@@ -1,3 +1,4 @@
+from six.moves import range
 from ZPublisher.BaseRequest import quote
 
 

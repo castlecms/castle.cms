@@ -1,31 +1,32 @@
-from Products.CMFPlone.interfaces import INavigationSchema
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
 from Acquisition import aq_parent
+from plone.autoform import directives as form
+from plone.dexterity.interfaces import IDexterityContainer
+from plone.memoize.instance import memoize
+from plone.registry.interfaces import IRegistry
+from plone.supermodel import model
+from plone.uuid.interfaces import IUUID
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import INavigationSchema
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from zope import schema
+from zope.component import getUtility
+from zope.interface import implementer
+from zope.schema.vocabulary import SimpleVocabulary
+
 from castle.cms.interfaces import IGlobalTile
 from castle.cms.tiles.base import BaseTile
 from castle.cms.tiles.views import BaseTileView
-from castle.cms.tiles.views import getTileView
 from castle.cms.tiles.views import TileViewsSource
+from castle.cms.tiles.views import getTileView
 from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import NavigationTypeWidget
 from castle.cms.widgets import QueryFieldWidget
 from castle.cms.widgets import RelatedItemsFieldWidget
-from plone.autoform import directives as form
-from plone.dexterity.interfaces import IDexterityContainer
-from plone.memoize.instance import memoize
-from plone.supermodel import model
-from plone.uuid.interfaces import IUUID
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope import schema
-from zope.interface import implements
-from zope.schema.vocabulary import SimpleVocabulary
 
 
 class NavigationTile(BaseTile):
-    implements(IGlobalTile)
+    @implementer(IGlobalTile)
 
     def render(self):
         view = getTileView(self.context, self.request, 'navigation',

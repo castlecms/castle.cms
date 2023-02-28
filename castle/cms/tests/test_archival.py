@@ -2,25 +2,28 @@
 # for compat with python3, specifically the urllib.parse includes
 # noqa because these need to precede other imports
 from future.standard_library import install_aliases
+
+
 install_aliases()  # noqa
 
-from lxml.html import fromstring
 import unittest
 from urllib.parse import unquote_plus
 
 import boto3
 import botocore
 from DateTime import DateTime
-from castle.cms import archival
-from castle.cms.files import aws
-from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from castle.cms.interfaces import IArchiveManager
+from lxml.html import fromstring
 from moto import mock_s3
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
+
+from castle.cms import archival
+from castle.cms.files import aws
+from castle.cms.interfaces import IArchiveManager
+from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
 class TestArchiveManager(unittest.TestCase):
