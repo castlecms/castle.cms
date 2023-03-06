@@ -74,4 +74,19 @@
     handler=".upgrades.upgrade_3005"
     profile="castle.cms:default"
     />
+  <genericsetup:registerProfile
+    name="3006"
+    title="CastleCMS upgrade to 3006 profile"
+    directory="profiles/3006"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3006"
+    description="Update security control panel settings to add ability to disable country code auth"
+    source="*"
+    destination="3006"
+    handler=".upgrades.upgrade_3006"
+    profile="castle.cms:default"
+    />
 </configure>
