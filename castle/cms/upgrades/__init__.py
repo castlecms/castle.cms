@@ -1,4 +1,4 @@
-from castle.cms.interfaces import IAPISettings
+from castle.cms.interfaces import IAPISettings, ISecuritySchema
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 from Products.CMFCore.utils import getToolByName
 
@@ -45,12 +45,16 @@ upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
 upgrade_3003 = default_upgrade_factory('3003')
 upgrade_3004 = default_upgrade_factory('3004')
+upgrade_3005 = default_upgrade_factory('3005')
 
 
-def upgrade_3005(site, logger=None):
-    re_register_profile(IAPISettings, 'castle')
+def upgrade_3006_cc(site, logger=None):
+    # for explicit enable/disable of country code checking
+    re_register_profile(ISecuritySchema, 'castle')
 
-def upgrade_3006(site, logger=None):
+
+def upgrade_3006_ga4(site, logger=None):
+    # for ga4 migration
     re_register_profile(IAPISettings, 'castle')
     old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
     if old_ga_id:

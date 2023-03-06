@@ -1,3 +1,19 @@
+<style>
+  .blog-query-listing article .overlay-image-container {
+    position: relative;
+    display: block;
+    width: fit-content;
+  }
+  .blog-query-listing article .overlay-image-container img.overlay-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: unset;
+    height: 20%;
+    width: 100%;
+    min-height: 25px;
+  }
+</style>
 <div class="blog-query-listing query-listing-container"
      tal:define="results view/tile/results;
                  utils view/tile/utils;
@@ -7,14 +23,30 @@
                          base_url item/getURL;
                          effective item/effective|nothing;
                          desc item/Description;
-                         has_image python: 'image' in df and utils.has_image(item);"
+                         has_image python: 'image' in df and utils.has_image(item);
+                         item_object item/getObject|nothing;
+                         status_overlay_url python:getattr(item_object, 'status_overlay_url', None);"
         class="post type-post status-${item/review_state} hentry
                ${python: has_image and 'has-post-thumbnail' or ''}
                portal-type-${python: utils.normalize(item.portal_type)}">
     	<div class="blog-item-wrap" style="${python: view.font_sizes.get('query_listing','')}">
-    		<a href="${url}" title="${item/Title}" tal:condition="has_image">
-    			<img src="${base_url}/@@images/image/large" class="post-image"
-               alt="${item/Title}">
+        <a
+          href="${url}"
+          title="${item/Title}"
+          tal:condition="has_image"
+          class="overlay-image-container"
+        >
+          <img
+            src="${base_url}/@@images/image/large"
+            class="post-image"
+            alt="${item/Title}"
+          >
+          <img
+            tal:condition="status_overlay_url"
+            src="${status_overlay_url}"
+            class="overlay-image"
+            alt="Status Overlay Banner"
+          />
         </a>
     		<div class="post-inner-content">
     			<header class="entry-header page-header">

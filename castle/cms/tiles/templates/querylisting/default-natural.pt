@@ -1,3 +1,19 @@
+<style>
+  .dt-default li .overlay-image-container {
+    position: relative;
+    display: block;
+    width: fit-content;
+  }
+  .dt-default li .overlay-image-container img.overlay-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: unset;
+    height: 20%;
+    width: 100%;
+    min-height: 25px;
+  }
+</style>
 <ul class="dt-default"
     tal:define="results view/tile/results;
                 utils view/tile/utils;
@@ -10,12 +26,26 @@
                   has_image python: 'image' in df and utils.has_image(item);
                   effective item/effective|nothing;
                   start item/start|nothing;
-                  end item/end|nothing;"
+                  end item/end|nothing;
+                  item_object item/getObject|nothing;
+                  status_overlay_url python:getattr(item_object, 'status_overlay_url', None);"
       class="portal-type-${python: utils.normalize(item.portal_type)}">
     <div class="row">
       <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
-        <a href="${url}">
-          <img src="${base_url}/@@images/image/mini" alt="${item/Title}">
+        <a
+          href="${url}"
+          class="overlay-image-container"
+        >
+          <img
+            src="${base_url}/@@images/image/mini"
+            alt="${item/Title}"
+          />
+          <img
+            tal:condition="status_overlay_url"
+            src="${status_overlay_url}"
+            class="overlay-image"
+            alt="Status Overlay Banner"
+          />
         </a>
       </div>
       <div class="col-lg-10 col-md-9 col-sm-8"

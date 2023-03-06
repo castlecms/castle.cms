@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="plone">
+
   <record interface="castle.cms.interfaces.IAPISettings"
           field="universal_analytics_id" prefix="castle" purge="False">
     <field type="plone.registry.field.TextLine">
@@ -22,4 +23,11 @@
       <required>False</required>
     </field>
   </record>
+
+  <record name="plone.disable_country_restriction"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="disable_country_restriction">
+    <value>False</value>
+  </record>
+
 </registry>
