@@ -1,10 +1,24 @@
 Changelog
 =========
 
-2.16.1 (unreleased)
+2.17.1 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+2.17.0 (2023-02-28)
+-------------------
+
+- update focal_image_tag to allow for overlays
+- add overlay support into query listings
+
+
+2.16.1 (2023-02-15)
 -------------------
 
 - Bump a few pins
+- add site-id command-line argument to script_runner
 
 
 2.16.0 (2023-02-01)
