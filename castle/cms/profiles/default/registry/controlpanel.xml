@@ -118,4 +118,28 @@
     </value>
   </record>
 
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="universal_analytics_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Universal Analytics ID</title>
+      <required>False</required>
+    </field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gst_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Global Site Tag ID</title>
+      <required>False</required>
+    </field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gst_enabled" prefix="castle" purge="False">
+    <field type="plone.registry.field.Bool">
+      <title>Enable Global Site Tags Throughout Site</title>
+      <required>False</required>
+    </field>
+  </record>
+
 </registry>

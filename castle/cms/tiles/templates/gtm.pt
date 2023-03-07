@@ -7,7 +7,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','${view/gtm_id}');</script>
   </head>
   <body>
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={view/gtm_id}"
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${view/gtm_id}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </body>
 </html>
