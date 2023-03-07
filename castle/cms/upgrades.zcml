@@ -553,7 +553,6 @@
     handler=".upgrades.upgrade_3004"
     profile="castle.cms:default"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3005"
     description="Update api control panel settings to add prince server username and password"
@@ -562,6 +561,8 @@
     handler=".upgrades.upgrade_3005"
     profile="castle.cms:default"
     />
+
+
   <genericsetup:registerProfile
     name="3006"
     title="CastleCMS upgrade to 3006 profile"
@@ -569,12 +570,20 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-  <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3006"
-    description="Update security control panel settings to add ability to disable country code auth"
+  <genericsetup:upgradeSteps
     source="*"
     destination="3006"
-    handler=".upgrades.upgrade_3006"
-    profile="castle.cms:default"
-    />
+      profile="castle.cms:default">
+
+      <genericsetup:upgradeStep
+        title="add explicit enable/disable of country code checking to security control panel"
+        handler=".upgrades.upgrade_3006_cc"
+        profile="castle.cms:default"
+        />
+      <genericsetup:upgradeStep
+        title="migrate to Google Analytics 4 settings structure"
+        handler=".upgrades.upgrade_3006_ga4"
+        profile="castle.cms:default"
+        />
+  </genericsetup:upgradeSteps>
 </configure>

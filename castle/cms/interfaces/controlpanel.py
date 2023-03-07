@@ -338,19 +338,31 @@ class IAPISettings(Interface):
 
     google_analytics_id = schema.TextLine(
         title=u'Google Analytics ID',
-        description=u'for use with gathering content statistics',
+        description=u'for use with gathering content statistics with GA4',
         required=False)
+
+    universal_analytics_id = schema.TextLine(
+        title=u'Universal Analytics ID',
+        description=u'for use with gathering content statistics with UA',
+        required=False)
+
+    gst_enabled = schema.Bool(
+        title=u'Enable Global Site Tags Throughout Site',
+        default=False)
+
+    gst_id = schema.TextLine(
+        title=u'Global Site Tag ID',
+        description=u'Provided by Google - Measurement ID in data streams',
+        required=False)
+
+    gtm_enabled = schema.Bool(
+        title=u'Enable Google Tag Manager Throughout Site',
+        default=False)
 
     gtm_id = schema.TextLine(
         title=u'Google Tag Manager Container ID',
         description=u'Provided by Google',
-        required=False
-    )
-
-    gtm_enabled = schema.Bool(
-        title=u'Enable Google Tag Manager Throughout Site',
-        default=False
-    )
+        required=False)
 
     recaptcha_public_key = schema.TextLine(
         title=u'Recaptcha 3 Public Key',
