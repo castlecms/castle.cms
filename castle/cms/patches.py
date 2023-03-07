@@ -1,5 +1,4 @@
 import logging
-import os
 from time import time
 
 from AccessControl import getSecurityManager
@@ -21,12 +20,10 @@ from plone.app.z3cform.widget import RichTextWidget
 from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
-from Products.CMFPlone.CatalogTool import CatalogTool
 from Products.CMFPlone.resources import add_resource_on_request
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
-from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import implementer
 

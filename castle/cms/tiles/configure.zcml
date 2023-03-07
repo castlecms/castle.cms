@@ -271,6 +271,18 @@
     />
 
   <plone:tile
+    name="castle.cms.globalsitetag"
+    title="Global Tag Manager"
+    class=".gtm.GlobalSiteTagTile"
+    schema=".gtm.GlobalSiteTagTileSchema"
+    for="*"
+    layer="castle.cms.interfaces.ICastleLayer"
+    add_permission="cmf.ModifyPortalContent"
+    permission="zope2.View"
+    template="templates/gtag.pt"
+    />
+
+  <plone:tile
     name="castle.cms.stickyfooter"
     title="Sticky Footer"
     class=".sticky.StickyFooterTile"
