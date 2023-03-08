@@ -4,7 +4,7 @@ Changelog
 3.0.0b121 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- fix upgrade zcml
 
 
 3.0.0b120 (2023-03-08)
