@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b120 (unreleased)
+3.0.0b120 (2023-03-08)
 ----------------------
 
 - add support for GoogleAnalytics 4
