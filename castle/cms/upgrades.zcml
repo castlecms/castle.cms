@@ -573,17 +573,15 @@
   <genericsetup:upgradeSteps
     source="*"
     destination="3006"
-      profile="castle.cms:default">
+    profile="castle.cms:default">
 
       <genericsetup:upgradeStep
         title="add explicit enable/disable of country code checking to security control panel"
         handler=".upgrades.upgrade_3006_cc"
-        profile="castle.cms:default"
         />
       <genericsetup:upgradeStep
         title="migrate to Google Analytics 4 settings structure"
         handler=".upgrades.upgrade_3006_ga4"
-        profile="castle.cms:default"
         />
   </genericsetup:upgradeSteps>
 </configure>
