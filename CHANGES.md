@@ -4,7 +4,8 @@ Changelog
 3.0.0b120 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- add support for GoogleAnalytics 4
+- add ability to disable, explicitly, country code checking in auth
 
 
 3.0.0b119 (2023-02-28)
