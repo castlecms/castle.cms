@@ -113,5 +113,3 @@ def get_all_ids(hps, index_name, domain):
         scroll_id = result['_scroll_id']
 
     return _ids
-
-

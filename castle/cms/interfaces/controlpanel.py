@@ -140,12 +140,17 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=120,
     )
 
+    disable_country_restriction = schema.Bool(
+        title=u'Disable Country Access Restriction',
+        description=u'Allow all logins, ignoring country restriction field below.',
+        default=False
+    )
+
     restrict_logins_to_countries = schema.Tuple(
         title=u'Restrict logins to countries',
         description=u'Choose countries that logins should be restricted to. '
                     u'This feature only works if your proxy server is '
-                    u'forwarding the user country code to the CastleCMS server. '
-                    u'Leave empty to allow all logins.',
+                    u'forwarding the user country code to the CastleCMS server. ',
         missing_value=(),
         default=(),
         required=False,
@@ -296,17 +301,34 @@ class IAPISettings(Interface):
         title=u'PrinceXML server url',
         description=u'required in order to convert documents',
         default=u'http://localhost:6543/convert',
-        required=False)
+        required=False,
+    )
+
+    princexml_server_auth_username = schema.TextLine(
+        title=u'PrinceXML server auth username',
+        description=u'The basic auth username (if enabled) for PrinceXML server',
+        default=None,
+        required=False,
+    )
+
+    princexml_server_auth_password = schema.TextLine(
+        title=u'PrinceXML server auth password',
+        description=u'The basic auth password (if enabled) for PrinceXML server',
+        default=None,
+        required=False,
+    )
 
     google_maps_api_key = schema.TextLine(
         title=u'Google Maps API Key',
         default=None,
-        required=False)
+        required=False,
+    )
 
     google_api_email = schema.TextLine(
         title=u'Google API Email',
         default=None,
-        required=False)
+        required=False,
+    )
 
     google_api_service_key_file = schema.ASCII(
         title=u"Google API Service Key File",
@@ -316,19 +338,31 @@ class IAPISettings(Interface):
 
     google_analytics_id = schema.TextLine(
         title=u'Google Analytics ID',
-        description=u'for use with gathering content statistics',
+        description=u'for use with gathering content statistics with GA4',
         required=False)
+
+    universal_analytics_id = schema.TextLine(
+        title=u'Universal Analytics ID',
+        description=u'for use with gathering content statistics with UA',
+        required=False)
+
+    gst_enabled = schema.Bool(
+        title=u'Enable Global Site Tags Throughout Site',
+        default=False)
+
+    gst_id = schema.TextLine(
+        title=u'Global Site Tag ID',
+        description=u'Provided by Google - Measurement ID in data streams',
+        required=False)
+
+    gtm_enabled = schema.Bool(
+        title=u'Enable Google Tag Manager Throughout Site',
+        default=False)
 
     gtm_id = schema.TextLine(
         title=u'Google Tag Manager Container ID',
         description=u'Provided by Google',
-        required=False
-    )
-
-    gtm_enabled = schema.Bool(
-        title=u'Enable Google Tag Manager Throughout Site',
-        default=False
-    )
+        required=False)
 
     recaptcha_public_key = schema.TextLine(
         title=u'Recaptcha 3 Public Key',

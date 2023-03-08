@@ -1,10 +1,40 @@
 Changelog
 =========
 
-3.0.0b117 (unreleased)
+3.0.0b121 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b120 (2023-03-08)
+----------------------
+
+- add support for GoogleAnalytics 4
+- add ability to disable, explicitly, country code checking in auth
+
+
+3.0.0b119 (2023-02-28)
+----------------------
+
+- update focal_image_tag to allow for overlays
+- add overlay support into query listings
+
+
+3.0.0b118 (2023-02-15)
+----------------------
+
+- Update cffi pin
+- add site-id command-line argument to script_runner\
+
+
+3.0.0b117 (2023-02-01)
+----------------------
+
+- update pdf functionality to work with prince server 15
+- add ability to provide simple auth to prince server
+- handle svg images correctly in inline_dom_images for pdf generation
+- handle ++resource++ and /++resource++ urls correctly in inline_dom_images
 
 
 3.0.0b116 (2022-11-04)

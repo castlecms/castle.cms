@@ -234,4 +234,3 @@ class SearchAjax(BrowserView):
             query)
 
         return json.dumps(results, default=custom_json_handler)
-

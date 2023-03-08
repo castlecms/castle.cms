@@ -150,7 +150,7 @@ _deferred_marker = 'deferred://'
 _type_marker = 'type://'
 _uid_marker = 'uid://'
 _uid_separator = '||||'
-_date_re = re.compile('^[0-9]{4}\-[0-9]{2}\-[0-9]{2}.*$')
+_date_re = re.compile('^[0-9]{4}\-[0-9]{2}\-[0-9]{2}.*$')  # noqa: W605
 
 
 export_folder = os.path.abspath(args.dir)
