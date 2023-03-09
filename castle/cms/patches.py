@@ -1,7 +1,9 @@
 import logging
+from six import iteritems as six_iteritems
 from time import time
 
 from AccessControl import getSecurityManager
+from Acquisition import aq_base
 from Acquisition import aq_parent
 from castle.cms import cache
 from castle.cms.constants import CASTLE_VERSION_STRING
@@ -13,10 +15,10 @@ from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import _cb_encode
 from OFS.CopySupport import eInvalid
 from OFS.CopySupport import eNoData
-from plone import api
 from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_tinymce_options
 from plone.app.z3cform.widget import RichTextWidget
+from plone.dexterity.utils import resolveDottedName
 from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
@@ -26,6 +28,8 @@ from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
+
+import plone.api as api
 
 
 logger = logging.getLogger('castle.cms')
@@ -170,6 +174,28 @@ def rich_text_args(self):
     args['pattern_options'] = merged_options
 
     return args
+
+
+# If a behavior provides an image field (or, probably, file or similar large blobby thing),
+# and data is stored for that field, then there's a whole complicated set of things that happen
+# to try to not store a copy of the blob, but instead a reference to it, as long as it hasn't changed.
+# this is perfectly reasonable. this data is retrieved in Products.CMFEditions as referenced_data,
+# a dict that has as keys the dotted names of interfaces (which again, can come from a behavior)
+# this method here, then, after doing some incomprehensible stuff, attempts to use those interfaces
+# to look up fields and then adapt them, which will fail if the dexterity object no longer provides
+# that interface (due to, for example, a behavior being removed). This patch attempts to bypass the
+# part of the code that will fail if the interface is no longer provided.
+def reattachReferencedAttributes(self, obj, attributes_dict):
+    obj = aq_base(obj)
+    for name, blob in six_iteritems(attributes_dict):
+        interface = resolveDottedName('.'.join(name.split('.')[:-1]))
+        if interface.providedBy(obj):  # Interface may have come from now-deactivated behavior or similar
+            field_name = name.split('.')[-1]
+            field = interface.get(field_name)
+            if field is not None:  # Field may have been removed from schema
+                    adapted_field = field.get(interface(obj))
+                    if adapted_field:
+                        adapted_field._blob = blob
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
