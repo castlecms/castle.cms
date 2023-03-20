@@ -399,6 +399,11 @@ class IAPISettings(Interface):
         required=False,
         default=None)
 
+    plivo_enabled = schema.Bool(
+        title=u'Enable Plivo',
+        description=u'Enable or disable Plivo usage, if auth id/token/number are configured.',
+        default=True)
+
     plivo_auth_id = schema.TextLine(
         title=u'Plivo Auth ID',
         description=u'Text messaging API',
@@ -412,6 +417,31 @@ class IAPISettings(Interface):
         title=u'Plivo Source Number',
         description=u'For making text messages from',
         required=False)
+
+    twilio_enabled = schema.Bool(
+        title=u'Enable Twilio',
+        description=u'Enable or disable Twilio usage, if account sid/auth token/from number are configured.',
+        default=False)
+
+    twilio_override = schema.Bool(
+        title=u'Override use of Plivo with Twilio',
+        description=u'If both Twilio and Plivo config are enabled, then Twilio will take '
+                    u'precedence if this is enabled.',
+        default=False)
+
+    twilio_account_sid = schema.TextLine(
+        title=u'Twilio Account SID',
+        required=False)
+
+    twilio_auth_token = schema.TextLine(
+        title=u'Twilio Auth Token',
+        required=False)
+
+    twilio_from = schema.TextLine(
+        title=u'Twilio From Number',
+        description=u'Phone number that will send sms messages',
+        required=False)
+
 
     etherpad_url = schema.TextLine(
         title=u'Etherpad URL',
