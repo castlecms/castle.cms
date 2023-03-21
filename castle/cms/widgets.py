@@ -197,6 +197,13 @@ def QueryFieldWidget(field, request):
     return z3c.form.widget.FieldWidget(field, QueryStringWidget(request))
 
 
+# TODO: widget definition
+@adapter(IField, ICastleLayer)
+@implementer(IFieldWidget)
+def CastleFieldWidget(field, request):
+    return z3c.form.widget.FieldWidget(field, QueryStringWidget(request))
+
+
 @adapter(IField, ICastleLayer)
 @implementer(IFieldWidget)
 def RelatedItemsFieldWidget(field, request):

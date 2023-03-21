@@ -26,6 +26,23 @@
     name="castle.cms.easyform.field.QueryChoice"
     />
 
+  <!-- Castle specific override for choice field -->
+  <utility
+    name="castle.cms.easyform.field.CastleChoice"
+    component=".field.CastleChoiceFactory"
+    />
+  <adapter factory=".field.getCastleChoiceFieldSchema" />
+  <adapter factory=".field.TextLineCastleChoiceField"
+           provides=".field.ICastleChoiceFieldSchema" />
+  <!-- z3c.form terms translation -->
+  <adapter factory=".terms.CastleChoiceTerms" />
+
+  <!-- supermodel integration to be able to (de)?serialize field -->
+  <utility
+    component=".supermodel.CastleChoiceImportExportHandler"
+    name="castle.cms.easyform.field.CastleChoice"
+    />
+
   <!--
   Tweak toolbar so when you're on fields, you can click the "View Page" button
   and go back
