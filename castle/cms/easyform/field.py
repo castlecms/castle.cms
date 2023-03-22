@@ -167,58 +167,6 @@ class TextLineQueryChoiceField(TextLineChoiceField):
 
 # TODO:
 #! --------------- CASTLE CHOICE SCHEMA ---------------
-
-class ICastleChoice(IChoice):
-    query = schema.List(
-        title=u'Query',
-        value_type=schema.Dict(value_type=schema.Field(),
-                               key_type=schema.TextLine()),
-        required=False
-    )
-
-    sort_on = schema.TextLine(
-        title=u'Sort on',
-        required=False,
-        default=u'effective'
-    )
-
-    sort_reversed = schema.Bool(
-        title=u'Reversed order',
-        required=False,
-        default=True
-    )
-
-    limit = schema.Int(
-        title=u'Limit',
-        required=False,
-        default=15,
-        min=1,
-    )
-
-
-@implementer(ICastleChoice)
-class CastleChoice(schema.Choice):
-
-    def __init__(self, query=None, sort_on='effective', sort_reversed=True,
-                 limit=15, **kw):
-        self.query = query or []
-        self.sort_on = sort_on
-        self.sort_reversed = sort_reversed
-        self.limit = limit
-        kw['source'] = CastleChoiceSource(self)  # bind to field
-        self._fix_query()
-        super(CastleChoice, self).__init__(**kw)
-
-    def _fix_query(self):
-        # does not save data properly often here
-        for item in (self.query or []):
-            if (item['v'] and
-                    isinstance(item['v'], basestring) and
-                    item['v'][0] in ('[', '{') and
-                    item['v'][-1] in (']', '}')):
-                item['v'] = ast.literal_eval(item['v'])
-
-
 @implementer(IContextSourceBinder)
 class CastleChoiceSource(object):
     __name__ = 'CastleChoiceSource'
@@ -231,37 +179,45 @@ class CastleChoiceSource(object):
             IUUID(context, 'default'), self.field.__name__)
 
     def __call__(self, context):
-        cache_key = self.get_cache_key(context)
-        request = getRequest()
-        if request is not None and cache_key in request.environ:
-            # prevent doing query many times
-            return request.environ[cache_key]
-
-        if not self.field.query:
+        if self.field.possible_values == []:
             return SimpleVocabulary([])
+        else:
+            default_none_val = SimpleVocabulary.createTerm(None, None, None)
+            terms = [default_none_val]
+            for item in self.field.possible_values:
+                terms.append(
+                    SimpleVocabulary.createTerm(item, item, item))
 
-        query = parse_query_from_data({
-            'query': self.field.query,
-            'sort_on': self.field.sort_on,
-            'sort_reversed': self.field.sort_reversed,
-        })
-        catalog = getToolByName(context, 'portal_catalog')
-        if query.get('sort_on', '') not in catalog._catalog.indexes:
-            query['sort_on'] = 'effective'
-
-        terms = []
-        for item in catalog(**query)[:self.field.limit]:
-            terms.append(
-                SimpleVocabulary.createTerm(item.id, item.id, item.Title))
-
-        value = SimpleVocabulary(terms)
-        if request is not None:
-            request.environ[cache_key] = value
-        return value
+            return SimpleVocabulary(terms)
 
 
 # so we can still resolve correctly
 alsoProvides(CastleChoiceSource, IContextSourceBinder)
+
+
+class ICastleChoice(IChoice):
+    possible_values = schema.List(
+        title=u'Possible values',
+        description=u'Enter allowed choices one per line.',
+        value_type=schema.TextLine()
+    )
+
+    # vocabulary_name = schema.Choice(
+    #     title=u'Vocabulary name',
+    #     description=u'Vocabulary name to lookup in the vocabulary registry',
+    #     default=u'',
+    #     vocabulary='castle.cms.vocabularies.MimeTypes'
+    # )
+
+
+@implementer(ICastleChoice)
+class CastleChoice(schema.Choice):
+
+    def __init__(self, possible_values=[], **kw):
+        self.possible_values = possible_values
+        # self.vocabulary_name = vocabulary_name
+        kw['source'] = CastleChoiceSource(self)  # bind to field
+        super(CastleChoice, self).__init__(**kw)
 
 
 CastleChoiceFactory = FieldFactory(
@@ -270,32 +226,18 @@ CastleChoiceFactory = FieldFactory(
 
 
 class ICastleChoiceFieldSchema(IField):
-    form.widget(query=CastleFieldWidget)
-    query = schema.List(
-        title=u'Query',
-        value_type=schema.Dict(value_type=schema.Field(),
-                               key_type=schema.TextLine()),
-        required=False
+    possible_values = schema.List(
+        title=u'Possible values',
+        description=u'Enter allowed choices one per line.',
+        value_type=schema.TextLine()
     )
 
-    sort_on = schema.TextLine(
-        title=u'Sort on',
-        required=False,
-        default=u'effective'
-    )
-
-    sort_reversed = schema.Bool(
-        title=u'Reversed order',
-        required=False,
-        default=True
-    )
-
-    limit = schema.Int(
-        title=u'Limit',
-        required=False,
-        default=15,
-        min=1,
-    )
+    # vocabulary_name = schema.Choice(
+    #     title=u'Vocabulary name',
+    #     description=u'Vocabulary name to lookup in the vocabulary registry',
+    #     default=u'',
+    #     vocabulary='castle.cms.vocabularies.MimeTypes'
+    # )
 
 
 @implementer(IFieldEditFormSchema)

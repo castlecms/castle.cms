@@ -34,8 +34,6 @@
   <adapter factory=".field.getCastleChoiceFieldSchema" />
   <adapter factory=".field.TextLineCastleChoiceField"
            provides=".field.ICastleChoiceFieldSchema" />
-  <!-- z3c.form terms translation -->
-  <adapter factory=".terms.CastleChoiceTerms" />
 
   <!-- supermodel integration to be able to (de)?serialize field -->
   <utility

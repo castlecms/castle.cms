@@ -6,7 +6,7 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 
-from .field import ICastleChoice, IQueryChoice
+from .field import IQueryChoice
 
 
 @implementer(ITerms)
@@ -17,15 +17,4 @@ from .field import ICastleChoice, IQueryChoice
     IQueryChoice,
     IWidget)
 def QueryChoiceTerms(context, request, form, field, widget):
-    return term.ChoiceTerms(context, request, form, field, widget)
-
-
-@implementer(ITerms)
-@adapter(
-    Interface,
-    ICastleLayer,
-    Interface,
-    ICastleChoice,
-    IWidget)
-def CastleChoiceTerms(context, request, form, field, widget):
     return term.ChoiceTerms(context, request, form, field, widget)
