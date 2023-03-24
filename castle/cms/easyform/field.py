@@ -2,7 +2,7 @@ import ast
 from plone.uuid.interfaces import IUUID
 
 from castle.cms.utils import parse_query_from_data
-from castle.cms.widgets import CastleFieldWidget, QueryFieldWidget
+from castle.cms.widgets import QueryFieldWidget
 from plone.autoform import directives as form
 from plone.schemaeditor.fields import FieldFactory
 from plone.schemaeditor.fields import TextLineChoiceField
@@ -14,6 +14,8 @@ from zope.globalrequest import getRequest
 from zope.i18nmessageid import MessageFactory
 from zope.interface import alsoProvides
 from zope.interface import implementer
+from zope.interface import Invalid
+from zope.interface import invariant
 from zope.schema.interfaces import IChoice
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IField
@@ -180,7 +182,13 @@ class CastleChoiceSource(object):
 
     def __call__(self, context):
         if self.field.possible_values == []:
-            return SimpleVocabulary([])
+            if self.field.vocabulary_name == None:
+                return SimpleVocabulary([])
+            else:
+                # TODO: use vocab selection if there are no fields input.
+                # get name of vocabulary from vocabulary_name value and lookup all vocab terms associated with it
+                thing = 'vocabulary: %s' % self.field.vocabulary_name
+                return SimpleVocabulary([SimpleVocabulary.createTerm(thing, thing, thing)])
         else:
             default_none_val = SimpleVocabulary.createTerm(None, None, None)
             terms = [default_none_val]
@@ -199,23 +207,31 @@ class ICastleChoice(IChoice):
     possible_values = schema.List(
         title=u'Possible values',
         description=u'Enter allowed choices one per line.',
-        value_type=schema.TextLine()
+        value_type=schema.TextLine(),
+        required=False
     )
 
-    # vocabulary_name = schema.Choice(
-    #     title=u'Vocabulary name',
-    #     description=u'Vocabulary name to lookup in the vocabulary registry',
-    #     default=u'',
-    #     vocabulary='castle.cms.vocabularies.MimeTypes'
-    # )
+    vocabulary_name = schema.Choice(
+        title=u'Vocabulary name',
+        description=u'Vocabulary name to lookup in the vocabulary registry',
+        default=u'',
+        vocabulary='plone.app.vocabularies.Groups',
+        required=False
+    )
+
+    @invariant
+    def validate(data):
+        if data.possible_values and data.vocabulary_name:
+            msg = 'You can not set a vocabulary name AND vocabulary values. Please clear values field or set "No value" for vocabulary name.'
+            raise Invalid(_(msg))
 
 
 @implementer(ICastleChoice)
 class CastleChoice(schema.Choice):
 
-    def __init__(self, possible_values=[], **kw):
+    def __init__(self, possible_values=[], vocabulary_name=None, **kw):
         self.possible_values = possible_values
-        # self.vocabulary_name = vocabulary_name
+        self.vocabulary_name = vocabulary_name
         kw['source'] = CastleChoiceSource(self)  # bind to field
         super(CastleChoice, self).__init__(**kw)
 
@@ -229,15 +245,23 @@ class ICastleChoiceFieldSchema(IField):
     possible_values = schema.List(
         title=u'Possible values',
         description=u'Enter allowed choices one per line.',
-        value_type=schema.TextLine()
+        value_type=schema.TextLine(),
+        required=False
     )
 
-    # vocabulary_name = schema.Choice(
-    #     title=u'Vocabulary name',
-    #     description=u'Vocabulary name to lookup in the vocabulary registry',
-    #     default=u'',
-    #     vocabulary='castle.cms.vocabularies.MimeTypes'
-    # )
+    vocabulary_name = schema.Choice(
+        title=u'Vocabulary name',
+        description=u'Vocabulary name to lookup in the vocabulary registry',
+        default=u'',
+        vocabulary='plone.app.vocabularies.Groups',
+        required=False
+    )
+
+    @invariant
+    def validate(data):
+        if data.possible_values and data.vocabulary_name:
+            msg = 'You can not set a vocabulary name AND vocabulary values. Please clear values field or set "No value" for vocabulary name.'
+            raise Invalid(_(msg))
 
 
 @implementer(IFieldEditFormSchema)
