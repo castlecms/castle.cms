@@ -88,11 +88,11 @@ Development setup on macOS
 1. ``brew install redis elasticsearch libav python``
 2. ``git clone git@github.com:castlecms/castle.cms.git``
 3. ``cd castle.cms``
-4. ``virtualenv -p python2.7 .``
-5. ``bin/pip install --upgrade pip``
-6. ``bin/pip install -r requirements.txt``
-7. ``bin/buildout``
-8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg``
+4. ``virtualenv -p python2.7 env``
+5. ``env/bin/pip install --upgrade pip``
+6. ``env/bin/pip install -r requirements.txt``
+7. ``env/bin/buildout``
+8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``env/bin/instance fg``
 9. Browse to http://localhost:8080/
 10. Once you have created a site in the development instance, run init-dev script to populate templates, ``bin/instance run castle/cms/_scripts/init-dev.py``
 

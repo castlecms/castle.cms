@@ -30,22 +30,29 @@
                    active info/active;
                    reserved info/reserved;
                    stats info/stats;
+                   registered info/registered;
                    status_ok python: workers != ''">
     <ul tal:condition="not: status_ok">
         There was an error connecting to Celery
     </ul>
 
     <div tal:condition="status_ok">
-        <h2>Registered Workers</h2>
+        <h2>Registered Workers: ${python: len(workers)}</h2>
         <ul tal:condition="python: workers and len(workers)">
           <tal:worker tal:repeat="worker python: workers.keys()">
             <li tal:define="status python: workers[worker]['ok']">
               ${worker} - ${python: status == 'pong' and 'ok' or 'bad'}
               <ul tal:on-error="nothing"
                   tal:define="wstats python: stats.get(worker, {}).get('total', [])">
-                <li tal:repeat="task_id python: wstats.keys()">
-                  ${python: view.get_task_name(task_id)} - ${python: wstats[task_id]}
+                <li>Registered Tasks: ${python: len(registered.get(worker))}</li>
+                <li>Active Tasks
+                  <span tal:condition="python: len(wstats.keys()) == 0">: 0</span>
                 </li>
+                <ul>
+                  <li tal:repeat="task_id python: wstats.keys()">
+                    ${python: view.get_task_name(task_id)} - ${python: wstats[task_id]}
+                  </li>
+                </ul>
               </ul>
             </li>
           </tal:worker>

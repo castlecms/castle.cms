@@ -24,11 +24,16 @@ class CeleryControlPanel(BrowserView):
             stats = ins.stats()
         except Exception:
             stats = ''
+        try:
+            registered = ins.registered()
+        except Exception:
+            registered = ''
         return {
             'workers': ping,
             'active': active,
             'reserved': reserved,
-            'stats': stats
+            'stats': stats,
+            'registered': registered,
         }
 
     def get_task_name(self, _id):
