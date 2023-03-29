@@ -63,7 +63,7 @@ def get_popularity(site):
             data[key + '_shares'] = value
 
         if IPloneSiteRoot.providedBy(ob):
-            ob = ob[getDefaultPage(ob)]
+            ob = ob[get_default_page(ob)]
 
         bulk_data.extend([{
             'update': {

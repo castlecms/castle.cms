@@ -22,8 +22,7 @@
     style="${python: view.font_sizes.get('query_listing','')}"
 >
   <tal:item tal:repeat="item python: results['items']">
-  <tal:wrap
-    tal:define="
+  <tal:wrap tal:define="
                   base_url item/getURL;
                   url python: utils.get_object_url(item);
                   has_image python: utils.has_image(item);
