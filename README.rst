@@ -92,7 +92,7 @@ Development setup on macOS
 5. ``env/bin/pip install --upgrade pip``
 6. ``env/bin/pip install -r requirements.txt``
 7. ``env/bin/buildout``
-8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``env/bin/instance fg``
+8. Run (in separate terminal windows) ``redis-server``, ``env/bin/instance fg``
 9. Browse to http://localhost:8080/
 10. Once you have created a site in the development instance, run init-dev script to populate templates, ``bin/instance run castle/cms/_scripts/init-dev.py``
 

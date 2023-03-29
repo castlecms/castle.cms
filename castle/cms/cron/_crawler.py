@@ -18,7 +18,6 @@ from zope.component import getUtility
 from castle.cms import archival
 from castle.cms import cache
 from castle.cms.constants import CRAWLED_DATA_KEY
-from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 from castle.cms.cron.utils import spoof_request
@@ -90,16 +89,21 @@ class Crawler(object):
 
     def crawl_page(self, url):
         logger.info('Indexing ' + url)
-        resp = requests.get(url, stream=True, headers={
-            'User-Agent': self.settings.crawler_user_agent
-        })
-        if resp.status_code == 404 or \
-          'html' not in resp.headers.get('content-type', '') or \
-          int(resp.headers.get('content-length', 0)) \
-              >= MAX_PAGE_SIZE:
+        try:
+            resp = requests.get(url, headers={
+                'User-Agent': self.settings.crawler_user_agent
+            })
+        except Exception:
+            # unable to access the page, remove for now
+            return False
+        if resp.status_code == 404 or 'html' not in resp.headers.get('content-type', ''):
             # remove from index
             return False
-        dom = html.fromstring(resp.content)
+        try:
+            dom = html.fromstring(resp.content)
+        except etree.XMLSyntaxError:
+            # unable to parse html, remove for now
+            return False  # lxml has been known to throw this as a bug, maybe use BeautifulSoup
         parsed = urlparse(url)
         data = {
             'url': url,
@@ -254,6 +258,7 @@ def crawl_site(site, full=False):
     registry = getUtility(IRegistry)
     settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
     if not settings.crawler_active or not settings.crawler_site_maps:
+        logger.info("Crawler must first be enabled in Site Setup")
         return False
 
     if not hps.is_enabled():
