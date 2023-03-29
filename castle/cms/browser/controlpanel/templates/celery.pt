@@ -44,10 +44,10 @@
               ${worker} - ${python: status == 'pong' and 'ok' or 'bad'}
               <ul tal:on-error="nothing"
                   tal:define="wstats python: stats.get(worker, {}).get('total', [])">
-                <li>Registered Tasks: ${python: len(registered.get(worker))}</li>
-                <li>Active Tasks
-                  <span tal:condition="python: len(wstats.keys()) == 0">: 0</span>
-                </li>
+                  <li>Registered Tasks: ${python: len(registered.get(worker))}</li>
+                  <li>Active Tasks
+                    <span tal:condition="python: len(wstats.keys()) == 0">: 0</span>
+                  </li>
                 <ul>
                   <li tal:repeat="task_id python: wstats.keys()">
                     ${python: view.get_task_name(task_id)} - ${python: wstats[task_id]}
