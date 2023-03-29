@@ -2,6 +2,7 @@ import ast
 from plone.uuid.interfaces import IUUID
 
 from castle.cms.utils import parse_query_from_data
+from castle.cms.vocabularies import castle_vocabularies
 from castle.cms.widgets import QueryFieldWidget
 from plone.autoform import directives as form
 from plone.schemaeditor.fields import FieldFactory
@@ -167,8 +168,6 @@ class TextLineQueryChoiceField(TextLineChoiceField):
     pass
 
 
-# TODO:
-#! --------------- CASTLE CHOICE SCHEMA ---------------
 @implementer(IContextSourceBinder)
 class CastleChoiceSource(object):
     __name__ = 'CastleChoiceSource'
@@ -181,20 +180,22 @@ class CastleChoiceSource(object):
             IUUID(context, 'default'), self.field.__name__)
 
     def __call__(self, context):
+        default_none_val = SimpleVocabulary.createTerm(None, None, None)
         if self.field.possible_values == []:
             if self.field.vocabulary_name == None:
                 return SimpleVocabulary([])
             else:
-                # TODO: use vocab selection if there are no fields input.
-                # get name of vocabulary from vocabulary_name value and lookup all vocab terms associated with it
-                thing = 'vocabulary: %s' % self.field.vocabulary_name
-                return SimpleVocabulary([SimpleVocabulary.createTerm(thing, thing, thing)])
+                try:
+                    vocab = castle_vocabularies[self.field.vocabulary_name](context)
+                except TypeError:
+                    vocab = castle_vocabularies[self.field.vocabulary_name]
+                vocab._terms.insert(0, default_none_val)
+                return vocab
         else:
-            default_none_val = SimpleVocabulary.createTerm(None, None, None)
             terms = [default_none_val]
-            for item in self.field.possible_values:
+            for term in self.field.possible_values:
                 terms.append(
-                    SimpleVocabulary.createTerm(item, item, item))
+                    SimpleVocabulary.createTerm(term, term, term))
 
             return SimpleVocabulary(terms)
 
@@ -214,8 +215,7 @@ class ICastleChoice(IChoice):
     vocabulary_name = schema.Choice(
         title=u'Vocabulary name',
         description=u'Vocabulary name to lookup in the vocabulary registry',
-        default=u'',
-        vocabulary='plone.app.vocabularies.Groups',
+        values=castle_vocabularies.keys(),
         required=False
     )
 
@@ -252,8 +252,7 @@ class ICastleChoiceFieldSchema(IField):
     vocabulary_name = schema.Choice(
         title=u'Vocabulary name',
         description=u'Vocabulary name to lookup in the vocabulary registry',
-        default=u'',
-        vocabulary='plone.app.vocabularies.Groups',
+        values=castle_vocabularies.keys(),
         required=False
     )
 
