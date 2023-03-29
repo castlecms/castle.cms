@@ -142,7 +142,6 @@ Running local dependencies with docker
 
     or, just the essentials:
     $ docker run -p 6379:6379 redis
-    $ docker run -p 9200:9200 elasticsearch:2.4-alpine
 
 
 Forks/Custom releases
