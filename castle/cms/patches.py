@@ -8,8 +8,6 @@ from castle.cms.constants import CASTLE_VERSION_STRING
 from castle.cms.events import AppInitializedEvent
 from castle.cms.interfaces import ICastleApplication
 from celery.result import AsyncResult
-from collective.elasticsearch.es import CUSTOM_INDEX_NAME_ATTR
-from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import _cb_encode
@@ -22,7 +20,6 @@ from plone.app.z3cform.widget import RichTextWidget
 from plone.keyring.interfaces import IKeyManager
 from plone.session import tktauth
 from plone.transformchain.interfaces import ITransform
-from Products.CMFPlone.CatalogTool import CatalogTool
 from Products.CMFPlone.resources import add_resource_on_request
 from ZODB.POSException import ConnectionStateError
 from zope.component import getGlobalSiteManager
@@ -39,16 +36,6 @@ def HideSiteLayoutFields_update(self):
     we don't want to hide these fields
     """
     return
-
-
-if not hasattr(ElasticSearchCatalog, 'original_searchResults'):
-    ElasticSearchCatalog.original_searchResults = ElasticSearchCatalog.searchResults  # noqa
-
-    def searchResultsTrashed(self, REQUEST=None, check_perms=False, **kw):
-        if 'trashed' not in kw:
-            kw['trashed'] = False
-        return self.original_searchResults(REQUEST, check_perms, **kw)
-    ElasticSearchCatalog.searchResults = searchResultsTrashed
 
 
 def Content_addCreator(self, creator=None):
@@ -158,20 +145,6 @@ def SessionPlugin_validateTicket(self, ticket, now=None):
             logger.warning(
                 'Connection state error, swallowing', exc_info=True)
     return ticket_data
-
-
-def es_custom_index(self, catalogtool):
-    es_index_enabled = api.portal.get_registry_record('castle.es_index_enabled', default=False)
-    if es_index_enabled:
-        new_index = api.portal.get_registry_record('castle.es_index')
-        setattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR, new_index)
-    else:
-        try:
-            delattr(CatalogTool, CUSTOM_INDEX_NAME_ATTR)
-        except AttributeError:
-            pass
-
-    self._old___init__(catalogtool)
 
 
 def version_overview(self):

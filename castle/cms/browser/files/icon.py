@@ -25,7 +25,7 @@ class IconView(NamedFileDownload):
 <link rel="apple-touch-icon" sizes="180x180" href="/site-icon.png">
 <link rel="icon" type="image/png" href="/site-icon.png?scale=32" sizes="32x32">
 <link rel="icon" type="image/png" href="//site-icon.png?scale=16" sizes="16x16">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
 
 <!-- can't do this one!!! no way to convert to svg -->
 <link rel="mask-icon" href="/site-icon.svg" color="#5bbad5">

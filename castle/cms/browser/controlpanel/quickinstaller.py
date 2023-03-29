@@ -15,7 +15,7 @@ class ManageProductsView(quickinstaller.ManageProductsView):
         'plone.app.tiles',
         'plone.app.mosaic',
         'collective.documentviewer',
-        'collective.elasticsearch',
+        'wildcard.hps',
         'Products.CMFPlone'
     )
 

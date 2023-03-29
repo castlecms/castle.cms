@@ -1,17 +1,13 @@
 from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
 from castle.cms.utils import get_public_url
-from collective.elasticsearch.es import ElasticSearchCatalog
-from collective.elasticsearch.interfaces import IQueryAssembler
+from castle.cms.indexing import hps
+
 from DateTime import DateTime
-from elasticsearch import TransportError
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.resources import add_resource_on_request
-from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.Five import BrowserView
-from urlparse import urljoin
 from urlparse import urlparse
-from zope.component import getMultiAdapter
 from zope.component import getUtility
 import dateutil.parser
 
@@ -30,12 +26,6 @@ def custom_json_handler(obj):
     return obj
 
 
-def _one(val):
-    if val and type(val) == list and len(val) == 1:
-        val = val[0]
-    return val
-
-
 class Search(BrowserView):
     def __call__(self):
         # utility function to add resource to rendered page
@@ -44,19 +34,22 @@ class Search(BrowserView):
 
     @property
     def options(self):
-        search_types = [{
-            'id': 'images',
-            'label': 'Image',
-            'query': {
-                'portal_type': 'Image'
+        search_types = [
+            {
+                'id': 'images',
+                'label': 'Image',
+                'query': {
+                    'portal_type': 'Image'
+                }
+            },
+            {
+                'id': 'page',
+                'label': 'Page',
+                'query': {
+                    'portal_type': ['Document', 'Folder']
+                }
             }
-        }, {
-            'id': 'page',
-            'label': 'Page',
-            'query': {
-                'portal_type': ['Document', 'Folder']
-            }
-        }]
+        ]
 
         ptypes = api.portal.get_tool('portal_types')
         allow_anyway = ['Audio']
@@ -73,40 +66,17 @@ class Search(BrowserView):
                     'portal_type': type_id
                 }
             })
-        # search_types.append({
-        #     'id': 'audio',
-        #     'label': 'Audio',
-        #     'query': {
-        #         'portal_type': 'Audio'
-        #     }
-        # })
-        # search_types.sort(key=lambda type: type['label'])
 
         additional_sites = []
-        es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
-        if es.enabled:
-            query = {
-                "size": 0,
-                "aggregations": {
-                    "totals": {
-                        "terms": {
-                            "field": "domain"
-                        }
-                    }
-                }
-            }
-            try:
-                result = es.connection.search(
-                    index=es.index_name,
-                    doc_type=CRAWLED_SITE_ES_DOC_TYPE,
-                    body=query)
-                for res in result['aggregations']['totals']['buckets']:
-                    site_name = res.get('key')
-                    if '.' not in site_name or 'amazon' in site_name:
-                        continue
-                    additional_sites.append(site_name)
-            except TransportError:
-                pass
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
+        if hps.is_enabled() and settings.crawler_active and settings.crawler_site_maps:
+            result = hps.get_index_summary(hps.get_index_name(), dict(field="domain"))
+            for res in result:
+                site_name = res.get('key')
+                if '.' not in site_name or 'amazon' in site_name:
+                    continue
+                additional_sites.append(site_name)
 
         parsed = urlparse(get_public_url())
         return json.dumps({
@@ -203,10 +173,9 @@ class SearchAjax(BrowserView):
             page = int(self.request.form.get('page'))
         except Exception:
             page = 1
-        catalog = api.portal.get_tool('portal_catalog')
-        es = ElasticSearchCatalog(catalog)
-        if es.enabled:
-            return self.get_es_results(page, page_size, query)
+
+        if hps.is_enabled():
+            return self.get_hps_results(page, page_size, query)
         else:
             return self.get_results(page, page_size, query)
 
@@ -243,106 +212,25 @@ class SearchAjax(BrowserView):
             'suggestions': []
         }, default=custom_json_handler)
 
-    def get_es_results(self, page, page_size, query):
-        start = (page - 1) * page_size
-        site_path = '/'.join(self.context.getPhysicalPath())
-        base_site_url = self.context.absolute_url()
+    def get_hps_results(self, page, page_size, query):
+        # returns json:
+        #   - count -- total hits
+        #   - results -- list of items:
+        #       - review_state -- always 'published'
+        #       - score
+        #       - path
+        #       - base_url
+        #       - url
+        #   - page
+        #   - suggestions -- list of objects from opensearch
 
-        results = suggestions = []
-        count = 0
-        if len(query) > 0:
-            results = self.search_es(query, start, page_size)
-            count = results['hits']['total']
-            try:
-                suggestions = results['suggest']['SearchableText'][0]['options']
-            except Exception:
-                suggestions = []
-            results = results['hits']['hits']
+        results = hps.get_search_results(
+            self.context,
+            self.request,
+            self.catalog,
+            _search_attributes,
+            page,
+            page_size,
+            query)
 
-        registry = getUtility(IRegistry)
-        view_types = registry.get('plone.types_use_view_action_in_listings', [])
-
-        items = []
-        for res in results:
-            fields = res['fields']
-
-            attrs = {}
-            for key in _search_attributes:
-                val = fields.get(key)
-                attrs[key] = _one(val)
-
-            if 'url' not in fields:
-                path = fields.get('path.path', [''])
-                path = path[0]
-                path = path[len(site_path):]
-                url = base_url = urljoin(base_site_url + '/', path.lstrip('/'))
-                if attrs.get('portal_type') in view_types:
-                    url += '/view'
-            else:
-                url = base_url = _one(fields['url'])
-                parsed = urlparse(url)
-                path = parsed.path
-
-            attrs.update({
-                'review_state': 'published',
-                'score': res['_score'],
-                'path': path,
-                'base_url': base_url,
-                'url': url
-            })
-
-            items.append(attrs)
-
-        return json.dumps({
-            'count': count,
-            'results': items,
-            'page': page,
-            'suggestions': suggestions
-        }, default=custom_json_handler)
-
-    def search_es(self, query, start, size):
-        user = _getAuthenticatedUser(self.catalog)
-        query['allowedRolesAndUsers'] = self.catalog._listAllowedRolesAndUsers(user)
-
-        es = ElasticSearchCatalog(self.catalog)
-        qassembler = getMultiAdapter((self.request, es), IQueryAssembler)
-        dquery, sort = qassembler.normalize(query)
-        equery = qassembler(dquery)
-
-        doc_type = es.doc_type
-        if 'searchSite' in self.request.form:
-            doc_type = CRAWLED_SITE_ES_DOC_TYPE
-            equery = {
-                'filtered': {
-                    'filter': {
-                        "term": {
-                            "domain": self.request.form['searchSite']
-                        }
-                    },
-                    'query': equery['function_score']['query']['filtered']['query']
-                }
-            }
-
-        query = {
-            'query': equery,
-            "suggest": {
-                "SearchableText": {
-                    "text": query.get('SearchableText', ''),
-                    "term": {
-                        "field": "SearchableText"
-                    }
-                }
-            },
-            'sort': sort
-        }
-
-        query_params = {
-            'from_': start,
-            'size': size,
-            'fields': ','.join(_search_attributes) + ',path.path'
-        }
-
-        return es.connection.search(index=es.index_name,
-                                    doc_type=doc_type,
-                                    body=query,
-                                    **query_params)
+        return json.dumps(results, default=custom_json_handler)

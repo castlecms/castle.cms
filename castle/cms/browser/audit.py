@@ -1,15 +1,48 @@
-from castle.cms import audit
-from castle.cms.utils import ESConnectionFactoryFactory
+"""
+Environment Variables:
+
+# see castle.cms.audit
+CASTLE_CMS_AUDIT_LOG_INSTANCE
+
+# we assume all logs are submitted to the same index per-instance
+# we assume that specific site audit logs can be fetched by including
+#   'schema_type', 'schema_version', 'instance', and 'site' as attributes
+#   to the search query to this index
+CASTLE_CMS_AUDIT_LOG_INDEXNAME
+
+# if audit logs records are coming from a opensearch index that was populated
+# by, eg, castle.cms.gelf.GELFHandler, then the log data will be key's on
+# an attribute like 'full_message' in the _source results
+CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX
+
+# opensearch connections are made using the WildcardHPSCatalog object,
+# ultimately, but do not necessarily sit on the same instance of opensearch,
+# and therefore the connection settings used for the audit log have a
+# different prefix, which is AUDIT_OPENSEARCH_ instead of just OPENSEARCH_
+#
+# see wildcard.hps.opensearch for the details of the connection settings
+AUDIT_OPENSEARCH_*
+
+"""
+import csv
 from cStringIO import StringIO
+import logging
+import os
+
 from plone import api
 from plone.app.uuid.utils import uuidToObject
-from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getUtility
 
-import csv
+from castle.cms import audit
+from castle.cms.indexing.hps import gen_audit_query
+from castle.cms.indexing.hps import health_is_good
+from castle.cms.indexing.hps import hps_get_data
+from castle.cms.indexing.hps import is_enabled as hps_is_enabled
+
+
+logger = logging.getLogger("Plone")
 
 
 class AuditView(BrowserView):
@@ -27,13 +60,12 @@ class AuditView(BrowserView):
         self._user_cache = {}
         self.site_path = '/'.join(self.context.getPhysicalPath())
         try:
-            results = self.do_query()
-            self.results = results['hits']['hits']
-            self.total = results['hits']['total']
+            self.results, self.total, _ = self.do_query()
 
             if 'Export' in self.request.form.get('export', ''):
-                return self.export()
+                return self.export(data=self.results)
         except Exception:
+            logger.error("problem with querying hps", exc_info=True)
             self.inner_template = self.error_template
         return super(AuditView, self).__call__()
 
@@ -51,15 +83,15 @@ class AuditView(BrowserView):
         return user
 
     @property
-    def el_connected(self):
-        registry = getUtility(IRegistry)
-        if not registry.get('collective.elasticsearch.interfaces.IElasticSettings.enabled', False):
+    def field_map_prefix(self):
+        return os.getenv("CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX", None)
+
+    @property
+    def can_connect_to_index(self):
+        if not hps_is_enabled(foraudit=True):
             return False
-        es = ESConnectionFactoryFactory()()
-        try:
-            return es.cluster.health()['status'] in ('green', 'yellow')
-        except Exception:
-            return False
+
+        return health_is_good(foraudit=True)
 
     def get_obj(self, uid):
         return uuidToObject(uid)
@@ -73,89 +105,61 @@ class AuditView(BrowserView):
         return path
 
     def get_query(self):
-        filters = []
         form = self.request.form
-        if form.get('type'):
-            filters.append(
-                {'term': {'type': form.get('type')}}
-            )
+
         if self.user:
-            filters.append(
-                {'term': {'user': api.user.get_current().getId()}}
-            )
+            user = api.user.get_current().getId().lower()
         else:
-            if form.get('user'):
-                filters.append(
-                    {'term': {'user': form.get('user')}}
-                )
-        if form.get('content'):
-            items = form.get('content').split(';')
-            cqueries = []
-            for item in items:
-                cqueries.append({'term': {'object': item}})
-            filters.append(
-                {'or': cqueries}
-            )
-        if form.get('after'):
-            filters.append(
-                {'range': {'date': {'gte': form.get('after')}}}
-            )
-        if form.get('before'):
-            filters.append(
-                {'range': {'date': {'lte': form.get('before')}}}
-            )
-        if len(filters) == 0:
-            query = {
-                "query": {'match_all': {}}
-            }
-        else:
-            if len(filters) > 1:
-                qfilter = {'and': filters}
-            else:
-                qfilter = filters[0]
-            query = {
-                "query": {
-                    'filtered': {
-                        'filter': qfilter,
-                        'query': {'match_all': {}}
-                    }
-                }
-            }
+            user = form.get('user', '').lower()
+
+        if len(user.strip()) <= 0:
+            user = None
+
+        try:
+            site_path = '/'.join(api.portal.get().getPhysicalPath())
+        except api.exc.CannotGetPortalError:
+            site_path = '(zoperoot)'
+
+        query = gen_audit_query(
+            field_map_prefix=self.field_map_prefix,
+            sort="date",
+            sortdir="desc",
+            instance=os.getenv("CASTLE_CMS_AUDIT_LOG_INSTANCE"),
+            site=site_path,
+            typeval=form.get("type", None),
+            user=user,
+            content=form.get('content', None),
+            after=form.get('after', None),
+            before=form.get('before', None))
+
         return query
 
-    def export(self):
-        index_name = audit.get_index_name()
-        es = ESConnectionFactoryFactory()()
-        query = self.get_query()
-        results = es.search(
-            index=index_name,
-            doc_type=audit.es_doc_type,
-            body=query,
-            sort='date:desc',
-            size=3000)
+    def export(self, data=None):
+        if data is None:
+            index_name = audit.get_index_name()
+            query = self.get_query()
+            data, _, _ = hps_get_data(index_name, query, foraudit=True, size=3000)
+
         output = StringIO()
         writer = csv.writer(output)
-
         writer.writerow(['Action', 'Path', 'User', 'Summary', 'Date'])
-        for result in results['hits']['hits']:
-            data = result['_source']
+        for rowdata in data:
             writer.writerow([
-                data['name'],
-                self.get_path(data),
-                data['user'],
-                data['summary'],
-                data['date']
+                rowdata["actionname"],
+                self.get_path(rowdata),
+                rowdata["user"],
+                rowdata["summary"],
+                rowdata["date"]
             ])
+        output.seek(0)
 
         resp = self.request.response
         resp.setHeader('Content-Disposition', 'attachment; filename=export.csv')
         resp.setHeader('Content-Type', 'text/csv')
-        output.seek(0)
         return output.read()
 
     def do_query(self):
         index_name = audit.get_index_name()
-        es = ESConnectionFactoryFactory()()
         query = self.get_query()
 
         try:
@@ -163,12 +167,18 @@ class AuditView(BrowserView):
         except Exception:
             page = 1
         start = (page - 1) * self.limit
-        results = es.search(
-            index=index_name,
-            doc_type=audit.es_doc_type,
-            body=query,
-            sort='date:desc',
-            from_=start,
-            size=self.limit)
 
-        return results
+        results = hps_get_data(index_name, query, foraudit=True, from_=start, size=self.limit)
+
+        # process results into something a little less complex to handle within the template
+        finalresults = []
+        for result in results[0]:
+            data = result['_source']
+            # IE if the data is coming from a index that had it's content generated by
+            # castle.cms.gelf.GELFHandler, then the stored object would actually have
+            # a full_message field, which then has the various audit log fields
+            if self.field_map_prefix is not None:
+                data = data[self.field_map_prefix]
+            finalresults.append(data)
+
+        return finalresults, results[1], results[2]

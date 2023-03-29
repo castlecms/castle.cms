@@ -54,12 +54,12 @@
             </div>
         </div>
 
-        <div tal:define="elasticsearch_ok python:view.elasticsearch()[0]">
-            <div tal:condition="elasticsearch_ok">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Elasticsearch: OK
+        <div tal:define="wildcardhps_ok python:view.wildcardhps()[0]">
+            <div tal:condition="wildcardhps_ok">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> WildcardHPS (OpenSearch): OK
             </div>
-            <div tal:condition="not: elasticsearch_ok">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Elasticsearch: ERROR <span tal:content = "structure python: view.elasticsearch()[1]"/>
+            <div tal:condition="not: wildcardhps_ok">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> WildcardHPS (OpenSearch): ERROR <span tal:content = "structure python: view.wildcardhps()[1]"/>
             </div>
         </div>
 

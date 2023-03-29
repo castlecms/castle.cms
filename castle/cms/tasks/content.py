@@ -121,7 +121,7 @@ def delete_error_handle(where, op, mdatas):
 <p>Hi %s,</p>
 
 <p>The site has failed to delete the items.</p>
-
+<p> %s </p>
 <p>Please contact your administrator.</p>""" % (
                     name, where.lstrip('/')))
         except Exception:

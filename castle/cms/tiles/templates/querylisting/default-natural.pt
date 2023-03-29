@@ -32,14 +32,20 @@
       class="portal-type-${python: utils.normalize(item.portal_type)}">
     <div class="row">
       <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
-        <a href="${url}" class="overlay-image-container">
-            <img src="${base_url}/@@images/image/mini" alt="${item/Title}" />
-            <img
-              tal:condition="status_overlay_url"
-              src="${status_overlay_url}"
-              class="overlay-image"
-              alt="Status Overlay Banner"
-            />
+        <a
+          href="${url}"
+          class="overlay-image-container"
+        >
+          <img
+            src="${base_url}/@@images/image/mini"
+            alt="${item/Title}"
+          />
+          <img
+            tal:condition="status_overlay_url"
+            src="${status_overlay_url}"
+            class="overlay-image"
+            alt="Status Overlay Banner"
+          />
         </a>
       </div>
       <div class="col-lg-10 col-md-9 col-sm-8"

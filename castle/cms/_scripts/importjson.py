@@ -173,7 +173,10 @@ class CastleImporter(object):
         ('effective_date', 'setEffectiveDate'),
         ('expiration_date', 'setExpirationDate'),
     ]
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
@@ -284,7 +287,12 @@ class CastleImporter(object):
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
+<<<<<<< HEAD
                             import pdb; pdb.set_trace()
+=======
+                            import pdb
+                            pdb.set_trace()
+>>>>>>> master
                         raise
                     logger.error('Error creating content {}'
                                                 .format(filepath), exc_info=True)
@@ -319,7 +327,12 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
+<<<<<<< HEAD
                                 import pdb; pdb.set_trace()
+=======
+                                import pdb
+                                pdb.set_trace()
+>>>>>>> master
                             raise
 
             # set workflow / review history
@@ -337,7 +350,10 @@ class CastleImporter(object):
             self.fix_dates(obj, data)
             return obj
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     def fix_dates(self, obj, data):
         for key, index_function_name in self.date_functions:
             indexed_date = data['data'].get(key, None)
@@ -359,7 +375,10 @@ class CastleImporter(object):
                     )
                     logger.warn(warn_message)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
         if path is not args.export_directory:
@@ -396,7 +415,12 @@ class CastleImporter(object):
                                                                 exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
+<<<<<<< HEAD
                         import pdb; pdb.set_trace()
+=======
+                        import pdb
+                        pdb.set_trace()
+>>>>>>> master
                     raise
 
 #    app._p_jar.invalidateCache()  # noqa
