@@ -1,4 +1,4 @@
-from castle.cms.constants import CRAWLED_SITE_ES_DOC_TYPE
+from castle.cms.interfaces import ICrawlerConfiguration
 from castle.cms.utils import get_public_url
 from castle.cms.indexing import hps
 
@@ -112,7 +112,7 @@ _search_attributes = [
     'is_folderish',
     'portal_type',
     'review_state',
-    'url'
+    'path.path'
 ]
 
 _valid_params = [

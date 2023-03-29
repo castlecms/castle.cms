@@ -169,67 +169,99 @@ Update note(s):
 3.0.0b11 (2021-09-17)
 ---------------------
 
+- revert changes to Download class from PR#510
 - bump plone.namedfile to 3.0.11
-- revert Download related changes from PR#510
 
 
-2.10.3 (2021-09-14)
--------------------
+3.0.0b10 (2021-09-08)
+---------------------
 
-- revert es7 commit that was merged to 2.x branch
-
-
-2.10.2 (2021-09-13)
--------------------
-
-- fix setup req for collective.elasticsearch that was updated to ES7 compat in the 2.x branch
-
-
-2.10.1 (2021-09-08)
--------------------
-
+- enable tinymce for richtext widget on collective.easyform forms on anonymous form
 - bugfix for site-icon 500 error under certain circumstances
 
 
-2.10.0 (2021-09-08)
--------------------
-
-- enable tinymce for richtext widget on collective.easyform forms on anonymous form
-
-
-2.9.0 (2021-09-01)
-------------------
+3.0.0b9 (2021-09-01)
+--------------------
 
 - add height property to gallery tile schema
 
 
-2.8.0 (2021-08-05)
-------------------
+3.0.0b8 (2021-08-05)
+--------------------
+
+- fix edge case for folder_contents customization that causes pat-structure not to load properly
+
+
+3.0.0b7 (2021-07-05)
+--------------------
+
+- fix upgrade step reference
+
+
+3.0.0b6 (2021-07-05)
+--------------------
+
+- fix upgrade step version
+
+
+3.0.0b5 (2021-07-05)
+--------------------
 
 - add initial implementation of a content type that supports parallax rendering
-- bug fix for custom pat-structure loading order issue
-- recompile resources
-- rename upgrade step 2635 to 3000
-- add upgrade step 3001
 
 
-2.7.2 (2021-06-10)
-------------------
+3.0.0b4 (2021-06-10)
+--------------------
 
-- rebuild styles
-
-
-2.7.1 (2021-06-08)
-------------------
-
-- fix 2633 upgrade profile to have correct configuration, update default profile to 2633
+- recompile styles
 
 
-2.7.0 (2021-06-01)
-------------------
+3.0.0b3 (2021-06-08)
+--------------------
 
-- add ability to create templates from existing contents. templates are unpublishable
-  and are managed as specially marked documents in a 'template-repository' folder.
+- fix 2633 upgrade by adding metadata to action, and set default profile to 2633
+
+
+3.0.0b2 (2021-06-01)
+--------------------
+
+- add ability to create templates from existing contents. templates are
+  unpublishable and are managed as specially marked documents in a
+  'template-repository' folder.
+
+
+3.0.0b1 (2021-05-03)
+--------------------
+
+- add ES host/port override to reindex-catalog script
+- add optional ES index creation to reindex-catalog script
+
+
+3.0.0b0 (2021-04-30)
+--------------------
+
+BREAKING
+++++++++
+
+The 3.x series of releases will bring CastleCMS into compatibility with
+ElasticSearch 7. Practically, this means primarily updating 3 packages:
+
+* castle.cms >= 3
+* collective.elasticsearch >= 4
+* elasticsearch >= 7, <= 7.6
+
+The `elasticsearch` package is restricted between 7 and 7.6 primarily due to
+the restriction from `collective.elasticsearch` -- this is expected to be
+updated at some point, but not for the initial release of `castle.cms` 3.x.
+
+For migration, it is recommended that you setup a new ES cluster, update
+site configurations to point at the new cluster, then do the "Convert" and
+"Rebuild" actions in the ElasticSearch control panel.
+
+This will not migrate your audit log, if enabled. To migrate the audit log,
+use the `castle/cms/_scripts/export-audit-log.py` script to dump the old
+audit log into a CSV file, and then use the `castle/cms/_scripts/import-audit-log.py`
+script to import the CSV file into the new cluster.
 
 
 2.6.31 (2021-04-20)
