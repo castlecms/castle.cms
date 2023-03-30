@@ -65,7 +65,6 @@ class QueryChoiceHandler(plone.supermodel.exportimport.ChoiceHandler):
 QueryChoiceImportExportHandler = QueryChoiceHandler(QueryChoice)
 
 
-# TODO:
 class CastleChoiceHandler(plone.supermodel.exportimport.ChoiceHandler):
     """
     Extend/override ChoiceHandler to work for CastleChoice field
