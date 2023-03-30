@@ -237,7 +237,7 @@ class CastleChoice(schema.Choice):
 
 
 CastleChoiceFactory = FieldFactory(
-    CastleChoice, _(u'label_castle_choice_field', default=u'Castle Choice'),
+    CastleChoice, _(u'label_castle_choice_field', default=u'Choice (no default value)'),
     source=CastleChoiceSource)
 
 
