@@ -1,5 +1,6 @@
 from Products.Five import BrowserView
 from celery.task.control import inspect
+from celery.task import Task
 from plone import api
 from castle.cms import taskinfo
 
@@ -41,6 +42,7 @@ class CeleryControlPanel(BrowserView):
 
     def task_info(self, task):
         info = taskinfo.get_info(task)
+        import pdb; pdb.set_trace()
         on_site = False
         if info['kwargs'].get('site_path') == '/'.join(self.site.getPhysicalPath()):
             on_site = True
