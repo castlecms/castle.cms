@@ -75,6 +75,14 @@
     preserveOriginal="False"
     />
 
+  <monkey:patch
+    description="make rich text field tinymce for frontend view"
+    class="plone.app.versioningbehavior.modifiers.CloneNamedFileBlobs"
+    original="reattachReferencedAttributes"
+    replacement=".patches.reattachReferencedAttributes"
+    preserveOriginal="False"
+    />
+
   <!-- disable additional mosaic pattern settings config since we already do this -->
   <adapter
       for="* .interfaces.ICastleLayer"
