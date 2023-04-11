@@ -45,3 +45,7 @@ def get_service(api_name, api_version, scope, key=None,
         service = build(api_name, api_version, http=http)
 
     return service
+
+def get_ga4_service(ga_id):
+    # TODO: run google-api.py script
+    pass

@@ -1,6 +1,7 @@
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from . import get_ga4_service
 from . import get_service
 
 
@@ -13,8 +14,11 @@ def get_ga_service(ga_scope=['https://www.googleapis.com/auth/analytics.readonly
 
     if not api_key or not api_email or (not ga_id and not ua_id):
         return
-    return get_service(
-        'analytics', 'v3', ga_scope, b64decode_file(api_key)[1], api_email)
+    if ga_id:
+        return get_ga4_service(ga_id)
+    elif ua_id:
+        return get_service(
+            'analytics', 'v3', ga_scope, b64decode_file(api_key)[1], api_email)
 
 
 def get_ga_profile(service):
