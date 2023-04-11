@@ -4,7 +4,7 @@ Changelog
 2.17.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix Required Lead Image clash with verioning control after behavior's removal
 
 
 2.17.0 (2023-02-28)
