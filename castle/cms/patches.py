@@ -220,9 +220,9 @@ def reattachReferencedAttributes(self, obj, attributes_dict):
             field_name = name.split('.')[-1]
             field = interface.get(field_name)
             if field is not None:  # Field may have been removed from schema
-                    adapted_field = field.get(interface(obj))
-                    if adapted_field:
-                        adapted_field._blob = blob
+                adapted_field = field.get(interface(obj))
+                if adapted_field:
+                    adapted_field._blob = blob
 
 
 # AsyncResult objects have a memory leak in them in Celery 4.2.1.
