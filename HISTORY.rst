@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - Fix Required Lead Image clash with verioning control after behavior's removal
+- add google-auth pin and update/add related dependencies, fix GA integration for v3
 
 
 2.17.0 (2023-02-28)
