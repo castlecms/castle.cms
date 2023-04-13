@@ -258,4 +258,14 @@
     layer="castle.cms.interfaces.ICastleLayer"
     />
 
+  <browser:page
+    name="scan-registry"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".scanregistry.ScanRegistryView"
+    permission="plone.app.controlpanel.Security"
+    layer="castle.cms.interfaces.ICastleLayer"
+    template="templates/scan-registry.pt"
+    />
+
+
 </configure>

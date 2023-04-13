@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - Fix Required Lead Image clash with verioning control after behavior's removal
+- add registry scan script and view
 
 
 2.17.0 (2023-02-28)

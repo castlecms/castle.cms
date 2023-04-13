@@ -176,7 +176,6 @@
       description=""
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-
   <genericsetup:upgradeStep
       title="Upgrade CastleCMS to 2.3.8"
       description=""
@@ -200,7 +199,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.0"
     description=""
@@ -216,7 +214,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.5"
     description=""
@@ -240,7 +237,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.7"
     description=""
@@ -256,7 +252,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.15"
     description=""
@@ -272,7 +267,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.17"
     description=""
@@ -288,7 +282,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.5.19"
     description=""
@@ -304,7 +297,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.2"
     description=""
@@ -320,7 +312,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.11"
     description=""
@@ -336,7 +327,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.12"
     description=""
@@ -353,7 +343,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.14"
     description=""
@@ -370,7 +359,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.16"
     description=""
@@ -387,7 +375,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.23"
     description=""
@@ -404,7 +391,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.25"
     description=""
@@ -421,7 +407,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.27"
     description=""
@@ -438,7 +423,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.30"
     description="2630 changes default slideshow view to the actual slideshow"
@@ -455,7 +439,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.31"
     description="adds/ fixes some mockup-structure pagination functionality"
@@ -472,7 +455,6 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.33"
     description=""
@@ -490,6 +472,23 @@
     handler=".upgrades.upgrade_2_6_34"
     profile="castle.cms:default"
   />
+
+  <genericsetup:registerProfile
+    name="2_6_35"
+    title="CastleCMS upgrade to 2.6.35 profile"
+    directory="profiles/2_6_35"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.35"
+    description="Add registry scan to site setup"
+    source="*"
+    destination="2635"
+    handler=".upgrades.upgrade_2_6_34"
+    profile="castle.cms:default"
+  />
+
 
   <genericsetup:registerProfile
     name="3000"
@@ -538,6 +537,7 @@
     handler=".upgrades.upgrade_3003"
     profile="castle.cms:default"
     />
+
   <genericsetup:registerProfile
     name="3004"
     title="CastleCMS upgrade to 3004 profile"
@@ -553,6 +553,7 @@
     handler=".upgrades.upgrade_3004"
     profile="castle.cms:default"
     />
+
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3005"
     description="Update api control panel settings to add prince server username and password"
@@ -562,7 +563,6 @@
     profile="castle.cms:default"
     />
 
-
   <genericsetup:registerProfile
     name="3006"
     title="CastleCMS upgrade to 3006 profile"
@@ -570,6 +570,7 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
+
   <genericsetup:upgradeSteps
     source="*"
     destination="3006"
@@ -584,4 +585,20 @@
         handler=".upgrades.upgrade_3006_ga4"
         />
   </genericsetup:upgradeSteps>
+
+  <genericsetup:registerProfile
+    name="3007"
+    title="CastleCMS upgrade to 3007 profile"
+    directory="profiles/3007"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3007"
+    description="Add registry scan to site setup"
+    source="*"
+    destination="3007"
+    handler=".upgrades.upgrade_3007"
+    profile="castle.cms:default"
+    />
 </configure>

@@ -78,6 +78,7 @@ upgrade_2_6_27 = default_upgrade_factory('2_6_27')
 upgrade_2_6_30 = default_upgrade_factory('2_6_30')
 upgrade_2_6_31 = default_upgrade_factory('2_6_31')
 upgrade_2_6_33 = default_upgrade_factory('2_6_33')
+upgrade_2_6_35 = default_upgrade_factory('2_6_35')
 
 def upgrade_2_6_34(site, logger=None):
     registry = api.portal.get_tool('portal_registry')
@@ -105,3 +106,6 @@ def upgrade_3006_ga4(site, logger=None):
     if old_ga_id:
         api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
         api.portal.set_registry_record('castle.google_analytics_id', u'')
+
+
+upgrade_3007 = default_upgrade_factory('3007')

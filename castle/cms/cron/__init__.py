@@ -118,5 +118,9 @@ def upgrade_sites(argv=sys.argv):
     return run_it('_upgrade_sites')
 
 
+def scan_registry(argv=sys.argv):
+    return run_it('_scan_registry')
+
+
 def link_report(argv=sys.argv):
     return run_it('_link_report')
