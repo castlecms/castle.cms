@@ -50,6 +50,7 @@
     handler=".upgrades.upgrade_3003"
     profile="castle.cms:default"
     />
+
   <genericsetup:registerProfile
     name="3004"
     title="CastleCMS upgrade to 3004 profile"
@@ -65,6 +66,7 @@
     handler=".upgrades.upgrade_3004"
     profile="castle.cms:default"
     />
+
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3005"
     description="Update api control panel settings to add prince server username and password"
@@ -73,7 +75,6 @@
     handler=".upgrades.upgrade_3005"
     profile="castle.cms:default"
     />
-
 
   <genericsetup:registerProfile
     name="3006"
@@ -96,4 +97,20 @@
         handler=".upgrades.upgrade_3006_ga4"
         />
   </genericsetup:upgradeSteps>
+
+  <genericsetup:registerProfile
+    name="3007"
+    title="CastleCMS upgrade to 3007 profile"
+    directory="profiles/3007"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3007"
+    description="Add registry scan to site setup"
+    source="*"
+    destination="3007"
+    handler=".upgrades.upgrade_3007"
+    profile="castle.cms:default"
+  />
 </configure>

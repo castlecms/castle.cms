@@ -4,7 +4,7 @@ Changelog
 3.0.0b123 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Add registry scan script and view
 
 
 3.0.0b122 (2023-04-11)

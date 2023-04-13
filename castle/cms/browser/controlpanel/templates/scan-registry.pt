@@ -1,0 +1,114 @@
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  lang="en"
+  metal:use-macro="context/prefs_main_template/macros/master"
+  i18n:domain="plone"
+>
+
+<body>
+  <metal:main metal:fill-slot="prefs_configlet_main">
+    <style>
+      .collapsing-div,
+      .collapsing-div table {
+        max-width: 100%;
+        overflow-x: scroll;
+      }
+
+      a {
+        color: rgb(35, 111, 157);
+      }
+
+      a.category-collapse {
+        display: block;
+      }
+
+      a#download-anchor-element {
+        display: hidden;
+      }
+
+      div.data-element {
+        display: hidden;
+      }
+
+    </style>
+    <a
+      href=""
+      id="setup-link"
+      tal:attributes="href string:$portal_url/plone_control_panel"
+      i18n:translate=""
+    >Site Setup</a>
+
+    <h1 class="documentFirstHeading">Registry Scan</h1>
+    <p class="discreet">
+      Displays the current registry values for this site
+    </p>
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+    <button id="download-registry-button">Download Registry Scan</button>
+    <a
+      id="download-anchor-element"
+      href="#"
+      download="${view/portal_id}-registry-scan.json"
+    ></a>
+
+    <div id="content-core">
+      <div
+        id="data-element"
+        data-categorized-items="${view/json_registry}"
+      ></div>
+      <tal:registry-item tal:repeat="categorized_items  python: sorted(view.categorized_registry.items(), key=lambda x: x[0].lower())">
+        <tal:defs tal:define="category  python: categorized_items[0];
+                              category_items  python: categorized_items[1];
+                              collapse_id  python:('collapse-' + category).replace('.','-').replace('/','-');">
+          <a
+            class="category-collapse"
+            data-toggle="collapse"
+            href="#${collapse_id}"
+          >
+            ${category} ▼
+          </a>
+          <div
+            class="collapse collapsing-div"
+            id="${collapse_id}"
+          >
+            <table class="table table-condensed table-hover table-striped">
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tal:keys-and-values tal:repeat="key_and_value  python: category_items.items()">
+                  <tr tal:on-error="nothing">
+                    <td>${python: key_and_value[0]}</td>
+                    <td>${python: key_and_value[1]}</td>
+                  </tr>
+                </tal:keys-and-values>
+              </tbody>
+            </table>
+          </div>
+        </tal:defs>
+      </tal:registry-item>
+    </div>
+    <script>
+      const downloadButton = document.getElementById( 'download-registry-button' );
+      downloadButton.onclick = () => {
+        const dataElement = document.querySelector( '#data-element' );
+        const { categorizedItems } = dataElement.dataset;
+
+        const dataHref = 'data:text/json;charset=utf-8,' + encodeURIComponent( categorizedItems );
+        const downloadAnchorElement = document.getElementById( 'download-anchor-element' );
+        downloadAnchorElement.setAttribute( "href", dataHref );
+        downloadAnchorElement.click();
+      }
+    </script>
+  </metal:main>
+</body>
+
+</html>

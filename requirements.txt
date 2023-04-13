@@ -1,3 +1,4 @@
+pip==18.1
 cryptography==3.3.2
 setuptools==44.0.0
 zc.buildout==2.13.7
