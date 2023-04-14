@@ -24,7 +24,7 @@
     </field>
   </record>
 
-  <record name="plone.disable_country_restriction"
+  <record name="castle.disable_country_restriction"
           interface="castle.cms.interfaces.ISecuritySchema"
           field="disable_country_restriction">
     <value>False</value>

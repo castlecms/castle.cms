@@ -218,7 +218,7 @@ class Authenticator(object):
 
         if self.registry:
             disable_country_restriction = self.registry.get(
-                'plone.disable_country_restriction'
+                'castle.disable_country_restriction'
             )
             if not disable_country_restriction:
                 allowed_countries = self.registry.get(
