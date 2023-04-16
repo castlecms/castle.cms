@@ -23,11 +23,4 @@
       <required>False</required>
     </field>
   </record>
-
-  <record name="castle.disable_country_restriction"
-          interface="castle.cms.interfaces.ISecuritySchema"
-          field="disable_country_restriction">
-    <value>False</value>
-  </record>
-
 </registry>
