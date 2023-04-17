@@ -26,6 +26,7 @@
                     reserved info/reserved;
                     stats info/stats;
                     registered info/registered;
+                    counts info/counts;
                     status_ok python: workers is not None">
       <ul tal:condition="not: status_ok">
           There was an error connecting to Celery
@@ -38,21 +39,24 @@
           </a>
         </li>
         <ul class="collapse" id="collapseRegisteredWorkers">
-          <li tal:repeat="worker python: workers.keys()" class="card card-body">${worker}</li>
+          <li tal:repeat="worker python: workers.keys()" class="card card-body">${worker}
+            <ul>
+              <li>Prefetched Count: ${python: stats.values()[0]['prefetch_count']}</li>
+              <li tal:define="inqueues python: stats.values()[0].get('pool').get('writes').get('inqueues')">Inqueues: 
+                <ul>
+                  <li>Active: ${python: inqueues['active']}</li>
+                  <li>Total: ${python: inqueues['total']}</li>
+                </ul>
+              </li>
+              <li tal:define="concurrent python: stats.values()[0].get('pool').get('max-concurrency')">Max Concurrency: ${concurrent}</li>
+            </ul>
+          </li>
         </ul>
-        <li>Prefetched Count: ${python: stats.values()[0]['prefetch_count']}</li>
-        <li tal:define="inqueues python: stats.values()[0].get('pool').get('writes').get('inqueues')">Inqueues: 
-          <ul>
-            <li>Active: ${python: inqueues['active']}</li>
-            <li>Total: ${python: inqueues['total']}</li>
-          </ul>
-        </li>
-        <li tal:define="concurrent python: stats.values()[0].get('pool').get('max-concurrency')">Max Concurrency: ${concurrent}</li>
       </ul>
 
       <h2>
         <a data-toggle="collapse" href="#collapseRegisteredTasks">
-          Registered Tasks
+          Registered Tasks: ${python: counts["registered"]}
         </a>
       </h2>
       <div class="collapse" id="collapseRegisteredTasks">
@@ -81,7 +85,7 @@
       </div>
             <h2>
               <a data-toggle="collapse" href="#collapseCompletedTasks">
-                Completed Tasks
+                Completed Tasks: ${python: counts["stats"]}
               </a>
             </h2>
             <div class="collapse" id="collapseCompletedTasks">
@@ -110,7 +114,7 @@
         </div>
         <h2>
           <a data-toggle="collapse" href="#collapseScheduledTasks">
-            Scheduled Tasks
+            Scheduled Tasks: ${python: counts["active"]+counts["reserved"]}
           </a>
         </h2>
         <div class="collapse" id="collapseScheduledTasks">

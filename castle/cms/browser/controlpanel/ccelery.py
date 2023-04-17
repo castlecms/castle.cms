@@ -1,6 +1,5 @@
 from Products.Five import BrowserView
 from celery.task.control import inspect
-from celery.task import Task
 from plone import api
 from castle.cms import taskinfo
 
@@ -29,12 +28,31 @@ class CeleryControlPanel(BrowserView):
             registered = ins.registered()
         except Exception:
             registered = ''
+        schedule = active
+        complete = stats
+        register = registered
+        reserve = reserved
+        types = [[register, "registered"], [reserve, "reserved"], [schedule, "active"], [complete, "stats"]]
+        counts = {}
+        for _type in types:
+            count = 0
+            keys = _type[0].keys()
+            try:
+                for key in keys:
+                    if _type[1] == "stats":
+                        count += len(_type[0][key].get('total'))
+                    else:
+                        count += len(_type[0][key])
+                counts[_type[1]]=count
+            except Exception:
+                counts[_type[1]]=0
         return {
             'workers': ping,
             'active': active,
             'reserved': reserved,
             'stats': stats,
             'registered': registered,
+            'counts': counts,
         }
 
     def get_task_name(self, _id):
