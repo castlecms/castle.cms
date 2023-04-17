@@ -81,6 +81,9 @@ def get_popularity(site):
     if len(bulk_data) > 0:
         conn.bulk(index=hps.get_index_name(), body=bulk_data)
     transaction.commit()
+    print('sleeping')
+    import time
+    time.sleep(5000)
 
 
 def run(app):

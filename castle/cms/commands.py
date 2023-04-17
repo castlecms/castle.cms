@@ -195,53 +195,53 @@ except IOError:
     logger.warn('gs not installed. Some metadata might remain in PDF files.')
 
 
-class MD5SubProcess(BaseSubProcess):
+class SHA256SubProcess(BaseSubProcess):
     """
-    To get md5 hash of files on the filesystem so
+    To get sha256 encryption of files on the filesystem so
     large files do not need to be loaded into
     memory to be checked
     """
     if os.name == 'nt':
-        bin_name = 'md5.exe'
+        bin_name = 'sha-256.exe'
     else:
-        bin_name = 'md5'
+        bin_name = 'sha-256'
 
     def __call__(self, filepath):
         cmd = [self.binary, filepath]
-        hashval = self._run_command(cmd)
-        return hashval.split('=')[1].strip()
+        encryptval = self._run_command(cmd)
+        return encryptval.split('=')[1].strip()
 
 
 try:
-    md5 = MD5SubProcess()
+    sha256 = SHA256SubProcess()
 except IOError:
-    md5 = None
+    sha256 = None
 
 
-class MD5SumSubProcess(BaseSubProcess):
+class SHA256SumSubProcess(BaseSubProcess):
     """
-    To get md5 hash of files on the filesystem so
+    To get sha256 encryption of files on the filesystem so
     large files do not need to be loaded into
     memory to be checked
     """
     if os.name == 'nt':
-        bin_name = 'md5sum.exe'
+        bin_name = 'sha256sum.exe'
     else:
-        bin_name = 'md5sum'
+        bin_name = 'sha256sum'
 
     def __call__(self, filepath):
         cmd = [self.binary, filepath]
-        hashval = self._run_command(cmd)
-        return hashval.split('  ')[0].strip()
+        encryptval = self._run_command(cmd)
+        return encryptval.split('  ')[0].strip()
 
 
 try:
-    if md5 is None:
-        md5 = MD5SumSubProcess()
+    if sha256 is None:
+        sha256 = SHA256SumSubProcess()
 except IOError:
-    logger.exception("No md5sum or md5 installed. castle.cms "
-                     "will not be able to detect md5 of files.")
-    md5 = None
+    logger.exception("No sha256 installed. castle.cms "
+                     "will not be able to detect sha256 of files.")
+    sha256 = None
 
 
 class DocSplitSubProcess(BaseSubProcess):

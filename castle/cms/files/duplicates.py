@@ -15,18 +15,18 @@ class DuplicateDetector(object):
         self.annotations = IAnnotations(self.site)
         self.data = self.annotations.get(DATA_KEY)
 
-    def register(self, obj, hash):
+    def register(self, obj, encrypt):
         if self.data is None:
             self.annotations[DATA_KEY] = OOBTree()
             self.data = self.annotations[DATA_KEY]
-        self.data[hash] = IUUID(obj)
+        self.data[encrypt] = IUUID(obj)
 
-    def get_object(self, hash):
+    def get_object(self, encrypt):
         if self.data is None:
             return None
-        if hash not in self.data:
+        if encrypt not in self.data:
             return None
-        uuid = self.annotations[DATA_KEY][hash]
+        uuid = self.annotations[DATA_KEY][encrypt]
         return uuidToObject(uuid)
 
 

@@ -52,11 +52,11 @@ def get_random_string(length=12,
 def make_random_key(length=150, prefix=''):
     if prefix:
         prefix = str(prefix) + '-'
-    hashed = '%s%s' % (
+    encrypted = '%s%s' % (
         hashlib.sha1(str(get_random_string(length)).encode('utf-8')).hexdigest()[:5],  # noqa
         str(datetime.now().microsecond)
     )
-    return prefix + hashlib.sha1(hashed.encode('utf-8')).hexdigest()[:length]
+    return prefix + hashlib.sha1(encrypted.encode('utf-8')).hexdigest()[:length]
 
 
 def retriable(count=3, sync=False, reraise=True, on_retry_exhausted=None):

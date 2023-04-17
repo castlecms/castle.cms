@@ -12,12 +12,12 @@ args = parser.parse_args()
 times = {}
 
 
-def md5(fname):
-    hash_md5 = hashlib.md5()
+def sha256(fname):
+    encrypt_sha256 = hashlib.sha256()
     with open(fname, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
+            encrypt_sha256.update(chunk)
+    return encrypt_sha256.hexdigest()
 
 
 def check(directory):
@@ -29,12 +29,12 @@ def check(directory):
             if check(filepath):
                 changed = True
         else:
-            hashed = md5(filepath)
-            current_hash = times.get(filepath, None)
+            encrypted = sha256(filepath)
+            current_encrypt = times.get(filepath, None)
 
-            times[filepath] = hashed
+            times[filepath] = encrypted
 
-            if hashed != current_hash:
+            if encrypted != current_encrypt:
                 print(filepath + ' has changed!')
                 changed = True
 
