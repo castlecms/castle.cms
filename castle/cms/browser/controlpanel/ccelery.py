@@ -24,35 +24,11 @@ class CeleryControlPanel(BrowserView):
             stats = ins.stats()
         except Exception:
             stats = ''
-        try:
-            registered = ins.registered()
-        except Exception:
-            registered = ''
-        schedule = active
-        complete = stats
-        register = registered
-        reserve = reserved
-        types = [[register, "registered"], [reserve, "reserved"], [schedule, "active"], [complete, "stats"]]
-        counts = {}
-        for _type in types:
-            count = 0
-            keys = _type[0].keys()
-            try:
-                for key in keys:
-                    if _type[1] == "stats":
-                        count += len(_type[0][key].get('total'))
-                    else:
-                        count += len(_type[0][key])
-                counts[_type[1]]=count
-            except Exception:
-                counts[_type[1]]=0
         return {
             'workers': ping,
             'active': active,
             'reserved': reserved,
-            'stats': stats,
-            'registered': registered,
-            'counts': counts,
+            'stats': stats
         }
 
     def get_task_name(self, _id):
@@ -60,7 +36,6 @@ class CeleryControlPanel(BrowserView):
 
     def task_info(self, task):
         info = taskinfo.get_info(task)
-        import pdb; pdb.set_trace()
         on_site = False
         if info['kwargs'].get('site_path') == '/'.join(self.site.getPhysicalPath()):
             on_site = True
