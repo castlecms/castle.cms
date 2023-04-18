@@ -1,10 +1,14 @@
+import logging
 import os
+import subprocess
 
 import httplib2
 from apiclient.discovery import build
 from oauth2client.client import OAuth2Credentials
 from oauth2client.client import SignedJwtAssertionCredentials
 
+
+logger = logging.getLogger('google-service')
 
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
@@ -47,5 +51,9 @@ def get_service(api_name, api_version, scope, key=None,
     return service
 
 def get_ga4_service(ga_id):
-    # TODO: run google-api.py script
-    pass
+    try:
+        service = subprocess.Popen(['/usr/bin/python3', 'scripts/google/google-api.py'])
+        return service
+    except ModuleNotFoundError:
+        # /usr/bin/pip3 install google-analytics-data
+        logger.error('google-analytics-data package not installed into environment')
