@@ -25,7 +25,9 @@ def get_ga_profile(service):
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
     ua_id = registry.get('castle.universal_analytics_id', None)
-    if not ga_id:
+    if ga_id:
+        return get_ga4_profile(service, ga_id)
+    else:
         if ua_id:
             ga_id = ua_id
         else:
@@ -56,3 +58,8 @@ def get_ga_profile(service):
                     return profiles.get('items')[0].get('id')
 
     return None
+
+
+def get_ga4_profile(service, ga_id):
+    # TODO: Use the GA4 service object to get the first profile id.
+    return

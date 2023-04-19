@@ -51,9 +51,20 @@ def get_service(api_name, api_version, scope, key=None,
     return service
 
 def get_ga4_service(ga_id):
+    service = None
     try:
-        service = subprocess.Popen(['/usr/bin/python3', 'scripts/google/google-api.py'])
-        return service
-    except ModuleNotFoundError:
+        process = subprocess.Popen(
+            ['/usr/bin/python3', 'scripts/google/google-api.py'],
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        # TODO: timeout issue when attempting to read stdout
+        out, err = process.communicate()
+        # out, err = process.communicate(timeout=5)
+        # out = process.stdout.read()
+        import pdb; pdb.set_trace()
+    except ImportError:
         # /usr/bin/pip3 install google-analytics-data
         logger.error('google-analytics-data package not installed into environment')
+
+    return service

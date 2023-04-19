@@ -29,4 +29,4 @@ else:
     # specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
     client = BetaAnalyticsDataClient()
 
-    import pdb; pdb.set_trace()
+    print(client)
