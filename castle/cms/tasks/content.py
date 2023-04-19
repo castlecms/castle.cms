@@ -226,6 +226,8 @@ def scan_links(obj):
         if obj is None:
             return
     linkintegrity.scan(obj)
+    import time
+    time.sleep(5000000)
 
 
 @task.as_admin()

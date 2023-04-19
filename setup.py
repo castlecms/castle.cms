@@ -133,6 +133,7 @@ setup(
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
+      sleep-task = castle.cms._scripts.sleep_task:setup_and_run
       """,
     include_package_data=True,
     zip_safe=False,

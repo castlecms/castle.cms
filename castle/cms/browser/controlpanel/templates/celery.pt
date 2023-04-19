@@ -84,11 +84,11 @@
       </table>
       </div>
             <h2>
-              <a data-toggle="collapse" href="#collapseCompletedTasks">
-                Completed Tasks: ${python: counts["stats"]}
+              <a data-toggle="collapse" href="#collapseAcceptedTasks">
+                Accepted Tasks: ${python: counts["stats"]}
               </a>
             </h2>
-            <div class="collapse" id="collapseCompletedTasks">
+            <div class="collapse" id="collapseAcceptedTasks">
           <table class="listing">
             <thead>
               <tr>
@@ -98,8 +98,8 @@
               </tr>
             </thead>
             <tbody>
-              <tal:completed-worker tal:repeat="worker python: workers.keys() or []">
-                <tal:completed-task tal:on-error="nothing" tal:define="wstats python: stats.get(worker, {}).get('total', [])">
+              <tal:accepted-worker tal:repeat="worker python: workers.keys() or []">
+                <tal:accepted-task tal:on-error="nothing" tal:define="wstats python: stats.get(worker, {}).get('total', [])">
                   <tal:task tal:repeat="task_name python: wstats.keys()">
                     <tr>
                       <th style="color: orange">${python: task_name}</th>
@@ -107,8 +107,8 @@
                       <th>${worker}</th>
                     </tr>
                   </tal:task>
-                </tal:completed-task>
-              </tal:completed-worker>
+                </tal:accepted-task>
+              </tal:accepted-worker>
             </tbody>
           </table>
         </div>
