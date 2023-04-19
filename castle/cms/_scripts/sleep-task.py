@@ -27,8 +27,9 @@ def run(app):
     user = app.acl_users.getUser('admin')
     newSecurityManager(None, user.__of__(app.acl_users))
 
-    from castle.cms.tasks.content import scan_links
-    scan_links()
+    from castle.cms.tasks.sleep import add
+    add.delay(2, 2)
+    import pdb; pdb.set_trace()
 
 
 def setup_and_run():

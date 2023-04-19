@@ -12,6 +12,7 @@ _task_descriptors = {
     'collective.celery.process_video': 'Process video',
     'collective.celery.workflow_updated': 'Processing workflow',
     'collective.celery.trash_tree': 'Processing trash',
+    'add': 'test task'
 }
 
 

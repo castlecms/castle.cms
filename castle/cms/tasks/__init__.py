@@ -4,3 +4,4 @@ from .files import *  # noqa
 from .content import *  # noqa
 from .email import *  # noqa
 from .archive import *  # noqa
+from .sleep import *  # noqa
