@@ -17,6 +17,10 @@ class CeleryControlPanel(BrowserView):
         except Exception:
             active = ''
         try:
+            scheduled = ins.scheduled()
+        except Exception:
+            scheduled = ''
+        try:
             reserved = ins.reserved()
         except Exception:
             reserved = ''
@@ -28,11 +32,8 @@ class CeleryControlPanel(BrowserView):
             registered = ins.registered()
         except Exception:
             registered = ''
-        schedule = active
-        complete = stats
-        register = registered
-        reserve = reserved
-        types = [[register, "registered"], [reserve, "reserved"], [schedule, "active"], [complete, "stats"]]
+
+        types = [[registered, "registered"], [reserved, "reserved"], [active, "active"], [scheduled, "scheduled"]]
         counts = {}
         for _type in types:
             count = 0
@@ -49,6 +50,7 @@ class CeleryControlPanel(BrowserView):
         return {
             'workers': ping,
             'active': active,
+            'scheduled': scheduled,
             'reserved': reserved,
             'stats': stats,
             'registered': registered,
