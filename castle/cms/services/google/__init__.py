@@ -51,20 +51,50 @@ def get_service(api_name, api_version, scope, key=None,
     return service
 
 def get_ga4_service(ga_id):
-    service = None
+    output = None
+    command = ['/usr/bin/python3', 'scripts/google/google-api.py']
+
+    environ = os.environ.copy()
+    environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+
+    # TODO: get data from Content Analytics modal form to set values for report
+
+    # realtime
+    environ['GA_REALTIME_AGGREGATE'] = 'Page views'
+    environ['GA_REALTIME_DIMENSIONS'] = 'N/A'
+    environ['GA_REALTIME_MAX_RESULTS'] = '5'
+    environ['GA_REALTIME_CHART_TYPE'] = 'Columns'
+    # historical
+    environ['GA_HISTORICAL_AGGREGATE'] = 'Page views'
+    environ['GA_HISTORICAL_DIMENSIONS'] = 'N/A'
+    environ['GA_HISTORICAL_MAX_RESULTS'] = '5'
+    environ['GA_HISTORICAL_CHART_TYPE'] = 'Columns'
+    environ['GA_HISTORICAL_START_DATE'] = '2023-04-13'
+    environ['GA_HISTORICAL_END_DATE'] = '2023-04-20'
+    # social
+    environ['GA_SOCIAL_AGGREGATE'] = 'Page views'
+    environ['GA_SOCIAL_DIMENSIONS'] = 'N/A'
+    environ['GA_SOCIAL_MAX_RESULTS'] = '5'
+    environ['GA_SOCIAL_CHART_TYPE'] = 'Columns'
+    environ['GA_SOCIAL_START_DATE'] = '2023-04-13'
+    environ['GA_SOCIAL_END_DATE'] = '2023-04-20'
+
     try:
         process = subprocess.Popen(
-            ['/usr/bin/python3', 'scripts/google/google-api.py'],
-            shell=True,
+            command,
+            env=environ,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
-        # TODO: timeout issue when attempting to read stdout
-        out, err = process.communicate()
-        # out, err = process.communicate(timeout=5)
-        # out = process.stdout.read()
-        import pdb; pdb.set_trace()
+        output, error = process.communicate()
+        if error:
+            logger.error(error)
+        if not output:
+            logger.error('No output received from GA4 request')
+            return
     except ImportError:
         # /usr/bin/pip3 install google-analytics-data
         logger.error('google-analytics-data package not installed into environment')
 
-    return service
+    output = output.split('\n')
+    
+    return output
