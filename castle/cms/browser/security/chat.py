@@ -28,6 +28,10 @@ class ChatLogin(BrowserView):
             for key in keyring:
                 if key is None:
                     continue
+                fi = open('/Users/katieschramm/dev/git/FBI/fbigov-dev/sha256_check', 'a')
+                path = 'castle/cms/browser/security/chat ChatLogin __call__'
+                fi.write(path + '\n')
+                fi.close()
                 value = hmac.new(key, user + salt, sha256).hexdigest()
                 if _is_equal(value, token):
                     return json.dumps({

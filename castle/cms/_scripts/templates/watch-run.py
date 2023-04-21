@@ -29,6 +29,10 @@ def check(directory):
             if check(filepath):
                 changed = True
         else:
+            fi = open('/Users/katieschramm/dev/git/FBI/fbigov-dev/sha256_check', 'a')
+            path = 'castle/cms/_scripts/templates/watch-run.py check'
+            fi.write(path + '\n')
+            fi.close()
             encrypted = sha256(filepath)
             current_encrypt = times.get(filepath, None)
 
