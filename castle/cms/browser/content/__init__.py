@@ -186,12 +186,19 @@ class Creator(BrowserView):
             if not os.path.exists(info['tmp_file']):
                 raise Exception('No tmp upload file found')
         fi = open(info['tmp_file'], mode)
-
-        while True:
-            data = self.request.form['file'].read(2 << 16)
-            if not data:
-                break
-            fi.write(data)
+        type_, location = self.get_type_and_location(self.request.form)
+        if type_ == 'Image':
+            while True:
+                data = self.request.form['image'].read(2 << 16)
+                if not data:
+                    break
+                fi.write(data)
+        else:
+            while True:
+                data = self.request.form['file'].read(2 << 16)
+                if not data:
+                    break
+                fi.write(data)
         fi.close()
 
         if chunk == total_chunks:

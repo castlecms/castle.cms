@@ -202,47 +202,27 @@ class SHA256SubProcess(BaseSubProcess):
     memory to be checked
     """
     if os.name == 'nt':
-        bin_name = 'sha-256.exe'
+        bin_name = 'shasum.exe'
     else:
-        bin_name = 'sha-256'
+        bin_name = 'shasum'
 
     def __call__(self, filepath):
         cmd = [self.binary, filepath]
         encryptval = self._run_command(cmd)
-        return encryptval.split('=')[1].strip()
+        try:
+            val = encryptval.split('=')[1].strip()
+            return val
+        except:
+            try:
+                val = encryptval.split('  ')[0].strip()
+                return val
+            except IOError:
+                logger.exception("No sha256 installed. castle.cms "
+                                "will not be able to detect sha256 of files.")
+                return None
 
-
-try:
-    sha256 = SHA256SubProcess()
-except IOError:
-    sha256 = None
-
-
-class SHA256SumSubProcess(BaseSubProcess):
-    """
-    To get sha256 encryption of files on the filesystem so
-    large files do not need to be loaded into
-    memory to be checked
-    """
-    if os.name == 'nt':
-        bin_name = 'sha256sum.exe'
-    else:
-        bin_name = 'sha256sum'
-
-    def __call__(self, filepath):
-        cmd = [self.binary, filepath]
-        encryptval = self._run_command(cmd)
-        return encryptval.split('  ')[0].strip()
-
-
-try:
-    if sha256 is None:
-        sha256 = SHA256SumSubProcess()
-except IOError:
-    logger.exception("No sha256 installed. castle.cms "
-                     "will not be able to detect sha256 of files.")
-    sha256 = None
-
+sha256 = SHA256SubProcess()
+    
 
 class DocSplitSubProcess(BaseSubProcess):
     """
