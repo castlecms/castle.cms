@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import subprocess
@@ -50,34 +51,24 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
-def get_ga4_service(ga_id):
+def get_ga4_service(request, ga_id):
     output = None
     command = ['/usr/bin/python3', 'scripts/google/google-api.py']
 
     environ = os.environ.copy()
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
 
-    # TODO: get data from Content Analytics modal form to set values for report
+    form = request.form
+    params = json.loads(form['params'])
+    form_type = form['type'].upper()
+    environ['CASTLE_GA_FORM_TYPE'] = form_type
 
-    # realtime
-    environ['GA_REALTIME_AGGREGATE'] = 'Page views'
-    environ['GA_REALTIME_DIMENSIONS'] = 'N/A'
-    environ['GA_REALTIME_MAX_RESULTS'] = '5'
-    environ['GA_REALTIME_CHART_TYPE'] = 'Columns'
-    # historical
-    environ['GA_HISTORICAL_AGGREGATE'] = 'Page views'
-    environ['GA_HISTORICAL_DIMENSIONS'] = 'N/A'
-    environ['GA_HISTORICAL_MAX_RESULTS'] = '5'
-    environ['GA_HISTORICAL_CHART_TYPE'] = 'Columns'
-    environ['GA_HISTORICAL_START_DATE'] = '2023-04-13'
-    environ['GA_HISTORICAL_END_DATE'] = '2023-04-20'
-    # social
-    environ['GA_SOCIAL_AGGREGATE'] = 'Page views'
-    environ['GA_SOCIAL_DIMENSIONS'] = 'N/A'
-    environ['GA_SOCIAL_MAX_RESULTS'] = '5'
-    environ['GA_SOCIAL_CHART_TYPE'] = 'Columns'
-    environ['GA_SOCIAL_START_DATE'] = '2023-04-13'
-    environ['GA_SOCIAL_END_DATE'] = '2023-04-20'
+
+    # TODO: some of the values passed in from the form are not valid according to
+    # available dimension and metric values:
+    # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema#dimensions
+    for key, val in params.items():
+        environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
 
     try:
         process = subprocess.Popen(

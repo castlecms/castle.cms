@@ -38,7 +38,8 @@ class AnalyticsView(BrowserView):
             result = None
 
         if result is None:
-            service = analytics.get_ga_service()
+            # TODO: Get Service Call...
+            service = analytics.get_ga_service(self.request)
             if not service:
                 return {'error': 'Could not get GA Service'}
 
