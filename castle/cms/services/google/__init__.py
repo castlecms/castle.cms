@@ -61,14 +61,24 @@ def get_ga4_service(request, ga_id):
     form = request.form
     params = json.loads(form['params'])
     form_type = form['type'].upper()
+
+    property_conversion_mapping = get_property_conversion_mapping()
+
+    prefix = ''
+    if form_type == 'REALTIME':
+        prefix = 'rt:'
+    elif form_type == 'GA':
+        form_type = 'HISTORICAL'
+        prefix = 'ga:'
     environ['CASTLE_GA_FORM_TYPE'] = form_type
 
-
-    # TODO: some of the values passed in from the form are not valid according to
-    # available dimension and metric values:
-    # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema#dimensions
     for key, val in params.items():
-        environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
+        val = str(val).replace(prefix, '')
+        try:
+            property_val = property_conversion_mapping[val]
+        except KeyError:
+            property_val = val
+        environ['GA_%s_%s' % (form_type, str(key.upper()))] = property_val
 
     try:
         process = subprocess.Popen(
@@ -89,3 +99,14 @@ def get_ga4_service(request, ga_id):
     output = output.split('\n')
     
     return output
+
+
+def get_property_conversion_mapping():
+    # TODO:
+    # available dimension and metric values:
+    # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
+
+    property_conversion_mapping = {
+        'pageViews': 'screenPageViews',
+    }
+    return property_conversion_mapping

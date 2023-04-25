@@ -43,7 +43,6 @@ class GA4Service():
     
     def get_service_data(self):
         data = []
-        data.append({'dimension': 'metric'})
 
         dimensions = os.environ.get(f"GA_{self.category}_DIMENSIONS", None)
         metrics = os.environ.get(f"GA_{self.category}_METRICS", "screenPageViews")
