@@ -62,23 +62,25 @@ def get_ga4_service(request, ga_id):
     params = json.loads(form['params'])
     form_type = form['type'].upper()
 
-    property_conversion_mapping = get_property_conversion_mapping()
-
-    prefix = ''
-    if form_type == 'REALTIME':
-        prefix = 'rt:'
-    elif form_type == 'GA':
+    if form_type == 'GA':
         form_type = 'HISTORICAL'
-        prefix = 'ga:'
     environ['CASTLE_GA_FORM_TYPE'] = form_type
 
+    property_conversion_mapping = get_property_conversion_mapping()
+
     for key, val in params.items():
-        val = str(val).replace(prefix, '')
-        try:
-            property_val = property_conversion_mapping[val]
-        except KeyError:
-            property_val = val
-        environ['GA_%s_%s' % (form_type, str(key.upper()))] = property_val
+        if key == 'metrics' or key == 'dimensions':
+            try:
+                val = str(val)
+                if val.startswith('-'):
+                    val = val.replace('-', '')
+                property_val = property_conversion_mapping[val]
+                environ['GA_%s_%s' % (form_type, str(key.upper()))] = property_val
+            except KeyError:
+                logger.error('No available property conversion for %s' % val)
+                return
+        else:
+            environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
 
     try:
         process = subprocess.Popen(
@@ -103,10 +105,61 @@ def get_ga4_service(request, ga_id):
 
 def get_property_conversion_mapping():
     # TODO:
+    #! = exact property unavailable for Data API V1
     # available dimension and metric values:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
+    # https://ga-dev-tools.google/dimensions-metrics-explorer/
 
     property_conversion_mapping = {
-        'pageViews': 'screenPageViews',
+        # Realtime
+        # Dimensions
+        'rt:userType': 'userGender', #!
+        'rt:medium': 'medium',
+        'rt:trafficType': 'contentType', #!
+        'rt:browser': 'browser',
+        'rt:operatingSystem': 'operatingSystem',
+        'rt:deviceCategory': 'deviceCategory',
+        'rt:country': 'country',
+        'rt:region': 'region',
+        'rt:pagePath': 'pagePath',
+        # Metrics
+        'rt:pageViews': 'screenPageViews',
+        'rt:activeUsers': 'activeUsers',
+
+        # Historical
+        # Dimensions
+        'ga:userType': 'userGender', #!
+        'ga:sessionCount': 'sessions',
+        'ga:socialNetwork': 'sourcePlatform', #!
+        'ga:hasSocialSourceReferral': 'sessionSourceMedium', #!
+        'ga:medium': 'medium',
+        'ga:trafficType': 'contentType', #!
+        'ga:browser': 'browser',
+        'ga:operatingSystem': 'operatingSystem',
+        'ga:deviceCategory': 'deviceCategory',
+        'ga:pagePath': 'pagePath',
+        'ga:country': 'country',
+        'ga:region': 'region',
+        'ga:continent': 'continent',
+        'ga:subContinent': '', #!? continent?
+        'ga:metro': '', #!? method?
+        'ga:city': 'city',
+        'ga:flashVersion': '', #!? appVersion?
+        'ga:javaEnabled': '', #!? visible?
+        'ga:language': 'language',
+        'ga:exitPagePath': 'pagePath',
+        # Metrics
+        'ga:hits': 'checkouts', #!
+        'ga:users': 'totalUsers',
+        'ga:newUsers': 'newUsers',
+        'ga:sessions': 'sessions',
+        'ga:pageviews': 'screenPageViews',
+        'ga:bounces': '', #!? bounceRate?
+        'ga:bounceRate': 'bounceRate',
+        'ga:avgSessionDuration': 'averageSessionDuration',
+        'ga:entranceRate': '', #!? bounceRate?
+        'ga:pageviewsPerSession': 'screenPageViewsPerSession',
+        'ga:avgTimeOnPage': 'engagementRate', #!
+        'ga:avgPageLoadTime': '' #!?engagementRate?
     }
     return property_conversion_mapping
