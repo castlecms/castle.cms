@@ -6,5 +6,5 @@ app = getCelery()
 def add(x, y):
     print('made it to task!')
     import time
-    time.sleep(500)
+    time.sleep(5000)
     return x + y

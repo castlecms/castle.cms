@@ -32,7 +32,28 @@ class CeleryControlPanel(BrowserView):
             registered = ins.registered()
         except Exception:
             registered = ''
-
+        try:
+            report = ins.report()
+            for worker in report.keys():
+                clean_info = report[worker]['ok'].replace('\'', '').replace('\"', '').replace(' \n', '').replace('\n ', '')
+                while True:
+                    alpha = len(clean_info)
+                    clean_info = clean_info.replace('  ', ' ')
+                    beta = len(clean_info)
+                    if alpha>beta:
+                        pass
+                    else:
+                        break
+                clean_info = clean_info.split('\n')
+                while True:
+                    try:
+                        index = clean_info.index('')
+                        clean_info.pop(index)
+                    except:
+                        report[worker] = clean_info
+                        break
+        except Exception as e:
+            report = ''
         types = [[registered, "registered"], [reserved, "reserved"], [active, "active"], [scheduled, "scheduled"]]
         counts = {}
         for _type in types:
@@ -55,6 +76,7 @@ class CeleryControlPanel(BrowserView):
             'stats': stats,
             'registered': registered,
             'counts': counts,
+            'report': report,
         }
 
     def get_task_name(self, _id):
@@ -62,7 +84,6 @@ class CeleryControlPanel(BrowserView):
 
     def task_info(self, task):
         info = taskinfo.get_info(task)
-        import pdb; pdb.set_trace()
         on_site = False
         if info['kwargs'].get('site_path') == '/'.join(self.site.getPhysicalPath()):
             on_site = True

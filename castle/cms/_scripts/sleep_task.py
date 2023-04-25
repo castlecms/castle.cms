@@ -29,11 +29,10 @@ def run(app):
 
     from castle.cms.tasks.sleep import add
     add.delay(2, 2)
-    import pdb; pdb.set_trace()
 
 
 def setup_and_run():
-    conf_path = os.getenv("ZOPE_CONF_PATH", "parts/instance/zope.conf")
+    conf_path = os.getenv("ZOPE_CONF_PATH", "parts/instance/etc/zope.conf")
     if conf_path is None or not os.path.exists(conf_path):
         raise Exception('Could not find zope.conf at {}'.format(conf_path))
 

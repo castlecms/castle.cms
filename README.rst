@@ -115,7 +115,7 @@ Running tests
 
 .. code-block:: shell
 
-  ./bin/test -s castle.cms
+  ./bin/test -pvc -s castle.cms -m test_content
 
 
 *To run only robot tests:*
