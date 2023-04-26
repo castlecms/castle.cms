@@ -68,18 +68,10 @@
     layer="castle.cms.interfaces.ICastleLayer" />
 
   <browser:page
-    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="verify-token"
-    class=".chat.ChatLogin"
-    permission="zope2.View"
-    layer="castle.cms.interfaces.ICastleLayer"
-  />
-
-  <browser:page
     name="impersonator"
     for="plone.app.layout.navigation.interfaces.INavigationRoot"
     class=".impersonator.ImpersonatorView"
     permission="zope2.View"
     />
-
+  
 </configure>

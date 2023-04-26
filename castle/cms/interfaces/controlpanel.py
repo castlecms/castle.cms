@@ -442,19 +442,6 @@ class IAPISettings(Interface):
         title=u'Cloudflare Zone ID',
         required=False)
 
-    rocket_chat_front_page = schema.TextLine(
-        title=u'Rocket.Chat User URL',
-        description=u'URL of the Rocket.Chat server to connect to',
-        required=False
-    )
-
-    rocket_chat_secret = schema.TextLine(
-        title=u'Rocket.Chat secret',
-        description=u'Text string used to salt Rocket.Chat authentication tokens',
-        required=False,
-        default=unicode(django_random.get_random_string(64))
-    )
-
     matomo_base_url = schema.URI(
         title=u'Matomo instance base URL',
         description=u'used to query social media share outlinks via Matomo API, '

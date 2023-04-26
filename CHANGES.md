@@ -4,7 +4,7 @@ Changelog
 3.0.0b123 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- remove rocket chat integration
 
 
 3.0.0b122 (2023-04-11)
