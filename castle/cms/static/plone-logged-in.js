@@ -40,6 +40,7 @@ require([
   'castle-url/patterns/toolbar',
   'castle-url/patterns/upload-update',
   'castle-url/patterns/widgets',
+  'castle-url/patterns/manage-subscribers',
 
   // scripts
   'castle-url/scripts/patches',

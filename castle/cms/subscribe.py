@@ -97,7 +97,7 @@ def all():
 
 
 def get_page(page_num):
-    per_page = 50
+    per_page = 1
     start = (page_num - 1) * per_page
     end = start + per_page
     storage = SubscriptionStorage()
