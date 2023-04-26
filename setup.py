@@ -126,6 +126,7 @@ setup(
       archive-content = castle.cms.cron:archive_content
       content-popularity = castle.cms.cron:ga_popularity
       empty-trash = castle.cms.cron:empty_trash
+      import-karl = castle.cms._scripts.migrate-karl-users:main
       twitter-monitor = castle.cms.cron:twitter_monitor
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
