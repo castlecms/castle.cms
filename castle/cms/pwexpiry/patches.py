@@ -11,7 +11,7 @@ from Products.PluggableAuthService.plugins.ZODBUserManager import \
 from zope.component import getAdapters
 from zope.event import notify
 
-from hashlib import sha256
+from hashlib import sha1 as sha
 
 
 logger = logging.getLogger(__file__)
@@ -88,7 +88,7 @@ def authenticateCredentials(self, credentials):
 
     if not is_authenticated:
         # Support previous naive behavior
-        digested = sha256(password).hexdigest()
+        digested = sha(password).hexdigest()
 
         if reference == digested:
             is_authenticated = True
