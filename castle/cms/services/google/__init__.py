@@ -51,7 +51,7 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
-def get_ga4_service(request, ga_id):
+def get_ga4_data(request, ga_id):
     output = None
     command = ['/usr/bin/python3', 'scripts/google/google-api.py']
 
@@ -104,18 +104,15 @@ def get_ga4_service(request, ga_id):
 
 
 def get_property_conversion_mapping():
-    # TODO:
-    #! = exact property unavailable for Data API V1
     # available dimension and metric values:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     # https://ga-dev-tools.google/dimensions-metrics-explorer/
-
     property_conversion_mapping = {
         # Realtime
         # Dimensions
-        'rt:userType': 'userGender', #!
+        'rt:userType': 'userGender',
         'rt:medium': 'medium',
-        'rt:trafficType': 'contentType', #!
+        'rt:trafficType': 'contentType',
         'rt:browser': 'browser',
         'rt:operatingSystem': 'operatingSystem',
         'rt:deviceCategory': 'deviceCategory',
@@ -128,12 +125,12 @@ def get_property_conversion_mapping():
 
         # Historical
         # Dimensions
-        'ga:userType': 'userGender', #!
+        'ga:userType': 'userGender',
         'ga:sessionCount': 'sessions',
-        'ga:socialNetwork': 'sourcePlatform', #!
-        'ga:hasSocialSourceReferral': 'sessionSourceMedium', #!
+        'ga:socialNetwork': 'sourcePlatform',
+        'ga:hasSocialSourceReferral': 'sessionSourceMedium',
         'ga:medium': 'medium',
-        'ga:trafficType': 'contentType', #!
+        'ga:trafficType': 'contentType',
         'ga:browser': 'browser',
         'ga:operatingSystem': 'operatingSystem',
         'ga:deviceCategory': 'deviceCategory',
@@ -149,7 +146,7 @@ def get_property_conversion_mapping():
         'ga:language': 'language',
         'ga:exitPagePath': 'pagePath',
         # Metrics
-        'ga:hits': 'checkouts', #!
+        'ga:hits': 'checkouts',
         'ga:users': 'totalUsers',
         'ga:newUsers': 'newUsers',
         'ga:sessions': 'sessions',
@@ -159,7 +156,7 @@ def get_property_conversion_mapping():
         'ga:avgSessionDuration': 'averageSessionDuration',
         'ga:entranceRate': '', #!? bounceRate?
         'ga:pageviewsPerSession': 'screenPageViewsPerSession',
-        'ga:avgTimeOnPage': 'engagementRate', #!
+        'ga:avgTimeOnPage': 'engagementRate',
         'ga:avgPageLoadTime': '' #!?engagementRate?
     }
     return property_conversion_mapping

@@ -1,15 +1,18 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
+from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.defaultpage import get_default_page
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
 import transaction
 from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 from zope.component.hooks import setSite
 
 from castle.cms.indexing import hps
 from castle.cms.services.google import analytics
+from castle.cms.services.google import get_ga4_data
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import retriable
 
@@ -30,6 +33,14 @@ def get_results(service, profile_id):
 def get_popularity(site):
     if not hps.is_enabled():
         return
+
+    # TODO: Handle popularity data with GA4 here...
+    # get request to pass into function call
+    request = ''
+    registry = getUtility(IRegistry)
+    ga_id = registry.get('castle.google_analytics_id', None)
+    if ga_id:
+        result = get_ga4_data(request, ga_id)
 
     service = analytics.get_ga_service()
     if not service:
