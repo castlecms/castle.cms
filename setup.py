@@ -121,12 +121,12 @@ setup(
       castle = castle.cms.tasks
 
       [console_scripts]
+      import-karl = castle.cms._scripts.migrate_karl_users:setup_and_run
       clean-plone-users = castle.cms.cron:clean_users
       social-counts = castle.cms.cron:social_counts
       archive-content = castle.cms.cron:archive_content
       content-popularity = castle.cms.cron:ga_popularity
       empty-trash = castle.cms.cron:empty_trash
-      import-karl = castle.cms._scripts.migrate-karl-users:main
       twitter-monitor = castle.cms.cron:twitter_monitor
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
