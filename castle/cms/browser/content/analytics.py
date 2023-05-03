@@ -70,12 +70,12 @@ class AnalyticsView(BrowserView):
 
                 query = ga.get(ids='ga:' + profile, **params)
                 result = query.execute()
-                if result:
-                    cache_duration = self.request.get('cache_duration')
-                    if cache_duration:
-                        cache.set(cache_key, result, int(cache_duration))
-                else:
-                    result = {'error': 'GA query execution yielded no result.'}
+            if result:
+                cache_duration = self.request.get('cache_duration')
+                if cache_duration:
+                    cache.set(cache_key, result, int(cache_duration))
+            else:
+                result = {'error': 'GA query execution yielded no result.'}
 
         return result
 

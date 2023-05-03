@@ -9,9 +9,11 @@ requires python >= 3.7 to run
 
 Environment Variables to configure:
 
-GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/credentials.json"
+GOOGLE_APPLICATION_CREDENTIALS
 GOOGLE_ANALYTICS_PROPERTY_ID
+GOOGLE_ANALYTICS_IS_DEV
 """
+import json
 import logging
 import os
 import sys
@@ -23,27 +25,33 @@ from google.analytics.data_v1beta.types import (
     Metric,
     RunReportRequest,
 )
+from google.oauth2 import service_account
 
 
 logger = logging.getLogger("google-api")
-property_id = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
-
-if not property_id:
-    logger.error('GOOGLE_ANALYTICS_PROPERTY_ID environment variable must be set')
-    sys.exit()
+IS_DEV = os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False)
+PROPERTY_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
     
+def get_mock_service_data():
+    # TODO: generate mock data for dev and testing purposes...
+    return
+
 class GA4Service():
 
     def __init__(self):
-        # Using a default constructor instructs the client to use the credentials
-        # specified in GOOGLE_APPLICATION_CREDENTIALS environment variable.
-        self.client = BetaAnalyticsDataClient()
+        # TODO: handle credential decoding...
+        credentials = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None)
+        credentials = json.loads(credentials)
+        credentials = service_account.Credentials.from_service_account_info(credentials)
+        scoped_credentials = credentials.with_scopes(
+            ['https://www.googleapis.com/auth/cloud-platform']
+        )
+        self.client = BetaAnalyticsDataClient(credentials=scoped_credentials)
         self.category = os.environ.get("CASTLE_GA_FORM_TYPE", "REALTIME")
 
     
     def get_service_data(self):
-        data = []
-
+        data = {}
         dimensions = os.environ.get(f"GA_{self.category}_DIMENSIONS", None)
         metrics = os.environ.get(f"GA_{self.category}_METRICS", "screenPageViews")
         start_date = os.environ.get(f"GA_{self.category}_START_DATE", "7daysAgo")
@@ -52,14 +60,14 @@ class GA4Service():
 
         if not dimensions:
             request = RunReportRequest(
-                property=f"properties/{property_id}",
+                property=f"properties/{PROPERTY_ID}",
                 metrics=[Metric(name=metrics)],
                 date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
                 limit=max_results
             )
         else:
             request = RunReportRequest(
-                property=f"properties/{property_id}",
+                property=f"properties/{PROPERTY_ID}",
                 dimensions=[Dimension(name=dimensions)],
                 metrics=[Metric(name=metrics)],
                 date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
@@ -68,11 +76,18 @@ class GA4Service():
         response = self.client.run_report(request)
 
         for row in response.rows:
-            data.append({row.dimension_values[0].value: row.metric_values[0].value})
+            data[row.dimension_values[0].value] = row.metric_values[0].value
 
         return data
 
 
 if __name__ == '__main__':
+    if IS_DEV:
+        service_data = get_mock_service_data()
+        print(service_data)
+        sys.exit()
+    if not PROPERTY_ID:
+        logger.error('GOOGLE_ANALYTICS_PROPERTY_ID environment variable must be set')
+        sys.exit()
     service_data = GA4Service().get_service_data()
     print(service_data)

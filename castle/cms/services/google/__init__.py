@@ -1,3 +1,4 @@
+import ast
 import json
 import logging
 import os
@@ -7,6 +8,8 @@ import httplib2
 from apiclient.discovery import build
 from oauth2client.client import OAuth2Credentials
 from oauth2client.client import SignedJwtAssertionCredentials
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
 
 logger = logging.getLogger('google-service')
@@ -58,6 +61,15 @@ def get_ga4_data(request, ga_id):
     environ = os.environ.copy()
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
 
+    # Get credentials from control panel if not provided via env variable
+    if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', None):
+        registry = getUtility(IRegistry)
+        api_key = registry.get('castle.google_data_api_service_key_file', None)
+        if api_key is None:
+            logger.error('No service key file provided for GA4 Data API')
+            return
+        environ['GOOGLE_APPLICATION_CREDENTIALS'] = api_key
+
     form = request.form
     params = json.loads(form['params'])
     form_type = form['type'].upper()
@@ -98,8 +110,7 @@ def get_ga4_data(request, ga_id):
         # /usr/bin/pip3 install google-analytics-data
         logger.error('google-analytics-data package not installed into environment')
 
-    output = output.split('\n')
-    
+    output = ast.literal_eval(output.replace('\n', ''))
     return output
 
 
@@ -107,6 +118,7 @@ def get_property_conversion_mapping():
     # available dimension and metric values:
     # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
     # https://ga-dev-tools.google/dimensions-metrics-explorer/
+    # TODO: handle this with different defs on the analytics-modal.js
     property_conversion_mapping = {
         # Realtime
         # Dimensions
@@ -138,11 +150,11 @@ def get_property_conversion_mapping():
         'ga:country': 'country',
         'ga:region': 'region',
         'ga:continent': 'continent',
-        'ga:subContinent': '', #!? continent?
-        'ga:metro': '', #!? method?
+        'ga:subContinent': None,
+        'ga:metro': None,
         'ga:city': 'city',
-        'ga:flashVersion': '', #!? appVersion?
-        'ga:javaEnabled': '', #!? visible?
+        'ga:flashVersion': None,
+        'ga:javaEnabled': None,
         'ga:language': 'language',
         'ga:exitPagePath': 'pagePath',
         # Metrics
@@ -151,12 +163,12 @@ def get_property_conversion_mapping():
         'ga:newUsers': 'newUsers',
         'ga:sessions': 'sessions',
         'ga:pageviews': 'screenPageViews',
-        'ga:bounces': '', #!? bounceRate?
+        'ga:bounces': None,
         'ga:bounceRate': 'bounceRate',
         'ga:avgSessionDuration': 'averageSessionDuration',
-        'ga:entranceRate': '', #!? bounceRate?
+        'ga:entranceRate': None,
         'ga:pageviewsPerSession': 'screenPageViewsPerSession',
         'ga:avgTimeOnPage': 'engagementRate',
-        'ga:avgPageLoadTime': '' #!?engagementRate?
+        'ga:avgPageLoadTime': None,
     }
     return property_conversion_mapping

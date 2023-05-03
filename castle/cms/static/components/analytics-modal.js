@@ -284,6 +284,8 @@ define([
   };
 
 
+  // TODO: separate tabs for when UA or GA4 are invoked
+  // TODO: view to do check for configuration record and return?
   var RealtimeTab = cutils.Class([BaseTab], {
     type: 'realtime',
     dimensionOptions: [

@@ -53,6 +53,7 @@ class CastleSettingsControlPanelForm(controlpanel.RegistryEditForm):
     def updateFields(self):
         super(CastleSettingsControlPanelForm, self).updateFields()
         self.groups[0].fields['google_api_service_key_file'].widgetFactory = NamedFileFieldWidget
+        self.groups[0].fields['google_data_api_service_key_file'].widgetFactory = NamedFileFieldWidget
         self.groups[1].fields['archival_types_to_archive'].widgetFactory = SelectFieldWidget
         self.groups[1].fields['archival_states_to_archive'].widgetFactory = SelectFieldWidget
         self.groups[2].fields['file_upload_fields'].widgetFactory = FileUploadFieldsFieldWidget
