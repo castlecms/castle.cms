@@ -2,9 +2,8 @@ import argparse
 import datetime
 import json
 import os
-import tempfile
 
-from zope.component.hooks import setSite
+from zope.component.hooks import setSite, getSite
 from tendo import singleton
 from AccessControl.SecurityManagement import newSecurityManager
 from plone import api
@@ -27,17 +26,22 @@ def import_profiles(args):
         profile = json.load(json_fi)
         json_fi.close()
 
-        fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
+        _fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
         try:
             user = api.user.create(email=profile['email'], 
                             username=profile['username'], 
                             password=None, 
-                            roles=('Member',),
-                            properties=profile['properties'])
-            user.setMemberProperties(mapping={ 'phone': profile['properties']['phone'] })
+                            roles=('Member',))
+            
+            user.description = profile['properties']['biography'],
+            user.fullname = _fullname,
+            user.location = profile['properties']['location']
+            user.homepage = profile['properties']['home_path']
+            user.language = profile['properties']['languages']
+            user.phone_number = profile['properties']['phone']
         except Exception as e:
             no_errors = False
-            logging.error('error while importing profile for {}, {}'.format(fullname, e))
+            logging.error('error while importing profile for {}, {}'.format(_fullname, e))
     return no_errors
 
 def import_groups(args):
@@ -128,27 +132,28 @@ def import_communities(path):  # path = {}/groups/communities
                     count += 1
                     print('import blog, blog post {}/{}'.format(count, len(os.listdir(blog_folder_path))))
                     
-                    attachments = []
-                    fake_attachment = 'Copy of _Stress Buster_ Challenge Tracker.pdf'
-                    
+                    blog_attachments = {}
+
                     blog_file = open(os.path.join(blog_folder_path, blog_post))
                     blog_dump = json.load(blog_file)
                     blog_file.close()
 
                     for attachment in blog_dump['data']['attachments']:
-                        split = fake_attachment.split('.')
-                        # split = attachment.split('.')
+                        # fake_attachment = 'Copy of _Stress Buster_ Challenge Tracker.pdf'
+                        # attachment = fake_attachment
+                        
+                        split = attachment.split('.')
                         attachment_name = split[0]
                         
                         fi = open(os.path.join('{}/_blog_attachments/__data__{}.json'.format(basePath, attachment_name)), 'rb')
                         data_attachment_dump = json.load(fi)
                         fi.close()
 
-                        attach_fi = open(os.path.join('{}/_blog_attachments/{}'.format(basePath, fake_attachment)), 'rb')
-                        # attach_fi = open(os.path.join('{}/_blog_attachments/{}'.format(basePath, attachment)), 'rb')  # {}/groups/communities/<community_name>/blog/<blog_name>/<blog_item>.json
-                        temp_fi = tempfile.TemporaryFile()
+                        attach_fi = open(os.path.join('{}/_blog_attachments/{}'.format(basePath, attachment)), 'rb')  # {}/groups/communities/<community_name>/blog/<blog_name>/<blog_item>.json
+                        temp_fi = open('{}/{}'.format(basePath, attach_fi), 'wb')
                         temp_fi.write(attach_fi.read())
                         attach_fi.close()
+                        temp_fi.close()
 
                         try:
                             file_obj = api.content.create(                          
@@ -162,7 +167,7 @@ def import_communities(path):  # path = {}/groups/communities
                                 file_obj.file = NamedBlobImage(                          
                                     data=temp_fi,                                  
                                     contentType=data_attachment_dump['mimetype'],                   
-                                    filename=attachment,            
+                                    filename=data_attachment_dump['filename'],            
                                 )
                             else:
                                 file_obj.file = NamedBlobFile(                          
@@ -170,31 +175,38 @@ def import_communities(path):  # path = {}/groups/communities
                                     contentType=data_attachment_dump['mimetype'],                   
                                     filename=attachment,            
                                 )
-                            attachments.append(file_obj)
-                            transaction.commit()
+                            blog_attachments.update({data_attachment_dump['filename']: file_obj.absolute_url_path()})
                             fi.close()
-                        except:
-                            pass
-                    blog_obj = api.content.create(type='News Item', 
+                        except Exception as e:
+                            logging.error('{}, line 178'.format(e))
+                    append_text = ''
+                    if len(blog_attachments)>0:
+                        append_text = '<br/><br/><h5>Attachments:</h5><br/><ul>'
+                        for filename, url in blog_attachments.items():
+                            append_text += '<li><a href="{}">{}</li>'.format(url, filename)
+                        append_text += '</ul><br/><br/>'
+                    text = blog_dump['text'] + append_text
+                    blog_obj = api.content.create(type='News Item',
                                        title=blog_dump['title'],
                                        container=community_blog_folder,
                                        subject=blog_dump['title'],
                                        description=blog_dump['description'],
-                                       contributors=[blog_dump['modified_by']],
+                                       contributors=blog_dump['modified_by'],
                                        effective_date=datetime.datetime.strptime(blog_dump['created'], "%Y-%m-%d %H:%M:%S.%f"),
                                        creation_date=datetime.datetime.strptime(blog_dump['created'], "%Y-%m-%d %H:%M:%S.%f"),
-                                       attachments=attachments,
                                        comments=blog_dump['data']['comments'],
-                                       text=blog_dump['text'],
-                                       creators=[blog_dump['creator']],
-                    )
+                                       text=text,
+                                       creators=blog_dump['creator'],
+                               )
                     if 'admin' in blog_obj.contributors:
                         index = blog_obj.contributors.index('admin')
                         contributors = blog_obj.contributors[:(index-1)] + blog_obj.contributors[(index+1):]
                         blog_obj.contributors = contributors
-                    mod = api.content.get('/blog/{}/{}'.format(community_name, blog_obj.id))
-                    mod.setModificationDate(datetime.datetime.strptime(blog_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))                  
-
+                    try:
+                        mod = api.content.get('/blog/{}/{}'.format(community_name, blog_obj.id))
+                        mod.setModificationDate(datetime.datetime.strptime(blog_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))                  
+                    except Exception as e:
+                        import pdb; pdb.set_trace()
             elif obj == '{}.json'.format(community_name):
                 try:  # create community
                     fi = open(os.path.join(community_folder_path, obj), 'r') # {}/groups/communities/<community_name>/<community_name>.json
@@ -230,12 +242,9 @@ def import_communities(path):  # path = {}/groups/communities
     return communities_list
 
 def migrate(args):
-    # import_profiles(args)
-    # transaction.commit()
-    # if no_profile_errors:
-    #     print('Successfully imported all profiles')
-    # else:
-    #     raise Exception('error importing profiles')
+    import_profiles(args)
+    transaction.commit()
+    
     import_groups(args)
     transaction.commit()
 
