@@ -19,30 +19,53 @@ basePath = '/Users/katieschramm/dev/git/FBI/fbigov-dev/karl_dump'
 def import_profiles(args):
     profiles_path = '{}/profiles'.format(args.dump_folder)
     profiles = os.listdir(profiles_path)
-    no_errors = True
     
     for filename in profiles:
         json_fi = open(os.path.join(profiles_path, filename), 'r')
         profile = json.load(json_fi)
         json_fi.close()
 
-        _fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
+        fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
         try:
             user = api.user.create(email=profile['email'], 
                             username=profile['username'], 
                             password=None, 
                             roles=('Member',))
             
-            user.description = profile['properties']['biography'],
-            user.fullname = _fullname,
-            user.location = profile['properties']['location']
-            user.homepage = profile['properties']['home_path']
-            user.language = profile['properties']['languages']
-            user.phone_number = profile['properties']['phone']
+            user.setMemberProperties(mapping={
+                'phone_number': profile['properties']['phone'],
+                'biography': profile['properties']['biography'],
+                'location': profile['properties']['location'],
+                'fullname': fullname,
+                'home': profile['properties']['home_path'],
+            })
+
+            user.fax = profile['properties']['fax'],
+            user.office = profile['properties']['office'],
+            user.firstname = profile['properties']['firstname'],
+            user.lastname = profile['properties']['lastname'],
+            user.categories = profile['properties']['categories'],
+            user.two_factor_phone = profile['properties']['two_factor_phone'],
+            user._alert_prefs= profile['properties']['_alert_prefs'],
+            user.websites = profile['properties']['websites'],
+            user.position = profile['properties']['position'],
+            user.two_factor_verified = profile['properties']['two_factor_verified'],
+            user.date_format = profile['properties']['date_format'],
+            user.organization = profile['properties']['organization'],
+            user.password_reset_key = profile['properties']['password_reset_key'],
+            user.extension = profile['properties']['extension'],
+            user.industry = profile['properties']['industry'],
+            user.preferred_communities = profile['properties']['preferred_communities'],
+            user.password_reset_time = profile['properties']['password_reset_time'],
+            user.languages = profile['properties']['languages'],
+            user.country = profile['properties']['country'],
+            user.department = profile['properties']['department'],
+            user._pending_alerts = profile['properties']['_pending_alerts'],
+            user.room_no = profile['properties']['room_no'],
+
+            transaction.commit()
         except Exception as e:
-            no_errors = False
-            logging.error('error while importing profile for {}, {}'.format(_fullname, e))
-    return no_errors
+            logging.error('error while importing profile for {}, {}'.format(fullname, e))
 
 def import_groups(args):
     site = api.content.get(path='/')
@@ -112,7 +135,6 @@ def import_groups(args):
     except Exception as e:
         logging.error('error while importing group {}, {}'.format(group, e))
     
-
 def import_communities(path):  # path = {}/groups/communities
     communities_list = []
     for community_name in os.listdir(path):
@@ -243,8 +265,6 @@ def import_communities(path):  # path = {}/groups/communities
 
 def migrate(args):
     import_profiles(args)
-    transaction.commit()
-    
     import_groups(args)
     transaction.commit()
 
