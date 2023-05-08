@@ -34,20 +34,24 @@ PROPERTY_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
     
 def get_mock_service_data():
     # TODO: generate mock data for dev and testing purposes...
+    data = {}
     return
 
 class GA4Service():
 
     def __init__(self):
-        # TODO: handle credential decoding...
-        credentials = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None)
-        credentials = json.loads(credentials)
-        credentials = service_account.Credentials.from_service_account_info(credentials)
-        scoped_credentials = credentials.with_scopes(
-            ['https://www.googleapis.com/auth/cloud-platform']
-        )
-        self.client = BetaAnalyticsDataClient(credentials=scoped_credentials)
         self.category = os.environ.get("CASTLE_GA_FORM_TYPE", "REALTIME")
+        self.credentials = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None)
+
+        if os.path.isfile(self.credentials):
+            self.client = BetaAnalyticsDataClient()
+        else:
+            self.credentials = json.loads(self.credentials)
+            self.credentials = service_account.Credentials.from_service_account_info(self.credentials)
+            scoped_credentials = self.credentials.with_scopes(
+                ['https://www.googleapis.com/auth/cloud-platform']
+            )
+            self.client = BetaAnalyticsDataClient(credentials=scoped_credentials)
 
     
     def get_service_data(self):

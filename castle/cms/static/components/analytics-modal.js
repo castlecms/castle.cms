@@ -284,64 +284,54 @@ define([
   };
 
 
-  // TODO: separate tabs for when UA or GA4 are invoked
-  // TODO: view to do check for configuration record and return?
   var RealtimeTab = cutils.Class([BaseTab], {
     type: 'realtime',
     dimensionOptions: [
-      'rt:userType',
-      'rt:medium',
-      'rt:trafficType',
-      'rt:browser',
-      'rt:operatingSystem',
-      'rt:deviceCategory',
-      'rt:country',
-      'rt:region',
-      'rt:pagePath'
+      'userGender',
+      'medium',
+      'contentType',
+      'browser',
+      'operatingSystem',
+      'deviceCategory',
+      'country',
+      'region',
+      'pagePath'
     ],
     metricOptions: [
-      'rt:pageViews',
-      'rt:activeUsers'
+      'screenPageViews',
+      'activeUsers'
     ]
   });
 
   var HistoryTab = cutils.Class([BaseTab], {
     type: 'ga',
     dimensionOptions: [
-      'ga:userType',
-      'ga:sessionCount',
-      'ga:socialNetwork',
-      'ga:hasSocialSourceReferral',
-      'ga:medium',
-      'ga:trafficType',
-      'ga:browser',
-      'ga:operatingSystem',
-      'ga:deviceCategory',
-      'ga:pagePath',
-      'ga:country',
-      'ga:region',
-      'ga:continent',
-      'ga:subContinent',
-      'ga:metro',
-      'ga:city',
-      'ga:flashVersion',
-      'ga:javaEnabled',
-      'ga:language',
-      'ga:exitPagePath'
+      'userGender',
+      'sessions',
+      'sourcePlatform',
+      'sessionSourceMedium',
+      'medium',
+      'contentType',
+      'browser',
+      'operatingSystem',
+      'deviceCategory',
+      'pagePath',
+      'country',
+      'region',
+      'metro',
+      'city',
+      'language',
     ],
     metricOptions: [
-      'ga:hits',
-      'ga:users',
-      'ga:newUsers',
-      'ga:sessions',
-      'ga:pageviews',
-      'ga:bounces',
-      'ga:bounceRate',
-      'ga:avgSessionDuration',
-      'ga:entranceRate',
-      'ga:pageviewsPerSession',
-      'ga:avgTimeOnPage',
-      'ga:avgPageLoadTime'
+      'checkouts',
+      'totalUsers',
+      'newUsers',
+      'sessions',
+      'screenPageViews',
+      'bounceRate',
+      'averageSessionDuration',
+      'screenPageViewsPerSession',
+      'engagementRate',
     ],
 
     getInitialState: function(){

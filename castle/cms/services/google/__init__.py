@@ -78,19 +78,12 @@ def get_ga4_data(request, ga_id):
         form_type = 'HISTORICAL'
     environ['CASTLE_GA_FORM_TYPE'] = form_type
 
-    property_conversion_mapping = get_property_conversion_mapping()
-
     for key, val in params.items():
         if key == 'metrics' or key == 'dimensions':
-            try:
-                val = str(val)
-                if val.startswith('-'):
-                    val = val.replace('-', '')
-                property_val = property_conversion_mapping[val]
-                environ['GA_%s_%s' % (form_type, str(key.upper()))] = property_val
-            except KeyError:
-                logger.error('No available property conversion for %s' % val)
-                return
+            val = str(val)
+            if val.startswith('-'):
+                val = val.replace('-', '')
+            environ['GA_%s_%s' % (form_type, str(key.upper()))] = val
         else:
             environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
 
@@ -112,63 +105,3 @@ def get_ga4_data(request, ga_id):
 
     output = ast.literal_eval(output.replace('\n', ''))
     return output
-
-
-def get_property_conversion_mapping():
-    # available dimension and metric values:
-    # https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema
-    # https://ga-dev-tools.google/dimensions-metrics-explorer/
-    # TODO: handle this with different defs on the analytics-modal.js
-    property_conversion_mapping = {
-        # Realtime
-        # Dimensions
-        'rt:userType': 'userGender',
-        'rt:medium': 'medium',
-        'rt:trafficType': 'contentType',
-        'rt:browser': 'browser',
-        'rt:operatingSystem': 'operatingSystem',
-        'rt:deviceCategory': 'deviceCategory',
-        'rt:country': 'country',
-        'rt:region': 'region',
-        'rt:pagePath': 'pagePath',
-        # Metrics
-        'rt:pageViews': 'screenPageViews',
-        'rt:activeUsers': 'activeUsers',
-
-        # Historical
-        # Dimensions
-        'ga:userType': 'userGender',
-        'ga:sessionCount': 'sessions',
-        'ga:socialNetwork': 'sourcePlatform',
-        'ga:hasSocialSourceReferral': 'sessionSourceMedium',
-        'ga:medium': 'medium',
-        'ga:trafficType': 'contentType',
-        'ga:browser': 'browser',
-        'ga:operatingSystem': 'operatingSystem',
-        'ga:deviceCategory': 'deviceCategory',
-        'ga:pagePath': 'pagePath',
-        'ga:country': 'country',
-        'ga:region': 'region',
-        'ga:continent': 'continent',
-        'ga:subContinent': None,
-        'ga:metro': None,
-        'ga:city': 'city',
-        'ga:flashVersion': None,
-        'ga:javaEnabled': None,
-        'ga:language': 'language',
-        'ga:exitPagePath': 'pagePath',
-        # Metrics
-        'ga:hits': 'checkouts',
-        'ga:users': 'totalUsers',
-        'ga:newUsers': 'newUsers',
-        'ga:sessions': 'sessions',
-        'ga:pageviews': 'screenPageViews',
-        'ga:bounces': None,
-        'ga:bounceRate': 'bounceRate',
-        'ga:avgSessionDuration': 'averageSessionDuration',
-        'ga:entranceRate': None,
-        'ga:pageviewsPerSession': 'screenPageViewsPerSession',
-        'ga:avgTimeOnPage': 'engagementRate',
-        'ga:avgPageLoadTime': None,
-    }
-    return property_conversion_mapping
