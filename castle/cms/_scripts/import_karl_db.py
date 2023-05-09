@@ -163,20 +163,23 @@ def import_communities(path):  # path = {}/groups/communities
                     for attachment in blog_dump['data']['attachments']:
                         # fake_attachment = 'Copy of _Stress Buster_ Challenge Tracker.pdf'
                         # attachment = fake_attachment
-                        
-                        split = attachment.split('.')
-                        attachment_name = split[0]
-                        
-                        fi = open(os.path.join('{}/_blog_attachments/__data__{}.json'.format(basePath, attachment_name)), 'rb')
-                        data_attachment_dump = json.load(fi)
-                        fi.close()
+                        try:
+                            filename_tuple = os.path.splitext(attachment)
+                            attachment_name = filename_tuple[0]
+                            
+                            fi = open(os.path.join('{}/_blog_attachments/__data__{}.json'.format(basePath, attachment_name)), 'rb')
+                            data_attachment_dump = json.load(fi)
+                            fi.close()
 
-                        attach_fi = open(os.path.join('{}/_blog_attachments/{}'.format(basePath, attachment)), 'rb')  # {}/groups/communities/<community_name>/blog/<blog_name>/<blog_item>.json
-                        temp_fi = open('{}/{}'.format(basePath, attach_fi), 'wb')
-                        temp_fi.write(attach_fi.read())
-                        attach_fi.close()
-                        temp_fi.close()
-
+                            attach_fi = open(os.path.join('{}/_blog_attachments/{}'.format(basePath, attachment)), 'rb')  # {}/groups/communities/<community_name>/blog/<blog_name>/<blog_item>.json
+                            
+                        except Exception as e:
+                            if os.path.exists('{}/dump.log'.format(basePath)):
+                                log = open('{}/dump.log'.format(basePath), 'a') 
+                            else:
+                                log = open('{}/dump.log'.format(basePath), 'w')
+                            log.write('unable to find {} for community {}\n'.format(attachment, community_name))
+                            log.close()
                         try:
                             file_obj = api.content.create(                          
                                 container=community_blog_folder,
@@ -187,17 +190,18 @@ def import_communities(path):  # path = {}/groups/communities
                             )
                             if 'image' in data_attachment_dump['mimetype']:
                                 file_obj.file = NamedBlobImage(                          
-                                    data=temp_fi,                                  
+                                    data=attach_fi.read(),                                  
                                     contentType=data_attachment_dump['mimetype'],                   
                                     filename=data_attachment_dump['filename'],            
                                 )
                             else:
                                 file_obj.file = NamedBlobFile(                          
-                                    data=temp_fi,                                  
+                                    data=attach_fi.read(),                                  
                                     contentType=data_attachment_dump['mimetype'],                   
                                     filename=attachment,            
                                 )
                             blog_attachments.update({data_attachment_dump['filename']: file_obj.absolute_url_path()})
+                            attach_fi.close()
                             fi.close()
                         except Exception as e:
                             logging.error('{}, line 178'.format(e))
@@ -303,7 +307,6 @@ def setup_and_run():
     newSecurityManager(None, user)
 
     run(app)
-
 
 if __name__ == '__main__':
     run(app)  # noqa
