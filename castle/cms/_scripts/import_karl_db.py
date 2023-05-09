@@ -247,7 +247,7 @@ def import_communities(path):  # path = {}/groups/communities
                     api.group.create(groupname='{}:members'.format(dump_fi['groupname']), 
                                     title='{}:members'.format(dump_fi['title']), 
                                     description=None, 
-                                    roles=[], 
+                                    roles=['Reader',], 
                                     groups=['{}:moderators'.format(dump_fi['groupname'])])
                     for member in dump_fi['members']:  # add community members to group
                         try:
