@@ -54,21 +54,23 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
-def get_ga4_data(request, ga_id):
+def get_ga4_data(request, ga_id, paths, params):
     output = None
-    command = ['/usr/bin/python3', 'scripts/google/google-api.py']
+    registry = getUtility(IRegistry)
 
     environ = os.environ.copy()
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+    environ['GOOGLE_ANALYTICS_API_EMAIL'] = registry.get('castle.google_api_email', None)
+    environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
+    environ['GOOGLE_ANALYTICS_PARAMS'] = str(params)
 
     # Get credentials from control panel if not provided via env variable
-    if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', None):
-        registry = getUtility(IRegistry)
-        api_key = registry.get('castle.google_data_api_service_key_file', None)
+    if not os.environ.get('GOOGLE_API_KEY', None):
+        api_key = registry.get('castle.google_api_service_key_file', None)
         if api_key is None:
             logger.error('No service key file provided for GA4 Data API')
             return
-        environ['GOOGLE_APPLICATION_CREDENTIALS'] = api_key
+        environ['GOOGLE_API_KEY'] = api_key
 
     form = request.form
     params = json.loads(form['params'])
@@ -87,21 +89,19 @@ def get_ga4_data(request, ga_id):
         else:
             environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
 
-    try:
-        process = subprocess.Popen(
-            command,
-            env=environ,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
-        output, error = process.communicate()
-        if error:
-            logger.error(error)
-        if not output:
-            logger.error('No output received from GA4 request')
-            return
-    except ImportError:
-        # /usr/bin/pip3 install google-analytics-data
-        logger.error('google-analytics-data package not installed into environment')
+    command = ['/usr/bin/python3', 'scripts/google/google-api.py']
+
+    process = subprocess.Popen(
+        command,
+        env=environ,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    if error:
+        logger.error(error)
+    if not output:
+        logger.error('No output received from GA4 request')
+        return
 
     output = ast.literal_eval(output.replace('\n', ''))
     return output

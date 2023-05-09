@@ -45,7 +45,7 @@ class AnalyticsView(BrowserView):
             ga_id = registry.get('castle.google_analytics_id', None)
 
             if ga_id:
-                result = get_ga4_data(self.request, ga_id)
+                result = get_ga4_data(self.request, ga_id, paths, params)
             else:
                 service = analytics.get_ga_service()
                 if not service:

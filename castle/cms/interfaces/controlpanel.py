@@ -330,15 +330,9 @@ class IAPISettings(Interface):
         required=False,
     )
 
-    google_data_api_service_key_file = schema.ASCII(
-        title=u"Google Data API Service Key File (GA4)",
-        description=u'Private key file for the GA4 API',
-        required=False
-    )
-
     google_api_service_key_file = schema.ASCII(
-        title=u"Google API Service Key File (UA)",
-        description=u'Private key file for the UA API',
+        title=u"Google API Service Key File",
+        description=u'Private key file for the Google API',
         required=False,
     )
 

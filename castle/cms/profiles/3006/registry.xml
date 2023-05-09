@@ -23,9 +23,6 @@
       <required>False</required>
     </field>
   </record>
-  <record interface="castle.cms.interfaces.IAPISettings"
-          field="google_data_api_service_key_file" prefix="castle" purge="False">
-  </record>
 
   <record name="plone.disable_country_restriction"
           interface="castle.cms.interfaces.ISecuritySchema"
