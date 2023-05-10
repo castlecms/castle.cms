@@ -14,16 +14,14 @@ from plone.api.exc import UserNotFoundError
 import logging
 from plone.namedfile import NamedBlobFile, NamedBlobImage
 
-basePath = '/Users/katieschramm/dev/git/FBI/fbigov-dev/karl_dump'
 
 def import_profiles(args):
     profiles_path = '{}/profiles'.format(args.dump_folder)
     profiles = os.listdir(profiles_path)
     
     for filename in profiles:
-        json_fi = open(os.path.join(profiles_path, filename), 'r')
-        profile = json.load(json_fi)
-        json_fi.close()
+        with open(os.path.join(profiles_path, filename), 'r') as json_fi:
+            profile = json.load(json_fi)
 
         fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
         try:
@@ -64,12 +62,12 @@ def import_profiles(args):
             user.room_no = profile['properties']['room_no'],
 
             transaction.commit()
-        except Exception as e:
-            logging.error('error while importing profile for {}, {}'.format(fullname, e))
+        except:
+            logging.error('error while importing profile for {}, {}'.format(fullname), exc_info=True)
 
 def import_groups(args):
     site = api.content.get(path='/')
-    api.content.create(container=site, type='Folder', title='blog')
+    api.content.create(container=site, type='Folder', title='communities')
     
     groups_path = '{}/groups'.format(args.dump_folder)
     groups = os.listdir(groups_path)
@@ -78,7 +76,7 @@ def import_groups(args):
             if group == 'communities':  # the only folder in groups should be communities
                 community_path = os.path.join(groups_path, 'communities')  # community_path = {}/groups/communities
 
-                communities_list = import_communities(community_path)
+                communities_list = import_communities(args, community_path)
                 api.group.create(groupname='Communities', 
                                  title='Communities', 
                                  description='', 
@@ -119,92 +117,118 @@ def import_groups(args):
     try:
         for groupname in group_list:  # for each of the core groups
             if groupname in group:
-                json_fi = open(os.path.join(groups_path, group), 'r')
-                fi = json.load(json_fi)
-                json_fi.close
+                with open(os.path.join(groups_path, group), 'r') as json_fi:
+                    fi = json.load(json_fi)
 
                 for member in fi['members']:
                     try:
                         api.group.add_user(groupname=groupname, username=member)
                     except UserNotFoundError:  # not all users in db were migrated
                         pass
-                    except Exception as e:
-                        logging.error('unexpected error: {}'.format(e))
+                    except:
+                        logging.error('unexpected error', exc_info=True)
                 group_list.remove(groupname)  # remove the group from the list to shorten the next for loop search
                 break
-    except Exception as e:
-        logging.error('error while importing group {}, {}'.format(group, e))
+    except:
+        logging.error('error while importing group {}'.format(group), exc_info=True)
     
-def import_communities(path):  # path = {}/groups/communities
+def import_communities(args, path):  # path = {}/groups/communities
     communities_list = []
+    
+    site = api.content.get(path='/')
+    api.content.create(container=site, type='Folder', title='blog')
+    blog_folder = api.content.get(path='/blog')
+    
     for community_name in os.listdir(path):
         communities_list.append(community_name)
-        print('import communites {}/{}'.format(len(communities_list), len(os.listdir(path))))
-        community_folder_path = os.path.join(path, community_name)  # {}/groups/communities/<community_name>
+        logging.info('import communites {}/{}'.format(len(communities_list), len(os.listdir(path))))
+
+        communities_site = api.content.get(path='/communities')
+        api.content.create(container=blog_folder, type='Folder', title='{}'.format(community_name))
+        blog_site = api.content.get(path='/blog/{}'.format(community_name))
+        api.content.create(container=blog_site, type='Folder', title='attachments')
+        attachment_folder = api.content.get(path='/blog/{}/attachments'.format(community_name))
+
+        try:  # create community
+            with open(os.path.join(path, community_name, '{}.json'.format(community_name)), 'r') as fi:
+                dump_fi = json.load(fi)
+
+            api.group.create(groupname='{}:moderators'.format(dump_fi['groupname']), 
+                            title='{}:moderators'.format(dump_fi['title']), 
+                            description=None, 
+                            roles=['Editor', 'Contributor'], 
+                            groups=[])
+            api.group.create(groupname='{}:members'.format(dump_fi['groupname']), 
+                            title='{}:members'.format(dump_fi['title']), 
+                            description=None, 
+                            roles=['Reader',], 
+                            groups=['{}:moderators'.format(dump_fi['groupname'])])
+            for member in dump_fi['members']:  # add community members to group
+                try:
+                    api.group.add_user(groupname='{}:members'.format(dump_fi['groupname']), 
+                                    username=member)
+                except UserNotFoundError:
+                    continue
+            for moderator in dump_fi['moderators']:  # add community moderators to group
+                try:
+                    api.group.add_user(groupname='{}:moderators'.format(dump_fi['groupname']), 
+                                    username=moderator)
+                except UserNotFoundError:
+                    continue
+            api.content.create(container=communities_site, type='Document', title=community_name, description=dump_fi['description'])
+        except:
+            logging.error('error while importing community {}'.format(path), exc_info=True)
+
+        community_folder_path = os.path.join(path, community_name)
         
         for obj in os.listdir(community_folder_path):
+            if obj == '{}.json'.format(community_name):
+                continue
             blog_folder_path = os.path.join(community_folder_path, obj)
             if os.path.isdir(os.path.join(community_folder_path, obj)) and obj == 'blog':  # if community has a blog
-                blog_folder = api.content.get(path='/blog')  # {}/groups/communities/<community_name>/blog
-                community_blog_folder = api.content.create(container=blog_folder, 
-                                                           type='Folder',
-                                                           title=community_name)
                 count = 0
                 for blog_post in os.listdir(blog_folder_path):
                     count += 1
-                    print('import blog, blog post {}/{}'.format(count, len(os.listdir(blog_folder_path))))
+                    logging.info('import blog, blog post {}/{}'.format(count, len(os.listdir(blog_folder_path))))
                     
                     blog_attachments = {}
 
-                    blog_file = open(os.path.join(blog_folder_path, blog_post))
-                    blog_dump = json.load(blog_file)
-                    blog_file.close()
+                    with open(os.path.join(blog_folder_path, blog_post)) as blog_file:
+                        blog_dump = json.load(blog_file)
 
                     for attachment in blog_dump['data']['attachments']:
-                        # fake_attachment = 'Copy of _Stress Buster_ Challenge Tracker.pdf'
-                        # attachment = fake_attachment
                         try:
                             filename_tuple = os.path.splitext(attachment)
                             attachment_name = filename_tuple[0]
                             
-                            fi = open(os.path.join('{}/_blog_attachments/__data__{}.json'.format(basePath, attachment_name)), 'rb')
-                            data_attachment_dump = json.load(fi)
-                            fi.close()
-
-                            attach_fi = open(os.path.join('{}/_blog_attachments/{}'.format(basePath, attachment)), 'rb')  # {}/groups/communities/<community_name>/blog/<blog_name>/<blog_item>.json
-                            
-                        except Exception as e:
-                            if os.path.exists('{}/dump.log'.format(basePath)):
-                                log = open('{}/dump.log'.format(basePath), 'a') 
-                            else:
-                                log = open('{}/dump.log'.format(basePath), 'w')
-                            log.write('unable to find {} for community {}\n'.format(attachment, community_name))
-                            log.close()
+                            with open(os.path.join('{}/_blog_attachments/__data__{}.json'.format(args.dump_folder, attachment_name)), 'rb') as fi:
+                                data_attachment_dump = json.load(fi)
+                        except:
+                            logging.error('unable to find blog attachment {} for community {}\n'.format(attachment, community_name), exc_info=True)
                         try:
                             file_obj = api.content.create(                          
-                                container=community_blog_folder,
+                                container=attachment_folder,
                                 type='File', 
                                 id=attachment,                             
                                 title=attachment, 
                                 safe_id=True
                             )
-                            if 'image' in data_attachment_dump['mimetype']:
-                                file_obj.file = NamedBlobImage(                          
-                                    data=attach_fi.read(),                                  
-                                    contentType=data_attachment_dump['mimetype'],                   
-                                    filename=data_attachment_dump['filename'],            
-                                )
-                            else:
-                                file_obj.file = NamedBlobFile(                          
-                                    data=attach_fi.read(),                                  
-                                    contentType=data_attachment_dump['mimetype'],                   
-                                    filename=attachment,            
-                                )
+                            with open(os.path.join('{}/_blog_attachments/{}'.format(args.dump_folder, attachment)), 'rb') as attach_fi:
+                                if 'image' in data_attachment_dump['mimetype']:
+                                    file_obj.file = NamedBlobImage(                          
+                                        data=attach_fi.read(),                                  
+                                        contentType=data_attachment_dump['mimetype'],                   
+                                        filename=data_attachment_dump['filename'],            
+                                    )
+                                else:
+                                    file_obj.file = NamedBlobFile(                          
+                                        data=attach_fi.read(),                                  
+                                        contentType=data_attachment_dump['mimetype'],                   
+                                        filename=attachment,            
+                                    )
                             blog_attachments.update({data_attachment_dump['filename']: file_obj.absolute_url_path()})
-                            attach_fi.close()
-                            fi.close()
-                        except Exception as e:
-                            logging.error('{}, line 178'.format(e))
+                        except:
+                            logging.error('error while importing blog attachment {}'.format(attachment), exc_info=True)
                     append_text = ''
                     if len(blog_attachments)>0:
                         append_text = '<br/><br/><h5>Attachments:</h5><br/><ul>'
@@ -212,9 +236,10 @@ def import_communities(path):  # path = {}/groups/communities
                             append_text += '<li><a href="{}">{}</li>'.format(url, filename)
                         append_text += '</ul><br/><br/>'
                     text = blog_dump['text'] + append_text
-                    blog_obj = api.content.create(type='News Item',
+                    blog_obj = api.content.create(
+                                       container=blog_site,
+                                       type='News Item',
                                        title=blog_dump['title'],
-                                       container=community_blog_folder,
                                        subject=blog_dump['title'],
                                        description=blog_dump['description'],
                                        contributors=blog_dump['modified_by'],
@@ -231,40 +256,8 @@ def import_communities(path):  # path = {}/groups/communities
                     try:
                         mod = api.content.get('/blog/{}/{}'.format(community_name, blog_obj.id))
                         mod.setModificationDate(datetime.datetime.strptime(blog_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))                  
-                    except Exception as e:
-                        import pdb; pdb.set_trace()
-            elif obj == '{}.json'.format(community_name):
-                try:  # create community
-                    fi = open(os.path.join(community_folder_path, obj), 'r') # {}/groups/communities/<community_name>/<community_name>.json
-                    dump_fi = json.load(fi)  # load community .json file
-                    fi.close()
-
-                    api.group.create(groupname='{}:moderators'.format(dump_fi['groupname']), 
-                                    title='{}:moderators'.format(dump_fi['title']), 
-                                    description=None, 
-                                    roles=['Editor', 'Contributor'], 
-                                    groups=[])
-                    api.group.create(groupname='{}:members'.format(dump_fi['groupname']), 
-                                    title='{}:members'.format(dump_fi['title']), 
-                                    description=None, 
-                                    roles=['Reader',], 
-                                    groups=['{}:moderators'.format(dump_fi['groupname'])])
-                    for member in dump_fi['members']:  # add community members to group
-                        try:
-                            api.group.add_user(groupname='{}:members'.format(dump_fi['groupname']), 
-                                            username=member)
-                        except UserNotFoundError:
-                            continue
-                    for moderator in dump_fi['moderators']:  # add community moderators to group
-                        try:
-                            api.group.add_user(groupname='{}:moderators'.format(dump_fi['groupname']), 
-                                            username=moderator)
-                        except UserNotFoundError:
-                            continue
-                except Exception as e:
-                    logging.error('error while importing community {}, {}'.format(path, e))
-            else:
-                logging.error('unexpected folder or filefile {}'.format(obj))
+                    except:
+                        logging.error('error trying to set modification date for community {} blog'.format(community_name), exc_info=True)
     return communities_list
 
 def migrate(args):
