@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<head>
+    <script>
+      function toggle() {
+        debugger();
+        const trashLog = document.getElementById("trash-log");
+        const logButton = document.getElementById("show-trash-log");
+        if (trashLog.style.display === "none") {
+          logButton.innerHTML = "Hide Auto-Empty Log";
+          trashLog.style.display = "block";
+        } else {
+          logButton.innerHTML = "Show Auto-Empty Log";
+          trashLog.style.display = "none";
+        }
+
+        window.toggle() = toggle()
+        debugger()
+      }
+    </script>
+</head>
+
+<metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
+  <h1 class="documentFirstHeading"
+      i18n:translate="">Communities</h1>
+  
+  <br />
+
+  <div id="content-core"
+       tal:define="info view/info;
+                   groups info/groups;">
+
+    <table class="listing">
+      <thead>
+        <tr>
+          <th>Community</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody tal:define="userGroups view/userGroups">
+        <tal:community tal:repeat="group python: groups">
+          <tr>
+            <th>${group/id}</th>
+            <th tal:define="title python: group.id.split(':')[0]">
+              <button tal:condition="python: group.id not in userGroups" style="background: green; color: white;" onclick="toggle('${title}')">Subscribe</button>
+              <button tal:condition="python: group.id in userGroups" style="background: red; color: white;" onclick="toggle('${title}')">Unsubscribe</button>
+            </th>
+          </tr>
+        </tal:community>
+      </tbody>
+    </table>
+  </div>
+
+</metal:main>
+
+</body>
+</html>

@@ -412,4 +412,13 @@
     layer="..interfaces.ICastleLayer"
     />
 
+    <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="karl-communities"
+    class=".karlcommunities.KarlCommunities"
+    permission="zope2.View"
+    template="templates/karl_communities.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
 </configure>
