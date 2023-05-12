@@ -1,11 +1,12 @@
 import ast
+import httplib2
 import json
 import logging
 import os
 import subprocess
 
-import httplib2
 from apiclient.discovery import build
+from collections import defaultdict
 from oauth2client.client import OAuth2Credentials
 from oauth2client.client import SignedJwtAssertionCredentials
 from plone.registry.interfaces import IRegistry
@@ -90,18 +91,36 @@ def get_ga4_data(request, ga_id, paths, params):
             environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
 
     command = ['/usr/bin/python3', 'scripts/google/google-api.py']
+    
+    # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
+    if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", True):
+        report_data = defaultdict(list)
 
-    process = subprocess.Popen(
-        command,
-        env=environ,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-    output, error = process.communicate()
-    if error:
-        logger.error(error)
-    if not output:
-        logger.error('No output received from GA4 request')
-        return
+        dimensions = ['contentType']
+        metrics = ['screenPageViews']
 
-    output = ast.literal_eval(output.replace('\n', ''))
-    return output
+        row = {'dimensionValues': [{'value': 'value_one'}, {'value': 'value_two'}],
+            'metricValues': [{'value': 'value_one'}, {'value': 'value_two'}]}
+
+        for i, key in enumerate(dimensions):
+            report_data[key].append(row.get('dimensionValues', [])[i]['value'])
+        for i, key in enumerate(metrics):
+            report_data[key].append(row.get('metricValues', [])[i]['value'])
+
+        return report_data
+    
+    else:
+        process = subprocess.Popen(
+            command,
+            env=environ,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        output, error = process.communicate()
+        if error:
+            logger.error(error)
+        if not output:
+            logger.error('No output received from GA4 request')
+            return
+
+        output = ast.literal_eval(output.replace('\n', ''))
+        return output
