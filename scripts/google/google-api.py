@@ -7,8 +7,12 @@ requires python >= 3.7 to run
 
 environment dependencies:
 google-api-python-client==2.2.0
-oauth2client==1.5.2
-pycrypto==2.6.1
+PyCryptodome==3.17
+google-auth-httplib2==0.1.0
+google-auth-oauthlib==1.0.0 
+pandas==2.0.1
+
+openssl pkcs12 -in castledev-6dc6c022d790.p12 -nocerts -passin pass:notasecret -nodes -out privatekey.pem
 
 Environment Variables to configure:
 
@@ -18,16 +22,28 @@ GOOGLE_CLIENT_SECRET
 GOOGLE_CLIENT_ID
 GOOGLE_ANALYTICS_IS_DEV
 """
+import ast
 import base64
 import httplib2
+import json
 import logging
 import os
+import pandas as pd
 import sys
 
 from apiclient.discovery import build
 from apiclient.http import HttpMock
-from oauth2client.client import OAuth2Credentials
-from oauth2client.client import SignedJwtAssertionCredentials
+from collections import defaultdict
+# from oauth2client.client import OAuth2Credentials
+# from oauth2client.client import SignedJwtAssertionCredentials
+
+
+
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 
 
 logger = logging.getLogger("google-api")
@@ -40,28 +56,11 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", None)
 
 
 def get_mock_service_data():
-    http = HttpMock('analytics-data.json', {'status': '200'})
+    http = HttpMock('analyticsdata-discovery.json', {'status': '200'})
     api_key = GOOGLE_API_KEY
     service = build('analyticsdata', 'v1beta', http=http, developerKey=api_key)
-    request = service.volumes().list(source='public', q='android')
-    response = request.execute(http=http)
-    return response
 
-
-def b64decode_file(value):
-    if isinstance(value, str):
-        value = value.encode("utf-8")
-    filename, data = value.split(b";")
-
-    filename = filename.split(b":")[1]
-    filename = base64.standard_b64decode(filename)
-    filename = filename.decode("utf-8")
-
-    data = data.split(b":")[1]
-    data = base64.standard_b64decode(data)
-
-    return filename, data
-
+    import pdb; pdb.set_trace()
 
 class GA4Service():
 
@@ -71,90 +70,68 @@ class GA4Service():
         self.params = os.environ.get("GOOGLE_ANALYTICS_PARAMS", None)
     
     def get_service_data(self):
-        ga_scope='https://www.googleapis.com/auth/analytics.readonly'
+        scopes = ['https://www.googleapis.com/auth/analytics.readonly']
+        service = self.ga_auth(scopes)
 
-        if not GOOGLE_API_KEY or not GOOGLE_API_EMAIL or not GOOGLE_CLIENT_ID:
-            return
-        else:
-            service = self.get_service('analyticsdata', 'v1beta', ga_scope, b64decode_file(GOOGLE_API_KEY)[1], GOOGLE_API_EMAIL)
-        if not service:
-            return {'error': 'Could not get GA Service'}
+        params = ast.literal_eval(self.params)
 
-        profile = self.get_ga_profile(service)
-        if not profile:
-            return {'error': 'Could not get GA Profile'}
+        try:
+            dimensions = [params['dimensions']]
+        except KeyError:
+            dimensions = []
+        metrics = [params['metrics']]
+        
+        request = {
+            "requests": [
+                {
+                "dateRanges": [
+                    {
+                    "startDate": "2022-03-01",
+                    "endDate": "2022-03-31"
+                    }
+                ],
+                "dimensions": [{'name': name} for name in dimensions],
+                "metrics": [{'name': name} for name in metrics],
+                "limit": 100000
+                }
+            ]
+        }
 
-        if self.request.get('type') == 'realtime':
-            ga = service.data().realtime()
-            if not self.params.pop('global', False):
-                # need to restrict by filters
-                path_query = ','.join(['rt:pagePath==%s' % p for p in self.paths])
-                self.params['filters'] = path_query
-        else:
-            if not self.params.pop('global', False):
-                # need to restrict by filters
-                path_query = ','.join(['ga:pagePath==%s' % p for p in self.paths])
-                self.params['filters'] = path_query
-            ga = service.data().ga()
+        response = service.properties().batchRunReports(property=f'properties/{GOOGLE_CLIENT_ID}', body=request).execute()
+        report_data = defaultdict(list)
 
-        query = ga.get(ids='ga:' + profile, **self.params)
-        result = query.execute()
+        for report in response.get('reports', []):
+            rows = report.get('rows', [])
+            for row in rows:
+                for i, key in enumerate(dimensions):
+                    report_data[key].append(row.get('dimensionValues', [])[i]['value'])  # Get dimensions
+                for i, key in enumerate(metrics):
+                    report_data[key].append(row.get('metricValues', [])[i]['value'])  # Get metrics
 
-        return result
+        return report_data
 
-    def get_service(self, api_name, api_version, scope, key=None,
-                    service_account_email=None, access_token=None,
-                    refresh_token=None, token_expiry=None):
-        service = None
 
-        if key and service_account_email:
-            credentials = SignedJwtAssertionCredentials(
-                service_account_email, key, scope=scope)
+    def ga_auth(self, scopes):
+        creds = None
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.json'):
+            creds = Credentials.from_authorized_user_file('token.json', scopes)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file('scripts/google/credentials.json', scopes)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
 
-            http = credentials.authorize(httplib2.Http())
+        service = build('analyticsdata', 'v1beta', credentials=creds)
 
-            # Build the service object.
-            service = build(api_name, api_version, http=http)
-        elif GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
-            creds = OAuth2Credentials(
-                access_token=access_token, client_id=GOOGLE_CLIENT_ID,
-                client_secret=GOOGLE_CLIENT_SECRET, refresh_token=refresh_token,
-                token_uri='https://accounts.google.com/o/oauth2/token',
-                token_expiry=token_expiry, user_agent='Castle CMS')
-            http = creds.authorize(httplib2.Http())
-            service = build(api_name, api_version, http=http)
-
-        return service
-
-    def get_ga_profile(self, service):
-        # Use the Analytics service object to get the first profile id.
-
-        # Get a list of all Google Analytics accounts for this user
-        profile = None
-        import pdb; pdb.set_trace()
-        accounts = service.management().accounts().list().execute()
-
-        if accounts.get('items'):
-            # Get the first Google Analytics account.
-            account = accounts.get('items')[0].get('id')
-
-            # Get a list of all the properties for the first account.
-            properties = service.management().webproperties().list(
-                accountId=account).execute()
-
-            for item in properties['items']:
-                if GOOGLE_CLIENT_ID == item['id']:
-                    # Get a list of all views (profiles) for the first property.
-                    profiles = service.management().profiles().list(
-                        accountId=account,
-                        webPropertyId=GOOGLE_CLIENT_ID).execute()
-
-                    if profiles.get('items'):
-                        # return the first view (profile) id.
-                        profile = profiles.get('items')[0].get('id')
-
-        return profile
-
+        return service        
 
 if __name__ == '__main__':
     if IS_DEV:
