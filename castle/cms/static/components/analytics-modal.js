@@ -134,7 +134,8 @@ define([
         that.setState({
           loading: false,
           data: data.data,
-          paths: data.paths
+          paths: data.paths,
+          version: data.version
         });
       }).fail(function(){
         alert('failed to load analytic data');
@@ -389,6 +390,119 @@ define([
     }
   });
 
+  var RealtimeTabUA = cutils.Class([BaseTab], {
+    type: 'realtime',
+    dimensionOptions: [
+      'rt:userType',
+      'rt:medium',
+      'rt:trafficType',
+      'rt:browser',
+      'rt:operatingSystem',
+      'rt:deviceCategory',
+      'rt:country',
+      'rt:region',
+      'rt:pagePath'
+    ],
+    metricOptions: [
+      'rt:pageViews',
+      'rt:activeUsers'
+    ]
+  });
+
+  var HistoryTabUA = cutils.Class([BaseTab], {
+    type: 'ga',
+    dimensionOptions: [
+      'ga:userType',
+      'ga:sessionCount',
+      'ga:socialNetwork',
+      'ga:hasSocialSourceReferral',
+      'ga:medium',
+      'ga:trafficType',
+      'ga:browser',
+      'ga:operatingSystem',
+      'ga:deviceCategory',
+      'ga:pagePath',
+      'ga:country',
+      'ga:region',
+      'ga:continent',
+      'ga:subContinent',
+      'ga:metro',
+      'ga:city',
+      'ga:flashVersion',
+      'ga:javaEnabled',
+      'ga:language',
+      'ga:exitPagePath'
+    ],
+    metricOptions: [
+      'ga:hits',
+      'ga:users',
+      'ga:newUsers',
+      'ga:sessions',
+      'ga:pageviews',
+      'ga:bounces',
+      'ga:bounceRate',
+      'ga:avgSessionDuration',
+      'ga:entranceRate',
+      'ga:pageviewsPerSession',
+      'ga:avgTimeOnPage',
+      'ga:avgPageLoadTime'
+    ],
+
+    getInitialState: function(){
+      var state = BaseTab.getInitialState.call(this);
+      state.to = moment().local().format('YYYY-MM-DD');
+      state.from = moment().local().subtract(7, 'days').format('YYYY-MM-DD');
+      return state;
+    },
+
+    componentDidUpdate: function(){
+      var that = this;
+      if(this.refs.from){
+        $(this.refs.from.getDOMNode()).pickadate({
+          format: 'yyyy-mm-dd',
+          formatSubmit: 'yyyy-mm-dd',
+          onSet: function(context){
+            that.state.from = moment(context.select).local().format('YYYY-MM-DD');
+            that.timedLoad();
+          }
+        });
+        $(this.refs.to.getDOMNode()).pickadate({
+          format: 'yyyy-mm-dd',
+          formatSubmit: 'yyyy-mm-dd',
+          onSet: function(context){
+            that.state.to = moment(context.select).local().format('YYYY-MM-DD');
+            that.timedLoad();
+          }
+        });
+      }
+    },
+
+    getQueryData: function(){
+      var data = BaseTab.getQueryData.call(this);
+      var now = moment().local();
+      var dfrom = moment(this.state.from, "YYYY-MM-DD").local();
+      var dto = moment(this.state.to, "YYYY-MM-DD").local();
+      data.start_date = parseInt((now - dfrom) / 1000 / 60 / 60 / 24) + 'daysAgo';
+      data.end_date = parseInt((now - dto) / 1000 / 60 / 60 / 24) + 'daysAgo';
+      return data;
+    },
+
+    renderAdditionalFields: function(){
+      return [
+        D.div({ className: "form-group col-md-2" }, [
+          D.label({ }, 'From'),
+          D.input({ className: 'form-control', ref: 'from',
+                    value: this.state.from })
+        ]),
+        D.div({ className: "form-group col-md-2" }, [
+          D.label({ }, 'To'),
+          D.input({ className: 'form-control', ref: 'to',
+                    value: this.state.to })
+        ])
+      ];
+    }
+  });
+
 
   var AnalyticsModalComponent = cutils.Class([Modal], {
     dataMappings: {
@@ -443,12 +557,15 @@ define([
         D.nav({ className: 'autotoc-nav'}, [
           that.renderTabItem('realtime', 'Real time'),
           that.renderTabItem('history', 'Historical'),
-          that.renderTabItem('social', 'Social')
+          that.renderTabItem('social', 'Social'),
+          that.renderTabItem('realtime-ua', 'Real time (UA)'),
+          that.renderTabItem('history-ua', 'Historical (UA)')
         ]),
         that.renderTab()
       ]);
     },
     renderTab: function(){
+      debugger;
       if(this.state.tab === 'realtime'){
         return R.createElement(RealtimeTab, {
           parent: this
@@ -461,6 +578,16 @@ define([
       }
       if(this.state.tab === 'social'){
         return this.renderSocialTab();
+      }
+      if(this.state.tab === 'realtime-ua'){
+        return R.createElement(RealtimeTabUA, {
+          parent: this
+        });
+      }
+      if(this.state.tab === 'history-ua'){
+        return R.createElement(HistoryTabUA, {
+          parent: this
+        });
       }
     },
     renderSiteTab: function(){

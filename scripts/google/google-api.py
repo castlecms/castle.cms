@@ -10,9 +10,6 @@ google-api-python-client==2.2.0
 PyCryptodome==3.17
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==1.0.0 
-pandas==2.0.1
-
-openssl pkcs12 -in castledev-6dc6c022d790.p12 -nocerts -passin pass:notasecret -nodes -out privatekey.pem
 
 Environment Variables to configure:
 
@@ -26,7 +23,6 @@ import logging
 import os
 import sys
 
-from collections import defaultdict
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -36,8 +32,6 @@ from google.oauth2.credentials import Credentials
 logger = logging.getLogger("google-api")
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
-GOOGLE_API_EMAIL = os.environ.get("GOOGLE_ANALYTICS_API_EMAIL", None)
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", None)
 
 
@@ -103,7 +97,7 @@ def get_service_data():
     }
 
     response = service.properties().batchRunReports(property=f'properties/{GOOGLE_CLIENT_ID}', body=request).execute()
-    report_data = defaultdict(list)
+    report_data = {}
 
     for report in response.get('reports', []):
         rows = report.get('rows', [])
