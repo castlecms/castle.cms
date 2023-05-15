@@ -59,12 +59,13 @@ def ga_auth(scopes):
 
 def get_service_data():
     category = os.environ.get("CASTLE_GA_FORM_TYPE", "REALTIME")
+    current_url_path = os.environ.get("GOOGLE_ANALYTICS_CURRENT_URL_PATH", "/")
     paths = os.environ.get("GOOGLE_ANALYTICS_PATHS", None)
     params = os.environ.get("GOOGLE_ANALYTICS_PARAMS", None)
-    scopes = ['https://www.googleapis.com/auth/analytics.readonly']
-    service = ga_auth(scopes)
-
     params = ast.literal_eval(params)
+    scopes = ['https://www.googleapis.com/auth/analytics.readonly']
+    report_data = {'rows': []}
+    service = ga_auth(scopes)
 
     try:
         dimensions = [params['dimensions']]
@@ -72,37 +73,73 @@ def get_service_data():
         dimensions = []
     metrics = [params['metrics']]
 
-    if category == 'HISTORICAL':
-        start_date = params['start_date']
-        end_date = params['end_date']
-    else:
-        start_date = '1daysAgo'
-        end_date = '0daysAgo'
-
-    # TODO: loop paths for each request and compile return data to report.
-    for path in paths:
-        #? request has path prop to use?
-        pass
-
     request = {
-        "dateRanges": [
-            {
-            "startDate": start_date,
-            "endDate": end_date
-            }
-        ],
         "dimensions": [{'name': name} for name in dimensions],
         "metrics": [{'name': name} for name in metrics],
+        "dimensionFilter": {
+            "filter": {
+                "fieldName": "pagePath",
+                "stringFilter": {
+                    "matchType": "CONTAINS",
+                    "value": current_url_path
+                }
+            }
+        },
         "limit": params['max_results']
     }
 
-    response = service.properties().runReport(property=f'properties/{GOOGLE_CLIENT_ID}', body=request).execute()
-    try:
-        # TODO: paths appended to report data
-        report_data = {'rows': ['/', response['rows']['metricValues']['value']]}
-        return report_data
-    except KeyError:
+    if category == 'HISTORICAL':
+        request['dateRanges'] = {
+            "startDate": params['start_date'],
+            "endDate": params['end_date']
+        }
+        if params['global']:
+            for path in paths:
+                request['dimensionFilter']['filter']['stringFilter']['value'] = path
+                response = service.properties().runReport(
+                    property=f'properties/{GOOGLE_CLIENT_ID}',
+                    body=request).execute()
+                try:
+                    report_data['rows'].append([path, response['rows']['metricValues']['value']])
+                except KeyError:
+                    pass
+            if report_data['rows'] == []:
+                report_data = None
+        else:
+            response = service.properties().runReport(
+                property=f'properties/{GOOGLE_CLIENT_ID}',
+                body=request).execute()
+            try:
+                report_data['rows'].append([current_url_path, response['rows']['metricValues']['value']])
+            except KeyError:
+                report_data = None
+    elif category == 'REALTIME':
+        if params['global']:
+            for path in paths:
+                request['dimensionFilter']['filter']['stringFilter']['value'] = path
+                response = service.properties().runRealtimeReport(
+                    property=f'properties/{GOOGLE_CLIENT_ID}',
+                    body=request).execute()
+                try:
+                    report_data['rows'].append([path, response['rows']['metricValues']['value']])
+                except KeyError:
+                    pass
+            if report_data['rows'] == []:
+                report_data = None
+        else:
+            response = service.properties().runRealtimeReport(
+                property=f'properties/{GOOGLE_CLIENT_ID}',
+                body=request).execute()
+            try:
+                report_data['rows'].append([current_url_path, response['rows']['metricValues']['value']])
+            except KeyError:
+                report_data = None
+    elif category == 'SOCIAL':
+        import pdb; pdb.set_trace()
+    else:
         return None
+    
+    return report_data
 
 
 if __name__ == '__main__':

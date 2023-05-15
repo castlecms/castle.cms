@@ -58,10 +58,11 @@ def get_service(api_name, api_version, scope, key=None,
 
 def get_ga4_data(ga_id, paths, form, params):
     output = None
-    registry = getUtility(IRegistry)
+    current_url_path = api.portal.get().absolute_url_path()
 
     environ = os.environ.copy()
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+    environ['GOOGLE_ANALYTICS_CURRENT_URL_PATH'] = current_url_path
     environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
     environ['GOOGLE_ANALYTICS_PARAMS'] = str(params)
 
