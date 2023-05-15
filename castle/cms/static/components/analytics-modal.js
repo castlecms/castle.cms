@@ -565,7 +565,6 @@ define([
       ]);
     },
     renderTab: function(){
-      debugger;
       if(this.state.tab === 'realtime'){
         return R.createElement(RealtimeTab, {
           parent: this
