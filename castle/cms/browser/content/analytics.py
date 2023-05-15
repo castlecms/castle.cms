@@ -53,10 +53,11 @@ class AnalyticsView(BrowserView):
             ga_id = registry.get('castle.google_analytics_id', None)
 
             if ga_id:
+                form = self.request.form
                 # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
                 if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
-                    return get_mock_ga4_data(paths)
-                result = get_ga4_data(self.request, ga_id, paths, params)
+                    return get_mock_ga4_data(paths, form)
+                result = get_ga4_data(ga_id, paths, form, params)
             else:
                 service = analytics.get_ga_service()
                 if not service:

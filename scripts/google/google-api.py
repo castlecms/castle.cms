@@ -79,35 +79,31 @@ def get_service_data():
     else:
         start_date = '1daysAgo'
         end_date = '0daysAgo'
+
+    # TODO: loop paths for each request and compile return data to report.
+    for path in paths:
+        #? request has path prop to use?
+        pass
     
     request = {
-        "requests": [
+        "dateRanges": [
             {
-            "dateRanges": [
-                {
-                "startDate": start_date,
-                "endDate": end_date
-                }
-            ],
-            "dimensions": [{'name': name} for name in dimensions],
-            "metrics": [{'name': name} for name in metrics],
-            "limit": params['max_results']
+            "startDate": start_date,
+            "endDate": end_date
             }
-        ]
+        ],
+        "dimensions": [{'name': name} for name in dimensions],
+        "metrics": [{'name': name} for name in metrics],
+        "limit": params['max_results']
     }
 
-    response = service.properties().batchRunReports(property=f'properties/{GOOGLE_CLIENT_ID}', body=request).execute()
-    report_data = {}
-
-    for report in response.get('reports', []):
-        rows = report.get('rows', [])
-        for row in rows:
-            for i, key in enumerate(dimensions):
-                report_data[key].append(row.get('dimensionValues', [])[i]['value'])
-            for i, key in enumerate(metrics):
-                report_data[key].append(row.get('metricValues', [])[i]['value'])
-
-    return report_data
+    response = service.properties().runReport(property=f'properties/{GOOGLE_CLIENT_ID}', body=request).execute()
+    try:
+        # TODO: paths appended to report data
+        report_data = {'rows': ['/', response['rows']['metricValues']['value']]}
+        return report_data
+    except KeyError:
+        return None
        
 
 if __name__ == '__main__':

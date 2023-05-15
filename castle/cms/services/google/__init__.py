@@ -7,9 +7,9 @@ import random
 import subprocess
 
 from apiclient.discovery import build
-from collections import defaultdict
 from oauth2client.client import OAuth2Credentials
 from oauth2client.client import SignedJwtAssertionCredentials
+from plone import api
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
@@ -56,7 +56,7 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
-def get_ga4_data(request, ga_id, paths, params):
+def get_ga4_data(ga_id, paths, form, params):
     output = None
     registry = getUtility(IRegistry)
 
@@ -74,15 +74,14 @@ def get_ga4_data(request, ga_id, paths, params):
             return
         environ['GOOGLE_API_KEY'] = api_key
 
-    form = request.form
-    params = json.loads(form['params'])
+    form_params = json.loads(form['params'])
     form_type = form['type'].upper()
 
     if form_type == 'GA':
         form_type = 'HISTORICAL'
     environ['CASTLE_GA_FORM_TYPE'] = form_type
 
-    for key, val in params.items():
+    for key, val in form_params.items():
         if key == 'metrics' or key == 'dimensions':
             val = str(val)
             if val.startswith('-'):
@@ -109,8 +108,13 @@ def get_ga4_data(request, ga_id, paths, params):
     return output
 
 
-def get_mock_ga4_data(paths):
+def get_mock_ga4_data(paths, form):
     data = {'rows': []}
-    for path in paths:
+    form_params = json.loads(form['params'])
+    if form_params['global']:
+        for path in paths:
+            data['rows'].append([path, random.randrange(0, 50)])
+    else:
+        path = api.portal.get().absolute_url_path()
         data['rows'].append([path, random.randrange(0, 50)])
     return data
