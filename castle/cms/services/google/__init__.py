@@ -62,17 +62,8 @@ def get_ga4_data(ga_id, paths, form, params):
 
     environ = os.environ.copy()
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
-    environ['GOOGLE_ANALYTICS_API_EMAIL'] = registry.get('castle.google_api_email', None)
     environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
     environ['GOOGLE_ANALYTICS_PARAMS'] = str(params)
-
-    # Get credentials from control panel if not provided via env variable
-    if not os.environ.get('GOOGLE_API_KEY', None):
-        api_key = registry.get('castle.google_api_service_key_file', None)
-        if api_key is None:
-            logger.error('No service key file provided for GA4 Data API')
-            return
-        environ['GOOGLE_API_KEY'] = api_key
 
     form_params = json.loads(form['params'])
     form_type = form['type'].upper()

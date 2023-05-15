@@ -32,7 +32,6 @@ from google.oauth2.credentials import Credentials
 logger = logging.getLogger("google-api")
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", None)
 
 
 def ga_auth(scopes):
@@ -55,9 +54,9 @@ def ga_auth(scopes):
 
     service = build('analyticsdata', 'v1beta', credentials=creds)
 
-    return service 
+    return service
 
-    
+
 def get_service_data():
     category = os.environ.get("CASTLE_GA_FORM_TYPE", "REALTIME")
     paths = os.environ.get("GOOGLE_ANALYTICS_PATHS", None)
@@ -84,7 +83,7 @@ def get_service_data():
     for path in paths:
         #? request has path prop to use?
         pass
-    
+
     request = {
         "dateRanges": [
             {
@@ -104,10 +103,10 @@ def get_service_data():
         return report_data
     except KeyError:
         return None
-       
+
 
 if __name__ == '__main__':
-    if not GOOGLE_CLIENT_ID and not GOOGLE_API_KEY:
+    if not GOOGLE_CLIENT_ID:
         sys.exit()
     service_data = get_service_data()
     print(service_data)
