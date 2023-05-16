@@ -220,6 +220,13 @@ define([
         });
       }
 
+      if (this.props.parent.state.tab == "realtime"){
+        return D.div({},
+          this.renderFields(),
+          chart,
+          D.p({ className: 'discreet'}, 'Totals for current page: ' + $('body').attr('data-base-url'))
+        );
+      }
       return D.div({},
         this.renderFields(),
         chart,
