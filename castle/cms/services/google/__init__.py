@@ -10,8 +10,6 @@ from apiclient.discovery import build
 from oauth2client.client import OAuth2Credentials
 from oauth2client.client import SignedJwtAssertionCredentials
 from plone import api
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
 
 
 logger = logging.getLogger('google-service')

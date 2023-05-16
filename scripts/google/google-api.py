@@ -13,9 +13,6 @@ google-auth-oauthlib==1.0.0
 
 Environment Variables to configure:
 
-GOOGLE_API_KEY
-GOOGLE_ANALYTICS_PROPERTY_ID
-GOOGLE_CLIENT_SECRET
 GOOGLE_CLIENT_ID
 """
 import ast
@@ -29,7 +26,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 
-logger = logging.getLogger("google-api")
+logger = logging.getLogger('google-api')
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
 
@@ -67,33 +64,33 @@ def get_service_data():
     report_data = {'rows': []}
     service = ga_auth(scopes)
 
-    try:
-        dimensions = [params['dimensions']]
-    except KeyError:
-        dimensions = []
-    metrics = [params['metrics']]
-
     request = {
-        "dimensions": [{'name': name} for name in dimensions],
-        "metrics": [{'name': name} for name in metrics],
-        "dimensionFilter": {
-            "filter": {
-                "fieldName": "pagePath",
-                "stringFilter": {
-                    "matchType": "CONTAINS",
-                    "value": current_url_path
-                }
-            }
-        },
-        "limit": params['max_results']
+        'metrics': [{'name': params['metrics']}],
+        'limit': params['max_results']
     }
+
+    try:
+        request['dimensions'] = [{'name': params['dimensions']}]
+    except KeyError:
+        pass        
 
     if category == 'HISTORICAL':
         request['dateRanges'] = {
-            "startDate": params['start_date'],
-            "endDate": params['end_date']
+            'startDate': params['start_date'],
+            'endDate': params['end_date']
         }
         if params['global']:
+            # use pagePath dimension when getting data for all available site paths
+            request['dimensions'] = [{'name': 'pagePath'}]
+            request['dimensionFilter'] = {
+                'filter': {
+                    'fieldName': 'pagePath',
+                    'stringFilter': {
+                        'matchType': 'CONTAINS',
+                        'value': current_url_path
+                    }
+                }
+            }
             for path in paths:
                 request['dimensionFilter']['filter']['stringFilter']['value'] = path
                 response = service.properties().runReport(
@@ -115,26 +112,16 @@ def get_service_data():
                 report_data = None
     elif category == 'REALTIME':
         if params['global']:
-            for path in paths:
-                request['dimensionFilter']['filter']['stringFilter']['value'] = path
-                response = service.properties().runRealtimeReport(
-                    property=f'properties/{GOOGLE_CLIENT_ID}',
-                    body=request).execute()
-                try:
-                    report_data['rows'].append([path, response['rows']['metricValues']['value']])
-                except KeyError:
-                    pass
-            if report_data['rows'] == []:
-                report_data = None
-        else:
-            response = service.properties().runRealtimeReport(
-                property=f'properties/{GOOGLE_CLIENT_ID}',
-                body=request).execute()
-            try:
-                report_data['rows'].append([current_url_path, response['rows']['metricValues']['value']])
-            except KeyError:
-                report_data = None
+            logger.error('"pagePath" dimension is unavailabe for realtime reporting with Data API (GA4).')
+        response = service.properties().runRealtimeReport(
+            property=f'properties/{GOOGLE_CLIENT_ID}',
+            body=request).execute()
+        try:
+            report_data['rows'].append([current_url_path, response['rows']['metricValues']['value']])
+        except KeyError:
+            report_data = None
     elif category == 'SOCIAL':
+        # TODO: handle social tab.
         import pdb; pdb.set_trace()
     else:
         return None
