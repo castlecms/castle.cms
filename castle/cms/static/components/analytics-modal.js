@@ -416,7 +416,7 @@ define([
   });
 
   var RealtimeTabUA = cutils.Class([BaseTab], {
-    type: 'realtime',
+    type: 'realtime-ua',
     dimensionOptions: [
       'rt:userType',
       'rt:medium',
@@ -435,7 +435,7 @@ define([
   });
 
   var HistoryTabUA = cutils.Class([BaseTab], {
-    type: 'ga',
+    type: 'ga-ua',
     dimensionOptions: [
       'ga:userType',
       'ga:sessionCount',
