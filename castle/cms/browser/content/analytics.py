@@ -17,11 +17,6 @@ class AnalyticsView(BrowserView):
 
     def __call__(self):
         self.request.response.setHeader('Content-type', 'application/json')
-        registry = getUtility(IRegistry)
-        if registry.get('castle.google_analytics_id', None):
-            analytics_version = 'ga4'
-        else:
-            analytics_version = 'ua'
         paths = self.get_paths()
         if self.request.get('api') == 'ga':
             data = self.ga_api_call(paths)
@@ -32,8 +27,7 @@ class AnalyticsView(BrowserView):
 
         return json.dumps({
             'paths': paths,
-            'data': data,
-            'version': analytics_version
+            'data': data
         })
 
     def ga_api_call(self, paths):

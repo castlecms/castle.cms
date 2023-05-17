@@ -35,12 +35,11 @@ def get_popularity(site):
         return
 
     # TODO: Handle popularity data with GA4 here...
-    # get request to pass into function call
-    request = ''
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
     if ga_id:
-        result = get_ga4_data(request, ga_id)
+        import pdb; pdb.set_trace()
+        # result = get_ga4_data(ga_id, paths, form, params)
 
     service = analytics.get_ga_service()
     if not service:
