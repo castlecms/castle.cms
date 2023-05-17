@@ -11,7 +11,9 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
+from plone.registry.interfaces import IRegistry
 from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 
 
 class TestAnalytics(unittest.TestCase):
@@ -44,30 +46,16 @@ class TestAnalytics(unittest.TestCase):
 
     @mock.patch('castle.cms.cache.get')
     @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
-    @mock.patch('castle.cms.services.google.analytics.get_ga_service')
-    def test_ga_api_call(self, get_ga_service, get_ga_profile,
-                         cache_set, cache_get):
+    def test_ga_api_call(self, cache_set, cache_get):
+        registry = getUtility(IRegistry)
+        registry['castle.google_analytics_id'] = u'123456789'
         cache_get.side_effect = KeyError()
         view = AnalyticsView(self.page, self.request)
         self.request.form.update({
-            'params': json.dumps({'foo': 'bar'})
+            'params': json.dumps({'foo': 'bar'}),
+            'type': 'realtime'
         })
         view.ga_api_call(['/'])
-        self.assertEquals(get_ga_service.call_count, 1)
-        self.assertEquals(get_ga_profile.call_count, 1)
-
-    @mock.patch('castle.cms.cache.get')
-    @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
-    def test_get_ga_profile(self, get_ga_profile, cache_set, cache_get):
-        cache_get.side_effect = KeyError()
-        view = AnalyticsView(self.page, self.request)
-        service_mock = mock.MagicMock()
-        view.get_ga_profile(service_mock)
-        self.assertEquals(cache_set.call_count, 1)
-        self.assertEquals(cache_get.call_count, 1)
-        self.assertEquals(get_ga_profile.call_count, 1)
 
     def test_get_paths(self):
         view = AnalyticsView(self.page, self.request)

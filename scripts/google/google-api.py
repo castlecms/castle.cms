@@ -15,6 +15,7 @@ Environment Variables to configure:
 
 GOOGLE_CLIENT_ID
 GOOGLE_PATH_TO_SERVICE_KEY - Optional path to credentials.json file
+GOOGLE_ANALYTICS_IS_DEV
 """
 import ast
 import json
@@ -132,9 +133,6 @@ def get_service_data():
             report_data['rows'].append([current_url_path, response['rows']['metricValues']['value']])
         except KeyError:
             report_data = None
-    elif category == 'SOCIAL':
-        # TODO: handle social tab.
-        import pdb; pdb.set_trace()
     else:
         return None
     
