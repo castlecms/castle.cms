@@ -1,4 +1,5 @@
 import ast
+import base64
 import httplib2
 import json
 import logging
@@ -54,12 +55,18 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
-def get_ga4_data(ga_id, paths, form, params):
+def get_ga4_data(ga_id, service_key, paths, form, params):
     output = None
+    environ = os.environ.copy()
+
     current_url_path = api.portal.get().absolute_url_path()
 
-    environ = os.environ.copy()
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+    if service_key:
+        service_key = service_key.split(':')[-1]
+        service_key = base64.b64decode(service_key)
+        environ['GOOGLE_ANALYTICS_SERVICE_KEY'] = service_key
+
     environ['GOOGLE_ANALYTICS_CURRENT_URL_PATH'] = current_url_path
     environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
     environ['GOOGLE_ANALYTICS_PARAMS'] = str(params)

@@ -14,8 +14,10 @@ google-auth-oauthlib==1.0.0
 Environment Variables to configure:
 
 GOOGLE_CLIENT_ID
+GOOGLE_PATH_TO_SERVICE_KEY - Optional path to credentials.json file
 """
 import ast
+import json
 import logging
 import os
 import sys
@@ -29,6 +31,8 @@ from google.oauth2.credentials import Credentials
 logger = logging.getLogger('google-api')
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
+GOOGLE_SERVICE_KEY_FILE = os.environ.get("GOOGLE_ANALYTICS_SERVICE_KEY", None)
+GOOGLE_PATH_TO_SERVICE_KEY = os.environ.get("GOOGLE_PATH_TO_SERVICE_KEY", None)
 
 
 def ga_auth(scopes):
@@ -43,7 +47,15 @@ def ga_auth(scopes):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('scripts/google/credentials.json', scopes)
+            if GOOGLE_SERVICE_KEY_FILE:
+                service_key_file = json.loads(GOOGLE_SERVICE_KEY_FILE)
+                flow = InstalledAppFlow.from_client_config(service_key_file, scopes)
+            elif GOOGLE_PATH_TO_SERVICE_KEY:
+                flow = InstalledAppFlow.from_client_secrets_file(GOOGLE_PATH_TO_SERVICE_KEY, scopes)
+            else:
+                logger.error('No service key json file provided. Upload via control panel, '
+                             'or set GOOGLE_PATH_TO_SERVICE_KEY env var')
+                sys.exit()
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
