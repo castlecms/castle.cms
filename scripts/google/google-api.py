@@ -141,7 +141,40 @@ def get_service_data():
 
 
 def get_popularity_service_data():
-    pass
+    paths = os.environ.get("GOOGLE_ANALYTICS_PATHS", None)
+    scopes = ['https://www.googleapis.com/auth/analytics.readonly']
+    report_data = {'rows': []}
+    service = ga_auth(scopes)
+
+    request = {
+        'metrics': [{'name': 'screenPageViews'}],
+        'dimensions': [{'name': 'pagePath'}],
+        'dateRanges': [{'startDate': '30daysAgo', 'endDate': 'today'}],
+        'orderBys': [{'metric': {'metricName': 'screenPageViews'}}],
+        'dimensionsFilter': {
+            'filter': {
+                'fieldName': 'pagePath',
+                'stringFilter': {
+                    'matchType': 'CONTAINS',
+                    'value': '/'
+                }
+            }
+        }
+    }
+
+    for path in paths:
+        request['dimensionFilter']['filter']['stringFilter']['value'] = path
+        response = service.properties().runReport(
+            property=f'properties/{GOOGLE_CLIENT_ID}',
+            body=request).execute()
+        try:
+            report_data['rows'].append([path, response['rows']['metricValues']['value']])
+        except KeyError:
+            pass
+    if report_data['rows'] == []:
+        report_data = None
+
+    return report_data
 
 
 if __name__ == '__main__':

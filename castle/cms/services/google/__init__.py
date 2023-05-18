@@ -55,6 +55,7 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
+
 def get_ga4_data(ga_id, service_key, context, paths, form, params):
     environ = os.environ.copy()
 

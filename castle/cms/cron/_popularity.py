@@ -33,27 +33,30 @@ def get_results(service, profile_id):
 def get_popularity(site):
     if not hps.is_enabled():
         return
-
+    
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
     service_key = registry.get('castle.google_api_service_key_file', None)
+
     if ga_id:
-        result = get_ga4_popularity_data(ga_id, service_key)
+        results = get_ga4_popularity_data(ga_id, service_key)
+    else:
+        service = analytics.get_ga_service()
+        if not service:
+            return
 
-    service = analytics.get_ga_service()
-    if not service:
-        return
-
-    profile = analytics.get_ga_profile(service)
-    if not profile:
-        return
+        profile = analytics.get_ga_profile(service)
+        if not profile:
+            return
+        results = get_results(service, profile)['rows']
 
     bulk_data = []
     bulk_size = hps.get_bulk_size()
     conn = hps.get_connection()
 
     site._p_jar.sync()
-    for path, page_views in get_results(service, profile)['rows']:
+
+    for path, page_views in results:
         path = path.split('?')[0].lstrip('/').replace('/view', '').split('@@')[0]
         ob = site.restrictedTraverse(str(path), None)
         if ob is None:
