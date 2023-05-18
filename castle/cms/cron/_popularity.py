@@ -12,7 +12,7 @@ from zope.component.hooks import setSite
 
 from castle.cms.indexing import hps
 from castle.cms.services.google import analytics
-from castle.cms.services.google import get_ga4_data
+from castle.cms.services.google import get_ga4_popularity_data
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import retriable
 
@@ -34,12 +34,11 @@ def get_popularity(site):
     if not hps.is_enabled():
         return
 
-    # TODO: Handle popularity data with GA4 here...
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
+    service_key = registry.get('castle.google_api_service_key_file', None)
     if ga_id:
-        import pdb; pdb.set_trace()
-        # result = get_ga4_data(ga_id, paths, form, params)
+        result = get_ga4_popularity_data(ga_id, service_key)
 
     service = analytics.get_ga_service()
     if not service:

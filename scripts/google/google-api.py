@@ -34,6 +34,7 @@ logger = logging.getLogger('google-api')
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
 GOOGLE_SERVICE_KEY_FILE = os.environ.get("GOOGLE_ANALYTICS_SERVICE_KEY", None)
 GOOGLE_PATH_TO_SERVICE_KEY = os.environ.get("GOOGLE_PATH_TO_SERVICE_KEY", None)
+GOOGLE_ANALYTICS_IS_POPULARITY_QUERY = os.environ.get("GOOGLE_ANALYTICS_IS_POPULARITY_QUERY", None)
 
 
 def ga_auth(scopes):
@@ -139,8 +140,15 @@ def get_service_data():
     return report_data
 
 
+def get_popularity_service_data():
+    pass
+
+
 if __name__ == '__main__':
     if not GOOGLE_CLIENT_ID:
         sys.exit()
-    service_data = get_service_data()
+    if GOOGLE_ANALYTICS_IS_POPULARITY_QUERY:
+        service_data = get_popularity_service_data()
+    else:
+        service_data = get_service_data()
     print(service_data)

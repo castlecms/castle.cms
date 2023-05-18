@@ -55,11 +55,10 @@ def get_service(api_name, api_version, scope, key=None,
 
     return service
 
-def get_ga4_data(ga_id, service_key, paths, form, params):
-    output = None
+def get_ga4_data(ga_id, service_key, context, paths, form, params):
     environ = os.environ.copy()
 
-    current_url_path = api.portal.get().absolute_url_path()
+    current_url_path = context.absolute_url_path()
 
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
     if service_key:
@@ -86,9 +85,32 @@ def get_ga4_data(ga_id, service_key, paths, form, params):
             environ['GA_%s_%s' % (form_type, str(key.upper()))] = val
         else:
             environ['GA_%s_%s' % (form_type, str(key.upper()))] = str(val)
-
-    command = ['/usr/bin/python3', 'scripts/google/google-api.py']
     
+    return ga4_run_script(environ)
+
+
+def get_ga4_popularity_data(ga_id, service_key):
+    environ = os.environ.copy()
+
+    environ['GOOGLE_ANALYTICS_IS_POPULARITY_QUERY'] = True
+
+    environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+    if service_key:
+        service_key = service_key.split(':')[-1]
+        service_key = base64.b64decode(service_key)
+        environ['GOOGLE_ANALYTICS_SERVICE_KEY'] = service_key
+
+    # TODO: get all available site paths...
+    # paths = get_paths()
+    paths = [api.portal.get().absolute_url_path()]
+    environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
+
+    return ga4_run_script(environ)
+
+
+def ga4_run_script(environ):
+    output = None
+    command = ['/usr/bin/python3', 'scripts/google/google-api.py']
     process = subprocess.Popen(
         command,
         env=environ,
@@ -115,3 +137,18 @@ def get_mock_ga4_data(paths, form):
         path = api.portal.get().absolute_url_path()
         data['rows'].append([path, random.randrange(0, 50)])
     return data
+
+
+# TODO: get paths without access to context obj
+# def get_paths(self):
+#     site_path = '/'.join(api.portal.get().getPhysicalPath())
+#     context_path = '/'.join(self.context.getPhysicalPath())
+#     base_path = context_path[len(site_path):]
+#     paths = [base_path, base_path + '/view']
+
+#     context_state = getMultiAdapter((self.context, self.request),
+#                                     name='plone_context_state')
+#     if context_state.is_portal_root():
+#         paths.append('/')
+#         paths.append('/main-page')
+#     return list(set(paths))
