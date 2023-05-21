@@ -12,9 +12,8 @@ def get_ga_service(ga_scope=['https://www.googleapis.com/auth/analytics.readonly
 
     if not api_key or not api_email or not ua_id:
         return
-    else:
-        return get_service(
-            'analytics', 'v3', ga_scope, b64decode_file(api_key)[1], api_email)
+    return get_service(
+        'analytics', 'v3', ga_scope, b64decode_file(api_key)[1], api_email)
 
 
 def get_ga_profile(service):

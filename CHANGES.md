@@ -1,10 +1,16 @@
 Changelog
 =========
 
-3.0.0b122 (unreleased)
+3.0.0b123 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b122 (2023-04-11)
+----------------------
+
+- Fix Required Lead Image clash with verioning control after behavior's removal
 
 
 3.0.0b121 (2023-03-08)
