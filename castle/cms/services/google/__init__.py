@@ -91,20 +91,26 @@ def get_ga4_data(ga_id, service_key, context, paths, form, params):
 
 
 def get_ga4_popularity_data(ga_id, service_key):
+    paths = get_site_paths()
+    # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
+    if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
+        mock_form = {
+            'params': '{"metrics":"activeUsers","global":true,\
+            "sort":"-activeUsers","dimensions":"city","max_results":5}',
+            'api': 'ga',
+            'type': 'realtime',
+            'cache_duration': '300'}
+        results = get_mock_ga4_data(paths, mock_form)
+        return results['rows']
     environ = os.environ.copy()
-
-    environ['GOOGLE_ANALYTICS_IS_POPULARITY_QUERY'] = True
-
+    environ['GOOGLE_ANALYTICS_IS_POPULARITY_QUERY'] = 'True'
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+    environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
+
     if service_key:
         service_key = service_key.split(':')[-1]
         service_key = base64.b64decode(service_key)
         environ['GOOGLE_ANALYTICS_SERVICE_KEY'] = service_key
-
-    # TODO: get all available site paths...
-    # paths = get_paths()
-    paths = [api.portal.get().absolute_url_path()]
-    environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
 
     return ga4_run_script(environ)
 
@@ -121,7 +127,7 @@ def ga4_run_script(environ):
     if error:
         logger.error(error)
     if not output:
-        logger.error('No output received from GA4 request')
+        logger.info('No output received from GA4 request')
         return
 
     output = ast.literal_eval(output.replace('\n', ''))
@@ -140,16 +146,9 @@ def get_mock_ga4_data(paths, form):
     return data
 
 
-# TODO: get paths without access to context obj
-# def get_paths(self):
-#     site_path = '/'.join(api.portal.get().getPhysicalPath())
-#     context_path = '/'.join(self.context.getPhysicalPath())
-#     base_path = context_path[len(site_path):]
-#     paths = [base_path, base_path + '/view']
-
-#     context_state = getMultiAdapter((self.context, self.request),
-#                                     name='plone_context_state')
-#     if context_state.is_portal_root():
-#         paths.append('/')
-#         paths.append('/main-page')
-#     return list(set(paths))
+def get_site_paths():
+    paths = []
+    site_contents = api.portal.get().listFolderContents()
+    for page in site_contents:
+        paths.append(page.absolute_url_path())
+    return paths
