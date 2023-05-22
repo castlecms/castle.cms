@@ -27,7 +27,7 @@ def import_profiles(args):
             profile = json.load(json_fi)
 
             fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
-            logging.warning('creating profile for {}'.format(fullname))
+            logging.info('creating profile for {}'.format(fullname))
             if api.user.get(username=profile['username']) is None:
                 try:
                     user = api.user.create(email=profile['email'], 
@@ -151,7 +151,7 @@ def import_groups(args):
     try:
         group_path = '{}/groups'.format(args.dump_folder)
         for groupname in group_list:  # for each of the core groups
-            logging.warning('adding members to {}'.format(groupname))
+            logging.info('adding members to {}'.format(groupname))
             with open('{}/group.{}.json'.format(group_path, groupname), 'r') as json_fi:
                 fi = json.load(json_fi)
 
@@ -172,7 +172,7 @@ def import_communities(args, path):  # path = {}/groups/communities
                 try:
                     attachment_fi = os.path.splitext(attachment)
                     attachment_name = attachment_fi[0]
-                    logging.warning('importing attachment {}'.format(attachment))
+                    logging.info('importing attachment {}'.format(attachment))
                     
                     with open('{}/__data__{}.json'.format(folderpath, attachment_name), 'rb') as fi:
                         data_attachment_dump = json.load(fi)
@@ -229,10 +229,13 @@ def import_communities(args, path):  # path = {}/groups/communities
                         sitepath = sitepath.replace('--', '-')
                     if sitepath.endswith('-'):
                         sitepath = sitepath[0:-1]
-                    
-                    if api.content.get(path=sitepath) is None:
-                        logging.warning('creating folder {}'.format(sitepath))
-                        api.content.create(container=container, type='Folder', title=obj)
+                    path_list = sitepath.split('/')
+                    if path_list.pop() == obj:
+                        transverse_attachments(folderpath=folderpath, sitepath=sitepath, obj=item.lower())
+                    else:
+                        if api.content.get(path=sitepath) is None:
+                            logging.info('creating folder {}'.format(sitepath))
+                            api.content.create(container=container, type='Folder', title=obj)
                 transverse_attachments(folderpath=folderpath, sitepath=sitepath, obj=item.lower())
 
     communities_site = api.content.get(path='/communities')
@@ -247,7 +250,7 @@ def import_communities(args, path):  # path = {}/groups/communities
             api.content.create(container=communities_site, type='Folder', title=community_name)
         comm_site = api.content.get(comm_sitepath)
 
-        logging.warning('import community {}/{}'.format(len(communities_list), len(os.listdir(path))))
+        logging.info('import community {}/{}'.format(len(communities_list), len(os.listdir(path))))
         comm_attach_sitepath = '{}/attachments'.format(comm_sitepath)
         if api.content.get(path=comm_attach_sitepath) is None:
             api.content.create(container=comm_site, type='Folder', title='attachments')
@@ -284,7 +287,7 @@ def import_communities(args, path):  # path = {}/groups/communities
                 list_len = len(dump_fi['members'])
                 for member in member_list:  # add community members to group
                     count += 1
-                    logging.warning('{}/{} checking {} group members'.format(count, list_len, dump_fi['groupname']))
+                    logging.info('{}/{} checking {} group members'.format(count, list_len, dump_fi['groupname']))
                     members = api.user.get_users(groupname='{}:members'.format(dump_fi['groupname']))
                     group_members = []
                     for person in members:
@@ -293,12 +296,12 @@ def import_communities(args, path):  # path = {}/groups/communities
                         try:
                             api.group.add_user(groupname='{}:members'.format(dump_fi['groupname']), 
                                             username=member)
-                            logging.warning('added {} to group {}'.format(member, dump_fi['groupname']))
+                            logging.info('added {} to group {}'.format(member, dump_fi['groupname']))
                         except UserNotFoundError:
-                            logging.warning('user {} was not found'.format(member))
+                            logging.info('user {} was not found'.format(member))
                             pass
                     else:
-                        logging.warning('{} is already a member of {}'.format(member, dump_fi['groupname']))
+                        logging.info('{} is already a member of {}'.format(member, dump_fi['groupname']))
                     member_list.remove(member)
                 transaction.commit()
                 for moderator in dump_fi['moderators']:  # add community moderators to group
@@ -323,7 +326,7 @@ def import_communities(args, path):  # path = {}/groups/communities
                 post_title = os.path.splitext(blog_post)[0].replace('.', '')
                 comm_blogpost_sitepath = '{}/{}'.format(comm_blog_sitepath, post_title)
                 if api.content.get(path=comm_blogpost_sitepath) is None:
-                    logging.warning('import blog, blog post {}/{}'.format(count, len(os.listdir(blog_folder_path))))
+                    logging.info('import blog, blog post {}/{}'.format(count, len(os.listdir(blog_folder_path))))
                     with open(os.path.join(blog_folder_path, blog_post)) as blog_file:
                         blog_dump = json.load(blog_file)
                         if api.content.get(path=comm_blogpost_sitepath) is None:
