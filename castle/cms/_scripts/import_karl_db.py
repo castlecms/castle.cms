@@ -25,10 +25,9 @@ def import_profiles(args):
         user_file_path = os.path.join(profiles_path, filename)
         with open(user_file_path, 'r') as json_fi:
             profile = json.load(json_fi)
-
             fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
-            logging.info('creating profile for {}'.format(fullname))
             if api.user.get(username=profile['username']) is None:
+                logging.info('creating profile for {}'.format(fullname))
                 try:
                     user = api.user.create(email=profile['email'], 
                                     username=profile['username'], 
@@ -72,7 +71,7 @@ def import_profiles(args):
 
 def import_groups(args):
     site = api.content.get(path='/')
-    if api.content.get('{}/communities'.format(site)) is None:
+    if api.content.get('/{}/communities'.format(args.site_id)) is None:
         api.content.create(container=site, type='Folder', title='communities')
     
     groups_path = '{}/groups'.format(args.dump_folder)
@@ -86,14 +85,14 @@ def import_groups(args):
                         roles=[], 
                         groups=communities_list)
     else:
-        karlcomm = api.group.get(groupname='KarlCommunities').groups
-        for group in communities_list:
-            karlcomm.append(group)
-        group_tool = api.portal.get_tool(name='portal_groups')
-        group_tool.editGroup(
-            'KarlCommunities',
-            groups=karlcomm,
-        )
+        karlcomm = api.group.get(groupname='KarlCommunities')
+        groups = karlcomm.getProperty('groups')
+        if groups is not None:
+            for group in communities_list:
+                karlcomm.append(group)
+        else:
+            groups = karlcomm
+        karlcomm.setGroupProperties({'groups': groups})
     
     # ----------------creating base groups----------------
     all_groups = api.group.get_groups()
@@ -109,14 +108,14 @@ def import_groups(args):
                         roles=['Editor', 'Contributor'], 
                         groups=moderators)
     else:
-        karlmoderator = api.group.get(groupname='KarlModerator').groups
-        for group in moderators:
-            karlmoderator.append(group)
-        group_tool = api.portal.get_tool(name='portal_groups')
-        group_tool.editGroup(
-            'KarlModerator',
-            groups=karlmoderator,
-        )
+        karlmoderator = api.group.get(groupname='KarlModerator')
+        groups = karlmoderator.getProperty('groups')
+        if groups is not None:
+            for group in communities_list:
+                karlmoderator.append(group)
+        else:
+            groups = karlmoderator
+        karlmoderator.setGroupProperties({'groups': groups})
     
     if api.group.get(groupname='KarlAdmin') is None:
         api.group.create(groupname='KarlAdmin', 
@@ -166,77 +165,74 @@ def import_groups(args):
         logging.error('error while importing group {}'.format(group), exc_info=True)
     
 def import_communities(args, path):  # path = {}/groups/communities
-    def transverse_attachments(folderpath, sitepath, obj=None):
-        def comm_attachments(folderpath, sitepath, attachment):
-            if api.content.get(os.path.join(sitepath, attachment)) is None:
-                try:
-                    attachment_fi = os.path.splitext(attachment)
-                    attachment_name = attachment_fi[0]
-                    logging.info('importing attachment {}'.format(attachment))
-                    
-                    with open('{}/__data__{}.json'.format(folderpath, attachment_name), 'rb') as fi:
-                        data_attachment_dump = json.load(fi)
-                        try:
-                            container = api.content.get(sitepath)
-                            file_obj = api.content.create(                          
-                                container=container,
-                                type='File', 
-                                id=attachment,                             
-                                title=attachment, 
-                                safe_id=True
-                            )
-                            with open(os.path.join(folderpath, attachment), 'rb') as attach_fi:
-                                if 'image' in data_attachment_dump['mimetype']:
-                                    file_obj.file = NamedBlobImage(                          
-                                        data=attach_fi.read(),                                  
-                                        contentType=data_attachment_dump['mimetype'],                   
-                                        filename=data_attachment_dump['filename'],            
-                                    )
-                                else:
-                                    file_obj.file = NamedBlobFile(                          
-                                        data=attach_fi.read(),                                  
-                                        contentType=data_attachment_dump['mimetype'],                   
-                                        filename=data_attachment_dump['filename'],            
-                                    )
-                            transaction.commit()
-                        except:
-                            logging.error('error while importing blog attachment {}'.format(attachment), exc_info=True)
-                except:
-                    logging.error('unable to find attachment {} for {}\n'.format(attachment, folderpath), exc_info=True)
+    def transverse(_folderpath, _sitepath):
+        _sitepath = clean_name(_sitepath)
+        for item in os.listdir(_folderpath):
+            if os.path.isfile(os.path.join(_folderpath, item)):
+                if not item.startswith('__data__') and api.content.get(os.path.join(_sitepath, item.lower())) is None:
+                    comm_attachments(folderpath=_folderpath, sitepath=_sitepath, attachment=item.lower())
             else:
-                logging.info('file {} already exists at {}'.format(attachment, sitepath))
-        temp_path = folderpath
-        if obj:
-            temp_path = os.path.join(folderpath, obj)
-        if os.path.isfile(temp_path):
-            if not obj.startswith('__data__'):
-                comm_attachments(folderpath=folderpath, sitepath=sitepath, attachment=obj)
+                parent = api.content.get(_sitepath)
+                _container = api.content.get(os.path.join(_sitepath, clean_name(item.lower())))
+                if _container is None:
+                    logging.info('creating folder {}'.format(_sitepath))
+                    api.content.create(container=parent, type='Folder', title=item.lower())
+                next_sitepath = os.path.join(_sitepath, item.lower())
+                next_folder = os.path.join(_folderpath, item.lower())
+                transverse(_folderpath=next_folder, _sitepath=next_sitepath)
+        transaction.commit()
+    def comm_attachments(folderpath, sitepath, attachment):
+        if api.content.get(os.path.join(sitepath, attachment)) is None:
+            try:
+                attachment_fi = os.path.splitext(attachment)
+                attachment_name = attachment_fi[0]
+                logging.info('importing attachment {}'.format(attachment))
+                
+                with open('{}/__data__{}.json'.format(folderpath, attachment_name), 'rb') as fi:
+                    data_attachment_dump = json.load(fi)
+                    try:
+                        container = api.content.get(sitepath)
+                        # if container is None: import pdb; pdb.set_trace()
+                        file_obj = api.content.create(                          
+                            container=container,
+                            type='File', 
+                            id=attachment,                             
+                            title=attachment, 
+                            safe_id=True
+                        )
+                        with open(os.path.join(folderpath, attachment), 'rb') as attach_fi:
+                            if 'image' in data_attachment_dump['mimetype']:
+                                file_obj.file = NamedBlobImage(                          
+                                    data=attach_fi.read(),                                  
+                                    contentType=data_attachment_dump['mimetype'],                   
+                                    filename=data_attachment_dump['filename'],            
+                                )
+                            else:
+                                file_obj.file = NamedBlobFile(                          
+                                    data=attach_fi.read(),                                  
+                                    contentType=data_attachment_dump['mimetype'],                   
+                                    filename=data_attachment_dump['filename'],            
+                                )
+                        transaction.commit()
+                    except:
+                        logging.error('error while importing blog attachment {}'.format(attachment), exc_info=True)
+            except:
+                logging.error('unable to find attachment {} for {}\n'.format(attachment, folderpath), exc_info=True)
         else:
-            if obj:
-                folderpath = os.path.join(folderpath, obj)
-            for item in os.listdir(folderpath):
-                container = api.content.get(path=sitepath)
-                if obj:
-                    sitepath = os.path.join(sitepath, obj)
-                    replace = [':', ',', '.', '#']
-                    for char in replace:
-                        sitepath = sitepath.replace(char, '')
-                    replace = [' ', '(', ')']
-                    for char in replace:
-                        sitepath = sitepath.replace(char, '-')
-                    sitepath = sitepath.replace(' ', '-')
-                    while '--' in sitepath:
-                        sitepath = sitepath.replace('--', '-')
-                    if sitepath.endswith('-'):
-                        sitepath = sitepath[0:-1]
-                    path_list = sitepath.split('/')
-                    if path_list.pop() == obj:
-                        transverse_attachments(folderpath=folderpath, sitepath=sitepath, obj=item.lower())
-                    else:
-                        if api.content.get(path=sitepath) is None:
-                            logging.info('creating folder {}'.format(sitepath))
-                            api.content.create(container=container, type='Folder', title=obj)
-                transverse_attachments(folderpath=folderpath, sitepath=sitepath, obj=item.lower())
+            logging.info('file {} already exists at {}'.format(attachment, sitepath))
+    def clean_name(sitepath):
+        replace = [':', ',', '.', '#']
+        for char in replace:
+            sitepath = sitepath.replace(char, '')
+        replace = [' ', '(', ')']
+        for char in replace:
+            sitepath = sitepath.replace(char, '-')
+        sitepath = sitepath.replace(' ', '-')
+        while '--' in sitepath:
+            sitepath = sitepath.replace('--', '-')
+        if sitepath.endswith('-'):
+            sitepath = sitepath[0:-1]
+        return sitepath
 
     communities_site = api.content.get(path='/communities')
     
@@ -260,7 +256,7 @@ def import_communities(args, path):  # path = {}/groups/communities
         # community files
         attach_path = '{}/groups/communities/{}/attachments'.format(args.dump_folder, community_name)
         if os.path.exists(attach_path):
-            transverse_attachments(folderpath=attach_path, sitepath=comm_attach_sitepath)
+            transverse(_folderpath=attach_path, _sitepath=comm_attach_sitepath)
         if api.content.get(path='{}/blog'.format(comm_sitepath)) is None:
             api.content.create(container=comm_site, type='Folder', title='blog')
         blog_site = api.content.get(path='{}/blog'.format(comm_sitepath))
@@ -284,10 +280,9 @@ def import_communities(args, path):  # path = {}/groups/communities
                                     groups=['{}:moderators'.format(dump_fi['groupname'])])
                 count = 0
                 member_list = dump_fi['members']
-                list_len = len(dump_fi['members'])
+                mem_count = 0
                 for member in member_list:  # add community members to group
-                    count += 1
-                    logging.info('{}/{} checking {} group members'.format(count, list_len, dump_fi['groupname']))
+                    mem_count += 1
                     members = api.user.get_users(groupname='{}:members'.format(dump_fi['groupname']))
                     group_members = []
                     for person in members:
@@ -296,13 +291,12 @@ def import_communities(args, path):  # path = {}/groups/communities
                         try:
                             api.group.add_user(groupname='{}:members'.format(dump_fi['groupname']), 
                                             username=member)
-                            logging.info('added {} to group {}'.format(member, dump_fi['groupname']))
+                            logging.info('{}/{} added {} to group {}'.format(mem_count, len(member_list), member, dump_fi['groupname']))
                         except UserNotFoundError:
-                            logging.info('user {} was not found'.format(member))
+                            logging.info('{}/{} user {} was not found'.format(mem_count, len(member_list), member))
                             pass
                     else:
-                        logging.info('{} is already a member of {}'.format(member, dump_fi['groupname']))
-                    member_list.remove(member)
+                        logging.info('{}/{} {} is already a member of {}'.format(mem_count, len(member_list), member, dump_fi['groupname']))
                 transaction.commit()
                 for moderator in dump_fi['moderators']:  # add community moderators to group
                     moderators = api.user.get_users(groupname='{}:moderators'.format(dump_fi['groupname']))
@@ -405,7 +399,7 @@ def import_communities(args, path):  # path = {}/groups/communities
     return communities_list
 
 def migrate(args):
-    import_profiles(args)
+    # import_profiles(args)
     import_groups(args)
     transaction.commit()
 
