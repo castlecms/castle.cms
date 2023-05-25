@@ -197,7 +197,7 @@ You can review the request at %(url)s
 
 A new user with the email %(email)s has signed up.
 
-Please <a href="%s">review the request</a>
+Please <a href="%(url)s">review the request</a>
 
 </p>""" % {
             'url': url,

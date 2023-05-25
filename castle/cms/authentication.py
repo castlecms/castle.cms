@@ -218,12 +218,16 @@ class Authenticator(object):
             raise AuthenticationUserDisabled()
 
         if self.registry:
-            allowed_countries = self.registry.get(
-                'plone.restrict_logins_to_countries')
-            if allowed_countries and country:
-                if country not in allowed_countries:
-                    if not self.country_exception_granted(user.getId()):
-                        raise AuthenticationCountryBlocked()
+            disable_country_restriction = self.registry.get(
+                'plone.disable_country_restriction'
+            )
+            if not disable_country_restriction:
+                allowed_countries = self.registry.get(
+                    'plone.restrict_logins_to_countries')
+                if allowed_countries and country:
+                    if country not in allowed_countries:
+                        if not self.country_exception_granted(user.getId()):
+                            raise AuthenticationCountryBlocked()
 
         if not self.is_zope_root:
             member = api.user.get(user.getId())

@@ -37,7 +37,7 @@ from castle.cms.widgets import ReCaptchaFieldWidget
 def check_phone_number(val):
     if not val:
         return
-    number = ''.join([l for l in val if l in string.digits])
+    number = ''.join([l for l in val if l in string.digits])  # noqa: E741
 
     if len(number) == 10:
         number = '1' + number

@@ -1,10 +1,36 @@
 Changelog
 =========
 
-3.0.0b119 (unreleased)
+3.0.0b123 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b122 (2023-04-11)
+----------------------
+
+- Fix Required Lead Image clash with verioning control after behavior's removal
+
+
+3.0.0b121 (2023-03-08)
+----------------------
+
+- fix upgrade zcml
+
+
+3.0.0b120 (2023-03-08)
+----------------------
+
+- add support for GoogleAnalytics 4
+- add ability to disable, explicitly, country code checking in auth
+
+
+3.0.0b119 (2023-02-28)
+----------------------
+
+- update focal_image_tag to allow for overlays
+- add overlay support into query listings
 
 
 3.0.0b118 (2023-02-15)

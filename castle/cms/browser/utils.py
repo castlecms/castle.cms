@@ -5,6 +5,14 @@ import six
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
+from castle.cms import cache
+from castle.cms import utils
+from castle.cms.behaviors.location import ILocation
+from castle.cms.browser.nextprev import NextPrevious
+from castle.cms.browser.security.login import SecureLoginView
+from castle.cms.interfaces import IUtils
+from castle.cms.vocabularies import LocationsVocabulary
+from logging import getLogger
 from DateTime import DateTime
 from lxml import etree
 from lxml.html import tostring
@@ -34,13 +42,8 @@ from zope.interface import implementer
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
 
-from castle.cms import cache
-from castle.cms import utils
-from castle.cms.behaviors.location import ILocation
-from castle.cms.browser.nextprev import NextPrevious
-from castle.cms.browser.security.login import SecureLoginView
-from castle.cms.interfaces import IUtils
-from castle.cms.vocabularies import LocationsVocabulary
+
+logger = getLogger('castle.cms')
 
 
 def _one(val):
@@ -358,16 +361,24 @@ class Utils(BrowserView):
         cache.set(cache_key, sorted_tags, 60 * 5)
         return sorted_tags
 
-    def focal_image_tag(self, brain, scale=None, className='', imageClassName='',
-                        attributes=None, focal=None):
+    def focal_image_tag(
+        self,
+        brain,
+        scale=None,
+        className='',
+        imageClassName='',
+        attributes=None,
+        focal=None,
+        attempt_overlay=False,
+    ):
         # read https://github.com/jonom/jquery-focuspoint on how to calc
         image_info = utils.get_image_info(brain)
 
-        attrib = {}
+        image_attributes = {}
         if attributes is not None:
-            attrib.update(attributes)
+            image_attributes.update(attributes)
 
-        if 'src' not in attrib:
+        if 'src' not in image_attributes:
             try:
                 url = brain.getURL()
                 alt = brain.Title
@@ -376,17 +387,40 @@ class Utils(BrowserView):
                 alt = brain.Title()
             if not isinstance(alt, six.string_types):
                 alt = ''
-            attrib.update({
+            image_attributes.update({
                 'src': '{0}/@@images/image/{1}'.format(url, scale or ''),
                 'alt': unidecode(alt),
                 'class': imageClassName
             })
 
-        el = etree.Element('div')
-        el.attrib['class'] = 'focuspoint' if not className else 'focuspoint ' + className
-        imEl = etree.Element('img')
-        imEl.attrib.update(attrib)
-        el.append(imEl)
+        image_container = etree.Element('div')
+        image_container.attrib['class'] = 'focuspoint' if not className else 'focuspoint ' + className
+        image_element = etree.Element('img')
+        image_element.attrib.update(image_attributes)
+        image_container.append(image_element)
+
+        if attempt_overlay is True:
+            status_overlay_url = None
+            try:
+                status_overlay_url = getattr(
+                    brain.getObject(),
+                    'status_overlay_url',
+                    None,
+                )
+            except Exception:
+                logger.warn('overlay for {url} could not be applied'.format(url=url))
+
+            if status_overlay_url is not None:
+                overlay_image_attributes = {
+                    'src': status_overlay_url,
+                    'alt': 'Status Overlay Banner',
+                    'class': 'overlay-image',
+                }
+
+                overlay_element = etree.Element('img')
+                overlay_element.attrib.update(overlay_image_attributes)
+                image_container.append(overlay_element)
+                image_container.attrib['class'] += ' overlay-image-container'
 
         if not focal and image_info and 'focal_point' in image_info:
             focal = image_info['focal_point']
@@ -405,7 +439,7 @@ class Utils(BrowserView):
                     'h': int(float(height) * float(scale_ratio))
                 }
 
-            el.attrib.update({
+            image_container.attrib.update({
                 'data-focus-x': str(focal_x),
                 'data-focus-y': str(focal_y),
                 'data-base-url': '{0}/@@images/image/'.format(url),
@@ -415,7 +449,7 @@ class Utils(BrowserView):
                 'data-scales-info': json.dumps(sizes_info)
             })
 
-        return tostring(el)
+        return tostring(image_container)
 
     def focal_cover_image_tag(self, brain, scale=None, class_name='',
                               attributes=None, focal=None):

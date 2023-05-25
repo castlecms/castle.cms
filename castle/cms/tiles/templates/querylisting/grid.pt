@@ -1,3 +1,14 @@
+<style>
+  .dt-grid li .focuspoint.overlay-image-container img.overlay-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: unset;
+    height: 20%;
+    width: 100%;
+    min-height: 25px;
+  }
+</style>
 <ul class="castle-grid-block-sm-1 castle-grid-block-md-2 castle-grid-block-lg-4 dt-grid"
     tal:define="results view/tile/results;
                 utils view/tile/utils;
@@ -14,7 +25,7 @@
       class="castle-grid-block-item portal-type-${python: utils.normalize(item.portal_type)}">
     <div tal:condition="has_image">
       <a href="${url}">
-        <div tal:replace="structure python: utils.focal_image_tag(item, 'mini')" />
+        <div tal:replace="structure python: utils.focal_image_tag(item, 'mini', attempt_overlay=True)"></div>
       </a>
     </div>
     <p class="date"

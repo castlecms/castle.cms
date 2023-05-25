@@ -61,7 +61,7 @@ class TestHPS(unittest.TestCase):
             id='doc3',
             container=folder,
             title='Foobar three')
-        doc4 = api.content.create(
+        doc4 = api.content.create(  # noqa: F841
             type='Document',
             id='doc4',
             container=folder,
@@ -71,7 +71,7 @@ class TestHPS(unittest.TestCase):
             id='doc5',
             container=folder2,
             title='Foobar five')
-        doc6 = api.content.create(
+        doc6 = api.content.create(  # noqa: F841
             type='Document',
             id='doc6',
             container=folder,

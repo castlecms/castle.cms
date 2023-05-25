@@ -12,6 +12,8 @@ from wildcard.hps.interfaces import IQueryAssembler
 from wildcard.hps.opensearch import WildcardHPSCatalog
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from collective.elasticsearch.es import ElasticSearchCatalog
+from collective.elasticsearch.hook import index_batch
 
 
 logger = logging.getLogger("Plone")
@@ -128,7 +130,7 @@ def gen_audit_query(
             filters.append({'terms': {objectfield: items}})
 
     if (after is not None and len(after) > 0) or (before is not None and len(before) > 0):
-        rangefilter = {'range': { datefield: {}}}
+        rangefilter = {'range': {datefield: {}}}
         if after is not None:
             rangefilter['range'][datefield]['gte'] = after
         if before is not None:
@@ -234,7 +236,7 @@ def get_search_results(context, request, catalog, search_attributes, page, page_
     # if a specific site's crawl data is being queried, exclude non-applicable
     # results from the generated opensearch query
     if 'searchSite' in request.form:
-        index_name = '{}_crawler'.format(index_name=hps.index_name)
+        index_name = '{}_crawler'.format(hps.index_name)
         os_query = os_query['script_score']['query']
         os_query['bool']['filter'] = [
             {

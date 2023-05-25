@@ -27,10 +27,9 @@ Therefore, in the above model, the following are mapped to an individual record:
     - site == app[site].id value
     - report_id == UUID4 unique per-site and per-execution of this script
 """
-import csv
+from argparse import ArgumentParser
 import logging
 import os
-import sys
 import uuid
 from argparse import ArgumentParser
 from datetime import datetime
@@ -99,7 +98,7 @@ def report_on_users(site):
                     roleperms[role].append(perm)
 
         for rp in roleperms.keys():
-            msg = "{schemaversion} {schematype} {appname} {site} {reportid} {username} {rolename} {permissions}".format(
+            msg = "{schemaversion} {schematype} {appname} {site} {reportid} {username} {rolename} {permissions}".format(  # noqa: E501
                 schemaversion=extras["schema_version"],
                 schematype=extras["schema_type"],
                 appname=extras["app_name"],

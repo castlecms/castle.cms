@@ -178,7 +178,6 @@ class CastleImporter(object):
         ('expiration_date', 'setExpirationDate'),
     ]
 
-
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
 
@@ -288,7 +287,8 @@ class CastleImporter(object):
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
-                            import pdb; pdb.set_trace()
+                            import pdb
+                            pdb.set_trace()
                         raise
                     logger.error('Error creating content {}'
                                                 .format(filepath), exc_info=True)
@@ -323,7 +323,8 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
-                                import pdb; pdb.set_trace()
+                                import pdb
+                                pdb.set_trace()
                             raise
 
             # set workflow / review history
@@ -340,7 +341,6 @@ class CastleImporter(object):
             obj.reindexObject()
             self.fix_dates(obj, data)
             return obj
-
 
     def fix_dates(self, obj, data):
         for key, index_function_name in self.date_functions:
@@ -362,7 +362,6 @@ class CastleImporter(object):
                         obj=obj,
                     )
                     logger.warn(warn_message)
-
 
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
@@ -400,7 +399,8 @@ class CastleImporter(object):
                                                                 exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb; pdb.set_trace()
+                        import pdb
+                        pdb.set_trace()
                     raise
 
 #    app._p_jar.invalidateCache()  # noqa

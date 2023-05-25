@@ -26,6 +26,7 @@ from castle.cms.interfaces import IArchiveManager
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 
 
+
 class TestArchiveManager(unittest.TestCase):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
 
