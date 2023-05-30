@@ -37,7 +37,7 @@ setup(
     namespace_packages=['castle'],
     install_requires=[
         # plone packages
-        'Products.CMFPlone>=5.0.10',
+        'Products.CMFPlone>=5.2.12',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
@@ -48,7 +48,7 @@ setup(
         'plone.folder>=1.0.12',
         'AccessControl>=3.0.14',
         'z3c.relationfield>=0.7.1.dev0',
-        'Products.ZCatalog>=3.0.3dev2',
+        'Products.ZCatalog>=7.0',
         'plone.app.standardtiles>=2.0.0.dev0',
         'plone.stringinterp>=1.3.1',
 
