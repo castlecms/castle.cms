@@ -77,7 +77,7 @@ Environment variables
 - GOOGLE_PATH_TO_SERVICE_KEY: Optional path to credentials.json file
 - GOOGLE_ANALYTICS_IS_DEV: return mock analytics data for devevlopment
 - GOOGLE_ANALYTICS_PYTHON_AND_SCRIPT_PATHS: list containing python and script location for GA4 functionality
-  e.g. ['/usr/bin/python3', 'scripts/google/google-api.py'] (temporary workaround until Castle is py3 compat)
+  e.g. ["/usr/bin/python3", "scripts/google/google-api.py"] (temporary workaround until Castle is py3 compat)
 
 
 Defaults

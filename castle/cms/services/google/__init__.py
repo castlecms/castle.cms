@@ -121,8 +121,13 @@ def get_ga4_popularity_data(ga_id, service_key):
 def ga4_run_script(environ):
     output = None
     # set this env var as a list specifying both path to py version and script
-    # e.g. ['/usr/bin/python3', 'scripts/google/google-api.py']
+    # e.g. ["/usr/bin/python3", "scripts/google/google-api.py"]
     command = os.environ.get("GOOGLE_ANALYTICS_PYTHON_AND_SCRIPT_PATHS", None)
+    try:
+        command = json.loads(command)
+    except ValueError:
+        command = command.replace("'", '"')
+        command = json.loads(command)
     process = subprocess.Popen(
         command,
         env=environ,
