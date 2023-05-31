@@ -57,6 +57,9 @@ def get_service(api_name, api_version, scope, key=None,
 
 
 def get_ga4_data(ga_id, service_key, context, paths, form, params):
+    # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
+    if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
+        return get_mock_ga4_data(paths, form)
     environ = os.environ.copy()
 
     current_url_path = context.absolute_url_path()
@@ -117,7 +120,9 @@ def get_ga4_popularity_data(ga_id, service_key):
 
 def ga4_run_script(environ):
     output = None
-    command = ['/usr/bin/python3', 'scripts/google/google-api.py']
+    # set this env var as a list specifying both path to py version and script
+    # e.g. ['/usr/bin/python3', 'scripts/google/google-api.py']
+    command = os.environ.get("GOOGLE_ANALYTICS_PYTHON_AND_SCRIPT_PATHS", None)
     process = subprocess.Popen(
         command,
         env=environ,

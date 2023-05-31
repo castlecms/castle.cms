@@ -5,7 +5,6 @@ from castle.cms import cache
 from castle.cms import social
 from castle.cms.services.google import analytics
 from castle.cms.services.google import get_ga4_data
-from castle.cms.services.google import get_mock_ga4_data
 from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
@@ -51,9 +50,6 @@ class AnalyticsView(BrowserView):
 
                 if ga_id:
                     form = self.request.form
-                    # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
-                    if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
-                        return get_mock_ga4_data(paths, form)
                     result = get_ga4_data(ga_id, service_key, self.context, paths, form, params)
             else:
                 service = analytics.get_ga_service()
