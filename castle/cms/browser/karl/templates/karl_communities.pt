@@ -1,0 +1,70 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
+  <h1 class="documentFirstHeading"
+      i18n:translate="">Communities</h1>
+  
+  <br />
+
+  <div id="content-core"
+       tal:define="info view/info;
+                   groups info/groups;">
+
+    <table class="listing">
+      <thead>
+        <tr>
+          <th>Community</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody tal:define="userGroups view/userGroups">
+        <tal:community tal:repeat="group python: groups">
+          <tr tal:define="title python: group.id.split(':')[0]">
+            <th>
+              <a href="${context/absolute_url}/@@communities?groupname=${title}&recentPage=1">
+                ${python: group.getProperty('title')}
+              </a>
+            </th>
+            <th>
+              <form tal:condition="python: group.id not in userGroups" 
+                    method="POST" 
+                    id="${title}-subscribe_form"
+                    action="${context/absolute_url}/@@subscribe-community?groupname=${title}">
+                  <input
+                         class="subscribeButton" 
+                         id="${title}-subscribe" 
+                         style="background: green; color: white;" 
+                         type="submit" 
+                         value="Subscribe"/>
+              </form>
+              <form tal:condition="python: group.id in userGroups" 
+                    method="POST" 
+                    id="${title}-subscribe_form"
+                    action="${context/absolute_url}/@@unsubscribe-community?groupname=${title}">
+                  <input
+                         class="unsubscribeButton" 
+                         id="${title}-unsubscribe" 
+                         style="background: red; color: white;" 
+                         type="submit" 
+                         value="Unsubscribe"/>
+              </form>
+            </th>
+          </tr>
+        </tal:community>
+        
+      </tbody>
+    </table>
+  </div>
+
+</metal:main>
+
+</body>
+</html>
