@@ -219,6 +219,13 @@ define([
         });
       }
 
+      if (this.props.parent.state.tab == "realtime"){
+        return D.div({},
+          this.renderFields(),
+          chart,
+          D.p({ className: 'discreet'}, 'Totals for current page: ' + $('body').attr('data-base-url'))
+        );
+      }
       return D.div({},
         this.renderFields(),
         chart,
@@ -287,6 +294,129 @@ define([
   var RealtimeTab = cutils.Class([BaseTab], {
     type: 'realtime',
     dimensionOptions: [
+      'appVersion',
+      'audienceId',
+      'audienceName',
+      'city',
+      'cityId',
+      'country',
+      'countryId',
+      'deviceCategory',
+      'eventName',
+      'minutesAgo',
+      'platform',
+      'streamId',
+      'streamName',
+      'unifiedScreenName'
+    ],
+    metricOptions: [
+      'activeUsers',
+      'conversions',
+      'eventCount',
+      'screenPageViews'
+    ]
+  });
+
+  var HistoryTab = cutils.Class([BaseTab], {
+    type: 'ga',
+    dimensionOptions: [
+      'browser',
+      'city',
+      'cityId',
+      'contentType',
+      'continent',
+      'continentId',
+      'country',
+      'countryId',
+      'date',
+      'deviceCategory',
+      'firstSessionDate',
+      'language',
+      'medium',
+      'metro',
+      'operatingSystem',
+      'pagePath',
+      'platform',
+      'region',
+      'sessionSourceMedium',
+      'sourcePlatform',
+      'userGender'
+    ],
+    metricOptions: [
+      'activeUsers',
+      'averageSessionDuration',
+      'bounceRate',
+      'checkouts',
+      'engagedSessions',
+      'engagementRate',
+      'newUsers',
+      'screenPageViews',
+      'screenPageViewsPerSession',
+      'screenPageViewsPerUser',
+      'sessions',
+      'sessionsPerUser',
+      'totalUsers',
+      'userEngagementDuration'
+    ],
+
+    getInitialState: function(){
+      var state = BaseTab.getInitialState.call(this);
+      state.to = moment().local().format('YYYY-MM-DD');
+      state.from = moment().local().subtract(7, 'days').format('YYYY-MM-DD');
+      return state;
+    },
+
+    componentDidUpdate: function(){
+      var that = this;
+      if(this.refs.from){
+        $(this.refs.from.getDOMNode()).pickadate({
+          format: 'yyyy-mm-dd',
+          formatSubmit: 'yyyy-mm-dd',
+          onSet: function(context){
+            that.state.from = moment(context.select).local().format('YYYY-MM-DD');
+            that.timedLoad();
+          }
+        });
+        $(this.refs.to.getDOMNode()).pickadate({
+          format: 'yyyy-mm-dd',
+          formatSubmit: 'yyyy-mm-dd',
+          onSet: function(context){
+            that.state.to = moment(context.select).local().format('YYYY-MM-DD');
+            that.timedLoad();
+          }
+        });
+      }
+    },
+
+    getQueryData: function(){
+      var data = BaseTab.getQueryData.call(this);
+      var now = moment().local();
+      var dfrom = moment(this.state.from, "YYYY-MM-DD").local();
+      var dto = moment(this.state.to, "YYYY-MM-DD").local();
+      data.start_date = parseInt((now - dfrom) / 1000 / 60 / 60 / 24) + 'daysAgo';
+      data.end_date = parseInt((now - dto) / 1000 / 60 / 60 / 24) + 'daysAgo';
+      return data;
+    },
+
+    renderAdditionalFields: function(){
+      return [
+        D.div({ className: "form-group col-md-2" }, [
+          D.label({ }, 'From'),
+          D.input({ className: 'form-control', ref: 'from',
+                    value: this.state.from })
+        ]),
+        D.div({ className: "form-group col-md-2" }, [
+          D.label({ }, 'To'),
+          D.input({ className: 'form-control', ref: 'to',
+                    value: this.state.to })
+        ])
+      ];
+    }
+  });
+
+  var RealtimeTabUA = cutils.Class([BaseTab], {
+    type: 'realtime-ua',
+    dimensionOptions: [
       'rt:userType',
       'rt:medium',
       'rt:trafficType',
@@ -303,8 +433,8 @@ define([
     ]
   });
 
-  var HistoryTab = cutils.Class([BaseTab], {
-    type: 'ga',
+  var HistoryTabUA = cutils.Class([BaseTab], {
+    type: 'ga-ua',
     dimensionOptions: [
       'ga:userType',
       'ga:sessionCount',
@@ -451,7 +581,9 @@ define([
         D.nav({ className: 'autotoc-nav'}, [
           that.renderTabItem('realtime', 'Real time'),
           that.renderTabItem('history', 'Historical'),
-          that.renderTabItem('social', 'Social')
+          that.renderTabItem('social', 'Social'),
+          that.renderTabItem('realtime-ua', 'Real time (UA)'),
+          that.renderTabItem('history-ua', 'Historical (UA)')
         ]),
         that.renderTab()
       ]);
@@ -469,6 +601,16 @@ define([
       }
       if(this.state.tab === 'social'){
         return this.renderSocialTab();
+      }
+      if(this.state.tab === 'realtime-ua'){
+        return R.createElement(RealtimeTabUA, {
+          parent: this
+        });
+      }
+      if(this.state.tab === 'history-ua'){
+        return R.createElement(HistoryTabUA, {
+          parent: this
+        });
       }
     },
     renderSiteTab: function(){

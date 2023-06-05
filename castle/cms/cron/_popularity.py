@@ -1,18 +1,20 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
-from castle.cms.services.google import analytics
-from castle.cms.social import COUNT_ANNOTATION_KEY
-from castle.cms.utils import retriable
-from collective.elasticsearch.es import ElasticSearchCatalog
-from plone import api
-from plone.app.layout.navigation.defaultpage import getDefaultPage
+from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
+from Products.CMFPlone.defaultpage import get_default_page
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from tendo import singleton
+import transaction
 from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 from zope.component.hooks import setSite
 
-import transaction
+from castle.cms.indexing import hps
+from castle.cms.services.google import analytics
+from castle.cms.services.google import get_ga4_popularity_data
+from castle.cms.social import COUNT_ANNOTATION_KEY
+from castle.cms.utils import retriable
 
 
 def get_results(service, profile_id):
@@ -29,26 +31,32 @@ def get_results(service, profile_id):
 
 @retriable(sync=True)
 def get_popularity(site):
-    setSite(site)
-    catalog = api.portal.get_tool('portal_catalog')
-    es = ElasticSearchCatalog(catalog)
-    if not es.enabled:
+    if not hps.is_enabled():
         return
+    
+    registry = getUtility(IRegistry)
+    ga_id = registry.get('castle.google_analytics_id', None)
+    service_key = registry.get('castle.google_api_service_key_file', None)
 
-    service = analytics.get_ga_service()
-    if not service:
-        return
+    if ga_id:
+        results = get_ga4_popularity_data(ga_id, service_key)
+    else:
+        service = analytics.get_ga_service()
+        if not service:
+            return
 
-    profile = analytics.get_ga_profile(service)
-    if not profile:
-        return
+        profile = analytics.get_ga_profile(service)
+        if not profile:
+            return
+        results = get_results(service, profile)['rows']
 
     bulk_data = []
-    bulk_size = es.get_setting('bulk_size', 50)
-    conn = es.connection
+    bulk_size = hps.get_bulk_size()
+    conn = hps.get_connection()
 
     site._p_jar.sync()
-    for path, page_views in get_results(service, profile)['rows']:
+
+    for path, page_views in results:
         path = path.split('?')[0].lstrip('/').replace('/view', '').split('@@')[0]
         ob = site.restrictedTraverse(str(path), None)
         if ob is None:
@@ -67,24 +75,23 @@ def get_popularity(site):
             data[key + '_shares'] = value
 
         if IPloneSiteRoot.providedBy(ob):
-            ob = ob[getDefaultPage(ob)]
+            ob = ob[get_default_page(ob)]
 
         bulk_data.extend([{
             'update': {
-                '_index': es.index_name,
-                '_type': es.doc_type,
+                '_index': conn.get_index_name(),
                 '_id': IUUID(ob)
             }
         }, {'doc': data}])
 
         if len(bulk_data) % bulk_size == 0:
-            conn.bulk(index=es.index_name, doc_type=es.doc_type, body=bulk_data)
+            conn.bulk(index=hps.get_index_name(), body=bulk_data)
             bulk_data = []
             transaction.commit()
             site._p_jar.sync()
 
     if len(bulk_data) > 0:
-        conn.bulk(index=es.index_name, doc_type=es.doc_type, body=bulk_data)
+        conn.bulk(index=hps.get_index_name(), body=bulk_data)
     transaction.commit()
 
 
@@ -97,6 +104,7 @@ def run(app):
     for oid in app.objectIds():  # noqa
         obj = app[oid]  # noqa
         if IPloneSiteRoot.providedBy(obj):
+            setSite(obj)
             get_popularity(obj)
 
 

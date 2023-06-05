@@ -1,11 +1,15 @@
+import json
+import os
+
 from castle.cms import cache
 from castle.cms import social
 from castle.cms.services.google import analytics
+from castle.cms.services.google import get_ga4_data
 from plone import api
+from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
-
-import json
+from zope.component import getUtility
 
 
 class AnalyticsView(BrowserView):
@@ -26,6 +30,7 @@ class AnalyticsView(BrowserView):
         })
 
     def ga_api_call(self, paths):
+        registry = getUtility(IRegistry)
         params = json.loads(self.request.get('params'))
 
         cache_key = '-'.join(api.portal.get().getPhysicalPath()[1:])
@@ -38,29 +43,38 @@ class AnalyticsView(BrowserView):
             result = None
 
         if result is None:
-            service = analytics.get_ga_service()
-            if not service:
-                return {'error': 'Could not get GA Service'}
+            form_type = self.request.form['type']
+            if '-ua' not in form_type:
+                ga_id = registry.get('castle.google_analytics_id', None)
+                service_key = registry.get('castle.google_api_service_key_file', None)
 
-            profile = self.get_ga_profile(service)
-            if not profile:
-                return {'error': 'Could not get GA Profile'}
-
-            if self.request.get('type') == 'realtime':
-                ga = service.data().realtime()
-                if not params.pop('global', False):
-                    # need to restrict by filters
-                    path_query = ','.join(['rt:pagePath==%s' % p for p in paths])
-                    params['filters'] = path_query
+                if ga_id:
+                    form = self.request.form
+                    result = get_ga4_data(ga_id, service_key, self.context, paths, form, params)
             else:
-                if not params.pop('global', False):
-                    # need to restrict by filters
-                    path_query = ','.join(['ga:pagePath==%s' % p for p in paths])
-                    params['filters'] = path_query
-                ga = service.data().ga()
+                service = analytics.get_ga_service()
+                if not service:
+                    return {'error': 'Could not get GA Service'}
 
-            query = ga.get(ids='ga:' + profile, **params)
-            result = query.execute()
+                profile = self.get_ga_profile(service)
+                if not profile:
+                    return {'error': 'Could not get GA Profile'}
+
+                if self.request.get('type') == 'realtime':
+                    ga = service.data().realtime()
+                    if not params.pop('global', False):
+                        # need to restrict by filters
+                        path_query = ','.join(['rt:pagePath==%s' % p for p in paths])
+                        params['filters'] = path_query
+                else:
+                    if not params.pop('global', False):
+                        # need to restrict by filters
+                        path_query = ','.join(['ga:pagePath==%s' % p for p in paths])
+                        params['filters'] = path_query
+                    ga = service.data().ga()
+
+                query = ga.get(ids='ga:' + profile, **params)
+                result = query.execute()
             if result:
                 cache_duration = self.request.get('cache_duration')
                 if cache_duration:

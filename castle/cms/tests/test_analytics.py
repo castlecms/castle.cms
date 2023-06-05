@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
+import mock
+import os
 import unittest
 
-import mock
 from castle.cms.browser.content.analytics import AnalyticsView
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
@@ -11,7 +12,9 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
 from plone.app.testing import setRoles
+from plone.registry.interfaces import IRegistry
 from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
 
 
 class TestAnalytics(unittest.TestCase):
@@ -42,17 +45,24 @@ class TestAnalytics(unittest.TestCase):
         view = AnalyticsView(self.page, self.request)
         self.assertEquals(json.loads(view())['data']['twitter'], 5)
 
+    def test_get_paths(self):
+        view = AnalyticsView(self.page, self.request)
+        paths = view.get_paths()
+
+        self.assertTrue('/' in paths)
+        self.assertTrue('/front-page' in paths)
+
+    # Universal Analytics
     @mock.patch('castle.cms.cache.get')
-    @mock.patch('castle.cms.cache.set')
     @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
     @mock.patch('castle.cms.services.google.analytics.get_ga_service')
-    def test_ga_api_call(self, get_ga_service, get_ga_profile,
-                         cache_set, cache_get):
+    def test_ua_api_call(self, get_ga_service, get_ga_profile, cache_get):
         cache_get.side_effect = KeyError()
-        view = AnalyticsView(self.page, self.request)
         self.request.form.update({
-            'params': json.dumps({'foo': 'bar'})
+            'params': json.dumps({'foo': 'bar'}),
+            'type': 'realtime-ua'
         })
+        view = AnalyticsView(self.page, self.request)
         view.ga_api_call(['/'])
         self.assertEquals(get_ga_service.call_count, 1)
         self.assertEquals(get_ga_profile.call_count, 1)
@@ -69,9 +79,33 @@ class TestAnalytics(unittest.TestCase):
         self.assertEquals(cache_get.call_count, 1)
         self.assertEquals(get_ga_profile.call_count, 1)
 
-    def test_get_paths(self):
+    # Google Analytics 4
+    @mock.patch('castle.cms.cache.get')
+    @mock.patch('castle.cms.services.google.get_ga4_data')
+    def test_ga4_api_call(self, get_ga4_data, cache_get):
+        ga_id = u'123456789'
+        registry = getUtility(IRegistry)
+        registry['castle.google_analytics_id'] = ga_id
+        cache_get.side_effect = KeyError()
+        self.request.form.update({
+            'params': json.dumps({'foo': 'bar'}),
+            'type': 'realtime'
+        })
         view = AnalyticsView(self.page, self.request)
-        paths = view.get_paths()
+        view.ga_api_call(['/'])
+        self.assertEquals(get_ga4_data.call_count, 1)
 
-        self.assertTrue('/' in paths)
-        self.assertTrue('/front-page' in paths)
+    @mock.patch('castle.cms.cache.get')
+    @mock.patch('castle.cms.services.google.get_mock_ga4_data')
+    def test_ga4_mock_data_call(self, get_mock_ga4_data, cache_get):
+        os.environ["GOOGLE_ANALYTICS_IS_DEV"] = 'True'
+        registry = getUtility(IRegistry)
+        registry['castle.google_analytics_id'] = u'123456789'
+        cache_get.side_effect = KeyError()
+        self.request.form.update({
+            'params': json.dumps({'foo': 'bar', 'global': False}),
+            'type': 'realtime'
+        })
+        view = AnalyticsView(self.page, self.request)
+        view.ga_api_call(['/'])
+        self.assertEquals(get_mock_ga4_data.call_count, 1)   
