@@ -56,7 +56,7 @@ def get_service(api_name, api_version, scope, key=None,
     return service
 
 
-def get_ga4_data(ga_id, service_key, context, paths, form, params):
+def get_ga4_data(ga_id, oauth_key, service_key, context, paths, form, params):
     # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
     if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
         return get_mock_ga4_data(paths, form)
@@ -65,9 +65,11 @@ def get_ga4_data(ga_id, service_key, context, paths, form, params):
     current_url_path = context.absolute_url_path()
 
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
+    if oauth_key:
+        oauth_key = decode_b64_to_json(oauth_key)
+        environ['GOOGLE_ANALYTICS_OAUTH_KEY'] = oauth_key
     if service_key:
-        service_key = service_key.split(':')[-1]
-        service_key = base64.b64decode(service_key)
+        service_key = decode_b64_to_json(service_key)
         environ['GOOGLE_ANALYTICS_SERVICE_KEY'] = service_key
 
     environ['GOOGLE_ANALYTICS_CURRENT_URL_PATH'] = current_url_path
@@ -93,7 +95,7 @@ def get_ga4_data(ga_id, service_key, context, paths, form, params):
     return ga4_run_script(environ)
 
 
-def get_ga4_popularity_data(ga_id, service_key):
+def get_ga4_popularity_data(ga_id, oauth_key, service_key):
     paths = get_site_paths()
     # Set GOOGLE_ANALYTICS_IS_DEV env variable to true to use mock return data
     if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
@@ -110,12 +112,20 @@ def get_ga4_popularity_data(ga_id, service_key):
     environ['GOOGLE_ANALYTICS_PROPERTY_ID'] = ga_id
     environ['GOOGLE_ANALYTICS_PATHS'] = str(paths)
 
+    if oauth_key:
+        oauth_key = decode_b64_to_json(oauth_key)
+        environ['GOOGLE_ANALYTICS_OAUTH_KEY'] = oauth_key
     if service_key:
-        service_key = service_key.split(':')[-1]
-        service_key = base64.b64decode(service_key)
+        service_key = decode_b64_to_json(service_key)
         environ['GOOGLE_ANALYTICS_SERVICE_KEY'] = service_key
 
     return ga4_run_script(environ)
+
+
+def decode_b64_to_json(key_file):
+    key_file = key_file.split(':')[-1]
+    key_file = base64.b64decode(key_file)
+    return key_file
 
 
 def ga4_run_script(environ):

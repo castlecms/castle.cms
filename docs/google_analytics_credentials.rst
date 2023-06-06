@@ -43,5 +43,6 @@ Creating OAuth credentials:
 Using the JSON file for authentication:
 ---------------------------------------
 
-    Navigate to the CastleCMS menu in Site Setup and upload the file to APIs -> Google API Service Key File 
-    Alternatively you may set the GOOGLE_PATH_TO_SERVICE_KEY environment variable as a path to the file i.e. '/path/to/credentials.json'
+    Navigate to the CastleCMS menu in Site Setup and upload the OAuth file to APIs -> Google API OAuth Key File
+    Selecting the Analytics menu option after this will prompt the user to generate a service key file through Google OAuth
+    The file will be saved as ga4-service-key.json and may then be add to Site Setup -> APIs -> Google API Service Key File

@@ -330,6 +330,12 @@ class IAPISettings(Interface):
         required=False,
     )
 
+    google_api_oauth_key_file = schema.ASCII(
+        title=u"Google API OAuth Key File",
+        description=u'OAuth credentials used to generate service key',
+        required=False,
+    )
+
     google_api_service_key_file = schema.ASCII(
         title=u"Google API Service Key File",
         description=u'Private key file for the Google API',
