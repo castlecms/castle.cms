@@ -415,10 +415,10 @@
 
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="karl-communities"
+    name="subscriptions"
     class="castle.cms.browser.karl.karlcommunities.KarlCommunities"
     permission="zope2.View"
-    template="karl/templates/karl_communities.pt"
+    template="karl/templates/subscriptions.pt"
     layer="castle.cms.interfaces.ICastleLayer"
   />
 
@@ -427,25 +427,34 @@
     name="karl-dashboard"
     class="castle.cms.browser.karl.karlcommunities.KarlDashboard"
     permission="zope2.View"
-    template="karl/templates/karl-dashboard.pt"
+    template="karl/templates/dashboard.pt"
     layer="castle.cms.interfaces.ICastleLayer"
   />
 
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="user-profile"
+    name="profile"
     class="castle.cms.browser.karl.karlcommunities.KarlProfile"
     permission="zope2.View"
-    template="karl/templates/user-profile.pt"
+    template="karl/templates/profile.pt"
     layer="castle.cms.interfaces.ICastleLayer"
   />
 
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    name="communities"
+    name="community"
     class="castle.cms.browser.karl.karlcommunities.KarlGroup"
     permission="zope2.View"
-    template="karl/templates/karl-group-landingpg.pt"
+    template="karl/templates/community.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
+  <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="blog"
+    class="castle.cms.browser.karl.karlcommunities.KarlBlog"
+    permission="zope2.View"
+    template="karl/templates/blog.pt"
     layer="castle.cms.interfaces.ICastleLayer"
   />
 
