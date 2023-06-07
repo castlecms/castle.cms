@@ -13,6 +13,7 @@ import transaction
 from plone.api.exc import UserNotFoundError
 import logging
 from plone.namedfile import NamedBlobFile, NamedBlobImage
+from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.INFO)
 
@@ -419,18 +420,21 @@ def import_communities(args, path):  # path = {}/groups/communities
                                         append_text += '<li><a href="{}">{}</li>'.format(url, filename)
                                     append_text += '</ul><br/><br/>'
                             text = blog_dump['text'] + append_text
-                            blog_obj = api.content.create(
-                                        container=blog_site,
-                                        type='News Item',
-                                        title=blog_dump['title'],
-                                        description=blog_dump['description'],
-                                        contributors=blog_dump['modified_by'],
-                                        effective_date=datetime.datetime.strptime(blog_dump['created'], "%Y-%m-%d %H:%M:%S.%f"),
-                                        creation_date=datetime.datetime.strptime(blog_dump['created'], "%Y-%m-%d %H:%M:%S.%f"),
-                                        comments=blog_dump['data']['comments'],
-                                        text=text,
-                                        creators=(blog_dump['creator'],),
-                                    )
+                            soup = BeautifulSoup(text, features="html.parser")
+                            try:
+                                blog_obj = api.content.create(
+                                            container=blog_site,
+                                            type='News Item',
+                                            title=blog_dump['title'],
+                                            description=blog_dump['description'],
+                                            contributors=blog_dump['modified_by'],
+                                            effective_date=datetime.datetime.strptime(blog_dump['created'], "%Y-%m-%d %H:%M:%S.%f"),
+                                            creation_date=datetime.datetime.strptime(blog_dump['created'], "%Y-%m-%d %H:%M:%S.%f"),
+                                            comments=blog_dump['data']['comments'],
+                                            text=soup.text,
+                                            creators=(blog_dump['creator'],),
+                                        )
+                            except: import pdb; pdb.set_trace()
                             if 'admin' in blog_obj.contributors:
                                 index = blog_obj.contributors.index('admin')
                                 if index - 1 == -1:
@@ -462,14 +466,14 @@ def import_communities(args, path):  # path = {}/groups/communities
                         logging.info('importing wiki page {} for community {}'.format(wiki_page, community_name))
                         with open(os.path.join(wiki_folder_path, wiki_page)) as wiki_file:
                             wiki_dump = json.load(wiki_file)
-                            
+                            soup = BeautifulSoup(wiki_dump)
                             # create wiki page
                             api.content.create(
                                         container=comm_wiki_site,
                                         type='Document',
                                         title=wiki_dump['title'],
                                         description=wiki_dump['description'],
-                                        text=wiki_dump['text'],
+                                        text=soup.text,
                                     )
                             transaction.commit()
                 except:
