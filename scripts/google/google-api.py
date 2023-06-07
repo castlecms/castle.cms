@@ -32,35 +32,31 @@ from google.oauth2.credentials import Credentials
 logger = logging.getLogger('google-api')
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_ANALYTICS_PROPERTY_ID", None)
+GOOGLE_OAUTH_KEY_FILE = os.environ.get("GOOGLE_ANALYTICS_OAUTH_KEY", None)
 GOOGLE_SERVICE_KEY_FILE = os.environ.get("GOOGLE_ANALYTICS_SERVICE_KEY", None)
-GOOGLE_PATH_TO_SERVICE_KEY = os.environ.get("GOOGLE_PATH_TO_SERVICE_KEY", None)
 GOOGLE_ANALYTICS_IS_POPULARITY_QUERY = os.environ.get("GOOGLE_ANALYTICS_IS_POPULARITY_QUERY", None)
 
 
 def ga_auth(scopes):
     creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', scopes)
+    # The file ga4-service-key.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first time.
+    if GOOGLE_SERVICE_KEY_FILE:
+        creds = Credentials.from_authorized_user_file(GOOGLE_SERVICE_KEY_FILE, scopes)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            if GOOGLE_SERVICE_KEY_FILE:
-                service_key_file = json.loads(GOOGLE_SERVICE_KEY_FILE)
+            if GOOGLE_OAUTH_KEY_FILE:
+                service_key_file = json.loads(GOOGLE_OAUTH_KEY_FILE)
                 flow = InstalledAppFlow.from_client_config(service_key_file, scopes)
-            elif GOOGLE_PATH_TO_SERVICE_KEY:
-                flow = InstalledAppFlow.from_client_secrets_file(GOOGLE_PATH_TO_SERVICE_KEY, scopes)
             else:
-                logger.error('No service key json file provided. Upload via control panel, '
-                             'or set GOOGLE_PATH_TO_SERVICE_KEY env var')
+                logger.error('No OAuth key json file provided. Upload via control panel')
                 sys.exit()
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open('ga4-service-key.json', 'w') as token:
             token.write(creds.to_json())
 
     service = build('analyticsdata', 'v1beta', credentials=creds)

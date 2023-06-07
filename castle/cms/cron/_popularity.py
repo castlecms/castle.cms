@@ -36,10 +36,10 @@ def get_popularity(site):
     
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
-    service_key = registry.get('castle.google_api_service_key_file', None)
-
     if ga_id:
-        results = get_ga4_popularity_data(ga_id, service_key)
+        oauth_key = registry.get('castle.google_api_oauth_key_file', None)
+        service_key = registry.get('castle.google_api_service_key_file', None)
+        results = get_ga4_popularity_data(ga_id, oauth_key, service_key)
     else:
         service = analytics.get_ga_service()
         if not service:
