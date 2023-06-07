@@ -18,7 +18,7 @@
        tal:define="info view/info;
                    groups info/groups;">
 
-    <table class="listing">
+    <table class="table">
       <thead>
         <tr>
           <th>Community</th>
@@ -29,8 +29,8 @@
         <tal:community tal:repeat="group python: groups">
           <tr tal:define="title python: group.id.split(':')[0]">
             <th>
-              <a href="${context/absolute_url}/@@communities?groupname=${title}&recentPage=1">
-                ${python: group.getProperty('title')}
+              <a href="${context/absolute_url}/@@community?groupname=${title}&recentPage=1">
+                ${python: group.getProperty("title")}
               </a>
             </th>
             <th>

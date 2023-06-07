@@ -7,22 +7,21 @@
       lang="en"
       metal:use-macro="context/prefs_main_template/macros/master"
       i18n:domain="plone">
-
 <body>
 <metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
   <div id="content-core"
        tal:define="info view/info;
                    user info/user;
                    files info/files;
-                   recentsPage info/recentsPage;"
-       >
-    <h1 class="documentFirstHeading" i18n:translate="">${python: user.getProperty('fullname')}</h1>
+                   recentsPage info/recentsPage;
+                   roles info/roles;"
+       onload="setView(roles)">
+    <h1 class="documentFirstHeading" i18n:translate="">${python: user.getProperty("fullname")}</h1>
 
     <br />
     <br />
-        
     <div class="row">
-      <div class="col-sm-7" style="border: 1px solid black">
+      <div class="left-col">
         <h3 class="col-sm-8">Recent Activity</h3>
         <div class="col-sm-4 text-right">
           <h3 tal:content="None">spacer</h3>
@@ -35,7 +34,7 @@
             </tal:showing>
           </div>
         </div>
-        <table class="table">
+        <table class="table table-bordered">
           <tbody>
             <tal:head>
               <th>Date</th>
@@ -97,7 +96,7 @@
         </table>
         <div class="text-center"
           style="padding-bottom: 1em">
-          <a tal:define="previous python: recentsPage-1" href="${context/absolute_url}/@@user-profile?recentPage=${previous}" 
+          <a tal:define="previous python: recentsPage - 1" href="${context/absolute_url}/@@user-profile?recentPage=${previous}" 
             style="color: white; 
                     background-color: #36619B;
                     border-radius: 50%;
@@ -107,7 +106,7 @@
                 style="padding: 2%">
             Page ${recentsPage} of ${pageCount}
           </span>
-          <a tal:define="next python: recentsPage+1"
+          <a tal:define="next python: recentsPage + 1"
             style="color: white; 
                     background-color: #36619B;
                     border-radius: 50%;
@@ -115,8 +114,8 @@
             href="${context/absolute_url}/@@user-profile?recentPage=${next}" class="glyphicon glyphicon-chevron-right"></a>
         </div>
       </div>
-      <div tal:content="None" class="col-sm-1">gutter column</div>
-      <div class="col-sm-4" style="border: 1px solid black">
+      <div class="mid-col"><p></p><!--gutter column--></div>
+      <div class="right-col">
         <h3 class="text-center">Profile</h3>
         <div class="row">
           <div tal:define="fullname python: '{} {}'.format(user.firstname[0], user.lastname[0]);
@@ -140,6 +139,37 @@
     </div>
   </div>
 </metal:main>
+<script>
+  $( document ).ready(function() {
+    admin = document.querySelector('#groupContent').dataset.admin;
+    if (!admin.includes('True')) {
+      $.each($(".right-col"), (index, item) => {
+        item.classList.add("col-sm-4")
+      });
+      $.each($(".mid-col"), (index, item) => {
+        item.classList.add("col-sm-1")
+      });
+      $.each($(".left-col"), (index, item) => {
+        item.classList.add("col-sm-7")
+      });
+    }
+    else {
+      $.each($(".right-col"), (index, item) => {
+          item.classList.add("col-sm-12")
+      });
 
+
+      $.each($(".right-col"), (index, item) => {
+        item.classList.add("col-sm-12")
+      });
+      $.each($(".mid-col"), (index, item) => {
+        item.classList.add("row")
+      });
+      $.each($(".left-col"), (index, item) => {
+        item.classList.add("col-sm-12")
+      });
+    }
+  });
+</script>
 </body>
 </html>
