@@ -2,8 +2,9 @@ import logging
 from plone import api
 import transaction
 from datetime import datetime
-from .hidden import TestUser
 import calendar
+from Products.CMFCore.utils import getToolByName
+from .karl import Karl
 
 class CommunitySubscription():
     def __call__(self):        
@@ -34,35 +35,6 @@ class CommunitySubscription():
         api.group.remove_user(groupname=group.id, username=user.id)
         transaction.commit()
         self.request.response.redirect('{}/@@karl-communities'.format(self.context.absolute_url()))
-
-class Karl(TestUser):
-    base_groups = ['Administrators', 'KarlAdmin', 'KarlCommunications', 'KarlCommunities', 'KarlModerator', 'KarlStaff', 'KarlUserAdmin', 'Reviewers', 'Site Administrators', 'AuthenticatedUsers']
-
-    def rescentPage(self, data_list):
-        if len(data_list) == 0 or data_list is None:
-            return 1
-        recent_page = self.request.get('recentPage')
-        if recent_page is None:
-            recent_page = 1
-        else:
-            recent_page = int(recent_page)
-        last_page = len(data_list)/20 if len(data_list)%20 == 0 else len(data_list)/20+1
-        if recent_page<1 or recent_page> last_page:
-            raise Exception('page out of range')
-        return recent_page
-    
-    def sort_by_mod_date(self, _obj):
-            return _obj.modified()
-    
-    def transverse_folder(self, folder, data):
-        for key, value in folder.items():
-            if key == 'files' or key == 'blog' or key == 'wiki':
-                pass
-            else:
-                data.append(value)
-            if value.portal_type == 'Folder':
-                self.transverse_folder(value, data)
-        return data
 
 class KarlCommunities(Karl):
 
@@ -115,89 +87,6 @@ class KarlGroup(Karl):
             'recentsPage': recent_page,
             'blog': blog,
             'wiki': wiki,
-            'roles': roles,
-        }
-    
-class KarlDashboard(Karl):
-    def info(self):
-        user = api.user.get_current()
-        data_list = list()
-        
-        group_list = api.group.get_groups(username=user.id)
-        
-        for group in group_list:
-            name = group.id.split(':')[0]
-            if name in self.base_groups:
-                continue
-            community_folder = group.get('communities').get(name)
-            self.transverse_folder(community_folder, data_list)
-        
-        if data_list is not None and len(data_list) != 0:
-            data_list.sort(reverse=True, key=self.sort_by_mod_date)
-
-        recent_page = self.rescentPage(data_list)
-
-        communities_of_interest = api.group.get_groups()
-        for group in self.base_groups:
-            communities_of_interest.remove(api.group.get(groupname=group))
-        for group in group_list:
-            try:
-                communities_of_interest.remove(group)
-            except:
-                pass
-        for group in api.user.get_users(groupname='KarlModerator'):
-            try:
-                communities_of_interest.remove(group)
-            except:
-                pass
-        for group in communities_of_interest:
-            if 'members' not in group.id:
-                communities_of_interest.remove(group)
-
-        roles = api.user.get_roles(username=user.id)
-
-        return {
-            'user': user,
-            'files': data_list,
-            'recentsPage': recent_page,
-            'coi': communities_of_interest,
-            'roles': roles
-        }
-    
-class KarlProfile(Karl):    
-    def info(self):
-        user = api.user.get_current()
-        data_list = list()        
-        group_list = api.group.get_groups(username=user.id)
-        
-        def user_contribution(folder, data):
-            for key, value in folder.items():
-                if key == 'files' or key == 'blog' or key == 'wiki':
-                    pass
-                else:
-                    if user.id in value.creators or user.id in value.contributors:
-                        data.append(value)
-                if value.portal_type == 'Folder':
-                    user_contribution(value, data)
-            return data
-
-        for group in group_list:
-            name = group.id.split(':')[0]
-            if name in self.base_groups or group.id.split(':')[1] == 'moderators':
-                continue
-            community_folder = group.get('communities').get(name)
-            user_contribution(community_folder, data_list)
-        if data_list is not None and len(data_list) != 0:
-            data_list.sort(reverse=True, key=self.sort_by_mod_date)
-        
-        recent_page = self.rescentPage(data_list)
-
-        roles = api.user.get_roles(username=user.id)
-        
-        return {
-            'user': user,
-            'files': data_list,
-            'recentsPage': recent_page,
             'roles': roles,
         }
     
