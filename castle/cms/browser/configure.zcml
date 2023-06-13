@@ -18,6 +18,62 @@
     <implements interface="..interfaces.ICastleApplication" />
   </class>
 
+  <subscriber
+    for="castle.cms.interfaces.content.IAudio
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_attachment_publish" />
+  <subscriber
+    for="castle.cms.interfaces.content.IAudio
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".karl.notifications.on_attachment_modify" />
+  <subscriber
+    for="castle.cms.interfaces.content.IVideo
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_attachment_publish" />
+  <subscriber
+    for="castle.cms.interfaces.content.IVideo
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".karl.notifications.on_attachment_modify" />
+  <subscriber
+    for="castle.cms.interfaces.content.IVideo
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_attachment_publish" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".karl.notifications.on_attachment_modify" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IFile
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_attachment_publish" />
+  <subscriber
+    for="castle.cms.interfaces.content.IMedia
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".karl.notifications.on_attachment_modify" />
+  <subscriber
+    for="castle.cms.interfaces.content.IMedia
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_attachment_publish" />
+
+  <subscriber
+    for="plone.app.contenttypes.interfaces.INewsItem
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_blog_publish" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.INewsItem
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".karl.notifications.on_blog_modify" />
+  
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IDocument
+         Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+    handler=".karl.notifications.on_page_publish" />
+  <subscriber
+    for="plone.app.contenttypes.interfaces.IDocument
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".karl.notifications.on_page_modify" />
+
+
   <browser:page
     name="add-clone-type"
     for="plone.app.dexterity.interfaces.ITypesContext"
@@ -416,7 +472,7 @@
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="subscriptions"
-    class="castle.cms.browser.karl.karlcommunities.KarlCommunities"
+    class="castle.cms.browser.karl.communities.KarlCommunities"
     permission="zope2.View"
     template="karl/templates/subscriptions.pt"
     layer="castle.cms.interfaces.ICastleLayer"
@@ -425,7 +481,7 @@
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="karl-dashboard"
-    class="castle.cms.browser.karl.karlcommunities.KarlDashboard"
+    class="castle.cms.browser.karl.users.KarlDashboard"
     permission="zope2.View"
     template="karl/templates/dashboard.pt"
     layer="castle.cms.interfaces.ICastleLayer"
@@ -434,7 +490,7 @@
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="profile"
-    class="castle.cms.browser.karl.karlcommunities.KarlProfile"
+    class="castle.cms.browser.karl.users.KarlProfile"
     permission="zope2.View"
     template="karl/templates/profile.pt"
     layer="castle.cms.interfaces.ICastleLayer"
@@ -443,7 +499,7 @@
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="community"
-    class="castle.cms.browser.karl.karlcommunities.KarlGroup"
+    class="castle.cms.browser.karl.communities.KarlGroup"
     permission="zope2.View"
     template="karl/templates/community.pt"
     layer="castle.cms.interfaces.ICastleLayer"
@@ -452,7 +508,7 @@
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="blog"
-    class="castle.cms.browser.karl.karlcommunities.KarlBlog"
+    class="castle.cms.browser.karl.communities.KarlBlog"
     permission="zope2.View"
     template="karl/templates/blog.pt"
     layer="castle.cms.interfaces.ICastleLayer"
@@ -461,16 +517,31 @@
   <browser:page
     name="subscribe-community"
     for="*"
-    class="castle.cms.browser.karl.karlcommunities.CommunitySubscription"
+    class="castle.cms.browser.karl.communities.CommunitySubscription"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
     />
   <browser:page
     name="unsubscribe-community"
     for="*"
-    class="castle.cms.browser.karl.karlcommunities.CommunitySubscription"
+    class="castle.cms.browser.karl.communities.CommunitySubscription"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  <browser:page
+    name="request-access"
+    for="*"
+    class="castle.cms.browser.karl.notifications.RequestAccess"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
+  <browser:page
+    for="*"
+    name="request-form"
+    class="castle.cms.browser.karl.notifications.RequestForm"
+    permission="zope2.View"
+    template="karl/templates/request-form.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
 
 </configure>

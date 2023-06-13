@@ -88,6 +88,13 @@ class Authenticator(object):
         if not self.is_zope_root and self.registry:
             enabled = self.registry.get('plone.two_factor_enabled', False)
         return enabled
+    
+    @property
+    def request_access(self):
+        request = False
+        if not self.is_zope_root and self.registry:
+            request = self.registry.get('plone.request_access', False)
+        return request
 
     @property
     def expire(self):
@@ -331,6 +338,7 @@ class Authenticator(object):
         data = {
             'supportedAuthSchemes': self.get_supported_auth_schemes(),
             'twoFactorEnabled': self.two_factor_enabled,
+            'requestAccess': self.request_access,
             'apiEndpoint': '{}/@@secure-login'.format(site_url),
             'successUrl': success_url,
             'additionalProviders': [],

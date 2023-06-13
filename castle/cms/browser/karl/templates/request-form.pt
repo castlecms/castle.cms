@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
+  <h1 class="documentFirstHeading"
+      i18n:translate="">Access Request</h1>
+  
+  <br />
+
+  <div id="content-core">
+    <form method="POST"
+          id="access-form"
+          action="${context/absolute_url}/@@request-access">
+      <label for="fname">First Name:</label><br/>
+      <input type="text" id="fname" name="fname" required><br/>
+      
+      <label for="lname">Last Name:</label><br/>
+      <input type="text" id="lname" name="lname" required><br/>
+      
+      <label for="org">Organization:</label><br/>
+      <input type="text" id="org" name="org" required><br/>
+      
+      <label for="position">Position:</label><br/>
+      <input type="text" id="position" name="position" required><br/>
+      
+      <label for="email">E-Mail:</label><br/>
+      <input type="text" id="email" name="email" required><br/>
+      
+      <label for="phone">Phone Number:</label><br/>
+      <input type="text" id="phone" name="phone" required><br/>
+      <div class="text-center">
+        <input type="submit" id="submit-request" value="Submit" required><br/>
+      </div>
+      
+    </form>
+    <script>
+      document.getElementById('access-form').addEventListener('submit', (event) => {
+        debugger;
+        event.preventDefault();
+        fetch(event.target.action, {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(event.target))
+        }).then((response) => {
+            if (!response.ok) {
+              const error = document.getElementById("submit-error");
+              error.style.display = null
+            }
+            else {
+              const success = document.getElementById("submit-success");
+              success.style.display = null
+              document.getElementById('access-form').reset()
+            }
+      });
+    })
+    </script>
+    <div class="text-center" style="padding: 2em">
+      <div id="submit-success" style="display: none">Your request has been successfully submitted</div>
+      <div id="submit-error" style="display: none">There was an error while submiting your request. Please try again.</div>
+    </div>
+  </div>
+
+</metal:main>
+
+</body>
+</html>

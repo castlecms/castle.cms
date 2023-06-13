@@ -134,6 +134,12 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    request_access = schema.Bool(
+        title=u'Request access to site',
+        description=u'Allows users to request access to site',
+        default=False,
+    )
+
     auth_step_timeout = schema.Int(
         title=u'(Seconds) This amount of inactivity will reset the login process',
         description=u'Between each step, the allowed time is reset to this amount',

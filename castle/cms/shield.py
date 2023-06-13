@@ -17,6 +17,9 @@ _blacklisted_meta_types = (
 def protect(req, recheck=False):
     url = req.getURL()
     login_url = '{}/@@secure-login'.format(api.portal.get().absolute_url())
+    request_access_url = '{}/@@request-form'.format(api.portal.get().absolute_url())
+    if '@@request-form' in url.lower() and url != request_access_url:
+        raise Redirect(request_access_url)
     if '@@secure-login' in url.lower() and url != login_url:
         raise Redirect(login_url)
 
@@ -67,6 +70,9 @@ Disallow: /"""
                     anonymous = True
         else:
             anonymous = api.user.is_anonymous()
-
         if anonymous:
-            raise Redirect(login_url)
+            access_setting = registry.get('plone.request_access', False)
+            if access_setting:
+                pass
+            else:
+                raise Redirect(login_url)

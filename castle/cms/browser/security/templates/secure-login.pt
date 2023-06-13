@@ -48,6 +48,7 @@
 
     <div tal:condition="not: view/auth/is_zope_root" id="secure-login-footer-message">
       <h3 class="text-center">${python: utils.get_registry_value('plone.login_footer_message')}</h3>
+      <h5 tal:condition="view/auth/request_access" class="text-center"><a href="${portal_url}/@@request-form">Request Access</a></h5>
     </div>
 
     <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/requirejs/require.js"></script>
