@@ -23,7 +23,6 @@ class HiddenProducts(object):
             'plone.formwidget.querystring:default',
             'plone.session:default',
             'plone.app.multilingual:default',
-            'Products.ATContentTypes:default',
             'Products.PloneKeywordManager:default',
             'archetypes.multilingual:default',
             'plone.app.mosaic:default',
