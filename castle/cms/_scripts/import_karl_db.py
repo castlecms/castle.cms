@@ -18,16 +18,18 @@ from bs4 import BeautifulSoup
 logging.basicConfig(level=logging.INFO)
 
 def import_profiles(args):
-    profiles_path = os.path.join(args.dump_folder, 'profiles')
+    profiles_path = '{}/profiles'.format(args.dump_folder, 'profiles')
     profiles = os.listdir(profiles_path)
     count = 0
     for filename in profiles:
-        count += 1
+        count += 1  # keep track of import profiles for logging purposes
         user_file_path = os.path.join(profiles_path, filename)
         with open(user_file_path, 'r') as json_fi:
             profile = json.load(json_fi)
+            
             fullname = '{} {}'.format(profile['properties']['firstname'], profile['properties']['lastname'])
             logging.info('{}/{} reading profile for {}'.format(count, len(profiles), fullname))
+            
             if api.user.get(username=profile['username']) is None:
                 logging.info('creating profile')
                 try:
@@ -75,11 +77,11 @@ def import_profiles(args):
 
 def import_groups(args):
     site = api.content.get(path='/')
-    if api.content.get('/{}/communities'.format(args.site_id)) is None:
+    if api.content.get('/{}/communities'.format(args.site_id)) is None:  # create communitites folder
         api.content.create(container=site, type='Folder', title='communities')
     
-    groups_path = '{}/groups'.format(args.dump_folder)
-    community_path = os.path.join(groups_path, 'communities')  # community_path = {}/groups/communities
+    groups_path = '{}/groups'.format(args.dump_folder)  # community_path = {}/groups/
+    community_path = '{}/communities'.format(groups_path)  # community_path = {}/groups/communities
     communities_list = import_communities(args, community_path)
     
     if api.group.get(groupname='KarlCommunities') is None:
@@ -195,7 +197,8 @@ def import_communities(args, path):  # path = {}/groups/communities
                     comm_attachments(folderpath=_folderpath, sitepath=_sitepath, attachment=item.lower())
             else:
                 parent = api.content.get(_sitepath)
-                _container = api.content.get(os.path.join(_sitepath, item.lower()))
+                path = clean_name(os.path.join(_sitepath, item.lower()))
+                _container = api.content.get(path)
                 if _container is None:
                     logging.info('creating folder {}/{}'.format(_sitepath, item.lower()))
                     api.content.create(container=parent, type='Folder', title=item.lower())
@@ -204,6 +207,7 @@ def import_communities(args, path):  # path = {}/groups/communities
                 next_folder = os.path.join(_folderpath, item.lower())
                 transverse(_folderpath=next_folder, _sitepath=next_sitepath)
         transaction.commit()
+
     def comm_attachments(folderpath, sitepath, attachment):
         def attachment_check():
             name, ext = os.path.splitext(attachment)
@@ -227,34 +231,35 @@ def import_communities(args, path):  # path = {}/groups/communities
                     data_attachment_dump = json.load(fi)
                     try:
                         container = api.content.get(sitepath)
-                        file_obj = api.content.create(                          
-                            container=container,
-                            type='File', 
-                            id=attachment,                             
-                            title=attachment, 
-                            safe_id=True
-                        )
-                        with open(os.path.join(folderpath, attachment), 'rb') as attach_fi:
-                            if 'image' in data_attachment_dump['mimetype']:
-                                file_obj.file = NamedBlobImage(                          
-                                    data=attach_fi.read(),                                  
-                                    contentType=data_attachment_dump['mimetype'],                   
-                                    filename=data_attachment_dump['filename'],            
-                                )
-                            else:
-                                file_obj.file = NamedBlobFile(                          
-                                    data=attach_fi.read(),                                  
-                                    contentType=data_attachment_dump['mimetype'],                   
-                                    filename=data_attachment_dump['filename'],            
-                                )
-                        transaction.commit()
-                        
-                        try:
-                            file_obj.setModificationDate(datetime.datetime.strptime(data_attachment_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))
-                            file_obj.creation_date = (datetime.datetime.strptime(data_attachment_dump['created'], "%Y-%m-%d %H:%M:%S.%f"))
+                        if api.content.get(os.path.join(sitepath, attachment_name)) is None:
+                            file_obj = api.content.create(                          
+                                container=container,
+                                type='File', 
+                                id=attachment_name,                             
+                                title=attachment_name, 
+                                safe_id=True
+                            )
+                            with open(os.path.join(folderpath, attachment), 'rb') as attach_fi:
+                                if 'image' in data_attachment_dump['mimetype']:
+                                    file_obj.file = NamedBlobImage(                          
+                                        data=attach_fi.read(),                                  
+                                        contentType=data_attachment_dump['mimetype'],                   
+                                        filename=data_attachment_dump['filename'],            
+                                    )
+                                else:
+                                    file_obj.file = NamedBlobFile(                          
+                                        data=attach_fi.read(),                                  
+                                        contentType=data_attachment_dump['mimetype'],                   
+                                        filename=data_attachment_dump['filename'],            
+                                    )
                             transaction.commit()
-                        except:
-                            logging.error('error trying to set modification/creation date for attachment'.format(attachment), exc_info=True)
+                        
+                            try:
+                                file_obj.setModificationDate(datetime.datetime.strptime(data_attachment_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))
+                                file_obj.creation_date = (datetime.datetime.strptime(data_attachment_dump['created'], "%Y-%m-%d %H:%M:%S.%f"))
+                                transaction.commit()
+                            except:
+                                logging.error('error trying to set modification/creation date for attachment'.format(attachment), exc_info=True)
                     except:
                         logging.error('error while importing attachment {}'.format(attachment), exc_info=True)
             except:
@@ -296,7 +301,7 @@ def import_communities(args, path):  # path = {}/groups/communities
         transaction.commit()
 
         try:  # create community
-            with open(os.path.join(path, community_name, '{}.json'.format(community_name)), 'r') as fi:
+            with open('{}/{}/{}.json'.format(path, community_name, community_name), 'r') as fi:
                 dump_fi = json.load(fi)
                 if api.group.get(groupname='{}:moderators'.format(dump_fi['groupname'])) is None:
                     api.group.create(groupname='{}:moderators'.format(dump_fi['groupname']), 
@@ -344,85 +349,82 @@ def import_communities(args, path):  # path = {}/groups/communities
         
         # community blog
         community_folder_path = os.path.join(path, community_name)
-        blog_folder_path = os.path.join(community_folder_path, 'blog')
+        blog_folder_path = '{}/blog'.format(community_folder_path)
         comm_blog_sitepath = '/communities/{}/blog'.format(community_name)
-        if os.path.exists(blog_folder_path):
+        if os.path.exists(community_folder_path):
             count = 0
-            for blog_post in os.listdir(blog_folder_path):
-                if os.path.isdir(os.path.join(blog_folder_path, blog_post)) and blog_post == 'attachments':
-                    count += 1
+            for blog_post in os.listdir(community_folder_path):
+                if os.path.isdir(os.path.join(community_folder_path, blog_post)) or not blog_post.startswith('blog'):
                     continue
                 count += 1
                 post_title = os.path.splitext(blog_post)[0].replace('.', '')
-                comm_blogpost_sitepath = '{}/{}'.format(comm_blog_sitepath, post_title)
+                comm_blogpost_sitepath = '{}/{}'.format(comm_blog_sitepath, post_title[4:])
                 if api.content.get(path=comm_blogpost_sitepath) is None:
-                    logging.info('import blog, blog post {}/{}'.format(count, len(os.listdir(blog_folder_path))))
-                    with open(os.path.join(blog_folder_path, blog_post)) as blog_file:
+                    logging.info('import blog, blog post {}'.format(post_title[4:]))
+                    with open(os.path.join(community_folder_path, blog_post)) as blog_file:
                         blog_dump = json.load(blog_file)
-                        if api.content.get(path=comm_blogpost_sitepath) is None:
-                            attachments_list = blog_dump['data']['attachments']
-                            append_text = ''
-                            #community blog
-                            if len(attachments_list)>0:
-                                attachments_path ='{}/attachments'.format(blog_folder_path)
-                                blog_attachments = {}
-                                for finame in attachments_list:
-                                    finame = finame
-                                    try:
-                                        filename_tuple = os.path.splitext(finame)
-                                        attachment_name = filename_tuple[0]
-                                        
-                                        with open('{}/__data__{}.json'.format(attachments_path, attachment_name), 'rb') as fi:
-                                            data_attachment_dump = json.load(fi)
+                        attachments_list = blog_dump['data']['attachments']
+                        append_text = ''
+                        #community blog
+                        if len(attachments_list)>0:
+                            attachments_path ='{}/attachments'.format(blog_folder_path)
+                            blog_attachments = {}
+                            for finame in attachments_list:
+                                finame = finame
+                                try:
+                                    filename_tuple = os.path.splitext(finame)
+                                    attachment_name = filename_tuple[0]
+                                    
+                                    with open('{}/__data__{}.json'.format(attachments_path, attachment_name), 'rb') as fi:
+                                        data_attachment_dump = json.load(fi)
+                                        try:
+                                            blog_attach_sitepath = '{}/files'.format(comm_blog_sitepath)
+                                            container = api.content.get(path=blog_attach_sitepath)
+                                            file_obj = api.content.create(                          
+                                                container=container,
+                                                type='File',
+                                                id=finame,                             
+                                                title=finame, 
+                                                safe_id=True
+                                            )
+                                            
+                                            with open(os.path.join(attachments_path, finame), 'rb') as attach_fi:
+                                                if 'image' in data_attachment_dump['mimetype']:
+                                                    file_obj.file = NamedBlobImage(                          
+                                                        data=attach_fi.read(),                                  
+                                                        contentType=data_attachment_dump['mimetype'],                   
+                                                        filename=data_attachment_dump['filename'],            
+                                                    )
+                                                else:
+                                                    file_obj.file = NamedBlobFile(                          
+                                                        data=attach_fi.read(),                                  
+                                                        contentType=data_attachment_dump['mimetype'],                   
+                                                        filename=finame,            
+                                                    )
+                                                transaction.commit()
+                                            
                                             try:
-                                                blog_attach_sitepath = '{}/files'.format(comm_blog_sitepath)
-                                                container = api.content.get(path=blog_attach_sitepath)
-                                                file_obj = api.content.create(                          
-                                                    container=container,
-                                                    type='File',
-                                                    id=finame,                             
-                                                    title=finame, 
-                                                    safe_id=True
-                                                )
-                                                
-                                                with open(os.path.join(attachments_path, finame), 'rb') as attach_fi:
-                                                    if 'image' in data_attachment_dump['mimetype']:
-                                                        file_obj.file = NamedBlobImage(                          
-                                                            data=attach_fi.read(),                                  
-                                                            contentType=data_attachment_dump['mimetype'],                   
-                                                            filename=data_attachment_dump['filename'],            
-                                                        )
-                                                    else:
-                                                        file_obj.file = NamedBlobFile(                          
-                                                            data=attach_fi.read(),                                  
-                                                            contentType=data_attachment_dump['mimetype'],                   
-                                                            filename=finame,            
-                                                        )
-                                                    transaction.commit()
-                                                
-                                                try:
-                                                    file_obj.setModificationDate(datetime.datetime.strptime(data_attachment_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))
-                                                    file_obj.creation_date = (datetime.datetime.strptime(data_attachment_dump['created'], "%Y-%m-%d %H:%M:%S.%f"))
-                                                    transaction.commit()
-                                                except:
-                                                    logging.error('error trying to set modification/creation date for attachment'.format(finame), exc_info=True)
-                                                    blog_attachments.update({data_attachment_dump['filename']: file_obj.absolute_url_path()})
-                                                
+                                                file_obj.setModificationDate(datetime.datetime.strptime(data_attachment_dump['modified'], "%Y-%m-%d %H:%M:%S.%f"))
+                                                file_obj.creation_date = (datetime.datetime.strptime(data_attachment_dump['created'], "%Y-%m-%d %H:%M:%S.%f"))
                                                 transaction.commit()
                                             except:
-                                                logging.error('error while importing blog attachment {}'.format(finame), exc_info=True)
-                                    except:
-                                        logging.error('unable to find blog attachment {} for {}\n'.format(finame, community_name), exc_info=True)
-                                
-                                if len(blog_attachments)>0:
-                                    append_text = '<br/><br/><h5>Attachments:</h5><br/><ul>'
-                                    for filename, url in blog_attachments.items():
-                                        append_text += '<li><a href="{}">{}</li>'.format(url, filename)
-                                    append_text += '</ul><br/><br/>'
+                                                logging.error('error trying to set modification/creation date for attachment'.format(finame), exc_info=True)
+                                                blog_attachments.update({data_attachment_dump['filename']: file_obj.absolute_url_path()})
+                                            
+                                            transaction.commit()
+                                        except:
+                                            logging.error('error while importing blog attachment {}'.format(finame), exc_info=True)
+                                except:
+                                    logging.error('unable to find blog attachment {} for {}\n'.format(finame, community_name), exc_info=True)
+                            
+                            if len(blog_attachments)>0:
+                                append_text = '<br/><br/><h5>Attachments:</h5><br/><ul>'
+                                for filename, url in blog_attachments.items():
+                                    append_text += '<li><a href="{}">{}</li>'.format(url, filename)
+                                append_text += '</ul><br/><br/>'
                             text = blog_dump['text'] + append_text
                             soup = BeautifulSoup(text, features="html.parser")
-                            try:
-                                blog_obj = api.content.create(
+                            blog_obj = api.content.create(
                                             container=blog_site,
                                             type='News Item',
                                             title=blog_dump['title'],
@@ -434,7 +436,6 @@ def import_communities(args, path):  # path = {}/groups/communities
                                             text=soup.text,
                                             creators=(blog_dump['creator'],),
                                         )
-                            except: import pdb; pdb.set_trace()
                             if 'admin' in blog_obj.contributors:
                                 index = blog_obj.contributors.index('admin')
                                 if index - 1 == -1:
@@ -466,7 +467,7 @@ def import_communities(args, path):  # path = {}/groups/communities
                         logging.info('importing wiki page {} for community {}'.format(wiki_page, community_name))
                         with open(os.path.join(wiki_folder_path, wiki_page)) as wiki_file:
                             wiki_dump = json.load(wiki_file)
-                            soup = BeautifulSoup(wiki_dump)
+                            soup = BeautifulSoup(wiki_dump['text'])
                             # create wiki page
                             api.content.create(
                                         container=comm_wiki_site,
