@@ -1,9 +1,7 @@
-import logging
 from plone import api
 import transaction
 from datetime import datetime
 import calendar
-from Products.CMFCore.utils import getToolByName
 from .karl import Karl
 
 class CommunitySubscription():
