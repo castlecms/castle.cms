@@ -44,41 +44,71 @@ class RequestAccess():
         except:
             self.request.response.setStatus(400)
 
-class RequestForm(BrowserView):
-    def info(self):
-        pass
-        
-def groupNotification(obj, event):
-    pass
+def get_group(obj):
+    groupname = '{}:members'.format(obj.__parent__.title)
+    group = api.group.get(groupname=groupname)
+    if obj.__parent__.title == "site":
+        raise Exception('no group found')
+    
+    if group is not None:
+        return groupname
+    else:
+        groupname = get_group(obj.__parent__)
+    
+    return groupname
+
+def groupNotification(group, subject, text, mp):
+    if mp == 'm':
+        subject = 'Item modified: {}'.format(subject)
+    elif mp == 'p':
+        subject = 'New item published: {}'.format(subject)
+    else:
+        raise Exception('mp must be of value m for modified or p for published')
+    
+    addresses = []
+
+    for user in api.user.get_users(groupname=group):
+        email = user.getProperty('email')
+        if email:
+            addresses.append(email)
+    send_email.delay(
+        recipients='admin@foobar.com',  #list(set(addresses)), 
+        subject=subject, 
+        text=text, 
+        sender='subscription_noreply@castlecms.com')
 
 def on_attachment_modify(obj, event):
-    import pdb; pdb.set_trace()
-    if event.new_state.id != 'published':
-        groupNotification(obj, event)
+    group = get_group(obj)
+    state = api.content.get_state(obj=obj)
+    if state == 'published':
+        groupNotification(group, obj.title, obj.text, 'm')
 
 def on_blog_modify(obj, event):
-    import pdb; pdb.set_trace()
-    if event.new_state.id != 'published':
-        groupNotification(obj, event)
+    group = get_group(obj)
+    state = api.content.get_state(obj=obj)
+    if state == 'published':
+        groupNotification(group, obj.title, obj.text, 'm')
 
 def on_page_modify(obj, event):
-    import pdb; pdb.set_trace()
-    if event.new_state.id != 'published':
-        groupNotification(obj, event)
+    group = get_group(obj)
+    state = api.content.get_state(obj=obj)
+    if state == 'published':
+        groupNotification(group, obj.title, obj.text, 'm')
 
 def on_attachment_publish(obj, event):
-    import pdb; pdb.set_trace()
+    group = get_group(obj)
     state = api.content.get_state(obj=obj)
-    if state != 'published':
-        return
+    if state == 'published':
+        groupNotification(group, obj.title, obj.text, 'p')
+    
 def on_blog_publish(obj, event):
-    import pdb; pdb.set_trace()
+    group = get_group(obj)
     state = api.content.get_state(obj=obj)
-    if state != 'published':
-        return
+    if state == 'published':
+        groupNotification(group, obj.title, obj.text, 'p')
 
 def on_page_publish(obj, event):
-    import pdb; pdb.set_trace()
+    group = get_group(obj)
     state = api.content.get_state(obj=obj)
-    if state != 'published':
-        return
+    if state == 'published':
+        groupNotification(group, obj.title, obj.text, 'p')

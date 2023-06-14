@@ -538,7 +538,6 @@
   <browser:page
     for="*"
     name="request-form"
-    class="castle.cms.browser.karl.notifications.RequestForm"
     permission="zope2.View"
     template="karl/templates/request-form.pt"
     layer="castle.cms.interfaces.ICastleLayer"
