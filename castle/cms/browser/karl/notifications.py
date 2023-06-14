@@ -57,58 +57,88 @@ def get_group(obj):
     
     return groupname
 
-def groupNotification(group, subject, text, mp):
+def groupNotification(group, obj, mp):
+    item = obj.portal_type
+    if item == 'News Item':
+        _type = 'Blog Entry'
+    if item == 'Document':
+        _type = 'Page'
+    if item == 'Audio' or item == 'Media' or item == 'File':
+        _type = 'Attachment'
     if mp == 'm':
-        subject = 'Item modified: {}'.format(subject)
+        subject = '{} modified: {}'.format(_type, obj.title)
     elif mp == 'p':
-        subject = 'New item published: {}'.format(subject)
+        subject = 'New {} published: {}'.format(_type, obj.title)
     else:
         raise Exception('mp must be of value m for modified or p for published')
     
-    addresses = []
+    contributors = ''
+    for person in obj.contributors:
+        contributors += '{}, '.format(person)
+    contributors = contributors[:-2]
 
+    addresses = []
+    try:
+        text = obj.text.raw.encode('utf-8')
+    except:
+        text = '<p>{}</p>'.format(obj.text)
+    if text is unicode:
+        try:
+            text.encode('ascii')
+        except:
+            text.encode('utf-8')
     for user in api.user.get_users(groupname=group):
         email = user.getProperty('email')
         if email:
             addresses.append(email)
+    html = """
+        <h2>{}</h2>
+        <h5>Contributors: {}</h5>
+        {}
+
+        <a href="{}">Click here to view on site</a>
+    """.format(subject,
+               contributors,
+               text,
+               obj.absolute_url())
     send_email.delay(
-        recipients='admin@foobar.com',  #list(set(addresses)), 
+        recipients=list(set(addresses)), 
         subject=subject, 
-        text=text, 
+        html=html, 
         sender='subscription_noreply@castlecms.com')
 
 def on_attachment_modify(obj, event):
     group = get_group(obj)
     state = api.content.get_state(obj=obj)
     if state == 'published':
-        groupNotification(group, obj.title, obj.text, 'm')
+        groupNotification(group, obj, 'm')
 
 def on_blog_modify(obj, event):
     group = get_group(obj)
     state = api.content.get_state(obj=obj)
     if state == 'published':
-        groupNotification(group, obj.title, obj.text, 'm')
+        groupNotification(group, obj, 'm')
 
 def on_page_modify(obj, event):
     group = get_group(obj)
     state = api.content.get_state(obj=obj)
     if state == 'published':
-        groupNotification(group, obj.title, obj.text, 'm')
+        groupNotification(group, obj, 'm')
 
 def on_attachment_publish(obj, event):
     group = get_group(obj)
     state = api.content.get_state(obj=obj)
     if state == 'published':
-        groupNotification(group, obj.title, obj.text, 'p')
+        groupNotification(group, obj, 'p')
     
 def on_blog_publish(obj, event):
     group = get_group(obj)
     state = api.content.get_state(obj=obj)
     if state == 'published':
-        groupNotification(group, obj.title, obj.text, 'p')
+        groupNotification(group, obj, 'p')
 
 def on_page_publish(obj, event):
     group = get_group(obj)
     state = api.content.get_state(obj=obj)
     if state == 'published':
-        groupNotification(group, obj.title, obj.text, 'p')
+        groupNotification(group, obj, 'p')
