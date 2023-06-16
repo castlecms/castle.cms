@@ -122,7 +122,6 @@ setup(
       castle = castle.cms.tasks
 
       [console_scripts]
-      import-karl = castle.cms._scripts.import_karl_db:setup_and_run
       clean-plone-users = castle.cms.cron:clean_users
       social-counts = castle.cms.cron:social_counts
       archive-content = castle.cms.cron:archive_content
