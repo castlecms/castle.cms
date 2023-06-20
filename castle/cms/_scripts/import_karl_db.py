@@ -187,24 +187,24 @@ def import_communities(args, path):  # path = {}/groups/communities
             sitepath = sitepath[:-1]
         if sitepath.startswith('-'):
             sitepath = sitepath[1:]
-        return sitepath
+        return sitepath.lower()
     
     def transverse(_folderpath, _sitepath):
         _sitepath = clean_name(_sitepath)
         for item in os.listdir(_folderpath):
             if os.path.isfile(os.path.join(_folderpath, item)):
                 if not item.startswith('__data__'):
-                    comm_attachments(folderpath=_folderpath, sitepath=_sitepath, attachment=item.lower())
+                    comm_attachments(folderpath=_folderpath, sitepath=_sitepath, attachment=item)
             else:
                 parent = api.content.get(_sitepath)
-                path = clean_name(os.path.join(_sitepath, item.lower()))
+                path = clean_name(os.path.join(_sitepath, item))
                 _container = api.content.get(path)
                 if _container is None:
-                    logging.info('creating folder {}/{}'.format(_sitepath, item.lower()))
-                    api.content.create(container=parent, type='Folder', title=item.lower())
+                    folder = api.content.create(container=parent, type='Folder', title=item)
+                    logging.info('creating folder {}'.format(folder.id))
                     transaction.commit()
-                next_sitepath = os.path.join(_sitepath, item.lower())
-                next_folder = os.path.join(_folderpath, item.lower())
+                next_sitepath = os.path.join(_sitepath, item)
+                next_folder = os.path.join(_folderpath, item)
                 transverse(_folderpath=next_folder, _sitepath=next_sitepath)
         transaction.commit()
 
@@ -230,7 +230,7 @@ def import_communities(args, path):  # path = {}/groups/communities
                 with open('{}/__data__{}.json'.format(folderpath, attachment_name), 'rb') as fi:
                     data_attachment_dump = json.load(fi)
                     try:
-                        container = api.content.get(sitepath)
+                        container = api.content.get(sitepath.lower())
                         if api.content.get(os.path.join(sitepath, attachment_name)) is None:
                             file_obj = api.content.create(                          
                                 container=container,
@@ -487,14 +487,13 @@ def import_tags(args):
     for tag_fi in tags_dir:
         tag_path = '{}/{}'.format(tags_path, tag_fi)
         with open(tag_path, 'r') as json_fi:
-            import pdb; pdb.set_trace()
             tag_info = json.load(json_fi)
             group = api.group.get('{}:members'.format(tag_info['community']))
 
 def migrate(args):
     import_profiles(args)
     import_groups(args)
-    # import_tags(args)
+    import_tags(args)
     transaction.commit()
 
 def run(app):
