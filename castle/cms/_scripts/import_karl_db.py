@@ -492,10 +492,10 @@ def import_tags(args):
             group = api.group.get('{}:members'.format(tag_info['community']))
 
 def migrate(args):
-    # import_profiles(args)
-    # import_groups(args)
-    import_tags(args)
-    # transaction.commit()
+    import_profiles(args)
+    import_groups(args)
+    # import_tags(args)
+    transaction.commit()
 
 def run(app):
     singleton.SingleInstance('migrate-karl')
