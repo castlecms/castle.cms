@@ -1,22 +1,14 @@
-import logging
-from plone import api
 from castle.cms.tasks import send_email
+from zope.component import queryUtility
+from plone.registry.interfaces import IRegistry
 
 class RequestAccess():
     def __call__(self):
         try:
-            group = 'test-group'
-            roles = api.group.get_roles(groupname=group)
-            if 'Site Administrator' not in roles:
-                logging.error('specified group to send access requests do not have Site Administrator role', exc_info=True)
-                raise Exception('specified group to send access requests do not have Site Administrator role')
-            
-            addresses = []
-            for user in api.user.get_users(groupname=group):
-                email = user.getProperty('email')
-                if email:
-                    addresses.append(email)
-            
+            registry = queryUtility(IRegistry)
+            addresses = registry.records['plone.system_email_addresses'].value
+            sender = registry.records['plone.email_from_address'].value
+
             form = self.request.form
             subject = 'Request Access'
             text = '''
@@ -38,6 +30,6 @@ class RequestAccess():
                 recipients=list(set(addresses)), 
                 subject=subject, 
                 text=text, 
-                sender='request_access_noreply@castlecms.com')
+                sender=sender)
         except:
             self.request.response.setStatus(400)

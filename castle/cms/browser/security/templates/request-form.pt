@@ -42,7 +42,6 @@
     </form>
     <script>
       document.getElementById('access-form').addEventListener('submit', (event) => {
-        debugger;
         event.preventDefault();
         fetch(event.target.action, {
             method: 'POST',
