@@ -45,6 +45,7 @@
   <browser:page
     name="request-form"
     for="castle.cms.interfaces.ICastleApplication"
+    class=".requestaccess.RequestForm"
     permission="zope.Public"
     template="./templates/request-form.pt"
     allowed_attributes="options" />
@@ -52,6 +53,7 @@
   <browser:page
     name="request-form"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".requestaccess.RequestForm"
     permission="zope2.View"
     template="./templates/request-form.pt"
     allowed_attributes="options"
@@ -61,8 +63,7 @@
     name="request-access"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     class=".requestaccess.RequestAccess"
-    permission="zope2.View"
-    />
+    permission="zope2.View"/>
 
   <browser:page
     name="password-reset"

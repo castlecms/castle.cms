@@ -140,6 +140,12 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    form_fields = schema.TextLine(
+        title=u'Request Access Form Fields',
+        description=u'Separate fields with a comma, field titles will show exactly as written',
+        default=None,
+        required=False)
+
     auth_step_timeout = schema.Int(
         title=u'(Seconds) This amount of inactivity will reset the login process',
         description=u'Between each step, the allowed time is reset to this amount',

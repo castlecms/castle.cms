@@ -14,27 +14,18 @@
   
   <br />
 
-  <div id="content-core">
+  <div id="content-core"
+       tal:define="fields view/fields">
     <form method="POST"
           id="access-form"
           action="${context/absolute_url}/@@request-access">
-      <label for="fname">First Name:</label><br/>
-      <input type="text" id="fname" name="fname" required><br/>
-      
-      <label for="lname">Last Name:</label><br/>
-      <input type="text" id="lname" name="lname" required><br/>
-      
-      <label for="org">Organization:</label><br/>
-      <input type="text" id="org" name="org" required><br/>
-      
-      <label for="position">Position:</label><br/>
-      <input type="text" id="position" name="position" required><br/>
-      
-      <label for="email">E-Mail:</label><br/>
-      <input type="text" id="email" name="email" required><br/>
-      
-      <label for="phone">Phone Number:</label><br/>
-      <input type="text" id="phone" name="phone" required><br/>
+      <tal:fields tal:repeat="field fields">
+        <tal:field tal:define="name python: field.lower();
+                               id python: name.replace(' ', '-')">
+          <label for="">${field}</label><br/>
+          <input type="text" id="${id}" name="${name}" required><br/>
+        </tal:field>
+      </tal:fields>
       <div class="text-center">
         <input type="submit" id="submit-request" value="Submit" required><br/>
       </div>
@@ -52,9 +43,10 @@
               error.style.display = null
             }
             else {
-              const success = document.getElementById("submit-success");
-              success.style.display = null
               document.getElementById('access-form').reset()
+              const error = document.getElementById("submit-error");
+              error.style.display = 'none'
+              alert('Your request has been successfully submitted')
             }
       });
     })
