@@ -13,7 +13,6 @@ from castle.cms.interfaces import IHasDefaultImage
 from castle.cms.interfaces import IReferenceNamedImage
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
-from OFS.CopySupport import eInvalid
 import plone.api as api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contentlisting.interfaces import IContentListingObject
@@ -26,6 +25,15 @@ from ZODB.POSException import POSKeyError
 
 
 logger = logging.getLogger('castle.cms')
+
+# Plone5.2 - 'eInvalid' method no longer exists, pasted here
+from App.Dialogs import MessageDialog
+eInvalid = MessageDialog(
+    title='Clipboard Error',
+    message='The data in the clipboard could not be read, possibly due '
+            'to cookie data being truncated by your web browser. Try copying '
+            'fewer objects.',
+    action='manage_main')
 
 
 def get_paste_data(req):

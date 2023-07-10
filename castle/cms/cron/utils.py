@@ -4,7 +4,9 @@ from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Testing.makerequest import makerequest
-from zope.app.publication.interfaces import BeforeTraverseEvent
+
+# Plone5.2 - 'BeforeTraverseEvent' exists elsewhere
+from zope.traversing.interfaces import BeforeTraverseEvent
 from zope.component.hooks import setSite
 from zope.event import notify
 from zope.globalrequest import setRequest

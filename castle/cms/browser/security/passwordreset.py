@@ -1,7 +1,5 @@
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.interfaces import IAuthenticator
-from Products.PasswordResetTool.PasswordResetTool import ExpiredRequestError
-from Products.PasswordResetTool.PasswordResetTool import InvalidRequestError
 from plone.protect.interfaces import IDisableCSRFProtection
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
@@ -12,6 +10,20 @@ from plone import api
 
 import json
 
+# Plone5.2 - Methods no longer exist, pasted here
+class InvalidRequestError(Exception):
+    def __init__(self, value=''):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+class ExpiredRequestError(Exception):
+    def __init__(self, value=''):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
 
 class PasswordResetView(BrowserView):
     implements(ISecureLoginAllowedView)

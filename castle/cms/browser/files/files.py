@@ -20,7 +20,8 @@ from plone.namedfile.scaling import ImageScaling
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
-from webdav.common import rfc1123_date
+# Plone5.2 - fc1123_date moved to App.common
+from App.Common import rfc1123_date
 from zExceptions import NotFound
 from ZODB.POSException import POSKeyError
 from zope.component import getMultiAdapter

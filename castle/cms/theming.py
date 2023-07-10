@@ -9,7 +9,8 @@ import logging
 import re
 from urlparse import urljoin
 
-import Globals
+# Plone5.2 TODO - 'Globals' removed with newer Zope build
+# import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
@@ -487,7 +488,9 @@ class _Transform(object):
 
 
 def getTransform(context, request):
-    DevelopmentMode = Globals.DevelopmentMode
+    # Plone5.2 TODO - 'DevelopmentMode' was set to False in former 'Globals' import
+    # DevelopmentMode = Globals.DevelopmentMode
+    DevelopmentMode = False
     policy = theming_policy(request)
 
     # Obtain settings. Do nothing if not found
@@ -560,7 +563,9 @@ class Policy(ThemingPolicy):
 
         # Resolve DevelopmentMode late (i.e. not on import time) since it may
         # be set during import or test setup time
-        DevelopmentMode = Globals.DevelopmentMode
+        # Plone5.2 TODO - 'DevelopmentMode' was set to False in old 'Globals'
+        # DevelopmentMode = Globals.DevelopmentMode
+        DevelopmentMode = False
 
         # Disable theming if the response sets a header
         if self.request.response.getHeader('X-Theme-Disabled'):
@@ -624,7 +629,8 @@ def transformIterable(self, result, encoding):
     except AttributeError:
         pass
 
-    DevelopmentMode = Globals.DevelopmentMode
+    # Plone5.2 TODO - 'DevelopmentMode' was set to False in 'Globals'. Remove?
+    DevelopmentMode = False
 
     try:
         # if we are here, it means we are rendering the the

@@ -16,8 +16,10 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFPlone.interfaces import IPatternsSettings, IPloneSiteRoot
-from Products.CMFPlone.patterns import (PloneSettingsAdapter,
-                                        TinyMCESettingsGenerator)
+
+# Plone5.2 - 'PloneSettingsAdapter' name and location changed
+from Products.CMFPlone.patterns.settings import PatternSettingsAdapter as PloneSettingsAdapter
+from Products.CMFPlone.patterns.tinymce import TinyMCESettingsGenerator
 from zope.component import getUtility
 from zope.interface import implements
 from castle.cms.services.google import youtube

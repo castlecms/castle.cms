@@ -15,8 +15,6 @@ from collective.elasticsearch.es import ElasticSearchCatalog  # noqa
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import _cb_encode
-from OFS.CopySupport import eInvalid
-from OFS.CopySupport import eNoData
 from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_tinymce_options
 from plone.app.z3cform.widget import RichTextWidget
@@ -36,6 +34,20 @@ import plone.api as api
 
 
 logger = logging.getLogger('castle.cms')
+
+# Plone5.2 - 'eInvalid' and 'eNoData' methods no longer exist, pasted here
+from App.Dialogs import MessageDialog
+eInvalid = MessageDialog(
+    title='Clipboard Error',
+    message='The data in the clipboard could not be read, possibly due '
+            'to cookie data being truncated by your web browser. Try copying '
+            'fewer objects.',
+    action='manage_main')
+
+eNoData = MessageDialog(
+    title='No Data',
+    message='No clipboard data found.',
+    action='manage_main')
 
 
 def HideSiteLayoutFields_update(self):

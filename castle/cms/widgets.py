@@ -12,7 +12,9 @@ from castle.cms.interfaces import ICastleLayer
 from castle.cms.interfaces import IReCaptchaWidget
 from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.tiles.views import getTileViews
-from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+
+# Plone5.2 - 'ILeadImage' method renamed to 'ILeadImageBehavior' in contenttypes 2.2.3
+from plone.app.contenttypes.behaviors.leadimage import ILeadImageBehavior as ILeadImage
 from plone.app.uuid.utils import uuidToObject
 from plone.app.widgets.base import InputWidget as BaseInputWidget
 from plone.app.widgets.base import TextareaWidget as BaseTextareaWidget

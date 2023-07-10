@@ -6,7 +6,9 @@ from AccessControl import AuthEncoding, ClassSecurityInfo, Unauthorized
 from castle.cms.pwexpiry.config import _
 from castle.cms.pwexpiry.utils import days_since_event
 from DateTime import DateTime
-from Globals import InitializeClass
+
+# Plone5.2 - 'Globals' no longer exists in zope2, method exists elsewhere
+from AccessControl.class_init import InitializeClass
 from plone import api
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PlonePAS.interfaces.plugins import IUserManagement
