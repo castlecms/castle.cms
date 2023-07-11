@@ -5,7 +5,6 @@ from . import cloudflare
 from App.config import getConfiguration
 from castle.cms.events import CacheInvalidatedEvent
 from castle.cms.linkintegrity import get_content_links
-from plone import api
 from plone.app.imaging.utils import getAllowedSizes
 from plone.cachepurging.hooks import KEY
 from plone.cachepurging.interfaces import ICachePurgingSettings
@@ -33,6 +32,7 @@ from collective.documentviewer.settings import Settings as DocViewerSettings
 
 import atexit
 import logging
+import plone.api as api
 import Queue
 import threading
 
@@ -65,7 +65,7 @@ def queuePurge(event, force=False):
 
     # THIS IS THE OVERRIDE HERE!!!
     # the original event goes forward IF there are cache proxies defined.
-    # so we check if they are NOT and then only force puring
+    # so we check if they are NOT and then only force purging
     if bool(settings.cachingProxies) and not force:
         return
 
@@ -254,7 +254,6 @@ class Purge(BrowserView):
             self.cf_enabled = True
             resp = CastlePurger.purgeSync(urls, cf)
             success = resp.json()['success']
-            notify(CacheInvalidatedEvent(self))
 
         nice_paths = []
         for path in paths:
@@ -264,16 +263,26 @@ class Purge(BrowserView):
                 path = path[len(site_path):]
             nice_paths.append(path.decode('utf-8'))
 
+        # this has moved to not just be for cloudflare. this may not be the desired behavior
+        event = CacheInvalidatedEvent(self.context, success, nice_paths, self.is_automatic_purge)
+        notify(event)
         return nice_paths, success
 
     def __call__(self):
         self.success = False
         self.purged = []
-        authenticator = getMultiAdapter((self.context, self.request),
-                                        name=u"authenticator")
+        authenticator = getMultiAdapter(
+            (self.context, self.request),
+            name=u"authenticator",
+        )
         if authenticator.verify():
             self.purged, self.success = self.purge()
-        return self.index()
+        if getattr(self, 'index', None) is not None:
+            return self.index()
+
+    def __init__(self, context, request, is_automatic_purge=False):
+        super(Purge, self).__init__(context, request)
+        self.is_automatic_purge = is_automatic_purge
 
 
 class LeadImagePurgePaths(object):
