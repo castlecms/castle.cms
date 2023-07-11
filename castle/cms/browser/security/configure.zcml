@@ -41,19 +41,11 @@
     class=".login.SecureLoginView"
     template="./templates/secure-login.pt"
     allowed_attributes="options" />
-
-  <browser:page
-    name="request-form"
-    for="castle.cms.interfaces.ICastleApplication"
-    class=".requestaccess.RequestForm"
-    permission="zope.Public"
-    template="./templates/request-form.pt"
-    allowed_attributes="options" />
   
   <browser:page
     name="request-form"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    class=".requestaccess.RequestForm"
+    class=".requestaccess.RequestAccessView"
     permission="zope2.View"
     template="./templates/request-form.pt"
     allowed_attributes="options"
@@ -62,7 +54,7 @@
   <browser:page
     name="request-access"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    class=".requestaccess.RequestAccess"
+    class=".requestaccess.RequestAccessView"
     permission="zope2.View"/>
 
   <browser:page
