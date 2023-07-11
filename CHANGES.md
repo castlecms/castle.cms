@@ -4,7 +4,9 @@ Changelog
 3.0.0b123 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- additional data in purging and purge events
+- automatically purge on modifying
+- change cloudflare api stuff
 
 
 3.0.0b122 (2023-04-11)
