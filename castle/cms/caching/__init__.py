@@ -263,7 +263,6 @@ class Purge(BrowserView):
                 path = path[len(site_path):]
             nice_paths.append(path.decode('utf-8'))
 
-        # this has moved to not just be for cloudflare. this may not be the desired behavior
         event = CacheInvalidatedEvent(self.context, success, nice_paths, self.is_automatic_purge)
         notify(event)
         return nice_paths, success

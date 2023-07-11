@@ -1,12 +1,9 @@
-import os
 import threading
 from datetime import datetime
-import logging
 
 import plone.api as api
 import transaction
 from castle.cms.events import (
-    # IAutomaticCacheInvalidatedEvent,
     ICacheInvalidatedEvent,
     IMetaTileEditedEvent,
     ITrashEmptiedEvent,
@@ -122,9 +119,6 @@ class CacheInvalidatedRecorder(DefaultRecorder):
 
     def __call__(self):
         data = super(CacheInvalidatedRecorder, self).__call__()
-        # these data are now available on the event itself,
-        # on no longer on the object, since the object is now the content object
-        # instead of the purger
         success = getattr(self.event, 'success', False)
         purged = getattr(self.event, 'purged', [])
         is_automatic_purge = getattr(self.event, 'is_automatic_purge', [])
