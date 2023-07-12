@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b124 (unreleased)
+3.0.0b124 (2023-07-12)
 ----------------------
 
 - Remove duplicate paths in cache purging
