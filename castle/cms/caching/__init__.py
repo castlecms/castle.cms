@@ -235,6 +235,8 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
+        paths = list(set(paths))
+
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
 
@@ -262,6 +264,7 @@ class Purge(BrowserView):
             else:
                 path = path[len(site_path):]
             nice_paths.append(path.decode('utf-8'))
+        nice_paths = list(set(nice_paths))
 
         event = CacheInvalidatedEvent(self.context, success, nice_paths, self.is_automatic_purge)
         notify(event)
