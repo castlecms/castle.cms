@@ -4,7 +4,9 @@ Changelog
 2.18.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- additional data in purging and purge events
+- automatically purge on modifying
+- change purge request for updated cloudflare api
 
 
 2.18.0 (2023-04-13)

@@ -1,8 +1,9 @@
 from castle.cms import audit
 from castle.cms import tasks
+from castle.cms.caching import Purge
 from castle.cms.constants import DEFAULT_SITE_LAYOUT_REGISTRY_KEY
+from castle.cms.events import ICacheInvalidatedEvent
 from castle.cms.lead import check_lead_image
-from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.blocks.interfaces import DEFAULT_CONTENT_LAYOUT_REGISTRY_KEY
 from plone.app.blocks.layoutbehavior import ILayoutAware
@@ -17,9 +18,13 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.browser.syndication.settings import FeedSettings
 from zope.component import getUtility
 from zope.component.hooks import getSite
+# from zope.event import notify
 from zope.globalrequest import getRequest
 from zope.interface import Interface
+
 import logging
+import plone.api as api
+
 
 
 logger = logging.getLogger('castle.cms')
@@ -106,6 +111,8 @@ def on_content_created(obj, event):
 
 def on_content_modified(obj, event):
     obj.changeNote = get_change_note(getRequest())
+    # auto-purge content when modifying
+    Purge(obj, getRequest(), True)()
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!
         return
@@ -126,9 +133,16 @@ def on_edit_finished(obj, event):
 
 
 def on_object_event(obj, event):
-    if IRelationBrokenEvent.providedBy(event):
-        # these trigger too much!
-        return
+    # IRelationBrokenEvent events trigger too much!
+    # ICacheInvalidatedEvent handled by on_cache_invalidated
+    # on_cache_invalidated maybe can just be removed, but we can verify that later
+    non_audit_events = [
+        IRelationBrokenEvent,
+        ICacheInvalidatedEvent,
+    ]
+    for non_audit_event in non_audit_events:
+        if non_audit_event.providedBy(event):
+            return
     audit.event(obj, event)
 
 
@@ -153,8 +167,8 @@ def on_trash_emptied(obj):
     audit.event(obj)
 
 
-def on_cache_invalidated(obj):
-    audit.event(obj)
+def on_cache_invalidated(obj, event):
+    audit.event(obj, event)
 
 
 def on_pas_event(event):
