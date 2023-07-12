@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b123 (unreleased)
+3.0.0b123 (2023-07-12)
 ----------------------
 
 - additional data in purging and purge events
