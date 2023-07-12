@@ -44,5 +44,10 @@ class ICacheInvalidatedEvent(IObjectEvent):
 
 @implementer(ICacheInvalidatedEvent)
 class CacheInvalidatedEvent(ObjectEvent):
-    def __init__(self, object):
+    def __init__(self, object, success=False, purged=None, is_automatic_purge=False):
+        if purged is None:
+            purged = []
         super(CacheInvalidatedEvent, self).__init__(object)
+        self.success = success
+        self.purged = purged
+        self.is_automatic_purge = is_automatic_purge
