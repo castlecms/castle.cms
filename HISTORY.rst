@@ -7,6 +7,7 @@ Changelog
 - additional data in purging and purge events
 - automatically purge on modifying
 - change purge request for updated cloudflare api
+- Remove duplicate paths in cache purging
 
 
 2.18.0 (2023-04-13)
