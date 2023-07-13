@@ -256,7 +256,7 @@ class Purge(BrowserView):
         success = True
         if cf.enabled:
             self.cf_enabled = True
-            batched_prefixes = self.get_cf_url_prefixes(urls)
+            batched_prefixes = self.get_cloudflare_url_prefixes(urls)
             successes = [
                 CastlePurger.purgeSync(batch, cf).json()['success']
                 for batch in batched_prefixes
@@ -276,7 +276,7 @@ class Purge(BrowserView):
         notify(event)
         return nice_paths, success
 
-    def get_cf_url_prefixes(self, urls):
+    def get_cloudflare_url_prefixes(self, urls):
         prefixes = []
         batched_prefixes = [[]]
         for url in urls:
