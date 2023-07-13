@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.18.1 (unreleased)
+2.19.0 (2023-07-13)
 -------------------
 
 - additional data in purging and purge events
