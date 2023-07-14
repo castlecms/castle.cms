@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - Allow batching in cloudflare purging
+- Make icon, favicon, manifest, browserconfig fully public
 
 
 2.19.0 (2023-07-13)
