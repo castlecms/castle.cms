@@ -3,6 +3,7 @@ from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
 from . import cloudflare
 from App.config import getConfiguration
+from castle.cms.constants import CLOUDFARE_PURGE_BATCH_SIZE_LIMIT, HYPERTEXT_PROTOCOL_PATTERN
 from castle.cms.events import CacheInvalidatedEvent
 from castle.cms.linkintegrity import get_content_links
 from plone.app.imaging.utils import getAllowedSizes
@@ -29,6 +30,7 @@ from zope.interface import implements
 from zope.testing.cleanup import addCleanUp
 from ZPublisher.interfaces import IPubSuccess
 from collective.documentviewer.settings import Settings as DocViewerSettings
+from re import sub as re_sub
 
 import atexit
 import logging
@@ -252,10 +254,15 @@ class Purge(BrowserView):
                     purger.purgeAsync(url)
 
         success = True
+
         if cf.enabled:
             self.cf_enabled = True
-            resp = CastlePurger.purgeSync(urls, cf)
-            success = resp.json()['success']
+            batched_prefixes = self.get_cloudflare_url_prefixes(urls)
+            successes = [
+                CastlePurger.purgeSync(batch, cf).json()['success']
+                for batch in batched_prefixes
+            ]
+            success = all(successes)
 
         nice_paths = []
         for path in paths:
@@ -269,6 +276,22 @@ class Purge(BrowserView):
         event = CacheInvalidatedEvent(self.context, success, nice_paths, self.is_automatic_purge)
         notify(event)
         return nice_paths, success
+
+    def get_cloudflare_url_prefixes(self, urls):
+        prefixes = []
+        batched_prefixes = [[]]
+        for url in urls:
+            url = re_sub(HYPERTEXT_PROTOCOL_PATTERN, '', url)
+            if '@@' in url:
+                url = url[:url.find('@@')]
+            prefixes.append(url)
+        for prefix in list(set(prefixes)):
+            batch = batched_prefixes[-1]
+            if len(batch) >= CLOUDFARE_PURGE_BATCH_SIZE_LIMIT:
+                batch = []
+                batched_prefixes.append(batch)
+            batch.append(prefix)
+        return batched_prefixes
 
     def __call__(self):
         self.success = False
