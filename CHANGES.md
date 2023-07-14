@@ -4,7 +4,7 @@ Changelog
 3.0.0b125 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Allow batching in cloudflare purging
 
 
 3.0.0b124 (2023-07-12)
