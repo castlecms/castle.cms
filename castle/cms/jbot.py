@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 
-# Plone5.2 - 'Globals' no longer exists in Zope2
+# Plone5.2 - 'Globals' no longer exists in Zope 4
 # import Globals
 from DateTime import DateTime
 from plone import api

@@ -38,7 +38,6 @@ setup(
     install_requires=[
         # plone packages
         # Plone 5.2- update reqs
-        # 'Products.CMFPlone>=5.0.10',
         'Products.CMFPlone>=5.2.12',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
@@ -48,10 +47,8 @@ setup(
         'plone.schemaeditor>=2.0.18',
         'plone.namedfile>=3.0.10',
         'plone.folder>=1.0.12',
-        # 'AccessControl>=3.0.14',
         'AccessControl>=4.3',
         'z3c.relationfield>=0.7.1.dev0',
-        # 'Products.ZCatalog>=3.0.3dev2',
         'Products.ZCatalog>=5.2',
         'plone.app.standardtiles>=2.0.0.dev0',
         'plone.stringinterp>=1.3.1',

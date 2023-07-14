@@ -9,7 +9,7 @@ import logging
 import re
 from urlparse import urljoin
 
-# Plone5.2 TODO - 'Globals' removed with newer Zope build
+# Plone5.2 'Globals' removed in Zope 4
 # import Globals
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
@@ -488,7 +488,7 @@ class _Transform(object):
 
 
 def getTransform(context, request):
-    # Plone5.2 TODO - 'DevelopmentMode' was set to False in former 'Globals' import
+    # Plone5.2 - 'DevelopmentMode' was set to False in former 'Globals' import
     # DevelopmentMode = Globals.DevelopmentMode
     DevelopmentMode = False
     policy = theming_policy(request)
@@ -563,7 +563,7 @@ class Policy(ThemingPolicy):
 
         # Resolve DevelopmentMode late (i.e. not on import time) since it may
         # be set during import or test setup time
-        # Plone5.2 TODO - 'DevelopmentMode' was set to False in old 'Globals'
+        # Plone5.2 - 'DevelopmentMode' was set to False in old 'Globals'
         # DevelopmentMode = Globals.DevelopmentMode
         DevelopmentMode = False
 
