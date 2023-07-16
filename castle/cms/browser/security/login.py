@@ -74,6 +74,9 @@ class SecureLoginView(BrowserView):
     def from_backend_url(self):
         return is_backend(self.request)
 
+    def request_form_url(self):
+        return self.auth.request_form_url
+    
     def scrub_backend(self):
         if not self.auth.is_zope_root and self.from_backend_url:
             return api.portal.get_registry_record('plone.scrub_title_logo_to_backend_login')

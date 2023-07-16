@@ -140,11 +140,20 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    request_form_url = schema.TextLine(
+        title=u'Custom request form url',
+        description=u'url for custom registration form, \
+            if nothing is provided the default form will be used \
+                which can be customized with "Request Access Form Fields"',            
+        default=u'/@@request-form',
+    )
+
     form_fields = schema.TextLine(
         title=u'Request Access Form Fields',
-        description=u'Separate fields with a comma, field titles will show exactly as written',
-        default=None,
-        required=False)
+        description=u'Separate fields with a comma, \
+            field titles will show exactly as written',
+        default=u'Name, E-Mail, Phone',
+    )
 
     auth_step_timeout = schema.Int(
         title=u'(Seconds) This amount of inactivity will reset the login process',

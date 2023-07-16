@@ -38,6 +38,12 @@ class RequestAccessView(BrowserView):
                 subject=subject, 
                 text=text, 
                 sender=sender)
+            self.request.response.setStatus(302)
+            parents = self.request.get('PARENTS')
+            for parent in parents:
+                if parent.title == 'site':
+                    url = parent.tpURL()
+            self.request.response.redirect('{}/@@secure-login'.format(url))
         except:
             self.request.response.setStatus(400)
     

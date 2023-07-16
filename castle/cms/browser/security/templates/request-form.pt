@@ -61,28 +61,23 @@
     </div>
       <script>
         document.getElementById('access-form').addEventListener('submit', (event) => {
-          event.preventDefault();
           fetch(event.target.action, {
               method: 'POST',
               body: new URLSearchParams(new FormData(event.target))
           }).then((response) => {
               if (!response.ok) {
+                event.preventDefault();
                 const error = document.getElementById("submit-error");
                 error.style.display = null
               }
-              else {
-                document.getElementById('access-form').reset()
-                const error = document.getElementById("submit-error");
-                error.style.display = 'none'
-                alert('Your request has been successfully submitted')
-              }
-        });
-      })
+          });
+        })
       </script>
       
-      <div class="text-center" style="padding: 2em">
-        <div id="submit-success" style="display: none">Your request has been successfully submitted</div>
-        <div id="submit-error" style="display: none">There was an error while submiting your request. Please try again.</div>
+      <div class="text-center" 
+           id="submit-error"
+           style="display: none; padding: 2em" >
+        There was an error while submiting your request. Please try again
       </div>
     </div>
   </body>
