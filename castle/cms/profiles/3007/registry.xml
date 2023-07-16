@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record name="plone.request_form_url"
+          interface="castle.cms.interfaces.controlpanel.ISecuritySchema"
+          field="request_form_url">
+    <value>/@@request-form</value>
+  </record>
+  <record name="plone.request_access"
+          interface="castle.cms.interfaces.controlpanel.ISecuritySchema"
+          field="request_access">
+    <value>False</value>
+  </record>
+
+  <record name="plone.form_fields"
+          interface="castle.cms.interfaces.controlpanel.ISecuritySchema"
+          field="form_fields">
+    <value>Name, E-Mail, Phone</value>
+  </record>
+
+</registry>

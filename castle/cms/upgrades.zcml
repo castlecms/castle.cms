@@ -96,4 +96,21 @@
         handler=".upgrades.upgrade_3006_ga4"
         />
   </genericsetup:upgradeSteps>
+
+
+  <genericsetup:registerProfile
+    name="3007"
+    title="CastleCMS upgrade to 3007 profile"
+    directory="profiles/3007"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3007"
+    description="Update ISecuritySchema"
+    source="*"
+    destination="3007"
+    handler=".upgrades.upgrade_3007"
+    profile="castle.cms:default"
+    />
 </configure>
