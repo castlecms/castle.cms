@@ -87,12 +87,12 @@
          zope.component.interfaces.IObjectEvent"
     handler=".subscribers.on_object_event" />
   <subscriber
-      for="Products.PluggableAuthService.interfaces.events.IPASEvent"
-      handler=".subscribers.on_pas_event"
-      />
+    for="Products.PluggableAuthService.interfaces.events.IPASEvent"
+    handler=".subscribers.on_pas_event" />
 
   <subscriber
-    for=".events.ICacheInvalidatedEvent"
+    for="plone.dexterity.interfaces.IDexterityContent
+         .events.ICacheInvalidatedEvent"
     handler=".subscribers.on_cache_invalidated" />
 
   <!-- trash related events -->

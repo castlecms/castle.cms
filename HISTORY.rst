@@ -1,10 +1,19 @@
 Changelog
 =========
 
-2.18.1 (unreleased)
+2.19.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Allow batching in cloudflare purging
+
+
+2.19.0 (2023-07-13)
+-------------------
+
+- additional data in purging and purge events
+- automatically purge on modifying
+- change purge request for updated cloudflare api
+- Remove duplicate paths in cache purging
 
 
 2.18.0 (2023-04-13)

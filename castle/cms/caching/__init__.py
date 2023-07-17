@@ -3,9 +3,9 @@ from plone.uuid.interfaces import IUUID
 from plone.app.contenttypes.interfaces import IFile
 from . import cloudflare
 from App.config import getConfiguration
+from castle.cms.constants import CLOUDFARE_PURGE_BATCH_SIZE_LIMIT, HYPERTEXT_PROTOCOL_PATTERN
 from castle.cms.events import CacheInvalidatedEvent
 from castle.cms.linkintegrity import get_content_links
-from plone import api
 from plone.app.imaging.utils import getAllowedSizes
 from plone.cachepurging.hooks import KEY
 from plone.cachepurging.interfaces import ICachePurgingSettings
@@ -30,9 +30,11 @@ from zope.interface import implements
 from zope.testing.cleanup import addCleanUp
 from ZPublisher.interfaces import IPubSuccess
 from collective.documentviewer.settings import Settings as DocViewerSettings
+from re import sub as re_sub
 
 import atexit
 import logging
+import plone.api as api
 import Queue
 import threading
 
@@ -65,7 +67,7 @@ def queuePurge(event, force=False):
 
     # THIS IS THE OVERRIDE HERE!!!
     # the original event goes forward IF there are cache proxies defined.
-    # so we check if they are NOT and then only force puring
+    # so we check if they are NOT and then only force purging
     if bool(settings.cachingProxies) and not force:
         return
 
@@ -235,6 +237,8 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
+        paths = list(set(paths))
+
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
 
@@ -250,11 +254,15 @@ class Purge(BrowserView):
                     purger.purgeAsync(url)
 
         success = True
+
         if cf.enabled:
             self.cf_enabled = True
-            resp = CastlePurger.purgeSync(urls, cf)
-            success = resp.json()['success']
-            notify(CacheInvalidatedEvent(self))
+            batched_prefixes = self.get_cloudflare_url_prefixes(urls)
+            successes = [
+                CastlePurger.purgeSync(batch, cf).json()['success']
+                for batch in batched_prefixes
+            ]
+            success = all(successes)
 
         nice_paths = []
         for path in paths:
@@ -263,17 +271,43 @@ class Purge(BrowserView):
             else:
                 path = path[len(site_path):]
             nice_paths.append(path.decode('utf-8'))
+        nice_paths = list(set(nice_paths))
 
+        event = CacheInvalidatedEvent(self.context, success, nice_paths, self.is_automatic_purge)
+        notify(event)
         return nice_paths, success
+
+    def get_cloudflare_url_prefixes(self, urls):
+        prefixes = []
+        batched_prefixes = [[]]
+        for url in urls:
+            url = re_sub(HYPERTEXT_PROTOCOL_PATTERN, '', url)
+            if '@@' in url:
+                url = url[:url.find('@@')]
+            prefixes.append(url)
+        for prefix in list(set(prefixes)):
+            batch = batched_prefixes[-1]
+            if len(batch) >= CLOUDFARE_PURGE_BATCH_SIZE_LIMIT:
+                batch = []
+                batched_prefixes.append(batch)
+            batch.append(prefix)
+        return batched_prefixes
 
     def __call__(self):
         self.success = False
         self.purged = []
-        authenticator = getMultiAdapter((self.context, self.request),
-                                        name=u"authenticator")
+        authenticator = getMultiAdapter(
+            (self.context, self.request),
+            name=u"authenticator",
+        )
         if authenticator.verify():
             self.purged, self.success = self.purge()
-        return self.index()
+        if getattr(self, 'index', None) is not None:
+            return self.index()
+
+    def __init__(self, context, request, is_automatic_purge=False):
+        super(Purge, self).__init__(context, request)
+        self.is_automatic_purge = is_automatic_purge
 
 
 class LeadImagePurgePaths(object):
