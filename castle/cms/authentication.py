@@ -88,19 +88,18 @@ class Authenticator(object):
         if not self.is_zope_root and self.registry:
             enabled = self.registry.get('plone.two_factor_enabled', False)
         return enabled
-    
+
     @property
     def request_access(self):
-        request = False
         if not self.is_zope_root and self.registry:
-            request = self.registry.get('plone.request_access', False)
-        return request
-    
+            return self.registry.get('plone.request_access', False)
+        return False
+
     @property
     def request_form_url(self):
         url = '/@@request-form'
         if not self.is_zope_root and self.registry:
-            url = self.registry.get('plone.request_form_url')
+            url = self.registry.get('plone.request_form_url', '/@@request-form')
         return url
 
     @property

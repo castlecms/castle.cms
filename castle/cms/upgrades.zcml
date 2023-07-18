@@ -107,7 +107,7 @@
     />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3007"
-    description="Update ISecuritySchema"
+    description="Update ISecuritySchema with Request Access Form fields"
     source="*"
     destination="3007"
     handler=".upgrades.upgrade_3007"

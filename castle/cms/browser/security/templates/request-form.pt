@@ -41,17 +41,23 @@
           <div class="row justify-content-center">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-              <tal:fields tal:repeat="field fields">
-                <div tal:define="name python: field.lower();
-                                      id python: name.replace(' ', '-');"
-                          class="form-group">
-                  <label for="${name}">${field}</label><br/>
-                  <input type="text" id="${id}" name="${name}" style="width: 100%" required><br/>
-                </div>
-              </tal:fields>
-              <br/>
+              <div class="form-group">
+                  <label for="name">Name</label>
+                  <br />
+                  <input type='text' id='name' name='name' style='width: 100%' required>
+              </div>
+              <div class="form-group">
+                  <label for="email">E-Mail Address</label>
+                  <br />
+                  <input type='text' id='email' name='email' style='width: 100%' required>
+              </div>
+              <div class="form-group">
+                  <label for="Phone">Phone</label>
+                  <br />
+                  <input type='text' id='phone' name='phone' style='width: 100%'>
+              </div>
               <div class="text-center">
-                <input type="submit" id="submit-request" class="btn btn-primary" value="Submit" required><br/>
+                <input type="submit" id="submit-request" class="btn btn-primary" value="Submit" required>
               </div>
             </div>
             <div class="col-md-4"></div>
@@ -73,7 +79,7 @@
           });
         })
       </script>
-      
+
       <div class="text-center" 
            id="submit-error"
            style="display: none; padding: 2em" >
