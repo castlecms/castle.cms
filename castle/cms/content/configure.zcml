@@ -19,9 +19,14 @@
     title="castle.cms: Add Slideshow"
     />
 
-  <permission
+    <permission
     id="castle.cms.addParallax"
     title="castle.cms: Add Parallax"
     />
 
-</configure>
+    <permission
+      id="castle.cms.addEmailTemplate"
+      title="castle.cms: Add Email Template"
+      />
+
+    </configure>
