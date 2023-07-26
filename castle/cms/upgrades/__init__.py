@@ -78,6 +78,7 @@ upgrade_2_6_27 = default_upgrade_factory('2_6_27')
 upgrade_2_6_30 = default_upgrade_factory('2_6_30')
 upgrade_2_6_31 = default_upgrade_factory('2_6_31')
 upgrade_2_6_33 = default_upgrade_factory('2_6_33')
+upgrade_2_6_35 = default_upgrade_factory('2_6_35')
 
 def upgrade_2_6_34(site, logger=None):
     registry = api.portal.get_tool('portal_registry')

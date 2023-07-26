@@ -482,14 +482,31 @@
     profile="castle.cms:default"
     />
 
-  <genericsetup:upgradeStep
+    <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.34"
     description="Update api control panel settings to add prince server username and password"
     source="*"
     destination="2634"
     handler=".upgrades.upgrade_2_6_34"
     profile="castle.cms:default"
-  />
+    />
+
+    <genericsetup:registerProfile
+      name="2_6_35"
+      title="CastleCMS upgrade to 2.6.35 profile"
+      directory="profiles/2_6_35"
+      description="Add Email Templates to castle.cms"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+    <genericsetup:upgradeStep
+      title="Upgrade CastleCMS to 2.6.35"
+      description="Add Email Templates to castle.cms"
+      source="*"
+      destination="2635"
+      handler=".upgrades.upgrade_2_6_35"
+      profile="castle.cms:default"
+      />
 
   <genericsetup:registerProfile
     name="3000"
