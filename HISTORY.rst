@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - Allow batching in cloudflare purging
+- Add Email Templates
 
 
 2.19.0 (2023-07-13)
