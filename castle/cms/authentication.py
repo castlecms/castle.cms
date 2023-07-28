@@ -92,7 +92,7 @@ class Authenticator(object):
     @property
     def request_access(self):
         if not self.is_zope_root and self.registry:
-            return self.registry.get('plone.request_access', False)
+            return self.registry.get('plone.request_access_enabled', False)
         return False
 
     @property
