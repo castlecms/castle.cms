@@ -60,3 +60,6 @@ def upgrade_3006_ga4(site, logger=None):
     if old_ga_id:
         api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
         api.portal.set_registry_record('castle.google_analytics_id', u'')
+
+
+upgrade_3007 = default_upgrade_factory('3007')

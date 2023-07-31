@@ -5,6 +5,7 @@ Changelog
 ----------------------
 
 - Allow batching in cloudflare purging
+- Add Email Templates
 - Make icon, favicon, manifest, browserconfig fully public
 
 
