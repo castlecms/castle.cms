@@ -78,7 +78,6 @@ upgrade_2_6_27 = default_upgrade_factory('2_6_27')
 upgrade_2_6_30 = default_upgrade_factory('2_6_30')
 upgrade_2_6_31 = default_upgrade_factory('2_6_31')
 upgrade_2_6_33 = default_upgrade_factory('2_6_33')
-upgrade_2_6_35 = default_upgrade_factory('2_6_35')
 
 def upgrade_2_6_34(site, logger=None):
     registry = api.portal.get_tool('portal_registry')
@@ -87,22 +86,4 @@ def upgrade_2_6_34(site, logger=None):
         prefix='castle',
     )
 
-
-upgrade_3000 = default_upgrade_factory('3000')
-upgrade_3001 = default_upgrade_factory('3001')
-upgrade_3003 = default_upgrade_factory('3003')
-upgrade_3004 = default_upgrade_factory('3004')
-upgrade_3005 = default_upgrade_factory('3005')
-
-
-def upgrade_3006_cc(site, logger=None):
-    # for explicit enable/disable of country code checking
-    re_register_profile(ISecuritySchema, 'castle')
-
-
-def upgrade_3006_ga4(site, logger=None):
-    re_register_profile(IAPISettings, 'castle')
-    old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
-    if old_ga_id:
-        api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
-        api.portal.set_registry_record('castle.google_analytics_id', u'')
+upgrade_2_6_35 = default_upgrade_factory('2_6_35')
