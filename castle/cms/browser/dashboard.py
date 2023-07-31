@@ -150,7 +150,7 @@ class DashboardUtils(BrowserView):
         try:
             modifier = item.last_modified_by
             try:
-                # to check if it is hashable and correct type
+                # to check if it is encryptable and correct type
                 foobar = modifier in self._user_cache  # noqa
             except Exception:
                 modifier = item.Creator

@@ -8,12 +8,7 @@ from plone.protect.authenticator import _getKeyring
 from plone.protect.authenticator import _is_equal
 from Products.Five import BrowserView
 from zope.component import getUtility
-
-
-try:
-    from hashlib import sha1 as sha
-except ImportError:
-    import sha
+from hashlib import sha256
 
 
 class ChatLogin(BrowserView):
@@ -33,7 +28,11 @@ class ChatLogin(BrowserView):
             for key in keyring:
                 if key is None:
                     continue
-                value = hmac.new(key, user + salt, sha).hexdigest()
+                fi = open('/Users/katieschramm/dev/git/FBI/fbigov-dev/sha256_check', 'a')
+                path = 'castle/cms/browser/security/chat ChatLogin __call__'
+                fi.write(path + '\n')
+                fi.close()
+                value = hmac.new(key, user + salt, sha256).hexdigest()
                 if _is_equal(value, token):
                     return json.dumps({
                         'status': 'success',

@@ -3,7 +3,7 @@ from logging import getLogger
 from shutil import copyfile, rmtree
 from tempfile import mkdtemp
 
-from castle.cms.commands import avconv, md5
+from castle.cms.commands import avconv, sha256
 from castle.cms.files import aws
 from castle.cms.services.google import youtube
 from collective.celery.utils import getCelery
@@ -35,12 +35,12 @@ def process(context):
 
     # by default, assume all non-mp4 videos need to be converted
     # but in reality, all videos need converting, even mp4.
-    # md5 is only what makes this possible
+    # sha256 is only what makes this possible
     convert_it = video.contentType.split('/')[-1] != 'mp4'
-    if md5 is not None:
-        old_hash = getattr(context, '_file_hash', None)
-        current_hash = md5(bfilepath)
-        if old_hash is None or old_hash != current_hash:
+    if sha256 is not None:
+        old_encrypt = getattr(context, '_file_encrypt', None)
+        current_encrypt = sha256(bfilepath)
+        if old_encrypt is None or old_encrypt != current_encrypt:
             convert_it = True
 
     if context.image and not convert_it:
@@ -50,8 +50,8 @@ def process(context):
     if convert_it and youtube.should_upload(context):
         try:
             youtube.upload(context, bfilepath, filename=video.filename)
-            # saving hash tells us we do not need to convert anymore...
-            context._file_hash = md5(bfilepath)
+            # saving encrypt tells us we do not need to convert anymore...
+            context._file_encrypt = sha256(bfilepath)
             convert_it = False
         except Exception:
             logger.error('Error uploading youtube video', exc_info=True)
@@ -68,11 +68,11 @@ def process(context):
             logger.info('Could not convert video', exc_info=True)
         if (os.path.exists(output_filepath) and
                 os.path.getsize(output_filepath) > 0):
-            if md5 is not None:
+            if sha256 is not None:
                 try:
-                    context._file_hash = md5(output_filepath)
+                    context._file_encrypt = sha256(output_filepath)
                 except Exception:
-                    logger.info('Could not get md5', exc_info=True)
+                    logger.info('Could not get sha256', exc_info=True)
             if not getCelery().conf.task_always_eager:
                 context._p_jar.sync()
             fi = open(output_filepath)
