@@ -99,7 +99,7 @@ class Authenticator(object):
     def request_form_url(self):
         url = '/@@request-form'
         if not self.is_zope_root and self.registry:
-            url = self.registry.get('plone.request_form_url', '/@@request-form')
+            url = self.registry.get('plone.request_access_form_path', '/@@request-form')
         return url
 
     @property
