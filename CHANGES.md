@@ -4,7 +4,7 @@ Changelog
 3.0.0b126 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Allow users to request site access on login screen
 
 
 3.0.0b125 (2023-07-31)

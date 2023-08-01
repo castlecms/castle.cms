@@ -63,3 +63,11 @@ def upgrade_3006_ga4(site, logger=None):
 
 
 upgrade_3007 = default_upgrade_factory('3007')
+
+
+def upgrade_3008(site, logger=None):
+    setup = getToolByName(site, 'portal_setup')
+    full_profile_id = 'profile-castle.cms:{}'.format('3008')
+    setup.runAllImportStepsFromProfile(full_profile_id)
+    cookWhenChangingSettings(api.portal.get())
+    re_register_profile(ISecuritySchema, 'castle')

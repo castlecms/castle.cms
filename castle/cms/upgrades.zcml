@@ -1,7 +1,8 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="castle.cms">
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+  i18n_domain="castle.cms"
+>
 
   <genericsetup:registerProfile
     name="3000"
@@ -9,7 +10,7 @@
     directory="profiles/3000"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
+  />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3000"
     description=""
@@ -17,7 +18,7 @@
     destination="3000"
     handler=".upgrades.upgrade_3000"
     profile="castle.cms:default"
-    />
+  />
 
 
   <genericsetup:registerProfile
@@ -26,7 +27,7 @@
     directory="profiles/3001"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
+  />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3001"
     description="Ensures mockup-structure-pattern-url is also pointing at ++plone++castle/patterns/structure/"
@@ -34,7 +35,7 @@
     destination="3001"
     handler=".upgrades.upgrade_3001"
     profile="castle.cms:default"
-    />
+  />
 
 
   <genericsetup:registerProfile
@@ -43,7 +44,7 @@
     directory="profiles/3003"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
+  />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3003"
     description="TinyMCE on forms for logged out users"
@@ -51,7 +52,7 @@
     destination="3003"
     handler=".upgrades.upgrade_3003"
     profile="castle.cms:default"
-    />
+  />
 
 
   <genericsetup:registerProfile
@@ -60,7 +61,7 @@
     directory="profiles/3004"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
+  />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3004"
     description="Fix pagination issues on content browser component"
@@ -68,7 +69,7 @@
     destination="3004"
     handler=".upgrades.upgrade_3004"
     profile="castle.cms:default"
-    />
+  />
 
 
   <genericsetup:upgradeStep
@@ -78,7 +79,7 @@
     destination="3005"
     handler=".upgrades.upgrade_3005"
     profile="castle.cms:default"
-    />
+  />
 
 
   <genericsetup:registerProfile
@@ -87,20 +88,21 @@
     directory="profiles/3006"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
+  />
   <genericsetup:upgradeSteps
     source="*"
     destination="3006"
-      profile="castle.cms:default">
+    profile="castle.cms:default"
+  >
 
-      <genericsetup:upgradeStep
-        title="add explicit enable/disable of country code checking to security control panel"
-        handler=".upgrades.upgrade_3006_cc"
-        />
-      <genericsetup:upgradeStep
-        title="migrate to Google Analytics 4 settings structure"
-        handler=".upgrades.upgrade_3006_ga4"
-        />
+    <genericsetup:upgradeStep
+      title="add explicit enable/disable of country code checking to security control panel"
+      handler=".upgrades.upgrade_3006_cc"
+    />
+    <genericsetup:upgradeStep
+      title="migrate to Google Analytics 4 settings structure"
+      handler=".upgrades.upgrade_3006_ga4"
+    />
   </genericsetup:upgradeSteps>
 
 
@@ -111,13 +113,29 @@
     description="Add Email Templates to castle.cms"
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
-
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3.0.7"
     description="Add Email Templates to castle.cms"
     source="*"
     destination="3007"
     handler=".upgrades.upgrade_3007"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3008"
+    title="CastleCMS upgrade to 3008 profile"
+    directory="profiles/3008"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3008"
+    description="Update ISecuritySchema with Request Access Form fields"
+    source="*"
+    destination="3008"
+    handler=".upgrades.upgrade_3008"
     profile="castle.cms:default"
   />
 
