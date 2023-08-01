@@ -38,18 +38,20 @@
           </div>
         </div>
       </div>
-      <h5 class="text-center"
-          style="color: green">
-        <div tal:condition="view/request_submitted">
-          Your request has been successfully submitted.
-        </div>
-      </h5>
-      <h5 class="text-center"
-          style="color: red">
-        <div tal:condition="not: view/request_submitted">
-          An error has occured. Contact your site administrator for assistance.
-        </div>
-      </h5>
+      <tal:request-access tal:condition="python: view.request_submitted is not None">
+        <h5 class="text-center"
+            style="color: green">
+          <div tal:condition="view/request_submitted">
+            Your request has been successfully submitted.
+          </div>
+        </h5>
+        <h5 class="text-center"
+            style="color: red">
+            <div tal:condition="not: view/request_submitted">
+            An error has occured. Contact your site administrator for assistance.
+          </div>
+        </h5>
+      </tal:request-access>
       <div id="secure-login" data-options="${view/options}">
         <p tal:condition="bad_domain" i18n:translate="description_bad_login_domain" class="login-exception-container">
             Wrong domain; Contact your site administrator for assistance.
@@ -59,7 +61,7 @@
 
     <div tal:condition="not: view/auth/is_zope_root" id="secure-login-footer-message">
       <h3 class="text-center">${python: utils.get_registry_value('plone.login_footer_message')}</h3>
-      <h5 tal:condition="view/auth/request_access" class="text-center"><a href="${portal_url}/@@request-form">Request Access</a></h5>
+      <h5 tal:condition="python: view.auth.request_access and not view.request_submitted" class="text-center"><a href="${portal_url}/@@request-form">Request Access</a></h5>
     </div>
 
     <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++plone++static/components/requirejs/require.js"></script>

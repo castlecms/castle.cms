@@ -76,7 +76,10 @@ class SecureLoginView(BrowserView):
 
     @property
     def request_submitted(self):
-        return self.request.get('submit') == 'true'
+        submit = self.request.get('submit', None)
+        if submit is None:
+            return None
+        return submit == 'true'
 
     @property
     def request_form_url(self):
