@@ -74,6 +74,11 @@ class SecureLoginView(BrowserView):
     def from_backend_url(self):
         return is_backend(self.request)
 
+    @property
+    def request_submitted(self):
+        return self.request.get('submit') == 'true'
+
+    @property
     def request_form_url(self):
         return self.auth.request_form_url
 

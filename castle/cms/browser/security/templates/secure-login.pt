@@ -38,11 +38,16 @@
           </div>
         </div>
       </div>
-      <h5 tal:define="url view/request_form_url;"
-           class="text-center"
-           style="color: green">
-        <div tal:condition="python: request.get('HTTP_REFERER').endswith(url)">
+      <h5 class="text-center"
+          style="color: green">
+        <div tal:condition="view/request_submitted">
           Your request has been successfully submitted.
+        </div>
+      </h5>
+      <h5 class="text-center"
+          style="color: red">
+        <div tal:condition="not: view/request_submitted">
+          An error has occured. Contact your site administrator for assistance.
         </div>
       </h5>
       <div id="secure-login" data-options="${view/options}">

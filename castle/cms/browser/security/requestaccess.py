@@ -1,27 +1,64 @@
-import logging
-
-from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
-from zope.interface import implements
+from zope.interface import implementer
 
 from castle.cms.browser.security.login import SecureLoginView
 from castle.cms.interfaces import ISecureLoginAllowedView
 from castle.cms.interfaces import IAuthenticator
 from castle.cms.tasks import send_email
 
+import logging
+import plone.api as api
 
 logger = logging.getLogger('Plone')
 
-
+@implementer(ISecureLoginAllowedView)
 class RequestAccessView(BrowserView):
-    implements(ISecureLoginAllowedView)
+
+    default_fields = ['name', 'email', 'phone']
+
+    @property
+    def accepted_fields(self):
+        fields_string = api.portal.get_registry_record(
+            'plone.request_access_form_accepted_fields',
+            default='',
+        )
+        fields = [
+            field.strip()
+            for field in fields_string.splitlines()
+            if len(field.strip()) > 0
+        ]
+        if len(fields) == 0:
+            return self.default_fields
+        return fields
+
+    @property
+    def request_access_email_addresses(self):
+        if api.portal.get_registry_record('plone.request_access_enabled', default=False) is False:
+            return []
+        system_email_address = api.portal.get_registry_record('plone.system_email_address', default='')
+        access_request_email_addresses = api.portal.get_registry_record(
+            'plone.request_access_form_email_addresses',
+            default=system_email_address,
+        )
+        return list(set([
+            email.strip()
+            for email in access_request_email_addresses.splitlines()
+            if len(email.strip()) > 0
+        ]))
+
+    @property
+    def request_access_enabled(self):
+        if api.portal.get_registry_record('plone.request_access_enabled', default=False) is False:
+            return False
+        if len(self.request_access_email_addresses) == 0:
+            return False
+        return True
 
     def __init__(self, context, request):
         super(RequestAccessView, self).__init__(context, request)
-
         self.auth = self.authenticator = getMultiAdapter((context, request), IAuthenticator)
 
     def __call__(self):
@@ -38,13 +75,7 @@ class RequestAccessView(BrowserView):
             site_title = registry.get('plone.site_title', 'CastleCMS')
             site_url = api.portal.get().absolute_url()
 
-            system_email_address = registry.get('plone.system_email_address', None)
-            configured_addresses = registry.get('plone.request_access_form_email_addresses', system_email_address)
-            if configured_addresses is None:
-                addresses = []
-            else:
-                addresses = list(set(configured_addresses.strip().splitlines()))
-
+            addresses = self.request_access_email_addresses
             fields = self.request_info()
             subject = 'Request Access Form Submission on {}'.format(site_title)
             text = 'Request Access Form Data\n--------------\n{}'.format(fields)
@@ -56,30 +87,22 @@ class RequestAccessView(BrowserView):
                     "not sending any request access form submission:"
                     "\n\nSubject: {}\n\n{}\n\n".format(subject, text))
                 self.request.response.setStatus(302)
-                self.request.response.redirect('{}/@@secure-login'.format(site_url))
+                self.request.response.redirect('{}/@@secure-login?submit=false'.format(site_url))
                 return
 
             logging.info("sending request access form submission to {}".format(", ".join(addresses)))
             send_email.delay(recipients=addresses, subject=subject, text=text)
             self.request.response.setStatus(302)
-            self.request.response.redirect('{}/@@secure-login'.format(site_url))
+            self.request.response.redirect('{}/@@secure-login?submit=true'.format(site_url))
         except Exception:
             logging.error("problem sending request access form", exc_info=True)
             self.request.response.setStatus(400)
 
 
     def request_info(self):
-        registry = queryUtility(IRegistry)
-
         # we only send data that was requested to actually be sent to prevent exploitation
         # of the form as much as possible
-        accepted_fields = registry.get('plone.request_access_form_accepted_fields', None)
-        if accepted_fields is None:
-            accepted_fields = []
-        elif len(accepted_fields.strip()) <= 0:
-            accepted_fields = []
-        else:
-            accepted_fields = accepted_fields.strip().splitlines()
+        accepted_fields = self.accepted_fields
 
         form = self.request.form
         values = []

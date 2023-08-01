@@ -62,5 +62,5 @@ def upgrade_3006_ga4(site, logger=None):
         api.portal.set_registry_record('castle.google_analytics_id', u'')
 
 
-def upgrade_3007(site, logger=None):
+def upgrade_3008(site, logger=None):
     re_register_profile(ISecuritySchema, 'castle')
