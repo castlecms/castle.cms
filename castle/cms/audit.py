@@ -190,33 +190,38 @@ class ConfigModifyRecorder(DefaultRecorder):
     def __call__(self):
         data = super(ConfigModifyRecorder, self).__call__()
         try:
-            data['summary'] = 'Configuration Record '
-            '%s modified. Old value: %s, New value: %s' % (
+            data['summary'] = 'Configuration Record %s modified. Old value: %s, New value: %s' % (
                 self.event.record,
                 self.event.oldValue,
                 self.event.newValue
             )
         except AttributeError:
-            data['summary'] = 'Configuration Record '
-            '%s modified.' % self.event.record
+            data['summary'] = 'Configuration Record %s modified.' % self.event.record
         return data
 
 
 class CacheInvalidatedRecorder(DefaultRecorder):
     def __call__(self):
         data = super(CacheInvalidatedRecorder, self).__call__()
-        if self.event.object.success:
-            data['summary'] = 'The following urls have been purged: '
-            '%s' % self.event.object.purged
+        success = getattr(self.event, 'success', False)
+        purged = getattr(self.event, 'purged', [])
+        is_automatic_purge = getattr(self.event, 'is_automatic_purge', [])
+
+        if is_automatic_purge:
+            data['actionname'] += ' Automatically'
         else:
-            data['summary'] = 'Cache invalidation failure. '
-            'Make sure caching proxies are properly configured.'
+            data['actionname'] += ' Manually'
+        if success:
+            summary = 'The following urls have been purged: {urls}'.format(urls=repr(purged))
+        else:
+            summary = 'Cache invalidation failure. Make sure caching proxies are properly configured.'
+        data['summary'] = summary
         return data
 
 
-class ContentTypeChangeNoteRecorder(DefaultRecorder):
+class ContentChangeNoteRecorder(DefaultRecorder):
     def __call__(self):
-        data = super(ContentTypeChangeNoteRecorder, self).__call__()
+        data = super(ContentChangeNoteRecorder, self).__call__()
         data['summary'] = 'Change Note Summary: %s' % \
                           self.event.object.changeNote
         return data
@@ -243,7 +248,7 @@ _registered = {
     IObjectCopiedEvent: AuditData('content', 'Copied'),
     IObjectModifiedEvent: AuditData(
         'content', 'Modified',
-        recorder_class=ContentTypeChangeNoteRecorder),
+        recorder_class=ContentChangeNoteRecorder),
     IObjectMovedEvent: AuditData('content', 'Moved'),
     IObjectRemovedEvent: AuditData('content', 'Deleted'),
     IPrincipalCreatedEvent: AuditData('user', 'Created'),
@@ -273,7 +278,7 @@ _registered = {
     ITrashEmptiedEvent: AuditData('content', 'Trash Emptied'),
     ICacheInvalidatedEvent: AuditData(
         'content', 'Cache Invalidated',
-        recorder_class=CacheInvalidatedRecorder)
+        recorder_class=CacheInvalidatedRecorder),
 }
 
 
@@ -295,8 +300,8 @@ def event(obj, event=None):
         event = obj
         obj = None
 
-    iface = providedBy(event).declared[0]
-    if iface not in _registered:
+    interface = providedBy(event).declared[0]
+    if interface not in _registered:
         return
 
     if obj is not None and ITrashed.providedBy(obj):
@@ -304,15 +309,15 @@ def event(obj, event=None):
         # we don't want to record transition events for trashing
         # and we want a special psuedo trash event
         # then, we still want an event when it gets deleted for good
-        if iface not in (IAfterTransitionEvent, IObjectRemovedEvent):
+        if interface not in (IAfterTransitionEvent, IObjectRemovedEvent):
             # dive out if not IAfterTransitionEvent or object removed event
             return
-        if iface == IObjectRemovedEvent:
-            audit_data = _registered[iface]
+        if interface == IObjectRemovedEvent:
+            audit_data = _registered[interface]
         else:
             audit_data = _registered[ITrashed]
     else:
-        audit_data = _registered[iface]
+        audit_data = _registered[interface]
 
     recorder = audit_data.get_recorder(event, obj)
     try:

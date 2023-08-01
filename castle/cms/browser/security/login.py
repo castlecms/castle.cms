@@ -95,7 +95,7 @@ class SecureLoginView(BrowserView):
     def country_blocked(self):
         if self.request.form.get('apiMethod', None) == 'request_country_exception':
             user = api.user.get(username=self.username)
-            cache_key = self.auth.get_country_exception_cache_key(user.getId)
+            cache_key = self.auth.get_country_exception_cache_key(user.getId())
             try:
                 request_data = cache.get(cache_key)
             except KeyError:

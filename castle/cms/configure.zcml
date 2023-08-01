@@ -130,6 +130,10 @@
     component=".vocabularies.ProvidesTitleSummaryLeadImageVocabularyFactory"
     name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
     />
+  <utility
+    component=".vocabularies.EmailTemplateVocabulary"
+    name="castle.cms.vocabularies.EmailTemplates"
+    />
 
   <!-- override default syndication -->
   <adapter factory=".syndication.DexterityItem"

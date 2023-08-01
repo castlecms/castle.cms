@@ -1,10 +1,32 @@
 Changelog
 =========
 
-3.0.0b123 (unreleased)
+3.0.0b126 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b125 (2023-07-31)
+----------------------
+
+- Allow batching in cloudflare purging
+- Add Email Templates
+- Make icon, favicon, manifest, browserconfig fully public
+
+
+3.0.0b124 (2023-07-12)
+----------------------
+
+- Remove duplicate paths in cache purging
+
+
+3.0.0b123 (2023-07-12)
+----------------------
+
+- additional data in purging and purge events
+- automatically purge on modifying
+- change cloudflare api stuff
 
 
 3.0.0b122 (2023-04-11)

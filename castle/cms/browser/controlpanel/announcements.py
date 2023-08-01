@@ -8,7 +8,6 @@ from castle.cms.tasks import send_email
 from castle.cms.tasks import send_email_to_subscribers
 from castle.cms.widgets import AjaxSelectFieldWidget
 from castle.cms.widgets import SelectFieldWidget, TinyMCETextFieldWidget
-from plone import api
 from plone.app.registry.browser import controlpanel
 from plone.app.textfield import RichText
 from plone.app.textfield.value import RichTextValue
@@ -24,14 +23,16 @@ from z3c.form import button
 from z3c.form import form
 from z3c.form.browser.file import FileWidget
 from z3c.form.interfaces import WidgetActionExecutionError
-from zope import schema
 from zope.component import getAdapters
 from zope.component import getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.Five import BrowserView
 
-reg_key = 'castle.subscriber_categories'
+import plone.api as api
+import zope.schema as schema
+
+SUBSCRIBER_CATEGORIES_REGISTRY_KEY = 'castle.subscriber_categories'
 
 
 class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
@@ -48,9 +49,12 @@ class AnnouncementsControlPanelForm(controlpanel.RegistryEditForm):
 
 
 class ISendEmailUsersForm(model.Schema):
+    directives.widget('subject', klass='email-subject--users')
     subject = schema.ASCIILine(
-        title=u'Subject')
+        title=u'Subject',
+    )
 
+    directives.widget('send_from', klass='email-send-from--users')
     send_from = schema.TextLine(
         title=u'Custom FROM address',
         required=False,
@@ -59,15 +63,16 @@ class ISendEmailUsersForm(model.Schema):
     directives.widget(
         'send_to_groups',
         AjaxSelectFieldWidget,
-        vocabulary='plone.app.vocabularies.Groups'
+        vocabulary='plone.app.vocabularies.Groups',
+        klass='email-send-to-groups--users',
     )
 
     send_to_groups = schema.List(
-        title=u'Send to groups',
+        title=u'Send to user groups',
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Groups'
         ),
-        required=False
+        required=False,
     )
 
     directives.widget(
@@ -81,15 +86,14 @@ class ISendEmailUsersForm(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.vocabularies.Users'
         ),
-        required=False
+        required=False,
     )
 
     send_to_custom = schema.List(
-        title=u'To(additional)',
-        description=u'Additional email addresses, one per line, to '
-                    u'send emails to.',
+        title=u'Additional recipients',
+        description=u'Additional email addresses, one per line, to send emails to.',
         value_type=schema.TextLine(),
-        required=False
+        required=False,
     )
 
     body = RichText(
@@ -98,7 +102,8 @@ class ISendEmailUsersForm(model.Schema):
         default_mime_type='text/html',
         output_mime_type='text/html',
         allowed_mime_types=('text/html',),
-        required=True)
+        required=True,
+    )
 
 
 class SendEmailUsersForm(AutoExtensibleForm, form.Form):
@@ -142,18 +147,21 @@ class SendEmailUsersForm(AutoExtensibleForm, form.Form):
 
 
 class ISendEmailSubscribersForm(model.Schema):
+    directives.widget('subject', klass='email-subject--subscribers')
     subject = schema.ASCIILine(
-        title=u'Subject')
+        title=u'Subject',
+    )
 
     directives.widget('send_to_categories', SelectFieldWidget)
     send_to_categories = schema.List(
-        title=u'Send to categories',
+        title=u'Send to subscription categories',
         required=False,
         value_type=schema.Choice(
             vocabulary='castle.cms.vocabularies.EmailCategories'
         )
     )
 
+    directives.widget('send_from', klass='email-send-from--subscribers')
     send_from = schema.TextLine(
         title=u'Custom FROM address',
         required=False,
@@ -227,6 +235,42 @@ class SendTextForm(AutoExtensibleForm, form.Form):
                 'Text message sent', request=self.request, type='info')
             self.request.response.redirect('%s/@@announcements-controlpanel' % (
                 self.context.absolute_url()))
+
+
+class IUsersLoadEmailTemplateForm(model.Schema):
+    directives.widget('users_load_email_template', klass='load-email-template-select--users')
+    users_load_email_template = schema.Choice(
+        title=u'Load email template',
+        description=u'Select an email template to load populate email fields below. '
+                    u'WARNING: this will replace the contents of any fields present in the email template.',
+        required=False,
+        vocabulary='castle.cms.vocabularies.EmailTemplates',
+        default=u'None',
+    )
+
+
+class UsersLoadEmailTemplateForm(AutoExtensibleForm, form.Form):
+    schema = IUsersLoadEmailTemplateForm
+    ignoreContext = True
+
+
+class ISubscribersLoadEmailTemplateForm(model.Schema):
+    directives.widget('subscribers_load_email_template', klass='load-email-template-select--subscribers')
+    subscribers_load_email_template = schema.Choice(
+        title=u'Load email template',
+        description=u'Select an email template to load populate email fields below. '
+                    u'WARNING: this will replace the contents of any fields present in the email template.',
+        required=False,
+        vocabulary='castle.cms.vocabularies.EmailTemplates',
+        default=u'None',
+    )
+
+
+class SubscribersLoadEmailTemplateForm(AutoExtensibleForm, form.Form):
+    schema = ISubscribersLoadEmailTemplateForm
+    ignoreContext = True
+
+
 
 
 class IExportSubscribersForm(model.Schema):
@@ -327,11 +371,11 @@ class ImportSubscribersForm(AutoExtensibleForm, form.Form):
                             except ValueError:
                                 subscriber[columns[index]] = col
                     subscribe.register(subscriber['email'], subscriber)
-                allcategories = api.portal.get_registry_record(reg_key)
+                all_categories = api.portal.get_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY)
                 for cat in subscriber['categories']:
-                    if cat not in allcategories:
-                        allcategories.append(cat)
-                api.portal.set_registry_record(reg_key, allcategories)
+                    if cat not in all_categories:
+                        all_categories.append(cat)
+                api.portal.set_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY, all_categories)
 
 
 class IMergeCategoriesForm(model.Schema):
@@ -358,7 +402,7 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
     def handle_merge(self, action):
         data, errors = self.extractData()
         if not errors:
-            allcategories = api.portal.get_registry_record(reg_key)
+            all_categories = api.portal.get_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY)
             categories = set()
             newname = u''
             if 'form.widgets.rename_merge_categories' in self.request.form:
@@ -367,7 +411,7 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
             if 'form.widgets.new_category_name' in self.request.form:
                 newname = data['new_category_name'].split(';')[0]
             if len(categories) > 0 and len(newname) > 0:
-                if newname in allcategories and newname not in categories:
+                if newname in all_categories and newname not in categories:
                     raise WidgetActionExecutionError(
                         'new_category_name',
                         Invalid(
@@ -376,9 +420,9 @@ class MergeCategoriesForm(AutoExtensibleForm, form.Form):
                     )
                     return
                 for category in categories:
-                    allcategories.remove(category)
-                allcategories.append(newname)
-                api.portal.set_registry_record(reg_key, allcategories)
+                    all_categories.remove(category)
+                all_categories.append(newname)
+                api.portal.set_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY, all_categories)
                 for subscriber in subscribe.all():
                     if ('categories' in subscriber and len(subscriber['categories']) > 0):
                         if len(categories.intersection(subscriber['categories'])) > 0:
@@ -417,7 +461,7 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
     def handle_delete(self, action):
         data, errors = self.extractData()
         if not errors:
-            allcategories = api.portal.get_registry_record(reg_key)
+            all_categories = api.portal.get_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY)
             categories = set()
             if 'form.widgets.delete_categories' in self.request.form:
                 if data['delete_categories'] not in (None, ''):
@@ -438,10 +482,10 @@ class DeleteCategoriesForm(AutoExtensibleForm, form.Form):
                                             subcat.remove(category)
                                 subscriber['categories'] = subcat
                     if force_delete or not existing_subscribers:
-                        allcategories.remove(category)
+                        all_categories.remove(category)
                     else:
                         badcategories.append(category)
-                api.portal.set_registry_record(reg_key, allcategories)
+                api.portal.set_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY, all_categories)
                 self.widgets['delete_categories'].value = ';'.join(badcategories)
                 if len(badcategories) > 0:
                     raise WidgetActionExecutionError(
@@ -470,7 +514,7 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
     def handle_addcat(self, action):
         data, errors = self.extractData()
         if not errors:
-            allcategories = api.portal.get_registry_record(reg_key)
+            all_categories = api.portal.get_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY)
             categories = set()
             if 'add_categories' in data:
                 if data['add_categories'] not in (None, ''):
@@ -479,11 +523,11 @@ class AddCategoryForm(AutoExtensibleForm, form.Form):
                 badcategories = []
                 for category in categories:
                     category = category.strip()
-                    if len(category) > 0 and category not in allcategories:
-                        allcategories.append(category)
+                    if len(category) > 0 and category not in all_categories:
+                        all_categories.append(category)
                     else:
                         badcategories.append(category)
-                api.portal.set_registry_record(reg_key, allcategories)
+                api.portal.set_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY, all_categories)
                 self.widgets['add_categories'].value = ';'.join(badcategories)
                 if len(badcategories) > 0:
                     raise WidgetActionExecutionError(
@@ -510,9 +554,11 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.merge_categories_form = MergeCategoriesForm(aq_inner(context), request)
         self.delete_categories_form = DeleteCategoriesForm(aq_inner(context), request)
         self.add_category_form = AddCategoryForm(aq_inner(context), request)
+        self.users_load_email_template_form = UsersLoadEmailTemplateForm(aq_inner(context), request)
+        self.subscribers_load_email_template_form = SubscribersLoadEmailTemplateForm(aq_inner(context), request)  # noqa: E501
 
     def get_sub_count(self):
-        self.categories = api.portal.get_registry_record(reg_key)
+        self.categories = api.portal.get_registry_record(SUBSCRIBER_CATEGORIES_REGISTRY_KEY)
         self.sub_count = {}
         for category in self.categories:
             self.sub_count[category] = 0
@@ -538,9 +584,12 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
 
     def __call__(self):
         registry = getUtility(IRegistry)
-        if (registry.get('castle.plivo_auth_id') and
-                registry.get('castle.plivo_auth_token') and
-                registry.get('castle.plivo_phone_number')):
+        has_texting = all([
+            registry.get('castle.plivo_auth_id', None),
+            registry.get('castle.plivo_auth_token', None),
+            registry.get('castle.plivo_phone_number', None),
+        ])
+        if has_texting:
             self.hasTexting = True
         self.email_form.update()
         self.email_subscribers_form.update()
@@ -550,6 +599,8 @@ class AnnouncementsControlPanel(controlpanel.ControlPanelFormWrapper):
         self.merge_categories_form.update()
         self.delete_categories_form.update()
         self.add_category_form.update()
+        self.subscribers_load_email_template_form.update()
+        self.users_load_email_template_form.update()
         self.get_sub_count()
         self.update_terms()
         return super(AnnouncementsControlPanel, self).__call__()

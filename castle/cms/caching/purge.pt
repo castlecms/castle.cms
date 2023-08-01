@@ -24,7 +24,7 @@
     <tal:purged tal:condition="view/purged">
       <h3>Purged urls</h3>
       <p tal:condition="not: view/success" class="discreet">
-        There was an error submitted the purge request
+        There was an error submitting the purge request
       </p>
       <ul class='purge-paths'>
         <tal:path tal:repeat="url python: sorted(view.purged)">
