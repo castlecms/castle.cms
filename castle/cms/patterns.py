@@ -18,11 +18,25 @@ from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFPlone.interfaces import IPatternsSettings, IPloneSiteRoot
 
 # Plone5.2 - 'PloneSettingsAdapter' name and location changed
-from Products.CMFPlone.patterns.settings import PatternSettingsAdapter as PloneSettingsAdapter
+from Products.CMFPlone.patterns.settings import PatternSettingsAdapter
 from Products.CMFPlone.patterns.tinymce import TinyMCESettingsGenerator
 from zope.component import getUtility
 from zope.interface import implements
 from castle.cms.services.google import youtube
+
+from zope.schema.interfaces import IVocabularyFactory
+from Products.CMFPlone.interfaces import ILinkSchema
+from Products.CMFPlone.interfaces import IPatternsSettings
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.CMFPlone.patterns.tinymce import TinyMCESettingsGenerator
+from Products.CMFPlone.utils import get_portal
+from plone.app.z3cform.utils import call_callables
+from zope.component import getUtility
+from zope.i18n import translate
+from zope.interface import implementer
+from zope.schema.interfaces import IVocabularyFactory
+from plone.app.widgets.utils import get_relateditems_options
+from plone.app.content.browser.interfaces import IFolderContentsView
 
 
 class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
@@ -46,63 +60,89 @@ class CastleTinyMCESettingsGenerator(TinyMCESettingsGenerator):
             config['style_formats'].extend(formats)
         return config
 
-
-class CastleSettingsAdapter(PloneSettingsAdapter):
+# Plone5.2 - Migrated new 'PatternSettingsAdapter' here to get tinyMCE to initialize
+@implementer(IPatternsSettings)
+class CastleSettingsAdapter(PatternSettingsAdapter):
     """
-    This adapter will handle all default plone settings.
-
-    Right now, it only does tinymce
+    Provides default plone settings relevant for patterns.
     """
-    implements(IPatternsSettings)
 
     def __init__(self, context, request, field):
-        super(CastleSettingsAdapter, self).__init__(context, request, field)
-        self.site = api.portal.get()
+        self.request = request
+        self.context = context
+        self.field = field
 
-    @property
-    @memoize
-    def registry(self):
-        return getUtility(IRegistry)
-
-    def get_cachable_config_data(self):
-        cache_key = '%s-config-data' % '/'.join(self.site.getPhysicalPath()[1:])
-        try:
-            return cache.get(cache_key)
-        except Exception:
-            pass
-
-        available_tiles = self.registry.get('castle.slot_tiles')
-        if not available_tiles:
-            available_tiles = {
-                'Structure': ['plone.app.standardtiles.rawhtml']
-            }
-
-        # otherwise, you're editing the value in the DB!!!!
-        available_tiles = available_tiles.copy()
-
-        for group_name, tile_ids in available_tiles.items():
-            group = []
-            for tile_id in tile_ids:
-                tile = getUtility(ITileType, name=tile_id)
-                group.append({
-                    'id': tile_id,
-                    'label': tile.title
-                })
-            available_tiles[group_name] = group
-
-        data = {
-            'data-available-slots': json.dumps(available_tiles),
-            'data-youtube-enabled': str(youtube.get_oauth_token() is not None).lower()
-        }
-
-        cache.set(cache_key, data, 600)
+    def __call__(self):
+        data = super(CastleSettingsAdapter, self).__call__()
+        data.update(self.mark_special_links())
+        data.update(self.structure_updater())
         return data
 
+    def structure_updater(self):
+        """Generate the options for the structure updater pattern.
+        If we're not in folder contents view, do not expose these options.
+        """
+        data = {}
+        view = self.request.get('PUBLISHED', None)
+        if IFolderContentsView.providedBy(view):
+            data = {
+                'data-pat-structureupdater': json.dumps({
+                    'titleSelector': '.documentFirstHeading',
+                    'descriptionSelector': '.documentDescription'
+                })
+            }
+        return data
+
+    def mark_special_links(self):
+        result = {}
+
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ILinkSchema, prefix="plone", check=False)
+
+        msl = settings.mark_special_links
+        elonw = settings.external_links_open_new_window
+        if msl or elonw:
+            result = {
+                'data-pat-markspeciallinks': json.dumps(
+                    {
+                        'external_links_open_new_window': elonw,
+                        'mark_special_links': msl
+                    }
+                )
+            }
+        return result
+
+    @property
+    def image_scales(self):
+        factory = getUtility(
+            IVocabularyFactory,
+            'plone.app.vocabularies.ImagesScales'
+        )
+        vocabulary = factory(self.context)
+        ret = [{
+            'title': translate(it.title), 'value': it.value}
+            for it in vocabulary]
+        ret = sorted(ret, key=lambda it: it['title'])
+        return json.dumps(ret)
+
     def tinymce(self):
+        """
+        data-pat-tinymce : JSON.stringify({
+            relatedItems: {
+              vocabularyUrl: config.portal_url +
+                '/@@getVocabulary?name=plone.app.vocabularies.Catalog'
+            },
+            tiny: config,
+            prependToUrl: 'resolveuid/',
+            linkAttribute: 'UID',
+            prependToScalePart: '/@@images/image/'
+          })
+        """
         generator = CastleTinyMCESettingsGenerator(self.context, self.request)
         settings = generator.settings
-
         folder = aq_inner(self.context)
+
         # Test if we are currently creating an Archetype object
         if IFactoryTempFolder.providedBy(aq_parent(folder)):
             folder = aq_parent(aq_parent(aq_parent(folder)))
@@ -113,109 +153,49 @@ class CastleSettingsAdapter(PloneSettingsAdapter):
             initial = None
         else:
             initial = IUUID(folder, None)
-        current_path = folder.absolute_url()[len(generator.portal_url):]
 
-        scales = []
-        for name, info in sorted(getAllowedSizes().items(), key=lambda x: x[1][0]):
-            scales.append({
-                'part': name,
-                'name': name,
-                'label': '{} ({}x{})'.format(
-                    name.capitalize(),
-                    info[0],
-                    info[1])
-            })
+        portal = get_portal()
+        portal_url = portal.absolute_url()
+        current_path = folder.absolute_url()[len(portal_url):]
+
         image_types = settings.image_objects or []
-        folder_types = settings.contains_objects or []
+
+        server_url = self.request.get('SERVER_URL', '')
+        site_path = portal_url[len(server_url):]
+
+        related_items_config = get_relateditems_options(
+            context=self.context,
+            value=None,
+            separator=';',
+            vocabulary_name='plone.app.vocabularies.Catalog',
+            vocabulary_view='@@getVocabulary',
+            field_name=None
+        )
+        related_items_config = call_callables(
+            related_items_config,
+            self.context
+        )
+
         configuration = {
-            'relatedItems': {
-                'vocabularyUrl':
-                    '%s/@@getVocabulary?name=plone.app.vocabularies.Catalog' % (
-                        generator.portal_url)
-            },
-            'upload': {
-                'initialFolder': initial,
-                'currentPath': current_path,
-                'baseUrl': generator.portal_url,
-                'relativePath': '@@fileUpload',
-                'uploadMultiple': False,
-                'maxFiles': 1,
-                'showTitle': False
-            },
             'base_url': self.context.absolute_url(),
-            'tiny': generator.get_tiny_config(),
-            # This is for loading the languages on tinymce
-            'loadingBaseUrl': '%s/++plone++static/components/tinymce-builded/js/tinymce' % generator.portal_url,  # noqa
-            'prependToUrl': 'resolveuid/',
-            'linkAttribute': 'UID',
-            'prependToScalePart': '/@@images/image/',
-            'folderTypes': folder_types,
             'imageTypes': image_types,
-            'scales': scales
+            'imageScales': self.image_scales,
+            'linkAttribute': 'UID',
+            # This is for loading the languages on tinymce
+            'loadingBaseUrl': '{0}/++plone++static/components/tinymce-builded/'
+                              'js/tinymce'.format(portal_url),
+            'relatedItems': related_items_config,
+            'prependToScalePart': '/@@images/image/',
+            'prependToUrl': '{0}/resolveuid/'.format(site_path.rstrip('/')),
+            'tiny': generator.get_tiny_config(),
+            'upload': {
+                'baseUrl': portal_url,
+                'currentPath': current_path,
+                'initialFolder': initial,
+                'maxFiles': 1,
+                'relativePath': '@@fileUpload',
+                'showTitle': False,
+                'uploadMultiple': False,
+            },
         }
-
         return {'data-pat-tinymce': json.dumps(configuration)}
-
-    def __call__(self):
-        data = super(CastleSettingsAdapter, self).__call__()
-
-        if api.user.is_anonymous():
-            return data
-
-        folder = self.context
-        if not IDexterityContainer.providedBy(folder):
-            folder = aq_parent(folder)
-
-        upload_fields = get_upload_fields(self.registry)
-        required_fields = [f['name'] for f in upload_fields
-                           if f.get('required')]
-        data.update({
-            'data-file-upload-fields': json.dumps(upload_fields),
-            'data-google-maps-api-key': self.registry.get(
-                'castle.google_maps_api_key', '') or '',
-            'data-folder-url': folder.absolute_url(),
-
-            # b/w compat until resources updated
-            'data-required-file-upload-fields': json.dumps(required_fields),
-        })
-
-        data.update(self.get_cachable_config_data())
-
-        show_tour = False
-        user = api.user.get_current()
-        viewed = user.getProperty('tours_viewed', [])
-        if ('all' not in viewed and
-                set(viewed) != set(['welcome', 'dashboard', 'foldercontents',
-                                    'addcontentinitial', 'addcontentadd', 'editpage'])):
-            show_tour = True
-
-        if show_tour and not api.env.test_mode():
-            data['data-show-tour'] = json.dumps({
-                'viewed': viewed
-            })
-
-        folder = self.context
-        if not ISiteRoot.providedBy(folder) and not IDexterityContainer.providedBy(folder):
-            folder = aq_parent(folder)
-        site_path = self.site.getPhysicalPath()
-        folder_path = folder.getPhysicalPath()
-        data['data-base-path'] = '/' + '/'.join(folder_path[len(site_path):])
-
-        real_context = self.context
-        if ISiteRoot.providedBy(real_context):
-            # we're at site root but actually kind of want context front page
-            try:
-                real_context = real_context[getDefaultPage(real_context)]
-            except (AttributeError, KeyError):
-                pass
-        if IDashboard.providedBy(real_context):
-            real_context = self.site
-
-        transform = theming.getTransform(real_context, self.request)
-        if transform is not None:
-            data['data-site-layout'] = transform.get_layout_name(real_context)
-
-        data['data-site-default'] = getDefaultPage(self.site) or 'front-page'
-        data['data-uid'] = IUUID(real_context, '')
-
-        return data
