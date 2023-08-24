@@ -2,7 +2,9 @@
 from Products.PloneKeywordManager.tests.test_controlpanel import ControlPanelTestCase
 from Products.PloneKeywordManager.tests.test_dexterity import DexterityContentTestCase
 from Products.PloneKeywordManager.tests.test_non_ascii_keywords import NonAsciiKeywordsTestCase
-from Products.PloneKeywordManager.tests.test_setup import InstallTestCase
+
+# Plone5.2 TODO - InstallTestCase renamed to TestSetup. Some tests still failing
+from Products.PloneKeywordManager.tests.test_setup import TestSetup
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from plone import api
 
@@ -24,5 +26,5 @@ class NonAsciiKeywords(NonAsciiKeywordsTestCase):
     pass
 
 
-class Install(InstallTestCase):
+class Install(TestSetup):
     layer = CASTLE_PLONE_INTEGRATION_TESTING
