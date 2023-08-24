@@ -16,7 +16,7 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.security import checkPermission
 
 import socket
@@ -81,9 +81,8 @@ class Dashboard(BrowserView):
 
         return dashboard
 
-
+@implementer(IDashboardUtils)
 class DashboardUtils(BrowserView):
-    implements(IDashboardUtils)
 
     default_interests = (
         'Document',

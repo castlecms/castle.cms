@@ -268,7 +268,13 @@ class _Transform(object):
         '''
         adapted = ILayoutAware(context, None)
         selected = None
-        if adapted is not None:
+
+        """
+        Plone5.2 - 'ILayoutAware' now sometimes returns an empty 'LayoutAwareDefault' object instead of None,
+                    which caused the control panel to not load.
+                    Checking for empty fields works for now, may need to keep an eye on this.
+        """
+        if adapted is not None and adapted.pageSiteLayout is not None:
             selected = adapted.pageSiteLayout
             if selected is None:
                 context = aq_parent(context)
