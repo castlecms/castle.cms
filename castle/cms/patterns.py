@@ -114,6 +114,45 @@ class CastleSettingsAdapter(PatternSettingsAdapter):
         return result
 
     @property
+    @memoize
+    def registry(self):
+        return getUtility(IRegistry)
+
+    def get_cachable_config_data(self):
+        cache_key = '%s-config-data' % '/'.join(self.site.getPhysicalPath()[1:])
+        try:
+            return cache.get(cache_key)
+        except Exception:
+            pass
+
+        available_tiles = self.registry.get('castle.slot_tiles')
+        if not available_tiles:
+            available_tiles = {
+                'Structure': ['plone.app.standardtiles.rawhtml']
+            }
+
+        # otherwise, you're editing the value in the DB!!!!
+        available_tiles = available_tiles.copy()
+
+        for group_name, tile_ids in available_tiles.items():
+            group = []
+            for tile_id in tile_ids:
+                tile = getUtility(ITileType, name=tile_id)
+                group.append({
+                    'id': tile_id,
+                    'label': tile.title
+                })
+            available_tiles[group_name] = group
+
+        data = {
+            'data-available-slots': json.dumps(available_tiles),
+            'data-youtube-enabled': str(youtube.get_oauth_token() is not None).lower()
+        }
+
+        cache.set(cache_key, data, 600)
+        return data
+
+    @property
     def image_scales(self):
         factory = getUtility(
             IVocabularyFactory,
