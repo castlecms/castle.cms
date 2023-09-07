@@ -2,51 +2,108 @@
       xml:lang="en-US" lang="en-US"
       xmlns:tal="http://xml.zope.org/namespaces/tal">
   <body>
-    <!-- Full Background Video Slide -->
-    <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-video'">
-      <div tal:condition="view/data/video|nothing">
-        Background Video Slide
-      </div>
-      <div tal:condition="not: view/data/video|nothing">
-        Background Video Slide with no video selected.
-      </div>
-    </div>
+    <tal:defs tal:define="title python: view.data.get('title', '');
+                          text python: view.data.get('text', '');
+                          left_align python: view.slide_hor_align('left');
+                          right_align python: view.slide_hor_align('right');
+                          alignment python: view.data.get('text_alignment', 'center');
+                          vert_align python: view.slide_vert_align();
+                          media view/slide_media;
+                          related_resources python: view.get_related_resources();">
+      <!-- Full Background Video Slide -->
+      <section class="slide-thumb slide-thumb-video-section" tal:condition="python: view.slide_type == 'background-video'">
+        <div class="video-container">
+          <video class="slide-thumb-video" muted>
+            <source src="${media}"/>
+          </video>
+          <div class="slide-thumb-text-container"
+             style="text-align: ${alignment};">
+            <section class="slide-thumb-video-text">
+              <div style="margin-right: ${right_align};
+                        margin-left: ${left_align};
+                        margin-top: ${vert_align};">${title}</div>
+              <div class="slide-thumb-body-text"
+                  style="margin-right: ${right_align};
+                          margin-left: ${left_align};">${text}</div>
+            </section>
+          </div>
+        </div>
+        <div tal:condition="not: view/data/video|nothing">
+          Background Video Slide with no video selected.
+        </div>
+      </section>
 
-    <!-- Left Video w/ Right Text Slide-->
-    <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-video-right-text'">
-      <div tal:condition="view/data/video|nothing">
-        Video Slide with right text
-      </div>
-      <div tal:condition="not: view/data/video|nothing">
-        Video Slide with no video selected.
-      </div>
-    </div>
+      <!-- Left Video w/ Right Text Slide-->
+      <section class="slide-thumb slide-thumb-video-section" tal:condition="python: view.slide_type == 'left-video-right-text'">
+        <div class="video-container"
+             style="text-align: ${alignment};">
+          <video class="slide-thumb-video" muted>
+            <source src="${media}"/>
+          </video>
+          <section class="slide-thumb-video-text slide-thumb-video-right-text">
+            <div style="margin-top: ${vert_align};">${title}</div>
+            <div class="slide-thumb-body-text">${text}</div>
+          </section>
+        </div>
+        <div tal:condition="not: view/data/video|nothing">
+          Video Slide with no video selected.
+        </div>
+      </section>
 
-    <!-- Full Background Image Slide -->
-    <div class="slide-thumb" tal:condition="python: view.slide_type == 'background-image'">
-      <div tal:condition="view/data/image|nothing">
-        Background Image slide
-      </div>
-      <div tal:condition="not: view/data/image|nothing">
-        Background Image slide with no image selected.
-      </div>
-    </div>
+      <!-- Full Background Image Slide -->
+      <section class="slide-thumb slide-thumb-bg-image"
+               tal:condition="python: view.slide_type == 'background-image'"
+               style="background-image: url('${media}');">
+        <div tal:condition="not: view/data/image|nothing">
+          Background Image slide with no image selected.
+        </div>
+        <div class="slide-thumb-text-container"
+             style="text-align: ${alignment};">
+          <section class="slide-thumb-text">
+            <div style="margin-right: ${right_align};
+                        margin-left: ${left_align};
+                        margin-top: ${vert_align};">${title}</div>
+            <div class="slide-thumb-body-text"
+                 style="margin-right: ${right_align};
+                        margin-left: ${left_align};">${text}</div>
+          </section>
+        </div>
+      </section>
 
-    <!-- Left Image w/ Right Text Slide -->
-    <div class="slide-thumb" tal:condition="python: view.slide_type == 'left-image-right-text'">
-      <div tal:condition="view/data/image|nothing">
-        Image slide with right text.
-      </div>
-      <div tal:condition="not: view/data/image|nothing">
-        Image slide with no image selected.
-      </div>
-    </div>
+      <!-- Left Image w/ Right Text Slide -->
+      <section class="slide-thumb-left-image"
+           tal:condition="python: view.slide_type == 'left-image-right-text'"
+           style="background-image: url('${media}');">
+        <div tal:condition="not: view/data/image|nothing">
+          Image slide with no image selected.
+        </div>
+        <div class="slide-thumb-text-container"
+             style="text-align: ${alignment};">
+          <section class="slide-thumb-text slide-thumb-right-text">
+            <div style="margin-top: ${vert_align};">${title}</div>
+            <div class="slide-thumb-body-text">${text}</div>
+          </section>
+        </div>
+      </section>
 
-    <!-- Resource Slide -->
-    <div class="slide-thumb" tal:condition="python: view.slide_type == 'resource-slide'">
-      <div>
-        Resource Slide.
-      </div>
-    </div>
+      <!-- Resource Slide -->
+      <section class="slide-thumb slide-thumb-resource-container"
+               tal:condition="python: view.slide_type == 'resource-slide'">
+        <div>Close slideshow and return to previous page on...</div>
+        <hr style="margin: 0;">
+        <div>See also:</div>
+        <tal:item tal:repeat="resource related_resources">
+          <div class="slide-thumb-resource">
+            <img src="${resource/absolute_url}/@@images/image/preview" class="resource-slide-image"/>
+            <div class="slide-thumb-resource-text">
+              <p class="slide-thumb-resource-title">${resource/Title}</p>
+              <p>${python: resource.effective_date.strftime('%B %e, %Y')}</p>
+              <p class="description">${resource/Description}</p>
+            </div>
+          </div>
+          <hr style="margin: 0;">
+        </tal:item>
+      </section>
+    </tal:defs>
   </body>
 </html>

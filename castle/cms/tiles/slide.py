@@ -2,6 +2,7 @@ from castle.cms.tiles.base import BaseTile
 from castle.cms.widgets import ImageRelatedItemFieldWidget
 from castle.cms.widgets import SlideRelatedItemsFieldWidget
 from castle.cms.widgets import VideoRelatedItemsFieldWidget
+from plone.app.uuid.utils import uuidToObject
 from plone.autoform import directives as form
 from plone.supermodel import model
 from zope import schema
@@ -18,6 +19,42 @@ class SlideTile(BaseTile):
     @property
     def slide_type(self):
         return self.data.get('display_type', 'background-image')
+
+    @property
+    def slide_media(self):
+        image = self.data.get('image', None)
+        video = self.data.get('video', None)
+        if image is not None:
+            return uuidToObject(image).absolute_url()
+        elif video is not None:
+            return uuidToObject(video).absolute_url()
+
+    def slide_hor_align(self, alignment):
+        hor = self.data.get('hor_text_position', 'center')
+        if 'background' in self.slide_type:
+            if hor == 'start':
+                return '50%' if alignment == 'right' else '0%'
+            elif hor == 'end':
+                return '0%' if alignment == 'right' else '50%'
+            else:
+                return '0%'
+
+    def slide_vert_align(self):
+        vert = self.data.get('vert_text_position', 'middle')
+        if vert == 'top':
+            return '0px'
+        elif vert == 'middle':
+            return '100px'
+        else:
+            return '200px'
+
+    def get_related_resources(self):
+        if self.data.get('display_type') == 'resource-slide':
+            try:
+                related_uuids = self.data.get('related_items')
+                return [uuidToObject(uuid) for uuid in related_uuids]
+            except Exception:
+                pass
 
 
 class ISlideTileSchema(model.Schema):
