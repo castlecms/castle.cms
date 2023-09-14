@@ -71,11 +71,75 @@ class CastleSettingsAdapter(PatternSettingsAdapter):
         self.request = request
         self.context = context
         self.field = field
+        self.site = api.portal.get()
 
     def __call__(self):
         data = super(CastleSettingsAdapter, self).__call__()
         data.update(self.mark_special_links())
         data.update(self.structure_updater())
+
+        if api.user.is_anonymous():
+            return data
+
+        folder = self.context
+        if not IDexterityContainer.providedBy(folder):
+            folder = aq_parent(folder)
+
+        upload_fields = get_upload_fields(self.registry)
+        required_fields = [f['name'] for f in upload_fields
+                           if f.get('required')]
+        data.update({
+            'data-file-upload-fields': json.dumps(upload_fields),
+            'data-google-maps-api-key': self.registry.get(
+                'castle.google_maps_api_key', '') or '',
+            'data-folder-url': folder.absolute_url(),
+
+            # b/w compat until resources updated
+            'data-required-file-upload-fields': json.dumps(required_fields),
+        })
+
+        data.update(self.get_cachable_config_data())
+
+        show_tour = False
+        user = api.user.get_current()
+        viewed = user.getProperty('tours_viewed', [])
+        if ('all' not in viewed and
+                set(viewed) != set(['welcome', 'dashboard', 'foldercontents',
+                                    'addcontentinitial', 'addcontentadd', 'editpage'])):
+            show_tour = True
+
+        if show_tour and not api.env.test_mode():
+            data['data-show-tour'] = json.dumps({
+                'viewed': viewed
+            })
+
+
+        folder = self.context
+        if not ISiteRoot.providedBy(folder) and not IDexterityContainer.providedBy(folder):
+            folder = aq_parent(folder)
+        site_path = self.site.getPhysicalPath()
+        folder_path = folder.getPhysicalPath()
+        data['data-base-path'] = '/' + '/'.join(folder_path[len(site_path):])
+
+        real_context = self.context
+        if ISiteRoot.providedBy(real_context):
+            # we're at site root but actually kind of want context front page
+            try:
+                real_context = real_context[getDefaultPage(real_context)]
+            except (AttributeError, KeyError):
+                pass
+        if IDashboard.providedBy(real_context):
+            real_context = self.site
+        
+        transform = theming.getTransform(real_context, self.request)
+        if transform is not None:
+            data['data-site-layout'] = transform.get_layout_name(real_context)
+
+        data['data-site-default'] = getDefaultPage(self.site) or 'front-page'
+        data['data-uid'] = IUUID(real_context, '')
+        # tinymceData = self.tinymce()
+        # data['data-pat-tinymce'] = tinymceData['data-pat-tinymce']
+
         return data
 
     def structure_updater(self):
@@ -237,4 +301,5 @@ class CastleSettingsAdapter(PatternSettingsAdapter):
                 'uploadMultiple': False,
             },
         }
+        print('====== tinymce ===========')
         return {'data-pat-tinymce': json.dumps(configuration)}

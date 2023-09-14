@@ -452,4 +452,9 @@ outline: 2px dashed orange;
         root.cssselect('body')[0].append(style)
 
         transform.dynamic_grid(dom.tree)
+
+        """
+        Plone5.2 TODO - The DOM string is not being converted back to HTML properly after it is returned.
+                        Instead, it appears as raw HTML code in the 'Slots' modal.
+        """
         return tostring(dom.tree)
