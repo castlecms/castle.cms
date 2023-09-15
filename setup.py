@@ -63,17 +63,17 @@ setup(
 
         # add-ons
         'collective.documentviewer>=5.0.4',
-        'collective.elasticsearch>=2.0.5<3',
+        'collective.elasticsearch>=2.0.5,<3',
         'collective.celery>=1.1.4',
 
         # python
         'boto3>=1.9.222',
-        'google-api-python-client>=1.4.2<2',
+        'google-api-python-client>=1.4.2,<2',
         'google-auth>=2.5.0',
-        'requests>=2.7.0<3',
-        'requests_oauthlib>=0.5.0<1',
-        'oauth2client>=1.5.1<2',
-        'redis>=2.10.5<3',
+        'requests>=2.7.0,<3',
+        'requests_oauthlib>=0.5.0,<1',
+        'oauth2client>=1.5.1,<2',
+        'redis>=2.10.5,<3',
         'setuptools',
         'python-dateutil',
         'pyopenssl',
