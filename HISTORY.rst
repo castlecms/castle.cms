@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.19.1 (unreleased)
+2.19.1 (2023-09-15)
 -------------------
 
 - Allow batching in cloudflare purging
