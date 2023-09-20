@@ -51,6 +51,7 @@ class RequestAccessView(BrowserView):
 
     @property
     def request_access_enabled(self):
+        import pdb; pdb.set_trace()
         if api.portal.get_registry_record('plone.request_access_enabled', default=False) is False:
             return False
         if len(self.request_access_email_addresses) == 0:

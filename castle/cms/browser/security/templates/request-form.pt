@@ -42,20 +42,11 @@
           <div class="row justify-content-center">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-              <div class="form-group">
-                  <label for="name">Name</label>
+              <div tal:repeat="field view/accepted_fields"
+                   class="form-group">
+                  <label for="${field}">${python: field.title()}</label>
                   <br />
-                  <input type='text' id='name' name='name' style='width: 100%' required>
-              </div>
-              <div class="form-group">
-                  <label for="email">E-Mail Address</label>
-                  <br />
-                  <input type='text' id='email' name='email' style='width: 100%' required>
-              </div>
-              <div class="form-group">
-                  <label for="Phone">Phone</label>
-                  <br />
-                  <input type='text' id='phone' name='phone' style='width: 100%'>
+                  <input type='text' id='${field}' name='${field}' style='width: 100%' required>
               </div>
               <div class="text-center">
                 <input type="submit" id="submit-request" class="btn btn-primary" value="Submit" required>
