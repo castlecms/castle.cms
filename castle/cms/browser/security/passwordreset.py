@@ -4,7 +4,7 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.i18n import translate
 from plone import api
 
@@ -25,8 +25,9 @@ class ExpiredRequestError(Exception):
     def __str__(self):
         return repr(self.value)
 
+
+@implementer(ISecureLoginAllowedView)
 class PasswordResetView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     def __init__(self, context, request):
         super(PasswordResetView, self).__init__(context, request)

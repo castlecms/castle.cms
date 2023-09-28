@@ -15,7 +15,7 @@ from Products.CMFPlone.utils import getSiteLogo
 from ZODB.POSException import POSKeyError
 from zope.component import adapts, getUtility, queryMultiAdapter
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 
 
 def format_date(dt):
@@ -32,9 +32,8 @@ class NoFileDexterityItem(DexterityItem):
         self.dexterity = IDexterityContent.providedBy(context)
         self.file = None
 
-
+@implementer(ILDData)
 class LDData(object):
-    implements(ILDData)
     adapts(IDexterityContent)
 
     type_ = 'WebPage'
@@ -108,8 +107,8 @@ class LDVideoData(LDAudioData):
     _type = 'VideoObject'
 
 
+@implementer(ILDData)
 class LDSiteData(object):
-    implements(ILDData)
     adapts(ISiteRoot)
 
     def __init__(self, context):

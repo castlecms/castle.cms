@@ -10,7 +10,7 @@ from plone.tiles import Tile
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -18,8 +18,8 @@ from zope.schema.vocabulary import SimpleVocabulary
 logger = logging.getLogger('castle.cms')
 
 
+@implementer(IGlobalTile)
 class MetaTile(Tile):
-    implements(IGlobalTile)
 
     _template = """<section class="meta-tile-container"
                         id="meta-tile-%(id)s" aria-label="%(id)s">%(content)s</section>"""

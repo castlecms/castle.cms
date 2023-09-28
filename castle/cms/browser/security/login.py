@@ -13,11 +13,11 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter, getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.i18n import translate
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(ISecureLoginAllowedView)
 class SecureLoginView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     def __init__(self, context, request):
         super(SecureLoginView, self).__init__(context, request)
@@ -369,8 +369,8 @@ The user requesting this access logged this information:
         return json.dumps(self.auth.get_options())
 
 
+@implementer(ISecureLoginAllowedView)
 class LoginExceptionApprovalView(BrowserView):
-    implements(ISecureLoginAllowedView)
 
     message = 'Incorrect code for country exception.'
     success = False

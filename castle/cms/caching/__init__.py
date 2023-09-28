@@ -26,7 +26,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.globalrequest import getRequest
-from zope.interface import implements
+from zope.interface import implementer
 from zope.testing.cleanup import addCleanUp
 from ZPublisher.interfaces import IPubSuccess
 from collective.documentviewer.settings import Settings as DocViewerSettings
@@ -109,9 +109,9 @@ def purge(event):
             CastlePurger.purgeAsync(urls, cf)
 
 
+@implementer(IPurger)
 class CastlePurgerFactory(object):
 
-    implements(IPurger)
 
     def __init__(self, backlog=200):
         self.worker = None
@@ -310,6 +310,7 @@ class Purge(BrowserView):
         self.is_automatic_purge = is_automatic_purge
 
 
+@implementer(IPurgePaths)
 class LeadImagePurgePaths(object):
     """Paths to purge for lead images
 
@@ -320,7 +321,6 @@ class LeadImagePurgePaths(object):
 
     """
 
-    implements(IPurgePaths)
     adapts(IImageScaleTraversable)
 
     def __init__(self, context):
@@ -342,6 +342,7 @@ class LeadImagePurgePaths(object):
         return []
 
 
+@implementer(IPurgePaths)
 class DocViewerPurgePaths(object):
     """
     Paths to purge for person objects
@@ -351,7 +352,6 @@ class DocViewerPurgePaths(object):
 
     """
 
-    implements(IPurgePaths)
     adapts(IFile)
 
     def __init__(self, context):

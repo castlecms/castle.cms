@@ -19,7 +19,7 @@ from z3c.form import field
 from zope import schema
 from zope.component import adapts
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -62,8 +62,8 @@ class IFeedSettings(IBaseFeedSettings):
     )
 
 
+@implementer(IFeedSettings)
 class FeedSettings(settings.FeedSettings):
-    implements(IFeedSettings)
     adapts(ISyndicatable)
 
     def __getattr__(self, name):
@@ -78,12 +78,12 @@ class FeedSettings(settings.FeedSettings):
         return self._metadata.get(name, default)
 
 
+@implementer(IFeedSettings)
 class ItemFeedSettings(settings.FeedSettings):
     '''
     Implement default item feed settings such as always being disabled.
     This prevents any errors if a non-folder item's feed setting data is read.
     '''
-    implements(IFeedSettings)
     adapts(IDexterityItem)
 
     enabled = False

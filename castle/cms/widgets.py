@@ -49,7 +49,7 @@ from zope.component import adapts
 from zope.component import getUtility
 from zope.interface import alsoProvides
 from zope.interface import implementer
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import implementsOnly
 from zope.schema.interfaces import IField
 from zope.schema.interfaces import IList
@@ -539,10 +539,10 @@ class IFocalNamedImageWidget(INamedImageWidget):
     pass
 
 
+@implementer(IFocalNamedImageWidget)
 class FocalNamedImageWidget(BaseNamedImageWidget):
     """A widget for a named file object
     """
-    implements(IFocalNamedImageWidget)
 
     def get_image_options(self):
         download_url = self.download_url

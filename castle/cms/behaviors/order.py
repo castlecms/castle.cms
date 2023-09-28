@@ -3,7 +3,6 @@ from zope.component import getAdapters
 from plone.folder.interfaces import IOrdering
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.interface import implements
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
@@ -14,8 +13,8 @@ from zope.interface import provider
 from zope import schema
 
 
+@implementer(IContextSourceBinder)
 class AvailableOrderSource(object):
-    implements(IContextSourceBinder)
 
     ignored = (
         'partial',

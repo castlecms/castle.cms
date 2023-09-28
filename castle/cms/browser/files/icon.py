@@ -11,12 +11,13 @@ from plone.namedfile.file import NamedImage
 from plone.registry.interfaces import IRegistry
 from zExceptions import NotFound
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 
 
 logger = logging.getLogger('castle.cms')
 
 
+@implementer(ISecureLoginAllowedView)
 class IconView(NamedFileDownload):
     """
     a bit insane all the icon sizes we need but this is the world we live in...
@@ -40,7 +41,6 @@ icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
 img.save('logo.ico', sizes=icon_sizes)
 
     """
-    implements(ISecureLoginAllowedView)
 
     filename = u'icon.png'
 

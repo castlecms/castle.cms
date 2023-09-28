@@ -13,7 +13,7 @@ from plone.supermodel import model
 from plone.tiles.interfaces import IPersistentTile
 from zope import schema
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Invalid
 from zope.interface import invariant
 
@@ -26,8 +26,8 @@ ITEM_TEMPLATE = """
 """
 
 
+@implementer(IPersistentTile)
 class MapTile(BaseTile):
-    implements(IPersistentTile)
 
     def render(self):
         return self.index()

@@ -6,12 +6,12 @@ from plone import api
 from castle.cms.widgets import RelatedItemFieldWidget
 from zope.component import getMultiAdapter
 
-from zope.interface import implements
+from zope.interface import implementer
 from plone.tiles.interfaces import IPersistentTile
 
 
+@implementer(IPersistentTile)
 class DocumentViewerTile(BaseTile):
-    implements(IPersistentTile)
 
     def __call__(self):
         if self.data.get('documentUID') is None:
