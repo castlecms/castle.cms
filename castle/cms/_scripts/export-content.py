@@ -24,7 +24,8 @@ from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
 from plone.app.blob.field import BlobWrapper
 from plone.app.blob.utils import openBlob
-from Products.Archetypes import Field
+# Plone5.2 - Archetypes not compatible with python3
+# from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
@@ -414,7 +415,7 @@ _serializers = {
     PersistentList: PersistentListSerializer,
     set: setSerializer,
     OFS.Image.Image: OFSImageSerializer,
-    Field.Image: OFSImageSerializer,
+    # Field.Image: OFSImageSerializer,
     OFS.Image.File: OFSFileSerializer,
     DateTime: DateTimeSerializer,
     datetime: datetimeSerializer,
