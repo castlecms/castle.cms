@@ -22,10 +22,9 @@ class HiddenProducts(object):
             'plone.formwidget.querystring:default',
             'plone.session:default',
             'plone.app.multilingual:default',
-            # Plone5.2 - Archetypes not compatible with python3
-            # 'Products.ATContentTypes:default',
+            'Products.ATContentTypes:default',
             'Products.PloneKeywordManager:default',
-            # 'archetypes.multilingual:default',
+            'archetypes.multilingual:default',
             'plone.app.mosaic:default',
             'plone.app.drafts:default',
             'plone.app.blocks:default',
