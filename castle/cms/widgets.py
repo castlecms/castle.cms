@@ -49,8 +49,7 @@ from zope.component import adapts
 from zope.component import getUtility
 from zope.interface import alsoProvides
 from zope.interface import implementer
-from zope.interface import implementer
-from zope.interface import implementsOnly
+from zope.interface import implementer_only
 from zope.schema.interfaces import IField
 from zope.schema.interfaces import IList
 from ZPublisher.HTTPRequest import FileUpload
@@ -288,12 +287,11 @@ class IJSONListWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IJSONListWidget)
 class JsonListWidget(BaseWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseInputWidget
-
-    implementsOnly(IJSONListWidget)
 
     pattern = 'mapselect'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -310,8 +308,8 @@ class IMapMarkersWidget(IJSONListWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IMapMarkersWidget)
 class MapMarkersWidget(JsonListWidget):
-    implementsOnly(IMapMarkersWidget)
 
     pattern = 'mapselect'
     pattern_options = JsonListWidget.pattern_options.copy()
@@ -338,12 +336,11 @@ def UseQueryWidget(field, request):
     return widget
 
 
+@implementer_only(IMapMarkersWidget)
 class MapPointWidget(BaseWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseInputWidget
-
-    implementsOnly(IMapMarkersWidget)
 
     klass = style = title = lang = onclick = ondblclick = onmousedown = ''
     onmouseup = onmouseover = onmousemove = onmouseout = onkeypress = ''
@@ -370,12 +367,11 @@ def MapPointFieldWidget(field, request):
     return widget
 
 
+@implementer_only(IMapMarkersWidget)
 class MapPointsWidget(MapPointWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseInputWidget
-
-    implementsOnly(IMapMarkersWidget)
 
     pattern = 'mapselect'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -399,8 +395,8 @@ class IFileUploadFieldsWidget(IJSONListWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IFileUploadFieldsWidget)
 class FileUploadFieldsWidget(MapPointsWidget):
-    implementsOnly(IFileUploadFieldsWidget)
     pattern = 'fileuploadfieldswidget'
 
     def _base_args(self):
@@ -469,11 +465,10 @@ def NavigationTypeWidget(field, request):
     return widget
 
 
+@implementer_only(IReCaptchaWidget)
 class ReCaptchaWidget(text.TextWidget):
     maxlength = 7
     size = 8
-
-    implementsOnly(IReCaptchaWidget)
 
     def public_key(self):
         registry = getUtility(IRegistry)
@@ -491,12 +486,11 @@ class ITinyMCETextWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(ITinyMCETextWidget)
 class TinyMCETextWidget(BaseWidget):
     """Ajax select widget for z3c.form."""
 
     _base = BaseTextareaWidget
-
-    implementsOnly(ITinyMCETextWidget)
 
     pattern = 'tinymce'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -748,12 +742,11 @@ class IFocalPointSelectWidget(ITextWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IFocalPointSelectWidget)
 class FocalPointSelectWidget(BaseWidget):
     """Widget to select focal point"""
 
     _base = BaseInputWidget
-
-    implementsOnly(IFocalPointSelectWidget)
 
     pattern = 'focalpointselect'
     pattern_options = BaseWidget.pattern_options.copy()
@@ -778,8 +771,8 @@ class ITOCWidget(IJSONListWidget):
     """Marker interface for the Select2Widget."""
 
 
+@implementer_only(IMapMarkersWidget)
 class TOCWidget(JsonListWidget):
-    implementsOnly(IMapMarkersWidget)
 
     pattern = 'toccreator'
     pattern_options = JsonListWidget.pattern_options.copy()
