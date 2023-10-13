@@ -1,11 +1,13 @@
 # for compat with python3, specifically the urllib.parse includes
 # noqa because these need to precede other imports
 from future.standard_library import install_aliases
+from six.moves import filter
+import six
 install_aliases()  # noqa
 
 import logging
 from datetime import datetime
-import StringIO
+from io import StringIO
 from time import time
 from urllib.parse import urlsplit, urlunsplit, quote, quote_plus
 
@@ -82,8 +84,8 @@ def move_file(obj):
         return
     key = KEY_PREFIX + uid
     filename = obj.file.filename
-    if not isinstance(filename, unicode):
-        filename = unicode(filename, 'utf-8', errors="ignore")
+    if not isinstance(filename, six.text_type):
+        filename = six.text_type(filename, 'utf-8', errors="ignore")
     filename = quote(filename.encode("utf8"))
     disposition = "attachment; filename*=UTF-8''%s" % filename
     size = obj.file.getSize()
@@ -152,7 +154,7 @@ def set_permission(obj):
         # this makes sure there are no empty segments, and then appends
         # the bucket name and quoted key value (which is fine, and usable
         # with aws api)
-        newpath = "/".join(filter(None, path.split("/")) + [bucket.name, quote_plus(key)])
+        newpath = "/".join([_f for _f in path.split("/") if _f] + [bucket.name, quote_plus(key)])
         url = urlunsplit((scheme, netloc, newpath, qs, anchor))
     else:
         object_acl.put(ACL='private')
@@ -222,7 +224,7 @@ def swap_url(url, registry=None, base_url=None):
         # make sure there are no empty segements
         # and also drop the first segment -- should be the bucket, which we
         # don't need to pass on to the final url
-        newpath = u"/".join(filter(None, path.split(u'/'))[1:])
+        newpath = u"/".join([_f for _f in path.split(u'/') if _f][1:])
         url = urlunsplit((basescheme, basenetloc, newpath, qs, anchor))
 
     return url
@@ -276,7 +278,7 @@ def get_url(obj):
     # the main one we've seen is extra slashes in the path
     scheme, netloc, path, qs, anchor = urlsplit(url)
     # this will get rid of any empty segments
-    path = "/".join(filter(None, path.split('/')))
+    path = "/".join([_f for _f in path.split('/') if _f])
     finalurl = urlunsplit((scheme, netloc, path, qs, anchor))
     return swap_url(finalurl)
 

@@ -22,7 +22,8 @@ from zope.event import notify
 from zope.interface import alsoProvides
 from zope.lifecycleevent import ObjectRemovedEvent
 from castle.cms.events import MetaTileEditedEvent
-import urllib
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
+import six.moves.urllib
 
 import json
 
@@ -430,7 +431,7 @@ outline: 2px dashed orange;
             title = None
             if '?' in slot_id:
                 slot_id, _, qs = slot_id.partition('?')
-                query = dict(urllib.parse_qsl(qs))
+                query = dict(six.moves.urllib.parse_qsl(qs))
                 title = query.get('title')
             else:
                 title = slot_id.replace('meta-', '').capitalize().replace('-', ' ')

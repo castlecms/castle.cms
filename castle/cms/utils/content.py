@@ -1,7 +1,7 @@
 import logging
 import os
 import types
-from urllib import unquote
+from six.moves.urllib.parse import unquote
 
 import transaction
 from Acquisition import aq_base
@@ -280,7 +280,7 @@ def get_folder_contents(folder, **query):
 def get_context_from_request(request):
     published = request.get('PUBLISHED')
     if isinstance(published, types.MethodType):
-        return published.im_self
+        return published.__self__
     return aq_parent(published)
 
 

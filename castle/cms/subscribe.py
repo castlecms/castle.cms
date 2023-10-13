@@ -101,7 +101,7 @@ def get_page(page_num):
     start = (page_num - 1) * per_page
     end = start + per_page
     storage = SubscriptionStorage()
-    return storage._data.items()[start:end]
+    return list(storage._data.items())[start:end]
 
 
 def get_phone_numbers():

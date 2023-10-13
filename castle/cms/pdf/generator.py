@@ -4,7 +4,8 @@ from castle.cms.utils import inline_images_in_dom
 from lxml.etree import tostring
 from lxml.html import fromstring
 from lxml.html.clean import Cleaner
-from plone.app.blob.utils import openBlob
+# from plone.app.blob.utils import openBlob
+from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from requests.auth import HTTPBasicAuth
 from ZODB.blob import Blob
@@ -17,6 +18,7 @@ import logging
 import plone.api as api
 import requests
 import traceback
+import six
 
 
 logger = logging.getLogger('castle.cms')
@@ -45,7 +47,7 @@ def create_raw_from_view(context, view_name='pdf', css_files=None, unrestricted_
             url=css_file,
             unrestricted_traverse=unrestricted_traverse,
         )
-        if isinstance(data, basestring):
+        if isinstance(data, six.string_types):
             css.append(data.replace('\n', ''))
     xml = cleaner.clean_html(fromstring(html))
     inline_images_in_dom(
@@ -122,9 +124,14 @@ def create(html, css, additional_args={}):
 
 
 def screenshot(blob):
-    blob_file = openBlob(blob)
+    # blob_file = openBlob(blob)
+    # filepath = docsplit.dump_image(blob_file.read(), '1000', 'gif')
+    # blob_file.close()
+
+    # Python3 TODO - Test blob handling changes
+    blob_file = NamedBlobFile(blob)
+    blob_file.open()
     filepath = docsplit.dump_image(blob_file.read(), '1000', 'gif')
-    blob_file.close()
 
     blob = Blob()
     new_blob_file = blob.open('w')

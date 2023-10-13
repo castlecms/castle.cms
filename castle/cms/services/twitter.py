@@ -15,6 +15,7 @@ from requests_oauthlib import OAuth1
 from requests_oauthlib import OAuth1Session
 from zope.component import getUtility
 from zope.globalrequest import getRequest
+from six.moves import map
 
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
@@ -72,8 +73,8 @@ def get_auth():
             return None
     try:
         return OAuth1(
-            unicode(client_id).encode('utf8'),
-            client_secret=unicode(client_secret).encode('utf8'),
+            six.text_type(client_id).encode('utf8'),
+            client_secret=six.text_type(client_secret).encode('utf8'),
             resource_owner_key=registry['plone.twitter_oauth_token'].encode('utf8'),
             resource_owner_secret=registry['plone.twitter_oauth_secret'].encode('utf8'),
             decoding=None)
@@ -352,9 +353,19 @@ class Stream(object):
         if resp.raw.closed:
             self.on_closed(resp)
 
-    def _start(self, async):
+    """
+    Plone5.2 TODO - 'async' is no longer usable as a variable name. It has been 
+                    changed to 't_async' to prevent compiler errors.
+
+                    Twitter docs state that User Streams have been removed as of 2018,
+                    so this code will need to be adjusted to work with the newer
+                    'Account Activity API' (if this feature was ever used in the 
+                    first place).
+    """
+
+    def _start(self, t_async):
         self.running = True
-        if async:
+        if t_async:
             self._thread = Thread(target=self._run)
             self._thread.start()
         else:
@@ -370,7 +381,7 @@ class Stream(object):
                    replies=None,
                    track=None,
                    locations=None,
-                   async=False,
+                   t_async=False,
                    encoding='utf8'):
         self.session.params = {'delimited': 'length'}
         if self.running:
@@ -391,34 +402,34 @@ class Stream(object):
         if track:
             self.session.params['track'] = u','.join(track).encode(encoding)
 
-        self._start(async)
+        self._start(t_async)
 
-    def firehose(self, count=None, async=False):
+    def firehose(self, count=None, t_async=False):
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/firehose.json' % STREAM_VERSION
         if count:
             self.url += '&count=%s' % count
-        self._start(async)
+        self._start(t_async)
 
-    def retweet(self, async=False):
+    def retweet(self, t_async=False):
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/retweet.json' % STREAM_VERSION
-        self._start(async)
+        self._start(t_async)
 
-    def sample(self, async=False, languages=None):
+    def sample(self, t_async=False, languages=None):
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/sample.json' % STREAM_VERSION
         if languages:
             self.session.params['language'] = ','.join(map(str, languages))
-        self._start(async)
+        self._start(t_async)
 
-    def filter(self, follow=None, track=None, async=False, locations=None,
+    def filter(self, follow=None, track=None, t_async=False, locations=None,
                stall_warnings=False, languages=None, encoding='utf8', filter_level=None):
         self.body = {}
         self.session.headers['Content-type'] = "application/x-www-form-urlencoded"
@@ -439,13 +450,13 @@ class Stream(object):
         if languages:
             self.body['language'] = u','.join(map(str, languages))
         if filter_level:
-            self.body['filter_level'] = unicode(filter_level, encoding)
+            self.body['filter_level'] = six.text_type(filter_level, encoding)
         self.session.params = {'delimited': 'length'}
         self.host = 'stream.twitter.com'
-        self._start(async)
+        self._start(t_async)
 
     def sitestream(self, follow, stall_warnings=False,
-                   with_='user', replies=False, async=False):
+                   with_='user', replies=False, t_async=False):
         self.body = {}
         if self.running:
             raise Exception('Stream object already connected!')
@@ -458,7 +469,7 @@ class Stream(object):
             self.body['with'] = with_
         if replies:
             self.body['replies'] = replies
-        self._start(async)
+        self._start(t_async)
 
     def disconnect(self):
         if self.running is False:

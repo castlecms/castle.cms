@@ -29,6 +29,8 @@ REQ_CACHE_KEY = 'castle.cms.jbot.storage'
 logger = logging.getLogger('castle.cms')
 IGNORE = object()
 
+def normalize(filepath):
+    return os.path.normcase(os.path.normpath(filepath))
 
 class Storage(object):
 
@@ -113,6 +115,9 @@ class _TemplateManager(object):
         self.syspaths = tuple(sys.path)
         self.templates = {}
         self.cache = {}
+        self.resources = {}
+        self.paths = {}
+        self.directories = set()
 
     def get_storage(self):
         try:
@@ -212,6 +217,28 @@ class _TemplateManager(object):
                 template.filename = self.templates[template]['original']
                 del self.templates[template]
                 return True
+    
+    def queryResourcePath(self, resource):
+        path = self.resources.get(resource.path)
+        if path is IGNORE:
+            return
+
+        if path is not None:
+            return path
+
+        path = find_package(self.syspaths, normalize(resource.path))
+        if path is None:
+            self.resources[resource.path] = IGNORE
+            return
+
+        filename = path.replace(os.path.sep, '.')
+        resource_path = self.paths.get(filename)
+        if resource_path is None:
+            self.resources[resource.path] = IGNORE
+            return
+
+        return resource_path
+
 
 @implementer(interfaces.ITemplateManager)
 class TemplateManagerFactory(object):

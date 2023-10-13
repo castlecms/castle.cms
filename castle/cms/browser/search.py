@@ -9,8 +9,8 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.resources import add_resource_on_request
 from Products.CMFCore.utils import _getAuthenticatedUser
 from Products.Five import BrowserView
-from urlparse import urljoin
-from urlparse import urlparse
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.parse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 import dateutil.parser

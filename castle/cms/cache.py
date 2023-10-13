@@ -3,13 +3,14 @@ from plone.memoize.ram import choose_cache as base_choose_cache
 from plone.memoize.ram import AbstractDict
 from zope.interface import directlyProvides
 
-import cPickle
+import six.moves.cPickle
 import os
 import redis
 import threading
 
 from zope import ramcache
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -38,12 +39,16 @@ class RedisAdapter(AbstractDict):
         self.globalkey = globalkey and '%s:' % globalkey or ''
 
     def _make_key(self, source):
-        if isinstance(source, unicode):
-            source = source.encode('utf-8')
+        # Python3 TODO - this caused the key to be stored in the cache as encoded,
+        # causing a KeyError when attempting to login.
+        # Could be safely removed
+
+        # if isinstance(source, six.text_type):
+        #     source = source.encode('utf-8')
         return source
 
     def get_key(self, key):
-        return self.globalkey + self._make_key(key)
+        return self.globalkey + str(self._make_key(key))
 
     def __getitem__(self, key):
         if 'plone.app.theming.plugins' in key:
@@ -57,15 +62,15 @@ class RedisAdapter(AbstractDict):
         if cached_value is None:
             raise KeyError(key)
         else:
-            val = cPickle.loads(cached_value)
+            val = six.moves.cPickle.loads(cached_value)
             return val
 
     def __setitem__(self, key, value):
         cache_key = self.get_key(key)
         try:
-            cached_value = cPickle.dumps(value)
+            cached_value = six.moves.cPickle.dumps(value)
             self.client.set(cache_key, cached_value)
-        except cPickle.PicklingError:
+        except six.moves.cPickle.PicklingError:
             pass
         except redis.exceptions.ConnectionError:
             # Try again in getting a redis connection or use a alternative

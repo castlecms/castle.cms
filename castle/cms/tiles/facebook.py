@@ -20,7 +20,7 @@ class FacebookPageTile(BaseTile):
         self.pageID = matches.group(1)
 
         self.parameters = {}
-        validFields = IFacebookPageTileSchema._InterfaceClass__attrs.keys()
+        validFields = list(IFacebookPageTileSchema._InterfaceClass__attrs.keys())
 
         # Prevent any additional values from being passed to FB
         for key in self.data.keys():

@@ -61,7 +61,7 @@ from zope.interface.declarations import noLongerProvides
 
 try:
     # Python 2.6-2.7
-    from HTMLParser import HTMLParser
+    from six.moves.html_parser import HTMLParser
 except ImportError:
     # Python 3
     from html.parser import HTMLParser

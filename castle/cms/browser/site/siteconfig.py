@@ -5,6 +5,7 @@ from zope.component import queryUtility
 from zope.interface import alsoProvides
 
 import json
+import six
 
 
 class SiteConfiguration:
@@ -33,7 +34,7 @@ class SiteConfiguration:
                             value = False
 
                     elif isinstance(schema_field, schema.TextLine):
-                        value = unicode(fieldValue)
+                        value = six.text_type(fieldValue)
 
                     elif isinstance(schema_field, schema.ASCII):
                         value = str(fieldValue)

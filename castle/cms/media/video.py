@@ -7,7 +7,7 @@ from castle.cms.commands import avconv, md5
 from castle.cms.files import aws
 from castle.cms.services.google import youtube
 from collective.celery.utils import getCelery
-from plone.app.blob.utils import openBlob
+# from plone.app.blob.utils import openBlob
 from plone.namedfile import NamedBlobImage
 from plone.namedfile.file import NamedBlobFile
 
@@ -26,9 +26,14 @@ def process(context):
         return
 
     try:
-        opened = openBlob(video._blob)
-        bfilepath = opened.name
-        opened.close()
+        # opened = openBlob(video._blob)
+        # bfilepath = opened.name
+        # opened.close()
+
+        # Python3 TODO - Test blob handling changes
+        blob = NamedBlobFile(video._blob)
+        bfilepath = opened.filename
+        opened = blob.open()
     except IOError:
         logger.warn('error opening blob file')
         return

@@ -13,7 +13,7 @@ from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 from zExceptions import Redirect
 from zope.component import adapter
 from zope.component.hooks import getSite
@@ -209,4 +209,4 @@ if argon2 is not None:
 
     registerScheme('argon2', Argon2Scheme())
     # we patch this to be default because plone doesn't provide a param
-    pw_encrypt.func_defaults = ('argon2',)
+    pw_encrypt.__defaults__ = ('argon2',)

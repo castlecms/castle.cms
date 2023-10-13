@@ -8,7 +8,8 @@ from castle.cms.services.google import youtube
 from castle.cms.utils import retriable
 from collective.celery import task
 from plone import api
-from plone.app.blob.utils import openBlob
+# from plone.app.blob.utils import openBlob
+from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
@@ -78,9 +79,14 @@ def youtube_video_edited(obj):
 
     if videofi is not None and videofi.filename != aws.FILENAME:
         try:
-            opened = openBlob(videofi._blob)
-            bfilepath = opened.name
-            opened.close()
+            # opened = openBlob(videofi._blob)
+            # bfilepath = opened.name
+            # opened.close()
+
+            # Python3 TODO - Test blob handling changes
+            blob = NamedBlobFile(videofi._blob)
+            bfilepath = opened.filename
+            opened = blob.open()
         except IOError:
             logger.warn('error opening blob file')
             return

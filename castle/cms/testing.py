@@ -3,7 +3,7 @@ import json
 import re
 import sys
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 
 import transaction
 from castle.cms import install

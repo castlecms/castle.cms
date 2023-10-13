@@ -6,13 +6,14 @@ from zope.component import getUtility
 import json
 import requests
 import string
+import six
 
 
 def send(message, numbers):
     if numbers == ALL_SUBSCRIBERS:
         numbers = subscribe.get_phone_numbers()
 
-    if isinstance(numbers, basestring):
+    if isinstance(numbers, six.string_types):
         numbers = [numbers]
 
     clean_numbers = []

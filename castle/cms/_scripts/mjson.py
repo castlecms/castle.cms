@@ -11,8 +11,8 @@ from Persistence.mapping import PersistentMapping as PM1
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2
-from plone.app.blob.field import BlobWrapper
-from plone.app.blob.utils import openBlob
+# from plone.app.blob.field import BlobWrapper
+# from plone.app.blob.utils import openBlob
 from plone.app.contentlisting.contentlisting import ContentListing
 from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedBlobImage
@@ -22,6 +22,7 @@ from Products.ZCatalog.Lazy import LazyCat
 from ZODB.blob import Blob
 from zope.dottedname.resolve import resolve
 from ZPublisher.HTTPRequest import record
+import six
 
 _filedata_marker = 'filedata://'
 _deferred_marker = 'deferred://'
@@ -117,24 +118,25 @@ class OFSFileSerializer(BaseTypeSerializer):
         return kls.klass(id, title, file, ct)
 
 
-class BlobSerializer(BaseTypeSerializer):
-    klass = Blob
+# Python3 TODO - Refactor to work with NamedFile
+# class BlobSerializer(BaseTypeSerializer):
+#     klass = Blob
 
-    @classmethod
-    def _serialize(kls, obj):
-        blobfi = openBlob(obj)
-        data = blobfi.read()
-        blobfi.close()
-        return {'data': base64.b64encode(data)}
+#     @classmethod
+#     def _serialize(kls, obj):
+#         blobfi = openBlob(obj)
+#         data = blobfi.read()
+#         blobfi.close()
+#         return {'data': base64.b64encode(data)}
 
-    @classmethod
-    def _deserialize(kls, data):
-        blob = Blob()
-        bfile = blob.open('w')
-        data = base64.b64decode(data['data'])
-        bfile.write(data)
-        bfile.close()
-        return blob
+#     @classmethod
+#     def _deserialize(kls, data):
+#         blob = Blob()
+#         bfile = blob.open('w')
+#         data = base64.b64decode(data['data'])
+#         bfile.write(data)
+#         bfile.close()
+#         return blob
 
 
 class OFSImageSerializer(OFSFileSerializer):
@@ -197,24 +199,25 @@ class ContentListingSerializer(BaseTypeSerializer):
         return LazyCat(data)
 
 
-class BlobWrapperSerializer(BaseTypeSerializer):
-    klass = BlobWrapper
+# Python3 TODO - Refactor to work with NamedFile
+# class BlobWrapperSerializer(BaseTypeSerializer):
+#     klass = BlobWrapper
 
-    @classmethod
-    def _serialize(kls, obj):
-        blob = obj.getBlob()
-        blobfi = openBlob(blob)
-        data = blobfi.read()
-        blobfi.close()
-        return {
-            'data': base64.b64encode(data),
-            'filename': obj.getFilename()}
+#     @classmethod
+#     def _serialize(kls, obj):
+#         blob = obj.getBlob()
+#         blobfi = openBlob(blob)
+#         data = blobfi.read()
+#         blobfi.close()
+#         return {
+#             'data': base64.b64encode(data),
+#             'filename': obj.getFilename()}
 
-    @classmethod
-    def _deserialize(kls, data):
-        io = StringIO(base64.b64decode(data['data']))
-        io.filename = data['filename']
-        return io
+#     @classmethod
+#     def _deserialize(kls, data):
+#         io = StringIO(base64.b64decode(data['data']))
+#         io.filename = data['filename']
+#         return io
 
 
 class NamedBlobFileSerializer(BaseTypeSerializer):
@@ -288,9 +291,9 @@ _serializers = {
     DateTime: DateTimeSerializer,
     datetime: datetimeSerializer,
     record: recordSerializer,
-    Blob: BlobSerializer,
+    # Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
-    BlobWrapper: BlobWrapperSerializer,
+    # BlobWrapper: BlobWrapperSerializer,
     NamedBlobImage: NamedBlobImageSerializer,
     NamedBlobFile: NamedBlobFileSerializer,
     NamedFile: NamedBlobFileSerializer,
@@ -320,10 +323,10 @@ def custom_decoder(d):
     if isinstance(d, list):
         pairs = enumerate(d)
     elif isinstance(d, dict):
-        pairs = d.items()
+        pairs = list(d.items())
     result = []
     for k, v in pairs:
-        if isinstance(v, basestring):
+        if isinstance(v, six.string_types):
             if v.startswith(_filedata_marker):
                 if v == _filedata_marker + _deferred_marker:
                     v = Deferred

@@ -10,7 +10,7 @@ from plone.app.testing import TEST_USER_NAME
 from moto import mock_s3
 
 import unittest
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 
 
 class TestCleanupArchive(unittest.TestCase):

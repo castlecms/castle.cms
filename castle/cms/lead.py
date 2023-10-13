@@ -10,6 +10,7 @@ from plone.tiles.data import ANNOTATIONS_KEY_PREFIX
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import alsoProvides
+import six
 
 
 def check_lead_image(obj, request=None):
@@ -46,7 +47,7 @@ def find_image_in_annotation(data):
                 continue
             if isinstance(data, list):
                 val = val[0]
-            if not isinstance(val, basestring):
+            if not isinstance(val, six.string_types):
                 continue
             val = val.strip()
             if '<' in val:

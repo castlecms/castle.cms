@@ -41,7 +41,7 @@ class Review(BaseView):
         return [self.dump(i) for i in man.getContentToArchive(30)]
 
     def json_dump(self):
-        return json.dumps(self.items())
+        return json.dumps(list(self.items()))
 
     def __call__(self):
         # utility function to add resource to rendered page

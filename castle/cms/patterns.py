@@ -6,7 +6,6 @@ from castle.cms import cache, theming
 from castle.cms.interfaces import IDashboard
 from castle.cms.utils import get_upload_fields
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.dexterity.interfaces import IDexterityContainer
 from plone.memoize.view import memoize
@@ -300,5 +299,4 @@ class CastleSettingsAdapter(PatternSettingsAdapter):
                 'uploadMultiple': False,
             },
         }
-        print('====== tinymce ===========')
         return {'data-pat-tinymce': json.dumps(configuration)}

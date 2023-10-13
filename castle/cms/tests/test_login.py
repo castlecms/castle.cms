@@ -22,6 +22,7 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryUtility
+import six
 
 
 try:
@@ -399,7 +400,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         )
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(''),)
+            value=(six.text_type(''),)
         )
         view = SecureLoginView(self.portal, self.request)
         view()  # call the view once to set initial state
@@ -418,7 +419,7 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         )
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(''),)
+            value=(six.text_type(''),)
         )
         view = SecureLoginView(self.portal, self.request)
         view()  # CHECK_CREDENTIALS state
@@ -438,9 +439,9 @@ class TestEnforceBackendEditingUrl(unittest.TestCase):
         api.portal.set_registry_record(
             name='plone.backend_url',
             value=(
-                unicode('http://dummydomain/castle'),
-                unicode('http://nohost/plone'),
-                unicode('http://vpn.example.com')
+                six.text_type('http://dummydomain/castle'),
+                six.text_type('http://nohost/plone'),
+                six.text_type('http://vpn.example.com')
             )
         )
         view = SecureLoginView(self.portal, self.request)

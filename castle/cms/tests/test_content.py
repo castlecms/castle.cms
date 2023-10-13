@@ -20,6 +20,8 @@ from Products.CMFPlone.interfaces.syndication import IFeedSettings
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import getSite
+import six
+from six.moves import range
 
 
 class TestContent(unittest.TestCase):
@@ -192,7 +194,7 @@ class TestContent(unittest.TestCase):
         registry = getUtility(IRegistry)
         fields = deepcopy(registry['castle.file_upload_fields'])
         for f in fields:
-            f['required'] = unicode(f['required']).lower()
+            f['required'] = six.text_type(f['required']).lower()
         fields.append({
             u'name': u'foobar',
             u'label': u'Foobar',

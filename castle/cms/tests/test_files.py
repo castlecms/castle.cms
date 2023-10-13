@@ -23,6 +23,7 @@ import json
 from time import time
 import unittest
 from urllib.parse import quote_plus
+from six.moves import range
 
 
 class TestDuplicateDetector(unittest.TestCase):

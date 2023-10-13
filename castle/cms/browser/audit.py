@@ -1,6 +1,6 @@
 from castle.cms import audit
 from castle.cms.utils import ESConnectionFactoryFactory
-from cStringIO import StringIO
+from io import StringIO
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from plone.registry.interfaces import IRegistry

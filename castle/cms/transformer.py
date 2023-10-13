@@ -10,7 +10,7 @@ from zope.component import adapter
 from zope.interface import implementer
 from ZPublisher.interfaces import IPubEnd
 from ZPublisher.interfaces import IPubStart
-from castle.cms.logger import log_request
+# from castle.cms.logger import log_request
 
 import time
 
@@ -34,7 +34,8 @@ def requestEnd(event):
     if period > 5.0:
         logger.warn('SLOW REQUEST(%i): %s' % (int(period), req.ACTUAL_URL))
 
-    log_request(req)
+    # Python3 TODO - Re-implement when log_request is fixed
+    # log_request(req)
 
 
 _impersonator_template = PageTemplate("""

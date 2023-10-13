@@ -7,6 +7,7 @@ from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.tiles.metadata import MetaDataTile
 from plone import api
 from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, login, setRoles
+import six
 
 
 class TestMetadata(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestMetadata(unittest.TestCase):
     def _set_to_backend(self):
         api.portal.set_registry_record(
             name='plone.backend_url',
-            value=(unicode(self.request.SERVER_URL), ),
+            value=(six.text_type(self.request.SERVER_URL), ),
         )
 
     def test_gives_location(self):

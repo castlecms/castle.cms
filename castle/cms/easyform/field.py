@@ -18,6 +18,7 @@ from zope.schema.interfaces import IChoice
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IField
 from zope.schema.vocabulary import SimpleVocabulary
+import six
 
 
 _ = MessageFactory('castle.cms')
@@ -68,7 +69,7 @@ class QueryChoice(schema.Choice):
         # does not save data properly often here
         for item in (self.query or []):
             if (item['v'] and
-                    isinstance(item['v'], basestring) and
+                    isinstance(item['v'], six.string_types) and
                     item['v'][0] in ('[', '{') and
                     item['v'][-1] in (']', '}')):
                 item['v'] = ast.literal_eval(item['v'])

@@ -1,7 +1,7 @@
 from plone.dexterity.browser import edit
 from Products.Five import BrowserView
 from lxml import etree
-from urlparse import urlparse, parse_qs
+from six.moves.urllib.parse import urlparse, parse_qs
 from plone.app.uuid.utils import uuidToObject
 from plone.api.portal import get as get_portal
 from plone.api.portal import get_registry_record

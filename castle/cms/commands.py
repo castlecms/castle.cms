@@ -4,6 +4,7 @@ from logging import getLogger
 import os
 import subprocess
 import shutil
+import six
 
 
 TMP_PDF_FILENAME = 'dump.pdf'
@@ -42,7 +43,7 @@ class BaseSubProcess(object):
         return None
 
     def _run_command(self, cmd, or_error=False):
-        if isinstance(cmd, basestring):
+        if isinstance(cmd, six.string_types):
             cmd = cmd.split()
         cmdformatted = ' '.join(cmd)
         logger.info("Running command %s" % cmdformatted)

@@ -11,6 +11,7 @@ from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
 from zope import schema
+import six
 
 
 @implementer(IContextSourceBinder)
@@ -65,7 +66,7 @@ class FolderOrder(object):
         self.context = context
 
     def _set_folder_order(self, value):
-        if isinstance(value, unicode):
+        if isinstance(value, six.text_type):
             value = value.encode('utf8')
         self.context._ordering = value
 

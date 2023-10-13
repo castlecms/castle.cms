@@ -1,8 +1,7 @@
 from AccessControl.Permissions import add_user_folders
 from Products.PluggableAuthService.PluggableAuthService import \
     registerMultiPlugin
-import pwexpiry_plugin
-
+from castle.cms.pwexpiry import pwexpiry_plugin
 
 def initialize(context):
     """Initializer called when used as a Zope 2 product."""

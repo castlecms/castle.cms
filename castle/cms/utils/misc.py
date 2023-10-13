@@ -11,6 +11,8 @@ from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from plone import api
 from ZODB.POSException import ConflictError
+from six.moves import range
+from six.moves import zip
 
 
 try:

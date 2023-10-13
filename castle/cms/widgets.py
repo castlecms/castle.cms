@@ -54,6 +54,7 @@ from zope.schema.interfaces import IField
 from zope.schema.interfaces import IList
 from ZPublisher.HTTPRequest import FileUpload
 from castle.cms.vocabularies import ReallyUserFriendlyTypesVocabulary as FriendlyTypesVocab
+import six
 
 
 class MultiSelectWidget(pz3c_SelectWidget):
@@ -173,7 +174,7 @@ class SlideRelatedItemsWidget(RelatedItemsWidget):
 
     def get_friendly_types_without_folder(self):
         friendly_portal_types_vocab = FriendlyTypesVocab()(self.context)
-        friendly_portal_types = friendly_portal_types_vocab.by_value.keys()
+        friendly_portal_types = list(friendly_portal_types_vocab.by_value.keys())
         friendly_portal_types.remove('Folder')
         return friendly_portal_types
 
@@ -427,7 +428,7 @@ class JSONListWidgetDataConverter(NamedDataConverter):
         fields = json.loads(value)
         for field in fields or []:
             if 'required' in field and isinstance(field['required'], bool):
-                field['required'] = unicode(field['required']).lower()
+                field['required'] = six.text_type(field['required']).lower()
         return fields
 
 
@@ -583,7 +584,7 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
 
     def get_reference_options(self):
         download_url = self.download_url
-        if (isinstance(self.value, basestring) and
+        if (isinstance(self.value, six.string_types) and
                 self.value.startswith('reference:')):
             reference = self.value.replace('reference:', '')
         else:
@@ -607,7 +608,7 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             'disabled': self.disabled,
             'maxlength': self.maxlength
         }
-        is_string = isinstance(self.value, basestring)
+        is_string = isinstance(self.value, six.string_types)
         if (IReferenceNamedImage.providedBy(self.value) or
                 (is_string and self.value.startswith('reference:'))):
             result.update(self.get_reference_options())
@@ -653,7 +654,7 @@ class FocalNamedImageDataConverter(NamedDataConverter):
 
             filename = safe_basename(value.filename)
 
-            if filename is not None and not isinstance(filename, unicode):
+            if filename is not None and not isinstance(filename, six.text_type):
                 # Work-around for
                 # https://bugs.launchpad.net/zope2/+bug/499696
                 filename = filename.decode('utf-8')
@@ -671,10 +672,10 @@ class FocalNamedImageDataConverter(NamedDataConverter):
                 filename = req.get(widget.name + '.filename')
                 if type(filename) in (list, set, tuple) and filename:
                     filename = filename[0]
-                if not isinstance(filename, unicode):
+                if not isinstance(filename, six.text_type):
                     filename = filename.decode('utf8')
                 args['filename'] = filename
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 if value.startswith('reference:'):
                     reference = value.replace('reference:', '')
                     obj = uuidToObject(reference)

@@ -8,6 +8,7 @@ from zope.component import getMultiAdapter
 import castle
 import os
 import time
+import six
 
 
 src_dir = os.path.sep.join(castle.__file__.split(os.path.sep)[:-3])
@@ -181,7 +182,7 @@ def add_tag(selenium, tagtoadd):
 def get_tile(request, context, name, data):
     tile = getMultiAdapter((context, request), name=name)
 
-    for key in data.iterkeys():
+    for key in six.iterkeys(data):
         tile.data[key] = data[key]
 
     return tile

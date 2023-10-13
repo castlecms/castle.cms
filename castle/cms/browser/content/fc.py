@@ -47,6 +47,7 @@ from plone.app.content.browser.vocabulary import (
 
 import json
 import transaction
+import six
 
 
 try:
@@ -481,7 +482,7 @@ class AllContentsVocabView(VocabularyView):
         items = []
 
         attributes = _parseJSON(self.request.get('attributes', ''))
-        if isinstance(attributes, basestring) and attributes:
+        if isinstance(attributes, six.string_types) and attributes:
             attributes = attributes.split(',')
 
         translate_ignored = self.get_translated_ignored()
@@ -511,7 +512,7 @@ class AllContentsVocabView(VocabularyView):
                         val = val[len(base_path):]
                     if (
                         key not in translate_ignored and
-                        isinstance(val, basestring)
+                        isinstance(val, six.string_types)
                     ):
                         item[key] = translate(
                             _(safe_unicode(val)),

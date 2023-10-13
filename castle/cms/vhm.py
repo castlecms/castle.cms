@@ -1,4 +1,5 @@
 from ZPublisher.BaseRequest import quote
+from six.moves import range
 
 
 _protocol_headers = (

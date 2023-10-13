@@ -11,7 +11,7 @@ from lxml.html import fromstring
 from lxml.html import tostring
 from plone import api
 from plone.registry.interfaces import IRegistry
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 from zope.component import getUtility
 from zope.component.hooks import setSite
 

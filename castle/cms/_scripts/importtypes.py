@@ -21,6 +21,7 @@ import base64
 import OFS
 import re
 import pdb
+import six
 
 logger = logging.getLogger('castle.cms')
 
@@ -101,7 +102,7 @@ def decode_file_data(data):
 
 
 def to_unicode(s):
-    if not isinstance(s, unicode):
+    if not isinstance(s, six.text_type):
         s = s.decode('utf8')
     return s
 
@@ -328,7 +329,7 @@ class BaseImportType(object):
                 if 'rendered_layout' in self.data['data']:
                     bdata.rendered_layout = self.data['data']['rendered_layout']
 
-        inv_field_mapping = {v: k for k, v in self.fields_mapping.iteritems()}
+        inv_field_mapping = {v: k for k, v in six.iteritems(self.fields_mapping)}
         for IBehavior, field_name in self.behavior_data_mappers:
 
             original_field_name = inv_field_mapping.get(field_name, field_name)
@@ -384,7 +385,7 @@ class BaseImportType(object):
                         logger.info("    lead image is type %s" % type(im_obj))
                     obj.image = NamedBlobImage(data=namedblobimage_data, contentType='', filename=filename)
 
-                if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, unicode):
+                if hasattr(obj.image, 'contentType') and isinstance(obj.image.contentType, six.text_type):
                     obj.image.contentType = obj.image.contentType.encode('ascii')
                 else:
                     if isinstance(im_obj, Image):

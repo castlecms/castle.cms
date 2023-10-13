@@ -8,6 +8,7 @@ from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from zope.component import getUtility
+import six
 
 
 def get_email_from_address():
@@ -17,7 +18,7 @@ def get_email_from_address():
 
 
 def send_email(recipients=None, subject=None, html='', text='', sender=None):
-    if isinstance(recipients, basestring):
+    if isinstance(recipients, six.string_types):
         recipients = [recipients]
 
     cleaned_recipients = []

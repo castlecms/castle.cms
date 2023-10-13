@@ -12,6 +12,7 @@ from collective.celery.utils import getCelery
 
 import logging
 import transaction
+import six
 
 
 logger = logging.getLogger('castle.cms')
@@ -221,7 +222,7 @@ def delete_items(uids):
 
 @task()
 def scan_links(obj):
-    if isinstance(obj, basestring):
+    if isinstance(obj, six.string_types):
         obj = api.portal.get().restrictedTraverse(obj, None)
         if obj is None:
             return

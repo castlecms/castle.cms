@@ -2,7 +2,7 @@ import json
 import logging
 import time
 from multiprocessing import Pool
-from urllib import urlencode
+from six.moves.urllib.parse import urlencode
 
 import requests
 

@@ -6,7 +6,7 @@ from App.config import getConfiguration
 from castle.cms.constants import CLOUDFARE_PURGE_BATCH_SIZE_LIMIT, HYPERTEXT_PROTOCOL_PATTERN
 from castle.cms.events import CacheInvalidatedEvent
 from castle.cms.linkintegrity import get_content_links
-from plone.app.imaging.utils import getAllowedSizes
+from Products.CMFPlone.utils import getAllowedSizes
 from plone.cachepurging.hooks import KEY
 from plone.cachepurging.interfaces import ICachePurgingSettings
 from plone.cachepurging.interfaces import IPurger
@@ -35,8 +35,9 @@ from re import sub as re_sub
 import atexit
 import logging
 import plone.api as api
-import Queue
+import six.moves.queue
 import threading
+from six.moves import range
 
 
 logger = logging.getLogger('castle.cms')
@@ -121,13 +122,13 @@ class CastlePurgerFactory(object):
 
     def purgeAsync(self, urls, purger):
         if self.worker is None:
-            self.queue = Queue.Queue(self.backlog)
+            self.queue = six.moves.queue.Queue(self.backlog)
             self.worker = Worker(self.queue, self)
             self.worker.start()
         try:
             self.queue.put((urls, purger), block=False)
             logger.debug('Queued %s' % ','.join(urls))
-        except Queue.Full:
+        except six.moves.queue.Full:
             # Make a loud noise. Ideally the queue size would be
             # user-configurable - but the more likely case is that the purge
             # host is down.
@@ -148,7 +149,7 @@ class CastlePurgerFactory(object):
         self.worker.stopping = True
         try:
             self.queue.put(None, block=False)
-        except Queue.Full:
+        except six.moves.queue.Full:
             # no problem - self.stopping should be seen.
             pass
         ok = True

@@ -13,6 +13,7 @@ from plone.tiles.data import ANNOTATIONS_KEY_PREFIX as TILE_ANNOTATIONS_KEY_PREF
 import unittest
 import json
 from castle.cms.browser import tiles as tile_views
+from six.moves import range
 
 
 class TestSlots(unittest.TestCase):

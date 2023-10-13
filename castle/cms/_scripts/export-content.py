@@ -22,10 +22,6 @@ from Persistence.mapping import PersistentMapping as PM1  # noqa
 from persistent.dict import PersistentDict
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping as PM2  # noqa
-from plone.app.blob.field import BlobWrapper
-from plone.app.blob.utils import openBlob
-# Plone5.2 - Archetypes not compatible with python3
-# from Products.Archetypes import Field
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.tests.base.security import OmnipotentUser
 from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy
@@ -38,6 +34,7 @@ from zope.component.hooks import setSite
 from zope.interface import Interface
 from zope.schema import getFieldsInOrder
 from ZPublisher.HTTPRequest import record
+import six
 
 
 logger = logging.getLogger(__name__)
@@ -249,24 +246,25 @@ class OFSFileSerializer(BaseTypeSerializer):
         return cls.klass(id, title, file, ct)
 
 
-class BlobSerializer(BaseTypeSerializer):
-    klass = Blob
+# Python3 TODO - Refactor to work with NamedFile
+# class BlobSerializer(BaseTypeSerializer):
+#     klass = Blob
 
-    @classmethod
-    def _serialize(cls, obj):
-        blobfi = openBlob(obj)
-        data = blobfi.read()
-        blobfi.close()
-        return {'data': base64.b64encode(data)}
+#     @classmethod
+#     def _serialize(cls, obj):
+#         blobfi = openBlob(obj)
+#         data = blobfi.read()
+#         blobfi.close()
+#         return {'data': base64.b64encode(data)}
 
-    @classmethod
-    def _deserialize(cls, data):
-        blob = Blob()
-        bfile = blob.open('w')
-        data = base64.b64decode(data['data'])
-        bfile.write(data)
-        bfile.close()
-        return blob
+#     @classmethod
+#     def _deserialize(cls, data):
+#         blob = Blob()
+#         bfile = blob.open('w')
+#         data = base64.b64decode(data['data'])
+#         bfile.write(data)
+#         bfile.close()
+#         return blob
 
 
 class OFSImageSerializer(OFSFileSerializer):
@@ -326,24 +324,25 @@ class ContentListingSerializer(BaseTypeSerializer):
         return LazyCat(data)
 
 
-class BlobWrapperSerializer(BaseTypeSerializer):
-    klass = BlobWrapper
+# Python3 TODO - Refactor to work with NamedFile
+# class BlobWrapperSerializer(BaseTypeSerializer):
+#     klass = BlobWrapper
 
-    @classmethod
-    def _serialize(cls, obj):
-        blob = obj.getBlob()
-        blobfi = openBlob(blob)
-        data = blobfi.read()
-        blobfi.close()
-        return {
-            'data': base64.b64encode(data),
-            'filename': obj.getFilename()}
+#     @classmethod
+#     def _serialize(cls, obj):
+#         blob = obj.getBlob()
+#         blobfi = openBlob(blob)
+#         data = blobfi.read()
+#         blobfi.close()
+#         return {
+#             'data': base64.b64encode(data),
+#             'filename': obj.getFilename()}
 
-    @classmethod
-    def _deserialize(cls, data):
-        io = StringIO(base64.b64decode(data['data']))
-        io.filename = data['filename']
-        return io
+#     @classmethod
+#     def _deserialize(cls, data):
+#         io = StringIO(base64.b64decode(data['data']))
+#         io.filename = data['filename']
+#         return io
 
 
 class NamedBlobFileSerializer(BaseTypeSerializer):
@@ -420,9 +419,9 @@ _serializers = {
     DateTime: DateTimeSerializer,
     datetime: datetimeSerializer,
     record: recordSerializer,
-    Blob: BlobSerializer,
+    # Blob: BlobSerializer,
     ContentListing: ContentListingSerializer,
-    BlobWrapper: BlobWrapperSerializer,
+    # BlobWrapper: BlobWrapperSerializer,
     NamedFile: NamedBlobFileSerializer,
     NamedBlobFile: NamedBlobFileSerializer,
     NamedBlobImage: NamedBlobImageSerializer
@@ -510,7 +509,7 @@ class ContentExporter(object):
     def get_referenced_images(self, data):
         images = []
         for key, value in data.items():
-            if not isinstance(value, basestring):
+            if not isinstance(value, six.string_types):
                 continue
             try:
                 dom = fromstring(value)

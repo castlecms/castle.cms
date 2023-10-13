@@ -14,6 +14,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
+import six
 
 
 def scan(obj):
@@ -81,7 +82,7 @@ def get_tile_data_links(obj, data):
             if field_name not in data:
                 continue
             val = data.get(field_name)
-            if isinstance(val, basestring):
+            if isinstance(val, six.string_types):
                 links = extractLinks(val)
                 refs |= li.getObjectsFromLinks(obj, links)
             elif isinstance(val, list):

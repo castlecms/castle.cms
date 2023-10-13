@@ -4,7 +4,7 @@ from plone.memoize.view import memoize_contextless
 from plone.tiles import Tile
 from plone.tiles.interfaces import IPersistentTile
 from Products.CMFCore.utils import getToolByName
-from urllib import quote_plus
+from six.moves.urllib.parse import quote_plus
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
 from zope.interface import implementer

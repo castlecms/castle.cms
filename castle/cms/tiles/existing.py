@@ -12,6 +12,7 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+import six
 
 
 DISPLAY_TYPE_KEY = 'existing'
@@ -63,7 +64,7 @@ class ExistingTile(ContentTile, DisplayTypeTileMixin):
             return ''
         if type(val) in (set, list, tuple):
             val = joiner.join(val)
-        if isinstance(val, basestring) and '\n' in val:
+        if isinstance(val, six.string_types) and '\n' in val:
             val = joiner.join(val.splitlines())
         return val
 

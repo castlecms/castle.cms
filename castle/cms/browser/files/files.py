@@ -1,6 +1,6 @@
 import base64
 import logging
-from cStringIO import StringIO
+from io import StringIO
 from os import fstat
 
 import zope.publisher.interfaces
@@ -9,13 +9,14 @@ from castle.cms.files import aws
 from castle.cms.interfaces import IReferenceNamedImage
 from PIL import Image
 from plone import api
-from plone.app.blob.download import handleRequestRange
-from plone.app.blob.iterators import BlobStreamIterator
-from plone.app.blob.utils import openBlob
+# from plone.app.blob.download import handleRequestRange
+# from plone.app.blob.iterators import BlobStreamIterator
+# from plone.app.blob.utils import openBlob
 from plone.app.contenttypes.browser import file
-from plone.app.imaging.utils import getAllowedSizes
+from Products.CMFPlone.utils import getAllowedSizes
 from plone.namedfile import browser as namedfile
 from plone.namedfile.interfaces import INamedBlobFile
+from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.scaling import ImageScaling
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
@@ -25,6 +26,7 @@ from App.Common import rfc1123_date
 from zExceptions import NotFound
 from ZODB.POSException import POSKeyError
 from zope.component import getMultiAdapter
+import six
 
 
 logger = logging.getLogger('castle.cms')
@@ -37,8 +39,12 @@ class DownloadAsPNG(BrowserView):
         if not self.context.image:
             raise NotFound
 
-        blob = self.context.image._blob
-        return openBlob(blob)
+        # blob = self.context.image._blob
+        # return openBlob(blob)
+
+        # Python3 TODO - Test blob handling changes
+        blob = NamedBlobFile(self.context.image._blob)
+        return blob.open()
 
     def __call__(self):
         fi = self.get_data()
@@ -77,9 +83,10 @@ class Download(namedfile.Download):
         if not INamedBlobFile.providedBy(file):
             return super(Download, self).__call__()
 
-        request_range = handleRequestRange(
-            self.context, file.getSize(), self.request, self.request.response)
-        return BlobStreamIterator(file._blob, **request_range)
+        # Python3 TODO - Find NamedFile solution to this
+        # request_range = handleRequestRange(
+        #     self.context, file.getSize(), self.request, self.request.response)
+        # return BlobStreamIterator(file._blob, **request_range)
 
     def __call__(self):
         if not aws.uploaded(self.context):
@@ -110,33 +117,33 @@ class DownloadBlob(BrowserView):
             logger.info('Could not get blob data', exc_info=True)
             raise NotFound
 
-        if data:
-            is_blob = False
-            if isinstance(data, basestring):
-                length = len(data)
-            else:
-                is_blob = True
-                blobfi = openBlob(data)
-                length = fstat(blobfi.fileno()).st_size
-                blobfi.close()
+        # if data:
+        #     is_blob = False
+        #     if isinstance(data, six.string_types):
+        #         length = len(data)
+        #     else:
+        #         is_blob = True
+        #         blobfi = openBlob(data)
+        #         length = fstat(blobfi.fileno()).st_size
+        #         blobfi.close()
 
-            self.request.response.setHeader(
-                'Last-Modified',
-                rfc1123_date(self.context._p_mtime))
-            resp = self.request.response
-            resp.setHeader('Content-Disposition',
-                           'inline; filename=%s.%s' % (self.context.getId(), self.file_ext))
-            resp.setHeader("Content-Length", length)
-            resp.setHeader('Content-Type', self.content_type)
+        #     self.request.response.setHeader(
+        #         'Last-Modified',
+        #         rfc1123_date(self.context._p_mtime))
+        #     resp = self.request.response
+        #     resp.setHeader('Content-Disposition',
+        #                    'inline; filename=%s.%s' % (self.context.getId(), self.file_ext))
+        #     resp.setHeader("Content-Length", length)
+        #     resp.setHeader('Content-Type', self.content_type)
 
-            if is_blob:
-                resp.setHeader('Accept-Ranges', 'bytes')
-                range = handleRequestRange(
-                    self.context, length, self.request,
-                    self.request.response)
-                return BlobStreamIterator(data, **range)
-            else:
-                return data
+        #     if is_blob:
+        #         resp.setHeader('Accept-Ranges', 'bytes')
+        #         range = handleRequestRange(
+        #             self.context, length, self.request,
+        #             self.request.response)
+        #         return BlobStreamIterator(data, **range)
+        #     else:
+        #         return data
         else:
             raise NotFound
 

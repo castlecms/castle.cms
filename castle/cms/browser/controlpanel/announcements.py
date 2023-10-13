@@ -30,6 +30,7 @@ from zope.component import getUtility
 from zope.interface import Invalid
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.Five import BrowserView
+from six.moves import map
 
 reg_key = 'castle.subscriber_categories'
 
@@ -305,7 +306,7 @@ class ImportSubscribersForm(AutoExtensibleForm, form.Form):
                 if len(cols) <= 1:
                     continue
                 subscriber = {
-                    'categories': map(safe_unicode, cols[categoryindex].strip('"').split(';')),
+                    'categories': list(map(safe_unicode, cols[categoryindex].strip('"').split(';'))),
                     'email': cols[emailindex]
                 }
                 match = subscribe.get_subscriber(subscriber['email'])

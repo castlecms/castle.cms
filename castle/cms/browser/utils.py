@@ -14,7 +14,7 @@ from datetime import datetime
 from lxml import etree
 from lxml.html import tostring
 from plone import api
-from plone.app.imaging.utils import getAllowedSizes
+from Products.CMFPlone.utils import getAllowedSizes
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.app.layout.viewlets.common import GlobalSectionsViewlet
@@ -29,8 +29,8 @@ from Products.CMFPlone.utils import getSiteLogo
 from Products.Five import BrowserView
 from Products.ZCatalog.interfaces import ICatalogBrain
 from unidecode import unidecode
-from urlparse import parse_qs
-from urlparse import urlparse
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.parse import urlparse
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -40,6 +40,7 @@ from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
 
 import json
+import six
 
 logger = getLogger('castle.cms')
 
@@ -99,7 +100,7 @@ class Utils(BrowserView):
         if isinstance(val, list) and len(val) > 0:
             # if it's a list let's try to use the first value
             val = val[0]
-        if isinstance(val, basestring):
+        if isinstance(val, six.string_types):
             if val[0] == '/':
                 # it's a path
                 return self.site.restrictedTraverse(val.strip('/'), None)
@@ -108,7 +109,7 @@ class Utils(BrowserView):
                 obj = uuidToObject(val)
                 if obj:
                     return obj
-        if isinstance(val, basestring):
+        if isinstance(val, six.string_types):
             return None
         return val
 
@@ -128,7 +129,7 @@ class Utils(BrowserView):
     def valid_date(self, date):
         if not date:
             return False
-        if isinstance(date, basestring):
+        if isinstance(date, six.string_types):
             date = DateTime(date)
         if date.year() == 1969:
             return False
@@ -137,14 +138,14 @@ class Utils(BrowserView):
     def iso_date(self, date):
         if not date:
             return ''
-        if isinstance(date, basestring):
+        if isinstance(date, six.string_types):
             date = DateTime(date)
         return date.ISO8601()
 
     def format_date(self, date, format='common', formatter=None):
         if not date:
             return ''
-        if isinstance(date, basestring):
+        if isinstance(date, six.string_types):
             date = DateTime(date)
         if isinstance(date, datetime):
             date = DateTime(date)
@@ -233,7 +234,7 @@ class Utils(BrowserView):
         return url
 
     def get_youtube_url(self, obj):
-        if isinstance(obj, basestring):
+        if isinstance(obj, six.string_types):
             url = obj
         else:
             try:
@@ -247,7 +248,7 @@ class Utils(BrowserView):
         return self.clean_youtube_url(url)
 
     def get_external_youtube_url(self, obj):
-        if isinstance(obj, basestring):
+        if isinstance(obj, six.string_types):
             url = obj
         else:
             try:
@@ -385,7 +386,7 @@ class Utils(BrowserView):
             except Exception:
                 url = brain.absolute_url()
                 alt = brain.Title()
-            if not isinstance(alt, basestring):
+            if not isinstance(alt, six.string_types):
                 alt = ''
             image_attributes.update({
                 'src': '{0}/@@images/image/{1}'.format(url, scale or ''),
@@ -465,7 +466,7 @@ class Utils(BrowserView):
             except Exception:
                 url = brain.absolute_url()
                 alt = brain.Title()
-            if not isinstance(alt, basestring):
+            if not isinstance(alt, six.string_types):
                 alt = ''
             attrib.update({
                 'src': '{0}/@@images/image'.format(url),

@@ -10,7 +10,7 @@ from time import time
 from uuid import uuid4
 from zope.component import getUtility
 
-import cPickle
+import six.moves.cPickle
 import logging
 
 
@@ -149,7 +149,7 @@ def get_active_sessions(sessions_key=None):
         if keys:
             for session in cclient.client.mget(keys):
                 try:
-                    session = cPickle.loads(session)
+                    session = six.moves.cPickle.loads(session)
                 except Exception:
                     continue
                 sessions.append(session)

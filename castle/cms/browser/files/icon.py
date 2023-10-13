@@ -1,5 +1,5 @@
 import logging
-from cStringIO import StringIO
+from io import StringIO
 
 from castle.cms.browser.files.files import NamedFileDownload
 from castle.cms.interfaces import ISecureLoginAllowedView
@@ -12,6 +12,7 @@ from plone.registry.interfaces import IRegistry
 from zExceptions import NotFound
 from zope.component import getUtility
 from zope.interface import implementer
+import six
 
 
 logger = logging.getLogger('castle.cms')
@@ -59,7 +60,7 @@ img.save('logo.ico', sizes=icon_sizes)
         '''
         filename = getattr(self, 'filename', u'file.ext')
         super(IconView, self).__init__(context, request)
-        self.filename = unicode(filename)
+        self.filename = six.text_type(filename)
 
     def get_data(self):
         registry = getUtility(IRegistry)

@@ -1,4 +1,4 @@
-from ZServer.medusa import http_server
+# from ZServer.medusa import http_server
 
 import App
 import logging
@@ -20,16 +20,18 @@ def medua_log_request(medusa_request, bytes):
     """
     pass
 
+# Python3 TODO - ZODB switched from ZServer to a WSGI Zope instance for Python 3
+# Need to re-implement using WSGI server
 
-http_server.http_request.log = medua_log_request
+# http_server.http_request.log = medua_log_request
 
 
-def log_date_string(when):
-    logtime = time.localtime(when)
-    return time.strftime('%d/', logtime) + \
-           http_server.http_date.monthname[logtime[1]] + \
-           time.strftime('/%Y:%H:%M:%S ', logtime) + \
-           http_server.tz_for_log
+# def log_date_string(when):
+#     logtime = time.localtime(when)
+#     return time.strftime('%d/', logtime) + \
+#            http_server.http_date.monthname[logtime[1]] + \
+#            time.strftime('/%Y:%H:%M:%S ', logtime) + \
+#            http_server.tz_for_log
 
 
 def log_request(request):
@@ -75,7 +77,8 @@ def log_request(request):
             origin,
             '- %s [%s] "%s" %d %s "%s" "%s"\n' % (
                 user_name,
-                log_date_string(time.time()),
+                # Python3 TODO - re-implement using WSGI server
+                # log_date_string(time.time()),
                 request_info,
                 resp.getStatus(),
                 resp.headers.get('content-length', '0'),

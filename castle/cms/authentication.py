@@ -116,7 +116,7 @@ class Authenticator(object):
         return auth_schemes
 
     def set_login_session_id(self):
-        self.login_session_id = uuid4()
+        self.login_session_id = uuid4().hex
         self.request.response.setCookie('__sl__', self.login_session_id)
 
     def get_secure_flow_key(self):

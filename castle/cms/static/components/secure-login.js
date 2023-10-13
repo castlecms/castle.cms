@@ -379,7 +379,9 @@ require([
       var $selectedForm = $('.' + getClass('form-' + this.state.state));
 
       setTimeout(function(){
-        $container.height($selectedForm.height() + 20);
+        // Python3 TODO - This was causing the login form to disappear
+        // Determine if still needed
+        // $container.height($selectedForm.height() + 20);
       }, 500);
       if(this.state.state !== this.state.last_state){
         var $oldForm = $('.' + getClass('form-' + this.state.last_state));

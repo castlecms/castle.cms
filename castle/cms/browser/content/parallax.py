@@ -1,7 +1,7 @@
 from lxml import etree
 from plone.app.uuid.utils import uuidToObject
 from Products.Five import BrowserView
-from urlparse import urlparse, parse_qs
+from six.moves.urllib.parse import urlparse, parse_qs
 
 
 class ParallaxView(BrowserView):

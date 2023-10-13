@@ -1,6 +1,7 @@
 from plone import api
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
+import six
 
 
 PROFILE_ID = 'profile-castle.cms:2_1_0'
@@ -17,7 +18,7 @@ def upgrade(context, logger=None):
 
     if isinstance(backend_url, tuple):
         pass
-    elif isinstance(backend_url, unicode):
+    elif isinstance(backend_url, six.text_type):
         api.portal.set_registry_record('plone.backend_url', (backend_url,))
     else:
         api.portal.set_registry_record('plone.backend_url', ())
