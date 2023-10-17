@@ -438,14 +438,14 @@ class _Transform(object):
             if len(content) == 0:
                 content = content_xpath(result)
             if len(content) > 0:
-                main_html = html.tostring(content[0])
+                main_html = self.__check_html_string(html.tostring(content[0]))
 
             column1 = column1_xpath(result)
             if len(column1) > 0 and len(column1[0]) > 0:
-                column1_html = html.tostring(column1[0])
+                column1_html = self.__check_html_string(html.tostring(column1[0]))
             column2 = column2_xpath(result)
             if len(column2) > 0 and len(column2[0]) > 0:
-                column2_html = html.tostring(column2[0])
+                column2_html = self.__check_html_string(html.tostring(column2[0]))
         return {
             'main': main_html,
             'left': column1_html,
@@ -493,6 +493,19 @@ class _Transform(object):
                 container.attrib.get('class', ''),
                 ' '.join(classes)
             )
+    
+    def __check_html_string(self, html):
+        '''
+        Python3 - Private method to decode html strings from bytes, if applicable.
+                  Prevents newline characters from being rendered in views parsed from .pt files.
+        '''
+        try:
+            html = html.decode()
+        except (UnicodeDecodeError, AttributeError):
+            pass
+
+        return html
+
 
 
 def getTransform(context, request):
