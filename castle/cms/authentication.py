@@ -100,7 +100,8 @@ class Authenticator(object):
         url = '/@@request-form'
         if not self.is_zope_root and self.registry:
             url = self.registry.get('plone.request_access_form_path', '/@@request-form')
-        return url
+        base_url = api.portal.get().absolute_url()
+        return ''.join([base_url, url])
 
     @property
     def expire(self):
