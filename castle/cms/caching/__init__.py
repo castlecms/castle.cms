@@ -271,7 +271,7 @@ class Purge(BrowserView):
                 path = path.split('VirtualHostRoot')[-1]
             else:
                 path = path[len(site_path):]
-            nice_paths.append(path.decode('utf-8'))
+            nice_paths.append(path)
         nice_paths = list(set(nice_paths))
 
         event = CacheInvalidatedEvent(self.context, success, nice_paths, self.is_automatic_purge)

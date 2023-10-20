@@ -210,7 +210,7 @@ class MD5SubProcess(BaseSubProcess):
     def __call__(self, filepath):
         cmd = [self.binary, filepath]
         hashval = self._run_command(cmd)
-        return hashval.split('=')[1].strip()
+        return hashval.split(b'=')[1].strip()
 
 
 try:

@@ -33,8 +33,6 @@ class PurgeManager(object):
         if self.site_path not in ('', '/') and path.startswith(self.site_path):
             path = path[len(self.site_path):]
 
-        path = path.decode('utf-8')
-
         urls = []
         urls.append(u'%s/%s' % (self.public_url.rstrip('/'), path.lstrip('/')))
         return urls

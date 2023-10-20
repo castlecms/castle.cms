@@ -377,9 +377,8 @@ class Creator(BrowserView):
 
     def create_object(self, folder, type_, info):
         filename = info['name']
-        name = filename.decode("utf8")
         chooser = INameChooser(folder)
-        chooser_name = name.lower().replace('aq_', '')
+        chooser_name = filename.lower().replace('aq_', '')
         newid = chooser.chooseName(chooser_name, folder.aq_parent)
         # strip metadata from file
         if (type_ in ('Image', 'File', 'Video') and
@@ -401,7 +400,8 @@ class Creator(BrowserView):
                 except Exception:
                     logger.warn('Could not strip metadata from file: %s' % info['tmp_file'])
 
-        fi = open(info['tmp_file'], 'r')
+        # Python3 - Treating file as binary, removed decoding events downstream
+        fi = open(info['tmp_file'], 'rb')
         try:
             # Try to determine which kind of NamedBlob we need
             # This will suffice for standard p.a.contenttypes File/Image
