@@ -199,7 +199,7 @@ def rich_text_args(self):
     args['name'] = self.name
     value = self.value and self.value.raw_encoded or ''
     args['value'] = (self.request.get(
-        self.field.getName(), value)).decode('utf-8')
+        self.field.getName(), value))
     args.setdefault('pattern_options', {})
 
     # displays tinymce editor for anonymous users

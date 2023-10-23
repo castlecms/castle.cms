@@ -9,9 +9,7 @@ from castle.cms.files import aws
 from castle.cms.interfaces import IReferenceNamedImage
 from PIL import Image
 from plone import api
-# from plone.app.blob.download import handleRequestRange
-# from plone.app.blob.iterators import BlobStreamIterator
-# from plone.app.blob.utils import openBlob
+from plone.namedfile.utils import stream_data
 from plone.app.contenttypes.browser import file
 from Products.CMFPlone.utils import getAllowedSizes
 from plone.namedfile import browser as namedfile
@@ -21,7 +19,6 @@ from plone.namedfile.scaling import ImageScaling
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
-# Plone5.2 - fc1123_date moved to App.common
 from App.Common import rfc1123_date
 from zExceptions import NotFound
 from ZODB.POSException import POSKeyError
@@ -82,11 +79,8 @@ class Download(namedfile.Download):
         self.set_headers(file)
         if not INamedBlobFile.providedBy(file):
             return super(Download, self).__call__()
-
-        # Python3 TODO - Find NamedFile solution to this
-        # request_range = handleRequestRange(
-        #     self.context, file.getSize(), self.request, self.request.response)
-        # return BlobStreamIterator(file._blob, **request_range)
+        
+        return stream_data(file)
 
     def __call__(self):
         if not aws.uploaded(self.context):
@@ -116,6 +110,9 @@ class DownloadBlob(BrowserView):
             # ocassionally
             logger.info('Could not get blob data', exc_info=True)
             raise NotFound
+
+        # Python3 TODO - Can't find any instance of this class in the code
+        #                Probably safe to remove?
 
         # if data:
         #     is_blob = False

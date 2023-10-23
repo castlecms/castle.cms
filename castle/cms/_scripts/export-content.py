@@ -246,7 +246,7 @@ class OFSFileSerializer(BaseTypeSerializer):
         return cls.klass(id, title, file, ct)
 
 
-# Python3 TODO - Refactor to work with NamedFile
+# Python3 TODO - Refactor to work with NamedFile (not sure if actually used anywhere)
 # class BlobSerializer(BaseTypeSerializer):
 #     klass = Blob
 
@@ -324,7 +324,7 @@ class ContentListingSerializer(BaseTypeSerializer):
         return LazyCat(data)
 
 
-# Python3 TODO - Refactor to work with NamedFile
+# Python3 TODO - Refactor to work with NamedFile (not sure if actually used anywhere)
 # class BlobWrapperSerializer(BaseTypeSerializer):
 #     klass = BlobWrapper
 
