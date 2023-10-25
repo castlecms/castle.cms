@@ -189,7 +189,8 @@ if argon2 is not None:
         ph = argon2.PasswordHasher()
 
         def _format(self, pw):
-            return b2a_base64(self.ph.hash(pw))
+            pw = self.ph.hash(pw).encode('utf-8')
+            return b2a_base64(pw)
 
         def encrypt(self, pw):
             pw = str(pw)
