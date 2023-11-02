@@ -816,7 +816,6 @@ a:hover [class^="icon-controlpanel-"]::before {
 }
 
 
-
 [class*="contenttype-"]::before,
 .contenttype-news.item::before,
 .glyphicon.glyphicon-upload::before,
@@ -826,7 +825,8 @@ a:hover [class^="icon-controlpanel-"]::before {
   height: 16px;
   display: inline-block;
   margin-right: 0.9375em;
-  vertical-align: top;
+  vertical-align: -.125em;
+  // vertical-align: top; - maybe this should go back instead
   content: '';
 }
 
@@ -840,7 +840,8 @@ a:hover [class^="icon-controlpanel-"]::before {
 
 
 /* content type icons */
-.contenttype-feed::before,
+.contenttype-feed::before, //is one of these unnecessary?
+.contenttype-collection::before, //is one of these unnecessary?
 .contenttype-image::before,
 .contenttype-folder::before {
   width: 16px;
@@ -852,8 +853,14 @@ a:hover [class^="icon-controlpanel-"]::before {
   margin-right: 0.9375em;
 }
 
-.contenttype-feed::before {
+.contenttype-feed::before,
+.contenttype-collection::before {
   content: url("../../svg/contenttypes/contenttype-feed.svg");
+}
+
+.contenttype-feed:hover::before,
+.contenttype-collection:hover::before {
+  content: url("../../svg/contenttypes/contenttype-feed-hover.svg");
 }
 
 .contenttype-image::before {
@@ -874,6 +881,10 @@ a:hover [class^="icon-controlpanel-"]::before {
 
 .contenttype-folder::before {
   content: url("../../svg/contenttypes/contenttype-folder.svg");
+}
+
+.contenttype-folder:hover::before {
+  content: url("../../svg/contenttypes/contenttype-folder-hover.svg");
 }
 
 // for the add new modal.. for "adding folders"
@@ -899,44 +910,41 @@ li.contenttype-folder-container .contenttype-folder:hover::before {
 .contenttype-event::before {
   content: url("../../svg/contenttypes/contenttype-event.svg");
 }
+
 .contenttype-event:hover::before {
   content: url("../../svg/contenttypes/contenttype-event-hover.svg");
 }
 
-
-.contenttype-person::before,
-.contenttype-presscontact::before,
-.contenttype-vicap::before,
-.contenttype-vicap::before,
-.contenttype-bankrobber::before,
-.contenttype-bankrobber::before {
-  content: url("../../svg/contenttypes/contenttype-person.svg");
+.contenttype-audio::before {
+  content: url("../../svg/contenttypes/contenttype-audio.svg");
 }
 
-.contenttype-person:hover::before,
-.contenttype-presscontact:hover::before,
-.contenttype-vicap:hover::before,
-.contenttype-vicap:hover::before,
-.contenttype-bankrobber:hover::before,
-.contenttype-bankrobber:hover::before {
-  content: url("../../svg/contenttypes/contenttype-person-hover.svg");
+.contenttype-audio:hover::before {
+  content: url("../../svg/contenttypes/contenttype-audio-hover.svg");
 }
 
-.contenttype-speech::before {
-  content: url("../../svg/contenttypes/contenttype-speech.svg");
-  padding-right: 0.2em;
+.contenttype-pad::before {
+  content: url("../../svg/contenttypes/contenttype-pad.svg");
 }
 
-.contenttype-speech:hover::before {
-  content: url("../../svg/contenttypes/contenttype-speech-hover.svg");
+.contenttype-pad:hover::before {
+  content: url("../../svg/contenttypes/contenttype-pad-hover.svg");
 }
 
-.contenttype-testimony::before {
-  content: url("../../svg/contenttypes/contenttype-testimony.svg") !important;
+.contenttype-dashboard::before {
+  content: url("../../svg/contenttypes/contenttype-dashboard.svg");
 }
 
-.contenttype-testimony:hover::before {
-  content: url("../../svg/contenttypes/contenttype-testimony-hover.svg") !important;
+.contenttype-dashboard:hover::before {
+  content: url("../../svg/contenttypes/contenttype-dashboard-hover.svg");
+}
+
+.contenttype-file::before {
+  content: url("../../svg/contenttypes/contenttype-file.svg");
+}
+
+.contenttype-file:hover::before {
+  content: url("../../svg/contenttypes/contenttype-file-hover.svg");
 }
 
 .contenttype-link::before {
@@ -947,19 +955,38 @@ li.contenttype-folder-container .contenttype-folder:hover::before {
   content: url("../../svg/contenttypes/contenttype-link-hover.svg");
 }
 
-.contenttype-pressrelease::before {
-   content: url("../../svg/contenttypes/contenttype-pressrelease.svg");
+.contenttype-slideshow::before {
+  content: url("../../svg/contenttypes/contenttype-slideshow.svg");
 }
 
-.contenttype-pressrelease:hover::before {
-  content: url("../../svg/contenttypes/contenttype-pressrelease-hover.svg");
-}
-.contenttype-story::before {
-  content: url("../../svg/contenttypes/contenttype-story.svg");
+.contenttype-slideshow:hover::before {
+  content: url("../../svg/contenttypes/contenttype-slideshow-hover.svg");
 }
 
-.contenttype-story:hover::before {
-  content: url("../../svg/contenttypes/contenttype-story-hover.svg");
+.contenttype-parallax::before {
+  content: url("../../svg/contenttypes/contenttype-parallax.svg");
+}
+
+.contenttype-parallax:hover::before {
+  content: url("../../svg/contenttypes/contenttype-parallax-hover.svg");
+}
+.contenttype-easyform::before {
+  content: url("../../svg/contenttypes/contenttype-easyform.svg") !important;
+}
+
+.contenttype-easyform:hover::before {
+  content: url("../../svg/contenttypes/contenttype-easyform-hover.svg") !important;
+}
+
+.glyphicon.glyphicon-upload::before,
+.glyphicon.glyphicon-eye-open::before,
+.glyphicon.glyphicon-pencil::before {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: 0.9375em;
+  vertical-align: top;
+  content: '';
 }
 
 .glyphicon.glyphicon-upload::before {

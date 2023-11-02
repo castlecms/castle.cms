@@ -4,7 +4,7 @@ Changelog
 3.0.0b12 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- fix broken compile-resources from new css/ less collision over function named "max"
 
 
 3.0.0b11 (2021-09-17)
