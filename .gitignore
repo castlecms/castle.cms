@@ -15,6 +15,7 @@
 /build/
 /parts/
 /var/
+/var-replicate/
 /eggs/
 /share/
 ._*
