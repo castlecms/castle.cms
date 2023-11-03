@@ -74,6 +74,17 @@ class SecureLoginView(BrowserView):
     def from_backend_url(self):
         return is_backend(self.request)
 
+    @property
+    def request_submitted(self):
+        submit = self.request.get('submit', None)
+        if submit is None:
+            return None
+        return submit == 'true'
+
+    @property
+    def request_form_url(self):
+        return self.auth.request_form_url
+
     def scrub_backend(self):
         if not self.auth.is_zope_root and self.from_backend_url:
             return api.portal.get_registry_record('plone.scrub_title_logo_to_backend_login')
@@ -87,7 +98,7 @@ class SecureLoginView(BrowserView):
     def country_blocked(self):
         if self.request.form.get('apiMethod', None) == 'request_country_exception':
             user = api.user.get(username=self.username)
-            cache_key = self.auth.get_country_exception_cache_key(user.getId)
+            cache_key = self.auth.get_country_exception_cache_key(user.getId())
             try:
                 request_data = cache.get(cache_key)
             except KeyError:

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="universal_analytics_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Universal Analytics ID</title>
+      <required>False</required>
+    </field>
+  </record>
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gst_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Global Site Tag ID</title>
+      <required>False</required>
+    </field>
+  </record>
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gst_enabled" prefix="castle" purge="False">
+    <field type="plone.registry.field.Bool">
+      <title>Enable Global Site Tags Throughout Site</title>
+      <required>False</required>
+    </field>
+  </record>
+
+  <record name="plone.disable_country_restriction"
+          interface="castle.cms.interfaces.ISecuritySchema"
+          field="disable_country_restriction">
+    <value>False</value>
+  </record>
+
+</registry>

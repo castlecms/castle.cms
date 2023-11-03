@@ -169,6 +169,10 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             except (KeyError, AttributeError, ValueError, TypeError):
                 pass
 
+        if self.show_expired:
+            parsed['show_all'] = 1
+            parsed['show_inactive'] = 1
+
         return parsed
 
     @property
@@ -190,6 +194,11 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     @property
     def limit(self):
         return self.data.get('limit', 20) or 20
+
+    @property
+    def show_expired(self):
+        should_show = self.data.get('show_expired', False) or None
+        return should_show if should_show in [True, False] else False
 
     @memoize
     def results(self):
@@ -344,6 +353,13 @@ class IQueryListingTileSchema(model.Schema):
         description=u'Sort the results in reverse order',
         required=False,
         default=True
+    )
+
+    show_expired = schema.Bool(
+        title=u'Show Expired',
+        description=u'Include all results, even expired ones',
+        required=False,
+        default=False,
     )
 
     limit = schema.Int(

@@ -33,7 +33,8 @@ def script_runner(script, argv=sys.argv):
         script_path = os.path.join(this_dir, script)
     else:
         script_path = script
-    cmd = [instance, 'run', script_path]
+    command_line_args = ['--site-id="{}"'.format(args.siteid)] if args.siteid is not None else []
+    cmd = [instance, 'run', script_path] + command_line_args
 
     print('Running command: %s' % ' '.join(cmd))
     subprocess.check_call(cmd, env=os.environ)
@@ -47,6 +48,9 @@ def run_it(module):
         os.path.join(cwd, 'parts/instance/etc/zope.conf'),
         os.path.join(cwd, 'parts/client1/etc/zope.conf'),
     ]
+    env_conf_path = os.getenv("ZOPE_CONF_PATH", None)
+    if env_conf_path is not None:
+        lookup_paths.append(env_conf_path)
     for path in lookup_paths:
         if os.path.exists(path):
             conf_path = path
@@ -94,14 +98,6 @@ def empty_trash(argv=sys.argv):
 
 def twitter_monitor(argv=sys.argv):
     return run_it('_twitter_monitor')
-
-
-def reindex_es(argv=sys.argv):
-    return run_it('_reindex_es')
-
-
-def upgrade_elasticsearch_in_place(argv=sys.argv):
-    return run_it('_upgrade_elasticsearch_in_place')
 
 
 def forced_publish_alert(argv=sys.argv):

@@ -1,10 +1,8 @@
 from .api import verify_recaptcha  # noqa
-from .catalog import ESConnectionFactoryFactory  # noqa
 from .catalog import add_indexes  # noqa
 from .catalog import add_metadata  # noqa
 from .catalog import delete_indexes  # noqa
 from .catalog import delete_metadata  # noqa
-from .catalog import index_in_es  # noqa
 from .content import clear_object_cache  # noqa
 from .content import get_context_from_request  # noqa
 from .content import get_data_from_url  # noqa

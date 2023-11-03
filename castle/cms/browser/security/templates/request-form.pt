@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html tal:define="portal_url context/portal_url|context/absolute_url;
+                  utils context/@@castle-utils;" lang="en">
+  <head>
+    <link href="${portal_url|nothing}/++plone++castle/libs/bootstrap/dist/css/bootstrap.css"
+          rel="stylesheet" type="text/css">
+    <link href="${portal_url|nothing}/++plone++castle/less/misc/secure-login.css?v=4"
+          rel="stylesheet" type="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="robots" content="noindex">
+    <title>${python: utils.get_registry_value('plone.site_title')} Request Access</title>
+  </head>
+
+  <body>
+    <div id="visual-wrapper">
+      <div class="castle-login-header">
+        <div class="row" tal:condition="not: view/auth/is_zope_root">
+          <div tal:condition="not: view/scrub_backend" class="col-md-12">
+            <img tal:attributes="alt string:${python: utils.get_registry_value('plone.site_title')} Logo;" src="${utils/get_logo|nothing}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" tal:condition="not: view/auth/is_zope_root">
+            <h1 tal:condition="not: view/scrub_backend" tal:on-error="string:CastleCMS">${python: utils.get_registry_value('plone.site_title')}</h1>
+            <h1 tal:condition="view/scrub_backend">CastleCMS</h1>
+          </div>
+          <div class="col-md-12">
+            <h2>Access Request</h2>
+          </div>
+        </div>
+      </div>
+    <br />
+
+    <div id="content-core">
+
+      <form tal:condition="view/request_access_enabled"
+            method="POST"
+            id="access-form"
+            class="align-self-center"
+            action="${context/absolute_url}/@@request-access">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+              <div class="form-group">
+                  <label for="name">Name</label>
+                  <br />
+                  <input type='text' id='name' name='name' style='width: 100%' required>
+              </div>
+              <div class="form-group">
+                  <label for="email">E-Mail Address</label>
+                  <br />
+                  <input type='text' id='email' name='email' style='width: 100%' required>
+              </div>
+              <div class="form-group">
+                  <label for="Phone">Phone</label>
+                  <br />
+                  <input type='text' id='phone' name='phone' style='width: 100%'>
+              </div>
+              <div class="text-center">
+                <input type="submit" id="submit-request" class="btn btn-primary" value="Submit" required>
+              </div>
+            </div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+      </form>
+      <p tal:condition="not: view/request_access_enabled" style="text-align: center">Access Requests are not currently enabled for this site</p>
+      <script>
+        document.getElementById('access-form').addEventListener('submit', (event) => {
+          fetch(event.target.action, {
+              method: 'POST',
+              body: new URLSearchParams(new FormData(event.target))
+          }).then((response) => {
+              if (!response.ok) {
+                event.preventDefault();
+                const error = document.getElementById("submit-error");
+                error.style.display = null
+              }
+          });
+        })
+      </script>
+
+      <div class="text-center"
+           id="submit-error"
+           style="display: none; padding: 2em" >
+        There was an error while submiting your request. Please try again
+      </div>
+    </div>
+  </body>
+</html>
