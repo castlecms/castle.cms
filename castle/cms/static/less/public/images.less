@@ -48,19 +48,22 @@
 
 .generate-image-size(@modifier) {
   .image-tile-container.landscape .focuspoint {
-    height: max(~'calc(@{base_height} * @{modifier} * @{landscape_ratio}), 150px');
+    --proposed-height: (@base_height * @modifier) * @landscape_ratio;
+    height: ~"max(var(--proposed-height), 150px)";
   }
 
   .image-tile-container.portrait .focuspoint {
-    height: max(~'calc(@{base_height} * @{modifier} * @{portrait_ratio}), 150px');
+    --proposed-height: (@base_height * @modifier) * @portrait_ratio;
+    height: ~"max(var(--proposed-height), 150px)";
   }
 
   .image-tile-container.square .focuspoint {
-    height: max(~'calc(@{base_height} * @{modifier}), 150px');
+    --proposed-height: @base_height * @modifier;
+    height: ~"max(var(--proposed-height), 150px)";
   }
-
-  .image-tile-container.short .focuspoint {
-    height: max(~'calc(@{base_height} * @{modifier} * @{short_ratio}), 150px');
+	.image-tile-container.short .focuspoint {
+    --proposed-height: (@base_height * @modifier) * @short_ratio;
+    height: ~"max(var(--proposed-height), 150px)";
   }
 }
 

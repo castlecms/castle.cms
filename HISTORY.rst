@@ -17,6 +17,7 @@ Changelog
 3.0.0b19 (2022-05-06)
 ---------------------
 
+- fix broken compile-resources from new css/ less collision over function named "max"
 - fix dates while importing
 - fix querylisting as folder view results bug
 

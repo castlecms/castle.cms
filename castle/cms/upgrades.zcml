@@ -545,18 +545,18 @@
     profile="castle.cms:default"
     />
   <genericsetup:registerProfile
-    name="3005"
-    title="CastleCMS upgrade to 3005 profile"
-    directory="profiles/3005"
+    name="3999"
+    title="CastleCMS upgrade to 3999 profile"
+    directory="profiles/3999"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3005"
+    title="Upgrade CastleCMS to 3999"
     description="pagination on folder_contents, mapselect js bug fix, conteenttypes descriptions and icons"
     source="*"
-    destination="3005"
-    handler=".upgrades.upgrade_3005"
+    destination="3999"
+    handler=".upgrades.upgrade_3999"
     profile="castle.cms:default"
     />
 </configure>
