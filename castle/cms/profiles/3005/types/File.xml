@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<object name="File" meta_type="Dexterity FTI" i18n:domain="plone"
-   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="description" i18n:translate="">A data object in one of a number of file-types</property>
-</object>

@@ -45,7 +45,11 @@ upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
 upgrade_3003 = default_upgrade_factory('3003')
 upgrade_3004 = default_upgrade_factory('3004')
-upgrade_3005 = default_upgrade_factory('3005')
+
+
+def upgrade_3005(site, logger=None):
+    # add in princexml username and password
+    re_register_profile(IAPISettings, 'castle')
 
 
 def upgrade_3006_cc(site, logger=None):
