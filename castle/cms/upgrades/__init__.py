@@ -73,4 +73,4 @@ def upgrade_3008(site, logger=None):
     re_register_profile(ISecuritySchema, 'castle')
 
 
-upgrade_3999 = default_upgrade_factory('3999')
+upgrade_3009 = default_upgrade_factory('3009')
