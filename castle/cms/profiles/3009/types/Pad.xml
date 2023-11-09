@@ -1,31 +1,34 @@
 <?xml version="1.0"?>
-<object name="Dashboard" meta_type="Dexterity FTI" i18n:domain="plone"
+<object name="Pad" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title" i18n:translate="">Dashboard</property>
- <property name="description" i18n:translate="">An object to manage a user's landing page</property>
+ <property name="title" i18n:translate="">Pad</property>
+ <property name="description"
+    i18n:translate="">A multi-user simaltaneously-editable document</property>
  <property name="icon_expr"></property>
- <property name="factory">Dashboard</property>
- <property name="add_view_expr">string:${folder_url}/++add++Dashboard</property>
+ <property name="factory">Pad</property>
+ <property name="add_view_expr">string:${folder_url}/++add++Pad</property>
  <property name="link_target"></property>
  <property name="immediate_view">view</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
- <property name="default_view">layout_view</property>
+ <property name="default_view">pad_view</property>
  <property name="view_methods">
-  <element value="layout_view"/>
+  <element value="pad_view"/>
  </property>
  <property name="default_view_fallback">True</property>
- <property name="add_permission">castle.cms.addDashboard</property>
- <property name="klass">castle.cms.content.dashboard.Dashboard</property>
+ <property name="add_permission">castle.cms.addPad</property>
+ <property name="klass">plone.dexterity.content.DexterityContent</property>
  <property name="behaviors">
-  <element value="plone.app.blocks.layoutbehavior.ILayoutAware" />
-  <element value="plone.app.lockingbehavior.behaviors.ILocking" />
+  <element value="plone.app.dexterity.behaviors.metadata.ICategorization"/>
+  <element value="plone.app.dexterity.behaviors.metadata.IPublication"/>
+  <element value="plone.app.dexterity.behaviors.metadata.IOwnership"/>
+  <element value="plone.app.relationfield.behavior.IRelatedItems"/>
  </property>
  <property name="schema"></property>
  <property name="model_source"></property>
- <property name="model_file">castle.cms.schema:dashboard.xml</property>
+ <property name="model_file">castle.cms.schema:pad.xml</property>
  <property name="schema_policy">dexterity</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>

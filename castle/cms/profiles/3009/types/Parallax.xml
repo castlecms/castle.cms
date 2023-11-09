@@ -2,7 +2,7 @@
 <object name="Parallax" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Parallax</property>
- <property name="description" i18n:translate="">A background that moves at a differnt rate than its content</property>
+ <property name="description" i18n:translate="">A background that moves at a differnt rate than its text</property>
  <property name="icon_expr"></property>
  <property name="factory">Parallax</property>
  <property name="add_view_expr">string:${folder_url}/++add++Parallax</property>
