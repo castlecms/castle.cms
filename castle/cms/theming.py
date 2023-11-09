@@ -16,9 +16,9 @@ from chameleon import PageTemplate
 from chameleon import PageTemplateLoader
 from lxml import etree
 from lxml import html
-from plone import api
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
+from plone.app.dexterity.interfaces import ITypesContext
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.policy import ThemingPolicy
@@ -34,6 +34,7 @@ from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import alsoProvides
 
+import plone.api as api
 
 logger = logging.getLogger('castle.cms')
 
@@ -54,7 +55,33 @@ jsslot_xpath = etree.XPath('//*[@id="javascript_head_slot"]')
 styleslot_xpath = etree.XPath('//*[@id="style_slot"]')
 dynamic_grid_xpath = etree.XPath('//*[@dynamic-grid]')
 LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
-
+meaningless_dexterity_control_panel_urls = (
+    '@@castle.cms.googletagmanager',
+    '@@castle.cms.meta/meta-above-content',
+    '@@castle.cms.meta/meta-below-content',
+    '@@castle.cms.meta/meta-left',
+    '@@castle.cms.meta/meta-right',
+    '@@castle.cms.meta/meta-footer',
+    '@@castle.cms.meta/meta-sticky-footer',
+    '@@castle.cms.meta/meta-top',
+    '@@castle.cms.metadata',
+    '@@plone.app.standardtiles.analytics',
+    '@@plone.app.standardtiles.discussion',
+    '@@plone.app.standardtiles.global_statusmessage',
+    '@@plone.app.standardtiles.lockinfo',
+    '@@plone.app.standardtiles.toolbar',
+    '@@plone.app.standardtiles.viewletmanager/below-content?manager=plone.abovecontentbody',
+    '@@fragment?name=508_',
+    '@@fragment?name=announcement',
+    '@@fragment?name=backend-login_',
+    '@@fragment?name=footer_',
+    '@@fragment?name=mainlinks',
+)
+meaningless_dexterity_control_panel_url_pattern = re.compile(r'{}$'.format(
+    '|'.join(meaningless_dexterity_control_panel_urls)
+    .replace('.', r'\.')
+    .replace('?', r'\?')
+))
 
 class ThemeTemplateLoader(PageTemplateLoader):
 
@@ -204,6 +231,8 @@ class _Transform(object):
             # old style things...
             self.bbb(dom.tree, result)
 
+        self.remove_undefined_types_context_tiles(dom, context)
+
         dom.tree = tiles.renderTiles(request, dom.tree)
 
         self.add_body_classes(original_context, context, request,
@@ -213,6 +242,17 @@ class _Transform(object):
         self.dynamic_grid(dom.tree)
 
         return dom
+
+    def remove_undefined_types_context_tiles(self, dom, context):
+        if ITypesContext.providedBy(context):
+            data_tile_elements = dom.tree.xpath('/html/*[name()="head" or name()="body"]//*[@data-tile]')
+            for data_tile_element in data_tile_elements:
+                data_tile_url = data_tile_element.get('data-tile')
+                if data_tile_url and re.search(
+                    meaningless_dexterity_control_panel_url_pattern,
+                    data_tile_url,
+                ):
+                    data_tile_element.getparent().remove(data_tile_element)
 
     def add_viewlet_tile(self, portal, request, el, name):
         tile = queryMultiAdapter(
