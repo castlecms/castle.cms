@@ -25,13 +25,18 @@ class SubscriptionStorage(object):
             self._data = OOBTree()
             self.site._subscribers = self._data
 
-    def add(self, email, data=None):
+    def add(self, email, data=None, code=None):
+
         email = email.lower()
         if data is None:
             data = {}
+
+        if code is None:
+            code = make_random_key(100)
+
         data.update({
             'created': time(),
-            'code': make_random_key(100),
+            'code': code,
             'confirmed': False,
             'phone_number_confirmed': False,
             'email': email
@@ -57,14 +62,15 @@ def remove(email):
     return storage.remove(email)
 
 
-def register(email, data):
+def register(email, data, code=None):
     storage = SubscriptionStorage()
-    return storage.add(email, data)
+    return storage.add(email, data, code)
 
 
 def confirm(email, code):
     storage = SubscriptionStorage()
     subscriber = storage.get(email)
+
     if not subscriber:
         raise InvalidEmailException(email)
     if subscriber['code'] != code:

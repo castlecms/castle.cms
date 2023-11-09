@@ -96,7 +96,7 @@ class ISiteSchema(controlpanel.ISiteSchema):
 
     enable_notification_subscriptions = schema.Bool(
         title=u'Enable notification subscriptions',
-        description=u'By going to @@subscribe',
+        description=u'By going to @@site-controlpanel',
         default=False)
 
 
