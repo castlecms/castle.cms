@@ -4,7 +4,9 @@ Changelog
 3.0.0b127 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Update control panel icons, providing one for every castle configlet
+- Update dexterity types so every one has an icon and a short desription
+- Add EmailTemplate dexterity type for repeated emails
 
 
 3.0.0b126 (2023-08-01)
