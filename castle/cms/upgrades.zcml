@@ -501,7 +501,7 @@
 
     <genericsetup:upgradeStep
       title="Upgrade CastleCMS to 2.6.35"
-      description="Add Email Templates to castle.cms"
+      description="Add Email Templates to castle.cms, fix dexterity icons and descriptions"
       source="*"
       destination="2635"
       handler=".upgrades.upgrade_2_6_35"
