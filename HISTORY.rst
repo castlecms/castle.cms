@@ -4,7 +4,11 @@ Changelog
 2.19.2 (unreleased)
 -------------------
 
-- Add Email Templates
+- Update control panel icons, providing one for every castle configlet
+- Update dexterity types so every one has an icon and a short desription
+- Add EmailTemplate dexterity type for repeated emails
+- Fix data-tiles that don't exist from rendering and spamming output
+  (for dexterity type definitions in control panel in /@@dexterity-types/<DexterityTypeHere>)
 
 
 2.19.1 (2023-09-15)
