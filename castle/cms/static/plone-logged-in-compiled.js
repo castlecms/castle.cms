@@ -89805,7 +89805,7 @@ define('castle-url/patterns/mapselect',[
     if(!lat || !lng){
       return 'No point selected';
     }
-    return address + '(' + lat.toFixed(6) + ',' + lng.toFixed(6) + ')';
+    return address + '(' + parseFloat( lat ).toFixed( 6 ) + ',' + parseFloat( lng ).toFixed( 6 ) + ')';
   };
 
   var MapSearchComponent = R.createClass({
@@ -100846,5 +100846,5 @@ require([
   }
 });
 
-define("/Users/joel/src/github.com/castlecms/castle.cms/castle/cms/static/plone-logged-in.js", function(){});
+define("/Users/brian.duncan/castle.cms/castle/cms/static/plone-logged-in.js", function(){});
 
