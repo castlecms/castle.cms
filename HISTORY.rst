@@ -9,7 +9,7 @@ Changelog
 - Add EmailTemplate dexterity type for repeated emails
 - Fix data-tiles that don't exist from rendering and spamming output
   (for dexterity type definitions in control panel in /@@dexterity-types/<DexterityTypeHere>)
-- Alloow resuming importjson script
+- Allow resuming importjson script
 
 
 2.19.1 (2023-09-15)
