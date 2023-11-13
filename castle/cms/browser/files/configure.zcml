@@ -73,27 +73,27 @@
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="site-icon.png"
     class=".icon.IconView"
-    permission="zope2.View"
+    permission="zope.Public"
     layer="castle.cms.interfaces.ICastleLayer"
     />
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="favicon.ico"
     class=".icon.FaviconView"
-    permission="zope2.View"
+    permission="zope.Public"
     />
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="manifest.json"
     class=".icon.ManifestView"
-    permission="zope2.View"
+    permission="zope.Public"
     layer="castle.cms.interfaces.ICastleLayer"
     />
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="browserconfig.xml"
     class=".icon.BrowserConfigView"
-    permission="zope2.View"
+    permission="zope.Public"
     layer="castle.cms.interfaces.ICastleLayer"
     />
 

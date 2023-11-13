@@ -1,10 +1,17 @@
 Changelog
 =========
 
-2.19.1 (unreleased)
+2.19.2 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+2.19.1 (2023-09-15)
 -------------------
 
 - Allow batching in cloudflare purging
+- Make icon, favicon, manifest, browserconfig fully public
 
 
 2.19.0 (2023-07-13)
