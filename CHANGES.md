@@ -10,6 +10,7 @@ Changelog
 - Fix data-tiles that don't exist from rendering and spamming output
   (for dexterity type definitions in control panel in /@@dexterity-types/<DexterityTypeHere>)
 - Allow resuming importjson script
+- fix missing/ inconsistently localed back to site setup button in controlpanels
 
 3.0.0b126 (2023-08-01)
 ----------------------
