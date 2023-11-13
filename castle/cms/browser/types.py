@@ -21,5 +21,6 @@ class TypesListing(types.TypesListing):
 
 # Create a form wrapper so the form gets layout.
 TypesListingPage = layout.wrap_form(
-    TypesListing, __wrapper_class=types.TypesEditFormWrapper,
-    label=_(u'Dexterity Content Types'))
+    TypesListing,
+    __wrapper_class=types.TypesEditFormWrapper,
+)

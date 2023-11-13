@@ -29,6 +29,13 @@
         </dd>
       </dl>
 
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
+    </a>
+
       <h1 i18n:translate="heading_add_aliases">Manage aliases</h1>
 
       <form tal:attributes="action view/view_url" method="post">
