@@ -1,0 +1,915 @@
+<!-- Overridding to add "◀ Site Setup" button -->
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  lang="en"
+  metal:use-macro="context/prefs_main_template/macros/master"
+  i18n:domain="plone"
+>
+
+<body>
+
+  <div metal:fill-slot="prefs_configlet_main">
+
+    <script type="text/javascript">
+      ( function ( $ ) {
+
+        if ( $.fn.prepOverlay ) {
+          $().ready( function () {
+            $( 'a.editGlobalOperationParameters, a.editRulesetOperationParameters' ).prepOverlay( {
+              subtype: 'ajax',
+              filter: '#content>*:not(div.configlet),dl.portalMessage.error,dl.portalMessage.info',
+              formselector: 'form:has(div[id^=formfield-form-widgets])',
+              closeselector: '[name="form.buttons.cancel"]',
+              noform: 'close'
+            } );
+          } );
+        }
+
+      } )( jQuery );
+    </script>
+
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
+    </a>
+
+    <div class="autotabs">
+      <ul class="formTabs autotoc-nav">
+        <li class="formTab firstFormTab">
+          <a
+            href=""
+            class="active selected"
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel"
+            i18n:translate="label_settings"
+          >Change settings</a>
+        </li>
+        <li class="formTab">
+          <a
+            href=""
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel-import"
+            i18n:translate="label_import"
+          >Import settings</a>
+        </li>
+        <li
+          tal:condition="view/purgingEnabled"
+          class="formTab"
+        >
+          <a
+            href=""
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel-purge"
+            i18n:translate="label_purging"
+          >Purge caching proxy</a>
+        </li>
+        <li class="formTab lastFormTab">
+          <a
+            href=""
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel-ramcache"
+            i18n:translate="label_ramcache"
+          >RAM cache</a>
+        </li>
+      </ul>
+    </div>
+
+    <div
+      class="portalMessage info"
+      tal:condition="not: view/settings/enabled"
+    >
+      <strong i18n:translate="">
+        Info
+      </strong>
+      <span
+        tal:omit-tag=""
+        i18n:translate="label_caching_first_time_here?"
+      >
+        First time here? We recommend that you get started by
+        <a
+          href="@@caching-controlpanel-import"
+          tal:attributes="href string:${context/absolute_url}/@@caching-controlpanel-import"
+          title="Import caching rules"
+          i18n:name="link"
+          i18n:translate="label_caching_first_time_here_link"
+        >importing a preconfigured set of caching rules</a>.
+      </span>
+    </div>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+
+    <div class="configlet">
+
+      <h1
+        class="documentFirstHeading"
+        i18n:translate="heading_caching_settings"
+      >Caching settings</h1>
+
+
+      <p
+        i18n:translate="description_cache_settings"
+        class="documentDescription"
+      >
+        Control how pages, images, style sheets and other resources are
+        cached.
+      </p>
+
+
+      <form
+        name="settings"
+        method="post"
+        class="enableFormTabbing pat-formunloadalert pat-autotoc"
+        data-pat-autotoc="levels: legend; section: fieldset; className: autotabs"
+        tal:attributes="action request/URL"
+        tal:define="errors view/errors"
+      >
+
+
+        <!-- Field set: global settings -->
+        <fieldset id="fieldset-global-settings">
+          <legend
+            id="fieldsetlegend-global-settings"
+            i18n:translate="legend_global_settings"
+          >Global settings</legend>
+
+          <div
+            class="field"
+            tal:define="selected python:request.get('enabled', view.settings.enabled)"
+          >
+
+            <input
+              type="hidden"
+              value=""
+              name="enabled:boolean:default"
+            />
+            <input
+              type="checkbox"
+              value="1"
+              name="enabled:boolean"
+              id="enabled"
+              tal:attributes="checked python:'checked' if selected else None"
+            />
+            <label
+              for="enabled"
+              i18n:translate="label_enabled"
+            >Enable caching</label>
+            <div
+              class="formHelp"
+              i18n:translate="help_enabled"
+            >
+              If this option is disabled, no caching will take place.
+            </div>
+
+          </div>
+
+        </fieldset>
+
+        <!-- Field set: caching proxies -->
+        <fieldset id="fieldset-caching-proxies">
+          <legend
+            id="fieldsetlegend-caching-proxies"
+            i18n:translate="legend_caching_proxies"
+          >Caching proxies</legend>
+
+          <div
+            class="discreet"
+            i18n:translate="description_caching_proxies"
+          >
+            High-performance sites will often place a caching reverse
+            proxy such as Varnish or Squid in front of Zope. The caching
+            operations configured elsewhere on this screen can often take
+            advantage of such a proxy by instructing it to cache certain
+            content in a certain way, whilst passing requests for other
+            content through to Plone always. Plone can also send so-called
+            <code>PURGE</code> requests to a caching proxy when content
+            changes, reducing the risk of a stale response from a cached
+            copy.
+          </div>
+
+          <div
+            class="field"
+            tal:define="selected python:request.get('purgingEnabled', view.purgingSettings.enabled)"
+          >
+
+            <input
+              type="hidden"
+              value=""
+              name="purgingEnabled:boolean:default"
+            />
+            <input
+              type="checkbox"
+              value="1"
+              name="purgingEnabled:boolean"
+              id="purgingEnabled"
+              tal:attributes="checked python:'checked' if selected else None"
+            />
+            <label
+              for="purgingEnabled"
+              i18n:translate="label_purging_enabled"
+            >Enable purging</label>
+            <div
+              class="formHelp"
+              i18n:translate="help_purging_enabled"
+            >
+              Enable this option if you have configured a caching proxy
+              in front of Plone, and the proxy supports HTTP
+              <code>PURGE</code> requests.
+            </div>
+
+          </div>
+
+          <div
+            tal:define="error errors/cachingProxies | nothing;
+                                        selected python:request.get('cachingProxies', view.purgingSettings.cachingProxies)"
+            tal:attributes="class python:'field error' if error else 'field'"
+          >
+
+            <label
+              for="cachingProxies"
+              i18n:translate="label_caching_proxies"
+            >Caching proxies</label>
+            <div
+              class="formHelp"
+              i18n:translate="help_caching_proxies"
+            >
+              Enter the domain name of each caching proxy, one per
+              line. For example, if you have Varnish running on the
+              local machine on port 1234, you could enter
+              <code>http://localhost:1234</code>. The domain name must
+              be reachable by the Zope process, but does not need to
+              be reachable from users' local machines.
+            </div>
+
+            <div
+              tal:replace="error"
+              tal:condition="error"
+            />
+
+            <textarea
+              cols="40"
+              rows="4"
+              id="cachingProxies"
+              name="cachingProxies:lines"
+              tal:content="python:'\n'.join(selected or [])"
+            ></textarea>
+
+          </div>
+
+          <div
+            tal:define="error errors/purgedContentTypes | nothing;
+                                        selected python:request.get('purgedContentTypes', view.ploneSettings.purgedContentTypes)"
+            tal:attributes="class python:'field error' if error else 'field'"
+          >
+
+            <label
+              for="purgedContentTypes"
+              i18n:translate="label_purged_content_types"
+            >Content types to purge</label>
+            <div
+              class="formHelp"
+              i18n:translate="help_purged_content_types"
+            >
+              If you have enabled purging, Plone can automatically purge
+              the views of content items when they are modified or
+              removed. Select the types to automatically purge below.
+              <strong>Note:</strong> although a content items's view
+              can be purged easily, it is not always possible to purge
+              every page where that item may appear. Items that appear
+              in dynamic listings (such as <em>Collection</em> portlets),
+              the navigation tree and other navigational aids may appear
+              out of date if you have cached the pages where those
+              items would appear.
+            </div>
+
+            <div
+              tal:replace="error"
+              tal:condition="error"
+            />
+
+            <select
+              size="6"
+              multiple="multiple"
+              id="purgedContentTypes"
+              name="purgedContentTypes:list"
+            >
+              <option
+                tal:repeat="contentType view/contentTypes"
+                tal:attributes="value    contentType/name;
+                                                    title    contentType/description;
+                                                    selected python:'selected' if contentType['name'] in selected else None;"
+                tal:content="contentType/title"
+                i18n:attributes="title"
+                i18n:translate=""
+              />
+            </select>
+
+          </div>
+
+          <div
+            class="field"
+            tal:define="selected python:request.get('virtualHosting', view.purgingSettings.virtualHosting)"
+          >
+
+            <input
+              type="hidden"
+              value=""
+              name="virtualHosting:boolean:default"
+            />
+            <input
+              type="checkbox"
+              value="1"
+              name="virtualHosting:boolean"
+              id="virtualHosting"
+              tal:attributes="checked python:'checked' if selected else None"
+            />
+            <label
+              for="virtualHosting"
+              i18n:translate="label_virtual_hosting"
+            >Virtual host rewriting takes place front of the caching proxy</label>
+            <div
+              class="formHelp"
+              i18n:translate="help_virtual_hosting"
+            >
+              Enable this if you are using virtual hosting with Zope's
+              VirtualHostMonster and you perform URL rewriting (to
+              incorporate the special virtual hosting tokens such as
+              <code>VirtualHostBase</code> and
+              <code>VirtualHostRoot</code> in the URL) <em>before</em>
+              the request is passed to the caching proxy, e.g. in an
+              Apache web server that receives requests and passes them
+              on to a Varnish caching proxy. Disable this option if you
+              are not using virtual hosting, or if the caching proxy is
+              in front of whatever performs the rewrite (or is itself
+              performing the rewrites), disable this option.
+            </div>
+
+          </div>
+
+          <div
+            tal:define="error errors/domains | nothing;
+                                        selected python:request.get('domains', view.purgingSettings.domains)"
+            tal:attributes="class python:'field error' if error else 'field'"
+          >
+
+            <label
+              for="domains"
+              i18n:translate="label_domains"
+            >Externally facing domains</label>
+            <div
+              class="formHelp"
+              i18n:translate="help_domains"
+            >
+              <p>
+                If you have enabled <em>Virtual host rewriting takes place
+                  front of the caching proxy</em> above, and your site is
+                reachable via multiple domains (e.g.
+                <code>http://example.com:80</code> vs.
+                <code>http://www.example.com:80</code>), enter all available
+                domains here, one per line. This will ensure that purge
+                requests are sent for all domains where applicable. Note
+                that it is more efficient to configure the front-most web
+                server to simply redirect all requests to a single domain,
+                so that Zope only "sees" a single domain.
+              </p>
+              <p>
+                It is safe to leave this list blank if you are not using
+                a caching proxy, if you are not using virtual hosting,
+                if virtual host rewriting takes place behind the caching
+                proxy, or if you only have a single virtually hosted
+                domain name.
+              </p>
+            </div>
+
+            <div
+              tal:replace="error"
+              tal:condition="error"
+            />
+
+            <textarea
+              cols="40"
+              rows="4"
+              id="domains"
+              name="domains:lines"
+              tal:content="python:'\n'.join(selected or [])"
+            ></textarea>
+
+          </div>
+
+        </fieldset>
+
+        <!-- Field set: memory -->
+        <fieldset id="fieldset-ram">
+          <legend
+            id="fieldsetlegend-ram"
+            i18n:translate="legend_ram"
+          >In-memory cache</legend>
+
+          <div
+            class="discreet"
+            i18n:translate="description_ram"
+          >
+            Plone maintains a cache of certain pages and
+            fragments of pages in memory to speed up
+            rendering. Certain caching operations, when
+            mapped, can be used to place entire pages into the
+            RAM cache. Using the RAM cache may allow you to
+            gain some speed (and reduce CPU usage), at the
+            cost of using more memory. Note that the default
+            RAM cache is shared among threads in the same
+            Zope instance, but is not shared between Zope
+            instances. Thus, if you are running a
+            multi-instance ZEO setup, you may find it more
+            efficient to segment your users using a front-end
+            load balancer so that they always reach the same
+            back-end instance. As an alternative, you can
+            integrate a shared cache such as
+            <em>memcached</em>. See the documentation for
+            details.
+          </div>
+
+          <div
+            tal:define="error errors/ramCacheMaxEntries | nothing"
+            tal:attributes="class python:'field error' if error else 'field'"
+          >
+
+            <label
+              for="ramCacheMaxEntries"
+              i18n:translate="label_ram_max_entries"
+            >Maximum entries in the cache</label>
+
+            <span
+              class="fieldRequired"
+              i18n:translate=""
+            >(Required)</span>
+
+            <div
+              class="formHelp"
+              i18n:translate="help_ram_max_entries"
+            >
+              Use this to control how many items can be
+              placed in the cache. The more items you allow,
+              the higher the potential memory consumption.
+            </div>
+
+            <div
+              tal:condition="error"
+              tal:content="error"
+            />
+
+            <input
+              name="ramCacheMaxEntries"
+              id="ramCacheMaxEntries"
+              size="6"
+              tal:attributes="value request/ramCacheMaxEntries | view/ramCache/maxEntries | nothing"
+            />
+
+          </div>
+
+          <div
+            tal:define="error errors/ramCacheMaxAge | nothing"
+            tal:attributes="class python:'field error' if error else 'field'"
+          >
+
+            <label
+              for="ramCacheMaxAge"
+              i18n:translate="label_ram_max_age"
+            >Maximum age of entries in the cache</label>
+
+            <span
+              class="fieldRequired"
+              i18n:translate=""
+            >(Required)</span>
+
+            <div
+              class="formHelp"
+              i18n:translate="help_ram_max_age"
+            >
+              Enter the maximum time, in seconds, that an item
+              may remain in the cache before being purged.
+            </div>
+
+
+            <div
+              tal:condition="error"
+              tal:content="error"
+            />
+
+            <input
+              name="ramCacheMaxAge"
+              id="ramCacheMaxAge"
+              size="6"
+              tal:attributes="value request/ramCacheMaxAge | view/ramCache/maxAge | nothing"
+            />
+
+          </div>
+
+          <div
+            tal:define="error errors/ramCacheCleanupInterval | nothing"
+            tal:attributes="class python:'field error' if error else 'field'"
+          >
+
+            <label
+              for="ramCacheCleanupInterval"
+              i18n:translate="label_ram_cleanup_interval"
+            >Cleanup interval</label>
+
+            <span
+              class="fieldRequired"
+              i18n:translate=""
+            >(Required)</span>
+
+            <div
+              class="formHelp"
+              i18n:translate="help_ram_cleanup_interval"
+            >
+              Enter the time, in seconds, before attempts
+              to clean up the cache. A lower value may reduce
+              memory consumption by purging items frequently,
+              but can also slow down the system by tying up
+              the cache with maintenance tasks for too long.
+            </div>
+
+            <div
+              tal:condition="error"
+              tal:content="error"
+            />
+
+            <input
+              name="ramCacheCleanupInterval"
+              id="ramCacheCleanupInterval"
+              size="6"
+              tal:attributes="value request/ramCacheCleanupInterval | view/ramCache/cleanupInterval | nothing"
+            />
+
+          </div>
+
+        </fieldset>
+
+        <!-- Field set: mappings -->
+        <fieldset id="fieldset-mappings">
+          <legend
+            id="fieldsetlegend-mappings"
+            i18n:translate="legend_mappings"
+          >Caching operations</legend>
+
+          <div
+            class="discreet"
+            i18n:translate="description_mappings"
+          >
+            <p>
+              Caching can be controlled by mapping <em>rulesets</em> to
+              <em>caching operations</em>.
+            </p>
+            <p>
+              A <strong>ruleset</strong> is a name given to a resource
+              published by Plone, such as a view. Rulesets are declared by
+              the developers who write those views. You can think of them as
+              a way to give hints about how something should be cached,
+              without actually implementing the caching operations.
+            </p>
+            <p>
+              The exact caching operations to use are mapped to
+              rulesets in the table below. Caching operations will often
+              set response headers to tell the users's web browser and/or
+              a caching proxy how to cache content. They may also intercept
+              a response to return a cached copy or instruct the browser to use
+              its own cached copy, if it is considered to be current.
+            </p>
+          </div>
+
+          <label i18n:translate="label_mappings">Ruleset mappings</label>
+          <div
+            class="formHelp"
+            i18n:translate="help_main_mappings"
+          >
+            Use the table below to map rulesets to caching
+            operations.
+          </div>
+
+          <table
+            class="listing nosort"
+            id="rulesetMappingsTable"
+          >
+            <thead>
+              <tr>
+                <th i18n:translate="heading_ruleset">Ruleset</th>
+                <th i18n:translate="heading_operation">Operation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr tal:repeat="ruleType view/ruleTypes">
+                <td>
+                  <div
+                    tal:content="ruleType/title"
+                    i18n:translate=""
+                  />
+                  <p
+                    class="discreet"
+                    tal:content="ruleType/description"
+                    i18n:translate=""
+                  />
+                </td>
+                <td tal:define="selected python:request.get('operations', view.operationMapping).get(ruleType['safeName'], None)">
+                  <select
+                    size="1"
+                    tal:attributes="id   string:operation-${ruleType/name};
+                                                            name string:operations.${ruleType/safeName}:record;"
+                  >
+                    <option
+                      value=""
+                      tal:attributes="selected python:'selected' if selected is None else None"
+                      i18n:translate="value_not_used"
+                    >(Not used)</option>
+                    <option
+                      tal:repeat="operationType view/operationTypes"
+                      tal:attributes="value    operationType/name;
+                                                                title    operationType/description;
+                                                                selected python:'selected' if operationType['name'] == selected else None;"
+                      tal:content="operationType/title"
+                    />
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <label i18n:translate="label_template_mappings">Legacy template mappings</label>
+          <div
+            class="formHelp"
+            i18n:translate="help_template_mappings"
+          >
+            <p>
+              Legacy page templates defined in the <em>portal_skins</em>
+              tool in the ZMI, or created or customised through the web cannot be
+              associated with rulesets in the usual way. There are two options:
+            </p>
+            <ul>
+              <li>If the template is the <em>default type</em> of a content type
+                it is possible to associate the type class or an interface it
+                provides with a ruleset.</li>
+              <li>You can also associate a specific page template (by name) or
+                content type with a ruleset using the options below.</li>
+            </ul>
+            <p>
+              <strong>Note:</strong> By default, folder-like content types are
+              associated with the ruleset <code>plone.content.folderView</code>,
+              and item-like content types are associated with the ruleset
+              <code>plone.content.itemView</code>. Any settings entered below or
+              set via an explicit cache ruleset (in a ZCML file) will override these
+              defaults.
+            </p>
+            <p>
+              <strong>Note:</strong> You can only use each template name or
+              content type once!
+            </p>
+          </div>
+
+          <table
+            class="listing nosort"
+            id="templateMappingsTable"
+          >
+            <thead>
+              <tr>
+                <th i18n:translate="heading_ruleset">Ruleset</th>
+                <th i18n:translate="heading_content_types">Content types</th>
+                <th i18n:translate="heading_templates">Templates</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tal:block repeat="ruleType view/ruleTypes">
+                <tr tal:define="contentTypeError python:errors.get('contenttypes', {}).get(ruleType['name'], None);
+                                                    templateError    python:errors.get('templates', {}).get(ruleType['name'], None);">
+                  <td>
+                    <div
+                      tal:content="ruleType/title"
+                      i18n:translate=""
+                    />
+                    <p
+                      class="discreet"
+                      tal:content="ruleType/description"
+                      i18n:translate=""
+                    />
+                    <div
+                      class="error"
+                      tal:condition="python:contentTypeError or templateError"
+                    >
+                      <div
+                        tal:content="contentTypeError"
+                        tal:condition="contentTypeError"
+                      />
+                      <div
+                        tal:content="templateError"
+                        tal:condition="templateError"
+                      />
+                    </div>
+                  </td>
+                  <td tal:define="selected python:request.get('contenttypes', view.reverseContentTypeMapping).get(ruleType['safeName'], [])">
+                    <div
+                      class="error"
+                      tal:omit-tag="not:contentTypeError"
+                    >
+                      <select
+                        size="6"
+                        multiple="multiple"
+                        tal:attributes="id   string:contenttypes-${ruleType/name};
+                                                                    name string:contenttypes.${ruleType/safeName}:record:list;"
+                      >
+                        <option
+                          tal:repeat="contentType view/contentTypes"
+                          tal:attributes="value    contentType/name;
+                                                                        title    contentType/description;
+                                                                        selected python:'selected' if contentType['name'] in selected else None;"
+                          tal:content="contentType/title"
+                          i18n:attributes="title"
+                          i18n:translate=""
+                        />
+                      </select>
+                    </div>
+                  </td>
+                  <td tal:define="selected python:request.get('templates', view.reverseTemplateMapping).get(ruleType['safeName'], '')">
+                    <div
+                      class="error"
+                      tal:omit-tag="not:templateError"
+                    >
+                      <textarea
+                        cols="40"
+                        rows="4"
+                        tal:attributes="id   string:templates-${ruleType/name};
+                                                                    name string:templates.${ruleType/safeName}:record:lines"
+                        tal:content="python:'\n'.join(selected or [])"
+                      ></textarea>
+                    </div>
+                  </td>
+                </tr>
+              </tal:block>
+            </tbody>
+          </table>
+
+        </fieldset>
+
+        <!-- Field set: detailed settings -->
+        <fieldset id="fieldset-detailed-settings">
+          <legend
+            id="fieldsetlegend-detailed-settings"
+            i18n:translate="legend_detailed_settings"
+          >Detailed settings</legend>
+
+          <div
+            class="discreet"
+            i18n:translate="description_detailed_settings"
+          >
+            <p>
+              Many caching operations accept parameters to influence their
+              behaviour. For example, an operation which returns a page
+              cached in RAM may accept a parameter specifying the timeout
+              period before pages are re-calculated. Most operations,
+              however, will have "sensible defaults", so that they work
+              acceptably even when no parameters have been set. Note also
+              that not all operations support parameters.
+            </p>
+            <p>
+              Parameters can be set at two levels. By default, parameters
+              apply to all uses of particular operation. Thus, if you have
+              assigned an operation to more than one ruleset, the
+              <em>same</em> parameters will be used. However, you can also
+              override the parameters for a particular ruleset.
+            </p>
+            <p>
+              Use the table below to access parameters for a particular
+              operation or ruleset. <strong>Warning:</strong> If you have
+              made changes elsewhere in this form, you should save them
+              before configuring any operation parameters. Otherwise, you
+              will lose your changes.
+            </p>
+          </div>
+
+          <label i18n:translate="label_operation_parameters">Operation parameters</label>
+          <div
+            class="formHelp"
+            i18n:translate="help_operation_parameters"
+          >
+            Use the table below to create, clear and edit operation
+            parameters. If you clear the ruleset-specific parameters for
+            a given operation, it will fall back on the global operation
+            parameters.
+          </div>
+
+          <table
+            class="listing nosort"
+            id="operationParametersTable"
+          >
+            <thead>
+              <tr>
+                <th i18n:translate="heading_ruleset">Ruleset</th>
+                <th i18n:translate="heading_operation">Operation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr tal:repeat="ruleType view/ruleTypes">
+                <td>
+                  <div
+                    tal:content="ruleType/title"
+                    i18n:translate=""
+                  />
+                  <p
+                    class="discreet"
+                    tal:content="ruleType/description"
+                    i18n:translate=""
+                  />
+                </td>
+                <td tal:define="operationName python:view.operationMapping.get(ruleType['safeName'], None)">
+                  <tal:block
+                    condition="not:operationName"
+                    i18n:translate="help_not_mapped"
+                  >
+                    Not mapped
+                  </tal:block>
+                  <tal:block condition="operationName">
+                    <tal:block
+                      define="operationInfo python:view.operationTypesLookup.get(operationName, None)"
+                      condition="operationInfo"
+                    >
+                      <div tal:content="operationInfo/title" />
+                      <div
+                        class="discreet"
+                        tal:condition="not:operationInfo/hasOptions"
+                        i18n:translate="help_no_options"
+                      >
+                        No parameters
+                      </div>
+                      <div
+                        style="white-space: nowrap"
+                        class="discreet rulesetParameterLink"
+                        tal:condition="operationInfo/hasOptions"
+                      >
+                        <a
+                          class="editGlobalOperationParameters pat-plone-modal"
+                          data-pat-plone-modal='{"actionOptions": {"disableAjaxFormSubmit":true, "redirectOnResponse":true}}'
+                          i18n:translate="link_view_edit"
+                          tal:attributes="href string:${context/absolute_url}/@@${view/__name__}/edit-operation-global/${operationName}"
+                        >View/edit</a>
+                        <span i18n:translate="label_global">global parameters</span>
+                      </div>
+                      <div
+                        style="white-space: nowrap"
+                        class="discreet rulesetParameterLink"
+                        tal:condition="operationInfo/hasOptions"
+                      >
+                        <tal:block define="hasRulesetOptions python:view.hasRulesetOptions(operationInfo['type'], ruleType['name'])">
+                          <a
+                            class="editRulesetOperationParameters pat-plone-modal"
+                            data-pat-plone-modal='{"actionOptions": {"disableAjaxFormSubmit":true, "redirectOnResponse":true}}'
+                            tal:condition="hasRulesetOptions"
+                            i18n:translate="link_view_edit_clear"
+                            tal:attributes="href string:${context/absolute_url}/@@${view/__name__}/edit-operation-ruleset/${operationName}/${ruleType/name}"
+                          >View/edit/clear</a>
+                          <a
+                            class="editRulesetOperationParameters pat-plone-modal"
+                            data-pat-plone-modal='{"actionOptions": {"disableAjaxFormSubmit":true, "redirectOnResponse":true}}'
+                            tal:condition="not:hasRulesetOptions"
+                            i18n:translate="link_create"
+                            tal:attributes="href string:${context/absolute_url}/@@${view/__name__}/edit-operation-ruleset/${operationName}/${ruleType/name}"
+                          >Create</a>
+                        </tal:block>
+                        <span i18n:translate="label_ruleset">per-ruleset parameters</span>
+                      </div>
+                    </tal:block>
+                  </tal:block>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </fieldset>
+
+        <div class="formControls">
+          <input
+            type="submit"
+            name="form.button.Save"
+            class="context"
+            value="Save"
+            i18n:attributes="value"
+          />
+
+          <input
+            type="submit"
+            name="form.button.Cancel"
+            class="standalone"
+            value="Cancel"
+            i18n:attributes="value"
+          />
+        </div>
+
+        <input tal:replace="structure context/@@authenticator/authenticator" />
+
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>
