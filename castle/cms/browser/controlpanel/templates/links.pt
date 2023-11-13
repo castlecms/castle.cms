@@ -47,13 +47,12 @@
 
 <metal:main metal:fill-slot="prefs_configlet_main">
 
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/plone_control_panel"
-       i18n:translate="">
-        Site Setup
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
     </a>
-
 
     <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
 
