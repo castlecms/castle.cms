@@ -1,3 +1,5 @@
+@toolbar-folder: "../../svg/toolbar";
+
 div.mosaic-toolbar {
   z-index:101 !important;
 }
@@ -289,12 +291,12 @@ div.mosaic-toolbar {
         border-left:1px solid @toolbar-border-color;
 
         &::before{
-           content: url("../../svg/icon-save-hover.svg");
+          content: url("@{toolbar-folder}/save-hover.svg");
         }
       }
 
       &::before{
-        content: url("../../svg/icon-save.svg");
+        content: url("@{toolbar-folder}/save.svg");
       }
     }
 
@@ -309,7 +311,7 @@ div.mosaic-toolbar {
       }
 
       &::before{
-        content: url("../../svg/icon-cancel.svg");
+        content: url("@{toolbar-folder}/cancel.svg");
         margin-top:2px;
       }
     }
