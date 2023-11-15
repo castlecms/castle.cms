@@ -30165,5 +30165,5 @@ $(document).ready(function(){
 
 });
 
-define("/Users/brian.duncan/castle-instances/minor-tasks/castle.cms/castle/cms/static/plone.js", function(){});
+define("/Users/brian.duncan/castle.cms/castle/cms/static/plone.js", function(){});
 
