@@ -80,6 +80,18 @@
   content: url("@{glyphicon-folder}/new-window.svg");
 }
 
+.glyphicon.glyphicon-upload::before,
+.glyphicon.glyphicon-eye-open::before,
+.glyphicon.glyphicon-pencil::before,
+.glyphicon.glyphicon-cog::before {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin-right: 0.9375em;
+  vertical-align: top;
+  content: '';
+}
+
 .glyphicon.glyphicon-cog::before {
   content: url("@{glyphicon-folder}/cog.svg");
 }
@@ -94,17 +106,6 @@
 
 .glyphicon.glyphicon-remove:before {
   content: url("@{glyphicon-folder}/remove.svg");
-}
-
-.glyphicon.glyphicon-upload::before,
-.glyphicon.glyphicon-eye-open::before,
-.glyphicon.glyphicon-pencil::before {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  margin-right: 0.9375em;
-  vertical-align: top;
-  content: '';
 }
 
 .glyphicon.glyphicon-upload::before {
