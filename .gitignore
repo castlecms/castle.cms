@@ -22,7 +22,6 @@ castle/cms/locales/en/LC_MESSAGES/plone.mo
 pip-selfcheck.json
 *.pyc
 .vscode/
-Gruntfile.js
 log.html
 node_modules/
 report.html
@@ -37,8 +36,5 @@ env
 env2
 dump.rdb
 export/
-/Makefile
-/package.json
-/watch-run.py
-/watchable-grunt.js
 npm-debug.log
+/Gruntfile.js
