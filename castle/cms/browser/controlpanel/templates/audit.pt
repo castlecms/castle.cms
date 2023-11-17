@@ -12,14 +12,13 @@
             tal:define="connected view/can_connect_to_index;
                         site_path python: '/'.join(context.getPhysicalPath())">
 
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/plone_control_panel"
-       i18n:translate=""
-       tal:condition="not: view/user">
-        Site Setup
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+      tal:condition="not: view/user">
+    >
+      Site Setup
     </a>
-
 
     <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
 

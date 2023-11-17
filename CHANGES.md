@@ -4,8 +4,13 @@ Changelog
 3.0.0b127 (unreleased)
 ----------------------
 
-- Nothing changed yet.
-
+- Update control panel icons, providing one for every castle configlet
+- Update dexterity types so every one has an icon and a short desription
+- Add EmailTemplate dexterity type for repeated emails
+- Fix data-tiles that don't exist from rendering and spamming output
+  (for dexterity type definitions in control panel in /@@dexterity-types/<DexterityTypeHere>)
+- Allow resuming importjson script
+- fix missing/ inconsistently localed back to site setup button in controlpanels
 
 3.0.0b126 (2023-08-01)
 ----------------------
