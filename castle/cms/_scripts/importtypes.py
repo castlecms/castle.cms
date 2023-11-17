@@ -11,7 +11,7 @@ from plone.app.event.dx.behaviors import (IEventAttendees, IEventBasic,
 from plone.app.textfield.value import RichTextValue
 from plone.event.utils import pydt
 from plone.namedfile.file import NamedBlobFile, NamedBlobImage
-from StringIO import StringIO
+from io import StringIO
 
 from zope.interface import Interface
 from zope.component import getUtilitiesFor, getGlobalSiteManager
