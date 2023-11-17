@@ -11,14 +11,11 @@ from plone.app.textfield.value import RichTextValue
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from zope.component import getUtility
 from zope.component.hooks import setSite
-
 import argparse
 import logging
 import os
 import transaction
-
 logger = logging.getLogger('castle.cms')
-
 # ToDo:
 #   - do NOT export images
 #       - only images that are referenced in content
@@ -29,8 +26,6 @@ logger = logging.getLogger('castle.cms')
 #       into file objects
 #   - if default page and only page inside folder, replace folder
 #
-
-
 parser = argparse.ArgumentParser(
     description='...')
 parser.add_argument('--site-id', dest='site_id', default='Castle')
@@ -38,7 +33,6 @@ parser.add_argument(
     '--export-directory', dest='export_directory', default='export')
 parser.add_argument('--import-paths', dest='import_paths', default=False)
 parser.add_argument('--skip-paths', dest='skip_paths', default=False)
-
 parser.add_argument('--overwrite', dest='overwrite', default=False)
 parser.add_argument('--admin-user', dest='admin_user', default='admin')
 parser.add_argument('--ignore-uuids', dest='ignore_uuids', default=False)
@@ -46,6 +40,9 @@ parser.add_argument(
     '--stop-if-exception', dest='stop_if_exception', default=False)
 parser.add_argument(
     '--pdb-if-exception', dest='pdb_if_exception', default=False)
+parser.add_argument('--resumable', dest='resumable', default=False, action='store_true')
+parser.add_argument(
+    '--delete-resumable-file', dest='delete_resumable_file', default=False, action='store_true')
 parser.add_argument('--skip-existing', dest='skip_existing', default=True)
 parser.add_argument(
     '--skip-transitioning', dest='skip_transitioning', default=False)
@@ -62,17 +59,18 @@ parser.add_argument(
         "FormSelectionField",
         "Topic"]))
 parser.add_argument('--only-types', dest='only_types', default=False)
-
 # Put files/videos/etc in to the repository paths by default,
 # Set true to retain exported path
 parser.add_argument('--retain-paths', dest='retain_paths', default=False)
-
 args, _ = parser.parse_known_args()
-
 ignore_uuids = args.ignore_uuids
 stop_if_exception = args.stop_if_exception
 pdb_if_exception = args.pdb_if_exception
 retain_paths = args.retain_paths
+resumable = args.resumable
+delete_resumable_file = args.delete_resumable_file
+successfully_imported_paths = []
+imported_but_not_committed = []
 
 if args.import_paths:
     import_paths = args.import_paths.split(',')
@@ -82,8 +80,6 @@ if args.skip_paths:
     skip_paths = args.skip_paths.split(',')
 else:
     skip_paths = False
-
-
 if args.only_types:
     only_types = args.only_types.split(',')
 else:
@@ -92,7 +88,6 @@ if args.skip_types:
     skip_types = args.skip_types.split(',')
 else:
     skip_types = False
-
 user = app.acl_users.getUser(args.admin_user)  # noqa
 try:
     newSecurityManager(None, user.__of__(app.acl_users))  # noqa
@@ -103,8 +98,6 @@ except Exception:
     exit(-1)
 site = app[args.site_id]  # noqa
 setSite(site)
-
-
 def traverse(path):
     folder = site  # noqa
     for part in path.strip('/').split('/'):
@@ -112,19 +105,13 @@ def traverse(path):
             folder = folder[part]
         else:
             return
-
-
 def relpath(obj):
     return '/'.join(obj.getPhysicalPath())[len(
         '/'.join(site.getPhysicalPath())) + 1:]
-
-
 _importable_fields = (
     'title',
     'description',
 )
-
-
 def fix_html_images(obj):
     try:
         html = obj.text.raw
@@ -164,8 +151,6 @@ def fix_html_images(obj):
         obj.text = RichTextValue(
             tostring(dom), mimeType=obj.text.mimeType,
             outputMimeType=obj.text.outputMimeType)
-
-
 class CastleImporter(object):
     imported_count = 0
     date_functions = [
@@ -174,22 +159,28 @@ class CastleImporter(object):
         ('expiration_date', 'setExpirationDate'),
     ]
 
+    @property
+    def successfully_imported_paths(self):
+        return [
+            args.export_directory + successfully_imported_path
+            for successfully_imported_path in successfully_imported_paths
+        ]
 
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
 
     def import_object(self, filepath, container=None):
-        fi = open(filepath)
-        file_read = fi.read()
-        fi.close()
+        if resumable and filepath in self.successfully_imported_paths:
+            print("Skipping {}; Already successfully imported and resuming is enabled".format(filepath))
+            return
         try:
-            data = mjson.loads(file_read)
+            with open(filepath, 'r') as import_file:
+                data = mjson.loads(import_file.read())
         except Exception:
             print("Skipping {}; Unable to read JSON data".format(filepath))
             return
         if filepath.endswith('__folder__'):
             filepath = '/'.join(filepath.split('/')[:-1])
-
         skipped = False
         if data['portal_type'] in skip_types:
             print('Skipping omitted type {type}'
@@ -222,19 +213,16 @@ class CastleImporter(object):
                 logger.warn('{path} contains additional content that will be '
                             'skipped.'.format(path=filepath))
             return
-
         original_path = filepath[len(args.export_directory):]
         if retain_paths:
             importtype = get_import_type(data, original_path, 'retain_paths')
         else:
             importtype = get_import_type(data, original_path)
         path = importtype.get_path()
-
         if container is None:
             logger.warn('Skipped {} because of creation error'.format(filepath))
             return
         _id = path.split('/')[-1]
-
         create = True
         if _id in container.objectIds():
             if args.overwrite:
@@ -247,11 +235,9 @@ class CastleImporter(object):
                 api.content.delete(container[_id])
             else:
                 create = False
-
         creation_data = importtype.get_data()
         pc_data = importtype.get_post_creation_data()
         creation_data['container'] = container
-
         aspect = ISelectableConstrainTypes(container, None)
         if aspect:
             if (aspect.getConstrainTypesMode() != 1 or
@@ -261,7 +247,6 @@ class CastleImporter(object):
         if create:
             if ignore_uuids and '_plone.uuid' in creation_data:
                 del creation_data['_plone.uuid']
-
             obj = None
             if not args.overwrite and (_id in container.objectIds()):
                 print('Skipping {path}, already exists. Use --overwrite to'
@@ -276,18 +261,24 @@ class CastleImporter(object):
                 try:
                     obj = api.content.create(safe_id=True, **creation_data)
                     print('Created {path}'.format(path=path))
+                    imported_but_not_committed.append(path)
                     self.imported_count += 1
                     if self.imported_count % 50 == 0:
                         print('%i processed, committing' % self.imported_count)
                         transaction.commit()
+                        successfully_imported_paths.extend(imported_but_not_committed)
+                        with open('./.successfullyimportedpaths', 'a') as fout:
+                            fout.writelines('\n'.join(imported_but_not_committed) + '\n')
+                            fout.flush()
+                        del imported_but_not_committed[0:]
                 except api.exc.InvalidParameterError:
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
-                            import pdb; pdb.set_trace()
+                            import pdb
+                            pdb.set_trace()
                         raise
-                    logger.error('Error creating content {}'
-                                                .format(filepath), exc_info=True)
+                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
                     return
     # TODO check default folder pages came over as folder with rich text tile
     # TODO any folder pages without default page should have content listing tile
@@ -296,14 +287,12 @@ class CastleImporter(object):
             for key, value in creation_data.items():
                 if key not in ('id', 'type'):
                     setattr(obj, key, value)
-
         if obj is not None:
             if path != original_path:
                 storage = getUtility(IRedirectionStorage)
                 rpath = os.path.join('/'.join(site.getPhysicalPath()),
                                      original_path.strip('/'))
                 storage.add(rpath, "/".join(obj.getPhysicalPath()))
-
             obj.contentLayout = importtype.layout
             importtype.post_creation(obj, post_creation_data=pc_data)
             if not args.skip_transitioning and data['state']:
@@ -319,9 +308,9 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
-                                import pdb; pdb.set_trace()
+                                import pdb
+                                pdb.set_trace()
                             raise
-
             # set workflow / review history
             if 'review_history' in data:
                 review_history = data['review_history']
@@ -331,13 +320,10 @@ class CastleImporter(object):
                     obj.workflow_history[workflow_id] = review_history
             else:
                 logger.warn('No review history on {obj}'.format(obj=obj))
-
             fix_html_images(obj)
             obj.reindexObject()
             self.fix_dates(obj, data)
             return obj
-
-
     def fix_dates(self, obj, data):
         for key, index_function_name in self.date_functions:
             indexed_date = data['data'].get(key, None)
@@ -358,8 +344,6 @@ class CastleImporter(object):
                         obj=obj,
                     )
                     logger.warn(warn_message)
-
-
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
         if path is not args.export_directory:
@@ -396,12 +380,11 @@ class CastleImporter(object):
                                                                 exc_info=True)
                 if stop_if_exception:
                     if pdb_if_exception:
-                        import pdb; pdb.set_trace()
+                        import pdb
+                        pdb.set_trace()
                     raise
-
 #    app._p_jar.invalidateCache()  # noqa
 #    app._p_jar.sync()  # noqa
-
     def create_plain_folder(self, id, container):
         logger.info("Creating plain Folder (no __folder__ file found), %s" % id)
         folder = api.content.create(
@@ -417,10 +400,20 @@ class CastleImporter(object):
 
 
 if __name__ == '__main__':
-
     print('------------------------------')
     print('Start importing')
     print('------------------------------')
+    if resumable:
+        print('------------------------------')
+        print('Resuming enabled, checking for ./.successfullyimportedpaths and loading')
+        # create if it doesn't exist:
+        with open('.successfullyimportedpaths', 'a+'):
+            pass
+        with open('.successfullyimportedpaths', 'r') as fin:
+            for line in fin.readlines():
+                successfully_imported_paths.append(line.replace('\n', ''))
+        print('{} paths loaded'.format(len(successfully_imported_paths)))
+        print('------------------------------')
     if args.overwrite:
         print('------------------------------')
         print('Importing with overwrite enabled')
@@ -429,3 +422,7 @@ if __name__ == '__main__':
     importer.do_import()
     print('Created {count} Content Items'.format(count=importer.imported_count))
     transaction.commit()
+    print('Import completed')
+    if delete_resumable_file:
+        print('Deleting .successfullyimportedpaths')
+        os.remove('.successfullyimportedpaths')

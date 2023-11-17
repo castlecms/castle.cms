@@ -1,0 +1,175 @@
+@contenttypes-folder: "../../svg/contenttypes";
+
+[class*="contenttype-"]::before,
+.contenttype-news.item::before {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: 0.9375em;
+  vertical-align: -.125em;
+  content: '';
+}
+
+.contenttype-collection::before,
+.contenttype-image::before,
+.contenttype-folder::before {
+  width: 16px;
+  height: 16px;
+  font-family: inherit !important;
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+  margin-right: 0.9375em;
+}
+
+[class^="contenttype-"][class$="-container"] {
+  >[class^="contenttype"]:not([class$="-container"]) {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+/* document used as default for some so present it first */
+.contenttype-document::before {
+  content: url("@{contenttypes-folder}/document.svg");
+}
+
+.contenttype-document:hover::before {
+  content: url("@{contenttypes-folder}/document-hover.svg");
+}
+
+.contenttype-collection::before {
+  content: url("@{contenttypes-folder}/feed.svg");
+}
+
+.contenttype-collection:hover::before {
+  content: url("@{contenttypes-folder}/feed-hover.svg");
+}
+
+.contenttype-image::before {
+  content: url("@{contenttypes-folder}/image.svg");
+}
+
+.contenttype-image:hover::before {
+  content: url("@{contenttypes-folder}/image-hover.svg");
+}
+
+.contenttype-video::before {
+  content: url("@{contenttypes-folder}/video.svg");
+}
+
+.contenttype-video:hover::before {
+  content: url("@{contenttypes-folder}/video-hover.svg");
+}
+
+.contenttype-folder::before {
+  content: url("@{contenttypes-folder}/folder.svg");
+}
+
+.contenttype-folder:hover::before {
+  content: url("@{contenttypes-folder}/folder-hover.svg");
+}
+
+// for the add new modal.. for "adding folders"
+li.contenttype-folder-container .contenttype-folder::before {
+  content: url("@{contenttypes-folder}/add-folder.svg");
+  width: 16px;
+  line-height: 1em;
+  vertical-align: middle;
+}
+
+li.contenttype-folder-container .contenttype-folder:hover::before {
+  content: url("@{contenttypes-folder}/add-folder-hover.svg");
+}
+
+.contenttype-news-item::before,
+.contenttype-news.item::before {
+  content: url("@{contenttypes-folder}/news-item.svg");
+}
+
+.contenttype-news-item:hover::before,
+.contenttype-news.item:hover::before {
+  content: url("@{contenttypes-folder}/news-item-hover.svg");
+}
+
+.contenttype-event::before {
+  content: url("@{contenttypes-folder}/event.svg");
+}
+
+.contenttype-event:hover::before {
+  content: url("@{contenttypes-folder}/event-hover.svg");
+}
+
+.contenttype-audio::before {
+  content: url("@{contenttypes-folder}/audio.svg");
+}
+
+.contenttype-audio:hover::before {
+  content: url("@{contenttypes-folder}/audio-hover.svg");
+}
+
+.contenttype-pad::before {
+  content: url("@{contenttypes-folder}/pad.svg");
+}
+
+.contenttype-pad:hover::before {
+  content: url("@{contenttypes-folder}/pad-hover.svg");
+}
+
+.contenttype-dashboard::before {
+  content: url("@{contenttypes-folder}/dashboard.svg");
+}
+
+.contenttype-dashboard:hover::before {
+  content: url("@{contenttypes-folder}/dashboard-hover.svg");
+}
+
+.contenttype-file::before {
+  content: url("@{contenttypes-folder}/file.svg");
+}
+
+.contenttype-file:hover::before {
+  content: url("@{contenttypes-folder}/file-hover.svg");
+}
+
+.contenttype-link::before {
+  content: url("@{contenttypes-folder}/link.svg");
+}
+
+.contenttype-link:hover::before {
+  content: url("@{contenttypes-folder}/link-hover.svg");
+}
+
+.contenttype-slideshow::before {
+  content: url("@{contenttypes-folder}/slideshow.svg");
+}
+
+.contenttype-slideshow:hover::before {
+  content: url("@{contenttypes-folder}/slideshow-hover.svg");
+}
+
+.contenttype-parallax::before {
+  content: url("@{contenttypes-folder}/parallax.svg");
+}
+
+.contenttype-parallax:hover::before {
+  content: url("@{contenttypes-folder}/parallax-hover.svg");
+}
+
+.contenttype-emailtemplate::before {
+  content: url("@{contenttypes-folder}/email-template.svg");
+}
+
+.contenttype-emailtemplate:hover::before {
+  content: url("@{contenttypes-folder}/email-template-hover.svg");
+}
+
+.contenttype-easyform::before {
+  content: url("@{contenttypes-folder}/easyform.svg") !important;
+}
+
+.contenttype-easyform:hover::before {
+  content: url("@{contenttypes-folder}/easyform-hover.svg") !important;
+}

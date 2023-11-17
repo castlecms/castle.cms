@@ -1,0 +1,34 @@
+@workflows-folder: "../../svg/workflows";
+
+.icon-plone-contentmenu-workflow::before {
+  content: none;
+}
+
+.state-published .icon-plone-contentmenu-workflow::before,
+.state-external .icon-plone-contentmenu-workflow::before,
+.state-published a:hover .icon-plone-contentmenu-workflow::before,
+.state-external a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("@{workflows-folder}/published.svg");
+}
+
+.state-private .icon-plone-contentmenu-workflow::before,
+.state-private a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("@{workflows-folder}/private.svg");
+}
+
+.state-pending .icon-plone-contentmenu-workflow::before,
+.state-pending a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("@{workflows-folder}/pending.svg");
+}
+
+.state-internally_published .icon-plone-contentmenu-workflow::before,
+.state-internally_published a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("@{workflows-folder}/internally_published.svg");
+}
+
+.state-draft .icon-plone-contentmenu-workflow::before,
+.state-internal .icon-plone-contentmenu-workflow::before,
+.state-draft a:hover .icon-plone-contentmenu-workflow::before,
+.state-internal a:hover .icon-plone-contentmenu-workflow::before {
+  content: url("@{workflows-folder}/draft.svg");
+}

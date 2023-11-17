@@ -1,0 +1,16 @@
+{
+  "name": "grunt-build",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "devDependencies": {
+    "grunt": "1.5.3",
+    "grunt-cli": "1.4.3",
+    "grunt-contrib-less": "3.0.0",
+    "grunt-contrib-requirejs": "1.0.0",
+    "grunt-contrib-uglify": "5.2.1",
+    "grunt-contrib-watch": "1.1.0",
+    "less-plugin-inline-urls": "github:castlecms/less-plugin-inline-urls#1.0.0",
+    "grunt-sed": "github:castlecms/grunt-sed#1.0.0"
+  }
+}

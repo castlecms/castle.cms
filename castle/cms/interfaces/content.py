@@ -1,13 +1,13 @@
-from plone.namedfile.interfaces import INamedImage
-from zope.interface import Attribute
 from OFS.interfaces import IApplication
+from plone.api.portal import get_registry_record
 from plone.app.contenttypes.interfaces import IFile
+from plone.namedfile.interfaces import INamedImage
 from plone.supermodel import model
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
+from zope.interface import Attribute
 from zope.interface import Interface
-from zope import schema
-from plone.api.portal import get_registry_record
 from zope.interface import provider
+import zope.schema as schema
 from zope.schema.interfaces import IContextAwareDefaultFactory
 
 
@@ -76,7 +76,6 @@ class ISlideshow(Interface):
         required=True,
         default=False)
 
-    # directives.widget('make_default_text', SingleCheckBoxFieldWidget)
     view_more_link_url = schema.URI(
         title=u"View More link URL",
         description=u'The URL to which the user is directed for the optional link at the bottom of the slideshow resource slide. ' # noqa
@@ -84,7 +83,6 @@ class ISlideshow(Interface):
         required=False,
         defaultFactory=get_default_url)
 
-    # directives.widget('make_default_text', SingleCheckBoxFieldWidget)
     update_default_link_url = schema.Bool(
         title=u"Make this the default link url for all slideshows?",
         description=u'This only changes the default value. It will not modify any existing content',
@@ -97,9 +95,7 @@ class IParallax(Interface):
 
 
 class ITrashed(Interface):
-    """
-    marker for object that is in the trash
-    """
+    """marker for object that is in the trash"""
 
 
 class IHasDefaultImage(Interface):
@@ -118,6 +114,4 @@ class IUploadedToYoutube(Interface):
 
 
 class ITemplate(Interface):
-    """
-    marker for object that has been made into template
-    """
+    """marker for object that has been made into template"""

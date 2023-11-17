@@ -2,8 +2,8 @@ Development
 ===========
 
 
-Building resources after changes to js
---------------------------------------
+Compiling resources after changes to js or less
+-----------------------------------------------
 
 Just regular plone compile resources::
 
