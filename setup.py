@@ -68,16 +68,16 @@ setup(
 
         # the use of collective.elasticsearch in the 3.x+ version of castle.cms
         # is limited and should not be relied on.
-        'collective.elasticsearch>=4.0.0<5.0.0',
+        'collective.elasticsearch >=4.0.0, <5.0.0',
 
         # python
         'boto3>=1.9.222',
-        'google-api-python-client>=1.4.2<2',
+        'google-api-python-client >=1.4.2, <2',
         'google-auth>=2.5.0',
-        'requests>=2.7.0<3',
-        'requests_oauthlib>=0.5.0<1',
-        'oauth2client>=1.5.1<2',
-        'redis>=2.10.5<3',
+        'requests >=2.7.0, <3',
+        'requests_oauthlib >=0.5.0, <1',
+        'oauth2client >=1.5.1, <2',
+        'redis >=2.10.5, <3',
         'setuptools',
         'python-dateutil',
         'pyopenssl',
