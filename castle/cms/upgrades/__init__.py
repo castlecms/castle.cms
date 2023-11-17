@@ -13,7 +13,7 @@ def cook_js_resources(context, logger=None):
     cookWhenChangingSettings(api.portal.get())
 
 
-def re_register_profile(interface, prefix):
+def re_register_interface(interface, prefix):
     registry = api.portal.get_tool('portal_registry')
     registry.registerInterface(
         interface,
@@ -79,11 +79,9 @@ upgrade_2_6_30 = default_upgrade_factory('2_6_30')
 upgrade_2_6_31 = default_upgrade_factory('2_6_31')
 upgrade_2_6_33 = default_upgrade_factory('2_6_33')
 
+
 def upgrade_2_6_34(site, logger=None):
-    registry = api.portal.get_tool('portal_registry')
-    registry.registerInterface(
-        IAPISettings,
-        prefix='castle',
-    )
+    re_register_interface(IAPISettings, 'castle')
+
 
 upgrade_2_6_35 = default_upgrade_factory('2_6_35')
