@@ -55,7 +55,7 @@ jsslot_xpath = etree.XPath('//*[@id="javascript_head_slot"]')
 styleslot_xpath = etree.XPath('//*[@id="style_slot"]')
 dynamic_grid_xpath = etree.XPath('//*[@dynamic-grid]')
 LAYOUT_NAME = re.compile(r'[a-zA-Z_\-]+/[a-zA-Z_\-]+')
-meaningless_dexterity_control_panel_urls = (
+nonexistant_dexterity_control_panel_urls = (
     '@@castle.cms.googletagmanager',
     '@@castle.cms.meta/meta-above-content',
     '@@castle.cms.meta/meta-below-content',
@@ -77,8 +77,8 @@ meaningless_dexterity_control_panel_urls = (
     '@@fragment?name=footer_',
     '@@fragment?name=mainlinks',
 )
-meaningless_dexterity_control_panel_url_pattern = re.compile(r'{}$'.format(
-    '|'.join(meaningless_dexterity_control_panel_urls)
+nonexistant_dexterity_control_panel_url_pattern = re.compile(r'{}$'.format(
+    '|'.join(nonexistant_dexterity_control_panel_urls)
     .replace('.', r'\.')
     .replace('?', r'\?')
 ))
@@ -244,12 +244,17 @@ class _Transform(object):
         return dom
 
     def remove_undefined_types_context_tiles(self, dom, context):
+        '''
+        The nonexistant_dexterity_control_panel_urls tiles listed above don't exist
+        (or something they rely on doesn't exist) for dexterity types control panel context
+        Since this doesn't cause a problem except to spam the log, we remove them
+        '''
         if ITypesContext.providedBy(context):
             data_tile_elements = dom.tree.xpath('/html/*[name()="head" or name()="body"]//*[@data-tile]')
             for data_tile_element in data_tile_elements:
                 data_tile_url = data_tile_element.get('data-tile')
                 if data_tile_url and re.search(
-                    meaningless_dexterity_control_panel_url_pattern,
+                    nonexistant_dexterity_control_panel_url_pattern,
                     data_tile_url,
                 ):
                     data_tile_element.getparent().remove(data_tile_element)

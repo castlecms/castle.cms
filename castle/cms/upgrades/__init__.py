@@ -13,7 +13,7 @@ def cook_js_resources(context, logger=None):
     cookWhenChangingSettings(api.portal.get())
 
 
-def re_register_profile(interface, prefix):
+def re_register_interface(interface, prefix):
     registry = api.portal.get_tool('portal_registry')
     registry.registerInterface(
         interface,
@@ -49,17 +49,17 @@ upgrade_3004 = default_upgrade_factory('3004')
 
 def upgrade_3005(site, logger=None):
     # add in princexml username and password
-    re_register_profile(IAPISettings, 'castle')
+    re_register_interface(IAPISettings, 'castle')
 
 
 def upgrade_3006_cc(site, logger=None):
     # for explicit enable/disable of country code checking
-    re_register_profile(ISecuritySchema, 'castle')
+    re_register_interface(ISecuritySchema, 'castle')
 
 
 def upgrade_3006_ga4(site, logger=None):
     # for ga4 migration
-    re_register_profile(IAPISettings, 'castle')
+    re_register_interface(IAPISettings, 'castle')
     old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
     if old_ga_id:
         api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
@@ -74,7 +74,7 @@ def upgrade_3008(site, logger=None):
     full_profile_id = 'profile-castle.cms:{}'.format('3008')
     setup.runAllImportStepsFromProfile(full_profile_id)
     cookWhenChangingSettings(api.portal.get())
-    re_register_profile(ISecuritySchema, 'castle')
+    re_register_interface(ISecuritySchema, 'castle')
 
 
 upgrade_3009 = default_upgrade_factory('3009')
