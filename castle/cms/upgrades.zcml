@@ -123,13 +123,6 @@
   />
 
 
-  <genericsetup:registerProfile
-    name="3008"
-    title="CastleCMS upgrade to 3008 profile"
-    directory="profiles/3008"
-    description=""
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-  />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3008"
     description="Update ISecuritySchema with Request Access Form fields"

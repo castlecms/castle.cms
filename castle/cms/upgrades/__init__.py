@@ -54,7 +54,7 @@ def upgrade_3005(site, logger=None):
 
 def upgrade_3006_cc(site, logger=None):
     # for explicit enable/disable of country code checking
-    re_register_interface(ISecuritySchema, 'castle')
+    re_register_interface(ISecuritySchema, 'plone')
 
 
 def upgrade_3006_ga4(site, logger=None):
@@ -70,11 +70,14 @@ upgrade_3007 = default_upgrade_factory('3007')
 
 
 def upgrade_3008(site, logger=None):
-    setup = getToolByName(site, 'portal_setup')
-    full_profile_id = 'profile-castle.cms:{}'.format('3008')
-    setup.runAllImportStepsFromProfile(full_profile_id)
-    cookWhenChangingSettings(api.portal.get())
-    re_register_interface(ISecuritySchema, 'castle')
+    re_register_interface(ISecuritySchema, 'plone')
+    registry_records = api.portal.get_tool('portal_registry').records
+    for security_schema_field_name in ISecuritySchema.names():
+        try:
+            del registry_records['castle.' + security_schema_field_name]
+        except KeyError:
+            # record not found
+            pass
 
 
 upgrade_3009 = default_upgrade_factory('3009')
