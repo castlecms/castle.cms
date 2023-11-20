@@ -4,7 +4,9 @@ Changelog
 3.0.0b128 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Fix upgrade step 3006 (change incorrect prefix)
+- Fix upgrade step 3008 (simplify and remove unnecessary registry records)
+- Remove unnecessary profile 3008
 
 
 3.0.0b127 (2023-11-17)
