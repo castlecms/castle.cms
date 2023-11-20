@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b128 (unreleased)
+3.0.0b128 (2023-11-20)
 ----------------------
 
 - Fix upgrade step 3006 (change incorrect prefix)
