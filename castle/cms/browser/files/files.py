@@ -14,6 +14,7 @@ from plone.app.contenttypes.browser import file
 from Products.CMFPlone.utils import getAllowedSizes
 from plone.namedfile import browser as namedfile
 from plone.namedfile.interfaces import INamedBlobFile
+from plone.namedfile.browser import Download
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.scaling import ImageScaling
 from Products.CMFCore.utils import getToolByName
@@ -111,36 +112,39 @@ class DownloadBlob(BrowserView):
             logger.info('Could not get blob data', exc_info=True)
             raise NotFound
 
-        # Python3 TODO - Can't find any instance of this class in the code
-        #                Probably safe to remove?
+        # Python3 TODO - Check if working, not sure where this is called
 
-        # if data:
-        #     is_blob = False
-        #     if isinstance(data, six.string_types):
-        #         length = len(data)
-        #     else:
-        #         is_blob = True
-        #         blobfi = openBlob(data)
-        #         length = fstat(blobfi.fileno()).st_size
-        #         blobfi.close()
+        if data:
+            is_blob = False
+            if isinstance(data, six.string_types):
+                length = len(data)
+            else:
+                is_blob = True
+                blobfi = NamedBlobFile(data).open()
+                length = blobfi.getSize()
 
-        #     self.request.response.setHeader(
-        #         'Last-Modified',
-        #         rfc1123_date(self.context._p_mtime))
-        #     resp = self.request.response
-        #     resp.setHeader('Content-Disposition',
-        #                    'inline; filename=%s.%s' % (self.context.getId(), self.file_ext))
-        #     resp.setHeader("Content-Length", length)
-        #     resp.setHeader('Content-Type', self.content_type)
+            self.request.response.setHeader(
+                'Last-Modified',
+                rfc1123_date(self.context._p_mtime))
+            resp = self.request.response
+            resp.setHeader('Content-Disposition',
+                           'inline; filename=%s.%s' % (self.context.getId(), self.file_ext))
+            resp.setHeader("Content-Length", length)
+            resp.setHeader('Content-Type', self.content_type)
 
-        #     if is_blob:
-        #         resp.setHeader('Accept-Ranges', 'bytes')
-        #         range = handleRequestRange(
-        #             self.context, length, self.request,
-        #             self.request.response)
-        #         return BlobStreamIterator(data, **range)
-        #     else:
-        #         return data
+            if is_blob:
+                # resp.setHeader('Accept-Ranges', 'bytes')
+                # range = handleRequestRange(
+                #     self.context, length, self.request,
+                #     self.request.response)
+                # return BlobStreamIterator(data, **range)
+
+                # Download instance comes with 'set_headers' and 'handle_request_range' methods
+                # Calling instance returns data stream
+                download_file = Download(blobfi)
+                return download_file()
+            else:
+                return data
         else:
             raise NotFound
 
