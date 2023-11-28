@@ -28,23 +28,15 @@
                   url python: utils.get_object_url(item);
                   has_image python: utils.has_image(item);
                   desc python: item.Description or item.Title;
-<<<<<<< HEAD
-                  title python: item.Title or item.Description;
-=======
                    title python: item.Title or item.Description;
->>>>>>> master
                   item_object item/getObject|nothing;
                   status_overlay_url python:getattr(item_object, 'status_overlay_url', None);">
   <li class="portal-type-${item/portal_type} grid-item"
       tal:condition="has_image">
-<<<<<<< HEAD
-    <a href="${url}" class="overlay-image-container">
-=======
     <a
       href="${url}"
       class="overlay-image-container"
     >
->>>>>>> master
       <img src="${base_url}/@@images/image/large"  alt="${title}" />
       <img
         tal:condition="status_overlay_url"
