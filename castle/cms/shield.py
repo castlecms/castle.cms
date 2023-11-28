@@ -67,6 +67,5 @@ Disallow: /"""
                     anonymous = True
         else:
             anonymous = api.user.is_anonymous()
-
         if anonymous:
             raise Redirect(login_url)

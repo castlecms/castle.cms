@@ -2,12 +2,28 @@ Development
 ===========
 
 
-Building resources after changes to js
---------------------------------------
+Compiling resources after changes to js or less
+-----------------------------------------------
 
 Just regular plone compile resources::
 
     ./bin/plone-compile-resources -s Castle -b all 
+
+Running this command runs npm install from /castle.cms/package.json, and generates a Gruntfile.js
+in /castle.cms. Once this has been run, however, for ongoing development of .less files or .js files,
+there is no need to run npm install or generate the Gruntfile again, so there are additional faster commands
+that can be run for compiling. Many of the useful ones can be found in /castle.cms/Makefile. For instance,
+
+   make less-plone-logged-in
+
+will only deal with the less files and leave everything else alone. If for some reason, more fine-grained
+control is desired, or compilation is needed on some less-commonly-worked with bundles, look at the registered tasks
+at the bottom of the generated Gruntfile.js for inspiration.
+
+
+When updating bundles (most commpnly plone or plone-logged-in), an upgrade step will be required in which the
+`last_compilation` key is updated in registry/resources.xml. Without this, those compiled changes will
+not be reflected in the site.
 
 
 Adding external toolbar buttons

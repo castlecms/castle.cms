@@ -90,6 +90,19 @@ class Authenticator(object):
         return enabled
 
     @property
+    def request_access(self):
+        if not self.is_zope_root and self.registry:
+            return self.registry.get('plone.request_access_enabled', False)
+        return False
+
+    @property
+    def request_form_url(self):
+        url = '/@@request-form'
+        if not self.is_zope_root and self.registry:
+            url = self.registry.get('plone.request_access_form_path', '/@@request-form')
+        return url
+
+    @property
     def expire(self):
         expire = 120
         if not self.is_zope_root and self.registry:

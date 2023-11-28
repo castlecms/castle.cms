@@ -9,14 +9,12 @@
 <body>
 <metal:main metal:fill-slot="prefs_configlet_main">
 
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/plone_control_panel"
-       i18n:translate="">
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
         Site Setup
     </a>
-
-
 
     <h1 class="documentFirstHeading">CastleCMS Status</h1>
         <p class="discreet">
@@ -54,12 +52,12 @@
             </div>
         </div>
 
-        <div tal:define="elasticsearch_ok python:view.elasticsearch()[0]">
-            <div tal:condition="elasticsearch_ok">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Elasticsearch: OK
+        <div tal:define="wildcardhps_ok python:view.wildcardhps()[0]">
+            <div tal:condition="wildcardhps_ok">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> WildcardHPS (OpenSearch): OK
             </div>
-            <div tal:condition="not: elasticsearch_ok">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Elasticsearch: ERROR <span tal:content = "structure python: view.elasticsearch()[1]"/>
+            <div tal:condition="not: wildcardhps_ok">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> WildcardHPS (OpenSearch): ERROR <span tal:content = "structure python: view.wildcardhps()[1]"/>
             </div>
         </div>
 

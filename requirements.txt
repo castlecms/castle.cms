@@ -1,4 +1,3 @@
 cryptography==3.3.2
-# Plone5.2 - Update buildout reqs
-zc.buildout==2.13.8
-setuptools==42.0.2
+setuptools==44.0.0
+zc.buildout==2.13.7

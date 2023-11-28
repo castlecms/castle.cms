@@ -600,14 +600,14 @@ define([
       var showToolTip = !isDisabled && [ '«', '<', '>', '»', '...' ].includes( buttonText );
       return D.li(
         Object.assign(
-          {key: `page-${ buttonText }-${ targetPageNumber }`},
+          {key: 'page-' + buttonText  + '-' + targetPageNumber },
           showToolTip ? {title: targetPageNumber} : {},
-          className ? { className } : {}
+          className ? { className: className } : {}
         ),
         D.a(
           Object.assign(
             {href: '#'},
-            isDisabled ? {} : {onClick}
+            isDisabled ? {} : {onClick: onClick}
           ),
           buttonText
         )
@@ -628,7 +628,7 @@ define([
       var pageNumbers = that.getPageNumbers(currentPageNumber, totalPageCount);
       var getPagingButton = that.getPagingButton.bind(
         that,
-        {currentPageNumber, totalPageCount}
+        {currentPageNumber: currentPageNumber, totalPageCount: totalPageCount}
       )
       return D.div(
         { className: 'pagination-centered'},

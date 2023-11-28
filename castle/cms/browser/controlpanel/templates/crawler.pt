@@ -10,13 +10,12 @@
 
 <div metal:fill-slot="prefs_configlet_main">
 
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/plone_control_panel"
-       i18n:translate="">
-        Site Setup
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
     </a>
-
 
     <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
 
@@ -49,7 +48,7 @@
         </table>
         <hr />
       </div>
-      <div class="crawl-info-container" tal:condition="cdata/tracking">
+      <div class="crawl-info-container" tal:condition="cdata">
         <h2>Crawl Times</h2>
         <table class="table">
           <thead>
@@ -59,12 +58,12 @@
             </tr>
           </thead>
           <tbody>
-            <tal:res tal:repeat="sitemap python: cdata['tracking'].keys()">
+            <tal:res tal:repeat="sitemap python: cdata.keys()">
               <tr>
                 <td>${sitemap}</td>
                 <td class="pat-moment"
                        data-pat-moment="format:relative"
-                       data-date="${python: cdata['tracking'][sitemap]}">${python: cdata['tracking'][sitemap]}</td>
+                       data-date="${python: cdata[sitemap]}">${python: cdata[sitemap]}</td>
               </tr>
             </tal:res>
           </tbody>

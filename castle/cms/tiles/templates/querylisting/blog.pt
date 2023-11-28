@@ -4,7 +4,10 @@
     display: block;
     width: fit-content;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
   .blog-query-listing article .overlay-image-container img.overlay-image {
     position: absolute;
     bottom: 0;
@@ -31,10 +34,24 @@
                ${python: has_image and 'has-post-thumbnail' or ''}
                portal-type-${python: utils.normalize(item.portal_type)}">
     	<div class="blog-item-wrap" style="${python: view.font_sizes.get('query_listing','')}">
+<<<<<<< HEAD
     		<a href="${url}" title="${item/Title}" tal:condition="has_image" class="overlay-image-container">
     			<img src="${base_url}/@@images/image/large"
                class="post-image"
                alt="${item/Title}">
+=======
+        <a
+          href="${url}"
+          title="${item/Title}"
+          tal:condition="has_image"
+          class="overlay-image-container"
+        >
+          <img
+            src="${base_url}/@@images/image/large"
+            class="post-image"
+            alt="${item/Title}"
+          >
+>>>>>>> master
           <img
             tal:condition="status_overlay_url"
             src="${status_overlay_url}"

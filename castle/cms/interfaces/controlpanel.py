@@ -134,6 +134,39 @@ class ISecuritySchema(controlpanel.ISecuritySchema):
         default=False,
     )
 
+    request_access_enabled = schema.Bool(
+        title=u'Enable Requesting Access',
+        description=u'When enabled, allows users to request access to site from login shield',
+        default=False,
+    )
+
+    request_access_form_path = schema.TextLine(
+        title=u'Path to Request Access Form',
+        description=u'When Request Access form is enabled, this value will be used '
+                    u'as the specific path to direct the user to, and should provide a '
+                    u'form to submit an access request, or information on how to submit '
+                    u'an access request. The default is a simple form, with submissions '
+                    u'being sent to the configured system email address.',
+        default=u'/@@request-form',
+    )
+
+    request_access_form_email_addresses = schema.Text(
+        title=u'EMail Addresses to Send Submissions from Request Access Form',
+        description=u'EMail Addresses, one per line, to send submissions from the default '
+                    u'Request Access Form. If no addresses are specified, the configured '
+                    u'system email address will be used.',
+        default=u'',
+        required=False,
+    )
+
+    request_access_form_accepted_fields = schema.Text(
+        title=u'Request Access Form Accepted Fields',
+        description=u'A list of fields that should be accepted by the Request Access Form '
+                    u'and sent to the EMail Addresses to Send Submissions. Default fields '
+                    u'are "name", "email", and "phone".',
+        default=u'name\nemail\nphone'
+    )
+
     auth_step_timeout = schema.Int(
         title=u'(Seconds) This amount of inactivity will reset the login process',
         description=u'Between each step, the allowed time is reset to this amount',
@@ -556,20 +589,6 @@ class ISlideshowSettings(Interface):
         required=False)
 
 
-class IElasticSearchSettings(Interface):
-    es_index_enabled = schema.Bool(
-        title=u'Enable Custom Elastic Search Index',
-        default=False
-    )
-
-    es_index = schema.TextLine(
-        title=u'Elastic Search Index',
-        description=u'The index prefix used for elastic search.  You must restart clients and rebuild '
-                    u'(or rename the index on ES) in order for things to work properly',
-        required=False
-    )
-
-
 class IAdjustableFontSizeSettings(Interface):
     font_size_small = schema.TextLine(
         title=u"Small font size",
@@ -593,7 +612,7 @@ class IAdjustableFontSizeSettings(Interface):
 
 class ICastleSettings(ISiteConfiguration, IAPISettings,
                       IArchivalSettings, IContentSettings,
-                      ISearchSettings, IElasticSearchSettings,
+                      ISearchSettings,
                       ISlideshowSettings, IAdjustableFontSizeSettings):
     pass
 

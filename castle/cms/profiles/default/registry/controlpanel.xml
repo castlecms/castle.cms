@@ -18,8 +18,6 @@
            prefix="castle" />
   <records interface="castle.cms.interfaces.ISlideshowSettings" 
            prefix="castle" />
-  <records interface="castle.cms.interfaces.IElasticSearchSettings"
-           prefix="castle" />
   <records interface="castle.cms.interfaces.ISearchSettings"
            prefix="castle" />
   <records interface="castle.cms.interfaces.IAdjustableFontSizeSettings" 
@@ -120,16 +118,28 @@
     </value>
   </record>
 
-  <record name="castle.es_index"
-          interface="castle.cms.interfaces.IElasticSearchSettings"
-          field="es_index">
-    <field type="plone.registry.field.TextLine" />
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="universal_analytics_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Universal Analytics ID</title>
+      <required>False</required>
+    </field>
   </record>
 
-  <record name="castle.es_index_enabled"
-          interface="castle.cms.interfaces.IElasticSearchSettings"
-          field="es_index_enabled">
-    <field type="plone.registry.field.Bool" />
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gst_id" prefix="castle" purge="False">
+    <field type="plone.registry.field.TextLine">
+      <title>Global Site Tag ID</title>
+      <required>False</required>
+    </field>
+  </record>
+
+  <record interface="castle.cms.interfaces.IAPISettings"
+          field="gst_enabled" prefix="castle" purge="False">
+    <field type="plone.registry.field.Bool">
+      <title>Enable Global Site Tags Throughout Site</title>
+      <required>False</required>
+    </field>
   </record>
 
   <record interface="castle.cms.interfaces.IAPISettings"

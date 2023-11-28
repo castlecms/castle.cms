@@ -28,11 +28,8 @@ Therefore, in the above model, the following are mapped to an individual record:
     - report_id == UUID4 unique per-site and per-execution of this script
 """
 from argparse import ArgumentParser
-import csv
-from datetime import datetime
 import logging
 import os
-import sys
 import uuid
 
 from AccessControl.SecurityManagement import newSecurityManager
@@ -42,7 +39,6 @@ from tendo import singleton
 from zope.component.hooks import setSite
 
 from castle.cms.gelf import GELFHandler
-
 
 
 logger = logging.getLogger("Plone")
@@ -100,11 +96,11 @@ def report_on_users(site):
                     roleperms[role].append(perm)
 
         for rp in roleperms.keys():
-            msg = "{schemaversion} {schematype} {appname} {site} {reportid} {username} {rolename} {permissions}".format(
+            msg = "{schemaversion} {schematype} {appname} {site} {reportid} {username} {rolename} {permissions}".format(  # noqa: E501
                 schemaversion=extras["schema_version"],
                 schematype=extras["schema_type"],
                 appname=extras["app_name"],
-                site=extras["site"]
+                site=extras["site"],
                 reportid=extras["report_id"],
                 username=extras["username"],
                 rolename=rp,

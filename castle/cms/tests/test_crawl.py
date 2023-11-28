@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+import unittest
+
+from plone.registry.interfaces import IRegistry
+import responses
+from zope.component import getUtility
+
 from castle.cms.cron._crawler import Crawler
+from castle.cms.indexing import hps
 from castle.cms.interfaces import ICrawlerConfiguration
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from collective.elasticsearch.es import ElasticSearchCatalog
-from plone import api
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
-import responses
-
-import unittest
 
 
 class TestCrawl(unittest.TestCase):
@@ -25,19 +25,13 @@ class TestCrawl(unittest.TestCase):
                       body=TEST_ARCHIVE_PAGE,
                       content_type="text/html")
 
-        catalog = api.portal.get_tool('portal_catalog')
-        es = ElasticSearchCatalog(catalog)
         registry = getUtility(IRegistry)
-        settings = registry.forInterface(
-            ICrawlerConfiguration, prefix='castle')
-        crawler = Crawler(self.portal, settings, es)
-        data = crawler.crawl_page(
-            'https://www.foobar.com')
+        settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
+        crawler = Crawler(self.portal, settings, hps.get_catalog())
+        data = crawler.crawl_page('https://www.foobar.com')
 
         self.assertEquals(data['domain'], 'www.foobar.com')
-        self.assertEquals(
-            data['url'],
-            'https://www.foobar.com')
+        self.assertEquals(data['url'], 'https://www.foobar.com')
         self.assertEquals(data['portal_type'], 'Form Folder')
         self.assertTrue(bool(data['Title']))
         self.assertTrue(bool(data['SearchableText']))

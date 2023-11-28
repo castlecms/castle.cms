@@ -23,7 +23,6 @@
   <include package="plone.app.standardtiles" />
   <include package="collective.documentviewer" />
   <include package="castle.theme" />
-  <include package="collective.elasticsearch" />
 
   <!-- uncomment to do profile code
     <include package="collective.profiler" />
@@ -77,13 +76,13 @@
   <include package=".ordering" />
   <include package=".passwordvalidation" />
   <include package=".pwexpiry" />
+  <include package=".indexing" />
 
   <include file="upgrades.zcml" />
   <include file="subscribers.zcml" />
   <include file="patches.zcml" />
   <include file="unconfigure.zcml" />
   <include file="widgets.zcml" />
-  <include file="indexing.zcml" />
   <include file="static.zcml" />
   <include file="theming.zcml" />
   <include file="meta.zcml" />
@@ -130,6 +129,10 @@
   <utility
     component=".vocabularies.ProvidesTitleSummaryLeadImageVocabularyFactory"
     name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
+    />
+  <utility
+    component=".vocabularies.EmailTemplateVocabulary"
+    name="castle.cms.vocabularies.EmailTemplates"
     />
 
   <!-- override default syndication -->

@@ -376,8 +376,6 @@ class Utils(BrowserView):
         if attributes is not None:
             image_attributes.update(attributes)
 
-
-
         if 'src' not in image_attributes:
             try:
                 url = brain.getURL()
