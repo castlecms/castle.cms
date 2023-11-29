@@ -1,12 +1,8 @@
 # remove bad archives
-# cleanup archive ES entries
-# rewrite archive links,images to reference base url
+# rewrite archive links and images to reference base url
 from castle.cms import archival
-from castle.cms.cron._crawler import Crawler
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.files import aws
-from castle.cms.interfaces import ICrawlerConfiguration
-from collective.elasticsearch.es import ElasticSearchCatalog
 from lxml.html import fromstring
 from lxml.html import tostring
 from plone import api
@@ -66,10 +62,6 @@ if __name__ == '__main__':
     toremove = {}  # uid: path
     catalog = api.portal.get_tool('portal_catalog')
     registry = getUtility(IRegistry)
-    crawler_settings = registry.forInterface(
-        ICrawlerConfiguration, prefix='castle')
-    es = ElasticSearchCatalog(catalog)
-    crawler = Crawler(site, crawler_settings, es)
     storage = archival.Storage(site)
     for key, archive_data in storage.archives.items():
         for url in (archive_data.get('view_url'), archive_data['url']):

@@ -26,7 +26,6 @@ import logging
 import plone.api as api
 
 
-
 logger = logging.getLogger('castle.cms')
 
 
@@ -111,7 +110,6 @@ def on_content_created(obj, event):
 
 def on_content_modified(obj, event):
     obj.changeNote = get_change_note(getRequest())
-    # auto-purge content when modifying
     Purge(obj, getRequest(), True)()
     if IRelationBrokenEvent.providedBy(event):
         # these trigger too much!

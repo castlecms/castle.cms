@@ -41,6 +41,21 @@
     class=".login.SecureLoginView"
     template="./templates/secure-login.pt"
     allowed_attributes="options" />
+  
+  <browser:page
+    name="request-form"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".requestaccess.RequestAccessView"
+    permission="zope2.View"
+    template="./templates/request-form.pt"
+    allowed_attributes="options"
+    layer="castle.cms.interfaces.ICastleLayer" />
+
+  <browser:page
+    name="request-access"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class=".requestaccess.RequestAccessView"
+    permission="zope2.View"/>
 
   <browser:page
     name="password-reset"

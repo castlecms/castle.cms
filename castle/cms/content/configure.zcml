@@ -24,4 +24,9 @@
     title="castle.cms: Add Parallax"
     />
 
+  <permission
+    id="castle.cms.addEmailTemplate"
+    title="castle.cms: Add Email Template"
+    />
+
 </configure>

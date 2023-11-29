@@ -47,6 +47,10 @@ class RedisAdapter(AbstractDict):
         #     source = source.encode('utf-8')
         return source
 
+    def keys(self):
+        keyslist = self.client.keys()
+        return [a for a in keyslist if a.startswith(self.globalkey)]
+
     def get_key(self, key):
         return self.globalkey + str(self._make_key(key))
 

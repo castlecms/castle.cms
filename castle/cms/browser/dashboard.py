@@ -3,8 +3,8 @@ from castle.cms.interfaces import IDashboardUtils
 from castle.cms.lockout import get_active_sessions
 from castle.cms.lockout import SessionManager
 from castle.cms.utils import publish_content
-from collective.elasticsearch.es import ElasticSearchCatalog
-from elasticsearch import TransportError
+from castle.cms.indexing import hps
+
 from plone import api
 from plone.app.blocks.interfaces import IBlocksTransformEnabled
 from plone.protect.interfaces import IDisableCSRFProtection
@@ -191,85 +191,7 @@ class DashboardUtils(BrowserView):
         return self._paging(query, 'review')
 
     def get_totals(self):
-        query = {
-            "size": 0,
-            "aggregations": {
-                "totals": {
-                    "terms": {
-                        "field": "portal_type"
-                    }
-                }
-            }
-        }
-        portal_catalog = api.portal.get_tool('portal_catalog')
-        try:
-            es = ElasticSearchCatalog(portal_catalog)
-            result = es.connection.search(
-                index=es.index_name,
-                doc_type=es.doc_type,
-                body=query)
-        except TransportError:
-            return []
-
-        return result['aggregations']['totals']['buckets']
-
-    def _get_base_interest_query(self):
-        return {
-            "size": 0,
-            "aggregations": {
-                "totals": {
-                    "terms": {
-                        "field": "parent_folder"
-                    }
-                }
-            }
-        }
-
-    def _make_query(self, query):
-        portal_catalog = api.portal.get_tool('portal_catalog')
-        try:
-            es = ElasticSearchCatalog(portal_catalog)
-            return es.connection.search(
-                index=es.index_name,
-                doc_type=es.doc_type,
-                body=query)['aggregations']['totals']['buckets']
-        except TransportError:
-            return []
-
-    def _get_creation_areas_of_interest(self, user_id):
-        query = self._get_base_interest_query()
-        query['aggregations']['totals']["aggregations"] = {
-            "types": {
-                "terms": {
-                    "field": "portal_type"
-                }
-            }
-        }
-        query['query'] = {
-            'filtered': {
-                'filter': {
-                    "and": [
-                        {'term': {'Creator': user_id}}
-                    ]
-                },
-                'query': {"match_all": {}}
-            }
-        }
-        return self._make_query(query)
-
-    def _get_contribution_areas_of_interest(self, user_id):
-        query = self._get_base_interest_query()
-        query['query'] = {
-            'filtered': {
-                'filter': {
-                    "and": [
-                        {'term': {'contributors': user_id}}
-                    ]
-                },
-                'query': {"match_all": {}}
-            }
-        }
-        return self._make_query(query)
+        return hps.get_index_summary(hps.get_index_name(), dict(field="portal_type"))
 
     def is_root(self, obj):
         return IPloneSiteRoot.providedBy(obj)
@@ -288,7 +210,12 @@ class DashboardUtils(BrowserView):
         interests = []
         upload_found = False
         manage_site_found = False
-        for result in self._get_creation_areas_of_interest(user_id):
+        areas_of_interest_results = hps.get_index_summary(
+            hps.get_index_name(),
+            dict(field='parent_folder'),
+            agg_agg_terms=dict(field='portal_type'),
+            filter_terms=dict(Creator=user_id))
+        for result in areas_of_interest_results:
             for tcount in result['types']['buckets'][:2]:  # max 2 per location
                 pt = tcount['key']
                 if pt in ('Image', 'File', 'Video', 'Audio'):
@@ -300,7 +227,12 @@ class DashboardUtils(BrowserView):
         if upload_found:
             interests.append(('UPLOAD', '', 1))
 
-        for result in self._get_contribution_areas_of_interest(user_id):
+        contrib_areas_of_interest_results = hps.get_index_summary(
+            hps.get_index_name(),
+            dict(field='parent_folder'),
+            agg_agg_terms=dict(field='portal_type'),
+            filter_terms=dict(contributors=user_id))
+        for result in contrib_areas_of_interest_results:
             # since so many will have these areas, ignore
             if result['key'].split('/')[-1] in ('image-repository',
                                                 'file-repository'):

@@ -353,19 +353,9 @@ class Stream(object):
         if resp.raw.closed:
             self.on_closed(resp)
 
-    """
-    Plone5.2 TODO - 'async' is no longer usable as a variable name. It has been 
-                    changed to 't_async' to prevent compiler errors.
-
-                    Twitter docs state that User Streams have been removed as of 2018,
-                    so this code will need to be adjusted to work with the newer
-                    'Account Activity API' (if this feature was ever used in the 
-                    first place).
-    """
-
-    def _start(self, t_async):
+    def _start(self, is_async):
         self.running = True
-        if t_async:
+        if is_async:
             self._thread = Thread(target=self._run)
             self._thread.start()
         else:
@@ -381,7 +371,7 @@ class Stream(object):
                    replies=None,
                    track=None,
                    locations=None,
-                   t_async=False,
+                   is_async=False,
                    encoding='utf8'):
         self.session.params = {'delimited': 'length'}
         if self.running:
@@ -398,38 +388,38 @@ class Stream(object):
             if len(locations) % 4 != 0:
                 raise Exception("Wrong number of locations points, "
                                 "it has to be a multiple of 4")
-            self.session.params['locations'] = ','.join(['%.2f' % l for l in locations])
+            self.session.params['locations'] = ','.join(['%.2f' % l for l in locations])  # noqa: E741
         if track:
             self.session.params['track'] = u','.join(track).encode(encoding)
 
-        self._start(t_async)
+        self._start(is_async)
 
-    def firehose(self, count=None, t_async=False):
+    def firehose(self, count=None, is_async=False):
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/firehose.json' % STREAM_VERSION
         if count:
             self.url += '&count=%s' % count
-        self._start(t_async)
+        self._start(is_async)
 
-    def retweet(self, t_async=False):
+    def retweet(self, is_async=False):
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/retweet.json' % STREAM_VERSION
-        self._start(t_async)
+        self._start(is_async)
 
-    def sample(self, t_async=False, languages=None):
+    def sample(self, is_async=False, languages=None):
         self.session.params = {'delimited': 'length'}
         if self.running:
             raise Exception('Stream object already connected!')
         self.url = '/%s/statuses/sample.json' % STREAM_VERSION
         if languages:
             self.session.params['language'] = ','.join(map(str, languages))
-        self._start(t_async)
+        self._start(is_async)
 
-    def filter(self, follow=None, track=None, t_async=False, locations=None,
+    def filter(self, follow=None, track=None, is_async=False, locations=None,
                stall_warnings=False, languages=None, encoding='utf8', filter_level=None):
         self.body = {}
         self.session.headers['Content-type'] = "application/x-www-form-urlencoded"
@@ -444,7 +434,7 @@ class Stream(object):
             if len(locations) % 4 != 0:
                 raise Exception("Wrong number of locations points, "
                                 "it has to be a multiple of 4")
-            self.body['locations'] = u','.join(['%.4f' % l for l in locations])
+            self.body['locations'] = u','.join(['%.4f' % l for l in locations])  # noqa: E741
         if stall_warnings:
             self.body['stall_warnings'] = stall_warnings
         if languages:
@@ -453,10 +443,10 @@ class Stream(object):
             self.body['filter_level'] = six.text_type(filter_level, encoding)
         self.session.params = {'delimited': 'length'}
         self.host = 'stream.twitter.com'
-        self._start(t_async)
+        self._start(is_async)
 
     def sitestream(self, follow, stall_warnings=False,
-                   with_='user', replies=False, t_async=False):
+                   with_='user', replies=False, is_async=False):
         self.body = {}
         if self.running:
             raise Exception('Stream object already connected!')
@@ -469,7 +459,7 @@ class Stream(object):
             self.body['with'] = with_
         if replies:
             self.body['replies'] = replies
-        self._start(t_async)
+        self._start(is_async)
 
     def disconnect(self):
         if self.running is False:

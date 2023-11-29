@@ -1,12 +1,17 @@
 <div class="audit-log-content-container"
-      tal:define="connected view/el_connected;
+      tal:define="connected view/can_connect_to_index;
                   site_path python: '/'.join(context.getPhysicalPath());
                   portal_url context/@@plone_portal_state/portal_url">
 
 <div class="portalMessage warning" tal:condition="not: connected">
   <strong>Warning</strong>
-  You have not <a href="${portal_url}/@@elastic-controlpanel">configured Elastic Search</a>.
-  Audit Logging does not work unless Elastic search is configured.
+    Not connected to the audit log index.
+    <p>
+        An administrator will have to make sure it is running and configured properly.
+    </p>
+    <p>
+        Viewing audit logs here will not work unless Wildcard HPS is configured.
+    </p>
 </div>
 
 <div tal:condition="connected">
@@ -82,12 +87,11 @@
       </tr>
     </thead>
     <tbody>
-      <tal:res tal:repeat="result view/results">
-        <tr tal:define="data result/_source;
-                        obj python: view.get_obj(data.get('object'));
+      <tal:res tal:repeat="data view/results">
+        <tr tal:define="obj python: view.get_obj(data.get('object'));
                         has_obj python: obj is not None;
                         user python: view.get_user(data['user'])">
-          <td>${data/name}</td>
+          <td>${data/actionname}</td>
           <td>
             <a tal:condition="has_obj" href="${obj/absolute_url}">${obj/Title}</a>
             <span tal:condition="not: has_obj">${python: view.get_path(data)}</span>

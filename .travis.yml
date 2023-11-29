@@ -5,14 +5,16 @@ services:
 matrix:
   include:
     - name: 'Unit Tests'
-      env: TEST_SUITE=unit BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
+      env: TEST_SUITE=unit BOTO_CONFIG=/dev/null HPS_FORCE_ENABLE=True CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX=full_message CASTLE_CMS_AUDIT_LOG_INSTANCE=travis HPS_INSTANCE_INDEX_PREFIX=test OPENSEARCH_HTTP_USERNAME=admin OPENSEARCH_HTTP_PASSWORD=admin OPENSEARCH_USE_SSL=yes OPENSEARCH_VERIFY_CERTS=no OPENSEARCH_SSL_SHOW_WARN=no
     - name: 'Test Upgrades'
-      env: TEST_SUITE=upgrades BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
+      env: TEST_SUITE=upgrades BOTO_CONFIG=/dev/null HPS_FORCE_ENABLE=True CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX=full_message CASTLE_CMS_AUDIT_LOG_INSTANCE=travis HPS_INSTANCE_INDEX_PREFIX=test OPENSEARCH_HTTP_USERNAME=admin OPENSEARCH_HTTP_PASSWORD=admin OPENSEARCH_USE_SSL=yes OPENSEARCH_VERIFY_CERTS=no OPENSEARCH_SSL_SHOW_WARN=no
     - name: 'Robot: Firefox'
-      env: TEST_SUITE=robot ROBOT_BROWSER=firefox BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
+      env: TEST_SUITE=robot ROBOT_BROWSER=firefox BOTO_CONFIG=/dev/null HPS_FORCE_ENABLE=True CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX=full_message CASTLE_CMS_AUDIT_LOG_INSTANCE=travis HPS_INSTANCE_INDEX_PREFIX=test OPENSEARCH_HTTP_USERNAME=admin OPENSEARCH_HTTP_PASSWORD=admin OPENSEARCH_USE_SSL=yes OPENSEARCH_VERIFY_CERTS=no OPENSEARCH_SSL_SHOW_WARN=no
     - name: 'Robot: Chrome'
-      env: TEST_SUITE=robot ROBOT_BROWSER=chrome BOTO_CONFIG=/dev/null ES_HOST=127.0.0.1
-dist: xenial
+      env: TEST_SUITE=robot ROBOT_BROWSER=chrome BOTO_CONFIG=/dev/null HPS_FORCE_ENABLE=True CASTLE_CMS_AUDIT_LOG_FIELD_MAP_PREFIX=full_message CASTLE_CMS_AUDIT_LOG_INSTANCE=travis HPS_INSTANCE_INDEX_PREFIX=test OPENSEARCH_HTTP_USERNAME=admin OPENSEARCH_HTTP_PASSWORD=admin OPENSEARCH_USE_SSL=yes OPENSEARCH_VERIFY_CERTS=no OPENSEARCH_SSL_SHOW_WARN=no
+arch: amd64
+os: linux
+dist: bionic
 services:
   - xvfb
 addons:
@@ -33,20 +35,20 @@ before_install:
     export PATH=$PATH:$(pwd)/webdriver;
     npm install -g surge;
     fi
-  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.5/elasticsearch-2.3.5.deb && sudo dpkg -i --force-confnew elasticsearch-2.3.5.deb
-  - sudo /usr/share/elasticsearch/bin/plugin install https://github.com/castlecms/elasticsearch-castle-scoring/raw/master/dist/elasticsearch-castle-script-2.3.5.zip
-  - sudo service elasticsearch start
+  - curl https://artifacts.opensearch.org/releases/bundle/opensearch/2.0.1/opensearch-2.0.1-linux-x64.tar.gz
+  - tar -zxf opensearch-2.0.1-linux-x64.tar.gz
+  - cd opensearch-2.0.1 && ./opensearch-tar-install.sh -Ediscovery.type=single-node && ./bin/opensearch &
 
 install:
   - mkdir -p {eggs,downloads}
-  - wget https://launchpad.net/plone/5.0/5.0.8/+download/Plone-5.0.8-UnifiedInstaller.tgz
+  - wget https://launchpad.net/plone/5.0/5.0.10/+download/Plone-5.0.10-UnifiedInstaller.tgz
   - tar -zxvf Plone-*.tgz > /dev/null
   - tar -xvjf Plone-*/packages/buildout-cache.tar.bz2 > /dev/null
   - cp -rf buildout-cache/eggs/* eggs/
   - cp -rf buildout-cache/downloads/* downloads/
   - pip install -r requirements.txt
   - if [ "$TEST_SUITE" == "unit" ]; then
-    pip install pyflakes==1.6.0 pycodestyle==2.3.1 flake8==3.5.0;
+    pip install pyflakes==2.4.0 pycodestyle==2.8.0 flake8==3.9.2;
     fi
   - if [ "$TEST_SUITE" == "upgrades" ]; then
     pip install requests;

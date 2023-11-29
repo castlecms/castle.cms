@@ -1,0 +1,190 @@
+<!-- Overridding to move "◀ Site Setup" button to consistent location -->
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  lang="en"
+  metal:use-macro="context/prefs_main_template/macros/master"
+  i18n:domain="plone"
+>
+
+<body>
+
+  <div metal:fill-slot="prefs_configlet_main">
+
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
+    </a>
+
+    <div class="autotabs">
+      <ul class="formTabs autotoc-nav">
+        <li class="formTab firstFormTab">
+          <a
+            href=""
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel"
+            i18n:translate="label_settings"
+          >Change settings</a>
+        </li>
+        <li class="formTab">
+          <a
+            href=""
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel-import"
+            i18n:translate="label_import"
+          >Import settings</a>
+        </li>
+        <li
+          tal:condition="view/purgingEnabled"
+          class="formTab"
+        >
+          <a
+            href=""
+            class="active selected"
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel-purge"
+            i18n:translate="label_purging"
+          >Purge caching proxy</a>
+        </li>
+        <li class="formTab lastFormTab">
+          <a
+            href=""
+            tal:attributes="href string:${portal_url}/@@caching-controlpanel-ramcache"
+            i18n:translate="label_ramcache"
+          >RAM cache</a>
+        </li>
+      </ul>
+    </div>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+    <div class="configlet">
+
+      <h1
+        class="documentFirstHeading"
+        i18n:translate="heading_caching_purging"
+      >Purge caching proxy</h1>
+
+      <p i18n:translate="description_cache_purging">
+        If you have enabled a caching proxy, it may end up caching
+        objects which are no longer current. Plone will attempt
+        to automatically purge objects when they change, but if
+        you are seeing stale objects in your cache, you can purge
+        them manually below.
+      </p>
+
+      <div
+        class="portalMessage info"
+        tal:condition="view/purgeLog | nothing"
+      >
+        <strong i18n:translate="heading_purged">Status</strong>
+        <span
+          tal:omit-tag=""
+          i18n:translate="description_purged"
+        >
+          The following items were purged:
+        </span>
+        <ul>
+          <li
+            tal:repeat="log view/purgeLog"
+            tal:content="log"
+          />
+        </ul>
+      </div>
+
+      <form
+        name="purge"
+        tal:attributes="action string:${request/URL}"
+        method="post"
+        class="pat-formunloadalert"
+        tal:define="errors view/errors"
+      >
+
+        <div
+          tal:define="error errors/urls | nothing"
+          tal:attributes="class python:'field error' if error else 'field'"
+        >
+
+          <label
+            for="purgeURLs"
+            i18n:translate="label_urls"
+          >URLs to purge</label>
+
+          <div
+            class="formHelp"
+            i18n:translate="help_urls"
+          >
+            Enter URLs to purge, one per line, below. You can
+            either enter a full URL including a domain, or a path
+            relative to the site root, starting with a <em>/</em>.
+          </div>
+
+          <div
+            tal:content="error"
+            tal:condition="error"
+          />
+
+          <textarea
+            id="purgeURLs"
+            name="urls:lines"
+            cols="40"
+            rows="4"
+          ></textarea>
+
+        </div>
+
+        <div class="field">
+          <input
+            type="hidden"
+            name="synchronous:boolean:default"
+            value=""
+          />
+          <input
+            type="checkbox"
+            name="synchronous:boolean"
+            id="purgeSynchronous"
+            value="1"
+            checked="checked"
+          />
+
+          <label
+            for="purgeSynchronous"
+            i18n:translate="label_synchronous"
+          >
+            Purge synchronously
+          </label>
+          <div
+            class="formHelp"
+            i18n:translate="help_synchronous"
+          >
+            Select this option to wait while the purge completes.
+            This allows you to see the results of the purges.
+            Purging asynchronously will return immediately, but
+            you will need to check your caching proxy's log files
+            to see if the purge actually succeeded.
+          </div>
+        </div>
+
+        <div class="formControls">
+          <input
+            type="submit"
+            name="form.button.Purge"
+            class="destructive"
+            value="Purge"
+            i18n:attributes="value"
+          />
+        </div>
+
+        <input tal:replace="structure context/@@authenticator/authenticator" />
+
+      </form>
+    </div>
+
+  </div>
+</body>
+
+</html>

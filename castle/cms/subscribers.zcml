@@ -92,8 +92,9 @@
 
   <subscriber
     for="plone.dexterity.interfaces.IDexterityContent
-         .events.ICacheInvalidatedEvent"
-    handler=".subscribers.on_cache_invalidated" />
+           .events.ICacheInvalidatedEvent"
+    handler=".subscribers.on_cache_invalidated"
+  />
 
   <!-- trash related events -->
   <subscriber

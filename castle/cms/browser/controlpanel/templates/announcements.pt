@@ -1,54 +1,101 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      lang="en"
-      metal:use-macro="context/prefs_main_template/macros/master"
-      i18n:domain="plone">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  lang="en"
+  metal:use-macro="context/prefs_main_template/macros/master"
+  i18n:domain="plone"
+>
 
 <body>
 
-<metal:main metal:fill-slot="prefs_configlet_main">
+  <metal:main metal:fill-slot="prefs_configlet_main">
 
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/plone_control_panel"
-       i18n:translate="">
-        Site Setup
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
     </a>
 
+    <script src="${context/portal_url}/++plone++castle/scripts/email-templates.js"></script>
 
-    <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+    <h1 class="documentFirstHeading">
+      ${view/label}
+    </h1>
 
     <div metal:use-macro="context/global_statusmessage/macros/portal_message">
       Portal status message
     </div>
 
     <div id="content-core">
-      <div id="layout-contents" tal:define="realview nocall:view">
-        <div data-pat-autotoc="levels: .tab; section: .tab-content; className: autotabs"
-             class="pat-autotoc layouts-editor">
-          <div class="tab-content" tal:define="form nocall:view/email_form;
-                                               view nocall:form">
+      <div
+        id="layout-contents"
+        tal:define="realview nocall:view"
+      >
+        <div
+          data-pat-autotoc="levels: .tab; section: .tab-content; className: autotabs"
+          class="pat-autotoc layouts-editor"
+        >
+          <div class="tab-content">
             <h2 class="tab">Email Users or Visitors</h2>
-            <div metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <p class="discreet">
+              Send email to individuals
+            </p>
+            <div
+              tal:define="form nocall:view/users_load_email_template_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <button
+              class="submit-widget button-field"
+              id="load-email-template--users"
+              onclick="loadEmailTemplate('users')"
+              style="margin-left:15px"
+            >Load Template</button>
+            <hr style="margin: 15px 15px 25px;">
+            <div
+              tal:define="form nocall:view/email_form;
+                          view nocall:form;"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
           </div>
-          <div class="tab-content" tal:define="form nocall:view/email_subscribers_form;
-                                               view nocall:form">
+          <div class="tab-content">
             <h2 class="tab">Email Subscribers</h2>
             <p class="discreet">
               Send email to site subscribers
             </p>
-            <div metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
+            <div
+              tal:define="form nocall:view/subscribers_load_email_template_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <button
+              class="submit-widget button-field"
+              id="load-email-template--subscribers"
+              onclick="loadEmailTemplate('subscribers')"
+              style="margin-left:15px"
+            >Load Template</button>
+            <hr style="margin: 15px 15px 25px;">
+            <div
+              tal:define="form nocall:view/email_subscribers_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
           </div>
-          <div class="tab-content" tal:define="form nocall:view/text_subscribers_form;
-                                               view nocall:form">
+          <div class="tab-content">
             <h2 class="tab">Send Text</h2>
             <p class="discreet">
               Send text to site subscribers
             </p>
-            <div metal:use-macro="context/@@ploneform-macros/titlelessform"
-                 tal:condition="realview/hasTexting"></div>
+            <div
+              tal:define="form nocall:view/text_subscribers_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+              tal:condition="realview/hasTexting"
+            ></div>
             <p tal:condition="not: realview/hasTexting">
               Text messaging not set up on this site.
             </p>
@@ -58,33 +105,44 @@
             <p class="discreet">
               Manage subscibers and categories
             </p>
-            <div tal:define="form nocall:view/export_subscribers_form;
-                            view nocall:form"
-                metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
-            <div tal:define="form nocall:view/import_subscribers_form;
-                            view nocall:form"
-                metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
-            <div tal:define="form nocall:view/add_category_form;
-                             view nocall:form"
-                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
-            <div tal:define="form nocall:view/merge_categories_form;
-                             view nocall:form"
-                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
-            <div tal:define="form nocall:view/delete_categories_form;
-                             view nocall:form"
-                 metal:use-macro="context/@@ploneform-macros/titlelessform"></div>
-                <div class="rowlike"
-                     tal:define="categories nocall:view/categories;
-                                 subcount nocall:view/sub_count;
-                                 invalidcat nocall:view/invalid_category"
-                     tal:condition="python:len(categories) > 0">
-                <label>Number of Subscibers:</label>
-                <p tal:repeat="category categories"
-                   tal:content="python:category + ': ' + \
-                                ('0' if category not in subcount else str(subcount[category]))">
-                </p>
-                <p tal:condition="python:invalidcat > 0"
-                   tal:content="python:'Invalid Category: ' + str(invalidcat)">
+            <div
+              tal:define="form nocall:view/export_subscribers_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <div
+              tal:define="form nocall:view/import_subscribers_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <div
+              tal:define="form nocall:view/add_category_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <div
+              tal:define="form nocall:view/merge_categories_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <div
+              tal:define="form nocall:view/delete_categories_form;
+                          view nocall:form"
+              metal:use-macro="context/@@ploneform-macros/titlelessform"
+            ></div>
+            <div
+              class="rowlike"
+              tal:define="categories nocall:view/categories;
+                          subcount nocall:view/sub_count;
+                          invalidcat nocall:view/invalid_category"
+              tal:condition="python:len(categories) > 0"
+            >
+              <label>Number of Subscribers:</label>
+              <p tal:repeat="category categories">
+                ${python: '{category}: {count}'.format(category=category,count=subcount.get(category, '0'))}
+              </p>
+              <p tal:condition="python:invalidcat > 0">
+                ${"python: 'Invalid Category: ' + str(invalidcat)"}
               </p>
             </div>
           </div>
@@ -96,6 +154,7 @@
       </div>
     </div>
 
-</metal:main>
+  </metal:main>
 </body>
+
 </html>

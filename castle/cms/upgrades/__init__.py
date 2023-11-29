@@ -13,7 +13,7 @@ def cook_js_resources(context, logger=None):
     cookWhenChangingSettings(api.portal.get())
 
 
-def re_register_profile(interface, prefix):
+def re_register_interface(interface, prefix):
     registry = api.portal.get_tool('portal_registry')
     registry.registerInterface(
         interface,
@@ -41,67 +41,43 @@ def profileless_upgrade_factory():
     return upgrade
 
 
-upgrade_2_0_12 = default_upgrade_factory('2_0_12')
-upgrade_2_0_16 = default_upgrade_factory('2_0_16')
-upgrade_2_0_41 = default_upgrade_factory('2_0_41')
-
-upgrade_2_1_0 = custom_upgrade_factory('2_1_0')
-upgrade_2_1_1 = custom_upgrade_factory('2_1_1')
-
-upgrade_2_2_0 = custom_upgrade_factory('2_2_0')
-
-upgrade_2_3_0 = default_upgrade_factory('2_3_0')
-upgrade_2_3_1 = custom_upgrade_factory('2_3_1')
-upgrade_2_3_2 = custom_upgrade_factory('2_3_2')
-upgrade_2_3_3 = custom_upgrade_factory('2_3_3')
-upgrade_2_3_5 = default_upgrade_factory('2_3_5')
-upgrade_2_3_7 = profileless_upgrade_factory()
-upgrade_2_3_8 = default_upgrade_factory('2_3_8')
-
-upgrade_2_4_0 = profileless_upgrade_factory()
-
-upgrade_2_5_0 = default_upgrade_factory('2_5_0')
-upgrade_2_5_5 = default_upgrade_factory('2_5_5')
-upgrade_2_5_7 = default_upgrade_factory('2_5_7')
-upgrade_2_5_15 = default_upgrade_factory('2_5_15')
-upgrade_2_5_17 = custom_upgrade_factory('2_5_17')
-upgrade_2_5_19 = default_upgrade_factory('2_5_19')
-
-upgrade_2_6_2 = default_upgrade_factory('2_6_2')
-upgrade_2_6_11 = custom_upgrade_factory('2_6_11')
-upgrade_2_6_12 = default_upgrade_factory('2_6_12')
-upgrade_2_6_14 = default_upgrade_factory('2_6_14')
-upgrade_2_6_16 = default_upgrade_factory('2_6_16')
-upgrade_2_6_23 = default_upgrade_factory('2_6_23')
-upgrade_2_6_25 = default_upgrade_factory('2_6_25')
-upgrade_2_6_27 = default_upgrade_factory('2_6_27')
-upgrade_2_6_30 = default_upgrade_factory('2_6_30')
-upgrade_2_6_31 = default_upgrade_factory('2_6_31')
-upgrade_2_6_33 = default_upgrade_factory('2_6_33')
-
-def upgrade_2_6_34(site, logger=None):
-    registry = api.portal.get_tool('portal_registry')
-    registry.registerInterface(
-        IAPISettings,
-        prefix='castle',
-    )
-
-
 upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
 upgrade_3003 = default_upgrade_factory('3003')
 upgrade_3004 = default_upgrade_factory('3004')
-upgrade_3005 = default_upgrade_factory('3005')
+
+
+def upgrade_3005(site, logger=None):
+    # add in princexml username and password
+    re_register_interface(IAPISettings, 'castle')
 
 
 def upgrade_3006_cc(site, logger=None):
     # for explicit enable/disable of country code checking
-    re_register_profile(ISecuritySchema, 'castle')
+    re_register_interface(ISecuritySchema, 'plone')
 
 
 def upgrade_3006_ga4(site, logger=None):
-    re_register_profile(IAPISettings, 'castle')
+    # for ga4 migration
+    re_register_interface(IAPISettings, 'castle')
     old_ga_id = api.portal.get_registry_record('castle.google_analytics_id')
     if old_ga_id:
         api.portal.set_registry_record('castle.universal_analytics_id', old_ga_id)
         api.portal.set_registry_record('castle.google_analytics_id', u'')
+
+
+upgrade_3007 = default_upgrade_factory('3007')
+
+
+def upgrade_3008(site, logger=None):
+    re_register_interface(ISecuritySchema, 'plone')
+    registry_records = api.portal.get_tool('portal_registry').records
+    for security_schema_field_name in ISecuritySchema.names():
+        try:
+            del registry_records['castle.' + security_schema_field_name]
+        except KeyError:
+            # record not found
+            pass
+
+
+upgrade_3009 = default_upgrade_factory('3009')

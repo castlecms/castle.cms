@@ -1,0 +1,98 @@
+<!-- Overridding to fix "◀ Site Setup" button -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/prefs_main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<div metal:fill-slot="prefs_configlet_main"
+    tal:define="status view/connection_status">
+
+    <style>
+      #status{
+
+      }
+      #actions form{
+        display: inline;
+      }
+      #actions{
+        margin-bottom: 10px;
+      }
+      hr{
+        margin-bottom: 10px;
+      }
+      #actions .rebuild{
+        padding: 5px;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+    </style>
+
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
+    </a>
+
+    <h1 class="documentFirstHeading" tal:content="view/label">View Title</h1>
+
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
+    </div>
+
+    <dl class="portalMessage warning" tal:condition="python: not status">
+        <dt>
+            Warning
+        </dt>
+        <dd>
+            Could not connect to specified elastic search server.
+        </dd>
+    </dl>
+
+    <div id="layout-contents">
+        <span tal:replace="structure view/contents" />
+    </div>
+
+    <tal:el tal:condition="view/active">
+      <div id="actions" tal:define="purl string:${view/portal_catalog/absolute_url}"
+            tal:condition="status">
+        <hr />
+        <form method="POST"
+              tal:attributes="action string:${purl}/@@elastic-convert">
+          <span tal:replace="structure context/@@authenticator/authenticator"/>
+          <input type="submit" name="convert" value="Convert Catalog" />
+        </form> |
+        <form method="POST" class="rebuild"
+              tal:attributes="action string:${purl}/@@elastic-rebuild">
+          <span tal:replace="structure context/@@authenticator/authenticator"/>
+          <input type="submit" name="convert" value="Rebuild Catalog" />
+          <span>Could take a very long time. Use carefully.</span>
+        </form>
+      </div>
+
+      <div tal:condition="status" id="status"
+        tal:define="shards status/_shards/total|python:0;">
+        <table class="listing">
+          <thead>
+            <th colspan="2">
+              Server status
+            </th>
+          </thead>
+          <tbody>
+            <tr tal:repeat="data view/es_info">
+              <td tal:content="python: data[0]" />
+              <td tal:content="python: data[1]" />
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </tal:el>
+
+</div>
+</body>
+</html>
