@@ -1,3 +1,4 @@
+from __future__ import print_function
 from plone.namedfile.file import NamedBlobImage
 from unidecode import unidecode
 from AccessControl.SecurityManagement import newSecurityManager
@@ -70,13 +71,13 @@ while len(parsed) < args.limit:
             type='Folder', title='Folder', container=container,
             exclude_from_nav=True)
 
-    print('parsing ' + found_url)
+    print(('parsing ' + found_url))
     resp = requests.get(found_url)
     dom = fromstring(resp.content)
     try:
         title = unidecode(dom.cssselect('h1')[0].text_content())
     except IndexError:
-        print('bad url: ' + found_url)
+        print(('bad url: ' + found_url))
         continue
     _id = normalizer.normalize(found_url.split('/')[-1])
     if _id in container.objectIds():

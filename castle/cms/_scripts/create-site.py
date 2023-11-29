@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import json
 import os
@@ -27,7 +28,7 @@ user = app.acl_users.getUser('admin')
 newSecurityManager(None, user.__of__(app.acl_users))
 
 if args.delete and args.site_id in app.objectIds():
-    print('Deleting site {}'.format(args.site_id))
+    print(('Deleting site {}'.format(args.site_id)))
     app.manage_delObjects([args.site_id])
 
 if args.site_id not in app.objectIds():

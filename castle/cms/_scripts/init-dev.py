@@ -1,3 +1,4 @@
+from __future__ import print_function
 from castle.cms._scripts.utils import get_module_dir
 from castle.cms.cron.utils import get_sites
 from castle.cms.cron.utils import setup_site

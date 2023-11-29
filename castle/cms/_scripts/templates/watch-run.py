@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import argparse
 import time
@@ -35,7 +36,7 @@ def check(directory):
             times[filepath] = hashed
 
             if hashed != current_hash:
-                print(filepath + ' has changed!')
+                print((filepath + ' has changed!'))
                 changed = True
 
     return changed

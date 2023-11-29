@@ -1,3 +1,4 @@
+from __future__ import print_function
 from castle.cms import archival
 from zope.component.hooks import setSite
 
@@ -33,11 +34,11 @@ for item in items:
     # need to export UID also
     new_url = storage.add_url(url, content_path, item['uid'])
     if new_url:
-        print('imported %s -> %s' % (url, new_url))
+        print(('imported %s -> %s' % (url, new_url)))
     else:
-        print('error importing %s' % (url,))
+        print(('error importing %s' % (url,)))
     if count % 100 == 0:
-        print('done with %i' % count)
+        print(('done with %i' % count))
         transaction.commit()
 
 transaction.commit()

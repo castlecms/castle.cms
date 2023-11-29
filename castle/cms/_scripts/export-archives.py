@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import json
 import os
@@ -52,7 +53,7 @@ def runExport(brains):
             'uid': brain.UID
         })
         if len(items) % 100 == 0:
-            print('exported %i' % len(items))
+            print(('exported %i' % len(items)))
     fi = open(export_path, 'w')
     fi.write(json.dumps(items))
     fi.close()

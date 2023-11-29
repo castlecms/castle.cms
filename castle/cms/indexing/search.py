@@ -9,6 +9,7 @@ from wildcard.hps.interfaces import IAdditionalIndexDataProvider
 from plone import api
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import implementer
+import six
 
 
 logger = logging.getLogger("Plone")
@@ -59,8 +60,8 @@ class AdditionalIndexDataProvider(object):
                 if not pin:
                     continue
                 p = pin.lower()
-                if type(p) != unicode:
-                    p = unicode(p, 'utf-8')
+                if type(p) != six.text_type:
+                    p = six.text_type(p, 'utf-8')
                 pins[i] = p
             data['searchterm_pins'] = pins
         else:
@@ -68,8 +69,8 @@ class AdditionalIndexDataProvider(object):
 
         try:
             existing_searchable_text = existing_data.get('SearchableText', u'')
-            if type(existing_searchable_text) != unicode:
-                existing_searchable_text = unicode(existing_searchable_text, 'utf-8')
+            if type(existing_searchable_text) != six.text_type:
+                existing_searchable_text = six.text_type(existing_searchable_text, 'utf-8')
             data['SearchableText'] = u'%s %s' % (existing_searchable_text, u' '.join(data['searchterm_pins']))
         except UnicodeError:
             logger.error("unicode error when generating SearchableText", exc_info=True)

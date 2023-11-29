@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import logging
 import time
@@ -178,7 +179,7 @@ def get_social_counts(site, obj, site_url, count_types, count=0):
     site_path = '/'.join(site.getPhysicalPath())
     obj_path = '/'.join(obj.getPhysicalPath())
     rel_path = obj_path[len(site_path):].strip('/')
-    print('Looking up ' + obj_path)
+    print(('Looking up ' + obj_path))
 
     urls = [site_url.rstrip('/') + '/' + rel_path]
     registry = getUtility(IRegistry)

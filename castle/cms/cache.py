@@ -48,7 +48,7 @@ class RedisAdapter(AbstractDict):
         return source
 
     def keys(self):
-        keyslist = self.client.keys()
+        keyslist = list(self.client.keys())
         return [a for a in keyslist if a.startswith(self.globalkey)]
 
     def get_key(self, key):

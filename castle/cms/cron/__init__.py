@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import argparse
 import sys
@@ -36,7 +37,7 @@ def script_runner(script, argv=sys.argv):
     command_line_args = ['--site-id="{}"'.format(args.siteid)] if args.siteid is not None else []
     cmd = [instance, 'run', script_path] + command_line_args
 
-    print('Running command: %s' % ' '.join(cmd))
+    print(('Running command: %s' % ' '.join(cmd)))
     subprocess.check_call(cmd, env=os.environ)
 
 

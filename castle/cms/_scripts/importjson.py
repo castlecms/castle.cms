@@ -1,3 +1,4 @@
+from __future__ import print_function
 from AccessControl.SecurityManagement import newSecurityManager
 from castle.cms._scripts import mjson
 from castle.cms._scripts.importtypes import get_import_type
@@ -193,25 +194,25 @@ class CastleImporter(object):
 
     def import_object(self, filepath, container=None):
         if resumable and filepath in self.successfully_imported_paths:
-            print("Skipping {}; Already successfully imported and resuming is enabled".format(filepath))
+            print(("Skipping {}; Already successfully imported and resuming is enabled".format(filepath)))
             return
         try:
             with open(filepath, 'r') as import_file:
                 data = mjson.loads(import_file.read())
         except Exception:
-            print("Skipping {}; Unable to read JSON data".format(filepath))
+            print(("Skipping {}; Unable to read JSON data".format(filepath)))
             return
         if filepath.endswith('__folder__'):
             filepath = '/'.join(filepath.split('/')[:-1])
 
         skipped = False
         if data['portal_type'] in skip_types:
-            print('Skipping omitted type {type}'
-                                            .format(type=data['portal_type']))
+            print(('Skipping omitted type {type}'
+                                            .format(type=data['portal_type'])))
             skipped = True
         if only_types and data['portal_type'] not in only_types:
-            print("Skipping {type} at {path}, not in only_types."
-                                .format(type=data['portal_type'], path=filepath))
+            print(("Skipping {type} at {path}, not in only_types."
+                                .format(type=data['portal_type'], path=filepath)))
             skipped = True
         if import_paths:
             do_import = False
@@ -222,14 +223,14 @@ class CastleImporter(object):
                     # Don't skip folders on the way to import_paths
                     do_import = True
             if not do_import:
-                print("Skipping {path}, not in import_paths"
-                                    .format(path=filepath))
+                print(("Skipping {path}, not in import_paths"
+                                    .format(path=filepath)))
                 skipped = True
         if skip_paths:
             for skip_path in skip_paths:
                 if filepath.lower().startswith('{}/{}'.format(args.export_directory, skip_path)):
-                    print("Skipping {path}, in skip_paths"
-                                    .format(path=filepath))
+                    print(("Skipping {path}, in skip_paths"
+                                    .format(path=filepath)))
                     skipped = True
         if skipped:
             if os.path.isdir(filepath) and len(os.listdir(filepath)):
@@ -255,9 +256,9 @@ class CastleImporter(object):
                 existing = container[_id]
                 if IFolder.providedBy(existing):
                     if len(existing.objectIds()):
-                        print("OVERWRITE: Deleting non-empty container {path}".format(path=path))
+                        print(("OVERWRITE: Deleting non-empty container {path}".format(path=path)))
                 else:
-                    print("OVERWRITE: Deleting content item at {path}".format(path=path))
+                    print(("OVERWRITE: Deleting content item at {path}".format(path=path)))
                 api.content.delete(container[_id])
             else:
                 create = False
@@ -278,8 +279,8 @@ class CastleImporter(object):
 
             obj = None
             if not args.overwrite and (_id in container.objectIds()):
-                print('Skipping {path}, already exists. Use --overwrite to'
-                                            ' create anyway.'.format(path=path))
+                print(('Skipping {path}, already exists. Use --overwrite to'
+                                            ' create anyway.'.format(path=path)))
                 return
             elif (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None):
                 logger.warn('Skipping {path}, content with its UUID already exists.'
@@ -289,11 +290,11 @@ class CastleImporter(object):
             else:
                 try:
                     obj = api.content.create(safe_id=True, **creation_data)
-                    print('Created {path}'.format(path=path))
+                    print(('Created {path}'.format(path=path)))
                     imported_but_not_committed.append(path)
                     self.imported_count += 1
                     if self.imported_count % 50 == 0:
-                        print('%i processed, committing' % self.imported_count)
+                        print(('%i processed, committing' % self.imported_count))
                         transaction.commit()
                         successfully_imported_paths.extend(imported_but_not_committed)
                         with open('./.successfullyimportedpaths', 'a') as fout:
@@ -331,7 +332,7 @@ class CastleImporter(object):
                 state = api.content.get_state(obj=obj)
                 if state != data['state']:
                     try:
-                        print('Transitioning %s to %s' % (obj.id, data['state']))
+                        print(('Transitioning %s to %s' % (obj.id, data['state'])))
                         api.content.transition(obj, to_state=data['state'])
                     except Exception:
                         logger.error("Error transitioning %s to %s, maybe workflows"
@@ -449,7 +450,7 @@ if __name__ == '__main__':
         with open('.successfullyimportedpaths', 'r') as fin:
             for line in fin.readlines():
                 successfully_imported_paths.append(line.replace('\n', ''))
-        print('{} paths loaded'.format(len(successfully_imported_paths)))
+        print(('{} paths loaded'.format(len(successfully_imported_paths))))
         print('------------------------------')
     if args.overwrite:
         print('------------------------------')
@@ -457,7 +458,7 @@ if __name__ == '__main__':
         print('------------------------------')
     importer = CastleImporter()
     importer.do_import()
-    print('Created {count} Content Items'.format(count=importer.imported_count))
+    print(('Created {count} Content Items'.format(count=importer.imported_count)))
     transaction.commit()
     print('Import completed')
     if delete_resumable_file:

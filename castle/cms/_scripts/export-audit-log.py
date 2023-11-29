@@ -10,6 +10,7 @@ from zope.component.hooks import setSite
 
 from castle.cms import audit
 from castle.cms.indexing import hps
+import six
 
 
 logger = logging.getLogger("castle.cms")
@@ -40,7 +41,7 @@ def get_args():
 
 
 def convertunicode(s):
-    if isinstance(s, unicode):  # noqa: F821
+    if isinstance(s, six.text_type):  # noqa: F821
         return s.encode('utf-8')
     return s
 

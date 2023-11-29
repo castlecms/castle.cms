@@ -1,3 +1,4 @@
+from __future__ import print_function
 from zope.component.hooks import setSite
 import argparse
 
@@ -21,6 +22,6 @@ if __name__ == '__main__':
         try:
             latest_modified = brain.modified if brain.modified > latest_modified else latest_modified  # noqa
         except Exception:
-            print('No modified date on brain {path}'.format(path=brain.getPath()))
+            print(('No modified date on brain {path}'.format(path=brain.getPath())))
 
-    print('Content last modified {latest}'.format(latest=latest_modified))
+    print(('Content last modified {latest}'.format(latest=latest_modified)))

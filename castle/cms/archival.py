@@ -1,5 +1,6 @@
 # for compat with python3, specifically the urllib.parse includes
 # noqa because these need to precede other imports
+from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()  # noqa
 
@@ -397,7 +398,7 @@ class Storage(object):
         if 'data:' in url:
             return
         if url in self.errors:
-            print('skipping because of error %s' % url)
+            print(('skipping because of error %s' % url))
             return
         resp = self.url_opener(url, use_vhm=use_vhm)
         if resp is None:

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import datetime
 import logging
@@ -62,7 +63,7 @@ def find_url(ob, url):
     elif (('https://' in url or 'http://' in url) and
             'http://nohost' not in url):
         try:
-            print('checking ' + url)
+            print(('checking ' + url))
             resp = requests.get(url, stream=True, timeout=5)
         except Exception:
             resp = BadResponse()
@@ -104,7 +105,7 @@ def find_broken(site):
             if url in good_urls:
                 continue
             if url in checked_urls:
-                print('skipping already checked {}'.format(url))
+                print(('skipping already checked {}'.format(url)))
                 continue
             checked_urls.append(url)
             if find_url(ob, url):
@@ -129,7 +130,7 @@ def find_broken(site):
             if url[0] == '#' or url.startswith('data:'):
                 continue
             if url in checked_urls:
-                print('skipping already checked {}'.format(url))
+                print(('skipping already checked {}'.format(url)))
                 continue
             checked_urls.append(url)
             if find_url(ob, url):

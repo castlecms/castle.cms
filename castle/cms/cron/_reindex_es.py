@@ -1,3 +1,4 @@
+from __future__ import print_function
 import logging
 
 from AccessControl.SecurityManagement import newSecurityManager
@@ -63,13 +64,13 @@ def index_site(site):
         try:
             ob = brain.getObject()
         except Exception:
-            print('Could not get object of %s' % brain.getPath())
+            print(('Could not get object of %s' % brain.getPath()))
             continue
         try:
             uid = IUUID(ob)
             index[uid] = ob
         except TypeError:
-            print('Could not get UID of %s' % brain.getPath())
+            print(('Could not get UID of %s' % brain.getPath()))
             continue
         if uid in ids:
             # remove from uids... When all said and done,
@@ -77,7 +78,7 @@ def index_site(site):
             # system and remove them from es
             ids.remove(uid)
         if len(index) > 300:
-            print('finished indexing %i' % count)
+            print(('finished indexing %i' % count))
             index_batch([], index, [], es)
             site._p_jar.invalidateCache()  # noqa
             transaction.begin()

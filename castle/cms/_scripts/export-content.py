@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import base64
 import errno
@@ -227,8 +228,8 @@ class OFSFileSerializer(BaseTypeSerializer):
         try:
             data = str(obj.data)
         except Exception:
-            print('Error in OFSFileSerializer while serializing {}'.format(
-                '/'.join(obj.getPhysicalPath())))
+            print(('Error in OFSFileSerializer while serializing {}'.format(
+                '/'.join(obj.getPhysicalPath()))))
             data = str(obj.data.data)
         return {
             'data': base64.b64encode(data),
@@ -462,7 +463,7 @@ def custom_handler(obj):
         serializer = _serializers[_type]
         return serializer.serialize(obj)
     else:
-        print('NOT SERIALIZING {}'.format(obj))
+        print(('NOT SERIALIZING {}'.format(obj)))
         return None
     return obj
 
@@ -575,7 +576,7 @@ class ArchetypesExporter(ContentExporter):
     def get_field_data(self):
         data = {}
         if not hasattr(self.obj, 'Schema'):
-            print('No schema on {}'.format(self.obj))
+            print(('No schema on {}'.format(self.obj)))
             return {}
         for field in self.obj.Schema().fields():
             try:
@@ -718,10 +719,10 @@ def export_dexterity_obj(obj):
 
 def export_obj(obj):
     if IDexterityContent.providedBy(obj):
-        print("--> Dexterity: %s" % obj.Title())
+        print(("--> Dexterity: %s" % obj.Title()))
         func = export_dexterity_obj
     else:
-        print("--> Archetypes: %s" % obj.Title())
+        print(("--> Archetypes: %s" % obj.Title()))
         func = export_archetype_obj
     for result in func(obj):
         yield result
@@ -745,7 +746,7 @@ def write_export(obj, data):
         fi.write(dumps(data))
         fi.close()
     except UnicodeDecodeError:
-        print('Error exporting {}'.format(objpath))
+        print(('Error exporting {}'.format(objpath)))
 
 
 def run_export(brains):
@@ -759,22 +760,22 @@ def run_export(brains):
         path = brain.getPath()
         if (args.path_filter and
                 not fnmatch(path, args.path_filter)):
-            print('skipping(filtered), ', path,
-                  ' ', str(idx + 1) + '/' + str(size))
+            print(('skipping(filtered), ', path,
+                  ' ', str(idx + 1) + '/' + str(size)))
             continue
-        print('processing, ', path, ' ', str(idx + 1) + '/' + str(size))
+        print(('processing, ', path, ' ', str(idx + 1) + '/' + str(size)))
         try:
             obj = brain.getObject()
         except Exception:
-            print('skipping - error getting object, ', path, ' ',
-                  str(idx + 1) + '/' + str(size))
+            print(('skipping - error getting object, ', path, ' ',
+                  str(idx + 1) + '/' + str(size)))
             continue
         for obj, data in export_obj(obj):
             write_export(obj, data)
 
 
 if args.createdsince:
-    print('exporting items created since %s' % args.createdsince)
+    print(('exporting items created since %s' % args.createdsince))
     date_range = {
         'query': (
             DateTime(args.createdsince),
@@ -784,7 +785,7 @@ if args.createdsince:
     }
     query = catalog(created=date_range)
 elif args.modifiedsince:
-    print('exporting items modified since %s' % args.modifiedsince)
+    print(('exporting items modified since %s' % args.modifiedsince))
     date_range = {
         'query': (
             DateTime(args.modifiedsince),

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Products.CMFCore.FSFile import FSFile
 from plone.resource.directory import FilesystemResourceDirectory
 from Products.Five.browser.resource import DirectoryResource
