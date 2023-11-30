@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='3.0.0b129.dev0',
+    version='4.0.0a1.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('CHANGES.md')
@@ -23,9 +23,8 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
-        "Framework :: Plone :: 5.0",
         "Framework :: Plone",
-        "Framework :: Plone :: 5.1",
+        "Framework :: Plone :: 5.2",
         "Framework :: CastleCMS",
         "Framework :: CastleCMS :: Theme"
     ],

@@ -1,10 +1,10 @@
 Changelog
 =========
 
-3.0.0b129 (unreleased)
+4.0.0a1 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- plone 5.2 compat
 
 
 3.0.0b128 (2023-11-20)
