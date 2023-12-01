@@ -8,7 +8,7 @@ import requests
 
 import transaction
 from castle.cms.browser.search import SearchAjax
-from collective.elasticsearch.es import ElasticSearchCatalog
+from collective.elasticsearch.manager import ElasticSearchManager
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from collective.elasticsearch.interfaces import IElasticSettings
@@ -119,7 +119,7 @@ if ES_ENABLED:
             settings.sniffer_timeout = 1.0
             self.catalog = getToolByName(self.portal, 'portal_catalog')
             self.catalog._elasticcustomindex = 'plone-test-index'
-            self.es = ElasticSearchCatalog(self.catalog)
+            self.es = ElasticSearchManager(self.catalog)
             self.es.recreateCatalog()
             self.catalog.manage_catalogRebuild()
 

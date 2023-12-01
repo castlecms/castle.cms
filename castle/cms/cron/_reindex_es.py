@@ -3,8 +3,7 @@ import logging
 
 from AccessControl.SecurityManagement import newSecurityManager
 from castle.cms.cron.utils import setup_site
-from collective.elasticsearch.es import ElasticSearchCatalog
-from collective.elasticsearch.hook import index_batch
+from collective.elasticsearch.manager import ElasticSearchManager
 from collective.elasticsearch.interfaces import IMappingProvider
 from collective.elasticsearch.interfaces import IReindexActive
 from elasticsearch import Elasticsearch
@@ -23,7 +22,7 @@ logger = logging.getLogger('castle.cms')
 def index_site(site):
     setup_site(site)
     catalog = api.portal.get_tool('portal_catalog')
-    es = ElasticSearchCatalog(catalog)
+    es = ElasticSearchManager(catalog)
     if not es.enabled:
         return
 
@@ -79,12 +78,12 @@ def index_site(site):
             ids.remove(uid)
         if len(index) > 300:
             print(('finished indexing %i' % count))
-            index_batch([], index, [], es)
+            es.bulk([], index, [], es)
             site._p_jar.invalidateCache()  # noqa
             transaction.begin()
             site._p_jar.sync()  # noqa
             index = {}
-    index_batch([], index, [], es)
+    es.bulk([], index, [], es)
     logger.info('finished indexing {}'.format(count))
 
     remove = []
@@ -92,7 +91,7 @@ def index_site(site):
         brains = catalog(UID=uid)
         if len(brains) == 0:
             remove.append(uid)
-    index_batch(remove, {}, [], es)
+    es.bulk(remove, {}, [], es)
 
 
 def run(app):
