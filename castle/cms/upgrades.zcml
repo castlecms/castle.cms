@@ -148,4 +148,21 @@
     handler=".upgrades.upgrade_3009"
     profile="castle.cms:default"
     />
+
+
+  <genericsetup:registerProfile
+    name="3010"
+    title="CastleCMS upgrade to 3010 profile"
+    directory="profiles/3010"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3010"
+    description="Add action to convert document to folder"
+    source="*"
+    destination="3010"
+    handler=".upgrades.upgrade_3010"
+    profile="castle.cms:default"
+    />
 </configure>
