@@ -36,12 +36,11 @@ setup(
     namespace_packages=['castle'],
     install_requires=[
         # plone packages
-        # Plone 5.2- update reqs
-        'Products.CMFPlone>=5.2.12',
+        'Products.CMFPlone>=5.2.14',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
-        # 'plone.app.blocks>=10.0.0', 
+        'plone.app.blocks>=10.0.0', 
         'Products.PloneKeywordManager>=2.2.1',
         'plone.schemaeditor>=2.0.18',
         'plone.namedfile>=3.0.10',

@@ -5,8 +5,6 @@ import sys
 import time
 import traceback
 
-# Plone5.2 - 'Globals' no longer exists in Zope 4
-# import Globals
 from DateTime import DateTime
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
@@ -54,8 +52,8 @@ class Storage(object):
     def _get_fs_path(self):
         """ returns FS path for jbot storage.
         """
-        # Plone5.2 TODO - Determine actual data_dir, set as '/var/filestorage/' for now
-        # base_path = '/'.join(Globals.data_dir.split('/')[:-1])
+        # Plone5.2 - 'Globals' contained 'data_dir' variable 
+        # set as '/var/filestorage/' for now
         base_path = '/var/filestorage/'
         jbot_dir = os.path.join(base_path, 'jbot')
         site_id = '-'.join(self.site.getPhysicalPath()[1:])
