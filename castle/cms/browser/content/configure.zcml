@@ -166,6 +166,13 @@
     permission="cmf.ModifyPortalContent"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  <browser:page
+    for="plone.app.contenttypes.interfaces.IDocument"
+    name="convert-document-to-folder"
+    class=".actions.ConvertToFolderForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
   <browser:page
     for="*"

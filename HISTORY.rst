@@ -11,6 +11,8 @@ Changelog
   (for dexterity type definitions in control panel in /@@dexterity-types/<DexterityTypeHere>)
 - Allow resuming importjson script
 - fix missing/ inconsistently localed back to site setup button in controlpanels
+- Create Content Redirectable behavior so Dexterity objects can act as redirects
+- Create an action to convert pages into folders with the original page as the default view
 
 
 2.19.1 (2023-09-15)

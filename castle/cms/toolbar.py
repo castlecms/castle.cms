@@ -1,7 +1,3 @@
-import copy
-import json
-import logging
-
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -10,7 +6,9 @@ from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
 from castle.cms.interfaces import ITemplate
 from castle.cms.utils import get_chat_info
-from plone import api
+from copy import copy
+from json import dumps as json_dumps
+from logging import getLogger
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.layout.navigation.defaultpage import getDefaultPage
 from plone.cachepurging.interfaces import ICachePurgingSettings
@@ -34,8 +32,10 @@ from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import implements
 
+import plone.api as api
 
-logger = logging.getLogger('castle.cms')
+
+logger = getLogger('castle.cms')
 
 
 class BaseToolbarModifier(object):
@@ -171,6 +171,17 @@ class Utils(object):
     def non_root_item(self):
         menuItem = MenuItemFactory('#', Base=NonRootMenuItem)
         return menuItem(self.toolbar).available
+
+    def show_convert_document_to_folder(self):
+        return self.is_document and not self.is_front_page
+
+    @property
+    def is_front_page(self):
+        return self.context.id == 'front-page'
+
+    @property
+    def is_document(self):
+        return self.context.portal_type == 'Document'
 
     def container_url(self):
         context = self.context
@@ -448,7 +459,7 @@ class Toolbar(BrowserView):
                 menu.append('spacer')
                 continue
 
-            obj = copy.copy(action.__dict__)
+            obj = copy(action.__dict__)
 
             if obj.get('icon_class') is None:
                 obj['icon_class'] = 'icon-%s' % obj['id']
@@ -572,4 +583,4 @@ class Toolbar(BrowserView):
             # if this was called from a request, set the ct header
             self.request.response.setHeader('Content-Type', 'application/json')
 
-        return json.dumps(data)
+        return json_dumps(data)

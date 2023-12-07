@@ -9,6 +9,7 @@
   <subscriber handler=".security.onUserLogsIn" />
   <subscriber handler=".security.onUserLogsOut" />
   <subscriber handler=".security.afterTraversal" />
+  <subscriber handler=".redirects.afterTraversal" />
   <subscriber handler=".security.beforeCommit" />
 
   <subscriber handler=".transformer.requestStart" />
