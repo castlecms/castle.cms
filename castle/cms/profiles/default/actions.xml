@@ -1,616 +1,688 @@
 <?xml version="1.0"?>
-<object name="portal_actions" meta_type="Plone Actions Tool"
+<object name="portal_actions"
+   meta_type="Plone Actions Tool"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <action-provider name="portal_workflow"/>
- <action-provider name="portal_types"/>
- <action-provider name="portal_actions"/>
- <object name="object_buttons" meta_type="CMF Action Category">
-   <object name="cut" remove="true"></object>
-   <object name="copy" remove="true"></object>
-   <object name="paste" remove="true"></object>
-   <object name="rename" remove="true"></object>
-   <object name="delete" remove="true"></object>
-   <object name="ical_import_enable" remove="true"></object>
-   <object name="ical_import_disable" remove="true"></object>
- </object>
- <object name="object" meta_type="CMF Action Category">
-   <object name="folderContents" remove="true"></object>
-   <object name="history" remove="true"></object>
-   <object name="local_roles" remove="true"></object>
-   <object name="contentrules" remove="true"></object>
-   <object name="syndication" remove="true"></object>
-   <object name="ical_import_settings" remove="true"></object>
- </object>
- <object name="user" meta_type="CMF Action Category">
-   <object name="preferences" remove="true"></object>
-   <object name="login" remove="true"></object>
-   <object name="join" remove="true"></object>
-   <object name="undo" remove="true"></object>
-   <object name="plone_setup" remove="true"></object>
-   <object name="review-comments" remove="true"></object>
-   <object name="logout" remove="true"></object>
- </object>
- <object name="document_actions" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="rss" meta_type="CMF Action" i18n:domain="plone">
-   <property name="title" i18n:translate="">RSS feed</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">object/@@syndication-util/rss_url</property>
-   <property name="link_target"></property>
-   <property name="icon_expr">string:$portal_url/rss.png</property>
-   <property
-      name="available_expr">object/@@syndication-util/context_enabled</property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">False</property>
-  </object>
-  <object name="print" meta_type="CMF Action" i18n:domain="plone">
-   <property name="title" i18n:translate="">Print this</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:javascript:this.print();</property>
-   <property name="link_target"></property>
-   <property name="icon_expr">string:$portal_url/print_icon.png</property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">False</property>
-  </object>
-  <object name="extedit" meta_type="CMF Action" i18n:domain="plone">
-   <property name="title"
-      i18n:translate="">Edit with external application</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/external_edit</property>
-   <property name="link_target"></property>
-   <property name="icon_expr">string:$portal_url/extedit_icon.png</property>
-   <property name="available_expr">object/externalEditorEnabled</property>
-   <property name="permissions">
-    <element value="Modify portal content"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
- </object>
- <object name="site_actions" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="sitemap" meta_type="CMF Action" i18n:domain="plone">
-   <property name="title" i18n:translate="">Site Map</property>
-   <property name="description" i18n:translate=""></property>
-   <property
-      name="url_expr">string:${globals_view/navigationRootUrl}/sitemap</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="accessibility" meta_type="CMF Action" i18n:domain="plone">
-   <property name="title" i18n:translate="">Accessibility</property>
-   <property name="description" i18n:translate=""></property>
-   <property
-      name="url_expr">string:${globals_view/navigationRootUrl}/accessibility-info</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="contact" meta_type="CMF Action" i18n:domain="plone">
-   <property name="title" i18n:translate="">Contact</property>
-   <property name="description" i18n:translate=""></property>
-   <property
-      name="url_expr">string:${globals_view/navigationRootUrl}/contact-info</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="modal" type="text">{}</property>
-  </object>
- </object>
- <object name="toolbar_menu" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="view-page" meta_type="CMF Action">
-   <property name="title">View Page</property>
-   <property name="description">Go back to public view of page.</property>
-   <property name="url_expr">string:${object/absolute_url}/view</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-   <property name="icon_class" type="string">icon-view</property>
-  </object>
-  <object name="folder_contents" meta_type="CMF Action">
-   <property name="title">Manage Content</property>
-   <property name="description">Batch organize and navigate site content.</property>
-   <property
-      name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/folder_contents</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="List folder contents"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class" type="string">icon-folderContents</property>
-  </object>
-  <object name="spacer" meta_type="CMF Action">
-   <property name="title">Spacer</property>
-   <property name="description"></property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="add" meta_type="CMF Action">
-   <property name="title">Add</property>
-   <property name="description">Add content (pages, folders, news items, and so on) in the current folder.</property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class"
-      type="string">icon-plone-contentmenu-factories</property>
-  </object>
-  <object name="edit" meta_type="CMF Action">
-   <property name="title">Edit</property>
-   <property name="description">Edit the content of this current item.</property>
-   <property name="url_expr">string:${object/absolute_url}/edit</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="state" meta_type="CMF Action">
-   <property name="title">State</property>
-   <property name="description">Manage the current publication state of this page.</property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-   <property name="icon_class"
-      type="string">icon-plone-contentmenu-workflow</property>
-  </object>
-  <object name="design" meta_type="CMF Action">
-   <property name="title">Design</property>
-   <property name="description">Change the appearance of the current page and folder.</property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/has_layout</property>
-   <property name="permissions">
-    <element value="Modify portal content"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="spacer_1" meta_type="CMF Action">
-   <property name="title">Spacer</property>
-   <property name="description"></property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="cut" meta_type="CMF Action">
-   <property name="title">Cut</property>
-   <property name="description">Cut this file to paste it elsewhere.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@object_cut</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
-   <property name="permissions">
-    <element value="Delete objects"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="copy" meta_type="CMF Action">
-   <property name="title">Copy</property>
-   <property name="description">Copy or Move this item.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@object_copy</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
-   <property name="permissions">
-    <element value="Copy or Move"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="paste" meta_type="CMF Action">
-   <property name="title">Paste</property>
-   <property name="description">Paste a file that has been copied or cut.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@object_paste</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/paste_available</property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="delete" meta_type="CMF Action">
-   <property name="title">Delete</property>
-   <property name="description">Delete or move this item to a recycle bin.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@delete_confirmation</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
-   <property name="permissions">
-    <element value="Delete objects"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="rename" meta_type="CMF Action">
-   <property name="title">Rename</property>
-   <property name="description">Rename this item.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@object_rename</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/show_rename</property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="convert_template" meta_type="CMF Action">
-   <property name="title">Template</property>
-   <property name="description">Copy this item to a template.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@convert_template</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/show_template</property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="spacer_2" meta_type="CMF Action">
-   <property name="title">Spacer</property>
-   <property name="description"></property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="sharing" meta_type="CMF Action">
-   <property name="title">Sharing</property>
-   <property name="description">Grant permissions on the current item to other users or groups of users. The permissions you can grant are for editing, viewing, or reviewing the current item for publication, and for being able to add more items to the current folder.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@sharing</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class" type="string">icon-local_roles</property>
-  </object>
-  <object name="history" meta_type="CMF Action">
-   <property name="title">History</property>
-   <property name="description">View edit and workflow state history of this page.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@historyview</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="CMFEditions: Access previous versions"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="rules" meta_type="CMF Action">
-   <property name="title">Rules</property>
-   <property name="description">Shows the version history of the current item: who created or edited it, when, and what they did, including version comparisons and the ability to revert to a particular version.</property>
-   <property
-      name="url_expr">string:${plone_context_state/canonical_object_url}/@@manage-content-rules</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">python:plone_context_state.canonical_object().restrictedTraverse('@@plone_contentrules_info').show_rules_tab()</property>
-   <property name="permissions">
-    <element value="Content rules: Manage rules"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="aliases" meta_type="CMF Action">
-   <property name="title">Aliases</property>
-   <property name="description">View and update all urls that redirect to this page.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@manage-aliases</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Modify portal content"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="syndication" meta_type="CMF Action">
-   <property name="title">Syndication</property>
-   <property name="description">Control how you publish your content with RSS/Atom/iTunes.</property>
-   <property
-      name="url_expr">string:${folder/absolute_url}/@@synPropertiesForm</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Manage properties"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="analytics" meta_type="CMF Action">
-   <property name="title">Analytics</property>
-   <property name="description">Review analytic statistics for this page.</property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="preview" meta_type="CMF Action">
-   <property name="title">Preview</property>
-   <property name="description">Preview this page in different browser sizes.</property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="invalidate" meta_type="CMF Action">
-   <property name="title">Invalidate Cache</property>
-   <property name="description">Clear proxy servers and/or cloudflare cache.</property>
-   <property
-      name="url_expr">string:${object/absolute_url}/@@castle-purge</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/show_invalidate</property>
-   <property name="permissions">
-    <element value="Modify portal content"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="spacer4" meta_type="CMF Action">
-   <property name="title">Spacer</property>
-   <property name="description"></property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="slots" meta_type="CMF Action">
-   <property name="title">Slots</property>
-   <property name="description">Manage content in parts of the page from the Theme.</property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Castle: Manage Slots"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class"
-      type="string">icon-plone-contentmenu-portletmanager</property>
-  </object>
- </object>
- <object name="user_menu" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="dashboard" meta_type="CMF Action">
-   <property name="title">Dashboard</property>
-   <property name="description">View and manage your dashboard.</property>
-   <property name="url_expr">string:${portal_url}/@@dashboard</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="my-folder" meta_type="CMF Action">
-   <property name="title">My Folder</property>
-   <property name="description"></property>
-   <property
-      name="url_expr">object/@@castle-toolbar-utils/user_folder</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@castle-toolbar-utils/user_folder</property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="preferences" meta_type="CMF Action">
-   <property name="title">Preferences</property>
-   <property name="description">Your personal settings.</property>
-   <property
-      name="url_expr">string:${portal_url}/@@personal-preferences</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="activity_log" meta_type="CMF Action">
-   <property name="title">Activity Log</property>
-   <property name="description">A list of everything you did on the site.</property>
-   <property name="url_expr">string:${portal_url}/@@activity-report</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="logout" meta_type="CMF Action">
-   <property name="title">Log Out</property>
-   <property name="description">Log out of the site.</property>
-   <property name="url_expr">string:${portal_url}/logout</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
- </object>
- <object name="management_menu" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="site_setup" meta_type="CMF Action">
-   <property name="title">Site Setup</property>
-   <property name="description">Configuration area for Castle and add-on Products.</property>
-   <property
-      name="url_expr">string:${portal_url}/@@overview-controlpanel</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Plone Site Setup: Overview"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="impersonate" meta_type="CMF Action">
-   <property name="title">View As...</property>
-   <property name="description">View the page as another user.</property>
-   <property name="url_expr">string:${portal_url}/@@impersonator</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-  </object>
-  <object name="recycle" meta_type="CMF Action">
-   <property name="title">Recycle Bin</property>
-   <property name="description">Recover deleted items from the recycle bin.</property>
-   <property name="url_expr">string:${portal_url}/@@trash</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Set own password"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="review" meta_type="CMF Action">
-   <property name="title">Review Archives</property>
-   <property name="description">Review content that will be archived to static storage.</property>
-   <property name="url_expr">string:${portal_url}/@@archival-review</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Manage portal"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
-  <object name="tour" meta_type="CMF Action">
-   <property name="title">Tour CastleCMS</property>
-   <property name="description">Launches the CastleCMS tour.</property>
-   <property name="url_expr">string:${portal_url}/@@retour</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions"/>
-   <property name="visible">True</property>
-   <property name="csrf" type="boolean">True</property>
-  </object>
-  <object name="moderate_comments" meta_type="CMF Action">
-   <property name="title">Moderate Comments</property>
-   <property name="description"></property>
-   <property name="url_expr">string:${portal_url}/@@moderate-comments</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">portal/@@moderate-comments-enabled|nothing</property>
-   <property name="permissions">
-    <element value="Review comments"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
- </object>
- <object name="folder_contents_menu" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="view" meta_type="CMF Action">
-   <property name="title">View Page</property>
-   <property name="description"></property>
-   <property
-      name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/view</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="List folder contents"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class" type="string">icon-view</property>
-  </object>
-  <object name="manage_content" meta_type="CMF Action">
-   <property name="title">Manage Content</property>
-   <property name="description"></property>
-   <property
-      name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/folder_contents</property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="List folder contents"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class" type="string">icon-folderContents</property>
-  </object>
-  <object name="add" meta_type="CMF Action">
-   <property name="title">Add</property>
-   <property name="description"></property>
-   <property name="url_expr"></property>
-   <property name="link_target"></property>
-   <property name="icon_expr"></property>
-   <property name="available_expr"></property>
-   <property name="permissions">
-    <element value="Add portal content"/>
-   </property>
-   <property name="visible">True</property>
-   <property name="icon_class"
-      type="string">icon-plone-contentmenu-factories</property>
-  </object>
- </object>
+   <action-provider name="portal_workflow" />
+   <action-provider name="portal_types" />
+   <action-provider name="portal_actions" />
+   <object name="object_buttons"
+      meta_type="CMF Action Category">
+      <object name="cut"
+         remove="true"></object>
+      <object name="copy"
+         remove="true"></object>
+      <object name="paste"
+         remove="true"></object>
+      <object name="rename"
+         remove="true"></object>
+      <object name="delete"
+         remove="true"></object>
+      <object name="ical_import_enable"
+         remove="true"></object>
+      <object name="ical_import_disable"
+         remove="true"></object>
+   </object>
+   <object name="object"
+      meta_type="CMF Action Category">
+      <object name="folderContents"
+         remove="true"></object>
+      <object name="history"
+         remove="true"></object>
+      <object name="local_roles"
+         remove="true"></object>
+      <object name="contentrules"
+         remove="true"></object>
+      <object name="syndication"
+         remove="true"></object>
+      <object name="ical_import_settings"
+         remove="true"></object>
+   </object>
+   <object name="user"
+      meta_type="CMF Action Category">
+      <object name="preferences"
+         remove="true"></object>
+      <object name="login"
+         remove="true"></object>
+      <object name="join"
+         remove="true"></object>
+      <object name="undo"
+         remove="true"></object>
+      <object name="plone_setup"
+         remove="true"></object>
+      <object name="review-comments"
+         remove="true"></object>
+      <object name="logout"
+         remove="true"></object>
+   </object>
+   <object name="document_actions"
+      meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="rss"
+         meta_type="CMF Action"
+         i18n:domain="plone">
+         <property name="title"
+            i18n:translate="">RSS feed</property>
+         <property name="description"
+            i18n:translate=""></property>
+         <property name="url_expr">object/@@syndication-util/rss_url</property>
+         <property name="link_target"></property>
+         <property name="icon_expr">string:$portal_url/rss.png</property>
+         <property name="available_expr">object/@@syndication-util/context_enabled</property>
+         <property name="permissions">
+            <element value="View" />
+         </property>
+         <property name="visible">False</property>
+      </object>
+      <object name="print"
+         meta_type="CMF Action"
+         i18n:domain="plone">
+         <property name="title"
+            i18n:translate="">Print this</property>
+         <property name="description"
+            i18n:translate=""></property>
+         <property name="url_expr">string:javascript:this.print();</property>
+         <property name="link_target"></property>
+         <property name="icon_expr">string:$portal_url/print_icon.png</property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="View" />
+         </property>
+         <property name="visible">False</property>
+      </object>
+      <object name="extedit"
+         meta_type="CMF Action"
+         i18n:domain="plone">
+         <property name="title"
+            i18n:translate="">Edit with external application</property>
+         <property name="description"
+            i18n:translate=""></property>
+         <property name="url_expr">string:$object_url/external_edit</property>
+         <property name="link_target"></property>
+         <property name="icon_expr">string:$portal_url/extedit_icon.png</property>
+         <property name="available_expr">object/externalEditorEnabled</property>
+         <property name="permissions">
+            <element value="Modify portal content" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+   </object>
+   <object name="site_actions"
+      meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="sitemap"
+         meta_type="CMF Action"
+         i18n:domain="plone">
+         <property name="title"
+            i18n:translate="">Site Map</property>
+         <property name="description"
+            i18n:translate=""></property>
+         <property name="url_expr">string:${globals_view/navigationRootUrl}/sitemap</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="View" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="accessibility"
+         meta_type="CMF Action"
+         i18n:domain="plone">
+         <property name="title"
+            i18n:translate="">Accessibility</property>
+         <property name="description"
+            i18n:translate=""></property>
+         <property name="url_expr">string:${globals_view/navigationRootUrl}/accessibility-info</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="View" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="contact"
+         meta_type="CMF Action"
+         i18n:domain="plone">
+         <property name="title"
+            i18n:translate="">Contact</property>
+         <property name="description"
+            i18n:translate=""></property>
+         <property name="url_expr">string:${globals_view/navigationRootUrl}/contact-info</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="View" />
+         </property>
+         <property name="visible">True</property>
+         <property name="modal"
+            type="text">{}</property>
+      </object>
+   </object>
+   <object name="toolbar_menu"
+      meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="view-page"
+         meta_type="CMF Action">
+         <property name="title">View Page</property>
+         <property name="description">Go back to public view of page.</property>
+         <property name="url_expr">string:${object/absolute_url}/view</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-view</property>
+      </object>
+      <object name="folder_contents"
+         meta_type="CMF Action">
+         <property name="title">Manage Content</property>
+         <property name="description">Batch organize and navigate site content.</property>
+         <property name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/folder_contents</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="List folder contents" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-folderContents</property>
+      </object>
+      <object name="spacer"
+         meta_type="CMF Action">
+         <property name="title">Spacer</property>
+         <property name="description"></property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="add"
+         meta_type="CMF Action">
+         <property name="title">Add</property>
+         <property name="description">Add content (pages, folders, news items, and so on) in the current folder.</property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-plone-contentmenu-factories</property>
+      </object>
+      <object name="edit"
+         meta_type="CMF Action">
+         <property name="title">Edit</property>
+         <property name="description">Edit the content of this current item.</property>
+         <property name="url_expr">string:${object/absolute_url}/edit</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="state"
+         meta_type="CMF Action">
+         <property name="title">State</property>
+         <property name="description">Manage the current publication state of this page.</property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-plone-contentmenu-workflow</property>
+      </object>
+      <object name="design"
+         meta_type="CMF Action">
+         <property name="title">Design</property>
+         <property name="description">Change the appearance of the current page and folder.</property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/has_layout</property>
+         <property name="permissions">
+            <element value="Modify portal content" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="spacer_1"
+         meta_type="CMF Action">
+         <property name="title">Spacer</property>
+         <property name="description"></property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="cut"
+         meta_type="CMF Action">
+         <property name="title">Cut</property>
+         <property name="description">Cut this file to paste it elsewhere.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@object_cut</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
+         <property name="permissions">
+            <element value="Delete objects" />
+         </property>
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="copy"
+         meta_type="CMF Action">
+         <property name="title">Copy</property>
+         <property name="description">Copy or Move this item.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@object_copy</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
+         <property name="permissions">
+            <element value="Copy or Move" />
+         </property>
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="paste"
+         meta_type="CMF Action">
+         <property name="title">Paste</property>
+         <property name="description">Paste a file that has been copied or cut.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@object_paste</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/paste_available</property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="delete"
+         meta_type="CMF Action">
+         <property name="title">Delete</property>
+         <property name="description">Delete or move this item to a recycle bin.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@delete_confirmation</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/non_root_item</property>
+         <property name="permissions">
+            <element value="Delete objects" />
+         </property>
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="rename"
+         meta_type="CMF Action">
+         <property name="title">Rename</property>
+         <property name="description">Rename this item.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@object_rename</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/show_rename</property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="convert_template"
+         meta_type="CMF Action">
+         <property name="title">Template</property>
+         <property name="description">Copy this item to a template.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@convert_template</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/show_template</property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="spacer_2"
+         meta_type="CMF Action">
+         <property name="title">Spacer</property>
+         <property name="description"></property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="sharing"
+         meta_type="CMF Action">
+         <property name="title">Sharing</property>
+         <property name="description">Grant permissions on the current item to other users or groups of users. The permissions you can grant are for editing, viewing, or reviewing the current item for publication, and for being able to add more items to the current folder.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@sharing</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-local_roles</property>
+      </object>
+      <object name="history"
+         meta_type="CMF Action">
+         <property name="title">History</property>
+         <property name="description">View edit and workflow state history of this page.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@historyview</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="CMFEditions: Access previous versions" />
+         </property>
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="rules"
+         meta_type="CMF Action">
+         <property name="title">Rules</property>
+         <property name="description">Shows the version history of the current item: who created or edited it, when, and what they did, including version comparisons and the ability to revert to a particular version.</property>
+         <property name="url_expr">string:${plone_context_state/canonical_object_url}/@@manage-content-rules</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">python:plone_context_state.canonical_object().restrictedTraverse('@@plone_contentrules_info').show_rules_tab()</property>
+         <property name="permissions">
+            <element value="Content rules: Manage rules" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="aliases"
+         meta_type="CMF Action">
+         <property name="title">Aliases</property>
+         <property name="description">View and update all urls that redirect to this page.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@manage-aliases</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Modify portal content" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="syndication"
+         meta_type="CMF Action">
+         <property name="title">Syndication</property>
+         <property name="description">Control how you publish your content with RSS/Atom/iTunes.</property>
+         <property name="url_expr">string:${folder/absolute_url}/@@synPropertiesForm</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Manage properties" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="analytics"
+         meta_type="CMF Action">
+         <property name="title">Analytics</property>
+         <property name="description">Review analytic statistics for this page.</property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="preview"
+         meta_type="CMF Action">
+         <property name="title">Preview</property>
+         <property name="description">Preview this page in different browser sizes.</property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="invalidate"
+         meta_type="CMF Action">
+         <property name="title">Invalidate Cache</property>
+         <property name="description">Clear proxy servers and/or cloudflare cache.</property>
+         <property name="url_expr">string:${object/absolute_url}/@@castle-purge</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/show_invalidate</property>
+         <property name="permissions">
+            <element value="Modify portal content" />
+         </property>
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="spacer4"
+         meta_type="CMF Action">
+         <property name="title">Spacer</property>
+         <property name="description"></property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="slots"
+         meta_type="CMF Action">
+         <property name="title">Slots</property>
+         <property name="description">Manage content in parts of the page from the Theme.</property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Castle: Manage Slots" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-plone-contentmenu-portletmanager</property>
+      </object>
+   </object>
+   <object name="user_menu"
+      meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="dashboard"
+         meta_type="CMF Action">
+         <property name="title">Dashboard</property>
+         <property name="description">View and manage your dashboard.</property>
+         <property name="url_expr">string:${portal_url}/@@dashboard</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="my-folder"
+         meta_type="CMF Action">
+         <property name="title">My Folder</property>
+         <property name="description"></property>
+         <property name="url_expr">object/@@castle-toolbar-utils/user_folder</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">object/@@castle-toolbar-utils/user_folder</property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="preferences"
+         meta_type="CMF Action">
+         <property name="title">Preferences</property>
+         <property name="description">Your personal settings.</property>
+         <property name="url_expr">string:${portal_url}/@@personal-preferences</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="activity_log"
+         meta_type="CMF Action">
+         <property name="title">Activity Log</property>
+         <property name="description">A list of everything you did on the site.</property>
+         <property name="url_expr">string:${portal_url}/@@activity-report</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="logout"
+         meta_type="CMF Action">
+         <property name="title">Log Out</property>
+         <property name="description">Log out of the site.</property>
+         <property name="url_expr">string:${portal_url}/logout</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+   </object>
+   <object name="management_menu"
+      meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="site_setup"
+         meta_type="CMF Action">
+         <property name="title">Site Setup</property>
+         <property name="description">Configuration area for Castle and add-on Products.</property>
+         <property name="url_expr">string:${portal_url}/@@overview-controlpanel</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Plone Site Setup: Overview" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="impersonate"
+         meta_type="CMF Action">
+         <property name="title">View As...</property>
+         <property name="description">View the page as another user.</property>
+         <property name="url_expr">string:${portal_url}/@@impersonator</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+      </object>
+      <object name="recycle"
+         meta_type="CMF Action">
+         <property name="title">Recycle Bin</property>
+         <property name="description">Recover deleted items from the recycle bin.</property>
+         <property name="url_expr">string:${portal_url}/@@trash</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Set own password" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="review"
+         meta_type="CMF Action">
+         <property name="title">Review Archives</property>
+         <property name="description">Review content that will be archived to static storage.</property>
+         <property name="url_expr">string:${portal_url}/@@archival-review</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Manage portal" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+      <object name="tour"
+         meta_type="CMF Action">
+         <property name="title">Tour CastleCMS</property>
+         <property name="description">Launches the CastleCMS tour.</property>
+         <property name="url_expr">string:${portal_url}/@@retour</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions" />
+         <property name="visible">True</property>
+         <property name="csrf"
+            type="boolean">True</property>
+      </object>
+      <object name="moderate_comments"
+         meta_type="CMF Action">
+         <property name="title">Moderate Comments</property>
+         <property name="description"></property>
+         <property name="url_expr">string:${portal_url}/@@moderate-comments</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr">portal/@@moderate-comments-enabled|nothing</property>
+         <property name="permissions">
+            <element value="Review comments" />
+         </property>
+         <property name="visible">True</property>
+      </object>
+   </object>
+   <object name="folder_contents_menu"
+      meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="view"
+         meta_type="CMF Action">
+         <property name="title">View Page</property>
+         <property name="description"></property>
+         <property name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/view</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="List folder contents" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-view</property>
+      </object>
+      <object name="manage_content"
+         meta_type="CMF Action">
+         <property name="title">Manage Content</property>
+         <property name="description"></property>
+         <property name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/folder_contents</property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="List folder contents" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-folderContents</property>
+      </object>
+      <object name="add"
+         meta_type="CMF Action">
+         <property name="title">Add</property>
+         <property name="description"></property>
+         <property name="url_expr"></property>
+         <property name="link_target"></property>
+         <property name="icon_expr"></property>
+         <property name="available_expr"></property>
+         <property name="permissions">
+            <element value="Add portal content" />
+         </property>
+         <property name="visible">True</property>
+         <property name="icon_class"
+            type="string">icon-plone-contentmenu-factories</property>
+      </object>
+   </object>
 </object>
