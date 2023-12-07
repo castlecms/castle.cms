@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_base
-from Acquisition import aq_inner
-from Acquisition import aq_parent
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.dexterity.interfaces import IDexterityContent
-from Products.CMFPlone.interfaces.controlpanel import ITypesSchema
 from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
