@@ -478,7 +478,7 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.30"
-    description="2630 changes default slideshow view to the actual slideshow"
+    description="2.6.30 - Change default slideshow view to the actual slideshow"
     source="*"
     destination="2630"
     handler=".upgrades.upgrade_2_6_30"
@@ -495,7 +495,7 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.31"
-    description="adds/ fixes some mockup-structure pagination functionality"
+    description="2.6.31 - Adds/ fixes some mockup-structure pagination functionality"
     source="*"
     destination="2631"
     handler=".upgrades.upgrade_2_6_31"
@@ -512,7 +512,7 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.33"
-    description=""
+    description="2.6.33 - Content templates"
     source="*"
     destination="2633"
     handler=".upgrades.upgrade_2_6_33"
@@ -522,7 +522,7 @@
 
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.34"
-    description="Update api control panel settings to add prince server username and password"
+    description="2.6.34 - Update api control panel settings to add prince server username and password"
     source="*"
     destination="2634"
     handler=".upgrades.upgrade_2_6_34"
@@ -539,7 +539,7 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.35"
-    description="Add Email Templates to castle.cms, fix dexterity icons and descriptions"
+    description="2.6.35 - Add Email Templates to castle.cms, fix dexterity icons and descriptions"
     source="*"
     destination="2635"
     handler=".upgrades.upgrade_2_6_35"
@@ -556,7 +556,7 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 2.6.36"
-    description="Add action to convert document to folder"
+    description="2.6.36 - Add action to convert document to folder"
     source="*"
     destination="2635"
     handler=".upgrades.upgrade_2_6_36"
