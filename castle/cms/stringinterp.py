@@ -55,8 +55,8 @@ class CastleLazyDict(LazyDict):
 
 
 @implementer(IStringInterpolator)
+@adapter(IContentish)
 class CastleInterpolator(object):
-    adapts(IContentish)
 
     def __init__(self, context):
         self._cldict = CastleLazyDict(context)

@@ -9,7 +9,6 @@ from castle.cms.browser.utils import Utils
 from castle.cms.tasks import template
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
-from plone import api
 from plone.app.content.browser import actions
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
@@ -20,6 +19,8 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import form
+
+import plone.api as api
 
 
 class ObjectPasteView(actions.ObjectPasteView):
@@ -171,6 +172,42 @@ class ObjectCutView(actions.ObjectCutView):
             _(u'${title} cut.', mapping={'title': self.title}),
             'info'
         )
+
+
+class ConvertToFolderForm(form.Form):
+
+    label = 'Convert to Folder'
+    description = (
+        '"Convert to Folder" will create change the id of the current page, '
+        'create a folder with the id and title of the original page, '
+        'move the current page inside the new folder, '
+        'and assign the original page as the default view of the new folder, '
+        'so that the new folder will display the same way the page used to, '
+        'but will now be able to be used as a folder as well. '
+    )
+
+    @button.buttonAndHandler(u'Convert To Folder', name='Convert')
+    def handle_convert(self, action):
+        original_page = self.context
+        original_page_id = original_page.id
+        original_page_title = original_page.title
+        default_page_id = original_page_id + '_default_page'
+        api.content.rename(original_page, default_page_id)
+        original_parent = aq_parent(aq_inner(original_page))
+        new_folder = api.content.create(original_parent, type='Folder', title=original_page_title, id=original_page_id)
+        api.content.move(original_page, new_folder)
+        new_folder.setDefaultPage(default_page_id)
+        IStatusMessage(self.request).add(u'Conversion complete')
+        return self.do_redirect(new_folder)
+
+    @button.buttonAndHandler(u'Cancel', name='Cancel')
+    def handle_cancel(self, action):
+        return self.do_redirect(self.context)
+
+    def do_redirect(self, context):
+        utils = Utils(self.context, self.request)
+        target = utils.get_object_url(context)
+        return self.request.response.redirect(target)
 
 
 class TemplateForm(form.Form):
