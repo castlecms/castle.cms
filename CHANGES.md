@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b129 (unreleased)
+3.0.0b129 (2023-12-07)
 ----------------------
 
 - Create Content Redirectable behavior so Dexterity objects can act as redirects
