@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.19.2 (unreleased)
+2.20.0 (2023-12-07)
 -------------------
 
 - Update control panel icons, providing one for every castle configlet
