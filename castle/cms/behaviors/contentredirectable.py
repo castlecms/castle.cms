@@ -107,12 +107,15 @@ class ContentRedirectable(object):
         return membership_tool.checkPermission('Modify portal content', self.context)
 
     @property
-    def should_redirect(self):
+    def is_redirectable(self):
         return (
             self.is_redirect_configured
             and not self._url_uses_scheme(self.non_redirectable_url_schemes)
-            and not self.user_can_edit
         )
+
+    @property
+    def should_redirect(self):
+        return self.is_redirectable and not self.user_can_edit
 
     # the methods below are adapted from plone.app.contenttypes.browser.link_redirect_view.LinkRedirectView
     @property
@@ -132,11 +135,22 @@ class ContentRedirectable(object):
          - the link is of a redirectable type (no mailto:, etc)
          - AND current user doesn't have permission to edit the Content Object"""
 
-        if self.should_redirect:
+        if self.is_redirectable:
             url = self.absolute_target_url()
             if not url:
                 return
-            return self.request.response.redirect(url.encode('utf-8'))
+            if self.user_can_edit:
+                message = (
+                    'This object is currently configured to redirect to {}. '.format(url) +
+                    'You are able to see this view because you have permission to edit this object.'
+                )
+                api.portal.show_message(
+                    message,
+                    request=self.request,
+                    type='warning',
+                )
+            else:
+                return self.request.response.redirect(url.encode('utf-8'))
 
     def absolute_target_url(self):
         """Compute the absolute target URL."""
