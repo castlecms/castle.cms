@@ -23022,7 +23022,8 @@ define('castle-url/components/upload',[
         that.renderFileList()
       ]
       var tabs = [
-        this.props.parent.renderTabItem('upload')
+        this.props.parent.renderTabItem('upload'),
+        this.props.parent.renderTabItem('templates')
       ]
       if (!that.state.update) {
         children.splice(1, 0, that.renderUploadLocation());
