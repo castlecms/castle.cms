@@ -194,7 +194,12 @@ class ConvertToFolderForm(form.Form):
         default_page_id = original_page_id + '_default_page'
         api.content.rename(original_page, default_page_id)
         original_parent = aq_parent(aq_inner(original_page))
-        new_folder = api.content.create(original_parent, type='Folder', title=original_page_title, id=original_page_id)
+        new_folder = api.content.create(
+            original_parent,
+            type='Folder',
+            title=original_page_title,
+            id=original_page_id,
+        )
         api.content.move(original_page, new_folder)
         new_folder.setDefaultPage(default_page_id)
         IStatusMessage(self.request).add(u'Conversion complete')
