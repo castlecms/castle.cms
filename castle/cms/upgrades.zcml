@@ -558,7 +558,7 @@
     title="Upgrade CastleCMS to 2.6.36"
     description="2.6.36 - Add action to convert document to folder"
     source="*"
-    destination="2635"
+    destination="2636"
     handler=".upgrades.upgrade_2_6_36"
     profile="castle.cms:default"
   />
