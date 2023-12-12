@@ -2,6 +2,7 @@ import json
 import logging
 import math
 import os
+import plone.api as api
 import shutil
 import tempfile
 import time
@@ -24,7 +25,6 @@ from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
 from persistent.dict import PersistentDict
-from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
 from plone.app.content.browser import i18n
@@ -122,7 +122,7 @@ class Creator(BrowserView):
     status = ''
 
     def __call__(self):
-        self.sm = getSecurityManager()
+        self.security_manager = getSecurityManager()
         self.request.response.setHeader('Content-type', 'application/json')
         if api.user.is_anonymous():
             self.request.response.setStatus(403)
@@ -130,15 +130,16 @@ class Creator(BrowserView):
                 'reason': 'No access'
             })
         self.catalog = api.portal.get_tool('portal_catalog')
-        if self.request.form.get('action') == 'check':
+        action = self.request.form.get('action')
+        if action == 'check':
             return self.check()
-        elif self.request.form.get('action') == 'create':
+        elif action == 'create':
             return self.create()
-        elif self.request.form.get('action') == 'create-from-template':
+        elif action == 'create-from-template':
             return self.create_object_from_template()
-        elif self.request.form.get('action') == 'remove':
+        elif action == 'remove':
             return self.remove_file_content()
-        elif self.request.form.get('action') == 'chunk-upload':
+        elif action == 'chunk-upload':
             return self.chunk_upload()
 
     def chunk_upload(self):
@@ -264,14 +265,17 @@ class Creator(BrowserView):
             pass
 
         aspect = ISelectableConstrainTypes(folder, None)
-        if (aspect and (
+        if aspect:
+            should_set_constrain_types = (
                 aspect.getConstrainTypesMode() != 1 or
-                [type_] != aspect.getImmediatelyAddableTypes())):
-            aspect.setConstrainTypesMode(1)
-            try:
-                aspect.setImmediatelyAddableTypes([type_])
-            except Exception:
-                pass
+                [type_] != aspect.getImmediatelyAddableTypes()
+            )
+            if should_set_constrain_types:
+                aspect.setConstrainTypesMode(1)
+                try:
+                    aspect.setImmediatelyAddableTypes([type_])
+                except Exception:
+                    pass
 
         if not getattr(folder, 'exclude_from_nav', False):
             # if auto generated path, exclude from nav
@@ -305,7 +309,7 @@ class Creator(BrowserView):
         success = False
         msg = None
         if obj:
-            if self.sm.checkPermission(ModifyPortalContent, obj):
+            if self.security_manager.checkPermission(ModifyPortalContent, obj):
                 try:
                     if info['field_name'].startswith('tmp_'):
                         self.add_tmp_upload(obj, info)
@@ -348,7 +352,7 @@ class Creator(BrowserView):
         if id and field:
             obj = uuidToObject(id)
             if obj:
-                if self.sm.checkPermission(ModifyPortalContent, obj):
+                if self.security_manager.checkPermission(ModifyPortalContent, obj):
                     setattr(obj, field, None)
 
     def create_file_content(self, info):
@@ -442,8 +446,10 @@ class Creator(BrowserView):
 
     def get_type_id(self):
         form = self.request.form
-        return form.get('selectedType[typeId]',
-                        form.get('selectedType[id]')).replace('%20', ' ')
+        return form.get(
+            'selectedType[typeId]',
+            form.get('selectedType[id]')
+        ).replace('%20', ' ')
 
     def create(self):
         if self._check():
@@ -543,15 +549,17 @@ content in this location."""
             if valid and not self.can_add(folder, type_id):
                 valid = False
                 self.status = 'You are not allowed to add this content type here'
-            elif valid and not self.sm.checkPermission(add_perm, folder):
+            elif valid and not self.security_manager.checkPermission(add_perm, folder):
                 valid = False
                 self.status = 'You do not have permission to add content here.'
             elif valid and self.request.form['id'] in folder.objectIds():
                 valid = False
                 ob = folder[self.request.form['id']]
                 if ITrashed.providedBy(ob):
-                    self.status = ('Content in recycling bin with same id exists. '
-                                   'Delete, rename or restore recycled content to use this.')
+                    self.status = (
+                        'Content in recycling bin with same id exists. '
+                        'Delete, rename or restore recycled content to use this.'
+                    )
                 else:
                     self.status = 'Content with same ID already exists'
             elif not self.valid_id(folder, self.request.form['id']):
@@ -670,8 +678,8 @@ class WorkflowPermissionChecker(object):
     def __init__(self, initial_state, folder):
         self.folder = folder
         self.initial_state = initial_state
-        self.sm = getSecurityManager()
-        self.user = self.sm.getUser()
+        self.security_manager = getSecurityManager()
+        self.user = self.security_manager.getUser()
         self.folder_roles = self.user.getRolesInContext(folder)
         self._u_groups = None
 
@@ -710,7 +718,7 @@ class WorkflowPermissionChecker(object):
                     if len(set(self.folder_roles) & set(pinfo['roles'])) > 0:
                         break
             if check_parent:
-                if self.sm.checkPermission(permission, self.folder):
+                if self.security_manager.checkPermission(permission, self.folder):
                     break
         else:
             # no perms valid...
