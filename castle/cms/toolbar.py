@@ -266,15 +266,18 @@ class Toolbar(BrowserView):
 
         try:
             site_templates = self.folder.template_list
-
-            for t in site_templates:
-                typeId = t.getId()
+            for template in site_templates:
+                typeId = template.getId()
+                portal_type = getattr(template, 'portal_type', '')
+                if type(portal_type) is not str:
+                    portal_type = ''
                 data['templates'].append({
                     'id': typeId,
                     'safeId': idnormalizer.normalize(typeId),
-                    'title': t.Title(),
-                    'description': t.Description(),
-                    'folderPath': folder_path
+                    'title': template.Title(),
+                    'description': template.Description(),
+                    'folderPath': folder_path,
+                    'portalType': portal_type.lower(),
                 })
         except AttributeError:
             pass

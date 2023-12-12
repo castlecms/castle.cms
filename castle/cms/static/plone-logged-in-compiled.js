@@ -23777,8 +23777,9 @@ define('castle-url/components/add-content-modal',[
       }
       return D.div({ className: 'wrapper'}, [
         D.ul({ className: 'select-type'}, this.props.templates.map(function(type){
+          console.log(type)
           return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
+            D.a({ className: 'contenttype-' + type.portalType, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
           );
         })),
         constrain
