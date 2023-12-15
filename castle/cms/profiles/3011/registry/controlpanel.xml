@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+    <record name="plone.custom_plugins"
+          interface="Products.CMFPlone.interfaces.controlpanel.ITinyMCESchema" field="custom_plugins">
+    <value purge="False">
+      <element>openai|++plone++castle/tinymce-openai.js</element>
+    </value>
+  </record>
+
+</registry>

@@ -35,7 +35,6 @@ class CastleMosaicRegistry(MosaicRegistry):
                 result = super(CastleMosaicRegistry, self).parseRegistry()
         else:
             result = super(CastleMosaicRegistry, self).parseRegistry()
-
         mng = get_tile_manager()
         for tile in mng.get_tiles():
             if tile.get('hidden'):

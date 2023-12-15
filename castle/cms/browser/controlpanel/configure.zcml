@@ -1,8 +1,9 @@
-<configure xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:plone="http://namespaces.plone.org/plone"
-    xmlns:five="http://namespaces.zope.org/five">
-
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:five="http://namespaces.zope.org/five"
+>
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     name="castle-settings"
@@ -44,7 +45,7 @@
     name="twitter-auth"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
@@ -52,7 +53,7 @@
     name="google-auth"
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="social-controlpanel"
@@ -60,7 +61,7 @@
     class=".social.SocialControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="site-controlpanel"
@@ -68,7 +69,7 @@
     class=".site.SiteControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="security-controlpanel"
@@ -76,7 +77,7 @@
     class=".security.SecurityControlPanel"
     permission="plone.app.controlpanel.Security"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="business-controlpanel"
@@ -84,7 +85,7 @@
     class=".business.BusinessControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="announcements-controlpanel"
@@ -92,7 +93,7 @@
     class=".announcements.AnnouncementsControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="manage-subscribers"
@@ -101,7 +102,7 @@
     class=".announcements.ManageSubscribers"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="audit-controlpanel"
@@ -110,7 +111,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/audit.pt"
-    />
+  />
 
   <browser:page
     name="sessions-controlpanel"
@@ -119,7 +120,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/sessions.pt"
-    />
+  />
 
   <browser:page
     name="tags-controlpanel"
@@ -128,7 +129,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/tags.pt"
-    />
+  />
 
   <browser:page
     name="crawler-controlpanel"
@@ -136,8 +137,7 @@
     class=".crawler.CrawlerControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
-
+  />
 
   <browser:page
     name="search-exclusion-controlpanel"
@@ -146,7 +146,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/search-exclusion.pt"
-    />
+  />
 
   <browser:page
     name="published-with-private-parents"
@@ -155,7 +155,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/published-with-private-parents.pt"
-    />
+  />
 
   <browser:page
     name="survey-controlpanel"
@@ -163,7 +163,7 @@
     class=".survey.SurveyControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="links-controlpanel"
@@ -172,7 +172,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/links.pt"
-    />
+  />
 
   <!-- overridding so we can customize styles, remove buttons -->
   <browser:page
@@ -182,7 +182,7 @@
     template="templates/mapper.pt"
     permission="plone.app.controlpanel.Themes"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <!-- override for widgets -->
   <browser:page
@@ -191,7 +191,7 @@
     class=".dateandtime.DateAndTimeControlPanel"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <!-- work with castle theming -->
   <browser:page
@@ -201,7 +201,7 @@
     attribute="getFrame"
     permission="plone.app.controlpanel.Themes"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <!-- user/groups overrides -->
   <browser:page
@@ -211,7 +211,7 @@
     permission="plone.app.controlpanel.UsersAndGroups"
     template="templates/usergroups_usersoverview.pt"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
   <browser:page
     name="usergroup-groupmembership"
@@ -220,16 +220,16 @@
     permission="plone.app.controlpanel.UsersAndGroups"
     template="templates/usergroups_groupmembership.pt"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
-    <browser:page
-      name="usergroup-groupdetails"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class="Products.CMFPlone.controlpanel.browser.usergroups_groupdetails.GroupDetailsControlPanel"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      template="templates/usergroups_groupdetails.pt"
-      layer="castle.cms.interfaces.ICastleLayer"
-      />
+  <browser:page
+    name="usergroup-groupdetails"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class="Products.CMFPlone.controlpanel.browser.usergroups_groupdetails.GroupDetailsControlPanel"
+    permission="plone.app.controlpanel.UsersAndGroups"
+    template="templates/usergroups_groupdetails.pt"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
 
   <browser:page
     name="status-controlpanel"
@@ -238,7 +238,7 @@
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/status.pt"
-    />
+  />
 
   <configure package="Products.CMFPlone.controlpanel.browser">
     <browser:page
@@ -248,7 +248,7 @@
       permission="cmf.ManagePortal"
       template="quickinstaller.pt"
       layer="castle.cms.interfaces.ICastleLayer"
-      />
+    />
   </configure>
   <browser:page
     name="upgrade_products"
@@ -256,6 +256,13 @@
     class=".quickinstaller.UpgradeProductsView"
     permission="cmf.ManagePortal"
     layer="castle.cms.interfaces.ICastleLayer"
-    />
+  />
 
+  <browser:page
+    name="manage-openai-settings"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    class="fbigov.theme.browser.controlpanel.OpenAISettingsControlPanel"
+    permission="cmf.ManagePortal"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
 </configure>
