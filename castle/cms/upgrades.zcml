@@ -173,18 +173,12 @@
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
-  <genericsetup:upgradeSteps
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.11"
+    description="3011 - Regster IOpenAISettings interface and register new profile records"
     source="*"
     destination="3011"
+    handler=".upgrades.upgrade_3011"
     profile="castle.cms:default"
-  >
-    <genericsetup:upgradeStep
-      title="3011a - Regster IOpenAISettings interface"
-      handler=".upgrades.upgrade_3011_interface_registry"
-    />
-    <genericsetup:upgradeStep
-      title="3011b - Register profile records"
-      handler=".upgrades.upgrade_3011_register_profile"
-    />
-  </genericsetup:upgradeSteps>
+  />
 </configure>

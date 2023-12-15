@@ -13,7 +13,7 @@
     <value key="name">toolbar-openai</value>
     <value key="category">styles</value>
     <value key="label">OpenAI</value>
-    <value key="action">code</value>
+    <value key="action">openai</value>
     <value key="icon">false</value>
     <value key="favorite">false</value>
     <value key="weight">1000</value>

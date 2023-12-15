@@ -572,7 +572,7 @@
     <value key="action">openai</value>
     <value key="icon">false</value>
     <value key="favorite">false</value>
-    <value key="weight">1050</value>
+    <value key="weight">1000</value>
   </records>
 
   <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
