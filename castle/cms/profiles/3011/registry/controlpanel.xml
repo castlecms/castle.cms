@@ -5,7 +5,7 @@
     <record name="plone.custom_plugins"
           interface="Products.CMFPlone.interfaces.controlpanel.ITinyMCESchema" field="custom_plugins">
     <value purge="False">
-      <element>openai|++plone++castle/tinymce-openai.js</element>
+      <element>openai|++plone++castle/patterns/tinymce/js/openai.js</element>
     </value>
   </record>
 

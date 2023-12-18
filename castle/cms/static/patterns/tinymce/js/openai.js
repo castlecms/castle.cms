@@ -9,7 +9,8 @@
  */
 
 /*global tinymce:true */
-define(["tinymce"], function(tinymce) {
+define(["jquery", "tinymce"], function($, tinymce) {
+	// $.mosaic.actionManager.actions
 	tinymce.PluginManager.add("openai", function (editor) {
 		"use strict";
 		function showDialog() {
