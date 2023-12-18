@@ -18,6 +18,7 @@ define([
   'text!mockup-patterns-tinymce-url/templates/selection.xml',
   'mockup-utils',
   'mockup-patterns-tinymce-url/js/links',
+  'mockup-patterns-tinymce-url/js/openai',
   'mockup-i18n',
   'translate',
   'tinymce-modern-theme',
@@ -124,12 +125,12 @@ define([
         theme: 'modern',
         plugins: ['advlist', 'autolink', 'lists', 'charmap', 'print', 'preview', 'anchor', 'searchreplace',
                   'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media', 'table', 'contextmenu',
-                  'paste', 'plonelink', 'ploneimage'],
+                  'paste', 'plonelink', 'ploneimage', 'openai'],
         menubar: 'edit table format tools view insert',
         toolbar: 'undo redo | styleselect | bold italic | ' +
                  'alignleft aligncenter alignright alignjustify | ' +
                  'bullist numlist outdent indent | ' +
-                 'unlink plonelink ploneimage',
+                 'unlink plonelink ploneimage | openai',
         //'autoresize_max_height': 900,
         'height': 400,
         // stick here because it's easier to config without
