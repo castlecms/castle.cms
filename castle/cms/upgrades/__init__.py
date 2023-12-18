@@ -86,42 +86,11 @@ def upgrade_3008(site, logger=None):
 
 upgrade_3009 = default_upgrade_factory('3009')
 upgrade_3010 = default_upgrade_factory('3010')
-
-def upgrade_3011_interface_registry(setup_tool, logger=None):
+    
+def upgrade_3011(setup_tool, logger=None):
     registry = api.portal.get_tool('portal_registry')
     registry.registerInterface(
         IOpenAISettings,
         prefix='castle',
     )
-def upgrade_3011_register_profile(setup_tool, logger=None):
-    # registry = api.portal.get_tool('portal_registry')
-    # reg = MosaicRegistry(registry)
-    # result = reg.parseRegistry
-    # mng = get_tile_manager()
-    # for tile in mng.get_tiles():
-    #     if tile.get('hidden'):
-    #         continue
-    #     key = 'castle_cms_dynamic_{}'.format(tile['id'])
-    #     category = tile.get('category') or 'advanced'
-    #     category_id = category.replace(' ', '_').lower()
-    #     if category_id not in result['plone']['app']['mosaic']['tiles_categories']:
-    #         result['plone']['app']['mosaic']['tiles_categories'][category_id] = {
-    #             'label': category,
-    #             'name': category_id,
-    #             'weight': 100
-    #             }
-    #         result['plone']['app']['mosaic']['app_tiles'][key] = {
-    #             'category': category_id,
-    #             'default_value': None,
-    #             'favorite': False,
-    #             'label': tile['title'],
-    #             'name': tile['name'],
-    #             'tile_type_id': u'castle.cms.dynamic',
-    #             'read_only': False,
-    #             'rich_text': False,
-    #             'settings': True,
-    #             'tile_type': u'app',
-    #             'weight': tile['weight']
-    #         }
-    # import pdb; pdb.set_trace()
-    default_upgrade_factory('3011')
+    return default_upgrade_factory('3011')
