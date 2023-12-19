@@ -94,7 +94,6 @@
     destination="3006"
     profile="castle.cms:default"
   >
-
     <genericsetup:upgradeStep
       title="3006a - Add explicit enable/disable of country code checking to security control panel"
       handler=".upgrades.upgrade_3006_cc"
@@ -172,13 +171,19 @@
     directory="profiles/3011"
     description=""
     provides="Products.GenericSetup.interfaces.EXTENSION"
-  />
-  <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3.0.11"
-    description="3011 - Regster IOpenAISettings interface and register new profile records"
+    />
+  <genericsetup:upgradeSteps
     source="*"
     destination="3011"
-    handler=".upgrades.upgrade_3011"
     profile="castle.cms:default"
-  />
+  >
+    <genericsetup:upgradeStep
+      title="3011a - Regster IOpenAISettings interface"
+      handler=".upgrades.upgrade_3011_interface"
+      />
+    <genericsetup:upgradeStep
+      title="3011b - Register profile"
+      handler=".upgrades.upgrade_3011_profile"
+      />
+  </genericsetup:upgradeSteps>
 </configure>

@@ -87,10 +87,11 @@ def upgrade_3008(site, logger=None):
 upgrade_3009 = default_upgrade_factory('3009')
 upgrade_3010 = default_upgrade_factory('3010')
     
-def upgrade_3011(setup_tool, logger=None):
+def upgrade_3011_interface(setup_tool, logger=None):
     registry = api.portal.get_tool('portal_registry')
     registry.registerInterface(
         IOpenAISettings,
         prefix='castle',
     )
-    return default_upgrade_factory('3011')
+# profile upgrade won't run if included in method
+upgrade_3011_profile = default_upgrade_factory('3011')
