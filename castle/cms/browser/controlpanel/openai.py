@@ -14,7 +14,7 @@ class IOpenAISettings(model.Schema):
     )
 
 class OpenAISettingsControlPanelForm(RegistryEditForm):
-    schema_prefix = 'fbigov.theme'
+    schema_prefix = 'castle'
     schema = IOpenAISettings
     id = 'OpenAISettingsControlPanel'
     label = u'OpenAI Settings'

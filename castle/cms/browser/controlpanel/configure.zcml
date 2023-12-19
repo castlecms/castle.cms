@@ -250,6 +250,7 @@
       layer="castle.cms.interfaces.ICastleLayer"
     />
   </configure>
+
   <browser:page
     name="upgrade_products"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
@@ -261,7 +262,7 @@
   <browser:page
     name="manage-openai-settings"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-    class="fbigov.theme.browser.controlpanel.OpenAISettingsControlPanel"
+    class="castle.cms.browser.controlpanel.openai.OpenAISettingsControlPanel"
     permission="cmf.ManagePortal"
     layer="castle.cms.interfaces.ICastleLayer"
   />

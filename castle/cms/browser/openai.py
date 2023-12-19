@@ -82,7 +82,7 @@ class OpenAI(BrowserView):
 
     @property
     def api_key(self):
-        key = api.portal.get_registry_record("fbigov.theme.openai_api_key", default="default_value")
+        key = api.portal.get_registry_record("castle.openai_api_key", default="default_value")
         return key
 
     def exponential_backoff(self, data, num_retries, delay, exponential_base=2):
