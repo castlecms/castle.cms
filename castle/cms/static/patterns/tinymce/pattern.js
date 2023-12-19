@@ -130,7 +130,7 @@ define([
         toolbar: 'undo redo | styleselect | bold italic | ' +
                  'alignleft aligncenter alignright alignjustify | ' +
                  'bullist numlist outdent indent | ' +
-                 'unlink plonelink ploneimage | openai',
+                 'unlink plonelink ploneimage openai',
         //'autoresize_max_height': 900,
         'height': 400,
         // stick here because it's easier to config without

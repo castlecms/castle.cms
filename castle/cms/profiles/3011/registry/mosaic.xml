@@ -11,12 +11,12 @@
   <records interface="plone.app.mosaic.interfaces.IFormat"
            prefix="plone.app.mosaic.richtext_toolbar.openai">
     <value key="name">toolbar-openai</value>
-    <value key="category">actions</value>
+    <value key="category">selection</value>
     <value key="label">OpenAI</value>
     <value key="action">openai</value>
     <value key="icon">false</value>
     <value key="favorite">false</value>
-    <value key="weight">1000</value>
+    <value key="weight">750</value>
   </records>
 
   <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
