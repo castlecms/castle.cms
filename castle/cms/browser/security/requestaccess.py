@@ -98,7 +98,6 @@ class RequestAccessView(BrowserView):
             logging.error("problem sending request access form", exc_info=True)
             self.request.response.setStatus(400)
 
-
     def request_info(self):
         # we only send data that was requested to actually be sent to prevent exploitation
         # of the form as much as possible
