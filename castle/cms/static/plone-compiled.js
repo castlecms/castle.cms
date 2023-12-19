@@ -5404,7 +5404,8 @@ define('mockup-i18n',[
   'use strict';
 
   var I18N = function() {
-    var self = this;
+    var self = this || {};
+
     self.baseUrl = $('body').attr('data-i18ncatalogurl');
 
     if (!self.baseUrl) {
