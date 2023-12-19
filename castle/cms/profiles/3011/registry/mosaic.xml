@@ -11,7 +11,7 @@
   <records interface="plone.app.mosaic.interfaces.IFormat"
            prefix="plone.app.mosaic.richtext_toolbar.openai">
     <value key="name">toolbar-openai</value>
-    <value key="category">styles</value>
+    <value key="category">actions</value>
     <value key="label">OpenAI</value>
     <value key="action">openai</value>
     <value key="icon">false</value>
