@@ -45,9 +45,7 @@ def set_queries(site):
             'query': (start, end),
             'range': 'min:max'
         },
-        'review_state': ['pending', 'private'],
-        'sort_on': 'modified',
-        'sort_order': 'reverse'
+        'review_state': ['pending', 'private']
     }
     run_query(publish_query)
 
