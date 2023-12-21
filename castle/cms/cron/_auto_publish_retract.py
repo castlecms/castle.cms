@@ -1,4 +1,4 @@
-
+from AccessControl.SecurityManagement import newSecurityManager
 from DateTime import DateTime
 from plone import api
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
@@ -31,11 +31,6 @@ def run_query(query_params):
 
 def set_queries(site):
     setSite(site)
-    
-    # XXX: Needed to run locally, probably not necessary for live environment
-    # from AccessControl.SecurityManagement import newSecurityManager
-    # admin = api.user.get(username='admin')
-    # newSecurityManager(None, admin)
 
     # publish pending content with an effective date within 30 minutes of cron run
     start = DateTime() - (30.0 / (24 * 60))
@@ -62,6 +57,9 @@ def set_queries(site):
 
 def run(app):
     singleton.SingleInstance('autopublish')
+
+    user = app.acl_users.getUser('admin')  # noqa
+    newSecurityManager(None, user.__of__(app.acl_users))  # noqa
 
     for oid in app.objectIds():  # noqa
         obj = app[oid]  # noqa
