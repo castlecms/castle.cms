@@ -12,7 +12,7 @@ import transaction
 logger = logging.getLogger('castle.cms')
 
 
-def run_query(query_params):
+def run_transitions(query_params):
 
     catalog = api.portal.get_tool('portal_catalog')
     content = catalog(**query_params)
@@ -42,7 +42,7 @@ def set_queries(site):
         },
         'review_state': ['pending', 'private']
     }
-    run_query(publish_query)
+    run_transitions(publish_query)
 
     # retract published content with an expiration date older than cron run
     retract_query = {
@@ -52,7 +52,7 @@ def set_queries(site):
         },
         'review_state': 'published'
     }
-    run_query(retract_query)
+    run_transitions(retract_query)
 
 
 def run(app):
