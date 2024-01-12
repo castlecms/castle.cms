@@ -33,8 +33,7 @@ def set_queries(site):
     setSite(site)
 
     # publish pending content with an effective date within 30 minutes of cron run
-    # Note: the math here is needed to subtract 30 minutes from a Zope DateTime object
-    start = DateTime() - (30.0 / (24 * 60))
+    start = DateTime(DateTime().timeTime() - (30 * 60))
     end = DateTime()
     publish_query = {
         'effective': {
