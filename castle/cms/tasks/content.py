@@ -68,18 +68,6 @@ def _paste_items(where, op, mdatas):
         else:
             api.content.move(ob, dest, safe_id=True)
 
-        if count / 50 != commit_count:
-            # commit every 50 objects moved
-            transaction.commit()
-            commit_count = count / 50
-            if not getCelery().conf.task_always_eager:
-                portal._p_jar.sync()
-            # so we do not redo it
-            try:
-                mdatas.remove(mdata)
-            except Exception:
-                pass
-
     # we commit here so we can trigger conflict errors before
     # trying to send email
     transaction.commit()
