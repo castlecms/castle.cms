@@ -275,7 +275,11 @@ define([
           nodeType = D.textarea;
         }
         input = nodeType({
-          className: 'form-control', value: this.state[name], id: id, readOnly: readonly,
+          className: 'form-control', 
+          value: this.state[name], 
+          ref: name,
+          id: id, 
+          readOnly: readonly,
           onChange: this.valueChanged.bind(this, name, 'text')});
       }
 
@@ -296,10 +300,14 @@ define([
       if(field['required']){
         labelClass += ' required';
       }
-      return D.div({ className: "field" }, [
+      return D.div({ className: 'field' }, [
         D.label({className: labelClass}, field['label'] || 'Tags'),
         D.div({ className: 'col-sm-8' },
-          D.input({ className: "pat-select2", type: "text", ref: 'select2', value: this.state.tags}))
+          D.input({ className: 'pat-select2', 
+            type: 'text', 
+            ref: 'select2', 
+            value: this.state.tags
+          }))
       ]);
     },
 
@@ -461,11 +469,35 @@ define([
     approveClicked: function(e){
       e.preventDefault();
       var that = this;
-      that.setState({
-        state: 'uploading',
-        progress: 0
-      });
-      that.props.parent.addUpload(that.props.file.uid);
+      const fields = that.props.uploadFields
+      let isValidForm = true;
+      fields.forEach(function(field){
+        let name = field.name
+        try{
+          if (name === 'tags'){
+            name = 'select2'
+          }
+          let element = that.refs[name].getDOMNode()
+          if (field['required'] && that.state[name] === ''){
+            isValidForm = false;
+            element.style.background = 'pink';
+          }
+          else{
+            element.style.background = 'white';
+          }
+        }
+        catch(error){
+          console.info('no ref named ' + name)
+        }
+      })
+
+      if (isValidForm){
+        that.setState({
+          state: 'uploading',
+          progress: 0
+        });
+        that.props.parent.addUpload(that.props.file.uid);
+      }
     },
 
     removeClicked: function(e){
@@ -624,6 +656,7 @@ define([
       }
       return D.label({ className: 'checkbox pull-right'}, [
         D.input({ type: 'checkbox', checked: this.state.autoUpload,
+                  ref: 'upload_to_multimedia',
                   onClick: function(e){
                     that.setState({
                       autoUpload: e.target.checked
