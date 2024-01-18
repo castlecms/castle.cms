@@ -42,11 +42,8 @@ def paste_error_handle(where, op, mdatas):
 def _paste_items(where, op, mdatas):
     logger.info('Copying a bunch of items')
     portal = api.portal.get()
-    catalog = api.portal.get_tool('portal_catalog')
     dest = portal.restrictedTraverse(str(where.lstrip('/')))
 
-    count = 0
-    commit_count = 0
     if not getCelery().conf.task_always_eager:
         portal._p_jar.sync()
 
@@ -58,7 +55,6 @@ def _paste_items(where, op, mdatas):
         pass
 
     for mdata in mdatas[:]:
-        count += len(catalog(path={'query': '/'.join(mdata), 'depth': -1}))
         ob = portal.unrestrictedTraverse(str('/'.join(mdata)), None)
         if ob is None:
             continue
