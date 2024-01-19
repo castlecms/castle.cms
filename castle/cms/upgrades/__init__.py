@@ -1,9 +1,13 @@
 from castle.cms.interfaces import IAPISettings, ISecuritySchema
+from castle.cms.browser.controlpanel.openai import IOpenAISettings
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 from Products.CMFCore.utils import getToolByName
 
 import importlib
 import plone.api as api
+
+from castle.cms.tiles.dynamic import get_tile_manager
+from plone.app.mosaic.registry import MosaicRegistry
 
 
 PROFILE_ID = 'profile-castle.cms:default'
@@ -82,3 +86,12 @@ def upgrade_3008(site, logger=None):
 
 upgrade_3009 = default_upgrade_factory('3009')
 upgrade_3010 = default_upgrade_factory('3010')
+    
+def upgrade_3011_interface(setup_tool, logger=None):
+    registry = api.portal.get_tool('portal_registry')
+    registry.registerInterface(
+        IOpenAISettings,
+        prefix='castle',
+    )
+# profile upgrade won't run if included in method
+upgrade_3011_profile = default_upgrade_factory('3011')

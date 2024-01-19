@@ -412,4 +412,12 @@
     layer="..interfaces.ICastleLayer"
     />
 
+    <browser:page
+    name="openai-request"
+    for="*"
+    class=".openai.OpenAI"
+    permission="zope2.View"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
 </configure>

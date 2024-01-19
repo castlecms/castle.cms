@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+
+  <record name="plone.app.mosaic.default_available_actions">
+    <value purge="False">
+      <element>openai</element>
+    </value>
+  </record>
+
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.richtext_toolbar.openai">
+    <value key="name">toolbar-openai</value>
+    <value key="category">selection</value>
+    <value key="label">OpenAI</value>
+    <value key="action">openai</value>
+    <value key="icon">false</value>
+    <value key="favorite">false</value>
+    <value key="weight">750</value>
+  </records>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_z3cform_wysiwyg_widget_WysiwygWidget.actions">
+    <value purge="False">
+      <element>toolbar-openai</element>
+    </value>
+  </record>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_z3cform_wysiwyg_widget_WysiwygFieldWidget.actions">
+    <value purge="False">
+      <element>toolbar-openai</element>
+    </value>
+  </record>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_widgets_dx_RichTextWidget.actions">
+    <value purge="False">
+      <element>toolbar-openai</element>
+    </value>
+  </record>
+
+  <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
+          name="plone.app.mosaic.widget_actions.plone_app_z3cform_widget_RichTextFieldWidget.actions">
+    <value purge="False">
+      <element>toolbar-openai</element>
+    </value>
+  </record>
+
+  <record name="plone.app.mosaic.structure_tiles.text.available_actions">
+    <value purge="False">
+      <element>toolbar-openai</element>
+    </value>
+  </record>
+
+  <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_rawhtml.available_actions">
+    <value purge="False">
+      <element>toolbar-openai</element>
+    </value>
+  </record>
+
+</registry>

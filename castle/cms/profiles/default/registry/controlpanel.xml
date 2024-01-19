@@ -43,6 +43,7 @@
           interface="Products.CMFPlone.interfaces.controlpanel.ITinyMCESchema" field="custom_plugins">
     <value purge="False">
       <element>mce-table-buttons|++plone++castle/tinymce-table.js</element>
+      <element>openai|++plone++castle/patterns/tinymce/js/openai.js</element>
     </value>
   </record>
 
