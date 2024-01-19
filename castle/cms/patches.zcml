@@ -83,6 +83,13 @@
     preserveOriginal="False"
     />
 
+  <monkey:patch
+    description="Moves image sharing permissions to an asynchronous task"
+    class="plone.app.workflow.browser.sharing.SharingView"
+    original="handle_form"
+    replacement=".patches.handle_form"
+    />
+
   <!-- disable additional mosaic pattern settings config since we already do this -->
   <adapter
       for="* .interfaces.ICastleLayer"
