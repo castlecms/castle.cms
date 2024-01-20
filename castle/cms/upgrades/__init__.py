@@ -82,3 +82,5 @@ def upgrade_3008(site, logger=None):
 
 upgrade_3009 = default_upgrade_factory('3009')
 upgrade_3010 = default_upgrade_factory('3010')
+
+upgrade_3011 = default_upgrade_factory('3011')

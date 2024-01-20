@@ -165,4 +165,21 @@
     handler=".upgrades.upgrade_3010"
     profile="castle.cms:default"
     />
+  
+
+  <genericsetup:registerProfile
+    name="3011"
+    title="CastleCMS upgrade to 3011 profile"
+    directory="profiles/3011"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.11"
+    description="3011 - Update bundles"
+    source="*"
+    destination="3011"
+    handler=".upgrades.upgrade_3011"
+    profile="castle.cms:default"
+    />
 </configure>
