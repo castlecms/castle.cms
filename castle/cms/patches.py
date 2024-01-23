@@ -29,12 +29,6 @@ from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import implementer
 
-from castle.cms import tasks
-from zExceptions import Forbidden
-from Products.statusmessages.interfaces import IStatusMessage
-from plone.app.workflow import PloneMessageFactory as _
-from plone.app.workflow.events import LocalrolesModifiedEvent
-
 import plone.api as api
 
 
@@ -208,64 +202,3 @@ def reattachReferencedAttributes(self, obj, attributes_dict):
 # See https://github.com/celery/celery/pull/4839/
 if getattr(AsyncResult, '__del__', False):
     delattr(AsyncResult, '__del__')
-
-
-"""
-This overrides the form submit for sharing permissions.
-
-Granting permissions from the 'image-repository' view
-needs to be run in an asynchronous task, as iterating
-over 13,000+ images crashes the app otherwise.
-
-"""
-def handle_form(self):
-    postback = True
-
-    form = self.request.form
-    submitted = form.get('form.submitted', False)
-    save_button = form.get('form.button.Save', None) is not None
-    cancel_button = form.get('form.button.Cancel', None) is not None
-    if submitted and save_button and not cancel_button:
-        if not self.request.get('REQUEST_METHOD', 'GET') == 'POST':
-            raise Forbidden
-        tasks.grant_permissions.delay()
-        # TODO: move everything below into task
-        # Perhaps preserve synchronous logic for all views except 
-        # for image-sharing
-
-        authenticator = self.context.restrictedTraverse('@@authenticator',
-                                                        None)
-        if not authenticator.verify():
-            raise Forbidden
-
-        # Update the acquire-roles setting
-        if self.can_edit_inherit():
-            inherit = bool(form.get('inherit', False))
-            reindex = self.update_inherit(inherit, reindex=False)
-        else:
-            reindex = False
-
-        # Update settings for users and groups
-        entries = form.get('entries', [])
-        roles = [r['id'] for r in self.roles()]
-        settings = []
-        for entry in entries:
-            settings.append(
-                dict(id=entry['id'],
-                        type=entry['type'],
-                        roles=[r for r in roles
-                        if entry.get('role_%s' % r, False)]))
-        if settings:
-            reindex = self.update_role_settings(settings, reindex=False) \
-                        or reindex
-        if reindex:
-            self.context.reindexObjectSecurity()
-            notify(LocalrolesModifiedEvent(self.context, self.request))
-        IStatusMessage(self.request).addStatusMessage(
-            _(u"Changes saved."), type='info')
-
-    # Other buttons return to the sharing page
-    if cancel_button:
-        postback = False
-
-    return postback

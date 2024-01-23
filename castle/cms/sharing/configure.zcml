@@ -1,0 +1,19 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    i18n_domain="castle.cms.pwexpiry">
+
+  <include package="collective.monkeypatcher" />
+
+  <monkey:patch
+    description="Moves image sharing permissions to an asynchronous task"
+    class="plone.app.workflow.browser.sharing.SharingView"
+    original="handle_form"
+    replacement=".patches.handle_form"
+    />
+
+</configure>
