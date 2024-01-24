@@ -273,3 +273,13 @@ def _reindex_children(obj, indices=None):
             obj[childId].reindexObject()
         if IFolderish.providedBy(obj[childId]):
             reindex_children.delay(obj[childId], indices)
+
+
+@task.as_admin()
+def grant_permissions():
+    _grant_permissions()
+
+
+@retriable()
+def _grant_permissions():
+    pass

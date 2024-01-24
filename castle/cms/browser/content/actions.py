@@ -10,6 +10,8 @@ from castle.cms.tasks import template
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
 from plone.app.content.browser import actions
+from plone.app.workflow.browser import sharing
+from plone.app.workflow.events import LocalrolesModifiedEvent
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
@@ -17,6 +19,9 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from zExceptions import Forbidden
+from zope.event import notify
+
 from z3c.form import button
 from z3c.form import form
 
@@ -238,3 +243,72 @@ class TemplateForm(form.Form):
         utils = Utils(self.context, self.request)
         target = utils.get_object_url(context)
         return self.request.response.redirect(target)
+
+class SharingView(sharing.SharingView):
+
+    # Either this or jbot_override
+    # template = ViewPageTemplateFile('sharing.pt')
+
+
+    # def __call__(self):
+    #     """Perform the update and redirect if necessary, or render the page
+    #     """
+    #     print('=== call ===')
+    #     postback = self.handle_form()
+    #     if postback:
+    #         return self.template()
+    #     else:
+    #         context_state = self.context.restrictedTraverse(
+    #             "@@plone_context_state")
+    #         url = context_state.view_url()
+    #         self.request.response.redirect(url)
+
+    def handle_form(self):
+        postback = True
+
+        form = self.request.form
+        submitted = form.get('form.submitted', False)
+        save_button = form.get('form.button.Save', None) is not None
+        cancel_button = form.get('form.button.Cancel', None) is not None
+        if submitted and save_button and not cancel_button:
+            if not self.request.get('REQUEST_METHOD', 'GET') == 'POST':
+                raise Forbidden
+
+            authenticator = self.context.restrictedTraverse('@@authenticator',
+                                                            None)
+            if not authenticator.verify():
+                raise Forbidden
+
+            # Update the acquire-roles setting
+            if self.can_edit_inherit():
+                inherit = bool(form.get('inherit', False))
+                reindex = self.update_inherit(inherit, reindex=False)
+            else:
+                reindex = False
+
+            # Update settings for users and groups
+            entries = form.get('entries', [])
+            roles = [r['id'] for r in self.roles()]
+            settings = []
+            for entry in entries:
+                settings.append(
+                    dict(id=entry['id'],
+                         type=entry['type'],
+                         roles=[r for r in roles
+                            if entry.get('role_%s' % r, False)]))
+            if settings:
+                reindex = self.update_role_settings(settings, reindex=False) \
+                            or reindex
+            if reindex:
+                tasks.grant_permissions.delay()
+                self.context.reindexObjectSecurity()
+                notify(LocalrolesModifiedEvent(self.context, self.request))
+            IStatusMessage(self.request).addStatusMessage(
+                _(u"Changes saved."), type='info')
+
+        # Other buttons return to the sharing page
+        if cancel_button:
+            postback = False
+
+        return postback
+    

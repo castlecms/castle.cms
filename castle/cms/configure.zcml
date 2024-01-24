@@ -77,7 +77,6 @@
   <include package=".passwordvalidation" />
   <include package=".pwexpiry" />
   <include package=".indexing" />
-  <include package=".sharing" />
 
   <include file="upgrades.zcml" />
   <include file="subscribers.zcml" />
