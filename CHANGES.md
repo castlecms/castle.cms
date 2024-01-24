@@ -1,7 +1,14 @@
 Changelog
 =========
 
-3.0.0b129 (unreleased)
+3.0.0b130 (unreleased)
+----------------------
+
+- Create Content Redirectable behavior so Dexterity objects can act as redirects
+- Create an action to convert pages into folders with the original page as the default view
+
+
+3.0.0b129 (2023-12-07)
 ----------------------
 
 - Create Content Redirectable behavior so Dexterity objects can act as redirects
