@@ -19,8 +19,6 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from zExceptions import Forbidden
-from zope.event import notify
 
 from z3c.form import button
 from z3c.form import form

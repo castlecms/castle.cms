@@ -11,7 +11,7 @@ _task_descriptors = {
     'collective.celery.index_batch_async': 'Index content',
     'collective.celery.process_video': 'Process video',
     'collective.celery.workflow_updated': 'Processing workflow',
-    'collective.celery.trash_tree': 'Processing trash', 
+    'collective.celery.trash_tree': 'Processing trash',
 }
 
 
