@@ -26,6 +26,7 @@ from z3c.form import button
 from z3c.form import form
 
 import plone.api as api
+import sys
 
 
 class ObjectPasteView(actions.ObjectPasteView):
@@ -244,71 +245,52 @@ class TemplateForm(form.Form):
         target = utils.get_object_url(context)
         return self.request.response.redirect(target)
 
+
 class SharingView(sharing.SharingView):
 
-    # Either this or jbot_override
-    # template = ViewPageTemplateFile('sharing.pt')
+    def __call__(self):
 
+        postback = self.handle_form()
+        if postback:
+            # Reset python recursion limit to baseline if previously raised
+            sys.setrecursionlimit(1000)
+            return self.template()
+        else:
+            context_state = self.context.restrictedTraverse(
+                "@@plone_context_state")
+            url = context_state.view_url()
+            self.request.response.redirect(url)
 
-    # def __call__(self):
-    #     """Perform the update and redirect if necessary, or render the page
-    #     """
-    #     print('=== call ===')
-    #     postback = self.handle_form()
-    #     if postback:
-    #         return self.template()
-    #     else:
-    #         context_state = self.context.restrictedTraverse(
-    #             "@@plone_context_state")
-    #         url = context_state.view_url()
-    #         self.request.response.redirect(url)
+    def large_count(self):
+        """
+        Displays an alert indicating that we're operating in a view
+        with a high document count, which slows down the process of
+        granting permissions.
+        """
+
+        try:
+            event = LocalrolesModifiedEvent(self.context, self.request)
+            obj = event.object
+            if obj._count:
+                return True if obj._count.value > 1000 else False
+        except AttributeError:
+            return False
 
     def handle_form(self):
-        postback = True
+        """
+        Overrides the 'handle_form' method so we can temporarily increase
+        the python recursion limit if needed.
+        """
 
-        form = self.request.form
-        submitted = form.get('form.submitted', False)
-        save_button = form.get('form.button.Save', None) is not None
-        cancel_button = form.get('form.button.Cancel', None) is not None
-        if submitted and save_button and not cancel_button:
-            if not self.request.get('REQUEST_METHOD', 'GET') == 'POST':
-                raise Forbidden
+        if bool(self.request.form):
+            event = LocalrolesModifiedEvent(self.context, self.request)
+            obj = event.object
+            if obj._count.value > 1000:
+                # XXX: We're increasing the recursion limit here to prevent the
+                # 'maximum recursion depth exceeded' error thrown by 'cPickle' 
+                # that occurs when granting permissions in a large directory 
+                # (i.e. the 'image-directory')
+                sys.setrecursionlimit(2000)      
 
-            authenticator = self.context.restrictedTraverse('@@authenticator',
-                                                            None)
-            if not authenticator.verify():
-                raise Forbidden
-
-            # Update the acquire-roles setting
-            if self.can_edit_inherit():
-                inherit = bool(form.get('inherit', False))
-                reindex = self.update_inherit(inherit, reindex=False)
-            else:
-                reindex = False
-
-            # Update settings for users and groups
-            entries = form.get('entries', [])
-            roles = [r['id'] for r in self.roles()]
-            settings = []
-            for entry in entries:
-                settings.append(
-                    dict(id=entry['id'],
-                         type=entry['type'],
-                         roles=[r for r in roles
-                            if entry.get('role_%s' % r, False)]))
-            if settings:
-                reindex = self.update_role_settings(settings, reindex=False) \
-                            or reindex
-            if reindex:
-                tasks.grant_permissions.delay()
-                self.context.reindexObjectSecurity()
-                notify(LocalrolesModifiedEvent(self.context, self.request))
-            IStatusMessage(self.request).addStatusMessage(
-                _(u"Changes saved."), type='info')
-
-        # Other buttons return to the sharing page
-        if cancel_button:
-            postback = False
-
-        return postback
+        return super(SharingView, self).handle_form()
     
