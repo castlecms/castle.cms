@@ -6,9 +6,11 @@ from Acquisition import aq_parent
 from castle.cms import tasks
 from castle.cms import trash
 from castle.cms.browser.utils import Utils
-from castle.cms.tasks import template
+from castle.cms.tasks.template import move_to_templates
+from castle.cms.tasks.template import copy_to_templates
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
+from castle.cms.utils import get_template_repository_info
 from plone.app.content.browser import actions
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
@@ -18,9 +20,13 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
+from z3c.form import field
 from z3c.form import form
+from z3c.form.widget import ComputedWidgetAttribute
+from zope.interface import Interface
 
 import plone.api as api
+import zope.schema as schema
 
 
 class ObjectPasteView(actions.ObjectPasteView):
@@ -163,14 +169,21 @@ class ObjectCutView(actions.ObjectCutView):
         try:
             self.parent.manage_cutObjects(self.context.getId(), self.request)
         except CopyError:
-            return self.do_redirect(self.view_url,
-                                    _(u'${title} is not moveable.',
-                                        mapping={'title': self.title}))
+            return self.do_redirect(
+                self.view_url,
+                _(
+                    u'${title} is not moveable.',
+                    mapping={'title': self.title},
+                ),
+            )
 
         return self.do_redirect(
             self.view_url,
-            _(u'${title} cut.', mapping={'title': self.title}),
-            'info'
+            _(
+                u'${title} cut.',
+                mapping={'title': self.title},
+            ),
+            'info',
         )
 
 
@@ -215,27 +228,97 @@ class ConvertToFolderForm(form.Form):
         return self.request.response.redirect(target)
 
 
+class IMakeTemplateForm(Interface):
+
+    template_title = schema.TextLine(
+        description=(
+            u'The title for the new template. This will be used when selecting a template from the template list'
+        ),
+        title=u'Template Title',
+        required=True,
+    )
+
+
+default_template_title = ComputedWidgetAttribute(
+    lambda form: form.context.Title(),
+    field=IMakeTemplateForm['template_title'],
+)
+
+
 class TemplateForm(form.Form):
+    can_create_template = False
+    new_template_title = None
+    fields = field.Fields(IMakeTemplateForm)
     template = ViewPageTemplateFile('templates/convert_template.pt')
-    label = _('heading_convert_template', default='Convert to Template')
-    description = _('description_convert_template',
-                    default='"Convert to Template" will turn current item into a template ' +
-                    'and move it to repository folder, while "Copy to Template" ' +
-                    'will keep current item and create a template from a copied version.')
+    ignoreContext = True
+    label = _(
+        'heading_convert_template',
+        default='Make a Template',
+    )
+    description = _(
+        'description_convert_template',
+        default=(
+            '"Move To Template Repository" will move current item to "Template Repository" '
+            'folder, while "Copy to Template Repository" will keep current item in place '
+            'and create a copy in the Template Repository folder.'
+        ),
+    )
 
-    @button.buttonAndHandler(_(u'Convert To Template'), name='Convert')
-    def handle_convert(self, action):
-        template_obj = template.save_as_template(self.context, 'convert')
-        IStatusMessage(self.request).add(u'%s has been converted to template.' % template_obj.title)
-        return self.do_redirect(template_obj)
+    @property
+    def status_messages(self):
+        return IStatusMessage(self.request)
 
-    @button.buttonAndHandler(_(u'Copy To Template'), name='Copy')
-    def handle_copy(self, action):
-        template_obj = template.save_as_template(self.context, 'copy')
-        IStatusMessage(self.request).add(u'%s has been copied to template.' % template_obj.title)
-        return self.do_redirect(template_obj)
+    def get_template_titles(self):
+        return [
+            getattr(template, 'Title', lambda: None)()
+            for template in get_template_repository_info()['templates']
+        ]
 
-    @button.buttonAndHandler(u'Cancel', name='Cancel')
+    def get_conversion_message(self, is_copy=False):
+        action_text = 'copied as' if is_copy else 'converted to'
+        return (
+            u'{title} has been {action_text} a template, and is now available '
+            u'to use from the Add Content screen (in the templates tab)'
+        ).format(
+            title=self.new_template_title,
+            action_text=action_text,
+        )
+
+    def prepare_template_creation(self):
+        data, errors = self.extractData()
+        if not errors:
+            template_title = data.get('template_title', None)
+            if template_title is None or template_title in self.get_template_titles():
+                self.status_messages.add(
+                    'Template NOT created. There is already a template '
+                    'with this title. Choose a different title.'
+                )
+                self.request.response.redirect(self.context.absolute_url())
+                return
+            self.new_template_title = template_title
+            self.can_create_template = True
+
+    @button.buttonAndHandler(_(u'Move To Template Repository'), name='move')
+    def handle_move_to_templates(self, action):
+        self.prepare_template_creation()
+        if self.can_create_template:
+            template_object = move_to_templates(self.context, self.new_template_title)
+
+            if template_object is not None:
+                self.status_messages.add(self.get_conversion_message(False))
+                redirect_url = get_template_repository_info()['folder_url'] + '/folder_contents'
+                return self.request.response.redirect(redirect_url)
+
+    @button.buttonAndHandler(_(u'Copy To Template Repository'), name='copy')
+    def handle_copy_to_templates(self, action):
+        self.prepare_template_creation()
+        if self.can_create_template:
+            template_object = copy_to_templates(self.context, self.new_template_title)
+            if template_object is not None:
+                self.status_messages.add(self.get_conversion_message(True))
+                return self.do_redirect(self.context)
+
+    @button.buttonAndHandler(u'Cancel', name='cancel')
     def handle_cancel(self, action):
         return self.do_redirect(self.context)
 
