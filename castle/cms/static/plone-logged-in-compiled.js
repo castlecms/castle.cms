@@ -23768,22 +23768,58 @@ define('castle-url/components/add-content-modal',[
 
     renderSelectionContent: function(){
       var that = this;
-      var constrain = '';
-      if(this.props.canConstrainTypes){
-        constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
-        ]);
-      }
-      return D.div({ className: 'wrapper'}, [
-        D.ul({ className: 'select-type'}, this.props.templates.map(function(type){
-          console.log(type)
-          return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.portalType, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
-          );
-        })),
-        constrain
-      ]);
+      const constrainAllowedTypesButton = this.props.canConstrainTypes ?
+        D.div(
+          { className: 'castle-constrain-types' },
+          [ D.a(
+            {
+              href: this.props.constrainUrl,
+              className: 'plone-btn plone-btn-default '
+            },
+            'Constrain allowed types'
+          ) ]
+        ) :
+        '';
+      return D.div(
+        { className: 'wrapper'},
+        [
+          D.ul(
+            { className: 'select-type'},
+            this.props.templates.map(
+              function(type){
+                const liProps = { className: 'contenttype-' + type.safeId + '-container'}
+                if(type.isAllowed){
+                  return D.li(
+                    { className: 'contenttype-' + type.safeId + '-container' },
+                    D.a(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        onClick: that.contentTypeClicked.bind( that, type )
+                      },
+                      type.title
+                    )
+                  );
+                } else {
+                  return D.li(
+                    {
+                      className: 'contenttype-' + type.safeId + '-container',
+                      style: { cursor: 'not-allowed' },
+                    },
+                    D.div(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        style: { cursor: 'not-allowed', color: '#ddd' },
+                      },
+                      type.title
+                    )
+                  );
+                }
+              }
+            )
+          ),
+          constrainAllowedTypesButton
+        ]
+      );
     },
 
     renderTemplateContent: function(){
@@ -91242,6 +91278,8 @@ define('castle-url/patterns/structure//js/actionmenu',['underscore'], function(_
   };
 
   var ActionMenu = function(menu) {
+    console.groupCollapsed(menu.model.attributes.id)
+    console.log(menu.model.attributes)
     // If an explicit menu was specified as an option to AppView, this
     // constructor will not override that.
     if (menu.menuOptions !== null) {
@@ -91268,10 +91306,12 @@ define('castle-url/patterns/structure//js/actionmenu',['underscore'], function(_
     }
 
     var typeToViewAction = app.options.typeToViewAction;
+    console.log(typeToViewAction)
     var viewAction = typeToViewAction && typeToViewAction[model.portal_type] || '';
+    console.log(viewAction)
     result.openItem.url = model.getURL + viewAction;
     result.editItem.url = model.getURL + '/@@edit';
-
+console.groupEnd()
     return result;
   };
 
@@ -97580,7 +97620,7 @@ define('castle-quality-check',[
     name: 'Template',
     warning: 'This object is a template and is unpublishable.',
     run: function(data, callback){
-      return callback(!data.template);
+      return callback(!data.isTemplate);
     }
   }];
 
@@ -97732,29 +97772,41 @@ define('castle-quality-check',[
           ]);
         }
       }
-      return D.div({ className: 'castle-quality'}, [D.ul({}, that.props.checks.map(function(check){
-        var className = '';
-        var label = check.name;
-        var labelExtra = '';
-        var value = that.state.checked[check.name];
-        if(value !== undefined){
-          if(value){
-            className = 'glyphicon glyphicon-ok';
-          }else{
-            className = 'glyphicon glyphicon-remove';
-            if(typeof(check.warning) != 'function'){
-              label += ': ' + check.warning;
-            }else{
-              labelExtra = check.warning(that);
-            }
-          }
-        }
-        return D.li({}, [
-          D.span({ className: className}),
-          label,
-          labelExtra
-        ]);
-      })),
+      return D.div({ className: 'castle-quality'}, [
+        D.ul(
+          {},
+          that.props.checks
+            .filter(function(check){
+              const isTemplate = (
+                check.name === 'Template' &&
+                that.state.checked[ 'Template' ] === true
+              );
+              return !isTemplate;
+            })
+            .map(function(check){
+              var className = '';
+              var label = check.name;
+              var labelExtra = '';
+              var value = that.state.checked[check.name];
+              if(value !== undefined){
+                if(value){
+                  className = 'glyphicon glyphicon-ok';
+                }else{
+                  className = 'glyphicon glyphicon-remove';
+                  if(typeof(check.warning) != 'function'){
+                    label += ': ' + check.warning;
+                  }else{
+                    labelExtra = check.warning(that);
+                  }
+                }
+              }
+              return D.li({}, [
+                D.span({ className: className}),
+                label,
+                labelExtra
+              ]);
+            })
+        ),
         info
       ]);
     },
