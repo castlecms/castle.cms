@@ -38,7 +38,7 @@
 
       <h1 i18n:translate="heading_add_aliases">Manage aliases</h1>
 
-      <form tal:attributes="action view/view_url" method="post">
+      <form action="${view/view_url}" method="post">
         <fieldset>
           <legend i18n:translate="legend_all_existing_aliases">All existing aliases for this site</legend>
 

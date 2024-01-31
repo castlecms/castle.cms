@@ -167,7 +167,7 @@
          meta_type="CMF Action">
          <property name="title">View Page</property>
          <property name="description">Go back to public view of page.</property>
-         <property name="url_expr">string:${object/absolute_url}/view</property>
+         <property name="url_expr">object/@@castle-toolbar-utils/view_url</property>
          <property name="link_target"></property>
          <property name="icon_expr"></property>
          <property name="available_expr"></property>
@@ -357,7 +357,7 @@
       <object name="convert_template"
          meta_type="CMF Action">
          <property name="title">Template</property>
-         <property name="description">Copy this item to a template.</property>
+         <property name="description">Make this item a template.</property>
          <property name="url_expr">string:${object/absolute_url}/@@convert_template</property>
          <property name="link_target"></property>
          <property name="icon_expr"></property>
@@ -657,7 +657,7 @@
          meta_type="CMF Action">
          <property name="title">View Page</property>
          <property name="description"></property>
-         <property name="url_expr">string:${object/@@castle-toolbar-utils/container_url}/view</property>
+         <property name="url_expr">object/@@castle-toolbar-utils/folder_view_url</property>
          <property name="link_target"></property>
          <property name="icon_expr"></property>
          <property name="available_expr"></property>

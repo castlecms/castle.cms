@@ -4,7 +4,9 @@ Changelog
 3.0.0b130 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Adjust View Page actions to account for folder's default page view
+- Rework templates to be anything in the Template Repository (remove ITemplate)
+- Better display of templates and icons in add content modal
 
 
 3.0.0b129 (2023-12-07)
