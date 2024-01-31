@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b130 (unreleased)
+3.0.0b130 (2024-01-31)
 ----------------------
 
 - Adjust View Page actions to account for folder's default page view
