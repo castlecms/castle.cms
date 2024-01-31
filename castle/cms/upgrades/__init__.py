@@ -124,3 +124,6 @@ def upgrade_3011(site, logger=CASTLE_LOGGER):
         logger.info('Deleted "template_list" from Portal object')
     except AttributeError:
         logger.info('Portal object did not have property "template_list"')
+
+
+upgrade_3012 = default_upgrade_factory('3012')

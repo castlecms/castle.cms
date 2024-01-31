@@ -4,13 +4,13 @@
 
   <records prefix="plone.bundles/plone"
     interface='Products.CMFPlone.interfaces.IBundleRegistry'>
-    <value key="last_compilation">2023-12-07 00:00:00</value>
+    <value key="last_compilation">2024-01-31 00:00:00</value>
   </records>
 
 
   <records prefix="plone.bundles/plone-logged-in"
     interface='Products.CMFPlone.interfaces.IBundleRegistry'>
-    <value key="last_compilation">2023-12-07 00:00:00</value>
+    <value key="last_compilation">2024-01-31 00:00:00</value>
   </records>
 
 </registry>
