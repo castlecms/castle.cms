@@ -18,6 +18,7 @@ from .content import inline_images_in_dom  # noqa: F401
 from .content import is_max_paste_items  # noqa: F401
 from .content import is_mosaic_edit_form  # noqa: F401
 from .content import recursive_create_path  # noqa: F401
+from .content import get_template_repository_info  # noqa: F401
 from .mail import get_email_from_address  # noqa: F401
 from .mail import send_email  # noqa: F401
 from .misc import get_ip  # noqa: F401
