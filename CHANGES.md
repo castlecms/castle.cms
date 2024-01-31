@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b131 (unreleased)
+3.0.0b131 (2024-01-31)
 ----------------------
 
 - try/catch in upgrade step
