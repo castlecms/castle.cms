@@ -4,7 +4,7 @@ Changelog
 3.0.0b131 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- try/catch in upgrade step
 
 
 3.0.0b130 (2024-01-31)
