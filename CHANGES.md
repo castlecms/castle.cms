@@ -6,6 +6,9 @@ Changelog
 
 - Create Content Redirectable behavior so Dexterity objects can act as redirects
 - Create an action to convert pages into folders with the original page as the default view
+- Adjust View Page actions to account for folder's default page view
+- Rework templates to be anything in the Template Repository (remove ITemplate)
+- Better display of templates and icons in add content modal
 
 
 3.0.0b129 (2023-12-07)
