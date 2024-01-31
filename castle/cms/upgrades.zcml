@@ -165,4 +165,14 @@
     handler=".upgrades.upgrade_3010"
     profile="castle.cms:default"
     />
+
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.11"
+    description="3011 - Remove ITemplate from all objects that provided it"
+    source="*"
+    destination="3011"
+    handler=".upgrades.upgrade_3011"
+    profile="castle.cms:default"
+    />
 </configure>
