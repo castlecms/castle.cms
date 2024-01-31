@@ -91278,8 +91278,6 @@ define('castle-url/patterns/structure//js/actionmenu',['underscore'], function(_
   };
 
   var ActionMenu = function(menu) {
-    console.groupCollapsed(menu.model.attributes.id)
-    console.log(menu.model.attributes)
     // If an explicit menu was specified as an option to AppView, this
     // constructor will not override that.
     if (menu.menuOptions !== null) {
@@ -91306,12 +91304,10 @@ define('castle-url/patterns/structure//js/actionmenu',['underscore'], function(_
     }
 
     var typeToViewAction = app.options.typeToViewAction;
-    console.log(typeToViewAction)
     var viewAction = typeToViewAction && typeToViewAction[model.portal_type] || '';
-    console.log(viewAction)
     result.openItem.url = model.getURL + viewAction;
     result.editItem.url = model.getURL + '/@@edit';
-console.groupEnd()
+
     return result;
   };
 
