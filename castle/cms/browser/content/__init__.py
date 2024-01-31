@@ -123,7 +123,7 @@ class Creator(BrowserView):
     status = ''
 
     def __call__(self):
-        self.security_manager = getSecurityManager()
+        self.sm = getSecurityManager()
         self.request.response.setHeader('Content-type', 'application/json')
         if api.user.is_anonymous():
             self.request.response.setStatus(403)
@@ -310,7 +310,7 @@ class Creator(BrowserView):
         success = False
         msg = None
         if obj:
-            if self.security_manager.checkPermission(ModifyPortalContent, obj):
+            if self.sm.checkPermission(ModifyPortalContent, obj):
                 try:
                     if info['field_name'].startswith('tmp_'):
                         self.add_tmp_upload(obj, info)
@@ -353,7 +353,7 @@ class Creator(BrowserView):
         if id and field:
             obj = uuidToObject(id)
             if obj:
-                if self.security_manager.checkPermission(ModifyPortalContent, obj):
+                if self.sm.checkPermission(ModifyPortalContent, obj):
                     setattr(obj, field, None)
 
     def create_file_content(self, info):
@@ -545,7 +545,7 @@ content in this location."""
             if valid and not self.can_add(folder, type_id):
                 valid = False
                 self.status = 'You are not allowed to add this content type here'
-            elif valid and not self.security_manager.checkPermission(add_permission_title, folder):
+            elif valid and not self.sm.checkPermission(add_permission_title, folder):
                 valid = False
                 self.status = 'You do not have permission to add content here.'
             elif valid and self.request.form['id'] in folder.objectIds():
@@ -670,8 +670,8 @@ class WorkflowPermissionChecker(object):
     def __init__(self, initial_state, folder):
         self.folder = folder
         self.initial_state = initial_state
-        self.security_manager = getSecurityManager()
-        self.user = self.security_manager.getUser()
+        self.sm = getSecurityManager()
+        self.user = self.sm.getUser()
         self.folder_roles = self.user.getRolesInContext(folder)
         self._u_groups = None
 
@@ -710,7 +710,7 @@ class WorkflowPermissionChecker(object):
                     if len(set(self.folder_roles) & set(pinfo['roles'])) > 0:
                         break
             if check_parent:
-                if self.security_manager.checkPermission(permission, self.folder):
+                if self.sm.checkPermission(permission, self.folder):
                     break
         else:
             # no perms valid...
