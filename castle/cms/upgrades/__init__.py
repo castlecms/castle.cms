@@ -106,7 +106,7 @@ def upgrade_3011(site, logger=CASTLE_LOGGER):
                 content_object = portal_type_brain.getObject()
                 content_object.reindexObject(idxs=['object_provides'])
                 if ITemplate.providedBy(content_object):
-                    itemplate_objects.append(itemplate_objects)
+                    itemplate_objects.append(content_object)
             except Exception:
                 logger.info('something weird happened with ' + repr(portal_type_brain))
                 continue
