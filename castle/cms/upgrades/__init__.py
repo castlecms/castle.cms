@@ -86,3 +86,5 @@ def upgrade_2_6_34(site, logger=None):
 
 upgrade_2_6_35 = default_upgrade_factory('2_6_35')
 upgrade_2_6_36 = default_upgrade_factory('2_6_36')
+upgrade_2_6_37 = custom_upgrade_factory('2_6_37')
+upgrade_2_6_38 = default_upgrade_factory('2_6_38')
