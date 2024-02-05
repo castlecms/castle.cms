@@ -22,10 +22,14 @@ def remove_itemplate_providers(logger=CASTLE_LOGGER):
         logger.info('reindexing object_provides for portal_type ' + portal_type)
         # this could take a while
         for portal_type_brain in api.content.find(portal_type=portal_type):
-            content_object = portal_type_brain.getObject()
-            content_object.reindexObject(idxs=['object_provides'])
-            if ITemplate.providedBy(content_object):
-                itemplate_objects.append(content_object)
+            try:
+                content_object = portal_type_brain.getObject()
+                content_object.reindexObject(idxs=['object_provides'])
+                if ITemplate.providedBy(content_object):
+                    itemplate_objects.append(content_object)
+            except Exception:
+                logger.info('something weird happened with ' + repr(portal_type_brain))
+                continue
 
     itemplate_object_count = len(itemplate_objects)
     plural_suffix = '' if itemplate_object_count == 1 else 's'
