@@ -567,21 +567,57 @@ define([
 
     renderSelectionContent: function(){
       var that = this;
-      var constrain = '';
-      if(this.props.canConstrainTypes){
-        constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
-        ]);
-      }
-      return D.div({ className: 'wrapper'}, [
-        D.ul({ className: 'select-type'}, this.props.templates.map(function(type){
-          return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
-          );
-        })),
-        constrain
-      ]);
+      const constrainAllowedTypesButton = this.props.canConstrainTypes ?
+        D.div(
+          { className: 'castle-constrain-types' },
+          [ D.a(
+            {
+              href: this.props.constrainUrl,
+              className: 'plone-btn plone-btn-default '
+            },
+            'Constrain allowed types'
+          ) ]
+        ) :
+        '';
+      return D.div(
+        { className: 'wrapper' },
+        [
+          D.ul(
+            { className: 'select-type' },
+            this.props.templates.map(
+              function ( type ) {
+                if ( type.isAllowed ) {
+                  return D.li(
+                    { className: 'contenttype-' + type.safeId + '-container' },
+                    D.a(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        onClick: that.contentTypeClicked.bind( that, type )
+                      },
+                      type.title
+                    )
+                  );
+                } else {
+                  return D.li(
+                    {
+                      className: 'contenttype-' + type.safeId + '-container',
+                      style: { cursor: 'not-allowed' },
+                    },
+                    D.div(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        style: { cursor: 'not-allowed', color: '#ddd' },
+                      },
+                      type.title
+                    )
+                  );
+                }
+              }
+            )
+          ),
+          constrainAllowedTypesButton
+        ]
+      );
     },
 
     renderTemplateContent: function(){
