@@ -228,4 +228,9 @@
     template="templates/parallaxview.pt"
   />
 
+  <adapter
+    factory=".actions.default_template_title"
+    name="default"
+  />
+
 </configure>
