@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 100 100">
-  <style type="text/css"> .st0{fill:#CECECE;} </style>
+  fill="currentColor"
+  class="bi bi-grid-1x2"
+  viewBox="0 0 16 16">
+  <style type="text/css"> .st0{ fill:#CECECE; } </style>
   <path class="st0"
-    d="M89.1 0.7h-7.5H64.6 35.3 18.2h-7.5c-5.3 0-9.7 4.3-9.7 9.7v74.1c0 5.3 4.3 9.7 9.7 9.7h78.4c5.3 0 9.7-4.3 9.7-9.7V10.4C98.8 5.1 94.4 0.7 89.1 0.7zM90.8 86H9V20.3h81.8V86z" />
+    d="M6 1H1v14h5zm9 0h-5v5h5zm0 9v5h-5v-5zM0 1a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm9 0a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1zm1 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1z" />
 </svg>
