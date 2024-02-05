@@ -134,10 +134,4 @@
     handler="plone.app.versioningbehavior.subscribers.create_initial_version_after_adding"
     />
 
-  <!-- template related events -->
-  <subscriber
-    for="castle.cms.interfaces.ITemplate
-         zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-    handler=".subscribers.on_template_delete" />
-
 </configure>
