@@ -191,7 +191,7 @@ class ConvertToFolderForm(form.Form):
 
     label = 'Convert to Folder'
     description = (
-        '"Convert to Folder" will create change the id of the current page, '
+        '"Convert to Folder" will change the id of the current page, '
         'create a folder with the id and title of the original page, '
         'move the current page inside the new folder, '
         'and assign the original page as the default view of the new folder, '
