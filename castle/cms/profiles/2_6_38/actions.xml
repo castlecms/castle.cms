@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<object name="portal_actions"
+  meta_type="Plone Actions Tool"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+  <object name="toolbar_menu"
+    meta_type="CMF Action Category">
+
+    <object name="convert_template"
+      meta_type="CMF Action">
+      <property name="title">Template</property>
+      <property name="description">Make this item a template.</property>
+      <property name="url_expr">string:${object/absolute_url}/@@convert_template</property>
+      <property name="link_target"></property>
+      <property name="icon_expr"></property>
+      <property name="available_expr">object/@@castle-toolbar-utils/show_template</property>
+      <property name="permissions">
+        <element value="Add portal content" />
+      </property>
+      <property name="visible">True</property>
+    </object>
+
+    <object name="view-page"
+      meta_type="CMF Action">
+      <property name="title">View Page</property>
+      <property name="description">Go back to public view of page.</property>
+      <property name="url_expr">object/@@castle-toolbar-utils/view_url</property>
+      <property name="link_target"></property>
+      <property name="icon_expr"></property>
+      <property name="available_expr"></property>
+      <property name="permissions" />
+      <property name="visible">True</property>
+      <property name="icon_class"
+        type="string">icon-view</property>
+    </object>
+
+  </object>
+
+  <object name="folder_contents_menu"
+    meta_type="CMF Action Category">
+
+    <object name="view"
+      meta_type="CMF Action">
+      <property name="title">View Page</property>
+      <property name="description"></property>
+      <property name="url_expr">object/@@castle-toolbar-utils/folder_view_url</property>
+      <property name="link_target"></property>
+      <property name="icon_expr"></property>
+      <property name="available_expr"></property>
+      <property name="permissions">
+        <element value="List folder contents" />
+      </property>
+      <property name="visible">True</property>
+      <property name="icon_class"
+        type="string">icon-view</property>
+    </object>
+
+  </object>
+
+</object>

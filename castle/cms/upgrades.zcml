@@ -563,4 +563,30 @@
     profile="castle.cms:default"
   />
 
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.37"
+    description="2.6.37 - Remove ITemplate from all objects that provided it"
+    source="*"
+    destination="2637"
+    handler=".upgrades.upgrade_2_6_37"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="2_6_38"
+    title="CastleCMS upgrade to 2.6.38 profile"
+    directory="profiles/2_6_38"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.38"
+    description="2.6.38 - Recompile resources and fix some view/ template actions"
+    source="*"
+    destination="2638"
+    handler=".upgrades.upgrade_2_6_38"
+    profile="castle.cms:default"
+  />
+
 </configure>
