@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.20.1 (unreleased)
+2.21.0 (2024-02-07)
 -------------------
 
 - Adjust View Page actions to account for folder's default page view
