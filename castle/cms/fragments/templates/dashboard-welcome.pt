@@ -22,7 +22,6 @@
  </div>
   <p class="welcome-message">
     What do you need to do today?<br/>
-    (<a href="${dutils/site/absolute_url}/dashboards/${userId}/edit">Edit dashboard</a>)
   </p>
 
   <ul class="castle-grid-block-sm-6 dashboard-add-content-buttons"
