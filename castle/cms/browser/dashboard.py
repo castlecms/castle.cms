@@ -192,14 +192,14 @@ class DashboardUtils(BrowserView):
         query = dict(
             sort_on='modified', 
             sort_order='reverse', 
-            modified_by=member.getUserName()
+            actors=member.getUserName()
         )
         return self._paging(query, 'modified')
 
     def get_user_created(self):
         member = api.user.get_current()
         query = dict(
-            sort_on='modified', 
+            sort_on='created', 
             sort_order='reverse', 
             Creator=member.getUserName()
         )

@@ -216,3 +216,19 @@ def self_or_child_has_title_description_and_image(obj):
 def has_custom_markup(image):
     if image.custom_markup:
         return True
+    
+
+@indexer(IItem)
+def actors(context):
+    actors_list = []
+
+    rt = api.portal.get_tool("portal_repository")
+    history = rt.getHistoryMetadata(context)
+    
+    for i in range(history.getLength(countPurged=False)):
+        data = history.retrieve(i, countPurged=False)
+        actor = data["metadata"]["sys_metadata"]["principal"]
+        actors_list.append(actor) if actor not in actors_list else None
+
+    return actors_list
+
