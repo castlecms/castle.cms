@@ -165,4 +165,31 @@
     handler=".upgrades.upgrade_3010"
     profile="castle.cms:default"
     />
+
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.11"
+    description="3011 - Remove ITemplate from all objects that provided it"
+    source="*"
+    destination="3011"
+    handler=".upgrades.upgrade_3011"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="3012"
+    title="CastleCMS upgrade to 3012 profile"
+    directory="profiles/3012"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.12"
+    description="3012 - Recompile resources and fix some view/ template actions"
+    source="*"
+    destination="3012"
+    handler=".upgrades.upgrade_3012"
+    profile="castle.cms:default"
+  />
+
 </configure>

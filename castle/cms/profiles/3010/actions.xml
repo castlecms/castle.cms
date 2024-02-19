@@ -6,8 +6,8 @@
    <object name="toolbar_menu"
       meta_type="CMF Action Category">
 
-    <object name="convert-to-folder"
-    insert-after="convert_template"
+      <object name="convert-to-folder"
+         insert-after="convert_template"
          meta_type="CMF Action">
          <property name="title"
             i18n:translate="">Convert to Folder</property>

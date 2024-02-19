@@ -23022,7 +23022,8 @@ define('castle-url/components/upload',[
         that.renderFileList()
       ]
       var tabs = [
-        this.props.parent.renderTabItem('upload')
+        this.props.parent.renderTabItem('upload'),
+        this.props.parent.renderTabItem('templates')
       ]
       if (!that.state.update) {
         children.splice(1, 0, that.renderUploadLocation());
@@ -23767,21 +23768,58 @@ define('castle-url/components/add-content-modal',[
 
     renderSelectionContent: function(){
       var that = this;
-      var constrain = '';
-      if(this.props.canConstrainTypes){
-        constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
-        ]);
-      }
-      return D.div({ className: 'wrapper'}, [
-        D.ul({ className: 'select-type'}, this.props.templates.map(function(type){
-          return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
-          );
-        })),
-        constrain
-      ]);
+      const constrainAllowedTypesButton = this.props.canConstrainTypes ?
+        D.div(
+          { className: 'castle-constrain-types' },
+          [ D.a(
+            {
+              href: this.props.constrainUrl,
+              className: 'plone-btn plone-btn-default '
+            },
+            'Constrain allowed types'
+          ) ]
+        ) :
+        '';
+      return D.div(
+        { className: 'wrapper'},
+        [
+          D.ul(
+            { className: 'select-type'},
+            this.props.templates.map(
+              function(type){
+                const liProps = { className: 'contenttype-' + type.safeId + '-container'}
+                if(type.isAllowed){
+                  return D.li(
+                    { className: 'contenttype-' + type.safeId + '-container' },
+                    D.a(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        onClick: that.contentTypeClicked.bind( that, type )
+                      },
+                      type.title
+                    )
+                  );
+                } else {
+                  return D.li(
+                    {
+                      className: 'contenttype-' + type.safeId + '-container',
+                      style: { cursor: 'not-allowed' },
+                    },
+                    D.div(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        style: { cursor: 'not-allowed', color: '#ddd' },
+                      },
+                      type.title
+                    )
+                  );
+                }
+              }
+            )
+          ),
+          constrainAllowedTypesButton
+        ]
+      );
     },
 
     renderTemplateContent: function(){
@@ -97578,7 +97616,7 @@ define('castle-quality-check',[
     name: 'Template',
     warning: 'This object is a template and is unpublishable.',
     run: function(data, callback){
-      return callback(!data.template);
+      return callback(!data.isTemplate);
     }
   }];
 
@@ -97730,29 +97768,41 @@ define('castle-quality-check',[
           ]);
         }
       }
-      return D.div({ className: 'castle-quality'}, [D.ul({}, that.props.checks.map(function(check){
-        var className = '';
-        var label = check.name;
-        var labelExtra = '';
-        var value = that.state.checked[check.name];
-        if(value !== undefined){
-          if(value){
-            className = 'glyphicon glyphicon-ok';
-          }else{
-            className = 'glyphicon glyphicon-remove';
-            if(typeof(check.warning) != 'function'){
-              label += ': ' + check.warning;
-            }else{
-              labelExtra = check.warning(that);
-            }
-          }
-        }
-        return D.li({}, [
-          D.span({ className: className}),
-          label,
-          labelExtra
-        ]);
-      })),
+      return D.div({ className: 'castle-quality'}, [
+        D.ul(
+          {},
+          that.props.checks
+            .filter(function(check){
+              const isTemplate = (
+                check.name === 'Template' &&
+                that.state.checked[ 'Template' ] === true
+              );
+              return !isTemplate;
+            })
+            .map(function(check){
+              var className = '';
+              var label = check.name;
+              var labelExtra = '';
+              var value = that.state.checked[check.name];
+              if(value !== undefined){
+                if(value){
+                  className = 'glyphicon glyphicon-ok';
+                }else{
+                  className = 'glyphicon glyphicon-remove';
+                  if(typeof(check.warning) != 'function'){
+                    label += ': ' + check.warning;
+                  }else{
+                    labelExtra = check.warning(that);
+                  }
+                }
+              }
+              return D.li({}, [
+                D.span({ className: className}),
+                label,
+                labelExtra
+              ]);
+            })
+        ),
         info
       ]);
     },

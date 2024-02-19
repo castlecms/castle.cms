@@ -236,4 +236,9 @@
     layer="castle.cms.interfaces.ICastleLayer"
   />
 
+  <adapter
+    factory=".actions.default_template_title"
+    name="default"
+  />
+
 </configure>
