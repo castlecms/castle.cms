@@ -369,14 +369,18 @@ class SharingView(sharing.SharingView):
         """
 
         if bool(self.request.form):
-            event = LocalrolesModifiedEvent(self.context, self.request)
-            obj = event.object
-            if obj._count.value > 1000:
-                # XXX: We're increasing the recursion limit here to prevent the
-                # 'maximum recursion depth exceeded' error thrown by 'cPickle' 
-                # that occurs when granting permissions in a large directory 
-                # (i.e. the 'image-directory')
-                sys.setrecursionlimit(2000)      
+            try:
+                event = LocalrolesModifiedEvent(self.context, self.request)
+                obj = event.object
+                if obj._count.value > 1000:
+                    # XXX: We're increasing the recursion limit here to prevent the
+                    # 'maximum recursion depth exceeded' error thrown by 'cPickle' 
+                    # that occurs when granting permissions in a large directory 
+                    # (i.e. the 'image-directory')
+                    sys.setrecursionlimit(2000)  
+            except AttributeError:
+                # User search form submitted, no need to get count
+                pass   
 
         return super(SharingView, self).handle_form()
     
