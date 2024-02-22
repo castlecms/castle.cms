@@ -15,7 +15,8 @@ INDEXES = {
     "trashed": "BooleanIndex",
     "has_private_parents": "BooleanIndex",
     "self_or_child_has_title_description_and_image": "BooleanIndex",
-    "actors": "KeywordIndex"
+    "actors": "KeywordIndex",
+    "assigned_users": "KeywordIndex"
 }
 
 REMOVE_INDEXES = [
@@ -36,7 +37,8 @@ METADATA = [
     'navigation_label',
     'has_private_parents',
     'self_or_child_has_title_description_and_image',
-    'actors'
+    'actors',
+    'assigned_users'
 ]
 
 REMOVE_METADATA = [

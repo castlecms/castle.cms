@@ -30,6 +30,7 @@
                      class="title"
                      tal:attributes="class string:title type contenttype-${conttypeLower}">${item/Title}</a>
                 </td>
+                <td><div class="creator icon-user">${creator/name_or_id}</div></td>
                 <td>
                   <div class="date pat-moment icon-events"
                        data-pat-moment="format:relative"
@@ -94,7 +95,6 @@
             data-total="${results/total}"
             tal:condition="python: results['total'] > results['end']">Load more</button>
   </div>
-</div>
 <div class="row castle-statistics-container" style="clear: both">
   <div class="col-md-4 load-container-modified"
        tal:attributes="class python: has_unders_review and 'col-md-4 load-container-modified' or 'col-md-6 load-container-modified'"

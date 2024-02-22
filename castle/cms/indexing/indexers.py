@@ -220,7 +220,8 @@ def has_custom_markup(image):
 
 @indexer(IItem)
 def actors(context):
-    actors_list = []
+    # Get history of users that have modified an object
+    actors = []
 
     rt = api.portal.get_tool("portal_repository")
     history = rt.getHistoryMetadata(context)
@@ -228,7 +229,20 @@ def actors(context):
     for i in range(history.getLength(countPurged=False)):
         data = history.retrieve(i, countPurged=False)
         actor = data["metadata"]["sys_metadata"]["principal"]
-        actors_list.append(actor) if actor not in actors_list else None
+        actors.append(actor) if actor not in actors else None
 
-    return actors_list
+    return actors
 
+
+@indexer(IItem)
+def assigned_users(context):
+    # Get local roles for an object
+    # These roles are assigned individually, not inherited
+    assigned_users = []
+
+    acl_users = api.portal.get_tool('acl_users')
+    local_roles = acl_users._getLocalRolesForDisplay(context)
+
+    for name, roles, rtype, rid in local_roles:
+        assigned_users.append(name)
+    return assigned_users
