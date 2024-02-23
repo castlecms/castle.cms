@@ -1,15 +1,22 @@
 <div tal:define="dutils context/@@dashboard-utils;
                  under_review dutils/get_in_review;
                  has_unders_review under_review/total;
+                 assigned dutils/get_user_assigned;
+                 has_assigned assigned/total;
                  dummy python: utils.add_resource_on_request('castle-dashboard-statistics');"
      class="castle-dashboard-statistics">
 
 <div class="row castle-statistics-container" style="clear: both">
-  <div class="col-md-4 load-container-modified"
-       tal:attributes="class python: has_unders_review and 'col-md-4 load-container-modified' or 'col-md-6 load-container-modified'"
+  <div class="col-md-4 load-container-user-modified"
+       tal:attributes="class python: has_assigned and 'col-md-4 load-container-user-modified' or 'col-md-6 load-container-user-modified'"
        tal:define="results dutils/get_user_modified">
     <h3>My Changes</h3>
-    <div class="recent-activity">
+    <button type="button" 
+            class="plone-btn plone-btn-default show-hide"
+            data-name="user-activity">
+            Show/Hide
+    </button>
+    <div id="user-activity">
       <table>
         <thead>
           <tr class="dots">
@@ -42,19 +49,24 @@
           </tal:item>
         </tbody>
       </table>
+      <button class="plone-btn plone-btn-default load-more"
+        data-name="${results/name}"
+        data-start="${results/start}"
+        data-end="${results/end}"
+        data-total="${results/total}"
+        tal:condition="python: results['total'] > results['end']">Load more</button>
     </div>
-    <button class="plone-btn plone-btn-default load-more"
-            data-name="${results/name}"
-            data-start="${results/start}"
-            data-end="${results/end}"
-            data-total="${results/total}"
-            tal:condition="python: results['total'] > results['end']">Load more</button>
   </div>
-  <div class="col-md-4 load-container-created"
-       tal:attributes="class python: has_unders_review and 'col-md-4 load-container-created' or 'col-md-6 load-container-created'"
+  <div class="col-md-4 load-container-user-created"
+       tal:attributes="class python: has_assigned and 'col-md-4 load-container-user-created' or 'col-md-6 load-container-user-created'"
        tal:define="results dutils/get_user_created">
     <h3>My Additions</h3>
-    <div class="recent-additions">
+    <button type="button" 
+            class="plone-btn plone-btn-default show-hide"
+            data-name="user-additions">
+            Show/Hide
+    </button>
+    <div id="user-additions">
       <table>
         <thead>
           <tr class="dots">
@@ -87,19 +99,24 @@
           </tal:item>
         </tbody>
       </table>
+      <button class="plone-btn plone-btn-default load-more"
+              data-name="${results/name}"
+              data-start="${results/start}"
+              data-end="${results/end}"
+              data-total="${results/total}"
+              tal:condition="python: results['total'] > results['end']">Load more</button>
     </div>
-    <button class="plone-btn plone-btn-default load-more"
-            data-name="${results/name}"
-            data-start="${results/start}"
-            data-end="${results/end}"
-            data-total="${results/total}"
-            tal:condition="python: results['total'] > results['end']">Load more</button>
   </div>
-  <div class="col-md-4 load-container-created"
-       tal:attributes="class python: has_unders_review and 'col-md-4 load-container-created' or 'col-md-6 load-container-created'"
+  <div class="col-md-4 load-container-user-assigned"
+       tal:condition="has_assigned"
        tal:define="results dutils/get_user_assigned">
     <h3>My Assigned Pages</h3>
-    <div class="recent-additions">
+    <button type="button" 
+            class="plone-btn plone-btn-default show-hide"
+            data-name="user-assigned">
+            Show/Hide
+    </button>
+    <div id="user-assigned">
       <table>
         <thead>
           <tr class="dots">
@@ -132,21 +149,26 @@
           </tal:item>
         </tbody>
       </table>
+      <button class="plone-btn plone-btn-default load-more"
+              data-name="${results/name}"
+              data-start="${results/start}"
+              data-end="${results/end}"
+              data-total="${results/total}"
+              tal:condition="python: results['total'] > results['end']">Load more</button>
     </div>
-    <button class="plone-btn plone-btn-default load-more"
-            data-name="${results/name}"
-            data-start="${results/start}"
-            data-end="${results/end}"
-            data-total="${results/total}"
-            tal:condition="python: results['total'] > results['end']">Load more</button>
   </div>
-</div>
-<div class="row castle-statistics-container" style="clear: both">
+  </div>
+  <div class="row castle-statistics-container" style="clear: both">
   <div class="col-md-4 load-container-modified"
        tal:attributes="class python: has_unders_review and 'col-md-4 load-container-modified' or 'col-md-6 load-container-modified'"
        tal:define="results dutils/get_recently_modified">
-    <h3>All Changes</h3>
-    <div class="recent-activity">
+    <h3>Recent Changes</h3>
+    <button type="button" 
+            class="plone-btn plone-btn-default show-hide"
+            data-name="recent-activity">
+            Show/Hide
+    </button>
+    <div id="recent-activity">
       <table>
         <thead>
           <tr class="dots">
@@ -179,19 +201,24 @@
           </tal:item>
         </tbody>
       </table>
+      <button class="plone-btn plone-btn-default load-more"
+              data-name="${results/name}"
+              data-start="${results/start}"
+              data-end="${results/end}"
+              data-total="${results/total}"
+              tal:condition="python: results['total'] > results['end']">Load more</button>
     </div>
-    <button class="plone-btn plone-btn-default load-more"
-            data-name="${results/name}"
-            data-start="${results/start}"
-            data-end="${results/end}"
-            data-total="${results/total}"
-            tal:condition="python: results['total'] > results['end']">Load more</button>
   </div>
   <div class="col-md-4 load-container-created"
        tal:attributes="class python: has_unders_review and 'col-md-4 load-container-created' or 'col-md-6 load-container-created'"
        tal:define="results dutils/get_recently_created">
-    <h3>All Additions</h3>
-    <div class="recent-additions">
+    <h3>Recent Additions</h3>
+    <button type="button" 
+            class="plone-btn plone-btn-default show-hide"
+            data-name="recent-additions">
+            Show/Hide
+    </button>
+    <div id="recent-additions">
       <table>
         <thead>
           <tr class="dots">
@@ -224,17 +251,22 @@
           </tal:item>
         </tbody>
       </table>
+      <button class="plone-btn plone-btn-default load-more"
+              data-name="${results/name}"
+              data-start="${results/start}"
+              data-end="${results/end}"
+              data-total="${results/total}"
+              tal:condition="python: results['total'] > results['end']">Load more</button>
     </div>
-    <button class="plone-btn plone-btn-default load-more"
-            data-name="${results/name}"
-            data-start="${results/start}"
-            data-end="${results/end}"
-            data-total="${results/total}"
-            tal:condition="python: results['total'] > results['end']">Load more</button>
   </div>
   <div class="col-md-4 load-container-review" tal:condition="has_unders_review">
     <h3>Under Review</h3>
-    <div class="under-review">
+    <button type="button" 
+            class="plone-btn plone-btn-default show-hide"
+            data-name="under-review">
+            Show/Hide
+    </button>
+    <div id="under-review">
       <table>
         <thead>
           <tr class="dots">
@@ -267,13 +299,13 @@
           </tal:item>
         </tbody>
       </table>
+      <button class="plone-btn plone-btn-default load-more"
+              data-name="${under_review/name}"
+              data-start="${under_review/start}"
+              data-end="${under_review/end}"
+              data-total="${under_review/total}"
+              tal:condition="python: under_review['total'] > under_review['end']">Load more</button>
     </div>
-    <button class="plone-btn plone-btn-default load-more"
-            data-name="${under_review/name}"
-            data-start="${under_review/start}"
-            data-end="${under_review/end}"
-            data-total="${under_review/total}"
-            tal:condition="python: under_review['total'] > under_review['end']">Load more</button>
   </div>
 </div>
 </div>

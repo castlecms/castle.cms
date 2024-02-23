@@ -194,7 +194,7 @@ class DashboardUtils(BrowserView):
             sort_order='reverse', 
             actors=member.getUserName()
         )
-        return self._paging(query, 'user_modified')
+        return self._paging(query, 'user-modified')
 
     def get_user_created(self):
         member = api.user.get_current()
@@ -203,7 +203,7 @@ class DashboardUtils(BrowserView):
             sort_order='reverse', 
             Creator=member.getUserName()
         )
-        return self._paging(query, 'user_created')
+        return self._paging(query, 'user-created')
     
     def get_user_assigned(self):
         member = api.user.get_current()
@@ -212,7 +212,7 @@ class DashboardUtils(BrowserView):
             sort_order='reverse', 
             assigned_users=member.getUserName()
         )
-        return self._paging(query, 'assigned')
+        return self._paging(query, 'user-assigned')
 
     def get_in_review(self):
         query = dict(sort_on='modified', review_state='pending', sort_order='reverse')
