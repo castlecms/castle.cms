@@ -6,6 +6,8 @@ Changelog
 
 - castle crawler should generate an index alias and an index when it verifies they
   exist, and then use the alias for all primary operations
+- mark the crawler mapping['url'] as _stored_ so opensearchpy stored_field parameter
+  can be used appropriately with it
 
 
 3.0.0b132 (2024-02-07)
