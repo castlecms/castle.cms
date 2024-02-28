@@ -4,7 +4,7 @@ Changelog
 3.0.0b130 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Fix mass copy/paste functionality
 
 
 3.0.0b129 (2023-12-07)
