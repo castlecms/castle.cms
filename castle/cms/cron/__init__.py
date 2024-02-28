@@ -122,7 +122,3 @@ def link_report(argv=sys.argv):
 
 def auto_publish_retract(argv=sys.argv):
     return run_it('_auto_publish_retract')
-
-
-def workflow_reminder(argv=sys.argv):
-    return run_it('_workflow_reminder')
