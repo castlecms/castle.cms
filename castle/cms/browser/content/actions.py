@@ -11,6 +11,7 @@ from castle.cms.tasks.template import copy_to_templates
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
 from castle.cms.utils import get_template_repository_info
+from castle.cms.tasks.email import send_email_reminder
 from plone.app.content.browser import actions
 from plone.app.workflow.browser import sharing
 from plone.app.workflow.events import LocalrolesModifiedEvent
@@ -33,11 +34,6 @@ import sys
 import zope.schema as schema
 from zope.event import notify
 from zExceptions import Forbidden
-from castle.cms import utils
-import logging
-
-
-logger = logging.getLogger('castle.cms')
 
 
 class ObjectPasteView(actions.ObjectPasteView):
@@ -378,6 +374,30 @@ class SharingView(sharing.SharingView):
         """
         postback = True
 
+        # print('=== actors ===')
+        # actors = []
+        # rt = api.portal.get_tool("portal_repository")
+        # history = rt.getHistoryMetadata(self.context)
+        # for i in range(history.getLength(countPurged=False)):
+        #     data = history.retrieve(i, countPurged=False)
+        #     actor = data["metadata"]["sys_metadata"]["principal"]
+        #     actors.append(actor) if actor not in actors else None
+        # print(actors)
+
+        # print('=== contributors ===')
+        # assigned_users = []
+
+        # acl_users = api.portal.get_tool('acl_users')
+        # local_roles = acl_users._getLocalRolesForDisplay(self.context)
+
+        # for name, rolesm, rtype, rid in local_roles:
+        #     print(name)
+        #     print(rolesm)
+        #     print(rtype)
+        #     assigned_users.append(name)
+        # print(assigned_users)
+
+
         if bool(self.request.form):
             try:
                 event = LocalrolesModifiedEvent(self.context, self.request)
@@ -431,24 +451,19 @@ class SharingView(sharing.SharingView):
                     user = api.user.get(entry['id'])
                     email = user.getProperty('email')
                     if email:
-                        name = user.getProperty('fullname') or user.getId()
+                        name=user.getProperty('fullname') or user.getId()
+                        roles=[r for r in roles if entry.get('role_%s' % r, False)]
                         site_path = '/'.join(api.portal.get().getPhysicalPath())
                         obj_path = '/'.join(obj.getPhysicalPath())[len(site_path):]
-                        try:
-                            # TODO: Should the assigned roles be added to the email as well?
-                            utils.send_email(
-                                recipients=email,
-                                subject="Page Assigned: %s" % (
-                                    api.portal.get_registry_record('plone.site_title')),
-                                html="""
-                                    <p>Hi %s,</p>
 
-                                    <p>You have been assigned a new page:</p>
-                                    <p> %s </p>
-                                    <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                                name, obj_path))
-                        except Exception:
-                            logger.warn('Could not send page assignment email ', exc_info=True)
+                        data = dict(
+                            pid=obj.getId(),
+                            name=name,
+                            email=email,
+                            roles=roles,
+                            obj_path=obj_path
+                        )
+                        send_email_reminder.delay(data)
 
             if settings:
                 reindex = self.update_role_settings(settings, reindex=False) \

@@ -244,5 +244,8 @@ def assigned_users(context):
     local_roles = acl_users._getLocalRolesForDisplay(context)
 
     for name, roles, rtype, rid in local_roles:
-        assigned_users.append(name)
+        if 'Owner' not in roles and rtype == 'user':
+            # 'Owner' indicates a global role assigned by admin
+            # These can only be un-assigned by admin, so we're ignoring them
+            assigned_users.append(name)
     return assigned_users
