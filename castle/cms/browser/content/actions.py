@@ -397,22 +397,6 @@ class SharingView(sharing.SharingView):
         #     assigned_users.append(name)
         # print(assigned_users)
 
-
-        if bool(self.request.form):
-            try:
-                event = LocalrolesModifiedEvent(self.context, self.request)
-                obj = event.object
-                if obj._count.value > 1000:
-                    # XXX: We're increasing the recursion limit here to prevent the
-                    # 'maximum recursion depth exceeded' error thrown by 'cPickle' 
-                    # that occurs when granting permissions in a large directory 
-                    # (i.e. the 'image-directory')
-                    sys.setrecursionlimit(2000)  
-
-            except AttributeError:
-                # User search form submitted, no need to get count
-                pass
-
         form = self.request.form
         submitted = form.get('form.submitted', False)
         save_button = form.get('form.button.Save', None) is not None
@@ -425,6 +409,19 @@ class SharingView(sharing.SharingView):
                                                             None)
             if not authenticator.verify():
                 raise Forbidden
+            
+            event = LocalrolesModifiedEvent(self.context, self.request)
+            obj = event.object
+            try:
+                if obj._count.value > 1000:
+                    # XXX: We're increasing the recursion limit here to prevent the
+                    # 'maximum recursion depth exceeded' error thrown by 'cPickle' 
+                    # that occurs when granting permissions in a large directory 
+                    # (i.e. the 'image-directory')
+                    sys.setrecursionlimit(2000)  
+            except AttributeError:
+                # User search form submitted, no need to get count
+                pass
 
             # Update the acquire-roles setting
             if self.can_edit_inherit():
@@ -439,31 +436,24 @@ class SharingView(sharing.SharingView):
 
             settings = []
             for entry in entries:
+                assigned_roles=[r for r in roles if entry.get('role_%s' % r, False)]
                 settings.append(
                     dict(id=entry['id'],
                          type=entry['type'],
-                         roles=[r for r in roles
-                            if entry.get('role_%s' % r, False)]))
+                         roles=assigned_roles))
 
-                if entry['type'] == 'user':
-                    # TODO: Should we only send emails for pages/documents?
-                    # Only send emails to individual users
+                if entry['type'] == 'user' and 'Reviewer' in assigned_roles:
+                    # Only send emails to individual users assigned as 'Reviewers'
                     user = api.user.get(entry['id'])
                     email = user.getProperty('email')
                     if email:
-                        name=user.getProperty('fullname') or user.getId()
-                        roles=[r for r in roles if entry.get('role_%s' % r, False)]
-                        site_path = '/'.join(api.portal.get().getPhysicalPath())
-                        obj_path = '/'.join(obj.getPhysicalPath())[len(site_path):]
-
                         data = dict(
-                            pid=obj.getId(),
-                            name=name,
+                            uid=user.getId(),
+                            name=user.getProperty('fullname') or user.getId(),
                             email=email,
                             roles=roles,
-                            obj_path=obj_path
                         )
-                        send_email_reminder.delay(data)
+                        send_email_reminder.delay(obj, data)
 
             if settings:
                 reindex = self.update_role_settings(settings, reindex=False) \

@@ -6,6 +6,8 @@ from plone import api
 from urllib import urlencode
 from zope.globalrequest import getRequest
 from castle.cms import cache
+from DateTime import DateTime
+from copy import deepcopy
 import logging
 
 
@@ -57,69 +59,85 @@ def send_email_to_subscribers(subject, html, categories=None, sender=None):
 
 
 @task.as_admin()
-def send_email_reminder(data=None):
+def send_email_reminder(obj=None, data=None):
     """
     This sends reminder emails to users who have been assigned to a page via the
     'Sharing' tab.
     The first email is sent upon initial assignment.
-    The second is sent after five days if they haven't run-assigned themselves 
+    The second is sent after five days if they haven't un-assigned themselves 
     from the page.
     """
 
     cache_key = '-'.join(api.portal.get().getPhysicalPath()[1:]) + '-email-reminders'
-    notify_list = []
+    reminder_cache = {}
 
     try:
-        notify_list = cache.get(cache_key)
+        reminder_cache = cache.get(cache_key)
     except KeyError:
-        cache.set(cache_key, notify_list)
+        cache.set(cache_key, reminder_cache)
 
-    
-    if data:
+    if obj:
         # A user has been assigned to a page
-        # Their info will be added to the cache, and they will receive an email
+        item_key = obj.getId() + '#' + data['uid']
+        if item_key not in reminder_cache:
 
-        notify_list.append(data)
-        cache.set(cache_key, notify_list)
+            data['pid'] = obj.getId()
+            data['portal_type'] = obj.portal_type
+            data['reminder_date'] = DateTime() + 5
 
-        try:
-            # TODO: Should the assigned roles be added to the email as well?
-            utils.send_email(
-                recipients=data.get('email'),
-                subject="Page Assigned: %s" % (
-                    api.portal.get_registry_record('plone.site_title')),
-                html="""
-                    <p>Hi %s,</p>
+            # Set key as page id + user id so each user/page association can be tracked individually
+            reminder_cache[data['pid'] + '#' + data['uid']] = data
+            cache.set(cache_key, reminder_cache)
 
-                    <p>You have been assigned a new page:</p>
-                    <p> %s </p>
-                    <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                data.get('name'), data.get('obj_path')))
-        except Exception:
-            logger.warn('Could not send page assignment email ', exc_info=True)
-    
+            obj_path = obj.getPhysicalPath()
+
+            try:
+                utils.send_email(
+                    recipients=data['email'],
+                    subject="Page Assigned: %s" % (
+                        api.portal.get_registry_record('plone.site_title')),
+                    html="""
+                        <p>Hi %s,</p>
+
+                        <p>You have been assigned a new page:</p>
+                        <p> %s </p>
+                        <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                                    data['name'], obj_path))
+            except Exception:
+                logger.warn('Could not send assignment email ', exc_info=True)
+        else:
+            # Assignment exists in cache
+            if 'Reviewer' not in data['roles']:
+                new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
+                new_cache.pop(item_key, None)
+                cache.set(cache_key, new_cache)
+
     else:
         # CRON run
-        # print('=== actors ===')
-        # actors = []
-        # rt = api.portal.get_tool("portal_repository")
-        # history = rt.getHistoryMetadata(self.context)
-        # for i in range(history.getLength(countPurged=False)):
-        #     data = history.retrieve(i, countPurged=False)
-        #     actor = data["metadata"]["sys_metadata"]["principal"]
-        #     actors.append(actor) if actor not in actors else None
-        # print(actors)
+        portal_catalog = api.portal.get_tool('portal_catalog')
 
-        # print('=== contributors ===')
-        # assigned_users = []
+        for key, item in reminder_cache.items():
+            results = portal_catalog.searchResults({'portal_type': item.get('portal_type'), 'id': item.get('pid')})
+            for brain in results:
+                obj = brain.getObject()
+                roles = obj.get_local_roles_for_userid(item.get('uid'))
+                if 'Reviewer' in roles:
+                    if item.get('reminder_date') < DateTime():
+                        try:
+                            utils.send_email(
+                                recipients=data['email'],
+                                subject="Page Assigned: %s" % (
+                                    api.portal.get_registry_record('plone.site_title')),
+                                html="""
+                                    <p>Hi %s,</p>
 
-        # acl_users = api.portal.get_tool('acl_users')
-        # local_roles = acl_users._getLocalRolesForDisplay(self.context)
-
-        # for name, rolesm, rtype, rid in local_roles:
-        #     print(name)
-        #     print(rolesm)
-        #     print(rtype)
-        #     assigned_users.append(name)
-        # print(assigned_users)
-        pass
+                                    <p>You have been assigned a new page:</p>
+                                    <p> %s </p>
+                                    <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                                                data['name'], obj_path))
+                        except Exception:
+                            logger.warn('Could not send assignment email ', exc_info=True)
+                else:
+                    new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
+                    new_cache.pop(key, None)
+                    cache.set(cache_key, new_cache)
