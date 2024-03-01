@@ -59,7 +59,7 @@ def send_email_to_subscribers(subject, html, categories=None, sender=None):
 
 
 @task.as_admin()
-def send_email_reminder(obj=None, data=None):
+def send_email_reminder(obj, data):
     """
     This sends reminder emails to users who have been assigned to a page via the
     'Sharing' tab.
@@ -76,68 +76,35 @@ def send_email_reminder(obj=None, data=None):
     except KeyError:
         cache.set(cache_key, reminder_cache)
 
-    if obj:
-        # A user has been assigned to a page
-        item_key = obj.getId() + '#' + data['uid']
-        if item_key not in reminder_cache:
+    item_key = obj.getId() + '#' + data['uid']
+    if item_key not in reminder_cache:
+        data['pid'] = obj.getId()
+        data['portal_type'] = obj.portal_type
+        data['reminder_date'] = DateTime() + 5
 
-            data['pid'] = obj.getId()
-            data['portal_type'] = obj.portal_type
-            data['reminder_date'] = DateTime() + 5
+        # Set key as page id + user id so each user/page association can be tracked individually
+        reminder_cache[data['pid'] + '#' + data['uid']] = data
+        cache.set(cache_key, reminder_cache)
 
-            # Set key as page id + user id so each user/page association can be tracked individually
-            reminder_cache[data['pid'] + '#' + data['uid']] = data
-            cache.set(cache_key, reminder_cache)
+        obj_path = obj.getPhysicalPath()
 
-            obj_path = obj.getPhysicalPath()
+        try:
+            utils.send_email(
+                recipients=data['email'],
+                subject="Page Assigned: %s" % (
+                    api.portal.get_registry_record('plone.site_title')),
+                html="""
+                    <p>Hi %s,</p>
 
-            try:
-                utils.send_email(
-                    recipients=data['email'],
-                    subject="Page Assigned: %s" % (
-                        api.portal.get_registry_record('plone.site_title')),
-                    html="""
-                        <p>Hi %s,</p>
-
-                        <p>You have been assigned a new page:</p>
-                        <p> %s </p>
-                        <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                    data['name'], obj_path))
-            except Exception:
-                logger.warn('Could not send assignment email ', exc_info=True)
-        else:
-            # Assignment exists in cache
-            if 'Reviewer' not in data['roles']:
-                new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
-                new_cache.pop(item_key, None)
-                cache.set(cache_key, new_cache)
-
+                    <p>You have been assigned a new page:</p>
+                    <p> %s </p>
+                    <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                                data['name'], obj_path))
+        except Exception:
+            logger.warn('Could not send assignment email ', exc_info=True)
     else:
-        # CRON run
-        portal_catalog = api.portal.get_tool('portal_catalog')
-
-        for key, item in reminder_cache.items():
-            results = portal_catalog.searchResults({'portal_type': item.get('portal_type'), 'id': item.get('pid')})
-            for brain in results:
-                obj = brain.getObject()
-                roles = obj.get_local_roles_for_userid(item.get('uid'))
-                if 'Reviewer' in roles:
-                    if item.get('reminder_date') < DateTime():
-                        try:
-                            utils.send_email(
-                                recipients=data['email'],
-                                subject="Page Assigned: %s" % (
-                                    api.portal.get_registry_record('plone.site_title')),
-                                html="""
-                                    <p>Hi %s,</p>
-
-                                    <p>You have been assigned a new page:</p>
-                                    <p> %s </p>
-                                    <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                                data['name'], obj_path))
-                        except Exception:
-                            logger.warn('Could not send assignment email ', exc_info=True)
-                else:
-                    new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
-                    new_cache.pop(key, None)
-                    cache.set(cache_key, new_cache)
+        # Assignment exists in cache
+        if 'Reviewer' not in data['roles']:
+            new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
+            new_cache.pop(item_key, None)
+            cache.set(cache_key, new_cache)
