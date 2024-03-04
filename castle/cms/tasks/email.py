@@ -70,6 +70,7 @@ def send_email_reminder(obj, data):
 
     cache_key = '-'.join(api.portal.get().getPhysicalPath()[1:]) + '-email-reminders'
     reminder_cache = {}
+    cache.set(cache_key, reminder_cache)
 
     try:
         reminder_cache = cache.get(cache_key)
@@ -86,20 +87,31 @@ def send_email_reminder(obj, data):
         reminder_cache[data['pid'] + '#' + data['uid']] = data
         cache.set(cache_key, reminder_cache)
 
-        obj_path = obj.getPhysicalPath()
+        obj_path = '/'.join(obj.getPhysicalPath())
 
         try:
-            utils.send_email(
-                recipients=data['email'],
-                subject="Page Assigned: %s" % (
-                    api.portal.get_registry_record('plone.site_title')),
-                html="""
-                    <p>Hi %s,</p>
+            recipients=data['email']
+            subject="New Page Assigned: %s" % (
+                api.portal.get_registry_record('plone.site_title'))
+            html="""
+                <p>Hi %s,</p>
 
-                    <p>You have been assigned a new page:</p>
-                    <p> %s </p>
-                    <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                data['name'], obj_path))
+                <p>You have been assigned a new page:</p>
+                <p> %s </p>
+                <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                            data['name'], obj_path)
+            message = data.get('message')
+            if message:
+                html += """
+
+                <p> %s </p>
+                """ % (message)
+            
+            utils.send_email(
+                recipients=recipients,
+                subject=subject,
+                html=html
+            )
         except Exception:
             logger.warn('Could not send assignment email ', exc_info=True)
     else:

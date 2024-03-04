@@ -31,21 +31,32 @@ def send_reminders(site):
         for brain in results:
             obj = brain.getObject()
             roles = obj.get_local_roles_for_userid(item.get('uid'))
-            obj_path = obj.getPhysicalPath()
+            obj_path = '/'.join(obj.getPhysicalPath())
             if 'Reviewer' in roles:
                 if item.get('reminder_date') < DateTime():
                     try:
-                        utils.send_email(
-                            recipients=item.get('email'),
-                            subject="Page Assigned: %s" % (
-                                api.portal.get_registry_record('plone.site_title')),
-                            html="""
-                                <p>Hi %s,</p>
+                        recipients=item['email']
+                        subject="Page Assigned: %s" % (
+                            api.portal.get_registry_record('plone.site_title'))
+                        html="""
+                            <p>Hi %s,</p>
 
-                                <p>This is a reminder that you have the following page assignment:</p>
-                                <p> %s </p>
-                                <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                            item.get('name'), obj_path))
+                            <p>You have been assigned a new page:</p>
+                            <p> %s </p>
+                            <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                                        item['name'], obj_path)
+                        message = item.get('message')
+                        if message:
+                            html += """
+
+                            <p> %s </p>
+                            """ % (message)
+                        
+                        utils.send_email(
+                            recipients=recipients,
+                            subject=subject,
+                            html=html
+                        )
                     except Exception:
                         logger.warn('Could not send assignment email ', exc_info=True)
             else:

@@ -378,6 +378,7 @@ class SharingView(sharing.SharingView):
         submitted = form.get('form.submitted', False)
         save_button = form.get('form.button.Save', None) is not None
         cancel_button = form.get('form.button.Cancel', None) is not None
+        message = form.get('message_optional', None)
         if submitted and save_button and not cancel_button:
             if not self.request.get('REQUEST_METHOD', 'GET') == 'POST':
                 raise Forbidden
@@ -429,6 +430,7 @@ class SharingView(sharing.SharingView):
                             name=user.getProperty('fullname') or user.getId(),
                             email=email,
                             roles=roles,
+                            message=message
                         )
                         send_email_reminder.delay(obj, data)
 
