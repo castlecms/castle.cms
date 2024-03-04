@@ -31,23 +31,23 @@ def send_reminders(site):
         for brain in results:
             obj = brain.getObject()
             roles = obj.get_local_roles_for_userid(item.get('uid'))
+            obj_path = obj.getPhysicalPath()
             if 'Reviewer' in roles:
                 if item.get('reminder_date') < DateTime():
-                    pass
-                    # try:
-                    #     utils.send_email(
-                    #         recipients=data['email'],
-                    #         subject="Page Assigned: %s" % (
-                    #             api.portal.get_registry_record('plone.site_title')),
-                    #         html="""
-                    #             <p>Hi %s,</p>
+                    try:
+                        utils.send_email(
+                            recipients=item.get('email'),
+                            subject="Page Assigned: %s" % (
+                                api.portal.get_registry_record('plone.site_title')),
+                            html="""
+                                <p>Hi %s,</p>
 
-                    #             <p>You have been assigned a new page:</p>
-                    #             <p> %s </p>
-                    #             <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                    #                         data['name'], obj_path))
-                    # except Exception:
-                    #     logger.warn('Could not send assignment email ', exc_info=True)
+                                <p>This is a reminder that you have the following page assignment:</p>
+                                <p> %s </p>
+                                <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                                            item.get('name'), obj_path))
+                    except Exception:
+                        logger.warn('Could not send assignment email ', exc_info=True)
             else:
                 new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
                 new_cache.pop(key, None)

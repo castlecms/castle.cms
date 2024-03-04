@@ -374,29 +374,6 @@ class SharingView(sharing.SharingView):
         """
         postback = True
 
-        # print('=== actors ===')
-        # actors = []
-        # rt = api.portal.get_tool("portal_repository")
-        # history = rt.getHistoryMetadata(self.context)
-        # for i in range(history.getLength(countPurged=False)):
-        #     data = history.retrieve(i, countPurged=False)
-        #     actor = data["metadata"]["sys_metadata"]["principal"]
-        #     actors.append(actor) if actor not in actors else None
-        # print(actors)
-
-        # print('=== contributors ===')
-        # assigned_users = []
-
-        # acl_users = api.portal.get_tool('acl_users')
-        # local_roles = acl_users._getLocalRolesForDisplay(self.context)
-
-        # for name, rolesm, rtype, rid in local_roles:
-        #     print(name)
-        #     print(rolesm)
-        #     print(rtype)
-        #     assigned_users.append(name)
-        # print(assigned_users)
-
         form = self.request.form
         submitted = form.get('form.submitted', False)
         save_button = form.get('form.button.Save', None) is not None
