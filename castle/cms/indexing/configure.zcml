@@ -43,6 +43,6 @@
   <adapter name="image_info" factory=".indexers.image_info" />
   <adapter name="has_custom_markup" factory=".indexers.has_custom_markup" />
   <adapter name="actors" factory=".indexers.actors" />
-  <adapter name="assigned_users" factory=".indexers.actors" />
+  <adapter name="assigned_users" factory=".indexers.assigned_users" />
 
 </configure>

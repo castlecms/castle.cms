@@ -204,7 +204,7 @@ class DashboardUtils(BrowserView):
             Creator=member.getUserName()
         )
         return self._paging(query, 'user-created')
-    
+
     def get_user_assigned(self):
         member = api.user.get_current()
         query = dict(

@@ -237,15 +237,13 @@ def actors(context):
 @indexer(IItem)
 def assigned_users(context):
     # Get local roles for an object
-    # These roles are assigned individually, not inherited
     assigned_users = []
-
+    
     acl_users = api.portal.get_tool('acl_users')
-    local_roles = acl_users._getLocalRolesForDisplay(context)
+    local_roles = acl_users.getLocalRolesForDisplay(context)
 
     for name, roles, rtype, rid in local_roles:
-        if 'Owner' not in roles and rtype == 'user':
-            # 'Owner' indicates a global role assigned by admin
-            # These can only be un-assigned by admin, so we're ignoring them
+        # Only items assigned 'Reviewer' status to user will appear on dashboard
+        if 'Reviewer' in roles:
             assigned_users.append(name)
     return assigned_users

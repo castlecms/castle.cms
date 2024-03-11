@@ -32,39 +32,34 @@ def send_reminders(site):
             obj = brain.getObject()
             roles = obj.get_local_roles_for_userid(item.get('uid'))
             obj_path = '/'.join(obj.getPhysicalPath())
-            if 'Reviewer' in roles:
-                if item.get('reminder_date') < DateTime():
-                    try:
-                        recipients=item['email']
-                        subject="Page Assigned: %s" % (
-                            api.portal.get_registry_record('plone.site_title'))
-                        html="""
-                            <p>Hi %s,</p>
+            if 'Reviewer' in roles and item.get('reminder_date') < DateTime():
+                try:
+                    recipients=item['email']
+                    subject="Page Assigned: %s" % (
+                        api.portal.get_registry_record('plone.site_title'))
+                    html="""
+                        <p>Hi %s,</p>
+                        <p>You have been assigned a new page:</p>
+                        <p> %s </p>
+                        <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                                    item['name'], obj_path)
+                    message = item.get('message')
+                    if message:
+                        html += """
+                        <p> %s </p>
+                        """ % (message)
 
-                            <p>You have been assigned a new page:</p>
-                            <p> %s </p>
-                            <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
-                                        item['name'], obj_path)
-                        message = item.get('message')
-                        if message:
-                            html += """
-
-                            <p> %s </p>
-                            """ % (message)
-                        
-                        utils.send_email(
-                            recipients=recipients,
-                            subject=subject,
-                            html=html
-                        )
-                    except Exception:
-                        logger.warn('Could not send assignment email ', exc_info=True)
+                    utils.send_email(
+                        recipients=recipients,
+                        subject=subject,
+                        html=html
+                    )
+                except Exception:
+                    logger.warn('Could not send assignment email ', exc_info=True)
             else:
                 new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
                 new_cache.pop(key, None)
                 cache.set(cache_key, new_cache)
-        
-    
 
 
 def run(app):
