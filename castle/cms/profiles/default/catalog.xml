@@ -51,4 +51,16 @@
 
   <column value="has_custom_markup"/>
 
+  <index name="actors" meta_type="KeywordIndex">
+    <indexed_attr value="actors"/>
+  </index>
+
+  <column value="actors"/>
+
+  <index name="assigned_users" meta_type="KeywordIndex">
+    <indexed_attr value="assigned_users"/>
+  </index>
+
+  <column value="assigned_users"/>
+
 </object>

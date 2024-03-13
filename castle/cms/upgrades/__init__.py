@@ -137,3 +137,22 @@ def upgrade_3011(site, logger=CASTLE_LOGGER):
 
 
 upgrade_3012 = default_upgrade_factory('3012')
+
+
+def upgrade_3013(site, logger=CASTLE_LOGGER):
+    # catalog = api.portal.get_tool('portal_catalog')
+    # catalog.manage_catalogRebuild()
+
+
+    portal_types_tool = api.portal.get_tool('portal_types')
+
+    for portal_type in portal_types_tool:
+        logger.info('reindexing actors and assigned_users for portal_type ' + portal_type)
+        # this could take a while
+        for portal_type_brain in api.content.find(portal_type=portal_type):
+            try:
+                content_object = portal_type_brain.getObject()
+                content_object.reindexObject(idxs=['actors', 'assigned_users'])
+            except Exception:
+                logger.info('something weird happened with ' + repr(portal_type_brain))
+                continue
