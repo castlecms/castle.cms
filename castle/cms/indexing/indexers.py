@@ -221,12 +221,15 @@ def has_custom_markup(image):
 
 @indexer(IItem)
 def actors(context):
-    # Get history of users that have modified an object
+    # Get history of users that have modified an item
     actors = []
-    ownership = IOwnership(context, None)
-    if ownership is not None:
-        for actor in ownership.contributors:
-            actors.append(actor) if actor not in actors else None
+    rt = api.portal.get_tool("portal_repository")
+    history = rt.getHistoryMetadata(context)
+
+    for i in range(history.getLength(countPurged=False)):
+        data = history.retrieve(i, countPurged=False)
+        actor = data["metadata"]["sys_metadata"]["principal"]
+        actors.append(actor) if actor not in actors else None
 
         req = getRequest()
         if req is not None and not IReindexActive.providedBy(req):
@@ -235,11 +238,8 @@ def actors(context):
                 # is not updated until AFTER reindexing. Here we manually
                 # update the index if the user modified something so it
                 # can immediately appear on the dashboard
-                user_id = api.user.get_current().getId()
-                if (user_id not in ownership.contributors):
-                    ownership.contributors = ownership.contributors + (
-                        user_id.decode('utf8'),)
-                    actors.append(user_id)
+                current_user = api.user.get_current().getUserName()
+                actors.append(current_user) if current_user not in actors else None
             except Exception:
                 pass
 
@@ -248,7 +248,7 @@ def actors(context):
 
 @indexer(IItem)
 def assigned_users(context):
-    # Get local roles for an object
+    # Get local roles for an item
     assigned_users = []
     
     acl_users = api.portal.get_tool('acl_users')
