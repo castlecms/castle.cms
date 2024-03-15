@@ -1,6 +1,5 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
-from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.defaultpage import get_default_page
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot

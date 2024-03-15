@@ -85,7 +85,7 @@ define([
     name: 'Template',
     warning: 'This object is a template and is unpublishable.',
     run: function(data, callback){
-      return callback(!data.template);
+      return callback(!data.isTemplate);
     }
   }];
 
@@ -237,29 +237,41 @@ define([
           ]);
         }
       }
-      return D.div({ className: 'castle-quality'}, [D.ul({}, that.props.checks.map(function(check){
-        var className = '';
-        var label = check.name;
-        var labelExtra = '';
-        var value = that.state.checked[check.name];
-        if(value !== undefined){
-          if(value){
-            className = 'glyphicon glyphicon-ok';
-          }else{
-            className = 'glyphicon glyphicon-remove';
-            if(typeof(check.warning) != 'function'){
-              label += ': ' + check.warning;
-            }else{
-              labelExtra = check.warning(that);
-            }
-          }
-        }
-        return D.li({}, [
-          D.span({ className: className}),
-          label,
-          labelExtra
-        ]);
-      })),
+      return D.div({ className: 'castle-quality'}, [
+        D.ul(
+          {},
+          that.props.checks
+            .filter(function(check){
+              const isTemplate = (
+                check.name === 'Template' &&
+                that.state.checked[ 'Template' ] === true
+              );
+              return !isTemplate;
+            })
+            .map(function(check){
+              var className = '';
+              var label = check.name;
+              var labelExtra = '';
+              var value = that.state.checked[check.name];
+              if(value !== undefined){
+                if(value){
+                  className = 'glyphicon glyphicon-ok';
+                }else{
+                  className = 'glyphicon glyphicon-remove';
+                  if(typeof(check.warning) != 'function'){
+                    label += ': ' + check.warning;
+                  }else{
+                    labelExtra = check.warning(that);
+                  }
+                }
+              }
+              return D.li({}, [
+                D.span({ className: className}),
+                label,
+                labelExtra
+              ]);
+            })
+        ),
         info
       ]);
     },

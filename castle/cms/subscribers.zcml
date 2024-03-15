@@ -9,6 +9,7 @@
   <subscriber handler=".security.onUserLogsIn" />
   <subscriber handler=".security.onUserLogsOut" />
   <subscriber handler=".security.afterTraversal" />
+  <subscriber handler=".redirects.afterTraversal" />
   <subscriber handler=".security.beforeCommit" />
 
   <subscriber handler=".transformer.requestStart" />
@@ -87,13 +88,14 @@
          zope.component.interfaces.IObjectEvent"
     handler=".subscribers.on_object_event" />
   <subscriber
-      for="Products.PluggableAuthService.interfaces.events.IPASEvent"
-      handler=".subscribers.on_pas_event"
-      />
+    for="Products.PluggableAuthService.interfaces.events.IPASEvent"
+    handler=".subscribers.on_pas_event" />
 
   <subscriber
-    for=".events.ICacheInvalidatedEvent"
-    handler=".subscribers.on_cache_invalidated" />
+    for="plone.dexterity.interfaces.IDexterityContent
+           .events.ICacheInvalidatedEvent"
+    handler=".subscribers.on_cache_invalidated"
+  />
 
   <!-- trash related events -->
   <subscriber
@@ -132,11 +134,5 @@
          zope.lifecycleevent.interfaces.IObjectAddedEvent"
     handler="plone.app.versioningbehavior.subscribers.create_initial_version_after_adding"
     />
-
-  <!-- template related events -->
-  <subscriber
-    for="castle.cms.interfaces.ITemplate
-         zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-    handler=".subscribers.on_template_delete" />
 
 </configure>

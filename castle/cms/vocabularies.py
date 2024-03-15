@@ -2,7 +2,6 @@ import pycountry
 from Acquisition import aq_parent
 from castle.cms.fragments.interfaces import IFragmentsDirectory
 from castle.cms.browser.survey import ICastleSurvey
-from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from zope.component import getAllUtilitiesRegisteredFor
@@ -18,7 +17,9 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from plone.app.tiles.browser.edit import AcquirableDictionary
 from plone.app.content.browser import vocabulary
+
 import requests
+import plone.api as api
 import json
 
 
@@ -216,6 +217,61 @@ class EmailCategoryVocabularyFactory(object):
 
 
 EmailCategoryVocabulary = EmailCategoryVocabularyFactory()
+
+
+@implementer(IVocabularyFactory)
+class EmailTemplateVocabularyFactory(object):
+
+    def get_send_to_users(self, email_template):
+        send_to_users = getattr(email_template, 'send_to_users', None)
+        if send_to_users is None:
+            return
+        users = []
+        for user_id in send_to_users:
+            try:
+                user_name = api.user.get(userid=user_id).getUserName()
+                users.append({
+                    'user_id': user_id,
+                    'user_name': user_name,
+                })
+            except Exception:
+                continue
+        return users if len(users) > 0 else None
+
+    def get_email_template_term_value(self, email_template):
+        fake_body = lambda: None  # noqa: E731
+        setattr(fake_body, 'raw', None)
+        return json.dumps({
+            'email_body': getattr(email_template, 'email_body', fake_body).raw,
+            'email_subject': getattr(email_template, 'email_subject', None),
+            'email_send_from': getattr(email_template, 'send_from', None),
+            'email_send_to_groups': getattr(email_template, 'send_to_groups', None),
+            'email_send_to_users': self.get_send_to_users(email_template),
+            'email_send_to_subscriber_categories': getattr(
+                email_template,
+                'send_to_subscriber_categories',
+                None,
+            ),
+            'email_send_to_custom': getattr(email_template, 'send_to_custom', None),
+        })
+
+    def __call__(self, context):
+        # import pdb; pdb.set_trace()
+        catalog = api.portal.get_tool('portal_catalog')
+        email_templates = [
+            brain.getObject()
+            for brain in catalog(portal_type="EmailTemplate")
+        ]
+        return SimpleVocabulary([
+            SimpleTerm(
+                value=self.get_email_template_term_value(email_template),
+                title=email_template.title,
+            )
+            for email_template in email_templates
+        ])
+
+
+EmailTemplateVocabulary = EmailTemplateVocabularyFactory()
 
 
 @implementer(IVocabularyFactory)

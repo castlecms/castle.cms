@@ -63,7 +63,7 @@ def export(args):
         query,
         sort='date:desc',
         scroll=args.scrolltime,
-        size=10000, # max per search result
+        size=10000,  # max per search result
         timeout=args.searchtimeout)
 
     logger.info("writing to `{}` (truncated)".format(args.filepath))

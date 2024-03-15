@@ -21,6 +21,8 @@
       <element>++plone++castle/less/logged-in.less</element>
     </value>
   </records>
+
+
   <records prefix="plone.resources/plone"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/plone.js</value>
@@ -29,6 +31,8 @@
         <element>++plone++castle/less/public.less</element>
       </value>
   </records>
+
+
   <records prefix="plone.bundles/plone"
             interface='Products.CMFPlone.interfaces.IBundleRegistry'>
     <value key="merge_with">default</value>
@@ -38,11 +42,13 @@
     <value key="enabled">True</value>
     <value key="jscompilation">++plone++castle/plone-compiled.min.js</value>
     <value key="csscompilation">++plone++castle/plone-compiled.css</value>
-    <value key="last_compilation">2021-12-01 00:00:00</value>
+    <value key="last_compilation">2024-01-31 00:00:00</value>
     <value key="stub_js_modules">
       <element>jquery</element>
     </value>
   </records>
+
+
   <records prefix="plone.bundles/plone-logged-in"
            interface='Products.CMFPlone.interfaces.IBundleRegistry'>
     <value key="merge_with">logged-in</value>
@@ -53,7 +59,7 @@
     <value key="expression">python: member is not None</value>
     <value key="jscompilation">++plone++castle/plone-logged-in-compiled.min.js</value>
     <value key="csscompilation">++plone++castle/plone-logged-in-compiled.css</value>
-    <value key="last_compilation">2021-12-01 00:00:00</value>
+    <value key="last_compilation">2024-01-31 00:00:00</value>
     <value key="depends">mosaic</value>
     <value key="stub_js_modules">
       <element>backbone</element>

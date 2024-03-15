@@ -1,5 +1,5 @@
 <form action="${portal_url}/@@search">
   <label for="main-search" class="visually-hidden">Search</label>
   <input id="main-search" type="text" name="SearchableText" placeholder="Search..." />
-  <button class="secondary button" type="submit"><img src="++plone++castle/svg/icon-search.svg" alt="Submit Search"></button>
+  <button class="secondary button" type="submit"><img src="++plone++castle/svg/toolbar/search.svg" alt="Submit Search"></button>
 </form>

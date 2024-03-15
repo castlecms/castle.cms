@@ -10947,14 +10947,14 @@ define('castle-url/components/content-browser',[
       var showToolTip = !isDisabled && [ '«', '<', '>', '»', '...' ].includes( buttonText );
       return D.li(
         Object.assign(
-          {key: `page-${ buttonText }-${ targetPageNumber }`},
+          {key: 'page-' + buttonText  + '-' + targetPageNumber },
           showToolTip ? {title: targetPageNumber} : {},
-          className ? { className } : {}
+          className ? { className: className } : {}
         ),
         D.a(
           Object.assign(
             {href: '#'},
-            isDisabled ? {} : {onClick}
+            isDisabled ? {} : {onClick: onClick}
           ),
           buttonText
         )
@@ -10975,7 +10975,7 @@ define('castle-url/components/content-browser',[
       var pageNumbers = that.getPageNumbers(currentPageNumber, totalPageCount);
       var getPagingButton = that.getPagingButton.bind(
         that,
-        {currentPageNumber, totalPageCount}
+        {currentPageNumber: currentPageNumber, totalPageCount: totalPageCount}
       )
       return D.div(
         { className: 'pagination-centered'},
@@ -23022,7 +23022,8 @@ define('castle-url/components/upload',[
         that.renderFileList()
       ]
       var tabs = [
-        this.props.parent.renderTabItem('upload')
+        this.props.parent.renderTabItem('upload'),
+        this.props.parent.renderTabItem('templates')
       ]
       if (!that.state.update) {
         children.splice(1, 0, that.renderUploadLocation());
@@ -23767,21 +23768,58 @@ define('castle-url/components/add-content-modal',[
 
     renderSelectionContent: function(){
       var that = this;
-      var constrain = '';
-      if(this.props.canConstrainTypes){
-        constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
-        ]);
-      }
-      return D.div({ className: 'wrapper'}, [
-        D.ul({ className: 'select-type'}, this.props.templates.map(function(type){
-          return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
-          );
-        })),
-        constrain
-      ]);
+      const constrainAllowedTypesButton = this.props.canConstrainTypes ?
+        D.div(
+          { className: 'castle-constrain-types' },
+          [ D.a(
+            {
+              href: this.props.constrainUrl,
+              className: 'plone-btn plone-btn-default '
+            },
+            'Constrain allowed types'
+          ) ]
+        ) :
+        '';
+      return D.div(
+        { className: 'wrapper'},
+        [
+          D.ul(
+            { className: 'select-type'},
+            this.props.templates.map(
+              function(type){
+                const liProps = { className: 'contenttype-' + type.safeId + '-container'}
+                if(type.isAllowed){
+                  return D.li(
+                    { className: 'contenttype-' + type.safeId + '-container' },
+                    D.a(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        onClick: that.contentTypeClicked.bind( that, type )
+                      },
+                      type.title
+                    )
+                  );
+                } else {
+                  return D.li(
+                    {
+                      className: 'contenttype-' + type.safeId + '-container',
+                      style: { cursor: 'not-allowed' },
+                    },
+                    D.div(
+                      {
+                        className: 'contenttype-' + type.formattedPortalType,
+                        style: { cursor: 'not-allowed', color: '#ddd' },
+                      },
+                      type.title
+                    )
+                  );
+                }
+              }
+            )
+          ),
+          constrainAllowedTypesButton
+        ]
+      );
     },
 
     renderTemplateContent: function(){
@@ -89805,7 +89843,7 @@ define('castle-url/patterns/mapselect',[
     if(!lat || !lng){
       return 'No point selected';
     }
-    return address + '(' + lat.toFixed(6) + ',' + lng.toFixed(6) + ')';
+    return address + '(' + parseFloat( lat ).toFixed( 6 ) + ',' + parseFloat( lng ).toFixed( 6 ) + ')';
   };
 
   var MapSearchComponent = R.createClass({
@@ -92525,16 +92563,16 @@ define('castle-url/patterns/structure//js/views/selectionbutton',[
 
 define('text!castle-url/patterns/structure/templates/paging.xml',[],function () { return '  <ul class="pagination pagination-sm pagination-centered">\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverfirst">\n        &laquo;\n      </a>\n    </li>\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverprevious">\n        &lt;\n      </a>\n    </li>\n    <% _.each(pages, function(p){ %>\n    <li class="<% if (currentPage == p) { %>active<% } %>">\n      <a href="#" class="page"><%- p %></a>\n    </li>\n    <% }); %>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="servernext">\n        &gt;\n      </a>\n    </li>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="serverlast">\n        &raquo;\n      </a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled"><a href="#"><%- _t("Show:") %></a></li>\n    <li class="serverhowmany serverhowmany15 <% if(perPage == 15){ %>disabled<% } %>">\n      <a href="#" class="">15</a>\n    </li>\n    <li class="serverhowmany serverhowmany30 <% if(perPage == 30){ %>disabled<% } %>">\n      <a href="#" class="">30</a>\n    </li>\n    <li class="serverhowmany serverhowmany50 <% if(perPage == 50){ %>disabled<% } %>">\n      <a href="#" class="">50</a>\n    </li>\n    <li class="serverhowmany serverhowmany100000 <% if(perPage == 100000){ %>disabled<% } %>">\n      <a href="#" class="">All</a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled">\n      <a href="#">\n        <%- _t("Page:") %> <span class="current"><%- currentPage %></span>\n        <%- _t("of") %>\n        <span class="total"><%- totalPages %></span>\n              <%- _t("shown") %>\n      </a>\n    </li>\n  </ul>\n';});
 
-define('castle-url/patterns/structure//js/views/paging',[
+define( 'castle-url/patterns/structure//js/views/paging',[
   'jquery',
   'underscore',
   'backbone',
   'text!castle-url/patterns/structure/templates/paging.xml',
   'translate'
-], function($, _, Backbone, PagingTemplate, _t) {
+], function ( $, _, Backbone, PagingTemplate, _t ) {
   'use strict';
 
-  var PagingView = Backbone.View.extend({
+  var PagingView = Backbone.View.extend( {
     events: {
       'click a.servernext': 'nextResultPage',
       'click a.serverprevious': 'previousResultPage',
@@ -92546,108 +92584,127 @@ define('castle-url/patterns/structure//js/views/paging',[
     },
 
     tagName: 'aside',
-    template: _.template(PagingTemplate),
+    template: _.template( PagingTemplate ),
     maxPages: 7,
     MAX_BATCH_SIZE: '100000',
-    totalPagesExists: function(){
-      return !!totalPages && totalPages === parseInt(totalPages, 10);
-    },
-    currentPageExists: function(){
-      return !!currentPage && currentPage === parseInt(currentPage, 10);
-    },
-    pagesExist: function(){
-      return this.currentPageExists() && this.totalPagesExists();
-    },
-    initialize: function(options) {
+    initialize: function ( options ) {
       this.options = options;
       this.app = this.options.app;
       this.collection = this.app.collection;
-      this.collection.on('reset', this.render, this);
-      this.collection.on('sync', this.render, this);
+      this.collection.on( 'reset', this.render, this );
+      this.collection.on( 'sync', this.render, this );
 
-      this.$el.appendTo('#pagination');
+      this.$el.appendTo( '#pagination' );
     },
 
-    render: function() {
+    render: function () {
       var data = this.collection.info();
-      data.pages = this.getPages(data);
-      var html = this.template($.extend({
+      data.pages = this.getPages( data );
+      var html = this.template( $.extend( {
         _t: _t
-      }, data));
-      this.$el.html(html);
+      }, data ) );
+      this.$el.html( html );
       return this;
     },
 
-    getPages: function(data) {
+    getPages: function ( data ) {
       var totalPages = data.totalPages;
-      if (!totalPages) {
+      if ( !totalPages ) {
         return [];
       }
       var currentPage = data.currentPage;
       var left = 1;
       var right = totalPages;
-      if (totalPages > this.maxPages) {
-        left = Math.max(1, Math.floor(currentPage - (this.maxPages / 2)));
-        right = Math.min(left + this.maxPages, totalPages);
-        if ((right - left) < this.maxPages) {
-          left = left - Math.floor(this.maxPages / 2);
+      if ( totalPages > this.maxPages ) {
+        left = Math.max( 1, Math.floor( currentPage - ( this.maxPages / 2 ) ) );
+        right = Math.min( left + this.maxPages, totalPages );
+        if ( ( right - left ) < this.maxPages ) {
+          left = left - Math.floor( this.maxPages / 2 );
         }
       }
       var pages = [];
-      for (var i = left; i <= right; i = i + 1) {
-        pages.push(i);
+      for ( var i = left; i <= right; i = i + 1 ) {
+        pages.push( i );
       }
 
       /* add before and after */
-      if (pages[0] > 1) {
-        if (pages[0] > 2) {
-          pages = ['...'].concat(pages);
+      if ( pages[ 0 ] > 1 ) {
+        if ( pages[ 0 ] > 2 ) {
+          pages = [ '...' ].concat( pages );
         }
-        pages = [1].concat(pages);
+        pages = [ 1 ].concat( pages );
       }
-      if (pages[pages.length - 1] < (totalPages - 1)) {
-        if (pages[pages.length - 2] < totalPages - 2) {
-          pages.push('...');
+      if ( pages[ pages.length - 1 ] < ( totalPages - 1 ) ) {
+        if ( pages[ pages.length - 2 ] < totalPages - 2 ) {
+          pages.push( '...' );
         }
-        pages.push(totalPages);
+        pages.push( totalPages );
       }
       return pages;
     },
-    nextResultPage: function(e) {
+    nextResultPage: function ( e ) {
       e.preventDefault();
-      if (this.pagesExist() && currentPage >= totalPages) {
-        return;
+      const nextPage = this.collection.information.next;
+      const totalPages = this.collection.information.totalPages;
+      const currentPage = this.collection.information.currentPage;
+      if (
+        nextPage &&
+        currentPage &&
+        totalPages &&
+        nextPage > currentPage &&
+        nextPage <= totalPages
+      ) {
+        this.collection.requestNextPage();
       }
-      this.collection.requestNextPage();
     },
-    previousResultPage: function(e) {
+    previousResultPage: function ( e ) {
       e.preventDefault();
-      this.collection.requestPreviousPage();
+      const previousPage = this.collection.information.previous;
+      const currentPage = this.collection.information.currentPage;
+      if (
+        previousPage &&
+        currentPage &&
+        currentPage > previousPage &&
+        previousPage >= 1
+      ) {
+        this.collection.requestPreviousPage();
+      }
     },
-    gotoFirst: function(e) {
+    gotoFirst: function ( e ) {
       e.preventDefault();
-      this.collection.goTo(this.collection.information.firstPage);
+      const currentPage = this.collection.information.currentPage;
+      if ( currentPage && currentPage > 1 ) {
+        this.collection.goTo( 1 );
+      }
     },
-    gotoLast: function(e) {
+    gotoLast: function ( e ) {
       e.preventDefault();
-      this.collection.goTo(this.collection.information.totalPages);
+      const currentPage = this.collection.information.currentPage;
+      const totalPages = this.collection.information.totalPages;
+      if (
+        currentPage &&
+        totalPages &&
+        currentPage < totalPages
+      ) {
+        this.collection.goTo( totalPages );
+      }
     },
-    gotoPage: function(e) {
+    gotoPage: function ( e ) {
       e.preventDefault();
-      var page = $(e.target).text();
-      this.collection.goTo(page);
+      var page = $( e.target ).text();
+      this.collection.goTo( page );
     },
-    changeCount: function(e){
+    changeCount: function ( e ) {
       e.preventDefault();
-      var text = $(e.target).text();
+      var text = $( e.target ).text();
       var per = text === 'All' ? this.MAX_BATCH_SIZE : text;
-      this.collection.howManyPer(per);
-      this.app.setCookieSetting('perPage', per);
+      this.collection.howManyPer( per );
+      this.app.setCookieSetting( 'perPage', per );
     },
-  });
+  } );
 
   return PagingView;
-});
+} );
 
 define('castle-url/patterns/structure//js/views/columns',[
   'jquery',
@@ -97559,7 +97616,7 @@ define('castle-quality-check',[
     name: 'Template',
     warning: 'This object is a template and is unpublishable.',
     run: function(data, callback){
-      return callback(!data.template);
+      return callback(!data.isTemplate);
     }
   }];
 
@@ -97711,29 +97768,41 @@ define('castle-quality-check',[
           ]);
         }
       }
-      return D.div({ className: 'castle-quality'}, [D.ul({}, that.props.checks.map(function(check){
-        var className = '';
-        var label = check.name;
-        var labelExtra = '';
-        var value = that.state.checked[check.name];
-        if(value !== undefined){
-          if(value){
-            className = 'glyphicon glyphicon-ok';
-          }else{
-            className = 'glyphicon glyphicon-remove';
-            if(typeof(check.warning) != 'function'){
-              label += ': ' + check.warning;
-            }else{
-              labelExtra = check.warning(that);
-            }
-          }
-        }
-        return D.li({}, [
-          D.span({ className: className}),
-          label,
-          labelExtra
-        ]);
-      })),
+      return D.div({ className: 'castle-quality'}, [
+        D.ul(
+          {},
+          that.props.checks
+            .filter(function(check){
+              const isTemplate = (
+                check.name === 'Template' &&
+                that.state.checked[ 'Template' ] === true
+              );
+              return !isTemplate;
+            })
+            .map(function(check){
+              var className = '';
+              var label = check.name;
+              var labelExtra = '';
+              var value = that.state.checked[check.name];
+              if(value !== undefined){
+                if(value){
+                  className = 'glyphicon glyphicon-ok';
+                }else{
+                  className = 'glyphicon glyphicon-remove';
+                  if(typeof(check.warning) != 'function'){
+                    label += ': ' + check.warning;
+                  }else{
+                    labelExtra = check.warning(that);
+                  }
+                }
+              }
+              return D.li({}, [
+                D.span({ className: className}),
+                label,
+                labelExtra
+              ]);
+            })
+        ),
         info
       ]);
     },
@@ -100847,5 +100916,5 @@ require([
   }
 });
 
-define("/Users/joel/src/github.com/castlecms/castle.cms/castle/cms/static/plone-logged-in.js", function(){});
+define("/Users/brian.duncan/castle-instances/pages-to-folders/castle/cms/static/plone-logged-in.js", function(){});
 

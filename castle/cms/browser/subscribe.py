@@ -36,7 +36,7 @@ import string
 def check_phone_number(val):
     if not val:
         return
-    number = ''.join([l for l in val if l in string.digits])
+    number = ''.join([l for l in val if l in string.digits])  # noqa: E741
 
     if len(number) == 10:
         number = '1' + number
@@ -188,8 +188,8 @@ If that does not work, copy and paste this url into your web browser: %s
                     urlencode({
                         'form.widgets.email': item['email'],
                         'form.widgets.phone_number': item.get('phone_number', '')
-                        })
-                    ))
+                    })
+                ))
 
     def __call__(self):
         registry = queryUtility(IRegistry)

@@ -247,7 +247,7 @@ class TrashAction(delete.DeleteAction):
         return {
             'title': 'Recycle bin',
             'id': 'recycle',
-            'icon': 'trash',
+            'icon': 'recycle',
             'context': 'default',
             'url': self.context.absolute_url() + '/@@fc-trash',
             'form': {
