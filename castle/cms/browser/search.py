@@ -172,6 +172,8 @@ class SearchAjax(BrowserView):
             query['has_private_parents'] = False
         query['exclude_from_search'] = False
 
+        print('=== searchajax ===')
+        print(self)
         allowed_types = self.get_allowed_types()
         query['portal_type'] = allowed_types
 
@@ -189,6 +191,20 @@ class SearchAjax(BrowserView):
             return self.get_hps_results(page, page_size, query)
         else:
             return self.get_results(page, page_size, query)
+        
+    def get_allowed_types(self):
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISearchExclusionSettings)
+        exclude_types_from_search = settings.exclude_from_searches
+        excluded_content = []
+
+        if exclude_types_from_search:
+            excluded_content = settings.items_to_exclude or []
+
+        ptypes = api.portal.get_tool('portal_types')
+        allowed_types = [type for type in ptypes.objectIds() if type not in excluded_content]
+
+        return tuple(allowed_types)
 
     def get_results(self, page, page_size, query):
         # regular plone search

@@ -49,7 +49,6 @@ def profileless_upgrade_factory():
 
 upgrade_3000 = default_upgrade_factory('3000')
 upgrade_3001 = default_upgrade_factory('3001')
-upgrade_3002 = default_upgrade_factory('3002')
 upgrade_3003 = default_upgrade_factory('3003')
 upgrade_3004 = default_upgrade_factory('3004')
 
@@ -138,3 +137,5 @@ def upgrade_3011(site, logger=CASTLE_LOGGER):
 
 
 upgrade_3012 = default_upgrade_factory('3012')
+
+upgrade_3014 = default_upgrade_factory('3014')
