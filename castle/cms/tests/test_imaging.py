@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from castle.cms import indexers
+from castle.cms.indexing import indexers
 from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
 from castle.cms.widgets import LeadImageFocalNamedImageFieldWidget

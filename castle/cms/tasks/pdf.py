@@ -15,9 +15,9 @@ logger = logging.getLogger('castle.cms')
 
 
 @retriable()
-def _create_pdf(obj, html, css):
+def _create_pdf(obj, html, css, additional_args={}):
     try:
-        blob = create(html, css)
+        blob = create(html, css, additional_args)
     except PDFGenerationError:
         logger.error('princexml error converting pdf', exc_info=True)
         return
@@ -30,21 +30,25 @@ def _create_pdf(obj, html, css):
 
 
 @task.as_admin()
-def create_pdf(obj, html, css):
+def create_pdf(obj, html, css, additional_args={}):
     # this completes so fast we get conflict errors on save sometimes.
     # just cool it a bit
     time.sleep(2)
     if not getCelery().conf.task_always_eager:
         obj._p_jar.sync()
-    return _create_pdf(obj, html, css)
+    return _create_pdf(obj, html, css, additional_args)
 
 
 @task.as_admin()
-def create_pdf_from_view(obj, css_files=[]):
+def create_pdf_from_view(obj, css_files=[], unrestricted_traverse=False, additional_args={}):
     # this completes so fast we get conflict errors on save sometimes.
     # just cool it a bit
     time.sleep(2)
     if not getCelery().conf.task_always_eager:
         obj._p_jar.sync()
-    html, css = create_raw_from_view(obj, css_files=css_files)
-    return _create_pdf(obj, html, css)
+    html, css = create_raw_from_view(
+        obj,
+        css_files=css_files,
+        unrestricted_traverse=unrestricted_traverse,
+    )
+    return _create_pdf(obj, html, css, additional_args)

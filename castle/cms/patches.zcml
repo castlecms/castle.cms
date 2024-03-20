@@ -60,13 +60,6 @@
     replacement=".patches.SessionPlugin_validateTicket"
     />
   <monkey:patch
-    description="change the index for elastic search"
-    class="collective.elasticsearch.es.ElasticSearchCatalog"
-    original="__init__"
-    replacement=".patches.es_custom_index"
-    preserveOriginal="True"
-    />
-  <monkey:patch
     description="include castle version in Version Overview"
     class="Products.CMFPlone.controlpanel.browser.overview.OverviewControlPanel"
     original="version_overview"
@@ -79,6 +72,14 @@
     class="plone.app.z3cform.widget.RichTextWidget"
     original="_base_args"
     replacement=".patches.rich_text_args"
+    preserveOriginal="False"
+    />
+
+  <monkey:patch
+    description="make rich text field tinymce for frontend view"
+    class="plone.app.versioningbehavior.modifiers.CloneNamedFileBlobs"
+    original="reattachReferencedAttributes"
+    replacement=".patches.reattachReferencedAttributes"
     preserveOriginal="False"
     />
 

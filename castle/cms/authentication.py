@@ -90,6 +90,19 @@ class Authenticator(object):
         return enabled
 
     @property
+    def request_access(self):
+        if not self.is_zope_root and self.registry:
+            return self.registry.get('plone.request_access_enabled', False)
+        return False
+
+    @property
+    def request_form_url(self):
+        url = '/@@request-form'
+        if not self.is_zope_root and self.registry:
+            url = self.registry.get('plone.request_access_form_path', '/@@request-form')
+        return url
+
+    @property
     def expire(self):
         expire = 120
         if not self.is_zope_root and self.registry:
@@ -217,12 +230,16 @@ class Authenticator(object):
             raise AuthenticationUserDisabled()
 
         if self.registry:
-            allowed_countries = self.registry.get(
-                'plone.restrict_logins_to_countries')
-            if allowed_countries and country:
-                if country not in allowed_countries:
-                    if not self.country_exception_granted(user.getId()):
-                        raise AuthenticationCountryBlocked()
+            disable_country_restriction = self.registry.get(
+                'plone.disable_country_restriction'
+            )
+            if not disable_country_restriction:
+                allowed_countries = self.registry.get(
+                    'plone.restrict_logins_to_countries')
+                if allowed_countries and country:
+                    if country not in allowed_countries:
+                        if not self.country_exception_granted(user.getId()):
+                            raise AuthenticationCountryBlocked()
 
         if not self.is_zope_root:
             member = api.user.get(user.getId())

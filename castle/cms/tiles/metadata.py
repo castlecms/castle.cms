@@ -52,7 +52,7 @@ class MetaDataTile(Tile):
 <link rel="apple-touch-icon" sizes="180x180" href="{url}/site-icon.png">
 <link rel="icon" type="image/png" href="{url}/site-icon.png?scale=32" sizes="32x32">
 <link rel="icon" type="image/png" href="{url}/site-icon.png?scale=16" sizes="16x16">
-<link rel="manifest" href="{url}/manifest.json">
+<link rel="manifest" href="{url}/manifest.json" crossorigin="use-credentials">
 <meta name="theme-color" content="#ffffff">'''.format(url=self.root_url)
 
     def _wrap_ld(self, data):
@@ -121,9 +121,7 @@ class MetaDataTile(Tile):
         return '''
 <link rel="search"
       title="Search this site"
-      href="{url}/@@search" />'''.format(
-            url=self.root_url
-          )
+      href="{url}/@@search" />'''.format(url=self.root_url)
 
     def get_printcss_link(self):
         template = ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''  # noqa:E501

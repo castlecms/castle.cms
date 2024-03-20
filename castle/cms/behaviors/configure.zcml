@@ -66,7 +66,6 @@
     title="Adjustable Font Size For Query Listing Tile"
     description="allow user to customize font size for Query Listing tiles on a per object basis"
     provides=".adjustablefont.IAdjustableFontSizeQueryListing"
-    for="plone.dexterity.interfaces.IDexterityContent"
     />
   <plone:behavior
     name="castle.versioning"
@@ -77,5 +76,15 @@
     marker=".versionable.IVersioningSupport"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
+  <plone:behavior
+    name="castle.contentredirectable"
+    title="Content Redirectable"
+    description="Gives the ability to keep a content item in place, but have it act as a redirect to an internal or external url"
+    provides=".contentredirectable.IContentRedirectable"
+    factory=".contentredirectable.ContentRedirectable"
+    marker=".contentredirectable.IContentRedirectableMarker"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+
 
 </configure>

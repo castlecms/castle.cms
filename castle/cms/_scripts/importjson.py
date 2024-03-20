@@ -4,7 +4,7 @@ from castle.cms._scripts.importtypes import get_import_type
 from lxml.html import fromstring
 from lxml.html import tostring
 from OFS.interfaces import IFolder
-from plone import api
+import plone.api as api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.textfield.value import RichTextValue
@@ -16,7 +16,6 @@ import argparse
 import logging
 import os
 import transaction
-import pdb
 
 logger = logging.getLogger('castle.cms')
 
@@ -47,6 +46,9 @@ parser.add_argument(
     '--stop-if-exception', dest='stop_if_exception', default=False)
 parser.add_argument(
     '--pdb-if-exception', dest='pdb_if_exception', default=False)
+parser.add_argument('--resumable', dest='resumable', default=False, action='store_true')
+parser.add_argument(
+    '--delete-resumable-file', dest='delete_resumable_file', default=False, action='store_true')
 parser.add_argument('--skip-existing', dest='skip_existing', default=True)
 parser.add_argument(
     '--skip-transitioning', dest='skip_transitioning', default=False)
@@ -74,6 +76,10 @@ ignore_uuids = args.ignore_uuids
 stop_if_exception = args.stop_if_exception
 pdb_if_exception = args.pdb_if_exception
 retain_paths = args.retain_paths
+resumable = args.resumable
+delete_resumable_file = args.delete_resumable_file
+successfully_imported_paths = []
+imported_but_not_committed = []
 
 if args.import_paths:
     import_paths = args.import_paths.split(',')
@@ -169,16 +175,29 @@ def fix_html_images(obj):
 
 class CastleImporter(object):
     imported_count = 0
+    date_functions = [
+        ('modification_date', 'setModificationDate'),
+        ('effective_date', 'setEffectiveDate'),
+        ('expiration_date', 'setExpirationDate'),
+    ]
+
+    @property
+    def successfully_imported_paths(self):
+        return [
+            args.export_directory + successfully_imported_path
+            for successfully_imported_path in successfully_imported_paths
+        ]
 
     def do_import(self):
         self.import_folder(args.export_directory, container=site)
 
     def import_object(self, filepath, container=None):
-        fi = open(filepath)
-        file_read = fi.read()
-        fi.close()
+        if resumable and filepath in self.successfully_imported_paths:
+            print("Skipping {}; Already successfully imported and resuming is enabled".format(filepath))
+            return
         try:
-            data = mjson.loads(file_read)
+            with open(filepath, 'r') as import_file:
+                data = mjson.loads(import_file.read())
         except Exception:
             print("Skipping {}; Unable to read JSON data".format(filepath))
             return
@@ -187,12 +206,15 @@ class CastleImporter(object):
 
         skipped = False
         if data['portal_type'] in skip_types:
-            print('Skipping omitted type {type}'
-                                            .format(type=data['portal_type']))
+            print('Skipping omitted type {type}'.format(
+                type=data['portal_type']
+            ))
             skipped = True
         if only_types and data['portal_type'] not in only_types:
-            print("Skipping {type} at {path}, not in only_types."
-                                .format(type=data['portal_type'], path=filepath))
+            print("Skipping {type} at {path}, not in only_types.".format(
+                type=data['portal_type'],
+                path=filepath,
+            ))
             skipped = True
         if import_paths:
             do_import = False
@@ -203,19 +225,18 @@ class CastleImporter(object):
                     # Don't skip folders on the way to import_paths
                     do_import = True
             if not do_import:
-                print("Skipping {path}, not in import_paths"
-                                    .format(path=filepath))
+                print("Skipping {path}, not in import_paths".format(path=filepath))
                 skipped = True
         if skip_paths:
             for skip_path in skip_paths:
                 if filepath.lower().startswith('{}/{}'.format(args.export_directory, skip_path)):
-                    print("Skipping {path}, in skip_paths"
-                                    .format(path=filepath))
+                    print("Skipping {path}, in skip_paths".format(path=filepath))
                     skipped = True
         if skipped:
             if os.path.isdir(filepath) and len(os.listdir(filepath)):
-                logger.warn('{path} contains additional content that will be '
-                            'skipped.'.format(path=filepath))
+                logger.warn(
+                    '{path} contains additional content that will be skipped.'.format(path=filepath)
+                )
             return
 
         original_path = filepath[len(args.export_directory):]
@@ -259,30 +280,38 @@ class CastleImporter(object):
 
             obj = None
             if not args.overwrite and (_id in container.objectIds()):
-                print('Skipping {path}, already exists. Use --overwrite to'
-                                            ' create anyway.'.format(path=path))
+                print(
+                    'Skipping {path}, already exists. Use --overwrite to create anyway.'.format(path=path)
+                )
                 return
             elif (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None):
-                logger.warn('Skipping {path}, content with its UUID already exists.'
-                                            'Use --ignore-uuids to create anyway.'
-                                                                .format(path=path))
+                logger.warn(
+                    'Skipping {path}, content with its UUID already exists.'
+                    'Use --ignore-uuids to create anyway.'.format(path=path)
+                )
                 return
             else:
                 try:
                     obj = api.content.create(safe_id=True, **creation_data)
                     print('Created {path}'.format(path=path))
+                    imported_but_not_committed.append(path)
                     self.imported_count += 1
                     if self.imported_count % 50 == 0:
                         print('%i processed, committing' % self.imported_count)
                         transaction.commit()
+                        successfully_imported_paths.extend(imported_but_not_committed)
+                        with open('./.successfullyimportedpaths', 'a') as fout:
+                            fout.writelines('\n'.join(imported_but_not_committed) + '\n')
+                            fout.flush()
+                        del imported_but_not_committed[0:]
                 except api.exc.InvalidParameterError:
                     if stop_if_exception:
                         logger.error('Error creating content {}'.format(filepath), exc_info=True)
                         if pdb_if_exception:
+                            import pdb
                             pdb.set_trace()
                         raise
-                    logger.error('Error creating content {}'
-                                                .format(filepath), exc_info=True)
+                    logger.error('Error creating content {}'.format(filepath), exc_info=True)
                     return
     # TODO check default folder pages came over as folder with rich text tile
     # TODO any folder pages without default page should have content listing tile
@@ -314,6 +343,7 @@ class CastleImporter(object):
                         # pass
                         if stop_if_exception:
                             if pdb_if_exception:
+                                import pdb
                                 pdb.set_trace()
                             raise
 
@@ -329,15 +359,29 @@ class CastleImporter(object):
 
             fix_html_images(obj)
             obj.reindexObject()
-            try:
-                modification_date = data['data']['modification_date']
-                obj.setModificationDate(modification_date)
-                obj.reindexObject(idxs=['modified'])
-                logger.info('    set modification date to %s' % modification_date)
-            except Exception:
-                logger.info('Could not set modification date on {obj}'
-                                                                .format(obj=obj))
+            self.fix_dates(obj, data)
             return obj
+
+    def fix_dates(self, obj, data):
+        for key, index_function_name in self.date_functions:
+            indexed_date = data['data'].get(key, None)
+            indexer = getattr(obj, index_function_name, None)
+            if indexed_date and indexer:
+                formatted_attribute = key.replace('_', ' ')
+                try:
+                    indexer(indexed_date)
+                    obj.reindexObject([key])
+                    info_message = '    set {attribute} to {date}'.format(
+                        attribute=formatted_attribute,
+                        date=indexed_date,
+                    )
+                    logger.info(info_message)
+                except Exception:
+                    warn_message = 'Could not set {attribute} on {obj}'.format(
+                        attribute=formatted_attribute,
+                        obj=obj,
+                    )
+                    logger.warn(warn_message)
 
     def import_folder(self, path, container):
         this_folder = os.path.join(path, '__folder__')
@@ -371,10 +415,13 @@ class CastleImporter(object):
             try:
                 self.import_object(path, container)
             except Exception:
-                logger.error('Error importing {path}'.format(path=filepath),
-                                                                exc_info=True)
+                logger.error(
+                    'Error importing {path}'.format(path=filepath),
+                    exc_info=True,
+                )
                 if stop_if_exception:
                     if pdb_if_exception:
+                        import pdb
                         pdb.set_trace()
                     raise
 
@@ -396,10 +443,20 @@ class CastleImporter(object):
 
 
 if __name__ == '__main__':
-
     print('------------------------------')
     print('Start importing')
     print('------------------------------')
+    if resumable:
+        print('------------------------------')
+        print('Resuming enabled, checking for ./.successfullyimportedpaths and loading')
+        # create if it doesn't exist:
+        with open('.successfullyimportedpaths', 'a+'):
+            pass
+        with open('.successfullyimportedpaths', 'r') as fin:
+            for line in fin.readlines():
+                successfully_imported_paths.append(line.replace('\n', ''))
+        print('{} paths loaded'.format(len(successfully_imported_paths)))
+        print('------------------------------')
     if args.overwrite:
         print('------------------------------')
         print('Importing with overwrite enabled')
@@ -408,3 +465,7 @@ if __name__ == '__main__':
     importer.do_import()
     print('Created {count} Content Items'.format(count=importer.imported_count))
     transaction.commit()
+    print('Import completed')
+    if delete_resumable_file:
+        print('Deleting .successfullyimportedpaths')
+        os.remove('.successfullyimportedpaths')

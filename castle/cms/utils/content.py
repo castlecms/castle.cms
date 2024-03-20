@@ -14,13 +14,14 @@ from castle.cms.interfaces import IReferenceNamedImage
 from OFS.CopySupport import CopyError
 from OFS.CopySupport import _cb_decode
 from OFS.CopySupport import eInvalid
-from plone import api
+import plone.api as api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.contentlisting.interfaces import IContentListingObject
 from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityEditForm
 from plone.subrequest import subrequest
+from re import match as re_match
 from ZODB.POSException import POSKeyError
 
 
@@ -87,28 +88,37 @@ def clear_object_cache(ob):
     ob._p_jar.sync()
 
 
-def inline_images_in_dom(dom, portal=None, site_url=None):
+def inline_images_in_dom(dom, portal=None, site_url=None, unrestricted_traverse=False):
     if portal is None:
         portal = api.portal.get()
     if site_url is None:
         site_url = portal.absolute_url()
     for img in dom.cssselect('img'):
         src = img.attrib.get('src', '')
-        if src.startswith(site_url):
-            ctype, data = get_data_from_url(src, portal, site_url)
-            if not ctype or not data or 'image' not in ctype:
+        is_resource_url = re_match(r'^/?\+\+resource\+\+', src) is not None
+        if src.startswith(site_url) or is_resource_url:
+            content_type, data = get_data_from_url(
+                url=src,
+                portal=portal,
+                site_url=site_url,
+                unrestricted_traverse=unrestricted_traverse,
+            )
+            if not content_type or not data or 'image' not in content_type:
                 img.attrib['src'] = ''
                 continue
             data = data.encode("base64").replace("\n", "")
-            data_uri = 'data:{0};base64,{1}'.format(ctype, data)
+            data_uri = 'data:{0};base64,{1}'.format(content_type, data)
             img.attrib['src'] = data_uri
 
 
-def get_data_from_url(url, portal=None, site_url=None):
+def get_data_from_url(url, portal=None, site_url=None, unrestricted_traverse=False):
     if portal is None:
         portal = api.portal.get()
     if site_url is None:
         site_url = portal.absolute_url()
+    traverse_function = portal.restrictedTraverse
+    if unrestricted_traverse:
+        traverse_function = portal.unrestrictedTraverse
     data = None
     path = url.replace(site_url, '').strip('/')
     ct = ''
@@ -119,7 +129,7 @@ def get_data_from_url(url, portal=None, site_url=None):
             if len(parts) == 2:
                 fieldname = parts[0]
                 size = parts[1]
-                images = portal.restrictedTraverse(
+                images = traverse_function(
                     str(path + '/@@images'), None)
                 if images is not None:
                     im = images.traverse(fieldname, [size])
@@ -130,14 +140,14 @@ def get_data_from_url(url, portal=None, site_url=None):
                         pass
             else:
                 # grab full size
-                ob = portal.restrictedTraverse(str(path), None)
+                ob = traverse_function(str(path), None)
                 data = ob.image.data
                 ct = ob.image.contentType
         except Exception:
             logger.error('Could not traverse image ' + url, exc_info=True)
 
     if data is None:
-        ob = portal.restrictedTraverse(str(path), None)
+        ob = traverse_function(str(path), None)
         file_path = getattr(ob, 'path', None)
         if file_path is None:
             try:
@@ -162,6 +172,9 @@ def get_data_from_url(url, portal=None, site_url=None):
             except ValueError:
                 ct = resp.getHeader('content-type').split(';')[0]
                 data = resp.getBody()
+
+    if ct == 'image/svg':
+        ct = 'image/svg+xml'
 
     return ct, data
 
@@ -276,3 +289,16 @@ def has_image(obj):
             return getattr(aq_base(obj), 'image', None) is not None
         except POSKeyError:
             return False
+
+
+def get_template_repository_info():
+    portal = api.portal.get()
+    folder = portal.get('template-repository', None)
+    folder_url = None if folder is None else folder.absolute_url()
+    templates = [] if folder is None else folder.listFolderContents()
+
+    return {
+        'folder': folder,
+        'folder_url': folder_url,
+        'templates': templates,
+    }

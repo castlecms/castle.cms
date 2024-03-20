@@ -1,11 +1,11 @@
-from castle.cms.constants import CRAWLED_DATA_KEY
-from castle.cms.interfaces import ICrawlerConfiguration
-from collective.elasticsearch.es import ElasticSearchCatalog
-from elasticsearch import TransportError
-from plone import api
 from plone.app.registry.browser import controlpanel
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.annotation.interfaces import IAnnotations
+
+from castle.cms import cache
+from castle.cms.constants import CRAWLED_DATA_KEY
+from castle.cms.indexing import hps
+from castle.cms.indexing import crawler
+from castle.cms.interfaces import ICrawlerConfiguration
 
 
 class CrawlerControlPanelForm(controlpanel.RegistryEditForm):
@@ -13,7 +13,9 @@ class CrawlerControlPanelForm(controlpanel.RegistryEditForm):
     schema = ICrawlerConfiguration
     id = "CrawlerControlPanel"
     label = u"Site Crawler Configuration"
-    description = "Configure Elastic search to crawl other sites and include those results in your site search. Elastic search must be enabled."  # noqa
+    description = "Configure CastleCMS to crawl other sites and include " \
+                  "those results in your site search. WildcardHPS must " \
+                  "be enabled."
 
 
 class CrawlerControlPanel(controlpanel.ControlPanelFormWrapper):
@@ -21,32 +23,15 @@ class CrawlerControlPanel(controlpanel.ControlPanelFormWrapper):
     index = ViewPageTemplateFile('templates/crawler.pt')
 
     def get_crawl_data(self):
-        annotations = IAnnotations(self.context)
-        if CRAWLED_DATA_KEY not in annotations:
-            return {
-                'tracking': {}
-            }
-        return annotations[CRAWLED_DATA_KEY]
+        try:
+            data = cache.get_client(CRAWLED_DATA_KEY)
+        except Exception:
+            return {}
+
+        return data
 
     def get_index_summary(self):
-        query = {
-            "size": 0,
-            "aggregations": {
-                "totals": {
-                    "terms": {
-                        "field": "domain"
-                    }
-                }
-            }
-        }
-        portal_catalog = api.portal.get_tool('portal_catalog')
-        try:
-            es = ElasticSearchCatalog(portal_catalog)
-            result = es.connection.search(
-                index='{index_name}_crawler'.format(index_name=es.index_name),
-                body=query)
-        except TransportError:
-            return []
-
-        data = result['aggregations']['totals']['buckets']
-        return data
+        idx = crawler.index_name(hps.get_index_name())
+        terms = dict(field="domain")
+        result = hps.get_index_summary(idx, terms)
+        return result
