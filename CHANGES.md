@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b133 (unreleased)
+3.0.0b133 (2024-03-21)
 ----------------------
 
 - castle crawler should generate an index alias and an index when it verifies they
