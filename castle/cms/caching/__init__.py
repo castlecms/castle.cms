@@ -248,12 +248,13 @@ class Purge(BrowserView):
             for i in range(1, number_of_pages + 1, 1):
                 pages.append(i)
 
+        prefix = '/' + self.context.virtual_url_path()
         for page in pages:
             path = '/@@castle.cms.querylisting-1?page=%s' % page
+            path = prefix + path
             paths.append(path)
 
         paths = list(set(paths))
-
 
         for path in paths:
             urls.extend(cf.getUrlsToPurge(path))
