@@ -31,4 +31,18 @@ require([
     });
   };
   bind();
+
+  var bindShowHide = function(){
+    $(csel + ' button.show-hide').off('click').on('click', function(e){
+      e.preventDefault();
+      var $btn = $(this);
+      var x = document.getElementById($btn.attr('data-name'));
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    });
+  };
+  bindShowHide();
 });

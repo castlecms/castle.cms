@@ -228,6 +228,14 @@
     template="templates/parallaxview.pt"
   />
 
+  <browser:page
+    for="*"
+    name="sharing"
+    class=".actions.SharingView"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+  />
+
   <adapter
     factory=".actions.default_template_title"
     name="default"

@@ -192,4 +192,21 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:registerProfile
+    name="3013"
+    title="CastleCMS upgrade to 3013 profile"
+    directory="profiles/3013"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.13"
+    description="3013 - Add new indexes to render additional items on dashboard"
+    source="*"
+    destination="3013"
+    handler=".upgrades.upgrade_3013"
+    profile="castle.cms:default"
+  />
+
+
 </configure>
