@@ -237,22 +237,10 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
-        pages = []
-        all_obj_count = len(context.contentItems())
-        if all_obj_count <= 40:
-            pages.append(1)
-        else:
-            number_of_pages = all_obj_count / 40
-            if all_obj_count % 40:
-                number_of_pages += 1
-            for i in range(1, number_of_pages + 1, 1):
-                pages.append(i)
-
         prefix = '/' + self.context.virtual_url_path()
-        for page in pages:
-            path = '/@@castle.cms.querylisting-1?page=%s' % page
-            path = prefix + path
-            paths.append(path)
+        path = '/@@castle.cms.querylisting/querylisting-1'
+        path = prefix + path
+        paths.append(path)
 
         paths = list(set(paths))
 
