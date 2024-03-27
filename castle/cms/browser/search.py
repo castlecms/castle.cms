@@ -1,4 +1,5 @@
 from castle.cms.interfaces import ICrawlerConfiguration
+from castle.cms.interfaces.controlpanel import ISearchExclusionSettings
 from castle.cms.utils import get_public_url
 from castle.cms.indexing import hps
 
@@ -51,10 +52,18 @@ class Search(BrowserView):
             }
         ]
 
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISearchExclusionSettings)
+        exclude_types_from_search = settings.exclude_from_searches
+        excluded_content = []
+
+        if exclude_types_from_search:
+            excluded_content = settings.items_to_exclude or []
+
         ptypes = api.portal.get_tool('portal_types')
         allow_anyway = ['Audio']
         for type_id in ptypes.objectIds():
-            if type_id in ('Link', 'Document', 'Folder'):
+            if type_id in excluded_content:
                 continue
             _type = ptypes[type_id]
             if not _type.global_allow and type_id not in allow_anyway:
@@ -68,7 +77,6 @@ class Search(BrowserView):
             })
 
         additional_sites = []
-        registry = getUtility(IRegistry)
         settings = registry.forInterface(ICrawlerConfiguration, prefix='castle')
         if hps.is_enabled() and settings.crawler_active and settings.crawler_site_maps:
             result = hps.get_index_summary(hps.get_index_name(), dict(field="domain"))
@@ -164,6 +172,9 @@ class SearchAjax(BrowserView):
             query['has_private_parents'] = False
         query['exclude_from_search'] = False
 
+        allowed_types = self.get_allowed_types(query)
+        query['portal_type'] = allowed_types
+
         try:
             page_size = int(self.request.form.get('pageSize'))
         except Exception:
@@ -178,6 +189,26 @@ class SearchAjax(BrowserView):
             return self.get_hps_results(page, page_size, query)
         else:
             return self.get_results(page, page_size, query)
+        
+    def get_allowed_types(self, query):
+        # If a filter tab is selected, use that portal type only
+        portal_types = query.get('portal_type')
+        if portal_types is not None:
+            return portal_types
+        
+        # Otherwise, use all non-excluded portal types
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISearchExclusionSettings)
+        exclude_types_from_search = settings.exclude_from_searches
+        excluded_content = []
+
+        if exclude_types_from_search:
+            excluded_content = settings.items_to_exclude or []
+
+        ptypes = api.portal.get_tool('portal_types')
+        allowed_types = [type for type in ptypes.objectIds() if type not in excluded_content]
+
+        return tuple(allowed_types)
 
     def get_results(self, page, page_size, query):
         # regular plone search

@@ -131,6 +131,10 @@
     name="castle.cms.vocabularies.ProvidesTitleSummaryLeadImage"
     />
   <utility
+    component=".vocabularies.SiteTypesVocabulary"
+    name="castle.cms.vocabularies.SiteTypes"
+    />
+  <utility
     component=".vocabularies.EmailTemplateVocabulary"
     name="castle.cms.vocabularies.EmailTemplates"
     />

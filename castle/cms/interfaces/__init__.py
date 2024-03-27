@@ -27,6 +27,7 @@ from .controlpanel import ISecuritySchema
 from .controlpanel import ISiteConfiguration
 from .controlpanel import ISiteSchema
 from .controlpanel import ISearchSettings
+from .controlpanel import ISearchExclusionSettings
 from .controlpanel import ISlideshowSettings
 from .controlpanel import ISocialMediaSchema
 from .layers import ICastleLayer
