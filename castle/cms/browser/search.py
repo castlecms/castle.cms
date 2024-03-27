@@ -172,7 +172,7 @@ class SearchAjax(BrowserView):
             query['has_private_parents'] = False
         query['exclude_from_search'] = False
 
-        allowed_types = self.get_allowed_types()
+        allowed_types = self.get_allowed_types(query)
         query['portal_type'] = allowed_types
 
         try:
@@ -190,7 +190,13 @@ class SearchAjax(BrowserView):
         else:
             return self.get_results(page, page_size, query)
         
-    def get_allowed_types(self):
+    def get_allowed_types(self, query):
+        # If a filter tab is selected, use that portal type only
+        portal_types = query.get('portal_type')
+        if portal_types is not None:
+            return portal_types
+        
+        # Otherwise, use all non-excluded portal types
         registry = getUtility(IRegistry)
         settings = registry.forInterface(ISearchExclusionSettings)
         exclude_types_from_search = settings.exclude_from_searches
