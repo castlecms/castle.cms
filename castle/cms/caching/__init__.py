@@ -237,6 +237,11 @@ class Purge(BrowserView):
         for obj in objs:
             paths.extend(getPathsToPurge(obj, self.request))
 
+        # Purge entire querylisting
+        prefix = '/' + self.context.virtual_url_path()
+        path = prefix + '/@@castle.cms.querylisting/querylisting-1'
+        paths.append(path)
+
         paths = list(set(paths))
 
         for path in paths:
@@ -267,8 +272,6 @@ class Purge(BrowserView):
         for path in paths:
             if 'VirtualHostRoot' in path:
                 path = path.split('VirtualHostRoot')[-1]
-            else:
-                path = path[len(site_path):]
             nice_paths.append(path.decode('utf-8'))
         nice_paths = list(set(nice_paths))
 
