@@ -172,8 +172,6 @@ class SearchAjax(BrowserView):
             query['has_private_parents'] = False
         query['exclude_from_search'] = False
 
-        print('=== searchajax ===')
-        print(self)
         allowed_types = self.get_allowed_types()
         query['portal_type'] = allowed_types
 
