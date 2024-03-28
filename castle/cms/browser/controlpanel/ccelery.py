@@ -11,29 +11,41 @@ class CeleryControlPanel(BrowserView):
         try:
             ping = ins.ping()
         except Exception:
-            ping = ''
+            ping = None
         try:
             active = ins.active()
+            if active is None:
+                active = {}
         except Exception:
-            active = ''
+            active = {}
         try:
             scheduled = ins.scheduled()
+            if scheduled is None:
+                scheduled = {}
         except Exception:
-            scheduled = ''
+            scheduled = {}
         try:
             reserved = ins.reserved()
+            if reserved is None:
+                reserved = {}
         except Exception:
-            reserved = ''
+            reserved = {}
         try:
             stats = ins.stats()
+            if stats is None:
+                stats = {}
         except Exception:
-            stats = ''
+            stats = {}
         try:
             registered = ins.registered()
+            if registered is None:
+                registered = {}
         except Exception:
-            registered = ''
+            registered = {}
         try:
             report = ins.report()
+            if report is None:
+                report = {}
             for worker in report.keys():
                 clean_info = report[worker]['ok'].replace('\'', '').replace('\"', '').replace(' \n', '').replace('\n ', '')
                 while True:
@@ -53,7 +65,7 @@ class CeleryControlPanel(BrowserView):
                         report[worker] = clean_info
                         break
         except Exception as e:
-            report = ''
+            report = {}
         types = [[registered, "registered"], [reserved, "reserved"], [active, "active"], [scheduled, "scheduled"]]
         counts = {}
         for _type in types:
