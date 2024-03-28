@@ -4,6 +4,7 @@ Changelog
 3.0.0b134 (unreleased)
 ----------------------
 
+- update celery control panel
 - Fix mass copy/paste functionality
 
 
