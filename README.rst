@@ -97,6 +97,13 @@ Development setup on macOS
 10. Once you have created a site in the development instance, run init-dev script to populate templates, ``bin/instance run castle/cms/_scripts/init-dev.py``
 
 
+Development -- Tasks Control Panel (Celery)
+-------------------------------------------
+Make sure that CELERY_ALWAYS_EAGER is set to False. If set to True, tasks will be immediately handled and therefore not displayed on the task control panel.
+If you are not already running an instance of redis, start one in a new terminal with `redis-server`
+In a new terminal, start an instance of celery with `bin/pcelery worker parts/instance/etc/zope.conf -c 1 -E`
+In your browser, navigate to the control panel on your Castle site and view the Tasks page
+
 Optional Dependencies
 ---------------------
 
