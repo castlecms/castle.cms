@@ -5405,11 +5405,13 @@ define('mockup-i18n',[
 
   var I18N = function() {
     var self = this;
-    self.baseUrl = $('body').attr('data-i18ncatalogurl');
+
+    self['baseUrl'] = $('body').attr('data-i18ncatalogurl');
 
     if (!self.baseUrl) {
       self.baseUrl = '/plonejsi18n';
     }
+
     self.currentLanguage = $('html').attr('lang') || 'en-us';
     self.storage = null;
     self.catalogs = {};
@@ -30165,5 +30167,5 @@ $(document).ready(function(){
 
 });
 
-define("/Users/joel/src/github.com/castlecms/castle.cms/castle/cms/static/plone.js", function(){});
+define("/Users/katiewiessfelt/dev/git/castle/fbigov-dev/src/castle.cms/castle/cms/static/plone.js", function(){});
 
