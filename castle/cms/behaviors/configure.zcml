@@ -76,5 +76,15 @@
     marker=".versionable.IVersioningSupport"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
+  <plone:behavior
+    name="castle.contentredirectable"
+    title="Content Redirectable"
+    description="Gives the ability to keep a content item in place, but have it act as a redirect to an internal or external url"
+    provides=".contentredirectable.IContentRedirectable"
+    factory=".contentredirectable.ContentRedirectable"
+    marker=".contentredirectable.IContentRedirectableMarker"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+
 
 </configure>

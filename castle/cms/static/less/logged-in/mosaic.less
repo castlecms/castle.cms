@@ -1,3 +1,5 @@
+@toolbar-folder: "../../svg/toolbar";
+
 div.mosaic-toolbar {
   z-index:101 !important;
 }
@@ -101,18 +103,26 @@ div.mosaic-toolbar {
   position: fixed;
 }
 
-.mosaic-panel .castle-rawhtml-tile.mosaic-tile-dark .mosaic-rich-text-toolbar {
-  margin-top: -60px;
+.mosaic-panel {
+
+  .mosaic-tile .mosaic-tile-content-empty.mce-edit-focus p:first-child {
+    height: unset;
+  }
+
+  .castle-rawhtml-tile.mosaic-tile-dark .mosaic-rich-text-toolbar {
+    margin-top: -60px;
+  }
+
+  .mosaic-selected-tile .mosaic-tile-outer-border {
+    border: 1px solid #292929;
+  }
+
 }
 
 .mosaic-tile-label {
   left: 23px;
   top: -24px;
   z-index: 50;
-}
-
-.mosaic-panel .mosaic-selected-tile .mosaic-tile-outer-border {
-  border: 1px solid #292929;
 }
 
 .mosaic-IRichText-text-tile,
@@ -281,12 +291,12 @@ div.mosaic-toolbar {
         border-left:1px solid @toolbar-border-color;
 
         &::before{
-           content: url("../../svg/icon-save-hover.svg");
+          content: url("@{toolbar-folder}/save-hover.svg");
         }
       }
 
       &::before{
-        content: url("../../svg/icon-save.svg");
+        content: url("@{toolbar-folder}/save.svg");
       }
     }
 
@@ -301,7 +311,7 @@ div.mosaic-toolbar {
       }
 
       &::before{
-        content: url("../../svg/icon-cancel.svg");
+        content: url("@{toolbar-folder}/cancel.svg");
         margin-top:2px;
       }
     }
@@ -494,7 +504,7 @@ div.mosaic-toolbar {
   opacity: 1;
   z-index: 99999999;
   min-width: 450px;
-  
+
   .portalMessage dd ul {
     padding-left: 0;
     .title {

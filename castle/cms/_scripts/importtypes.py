@@ -700,7 +700,8 @@ def get_import_type(data, path, *args):
     _types = {name: klass for name, klass in types}
     if data['portal_type'] in _types:
         return _types[data['portal_type']](data, path, *args)
-    logger.info('No explicit mapping for type {type}.'
-                        ' Attempting base import type.'
-                        .format(type=data['portal_type']))
+    info_message = 'No explicit mapping for type {type}. Attempting base import type.'.format(
+        type=data['portal_type']
+    )
+    logger.info(info_message)
     return BaseImportType(data, path, *args)

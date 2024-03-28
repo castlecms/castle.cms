@@ -2,6 +2,7 @@ import json
 import logging
 import math
 import os
+import plone.api as api
 import shutil
 import tempfile
 import time
@@ -17,14 +18,14 @@ from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
 from castle.cms.files import duplicates
-from castle.cms.interfaces import ITemplate, ITrashed
+from castle.cms.interfaces import ITrashed
+from castle.cms.utils import get_template_repository_info
 from castle.cms.utils import get_upload_fields
 from castle.cms.utils import publish_content
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
 from persistent.dict import PersistentDict
-from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
 from plone.app.content.browser import i18n
@@ -130,15 +131,16 @@ class Creator(BrowserView):
                 'reason': 'No access'
             })
         self.catalog = api.portal.get_tool('portal_catalog')
-        if self.request.form.get('action') == 'check':
+        action = self.request.form.get('action')
+        if action == 'check':
             return self.check()
-        elif self.request.form.get('action') == 'create':
+        elif action == 'create':
             return self.create()
-        elif self.request.form.get('action') == 'create-from-template':
+        elif action == 'create-from-template':
             return self.create_object_from_template()
-        elif self.request.form.get('action') == 'remove':
+        elif action == 'remove':
             return self.remove_file_content()
-        elif self.request.form.get('action') == 'chunk-upload':
+        elif action == 'chunk-upload':
             return self.chunk_upload()
 
     def chunk_upload(self):
@@ -264,14 +266,17 @@ class Creator(BrowserView):
             pass
 
         aspect = ISelectableConstrainTypes(folder, None)
-        if (aspect and (
+        if aspect:
+            should_set_constrain_types = (
                 aspect.getConstrainTypesMode() != 1 or
-                [type_] != aspect.getImmediatelyAddableTypes())):
-            aspect.setConstrainTypesMode(1)
-            try:
-                aspect.setImmediatelyAddableTypes([type_])
-            except Exception:
-                pass
+                [type_] != aspect.getImmediatelyAddableTypes()
+            )
+            if should_set_constrain_types:
+                aspect.setConstrainTypesMode(1)
+                try:
+                    aspect.setImmediatelyAddableTypes([type_])
+                except Exception:
+                    pass
 
         if not getattr(folder, 'exclude_from_nav', False):
             # if auto generated path, exclude from nav
@@ -442,8 +447,12 @@ class Creator(BrowserView):
 
     def get_type_id(self):
         form = self.request.form
-        return form.get('selectedType[typeId]',
-                        form.get('selectedType[id]')).replace('%20', ' ')
+        type_id = form.get('selectedType[unformattedPortalType]', None)
+        if type_id is None:
+            type_id = form.get('selectedType[typeId]', None)
+        if type_id is None:
+            type_id = form.get('selectedType[id]', '') or ''
+        return type_id.replace('%20', ' ')
 
     def create(self):
         if self._check():
@@ -530,28 +539,23 @@ content in this location."""
             portal_types = getToolByName(self.context, 'portal_types')
             type_id = self.get_type_id()
 
-            # Templates need special handling based on type_id
-            try:
-                if ITemplate.providedBy(self.context['template-repository'][type_id]):
-                    type_id = self.context['template-repository'][type_id].portal_type
-            except KeyError:
-                pass
-
-            pt = portal_types[type_id]
-            add_perm = utils.get_permission_title(pt.add_permission)
+            add_permission = portal_types[type_id].add_permission
+            add_permission_title = utils.get_permission_title(add_permission)
 
             if valid and not self.can_add(folder, type_id):
                 valid = False
                 self.status = 'You are not allowed to add this content type here'
-            elif valid and not self.sm.checkPermission(add_perm, folder):
+            elif valid and not self.sm.checkPermission(add_permission_title, folder):
                 valid = False
                 self.status = 'You do not have permission to add content here.'
             elif valid and self.request.form['id'] in folder.objectIds():
                 valid = False
                 ob = folder[self.request.form['id']]
                 if ITrashed.providedBy(ob):
-                    self.status = ('Content in recycling bin with same id exists. '
-                                   'Delete, rename or restore recycled content to use this.')
+                    self.status = (
+                        'Content in recycling bin with same id exists. '
+                        'Delete, rename or restore recycled content to use this.'
+                    )
                 else:
                     self.status = 'Content with same ID already exists'
             elif not self.valid_id(folder, self.request.form['id']):
@@ -633,23 +637,19 @@ content in this location."""
 
     def create_object_from_template(self):
         if self._check():
-            site = getSite()
             template_title = self.request.form.get('selectedType[title]')
             new_id = self.request.form.get('id')
             new_title = self.request.form.get('title')
             path = self.request.form.get('basePath', '/')
             folder = utils.recursive_create_path(self.context, path)
-            template_repo = site['template-repository']
-
-            for t in template_repo.getChildNodes()._data:
-                if t.title == template_title:
+            for template in get_template_repository_info()['templates']:
+                if template.title == template_title:
                     obj = api.content.copy(
-                        source=t,
+                        source=template,
                         id=new_id,
                         target=folder
                     )
                     obj.title = new_title
-                    noLongerProvides(obj, ITemplate)
 
             transition_to = self.request.form.get('transitionTo')
             if transition_to:
@@ -772,10 +772,6 @@ class QualityCheckContent(BrowserView):
                     break
                 last = idx
 
-        is_template = False
-        if ITemplate.providedBy(self.context):
-            is_template = True
-
         self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps({
             'title': self.context.Title(),
@@ -784,7 +780,7 @@ class QualityCheckContent(BrowserView):
             'linksValid': valid,
             'headersOrdered': headers_ordered,
             'html': html_parser.unescape(html),
-            'template': is_template
+            'isTemplate': self.context in get_template_repository_info()['templates'],
         })
 
 

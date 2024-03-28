@@ -1,10 +1,99 @@
 Changelog
 =========
 
-3.0.0b122 (unreleased)
+3.0.0b134 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Fix mass copy/paste functionality
+
+
+3.0.0b133 (2024-03-21)
+----------------------
+
+- castle crawler should generate an index alias and an index when it verifies they
+  exist, and then use the alias for all primary operations
+- mark the crawler mapping['url'] as _stored_ so opensearchpy stored_field parameter
+  can be used appropriately with it
+
+
+3.0.0b132 (2024-02-07)
+----------------------
+
+- bug fixes
+
+
+3.0.0b131 (2024-01-31)
+----------------------
+
+- try/catch in upgrade step
+
+
+3.0.0b130 (2024-01-31)
+----------------------
+
+- Adjust View Page actions to account for folder's default page view
+- Rework templates to be anything in the Template Repository (remove ITemplate)
+- Better display of templates and icons in add content modal
+
+
+3.0.0b129 (2023-12-07)
+----------------------
+
+- Create Content Redirectable behavior so Dexterity objects can act as redirects
+- Create an action to convert pages into folders with the original page as the default view
+
+
+3.0.0b128 (2023-11-20)
+----------------------
+
+- Fix upgrade step 3006 (change incorrect prefix)
+- Fix upgrade step 3008 (simplify and remove unnecessary registry records)
+- Remove unnecessary profile 3008
+
+
+3.0.0b127 (2023-11-17)
+----------------------
+
+- Update control panel icons, providing one for every castle configlet
+- Update dexterity types so every one has an icon and a short desription
+- Add EmailTemplate dexterity type for repeated emails
+- Fix data-tiles that don't exist from rendering and spamming output
+  (for dexterity type definitions in control panel in /@@dexterity-types/<DexterityTypeHere>)
+- Allow resuming importjson script
+- fix missing/ inconsistently localed back to site setup button in controlpanels
+
+3.0.0b126 (2023-08-01)
+----------------------
+
+- Allow users to request site access on login screen
+
+
+3.0.0b125 (2023-07-31)
+----------------------
+
+- Allow batching in cloudflare purging
+- Add Email Templates
+- Make icon, favicon, manifest, browserconfig fully public
+
+
+3.0.0b124 (2023-07-12)
+----------------------
+
+- Remove duplicate paths in cache purging
+
+
+3.0.0b123 (2023-07-12)
+----------------------
+
+- additional data in purging and purge events
+- automatically purge on modifying
+- change cloudflare api stuff
+
+
+3.0.0b122 (2023-04-11)
+----------------------
+
+- Fix Required Lead Image clash with verioning control after behavior's removal
 
 
 3.0.0b121 (2023-03-08)

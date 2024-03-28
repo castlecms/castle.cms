@@ -121,9 +121,7 @@ class MetaDataTile(Tile):
         return '''
 <link rel="search"
       title="Search this site"
-      href="{url}/@@search" />'''.format(
-            url=self.root_url
-          )
+      href="{url}/@@search" />'''.format(url=self.root_url)
 
     def get_printcss_link(self):
         template = ''' <link rel="stylesheet" href="{url}/++plone++castle/less/public/print.css" type="text/css" media="print">'''  # noqa:E501

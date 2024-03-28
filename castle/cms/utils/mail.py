@@ -4,10 +4,11 @@ from email.mime.text import MIMEText
 from castle.cms.constants import ALL_SUBSCRIBERS
 from castle.cms.constants import ALL_USERS
 from html2text import html2text
-from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from zope.component import getUtility
+
+import plone.api as api
 
 
 def get_email_from_address():
@@ -20,18 +21,18 @@ def send_email(recipients=None, subject=None, html='', text='', sender=None):
     if isinstance(recipients, basestring):
         recipients = [recipients]
 
-    cleaned_recipients = []
+    cleaned_recipients = set()
     for recipient in recipients:
-        if recipients == ALL_USERS:
+        if recipient == ALL_USERS:
             for user in api.user.get_users():
                 email = user.getProperty('email')
                 if email:
-                    cleaned_recipients.append(email)
-        elif recipients == ALL_SUBSCRIBERS:
+                    cleaned_recipients.add(email)
+        elif recipient == ALL_SUBSCRIBERS:
             from castle.cms import subscribe
-            cleaned_recipients.extend(subscribe.get_email_addresses())
+            cleaned_recipients.update(subscribe.get_email_addresses())
         else:
-            cleaned_recipients.append(recipient)
+            cleaned_recipients.add(recipient)
 
     if sender is None:
         sender = get_email_from_address()

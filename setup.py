@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='3.0.0b122.dev0',
+    version='3.0.0b134.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('CHANGES.md')
@@ -68,15 +68,16 @@ setup(
 
         # the use of collective.elasticsearch in the 3.x+ version of castle.cms
         # is limited and should not be relied on.
-        'collective.elasticsearch>=4.0.0<5.0.0',
+        'collective.elasticsearch >=4.0.0, <5.0.0',
 
         # python
         'boto3>=1.9.222',
-        'google-api-python-client>=1.4.2<2',
-        'requests>=2.7.0<3',
-        'requests_oauthlib>=0.5.0<1',
-        'oauth2client>=1.5.1<2',
-        'redis>=2.10.5<3',
+        'google-api-python-client >=1.4.2, <2',
+        'google-auth>=2.5.0',
+        'requests >=2.7.0, <3',
+        'requests_oauthlib >=0.5.0, <1',
+        'oauth2client >=1.5.1, <2',
+        'redis >=2.10.5, <3',
         'setuptools',
         'python-dateutil',
         'pyopenssl',
@@ -133,6 +134,7 @@ setup(
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
+      auto-publish-retract = castle.cms.cron:auto_publish_retract
       """,
     include_package_data=True,
     zip_safe=False,

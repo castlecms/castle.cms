@@ -5,293 +5,98 @@
       lang="en"
       metal:use-macro="context/prefs_main_template/macros/master"
       i18n:domain="plone">
-  <body>
-    <metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
-      <a href=""
-        id="setup-link"
-        tal:attributes="href string:$portal_url/@@overview-controlpanel"
-        i18n:translate="">
-        Site Setup
-      </a>
-      <h1 class="documentFirstHeading" i18n:translate="">Celery Tasks</h1>
-      <div class="documentDescription">
-        Inspect currently active celery tasks
-      </div>
-      <br />
-      <div id="content-core"
-          tal:define="info view/info;
-                      workers info/workers;
-                      active info/active;
-                      scheduled info/scheduled;
-                      reserved info/reserved;
-                      stats info/stats;
-                      registered info/registered;
-                      counts info/counts;
-                      report info/report;
-                      status_ok python: workers is not None">
-        <ul tal:condition="not: status_ok">
-            There was an error connecting to Celery
+
+<body>
+
+
+<metal:main metal:fill-slot="prefs_configlet_main" i18n:domain="plone">
+
+    <a href=""
+       id="setup-link"
+       tal:attributes="href string:$portal_url/@@overview-controlpanel"
+       i18n:translate="">
+       Site Setup
+    </a>
+    <h1 class="documentFirstHeading"
+        i18n:translate="">Celery Tasks</h1>
+
+    <div class="documentDescription">
+      Inspect currently active celery tasks
+    </div>
+<br />
+  <div id="content-core"
+       tal:define="info view/info;
+                   workers info/workers;
+                   active info/active;
+                   reserved info/reserved;
+                   stats info/stats;
+                   status_ok python: workers != ''">
+    <ul tal:condition="not: status_ok">
+        There was an error connecting to Celery
+    </ul>
+
+    <div tal:condition="status_ok">
+        <h2>Registered Workers</h2>
+        <ul tal:condition="python: workers and len(workers)">
+          <tal:worker tal:repeat="worker python: workers.keys()">
+            <li tal:define="status python: workers[worker]['ok']">
+              ${worker} - ${python: status == 'pong' and 'ok' or 'bad'}
+              <ul tal:on-error="nothing"
+                  tal:define="wstats python: stats.get(worker, {}).get('total', [])">
+                <li tal:repeat="task_id python: wstats.keys()">
+                  ${python: view.get_task_name(task_id)} - ${python: wstats[task_id]}
+                </li>
+              </ul>
+            </li>
+          </tal:worker>
         </ul>
-        <div tal:condition="status_ok">
-          <h4>
-            <a data-toggle="collapse" href="#collapseRegisteredWorkers">
-              Registered Workers: ${python: len(workers)}
-            </a>
-          </h4>
-          <div class="collapse" id="collapseRegisteredWorkers">
-            <table class="listing">
-              <thead>
-                <tr>
-                  <th>Worker</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tal:registered-worker tal:repeat="worker python: workers.keys() or []">
-                  <tal:worker define="status python: workers[worker]['ok']">
-                    <tr tal:condition="python: workers and len(workers)" tal:on-error="nothing">
-                      <td style="vertical-align: top">
-                        <b>${worker}</b><br/>
-                        <a data-toggle="collapse" href="#registered_${python: workers.keys().index(worker)}">
-                          More Info
-                        </a>
-                      </td>
-                      <td>
-                        <ul style="list-style: none; padding-left: 0">
-                          <span>Prefetched Count: ${python: stats.values()[0]['prefetch_count']}</span><br/>
-                          <span tal:define="inqueues python: stats.values()[0].get('pool').get('writes').get('inqueues')">Inqueues: 
-                            <ul style="list-style: none">
-                              <li>Active: ${python: inqueues['active']}</li>
-                              <li>Total: ${python: inqueues['total']}</li>
-                            </ul>
-                          </span>
-                          <span tal:define="concurrent python: stats.values()[0].get('pool').get('max-concurrency')">Max Concurrency: ${concurrent}</span>
-                        </ul>
-                      </td>
-                    </tr>
-                    <tr class="collapse" id="registered_${python: workers.keys().index(worker)}" style="background: #FAF9F6">
-                      <td colspan="2">
-                        <ul tal:repeat="item python: report.get(worker)">
-                          <li>${item}</li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </tal:worker>
-                </tal:registered-worker>
-              </tbody>
-            </table>
-          </div>
-          <h2>
-            <a data-toggle="collapse" href="#collapseRegisteredTasks">
-              Registered Tasks: ${python: counts["registered"]}
-            </a>
-          </h2>
-          <div class="collapse" id="collapseRegisteredTasks">
-            <table class="listing">
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>Status</th>
-                  <th>Worker</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tal:registered-worker tal:repeat="worker python: workers.keys() or []">
-                  <tal:registered-task tal:repeat="registered_task python: registered.get(worker)">
-                    <tal:task define="status python: workers[worker]['ok']">
-                      <tr tal:condition="python: workers and len(workers)" tal:on-error="nothing">
-                        <td style="color: orange; font-weight: bold">${python: registered_task}</td>
-                        <td>${python: status == 'pong' and 'ok' or 'bad'}</td>
-                        <td>${worker}</td>
-                      </tr>
-                    </tal:task>
-                  </tal:registered-task>
-                </tal:registered-worker>
-              </tbody>
-            </table>
-          </div>
-          <h2>
-            <a data-toggle="collapse" href="#collapseActiveTasks">
-              Active Tasks: ${python: counts["active"]}
-            </a>
-          </h2>
-          <div class="collapse" id="collapseActiveTasks">
-            <table class="listing">
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>User</th>
-                  <th>Object</th>
-                  <th>Worker</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tal:active-worker tal:repeat="worker python: active and active.keys() or []">
-                  <tal:active-task tal:repeat="active_task python: active[worker]">
-                    <tal:task tal:define="task_info python: view.task_info(active_task)">
-                      <tr tal:condition="python: worker and len(worker)" tal:on-error="nothing">
-                        <td>
-                          <span style="color: orange; font-weight: bold">
-                            ${task_info/name}
-                          </span><br/>
-                          <a data-toggle="collapse" href="#active_${python: workers.keys().index(worker)}">
-                            More Info
-                          </a>
-                        </td>
-                        <td>${task_info/kwargs/authorized_userid|nothing}</td>
-                        <td tal:condition="python: task_info['obj'] is not None">
-                          <a href="${task_info/obj/absolute_url}/view">${task_info/obj/Title}</a>
-                        </td>
-                        <td tal:condition="python: task_info['obj'] is None"></td>
-                        <td>${worker}</td>
-                      </tr>
-                      <tr style="background: #FAF9F6" class="collapse" id="active_${python: workers.keys().index(worker)}" >
-                        <td colspan='4'>
-                          <ul tal:condition="python: active_task is not None">
-                            <li>id: ${python: active_task.get('id')}<br/></li>
-                            <li>name: ${python: active_task.get('name')}<br/></li>
-                            <li>args: ${python: active_task.get('args')}<br/></li>
-                            <li>kwargs: ${python: active_task.get('kwargs')}<br/></li>
-                            <li>type: ${python: active_task.get('type')}<br/></li>
-                            <li>hostname: ${python: active_task.get('hostname')}<br/></li>
-                            <li>time start: ${python: active_task.get('time_start')}<br/></li>
-                            <li>acknowledged: ${python: active_task.get('acknowledged')}<br/></li>
-                            <li>delivery info:<br/>
-                              <ul>
-                                <li>exchange: ${python: active_task.get('delivery_info').get('exchange')}</li>
-                                <li>priority: ${python: active_task.get('delivery_info').get('priority')}</li>
-                                <li>redelivered: ${python: active_task.get('delivery_info').get('redelivered')}</li>
-                                <li>routing key: ${python: active_task.get('delivery_info').get('routing_key')}</li>
-                              </ul>
-                            </li>
-                            <li>worker pid: ${python: active_task.get('worker_pid')}</li>
-                          </ul>
-                        </td>
-                      </tr>
-                    </tal:task>
-                  </tal:active-task>
-                </tal:active-worker>
-              </tbody>
-            </table>
-          </div>
-          <h2>
-            <a data-toggle="collapse" href="#collapseScheduledTasks">
-              Scheduled Tasks: ${python: counts["scheduled"]}
-            </a>
-          </h2>
-          <div class="collapse" id="collapseScheduledTasks">
-            <table class="listing">
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>ETA</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tal:scheduled-worker tal:repeat="worker python: scheduled and scheduled.keys() or []">
-                  <tal:scheduled-task tal:repeat="scheduled_task python: scheduled.get(worker)">
-                    <tal:task>
-                      <tr tal:condition="python: worker and len(worker)" tal:on-error="nothing">
-                        <td>
-                          <span style="color: orange; font-weight: bold">
-                            ${python: scheduled_task.get('request').get('name')}
-                          </span><br/>
-                          <a data-toggle="collapse" href="#${python: scheduled_task.get('request').get('name')}">
-                            More Info
-                          </a>
-                        </td>
-                        <td>${python: scheduled_task.get('eta')}</td>
-                      </tr>
-                      <tr style="background: #FAF9F6" class="collapse" id="scheduled_${python: workers.keys().index(worker)}" >
-                        <td colspan='2'>
-                          <ul tal:condition="python: scheduled_task is not None">
-                            <li>id: ${python: scheduled_task.get('id')}<br/></li>
-                            <li>name: ${python: scheduled_task.get('name')}<br/></li>
-                            <li>args: ${python: scheduled_task.get('args')}<br/></li>
-                            <li>kwargs: ${python: scheduled_task.get('kwargs')}<br/></li>
-                            <li>type: ${python: scheduled_task.get('type')}<br/></li>
-                            <li>hostname: ${python: scheduled_task.get('hostname')}<br/></li>
-                            <li>time start: ${python: scheduled_task.get('time_start')}<br/></li>
-                            <li>acknowledged: ${python: scheduled_task.get('acknowledged')}<br/></li>
-                            <li>delivery info:<br/>
-                              <ul>
-                                <li>exchange: ${python: scheduled_task.get('delivery_info').get('exchange')}</li>
-                                <li>priority: ${python: scheduled_task.get('delivery_info').get('priority')}</li>
-                                <li>redelivered: ${python: scheduled_task.get('delivery_info').get('redelivered')}</li>
-                                <li>routing key: ${python: scheduled_task.get('delivery_info').get('routing_key')}</li>
-                              </ul>
-                            </li>
-                            <li>worker pid: ${python: scheduled_task.get('worker_pid')}</li>
-                          </ul>
-                        </td>
-                      </tr>
-                    </tal:task>
-                  </tal:scheduled-task>
-                </tal:scheduled-worker>
-              </tbody>
-            </table>
-          </div>
-          <h2>
-            <a data-toggle="collapse" href="#collapseReservedTasks">
-              Reserved Tasks: ${python: counts["reserved"]}
-            </a>
-          </h2>
-          <div class="collapse" id="collapseReservedTasks">
-            <table class="listing">
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>Status</th>
-                  <th>Worker</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tal:reserved-worker tal:repeat="worker python: reserved and reserved.keys() or []">
-                  <tal:reserved-task tal:repeat="task python: reserved[worker]">
-                    <tal:task tal:define="task_info python: view.task_info(task)">
-                      <tr tal:condition="task_info/on_site" tal:on-error="nothing">
-                        <th tal:condition="python: task_info['obj'] is not None">
-                          <span style="color: orange; font-weight: bold">
-                            ${task_info/obj/Title}
-                          </span><br/>
-                          <a data-toggle="collapse" href="#reserved_${python: workers.keys().index(worker)}">
-                            ${task_info/obj/Title}
-                          </a>
-                        </th>
-                        <th tal:condition="python: task_info['obj'] is None"></th>
-                        <th>${worker}</th>
-                      </tr>
-                      <tr style="background: #FAF9F6" class="collapse" id="reserved_${python: workers.keys().index(worker)}">
-                        <td colspan='3'>
-                          <ul tal:condition="python: reserved_task is not None">
-                            <li>id: ${python: reserved_task.get('id')}<br/></li>
-                            <li>name: ${python: reserved_task.get('name')}<br/></li>
-                            <li>args: ${python: reserved_task.get('args')}<br/></li>
-                            <li>kwargs: ${python: reserved_task.get('kwargs')}<br/></li>
-                            <li>type: ${python: reserved_task.get('type')}<br/></li>
-                            <li>hostname: ${python: reserved_task.get('hostname')}<br/></li>
-                            <li>time start: ${python: reserved_task.get('time_start')}<br/></li>
-                            <li>acknowledged: ${python: reserved_task.get('acknowledged')}<br/></li>
-                            <li>delivery info:<br/>
-                              <ul>
-                                <li>exchange: ${python: reserved_task.get('delivery_info').get('exchange')}</li>
-                                <li>priority: ${python: reserved_task.get('delivery_info').get('priority')}</li>
-                                <li>redelivered: ${python: reserved_task.get('delivery_info').get('redelivered')}</li>
-                                <li>routing key: ${python: reserved_task.get('delivery_info').get('routing_key')}</li>
-                              </ul>
-                            </li>
-                            <li>worker pid: ${python: reserved_task.get('worker_pid')}</li>
-                          </ul>
-                        </td>
-                      </tr>
-                    </tal:task>
-                  </tal:reserved-task>
-                </tal:reserved-worker>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </metal:main>
-  </body>
+        <h2>Scheduled Tasks</h2>
+        <table class="listing">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>User</th>
+              <th>Object</th>
+              <th>Worker</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tal:active-worker tal:repeat="worker python: active and active.keys() or []">
+              <tal:active-task tal:repeat="task python: active[worker]">
+                <tal:task tal:define="task_info python: view.task_info(task)">
+                  <tr tal:condition="task_info/on_site" tal:on-error="nothing">
+                    <th style="color: orange">${task/name}</th>
+                    <th>${task_info/kwargs/authorized_userid|nothing}</th>
+                    <th tal:condition="python: task_info['obj'] is not None">
+                      <a href="${task_info/obj/absolute_url}/view">${task_info/obj/Title}</a>
+                    </th>
+                    <th tal:condition="python: task_info['obj'] is None"></th>
+                    <th>${worker}</th>
+                  </tr>
+                </tal:task>
+              </tal:active-task>
+            </tal:active-worker>
+            <tal:reserved-worker tal:repeat="worker python: reserved and reserved.keys() or []">
+              <tal:reserved-task tal:repeat="task python: reserved[worker]">
+                <tal:task tal:define="task_info python: view.task_info(task)">
+                  <tr tal:condition="task_info/on_site" tal:on-error="nothing">
+                    <th>${task/name}</th>
+                    <th>${task_info/kwargs/authorized_userid|nothing}</th>
+                    <th tal:condition="python: task_info['obj'] is not None">
+                      <a href="${task_info/obj/absolute_url}/view">${task_info/obj/Title}</a>
+                    </th>
+                    <th tal:condition="python: task_info['obj'] is None"></th>
+                    <th>${worker}</th>
+                  </tr>
+                </tal:task>
+              </tal:reserved-task>
+            </tal:reserved-worker>
+          </tbody>
+        </table>
+    </div>
+
+  </div>
+</metal:main>
+
+</body>
 </html>

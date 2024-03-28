@@ -166,6 +166,13 @@
     permission="cmf.ModifyPortalContent"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+  <browser:page
+    for="plone.app.contenttypes.interfaces.IDocument"
+    name="convert-document-to-folder"
+    class=".actions.ConvertToFolderForm"
+    permission="cmf.ModifyPortalContent"
+    layer="castle.cms.interfaces.ICastleLayer"
+    />
 
   <browser:page
     for="*"
@@ -219,6 +226,11 @@
     permission="zope2.View"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/parallaxview.pt"
+  />
+
+  <adapter
+    factory=".actions.default_template_title"
+    name="default"
   />
 
 </configure>
