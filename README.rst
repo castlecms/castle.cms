@@ -88,11 +88,11 @@ Development setup on macOS
 1. ``brew install redis elasticsearch libav python``
 2. ``git clone git@github.com:castlecms/castle.cms.git``
 3. ``cd castle.cms``
-4. ``virtualenv -p python2.7 .``
-5. ``bin/pip install --upgrade pip``
-6. ``bin/pip install -r requirements.txt``
-7. ``bin/buildout``
-8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg``
+4. ``virtualenv -p python2.7 env``
+5. ``env/bin/pip install --upgrade pip``
+6. ``env/bin/pip install -r requirements.txt``
+7. ``env/bin/buildout``
+8. Run (in separate terminal windows) ``redis-server``, ``env/bin/instance fg``
 9. Browse to http://localhost:8080/
 
 Once you have created a site in the development instance:
@@ -101,6 +101,13 @@ Once you have created a site in the development instance:
 11. Run init-dev script to populate templates, ``bin/instance run castle/cms/_scripts/init-dev.py``
 12. See the /docs/ folder for further development information
 
+
+Development -- Tasks Control Panel (Celery)
+-------------------------------------------
+Make sure that CELERY_ALWAYS_EAGER is set to False. If set to True, tasks will be immediately handled and therefore not displayed on the task control panel.
+If you are not already running an instance of redis, start one in a new terminal with `redis-server`
+In a new terminal, start an instance of celery with `bin/pcelery worker parts/instance/etc/zope.conf -c 1 -E`
+In your browser, navigate to the control panel on your Castle site and view the Tasks page
 
 Optional Dependencies
 ---------------------
@@ -120,7 +127,7 @@ Running tests
 
 .. code-block:: shell
 
-  ./bin/test -s castle.cms
+  ./bin/test -pvc -s castle.cms -m test_content
 
 
 *To run only robot tests:*
@@ -147,7 +154,6 @@ Running local dependencies with docker
 
     or, just the essentials:
     $ docker run -p 6379:6379 redis
-    $ docker run -p 9200:9200 elasticsearch:2.4-alpine
 
 
 Forks/Custom releases

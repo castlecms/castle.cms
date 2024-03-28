@@ -11,24 +11,84 @@ class CeleryControlPanel(BrowserView):
         try:
             ping = ins.ping()
         except Exception:
-            ping = ''
+            ping = None
         try:
             active = ins.active()
+            if active is None:
+                active = {}
         except Exception:
-            active = ''
+            active = {}
+        try:
+            scheduled = ins.scheduled()
+            if scheduled is None:
+                scheduled = {}
+        except Exception:
+            scheduled = {}
         try:
             reserved = ins.reserved()
+            if reserved is None:
+                reserved = {}
         except Exception:
-            reserved = ''
+            reserved = {}
         try:
             stats = ins.stats()
+            if stats is None:
+                stats = {}
         except Exception:
-            stats = ''
+            stats = {}
+        try:
+            registered = ins.registered()
+            if registered is None:
+                registered = {}
+        except Exception:
+            registered = {}
+        try:
+            report = ins.report()
+            if report is None:
+                report = {}
+            for worker in report.keys():
+                clean_info = report[worker]['ok'].replace('\'', '').replace('\"', '').replace(' \n', '').replace('\n ', '')
+                while True:
+                    alpha = len(clean_info)
+                    clean_info = clean_info.replace('  ', ' ')
+                    beta = len(clean_info)
+                    if alpha>beta:
+                        pass
+                    else:
+                        break
+                clean_info = clean_info.split('\n')
+                while True:
+                    try:
+                        index = clean_info.index('')
+                        clean_info.pop(index)
+                    except:
+                        report[worker] = clean_info
+                        break
+        except Exception as e:
+            report = {}
+        types = [[registered, "registered"], [reserved, "reserved"], [active, "active"], [scheduled, "scheduled"]]
+        counts = {}
+        for _type in types:
+            count = 0
+            keys = _type[0].keys()
+            try:
+                for key in keys:
+                    if _type[1] == "stats":
+                        count += len(_type[0][key].get('total'))
+                    else:
+                        count += len(_type[0][key])
+                counts[_type[1]]=count
+            except Exception:
+                counts[_type[1]]=0
         return {
             'workers': ping,
             'active': active,
+            'scheduled': scheduled,
             'reserved': reserved,
-            'stats': stats
+            'stats': stats,
+            'registered': registered,
+            'counts': counts,
+            'report': report,
         }
 
     def get_task_name(self, _id):
