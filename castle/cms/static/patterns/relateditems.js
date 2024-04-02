@@ -138,15 +138,13 @@ define([
           valid.push(item);
         }
       });
-      // TODO: Where is is this prop set?
-      // if(that.props.maximumSelectionSize === 1){
-      //   if(valid.length > 0){
-      //     that.state.selected = [valid[0]];
-      //   }
-      // }else{
-      //   that.state.selected = that.state.selected.concat(valid);
-      // }
-      that.state.selected = that.state.selected.concat(valid);
+      if(that.props.maximumSelectionSize === 1){
+        if(valid.length > 0){
+          that.state.selected = [valid[0]];
+        }
+      }else{
+        that.state.selected = that.state.selected.concat(valid);
+      }
       that.selectionUpdated();
     },
 
@@ -363,9 +361,7 @@ define([
           className: 'plone-btn plone-btn-default castle-btn-browse',
           onClick: this.browseClicked
         }, 'Browse')];
-      // TODO: WHere is this prop set?
-      // if(this.props.allowAdd){
-      if(!this.props.allowAdd){
+      if(this.props.allowAdd){
         buttons.push(D.button({
           className: 'plone-btn plone-btn-default castle-btn-add',
           onClick: this.addClicked

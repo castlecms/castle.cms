@@ -175,9 +175,9 @@ define([
       }
       var pattern = new RelatedItems($re, cutils.extend(options, {
         vocabularyUrl: $('body').attr('data-portal-url') + '/@@getVocabulary?name=plone.app.vocabularies.Catalog',
-        maximumSelectionSize: 1,
-        multiple: false,
-        allowAdd: false,
+        maximumSelectionSize: -1,  // Set to -1 to remove selection limit
+        multiple: true,  // Allows for multiple images to be selected at once via checkboxes
+        allowAdd: false,  // Allows all dexterity types to be added as related items
         noItemsSelectedText: 'No image selected',
         initial_selection: selection,
         selectableTypes: ['Image'],
