@@ -6,17 +6,37 @@ from plone.namedfile import field as namedfile
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
+from zope.schema.interfaces import IFromUnicode
 
 import zope.schema as schema
 
+# TODO: Currently attempting to convert the image schema
+# to a list of namedBlobImages.
+# The list requires the IFromUnicode interface to function,
+# though it causes the 'multimedia' tab to disappear in the modal.
+# These two interfaces may not be compatible together
 
-@provider(IFormFieldProvider)
+def multi_provider(*interfaces):
+    def decorator(cls):
+        for interface in interfaces:
+            provider(interface)(cls)
+        return cls
+    return decorator
+
+# @provider(IFormFieldProvider)
+@multi_provider(IFormFieldProvider, IFromUnicode)
 class IRequiredLeadImage(ILeadImage):
 
-    image = namedfile.NamedBlobImage(
-        title=_(u'label_leadimage', default=u'Lead Image'),
+    # image = namedfile.NamedBlobImage(
+    #     title=_(u'label_leadimage', default=u'Lead Image'),
+    #     description=_(u'help_leadimage', default=u''),
+    #     required=True
+    # )
+    image = schema.List(
+        title=_(u'label_leadimage', default=u'Lead Image(s)'),
         description=_(u'help_leadimage', default=u''),
-        required=True
+        required=True,
+        value_type=namedfile.NamedBlobImage()
     )
 
     image_caption = schema.TextLine(
