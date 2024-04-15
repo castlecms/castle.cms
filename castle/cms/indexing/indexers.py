@@ -19,7 +19,6 @@ from castle.cms.interfaces import IHasDefaultImage
 from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.interfaces import ITrashed
 
-
 @indexer(IItem)
 def getRawRelatedItems(obj):
     try:
@@ -152,7 +151,7 @@ def last_modified_by(context):
     try:
         if not rt.isUpToDate(context):
             return creator
-    except POSKeyError:
+    except (POSKeyError, EOFError):
         return creator
 
     length = history.getLength(countPurged=False)
@@ -182,8 +181,12 @@ def last_modified_by(context):
 
 @indexer(IItem)
 def has_private_parents(obj):
-    if (api.content.get_state(obj) != 'published'):
-        return True  # needs to be True for private self as well as parents
+    try:
+        if (api.content.get_state(obj) != 'published'):
+            return True  # needs to be True for private self as well as parents
+    except Exception:
+        # in case it doesn't have workflow status for some reason
+        return True
     parent = aq_parent(obj)
     while not ISiteRoot.providedBy(parent):
         try:

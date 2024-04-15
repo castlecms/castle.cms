@@ -5,7 +5,7 @@ Changelog
 ----------------------
 
 - Fix mass copy/paste functionality
-
+- wipe traces of collective.elasticsearch
 
 3.0.0b133 (2024-03-21)
 ----------------------

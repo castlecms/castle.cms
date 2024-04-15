@@ -5,25 +5,25 @@ services:
         image: "redis:alpine"
         ports:
             - 6379:6379
-    elasticsearch:
-        image: "elasticsearch:7.6.0"
+    opensearch:
+        image: "opensearch:2.10.0"
         ports:
           - 9200:9200
         environment:
           - node.name=es01
           - discovery.type=single-node
         networks:
-          - elastic
+          - opensearch
     kibana:
-        image: "docker.elastic.co/kibana/kibana:7.6.0"
+      image: "opensearchproject/opensearch-dashboards:latest"
         container_name: "kibana"
         ports:
           - 5601:5601
         environment:
-          ELASTICSEARCH_URL: http://elasticsearch:9200
-          ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+          ELASTICSEARCH_URL: http://opensearch:9200
+          ELASTICSEARCH_HOSTS: http://opensearch:9200
         networks:
-          - elastic
+          - opensearch
     etherpad:
         image: "etherpad/etherpad"
         ports:
@@ -34,5 +34,5 @@ services:
           - 1025:1025
           - 8025:8025
 networks:
-  elastic:
+  opensearch:
     driver: bridge

@@ -44,7 +44,6 @@ Persistent processes that can run continuously(for example with supervisor)
 Additional commands
 -------------------
 
-- ``bin/reindex-elasticsearch``: Reindex all content in elasticsearch
 - ``bin/upgrade-sites``: Run all available upgrades on all sites
 
 
