@@ -74,9 +74,7 @@ define([
     },
 
     selectionUpdated: function(){
-      console.log('=== selection updated ===')
       this.props.updateValue(this.state.selected);
-      console.log(this.state)
       this.load();
     },
 
@@ -135,16 +133,11 @@ define([
     addSelection: function(selection){
       var that = this;
       var valid = [];
-      console.log('=== selection ===')
       selection.forEach(function(item){
-        console.log(that.state.selected)
-
         if(that.state.selected.indexOf(item) === -1){
           valid.push(item);
         }
       });
-      console.log('=== selectionsize ===')
-      console.log(that.props.maximumSelectionSize)
       if(that.props.maximumSelectionSize === 1){
         if(valid.length > 0){
           that.state.selected = [valid[0]];
@@ -175,8 +168,6 @@ define([
       if(that.state.selected.length > 60){
         method = 'POST';
       }
-      console.log('=== props ===')
-      console.log(that.props)
       $.ajax({
         url: that.props.vocabularyUrl,
         dataType: 'JSON',
@@ -227,15 +218,8 @@ define([
             },
             onSelectItems: function(items){
               var uids = [];
-              // XXX: With 'multiple' enabled, the existing lead image disappears from the
-              // 'selected' array but remains in the 'items' array when new images are selected.
-              // This is probably a bug
-              that.state.items = [] // For now, reset 'items' prop
               items.forEach(function(item){
                 uids.push(item.UID);
-                // XXX: Items are not normally added to the 'items' prop when selecting multiple images
-                // For now, add them manually
-                that.state.items.push(item)
               });
               that.addSelection(uids);
             },
@@ -377,7 +361,6 @@ define([
           className: 'plone-btn plone-btn-default castle-btn-browse',
           onClick: this.browseClicked
         }, 'Browse')];
-
       if(this.props.allowAdd){
         buttons.push(D.button({
           className: 'plone-btn plone-btn-default castle-btn-add',
