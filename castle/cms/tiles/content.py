@@ -57,6 +57,12 @@ class IContentTileSchema(model.Schema):
         required=False,
     )
 
+    alternate_image = schema.Bool(
+        title=u'Use Alternate Image',
+        description=u'Displays the alternate image, if any',
+        required=False,
+    )
+
     more_text = schema.TextLine(
         title=u'More text',
         default=u'',
