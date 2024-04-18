@@ -23,7 +23,7 @@ class IRequiredLeadImage(model.Schema):
 
     alternate_image = namedfile.NamedBlobImage(
         title=_(u'label_alternateleadimage', default=u'Alternate Lead Image'),
-        description=_(u'label_alternateleadimage', default=u'An alternate image that can be displayed in a Feature tile.'),
+        description=_(u'label_alternateleadimage', default=u'An image that can be displayed in tiles that support alternate images.'),
         required=False
     )
 
