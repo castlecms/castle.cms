@@ -235,12 +235,10 @@ class Purge(BrowserView):
                 pass
 
         for obj in objs:
+            path = '/'.join(obj.getPhysicalPath())
+            path = path + '/@@castle.cms.querylisting/querylisting-1'
+            paths.append(path)
             paths.extend(getPathsToPurge(obj, self.request))
-
-        # Purge entire querylisting
-        prefix = '/' + self.context.virtual_url_path()
-        path = prefix + '/@@castle.cms.querylisting/querylisting-1'
-        paths.append(path)
 
         paths = list(set(paths))
 
