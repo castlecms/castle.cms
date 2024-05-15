@@ -4,6 +4,7 @@ Changelog
 3.0.0b134 (unreleased)
 ----------------------
 
+- change all references of md5 to sha256
 - Fix mass copy/paste functionality
 
 
