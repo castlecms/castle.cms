@@ -1,11 +1,12 @@
 import argparse
-from io import StringIO
+import hashlib
 import logging
 
-from castle.cms.files import aws  # noqa: E402
-import hashlib  # noqa: E402
-import plone.api as api  # noqa: E402
+from castle.cms.files import aws
+from castle.cms.services.google.youtube import get_youtube_service
+import plone.api as api
 from zope.component.hooks import setSite
+
 
 logger = logging.getLogger(__name__)
 RESOURCES_KEY_PREFIX = 'archiveresources/'
@@ -46,7 +47,6 @@ def update_s3_resources():
                 if resp_delete.status != 200:
                     logger.error(f'Unable to delete md5 hashed key {md5_key}. This key should not be used for security purposes')
                     raise Exception(f'Unable to delete key {md5_key}.')
-
 
 if __name__ == '__main__':
     site = app[args.site_id]  # noqa
