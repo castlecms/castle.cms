@@ -33,6 +33,8 @@ class ChatLogin(BrowserView):
             for key in keyring:
                 if key is None:
                     continue
+                # this code matches the hashing code in rocket chat and cannot
+                # be updated to sha256
                 value = hmac.new(key, user + salt, sha).hexdigest()
                 if _is_equal(value, token):
                     return json.dumps({
