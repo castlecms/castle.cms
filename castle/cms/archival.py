@@ -323,7 +323,7 @@ class Storage(object):
         except AttributeError:
             self.archives = self.site._archives = OOBTree()
             self.path_to_uid = self.site._archives_path_to_uid = OOBTree()
-        self.resources = {}  # path -> md5 dict
+        self.resources = {}  # path -> sha256 dict
         self.errors = []  # so we can ignore
 
         try:
@@ -424,10 +424,10 @@ class Storage(object):
                     fidata = fidata.replace(sub_url, new_url)
 
         # upload to amazon and get url!
-        md5 = hashlib.md5(fidata).hexdigest()
+        sha256 = hashlib.sha256(fidata).hexdigest()
 
         content_path = '{0}{1}/{2}/{3}/{4}'.format(
-            RESOURCES_KEY_PREFIX, md5[0], md5[1], md5[2], md5
+            RESOURCES_KEY_PREFIX, sha256[0], sha256[1], sha256[2], sha256
         )
         if keep_ext and '.' in url:
             ext = url.split('.')[-1]
