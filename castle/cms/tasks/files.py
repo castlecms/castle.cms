@@ -1,7 +1,7 @@
 import logging
 
 import transaction
-from castle.cms.commands import md5
+from castle.cms.commands import md5, sha256
 from castle.cms.files import aws
 from castle.cms.media import video
 from castle.cms.services.google import youtube
@@ -87,13 +87,17 @@ def youtube_video_edited(obj):
 
         # we can only edit if file has NOT changed
         # otherwise, it will be reuploaded and original deleted
-        if md5 is not None:
-            old_hash = getattr(obj, '_file_hash', None)
-            if old_hash is not None:
-                current_hash = md5(bfilepath)
-                if old_hash != current_hash:
-                    # dive out, we don't want to edit
-                    return
+        old_hash = getattr(obj, '_file_hash', None)
+        if old_hash is not None:
+            if obj.useforsecurity is True:
+                if sha256 is not None:
+                    current_hash = sha256(bfilepath)
+            if obj.useforsecurity is False:
+                if md5 is not None:
+                    current_hash = md5(bfilepath)
+            if old_hash != current_hash:
+                # dive out, we don't want to edit
+                return
 
     youtube.edit(obj)
 
