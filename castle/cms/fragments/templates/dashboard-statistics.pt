@@ -8,21 +8,20 @@
 
 <div class="row castle-statistics-container" style="clear: both">
   <div class="col-md-4 load-container-user-modified"
-       tal:attributes="class python: has_assigned and 'col-md-4 load-container-user-modified' or 'col-md-6 load-container-user-modified'"
+       tal:attributes="class python: 'col-md-4 load-container-user-modified' if has_assigned else 'col-md-6 load-container-user-modified'"
        tal:define="results dutils/get_user_modified">
-    <h3>My Changes</h3>
-    <button type="button" 
-            class="plone-btn plone-btn-default show-hide"
+    <h3>My Changes <button type="button" 
+            class="plone-btn plone-btn-sm plone-btn-secondary show-hide"
             data-name="user-activity">
             Show/Hide
-    </button>
+    </button></h3>
     <div id="user-activity">
       <table>
         <thead>
           <tr class="dots">
-            <th scope="col">Title</th>
-            <th scope="col">Last modified by</th>
-            <th scope="col">Modified</th>
+            <th scope="col" style="padding:0 10px 0 0;">Title</th>
+            <th scope="col" style="padding:0 10px 0 0;">Last modified by</th>
+            <th scope="col" style="padding:0 10px 0 0;">Modified</th>
           </tr>
         </thead>
         <tbody>
@@ -60,19 +59,18 @@
   <div class="col-md-4 load-container-user-created"
        tal:attributes="class python: has_assigned and 'col-md-4 load-container-user-created' or 'col-md-6 load-container-user-created'"
        tal:define="results dutils/get_user_created">
-    <h3>My Additions</h3>
-    <button type="button" 
-            class="plone-btn plone-btn-default show-hide"
+    <h3>My Additions <button type="button" 
+            class="plone-btn plone-btn-sm plone-btn-secondary show-hide"
             data-name="user-additions">
             Show/Hide
-    </button>
+    </button></h3>
     <div id="user-additions">
       <table>
         <thead>
           <tr class="dots">
-            <th scope="col">Title</th>
-            <th scope="col">Created by</th>
-            <th scope="col">Created</th>
+            <th scope="col" style="padding:0 10px 0 0;">Title</th>
+            <th scope="col" style="padding:0 10px 0 0;">Created by</th>
+            <th scope="col" style="padding:0 10px 0 0;">Created</th>
           </tr>
         </thead>
         <tbody>
@@ -110,19 +108,18 @@
   <div class="col-md-4 load-container-user-assigned"
        tal:condition="has_assigned"
        tal:define="results dutils/get_user_assigned">
-    <h3>My Assigned Pages</h3>
-    <button type="button" 
-            class="plone-btn plone-btn-default show-hide"
+    <h3>My Assigned Pages <button type="button" 
+            class="plone-btn plone-btn-sm plone-btn-secondary show-hide"
             data-name="user-assigned">
             Show/Hide
-    </button>
+    </button></h3>
     <div id="user-assigned">
       <table>
         <thead>
           <tr class="dots">
-            <th scope="col">Title</th>
-            <th scope="col">Created by</th>
-            <th scope="col">Created</th>
+            <th scope="col" style="padding:0 10px 0 0;">Title</th>
+            <th scope="col" style="padding:0 10px 0 0;">Created by</th>
+            <th scope="col" style="padding:0 10px 0 0;">Created</th>
           </tr>
         </thead>
         <tbody>
@@ -162,19 +159,18 @@
   <div class="col-md-4 load-container-modified"
        tal:attributes="class python: has_unders_review and 'col-md-4 load-container-modified' or 'col-md-6 load-container-modified'"
        tal:define="results dutils/get_recently_modified">
-    <h3>Recent Changes</h3>
-    <button type="button" 
-            class="plone-btn plone-btn-default show-hide"
+    <h3>Recent Changes <button type="button" 
+            class="plone-btn plone-btn-sm plone-btn-secondary show-hide"
             data-name="recent-activity">
             Show/Hide
-    </button>
+    </button></h3>
     <div id="recent-activity">
       <table>
         <thead>
           <tr class="dots">
-            <th scope="col">Title</th>
-            <th scope="col">Last modified by</th>
-            <th scope="col">Modified</th>
+            <th scope="col" style="padding:0 10px 0 0;">Title</th>
+            <th scope="col" style="padding:0 10px 0 0;">Last modified by</th>
+            <th scope="col" style="padding:0 10px 0 0;">Modified</th>
           </tr>
         </thead>
         <tbody>
@@ -212,19 +208,18 @@
   <div class="col-md-4 load-container-created"
        tal:attributes="class python: has_unders_review and 'col-md-4 load-container-created' or 'col-md-6 load-container-created'"
        tal:define="results dutils/get_recently_created">
-    <h3>Recent Additions</h3>
-    <button type="button" 
-            class="plone-btn plone-btn-default show-hide"
+    <h3>Recent Additions <button type="button" 
+            class="plone-btn plone-btn-sm plone-btn-secondary show-hide"
             data-name="recent-additions">
             Show/Hide
-    </button>
+    </button></h3>
     <div id="recent-additions">
       <table>
         <thead>
           <tr class="dots">
-            <th scope="col">Title</th>
-            <th scope="col">Created by</th>
-            <th scope="col">Created</th>
+            <th scope="col" style="padding:0 10px 0 0;">Title</th>
+            <th scope="col" style="padding:0 10px 0 0;">Created by</th>
+            <th scope="col" style="padding:0 10px 0 0;">Created</th>
           </tr>
         </thead>
         <tbody>
@@ -260,19 +255,18 @@
     </div>
   </div>
   <div class="col-md-4 load-container-review" tal:condition="has_unders_review">
-    <h3>Under Review</h3>
-    <button type="button" 
-            class="plone-btn plone-btn-default show-hide"
+    <h3>Under Review <button type="button" 
+            class="plone-btn plone-btn-sm plone-btn-secondary show-hide"
             data-name="under-review">
             Show/Hide
-    </button>
+    </button></h3>
     <div id="under-review">
       <table>
         <thead>
           <tr class="dots">
-            <th scope="col">Title</th>
-            <th scope="col">Last modified by</th>
-            <th scope="col">Modified</th>
+            <th scope="col" style="padding:0 10px 0 0;">Title</th>
+            <th scope="col" style="padding:0 10px 0 0;">Last modified by</th>
+            <th scope="col" style="padding:0 10px 0 0;">Modified</th>
           </tr>
         </thead>
         <tbody>

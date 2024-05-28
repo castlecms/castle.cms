@@ -201,7 +201,7 @@ class DashboardUtils(BrowserView):
         query = dict(
             sort_on='created', 
             sort_order='reverse', 
-            Creator=member.getUserName()
+            Creator=member.getId()
         )
         return self._paging(query, 'user-created')
 
