@@ -5,6 +5,7 @@ Changelog
 ----------------------
 
 - Fix mass copy/paste functionality
+- Handle additional edge case errors when reindexing
 
 
 3.0.0b133 (2024-03-21)
