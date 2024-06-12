@@ -122,3 +122,7 @@ def link_report(argv=sys.argv):
 
 def auto_publish_retract(argv=sys.argv):
     return run_it('_auto_publish_retract')
+
+
+def email_reminders(argv=sys.argv):
+    return run_it('_email_reminders')

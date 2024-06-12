@@ -5,6 +5,13 @@ from collective.celery import task
 from plone import api
 from urllib import urlencode
 from zope.globalrequest import getRequest
+from castle.cms import cache
+from DateTime import DateTime
+from copy import deepcopy
+import logging
+
+
+logger = logging.getLogger('castle.cms')
 
 
 @task.as_admin()
@@ -49,3 +56,67 @@ def send_email_to_subscribers(subject, html, categories=None, sender=None):
         html = html.replace('{{change_url}}', change_url)
 
         utils.send_email([subscriber.get('email')], subject, html, sender=sender)
+
+
+@task.as_admin()
+def send_email_reminder(obj, data):
+    """
+    This sends reminder emails to users who have been assigned to a page via the
+    'Sharing' tab.
+    The first email is sent upon initial assignment.
+    The second is sent after five days if they haven't un-assigned themselves 
+    from the page.
+    """
+
+    cache_key = '-'.join(api.portal.get().getPhysicalPath()[1:]) + '-email-reminders'
+    reminder_cache = {}
+    cache.set(cache_key, reminder_cache)
+
+    try:
+        reminder_cache = cache.get(cache_key)
+    except KeyError:
+        cache.set(cache_key, reminder_cache)
+
+    item_key = obj.getId() + '#' + data['uid']
+    if item_key not in reminder_cache:
+        data['pid'] = obj.getId()
+        data['portal_type'] = obj.portal_type
+        data['reminder_date'] = DateTime() + 5
+
+        # Set key as page id + user id so each user/page association can be tracked individually
+        reminder_cache[data['pid'] + '#' + data['uid']] = data
+        cache.set(cache_key, reminder_cache)
+
+        obj_path = '/'.join(obj.getPhysicalPath())
+
+        try:
+            recipients=data['email']
+            subject="New Page Assigned: %s" % (
+                api.portal.get_registry_record('plone.site_title'))
+            html="""
+                <p>Hi %s,</p>
+
+                <p>You have been assigned a new page:</p>
+                <p> %s </p>
+                <p>When your task is complete, you may un-assign yourself from this page.</p>""" % (
+                            data['name'], obj_path)
+            message = data.get('message')
+            if message:
+                html += """
+
+                <p> %s </p>
+                """ % (message)
+            
+            utils.send_email(
+                recipients=recipients,
+                subject=subject,
+                html=html
+            )
+        except Exception:
+            logger.warn('Could not send assignment email ', exc_info=True)
+    else:
+        # Assignment exists in cache
+        if 'Reviewer' not in data['roles']:
+            new_cache = deepcopy(reminder_cache) # Not sure if deepcopy is necessary
+            new_cache.pop(item_key, None)
+            cache.set(cache_key, new_cache)

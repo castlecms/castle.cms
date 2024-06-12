@@ -11,7 +11,10 @@ from castle.cms.tasks.template import copy_to_templates
 from castle.cms.utils import get_paste_data
 from castle.cms.utils import is_max_paste_items
 from castle.cms.utils import get_template_repository_info
+from castle.cms.tasks.email import send_email_reminder
 from plone.app.content.browser import actions
+from plone.app.workflow.browser import sharing
+from plone.app.workflow.events import LocalrolesModifiedEvent
 from plone.memoize.view import memoize
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
@@ -19,6 +22,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -26,7 +30,10 @@ from z3c.form.widget import ComputedWidgetAttribute
 from zope.interface import Interface
 
 import plone.api as api
+import sys
 import zope.schema as schema
+from zope.event import notify
+from zExceptions import Forbidden
 
 
 class ObjectPasteView(actions.ObjectPasteView):
@@ -326,3 +333,118 @@ class TemplateForm(form.Form):
         utils = Utils(self.context, self.request)
         target = utils.get_object_url(context)
         return self.request.response.redirect(target)
+
+
+class SharingView(sharing.SharingView):
+
+    def __call__(self):
+
+        postback = self.handle_form()
+        if postback:
+            # Reset python recursion limit to baseline if previously raised
+            sys.setrecursionlimit(1000)
+            return self.template()
+        else:
+            context_state = self.context.restrictedTraverse(
+                "@@plone_context_state")
+            url = context_state.view_url()
+            self.request.response.redirect(url)
+
+    def large_count(self):
+        """
+        Displays an alert indicating that we're operating in a view
+        with a high document count, which slows down the process of
+        granting permissions.
+        """
+
+        try:
+            event = LocalrolesModifiedEvent(self.context, self.request)
+            obj = event.object
+            if obj._count:
+                return True if obj._count.value > 1000 else False
+        except AttributeError:
+            return False
+
+    def handle_form(self):
+        """
+        Overrides the 'handle_form' method so we can temporarily increase
+        the python recursion limit if needed.
+
+        Also sends a notification email to individual users assigned to a page.
+        """
+        postback = True
+
+        form = self.request.form
+        submitted = form.get('form.submitted', False)
+        save_button = form.get('form.button.Save', None) is not None
+        cancel_button = form.get('form.button.Cancel', None) is not None
+        message = form.get('message_optional', None)
+        if submitted and save_button and not cancel_button:
+            if not self.request.get('REQUEST_METHOD', 'GET') == 'POST':
+                raise Forbidden
+
+            authenticator = self.context.restrictedTraverse('@@authenticator',
+                                                            None)
+            if not authenticator.verify():
+                raise Forbidden
+            
+            event = LocalrolesModifiedEvent(self.context, self.request)
+            obj = event.object
+            try:
+                if obj._count.value > 1000:
+                    # XXX: We're increasing the recursion limit here to prevent the
+                    # 'maximum recursion depth exceeded' error thrown by 'cPickle' 
+                    # that occurs when granting permissions in a large directory 
+                    # (i.e. the 'image-directory')
+                    sys.setrecursionlimit(2000)  
+            except AttributeError:
+                # User search form submitted, no need to get count
+                pass
+
+            # Update the acquire-roles setting
+            if self.can_edit_inherit():
+                inherit = bool(form.get('inherit', False))
+                reindex = self.update_inherit(inherit, reindex=False)
+            else:
+                reindex = False
+
+            # Update settings for users and groups
+            entries = form.get('entries', [])
+            roles = [r['id'] for r in self.roles()]
+
+            settings = []
+            for entry in entries:
+                assigned_roles=[r for r in roles if entry.get('role_%s' % r, False)]
+                settings.append(
+                    dict(id=entry['id'],
+                         type=entry['type'],
+                         roles=assigned_roles))
+
+                if entry['type'] == 'user' and 'Reviewer' in assigned_roles:
+                    # Only send emails to individual users assigned as 'Reviewers'
+                    user = api.user.get(entry['id'])
+                    email = user.getProperty('email')
+                    if email:
+                        data = dict(
+                            uid=user.getId(),
+                            name=user.getProperty('fullname') or user.getId(),
+                            email=email,
+                            roles=roles,
+                            message=message
+                        )
+                        send_email_reminder.delay(obj, data)
+
+            if settings:
+                reindex = self.update_role_settings(settings, reindex=False) \
+                            or reindex
+            if reindex:
+                self.context.reindexObjectSecurity()
+                notify(LocalrolesModifiedEvent(self.context, self.request))
+            IStatusMessage(self.request).addStatusMessage(
+                _(u"Changes saved."), type='info')
+            
+        # Other buttons return to the sharing page
+        if cancel_button:
+            postback = False
+
+        return postback

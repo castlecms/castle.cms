@@ -13,6 +13,7 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
+from plone.app.dexterity.behaviors.metadata import IOwnership
 
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import IHasDefaultImage
@@ -220,3 +221,45 @@ def self_or_child_has_title_description_and_image(obj):
 def has_custom_markup(image):
     if image.custom_markup:
         return True
+    
+
+@indexer(IItem)
+def actors(context):
+    # Get history of users that have modified an item
+    actors = []
+    rt = api.portal.get_tool("portal_repository")
+    history = rt.getHistoryMetadata(context)
+
+    for i in range(history.getLength(countPurged=False)):
+        data = history.retrieve(i, countPurged=False)
+        actor = data["metadata"]["sys_metadata"]["principal"]
+        actors.append(actor) if actor not in actors else None
+
+        req = getRequest()
+        if req is not None and not IReindexActive.providedBy(req):
+            try:
+                # When a user modifies an item, the item's revision history
+                # is not updated until AFTER reindexing. Here we manually
+                # update the index if the user modified something so it
+                # can immediately appear on the dashboard
+                current_user = api.user.get_current().getUserName()
+                actors.append(current_user) if current_user not in actors else None
+            except Exception:
+                pass
+
+    return actors
+
+
+@indexer(IItem)
+def assigned_users(context):
+    # Get local roles for an item
+    assigned_users = []
+    
+    acl_users = api.portal.get_tool('acl_users')
+    local_roles = acl_users.getLocalRolesForDisplay(context)
+
+    for name, roles, rtype, rid in local_roles:
+        # Only users assigned 'Reviewer' status will be indexed for now
+        if 'Reviewer' in roles:
+            assigned_users.append(name)
+    return assigned_users

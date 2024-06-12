@@ -1,6 +1,5 @@
 <div tal:define="dutils context/@@dashboard-utils;
                  totals dutils/get_totals|nothing;
-                 interests dutils/find_areas_of_interest|nothing;
                  memberinfo context/portal_membership/getMemberInfo;
                  member context/@@plone_portal_state/member;
                  userId python: member.getId() or member.getId();
@@ -22,80 +21,7 @@
  </div>
   <p class="welcome-message">
     What do you need to do today?<br/>
-    (<a href="${dutils/site/absolute_url}/dashboards/${userId}/edit">Edit dashboard</a>)
   </p>
-
-  <ul class="castle-grid-block-sm-6 dashboard-add-content-buttons"
-      tal:condition="python: not interests and dutils.has_add_permission">
-    <!-- This should be dynamically generated -->
-    <li class="castle-grid-block-item">
-      <a href="${context/absolute_url}"
-         class="add-content-btn contenttype-document"
-         data-type="Document"
-         data-path="/">Add page</a></li>
-    <li class="castle-grid-block-item">
-      <a href="${context/absolute_url}"
-         class="add-content-btn contenttype-news-item"
-         data-type="News Item"
-         data-path="/">Add news item</a></li>
-    <li class="castle-grid-block-item">
-      <a href="${context/absolute_url}"
-         class="add-content-btn contenttype-link"
-         data-type="Link"
-         data-path="/">Add link</a></li>
-    <li class="castle-grid-block-item">
-      <a href="${context/absolute_url}"
-         class="add-content-btn contenttype-folder"
-         data-type="Folder"
-         data-path="/">Add folder</a></li>
-    <li class="castle-grid-block-item">
-      <a href="${context/absolute_url}"
-         class="upload-content-btn glyphicon glyphicon-upload"
-         data-type="upload">Add files</a></li>
-    <li class="castle-grid-block-item">
-      <a href="${portal_url}/folder_contents" class="icon-manage-site">Manage content</a></li>
-  </ul>
-  <ul class="castle-grid-block-sm-6 dashboard-add-content-buttons" tal:condition="interests">
-    <tal:int tal:repeat="interest interests">
-      <tal:defs tal:define="root python: dutils.is_root(interest['loc']);
-                            type interest/type">
-      <li class="castle-grid-block-item"
-          tal:condition="python: type not in ('UPLOAD', 'MANAGE')">
-        <a href="${context/absolute_url}"
-           class="add-content-btn
-                  contenttype-${python: type.lower().replace(' ', '-')}"
-           tal:condition="root"
-           data-type="${python: interest['type']}"
-           data-path="/">Add ${python: interest['pt'].title.lower()}</a>
-        <a href="${python: interest['loc']}"
-           class="add-content-btn
-                  contenttype-${python: type.lower().replace(' ', '-')}"
-            tal:condition="not: root"
-            data-type="${type}"
-            data-path="${python: dutils.get_path(interest['loc'])}">
-          Add ${python: interest['pt'].title.lower()}
-          <span class="path">to ${python: dutils.get_path(interest['loc'])}</span>
-        </a>
-      </li>
-      <li class="castle-grid-block-item"
-          tal:condition="python: type == 'UPLOAD'">
-        <a href="#" class="upload-content-btn glyphicon glyphicon-upload"
-           data-type="upload">Add files</a>
-      </li>
-      <li class="castle-grid-block-item"
-          tal:condition="python: type == 'MANAGE'"
-          tal:define="root python: dutils.is_root(interest['loc'])">
-        <a href="${portal_url}/folder_contents" tal:condition="root"
-           class="icon-manage-site manage-content-btn">Manage site content</a>
-        <a href="${interest/loc/absolute_url}/folder_contents" tal:condition="not: root"
-           class="icon-manage-site manage-content-btn">
-          Manage
-          <span class="path">${python: dutils.get_path(interest['loc'])}</span>
-        </a>
-      </li>
-    </tal:defs>
-    </tal:int>
-  </ul>
 
   <div class="content-totals" tal:condition="totals" style="display: none">
     <!-- ignore for now... -->
