@@ -239,7 +239,6 @@ class EmailTemplateVocabularyFactory(object):
         })
 
     def __call__(self, context):
-        # import pdb; pdb.set_trace()
         catalog = api.portal.get_tool('portal_catalog')
         email_templates = [
             brain.getObject()
