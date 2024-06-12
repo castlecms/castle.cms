@@ -1,6 +1,7 @@
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Acquisition import aq_inner
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFPlone import utils
 from Products.CMFPlone.browser.interfaces import INavigationBreadcrumbs
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
@@ -14,6 +15,21 @@ from castle.cms.browser.utils import Utils
 class PhysicalNavigationBreadcrumbs(BrowserView):
 
     def breadcrumbs(self):
+        # get actual context object if only site root is passed in as context
+        site = api.portal.get()
+        if self.context == site:
+            context_url = self.request.URL
+            site_url = site.absolute_url()
+            path = context_url.replace(site_url, '')
+            if '/layout_view' in path:
+                path = path.replace('/layout_view', '')
+            try:
+                context = api.content.get(path)
+                if IContentish.providedBy(context):
+                    self.context = context
+            except Exception:
+                return []
+
         context = aq_inner(self.context)
 
         view_utils = Utils(self.context, self.request)
