@@ -142,7 +142,7 @@
   <browser:page
     name="search-exclusion-controlpanel"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    class=".search.ExclusionPanel"
+    class=".search.ExclusionPanelView"
     permission="plone.app.controlpanel.Site"
     layer="castle.cms.interfaces.ICastleLayer"
     template="templates/search-exclusion.pt"
