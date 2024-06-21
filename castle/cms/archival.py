@@ -17,7 +17,7 @@ from re import compile as re_compile  # noqa: E402
 from urllib.parse import urlparse, urljoin, quote_plus  # noqa: E402
 from zope.component import getAllUtilitiesRegisteredFor  # noqa: E402
 from zope.globalrequest import getRequest  # noqa: E402
-from zope.interface import implements  # noqa: E402
+from zope.interface import implementer  # noqa: E402
 
 import hashlib  # noqa: E402
 import logging  # noqa: E402
