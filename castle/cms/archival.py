@@ -3,35 +3,34 @@
 from future.standard_library import install_aliases
 install_aliases()  # noqa
 
-from BTrees.OOBTree import OOBTree
-from castle.cms import theming
-from castle.cms.files import aws
-from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager
-from castle.cms.utils import normalize_url
-from DateTime import DateTime
-from lxml.html import fromstring
-from lxml.html import tostring
-from plone import api
-from plone.subrequest import subrequest
-from plone.uuid.interfaces import IUUID
-from urllib.parse import urlparse, urljoin, quote_plus
-from zope.component import getAllUtilitiesRegisteredFor
-from zope.globalrequest import getRequest
-from zope.interface import implementer
+from BTrees.OOBTree import OOBTree  # noqa: E402
+from castle.cms import theming  # noqa: E402
+from castle.cms.files import aws  # noqa: E402
+from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager  # noqa: E402
+from castle.cms.utils import normalize_url  # noqa: E402
+from DateTime import DateTime  # noqa: E402
+from lxml.html import fromstring  # noqa: E402
+from lxml.html import tostring  # noqa: E402
+from plone.subrequest import subrequest  # noqa: E402
+from plone.uuid.interfaces import IUUID  # noqa: E402
+from re import compile as re_compile  # noqa: E402
+from urllib.parse import urlparse, urljoin, quote_plus  # noqa: E402
+from zope.component import getAllUtilitiesRegisteredFor  # noqa: E402
+from zope.globalrequest import getRequest  # noqa: E402
+from zope.interface import implements  # noqa: E402
 
-import hashlib
-import logging
-import re
-import requests
-
+import hashlib  # noqa: E402
+import logging  # noqa: E402
+import plone.api as api  # noqa: E402
+import requests  # noqa: E402
 
 logger = logging.getLogger('castle.cms')
 
 
 # gets all url() CSS directives
-RE_CSS_URL = re.compile(r"""url\(["']?([^\)'"]+)['"]?\)""")
+RE_CSS_URL = re_compile(r"""url\(["']?([^\)'"]+)['"]?\)""")
 # inline css import...
-RE_CSS_IMPORTS = re.compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))["'];""")  # noqa
+RE_CSS_IMPORTS = re_compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))["'];""")  # noqa
 
 CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'

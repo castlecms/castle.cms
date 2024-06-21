@@ -6,7 +6,7 @@ from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 class CastleDocumentViewerSettingsForm(GlobalSettingsForm):
     template = ViewPageTemplateFile('templates/documentviewer.pt')
     label = None
-    description=None
+    description = None
 
 
 GlobalSettingsFormView = wrap_form(CastleDocumentViewerSettingsForm)

@@ -10,7 +10,8 @@ from plone.dexterity.interfaces import IDexterityContainer
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
-from zope import schema
+
+import zope.schema as schema
 
 
 @implementer(IContextSourceBinder)

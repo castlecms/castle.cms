@@ -13,6 +13,49 @@ Changelog
 - plone 5.2 compat
 
 
+3.0.0b134 (2024-06-06)
+----------------------
+
+- Fix mass copy/paste functionality
+- Handle additional edge case errors when reindexing
+
+
+3.0.0b133 (2024-03-21)
+----------------------
+
+- castle crawler should generate an index alias and an index when it verifies they
+  exist, and then use the alias for all primary operations
+- mark the crawler mapping['url'] as _stored_ so opensearchpy stored_field parameter
+  can be used appropriately with it
+
+
+3.0.0b132 (2024-02-07)
+----------------------
+
+- bug fixes
+
+
+3.0.0b131 (2024-01-31)
+----------------------
+
+- try/catch in upgrade step
+
+
+3.0.0b130 (2024-01-31)
+----------------------
+
+- Adjust View Page actions to account for folder's default page view
+- Rework templates to be anything in the Template Repository (remove ITemplate)
+- Better display of templates and icons in add content modal
+
+
+3.0.0b129 (2023-12-07)
+----------------------
+
+- Create Content Redirectable behavior so Dexterity objects can act as redirects
+- Create an action to convert pages into folders with the original page as the default view
+
+
 3.0.0b128 (2023-11-20)
 ----------------------
 

@@ -42,11 +42,8 @@ def paste_error_handle(where, op, mdatas):
 def _paste_items(where, op, mdatas):
     logger.info('Copying a bunch of items')
     portal = api.portal.get()
-    catalog = api.portal.get_tool('portal_catalog')
     dest = portal.restrictedTraverse(str(where.lstrip('/')))
 
-    count = 0
-    commit_count = 0
     if not getCelery().conf.task_always_eager:
         portal._p_jar.sync()
 
@@ -58,7 +55,6 @@ def _paste_items(where, op, mdatas):
         pass
 
     for mdata in mdatas[:]:
-        count += len(catalog(path={'query': '/'.join(mdata), 'depth': -1}))
         ob = portal.unrestrictedTraverse(str('/'.join(mdata)), None)
         if ob is None:
             continue
@@ -67,18 +63,6 @@ def _paste_items(where, op, mdatas):
             api.content.copy(ob, dest, safe_id=True)
         else:
             api.content.move(ob, dest, safe_id=True)
-
-        if count / 50 != commit_count:
-            # commit every 50 objects moved
-            transaction.commit()
-            commit_count = count / 50
-            if not getCelery().conf.task_always_eager:
-                portal._p_jar.sync()
-            # so we do not redo it
-            try:
-                mdatas.remove(mdata)
-            except Exception:
-                pass
 
     # we commit here so we can trigger conflict errors before
     # trying to send email

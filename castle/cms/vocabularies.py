@@ -221,7 +221,7 @@ class EmailTemplateVocabularyFactory(object):
         return users if len(users) > 0 else None
 
     def get_email_template_term_value(self, email_template):
-        fake_body = lambda: None
+        fake_body = lambda: None  # noqa: E731
         setattr(fake_body, 'raw', None)
         return json.dumps({
             'email_body': getattr(email_template, 'email_body', fake_body).raw,
@@ -229,7 +229,11 @@ class EmailTemplateVocabularyFactory(object):
             'email_send_from': getattr(email_template, 'send_from', None),
             'email_send_to_groups': getattr(email_template, 'send_to_groups', None),
             'email_send_to_users': self.get_send_to_users(email_template),
-            'email_send_to_subscriber_categories': getattr(email_template, 'send_to_subscriber_categories', None),
+            'email_send_to_subscriber_categories': getattr(
+                email_template,
+                'send_to_subscriber_categories',
+                None,
+            ),
             'email_send_to_custom': getattr(email_template, 'send_to_custom', None),
         })
 

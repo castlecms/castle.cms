@@ -4,10 +4,12 @@ from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
 from Products.CMFPlone.utils import validate_json
-from zope import schema
-from zope.interface import alsoProvides
+from zope.interface import provider
+
+import zope.schema as schema
 
 
+@provider(IFormFieldProvider)
 class ILocation(model.Schema):
 
     model.fieldset(
@@ -36,6 +38,3 @@ class ILocation(model.Schema):
         constraint=validate_json,
         required=False
     )
-
-
-alsoProvides(ILocation, IFormFieldProvider)

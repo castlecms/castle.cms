@@ -297,3 +297,16 @@ def has_image(obj):
             return getattr(aq_base(obj), 'image', None) is not None
         except POSKeyError:
             return False
+
+
+def get_template_repository_info():
+    portal = api.portal.get()
+    folder = portal.get('template-repository', None)
+    folder_url = None if folder is None else folder.absolute_url()
+    templates = [] if folder is None else folder.listFolderContents()
+
+    return {
+        'folder': folder,
+        'folder_url': folder_url,
+        'templates': templates,
+    }

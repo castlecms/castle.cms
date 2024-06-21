@@ -12,7 +12,7 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3000"
+    title="Upgrade CastleCMS to 3.0.0"
     description=""
     source="*"
     destination="3000"
@@ -29,8 +29,8 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3001"
-    description="Ensures mockup-structure-pattern-url is also pointing at ++plone++castle/patterns/structure/"
+    title="Upgrade CastleCMS to 3.0.1"
+    description="3001 - Ensures mockup-structure-pattern-url is also pointing at ++plone++castle/patterns/structure/"
     source="*"
     destination="3001"
     handler=".upgrades.upgrade_3001"
@@ -46,8 +46,8 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3003"
-    description="TinyMCE on forms for logged out users"
+    title="Upgrade CastleCMS to 3.0.3"
+    description="3003 - TinyMCE on forms for logged out users"
     source="*"
     destination="3003"
     handler=".upgrades.upgrade_3003"
@@ -63,8 +63,8 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3004"
-    description="Fix pagination issues on content browser component"
+    title="Upgrade CastleCMS to 3.0.4"
+    description="3004 - Fix pagination issues on content browser component"
     source="*"
     destination="3004"
     handler=".upgrades.upgrade_3004"
@@ -73,8 +73,8 @@
 
 
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3005"
-    description="Update api control panel settings to add prince server username and password"
+    title="Upgrade CastleCMS to 3.0.5"
+    description="3005 - Update api control panel settings to add prince server username and password"
     source="*"
     destination="3005"
     handler=".upgrades.upgrade_3005"
@@ -96,11 +96,11 @@
   >
 
     <genericsetup:upgradeStep
-      title="add explicit enable/disable of country code checking to security control panel"
+      title="3006a - Add explicit enable/disable of country code checking to security control panel"
       handler=".upgrades.upgrade_3006_cc"
     />
     <genericsetup:upgradeStep
-      title="migrate to Google Analytics 4 settings structure"
+      title="3006b - Migrate to Google Analytics 4 settings structure"
       handler=".upgrades.upgrade_3006_ga4"
     />
   </genericsetup:upgradeSteps>
@@ -115,7 +115,7 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3.0.7"
-    description="Add Email Templates to castle.cms"
+    description="3007 - Add Email Templates to castle.cms"
     source="*"
     destination="3007"
     handler=".upgrades.upgrade_3007"
@@ -124,8 +124,8 @@
 
 
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3008"
-    description="Update ISecuritySchema with Request Access Form fields"
+    title="Upgrade CastleCMS to 3.0.8"
+    description="3008 - Update ISecuritySchema with Request Access Form fields"
     source="*"
     destination="3008"
     handler=".upgrades.upgrade_3008"
@@ -141,11 +141,55 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
   <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3009"
-    description="pagination on folder_contents, mapselect js bug fix, conteenttypes descriptions and icons"
+    title="Upgrade CastleCMS to 3.0.9"
+    description="3009 - Pagination on folder_contents, mapselect js bug fix, conteenttypes descriptions and icons"
     source="*"
     destination="3009"
     handler=".upgrades.upgrade_3009"
     profile="castle.cms:default"
     />
+
+
+  <genericsetup:registerProfile
+    name="3010"
+    title="CastleCMS upgrade to 3010 profile"
+    directory="profiles/3010"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.10"
+    description="3010 - Add action to convert document to folder"
+    source="*"
+    destination="3010"
+    handler=".upgrades.upgrade_3010"
+    profile="castle.cms:default"
+    />
+
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.11"
+    description="3011 - Remove ITemplate from all objects that provided it"
+    source="*"
+    destination="3011"
+    handler=".upgrades.upgrade_3011"
+    profile="castle.cms:default"
+    />
+
+  <genericsetup:registerProfile
+    name="3012"
+    title="CastleCMS upgrade to 3012 profile"
+    directory="profiles/3012"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.12"
+    description="3012 - Recompile resources and fix some view/ template actions"
+    source="*"
+    destination="3012"
+    handler=".upgrades.upgrade_3012"
+    profile="castle.cms:default"
+  />
+
 </configure>
