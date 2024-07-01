@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.21.1 (unreleased)
+2.22.0 (2024-07-01)
 -------------------
 
 - Fix mass copy/paste functionality
