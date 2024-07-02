@@ -4,7 +4,7 @@ Changelog
 2.22.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Check for backend urls during quality check
 
 
 2.22.0 (2024-07-01)
