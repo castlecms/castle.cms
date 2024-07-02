@@ -4,7 +4,7 @@ Changelog
 3.0.0b135 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Check for backend urls during quality check
 
 
 3.0.0b134 (2024-06-06)
