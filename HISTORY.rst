@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.22.1 (unreleased)
+2.23.0 (2024-07-03)
 -------------------
 
 - Check for backend urls during quality check
