@@ -573,6 +573,7 @@
     profile="castle.cms:default"
     />
 
+
   <genericsetup:registerProfile
     name="2_6_38"
     title="CastleCMS upgrade to 2.6.38 profile"
@@ -586,6 +587,23 @@
     source="*"
     destination="2638"
     handler=".upgrades.upgrade_2_6_38"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+  name="2_6_39"
+  title="CastleCMS upgrade to 2.6.39 profile"
+  directory="profiles/2_6_39"
+  description=""
+  provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.39"
+    description="2.6.39 - Recompile resources for backend url quality check"
+    source="*"
+    destination="2639"
+    handler=".upgrades.upgrade_2_6_39"
     profile="castle.cms:default"
   />
 
