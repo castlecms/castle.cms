@@ -1,7 +1,13 @@
 Changelog
 =========
 
-3.0.0b135 (unreleased)
+3.0.0b136 (unreleased)
+----------------------
+
+- Check for backend urls during quality check
+
+
+3.0.0b135 (2024-07-03)
 ----------------------
 
 - Check for backend urls during quality check
