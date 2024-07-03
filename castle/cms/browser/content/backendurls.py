@@ -7,42 +7,54 @@ import re
 logger = logging.getLogger('castle.cms')
 
 
-class HasBackendUrlView(object):
+class BackendUrlUtils(object):
     # start of string
     # optional http:// or https:// is catured as 'protocol'
     # optional leading slashes are captured as 'leading_slashes'
     # everything else is captured as 'url'
     URL_PATTERN = r'^(?P<protocol>https?:\/\/)?(?P<leading_slashes>\/+)?(?P<url>.*)$'
+    UNSET = object()
+    _public_url = UNSET
+    _backend_urls = UNSET
+    _invalid_backend_urls = ['a']
 
     @property
     def backend_urls(self):
-        formatted_backend_urls = []
-        backend_urls = api.portal.get_registry_record('plone.backend_url', default=[]) or []
-        for backend_url in backend_urls:
-            formatted_url = self.get_formatted_url(backend_url)
-            if formatted_url and isinstance(formatted_url, basestring):
-                formatted_backend_urls.append(formatted_url)
-        return formatted_backend_urls
+        if getattr(self, '_backend_urls', self.UNSET) is self.UNSET:
+            formatted_backend_urls = []
+            backend_urls = api.portal.get_registry_record('plone.backend_url', default=[]) or []
+            for backend_url in backend_urls:
+                formatted_url = self.get_formatted_url(backend_url)
+                if formatted_url and isinstance(formatted_url, basestring):
+                    formatted_backend_urls.append(formatted_url)
+            self._backend_urls = formatted_backend_urls
+        return self._backend_urls
 
     @property
     def public_url(self):
-        public_url = api.portal.get_registry_record('plone.public_url', default=None) or None
-        if public_url and isinstance(public_url, basestring):
-            return public_url
-        return None
+        if getattr(self, '_public_url', self.UNSET) is self.UNSET:
+            public_url = api.portal.get_registry_record('plone.public_url', default=None) or None
+            if public_url and isinstance(public_url, basestring):
+                self._public_url = public_url
+            else:
+                self._public_url = None
+        return self._public_url
 
     @property
     def invalid_backend_urls(self):
         # if a site has the same backend and public url, do not consider it invalid
-        public_url = self.public_url
-        backend_urls = self.backend_urls
-        if public_url is None:
-            return backend_urls
-        return [
-            backend_url
-            for backend_url in backend_urls
-            if backend_url != public_url
-        ]
+        if getattr(self, '_invalid_backend_urls', self.UNSET) is self.UNSET:
+            public_url = self.public_url
+            backend_urls = self.backend_urls
+            if public_url is None:
+                self._invalid_backend_urls = backend_urls
+            else:
+                self._invalid_backend_urls = [
+                    backend_url
+                    for backend_url in backend_urls
+                    if backend_url != public_url
+                ]
+        return self._invalid_backend_urls
 
     def get_formatted_url(self, url):
         try:
@@ -58,6 +70,9 @@ class HasBackendUrlView(object):
             for invalid_backend_url in self.invalid_backend_urls
             if invalid_backend_url in content
         ]
+
+
+class HasBackendUrlView(BackendUrlUtils):
 
     def check_document(self):
         if api.user.is_anonymous():
