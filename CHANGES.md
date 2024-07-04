@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b136 (unreleased)
+3.0.0b136 (2024-07-04)
 ----------------------
 
 - Remove check for backend urls during quality check (for now)
