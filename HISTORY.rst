@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.23.1 (unreleased)
+2.23.1 (2024-07-04)
 -------------------
 
 - Remove check for backend urls during quality check (for now)
