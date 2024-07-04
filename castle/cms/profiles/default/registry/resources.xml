@@ -56,7 +56,7 @@
     <value key="expression">python: member is not None</value>
     <value key="jscompilation">++plone++castle/plone-logged-in-compiled.min.js</value>
     <value key="csscompilation">++plone++castle/plone-logged-in-compiled.css</value>
-    <value key="last_compilation">2024-07-02 00:00:00</value>
+    <value key="last_compilation">2024-07-04 00:00:00</value>
     <value key="depends">mosaic</value>
     <value key="stub_js_modules">
       <element>backbone</element>

@@ -4,7 +4,7 @@ Changelog
 2.23.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Remove check for backend urls during quality check (for now)
 
 
 2.23.0 (2024-07-03)
