@@ -176,6 +176,7 @@
     profile="castle.cms:default"
     />
 
+
   <genericsetup:registerProfile
     name="3012"
     title="CastleCMS upgrade to 3012 profile"
@@ -192,6 +193,7 @@
     profile="castle.cms:default"
   />
 
+
   <genericsetup:registerProfile
     name="3013"
     title="CastleCMS upgrade to 3013 profile"
@@ -205,6 +207,23 @@
     source="*"
     destination="3013"
     handler=".upgrades.upgrade_3013"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3014"
+    title="CastleCMS upgrade to 3014 profile"
+    directory="profiles/3014"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.14"
+    description="3014 - Recompile resources for removing backend url quality check"
+    source="*"
+    destination="3014"
+    handler=".upgrades.upgrade_3014"
     profile="castle.cms:default"
   />
 
