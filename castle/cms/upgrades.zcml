@@ -624,4 +624,21 @@
     profile="castle.cms:default"
   />
 
+
+  <genericsetup:registerProfile
+  name="2_6_41"
+  title="CastleCMS upgrade to 2.6.41 profile"
+  directory="profiles/2_6_41"
+  description=""
+  provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.41"
+    description="2.6.41 - Recompile resources for removing backend url quality check"
+    source="*"
+    destination="2641"
+    handler=".upgrades.upgrade_2_6_41"
+    profile="castle.cms:default"
+  />
+
 </configure>
