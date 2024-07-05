@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b137 (unreleased)
+3.0.0b137 (2024-07-05)
 ----------------------
 
 - Use VHM to correctly implement quality check for backend urls
