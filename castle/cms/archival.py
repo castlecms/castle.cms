@@ -36,8 +36,6 @@ RE_CSS_IMPORTS = re_compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))
 
 CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'
-# at the end of the string, a : then one or more digits, captured as port
-PORT_REGEX = r':(?P<port>\d+)$'
 
 
 class BaseArchivalTransformer(object):
@@ -200,17 +198,12 @@ def _get_vhm_base_url(public_url, site_path):
     if not public_url:
         return site_path
     parsed = urlparse(public_url)
-    netloc = parsed.netloc
-    port = None
-    port_match = re.search(PORT_REGEX, netloc)
-    if port_match:
-        port = port_match.groupdict().get('port', None)
-        netloc = ':'.join(netloc.split(':')[:-1])
+    port = parsed.port
     if port is None:
         port = 80 if parsed.scheme == 'http' else 403
-    return '/VirtualHostBase/{scheme}/{netloc}:{port}{site_path}/VirtualHostRoot'.format(
+    return '/VirtualHostBase/{scheme}/{hostname}:{port}{site_path}/VirtualHostRoot'.format(
         scheme=parsed.scheme,
-        netloc=netloc,
+        hostname=parsed.hostname,
         port=port,
         site_path=site_path,
     )
