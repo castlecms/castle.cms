@@ -4,7 +4,7 @@ Changelog
 3.0.0b136 (unreleased)
 ----------------------
 
-- Check for backend urls during quality check
+- Use VHM to correctly implement quality check for backend urls
 
 
 3.0.0b135 (2024-07-03)
