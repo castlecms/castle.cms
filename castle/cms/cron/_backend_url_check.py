@@ -111,25 +111,27 @@ def run(app):
     parser.add_argument('--site-id', dest='site_id', default=None)
 
     args, _ = parser.parse_known_args()
+    import pdb; pdb.set_trace()
+    # try:
+    if args.site_id is not None:
+        site = app[args.site_id]
+        setup_site(app[args.site_id])
 
-    try:
-        if args.site_id is not None:
-            setup_site(app[args.site_id])
-            check_object_views(app[args.site_id])
-        else:
-            for oid in app.objectIds():
-                obj = app[oid]
-                if IPloneSiteRoot.providedBy(obj):
-                    try:
-                        setup_site(obj)
-                        # obj._p_jar.sync()  # sync transactions
-                        check_object_views(obj)
-                    except Exception:
-                        logger.error('Error crawling site %s' % oid, exc_info=True)
-    except KeyError:
-        pass
-    except Exception:
-        logger.error('Error setting up crawling', exc_info=True)
+        check_object_views(app[args.site_id])
+        # else:
+        #     for oid in app.objectIds():
+        #         obj = app[oid]
+        #         if IPloneSiteRoot.providedBy(obj):
+        #             try:
+        #                 setup_site(obj)
+        #                 # obj._p_jar.sync()  # sync transactions
+        #                 check_object_views(obj)
+        #             except Exception:
+        #                 logger.error('Error crawling site %s' % oid, exc_info=True)
+    # except KeyError:
+    #     pass
+    # except Exception:
+    #     logger.error('Error setting up crawling', exc_info=True)
 
 
 if __name__ == '__main__':
