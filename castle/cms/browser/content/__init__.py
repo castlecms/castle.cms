@@ -874,7 +874,7 @@ class QualityCheckContent(BrowserView):
             'title': self.context.Title(),
             'id': self.context.getId(),
             'description': self.context.Description(),
-            'linksValid': self.links_valid,
+            'linksValid': self.are_links_valid,
             'headersOrdered': self.are_headers_ordered(html),
             'html': html_parser.unescape(html),
             'isTemplate': self.context in get_template_repository_info()['templates'],
