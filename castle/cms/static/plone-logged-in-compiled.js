@@ -97598,6 +97598,12 @@ define('castle-quality-check',[
     run: function(data, callback){
       return callback(!data.isTemplate);
     }
+  }, {
+    name: 'No Backend Urls',
+    warning: 'A backend url for this site is visible in this content.',
+    run: function ( data, callback ) {
+      return callback( !data.containsBackendUrls );
+    }
   } ];
 
   var ATDCheck = {
