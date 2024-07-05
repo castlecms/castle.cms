@@ -196,15 +196,6 @@
     />
 
   <browser:page
-    for="*"
-    name="check-backend-urls"
-    class=".backendurls.HasBackendUrlView"
-    permission="zope2.View"
-    attribute="check_document"
-    layer="castle.cms.interfaces.ICastleLayer"
-    />
-
-  <browser:page
     for="castle.cms.interfaces.IUploadedToYoutube"
     name="edit"
     class=".video.VideoEditForm"
