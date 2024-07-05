@@ -4,7 +4,7 @@ Changelog
 2.23.2 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Use VHM to correctly implement quality check for backend urls
 
 
 2.23.1 (2024-07-04)
