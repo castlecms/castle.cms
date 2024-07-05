@@ -130,6 +130,7 @@ setup(
       twitter-monitor = castle.cms.cron:twitter_monitor
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
+      backend-url-check = castle.cms.cron:backend_url_check
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report

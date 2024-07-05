@@ -227,4 +227,21 @@
     profile="castle.cms:default"
   />
 
+
+  <genericsetup:registerProfile
+    name="3015"
+    title="CastleCMS upgrade to 3015 profile"
+    directory="profiles/3015"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.15"
+    description="3015 - Recompile resources for backend url quality check"
+    source="*"
+    destination="3015"
+    handler=".upgrades.upgrade_3015"
+    profile="castle.cms:default"
+  />
+
 </configure>
