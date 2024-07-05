@@ -97620,34 +97620,9 @@ define('castle-quality-check',[
     }
   }, {
     name: 'No Backend Urls',
-    warning: function(component){
-      let message = 'A backend url for this site is visible in this content';
-      const customMessage = component.state.data.backendUrlErrorMessage;
-      return D.span( {}, ': ' + customMessage || message );
-    },
-    run: function( data, callback ) {
-      $.ajax( {
-        method: 'POST',
-        url: $( 'body' ).attr( 'data-base-url' ) + '/check-backend-urls',
-        data: {
-          data: data.html,
-          key: 'castle-qualitycheck'
-        }
-      } ).done( function ( result ) {
-        if ( result === 'must be authenticated' ){
-          // this should never happen - must be logged in to see quality check
-          callback(false);
-          return;
-        }
-        if(result.message){
-          data.backendUrlErrorMessage = result.message
-        }
-        const isValid = result.error === false
-        callback(isValid)
-      } ).fail( function (err) {
-        data.backendUrlErrorMessage = 'Unknown error while checking for backend urls in content'
-        callback( false );
-      } );
+    warning: 'A backend url for this site is visible in this content.',
+    run: function(data, callback){
+      return callback( !data.containsBackendUrls );
     }
   }];
 
@@ -100947,5 +100922,5 @@ require([
   }
 });
 
-define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only-master/castle/cms/static/plone-logged-in.js", function(){});
+define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only/castle/cms/static/plone-logged-in.js", function(){});
 
