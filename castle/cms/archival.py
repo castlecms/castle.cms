@@ -298,7 +298,7 @@ class SubrequestUrlOpener(object):
 
         if use_vhm:
             url = self.get_vhm_url(url)
-        resp = subrequest(url, None)
+        resp = subrequest(url, root=root)
         if resp.getStatus() == 404:
             return
 
