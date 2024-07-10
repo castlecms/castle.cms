@@ -60,6 +60,8 @@ from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.interface.declarations import noLongerProvides
+from zope.globalrequest import getRequest
+from zope.globalrequest import setRequest
 
 
 try:
@@ -817,16 +819,27 @@ class QualityCheckContent(BrowserView):
             return None
 
     @property
-    def subrequest_results(self):
-        opener = SubrequestUrlOpener(
-            site=api.portal.get(),
-            check_blacklist=False,
-        )
-        return opener(self.formatted_url, require_public_url=False)
-
-    @property
     def contains_backend_urls(self):
-        subrequest_results = self.subrequest_results
+        app = api.portal.get()
+        orig_req = getRequest()
+        # we subvert the original request to remove any configured VHM meta that the
+        # plone.subrequest.subrequest() method will use to construct the request it'll
+        # end up using
+        req_for_sub = orig_req.copy()
+        req_for_sub['VIRTUAL_URL_PARTS'] = None
+        setRequest(req_for_sub)
+        try:
+            opener = SubrequestUrlOpener(site=app, check_blacklist=False)
+            # we pass in the app as the "root" object to get a base path from, since it'll just
+            # be an empty path (or a single slash, which will be neglegable)
+            #
+            # the subverted VIRTUAL_URL_PARTS and the portal root object as the root/context to
+            # use combined will mean that the calculated VHM path for the configured frontend
+            # can be used from within the context of a backend url
+            subrequest_results = opener(self.formatted_url, require_public_url=False, root=app)
+        finally:
+            # and we revert back to the original request
+            setRequest(orig_req)
         subrequest_html = subrequest_results['data']
         backend_utils = BackendUrlUtils()
         backend_urls_found = backend_utils.get_invalid_backend_urls_found(subrequest_html)

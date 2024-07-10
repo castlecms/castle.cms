@@ -276,7 +276,7 @@ class SubrequestUrlOpener(object):
         final_path = '/' + '/'.join(parsed_path)
         return self.vhm_base + final_path
 
-    def __call__(self, url, use_vhm=True, require_public_url=True):
+    def __call__(self, url, use_vhm=True, require_public_url=True, root=None):
         url = normalize_url(url)
         if not url:
             return
@@ -298,7 +298,7 @@ class SubrequestUrlOpener(object):
 
         if use_vhm:
             url = self.get_vhm_url(url)
-        resp = subrequest(url)
+        resp = subrequest(url, None)
         if resp.getStatus() == 404:
             return
 
