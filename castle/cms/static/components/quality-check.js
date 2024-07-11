@@ -89,9 +89,20 @@ define([
     }
   }, {
     name: 'No Backend Urls',
-    warning: 'A backend url for this site is visible in this content.',
+    warning: function ( component ) {
+      let errorMessage = 'A backend url for this site is visible in this content.';
+      try {
+        const containsBackendUrls = component.state.data.containsBackendUrls
+        if ( containsBackendUrls === 'ERROR' ) {
+          errorMessage = 'Unknown error while checking for backend urls.';
+        }
+      } catch (err) {
+        errorMessage = 'Unknown error while checking for backend urls.';
+      }
+      return D.span( {}, ': ' + errorMessage );
+    },
     run: function ( data, callback ) {
-      return callback( !data.containsBackendUrls );
+      return callback( data.containsBackendUrls === false );
     }
   } ];
 

@@ -807,6 +807,7 @@ class BackendUrlUtils(object):
 
 class QualityCheckContent(BrowserView):
     QUALITY_CHECK_URL = '/@@quality-check'
+    ERROR = 'ERROR'
 
     @property
     def formatted_url(self):
@@ -825,7 +826,7 @@ class QualityCheckContent(BrowserView):
         # we subvert the original request to remove any configured VHM meta that the
         # plone.subrequest.subrequest() method will use to construct the request it'll
         # end up using
-        req_for_sub = orig_req.copy()
+        req_for_sub = orig_req.copy() # didn't work locally - maybe clone()?
         req_for_sub['VIRTUAL_URL_PARTS'] = None
         setRequest(req_for_sub)
         try:
@@ -837,18 +838,20 @@ class QualityCheckContent(BrowserView):
             # use combined will mean that the calculated VHM path for the configured frontend
             # can be used from within the context of a backend url
             subrequest_results = opener(self.formatted_url, require_public_url=False, root=app)
+            subrequest_html = subrequest_results['data']
+            backend_utils = BackendUrlUtils()
+            backend_urls_found = backend_utils.get_invalid_backend_urls_found(subrequest_html)
+            if len(backend_urls_found) > 0:
+                logger.warn('There were backend urls found in the html')
+                logger.info('Backend urls found: {}'.format(repr(backend_urls_found)))
+                logger.info('Data searched for: ' + self.formatted_url)
+                return True
+            return False
+        except Exception:
+            return self.ERROR
         finally:
             # and we revert back to the original request
             setRequest(orig_req)
-        subrequest_html = subrequest_results['data']
-        backend_utils = BackendUrlUtils()
-        backend_urls_found = backend_utils.get_invalid_backend_urls_found(subrequest_html)
-        if len(backend_urls_found) > 0:
-            logger.warn('There were backend urls found in the html')
-            logger.info('Backend urls found: {}'.format(repr(backend_urls_found)))
-            logger.info('Data searched for: ' + self.formatted_url)
-            return True
-        return False
 
     @property
     def are_links_valid(self):
@@ -891,7 +894,7 @@ class QualityCheckContent(BrowserView):
             'headersOrdered': self.are_headers_ordered(html),
             'html': html_parser.unescape(html),
             'isTemplate': self.context in get_template_repository_info()['templates'],
-            'containsBackendUrls': self.contains_backend_urls,
+            'containsBackendUrls': self.contains_backend_urls,  # boolean or 'ERROR'
         })
 
 
