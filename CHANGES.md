@@ -4,7 +4,9 @@ Changelog
 3.0.0b138 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Add focus and tabindexes to modal add component (accessibility)
+- Don't display incorrect login statuses on screenreaders
+- Hide backend url check once more (and don't call code from backend for now)
 
 
 3.0.0b137 (2024-07-05)
