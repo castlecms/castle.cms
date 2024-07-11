@@ -199,7 +199,7 @@ def _get_vhm_base_url(public_url, site_path):
     parsed = urlparse(public_url)
     port = parsed.port
     if port is None:
-        port = 80 if parsed.scheme == 'http' else 403
+        port = 80 if parsed.scheme == 'http' else 443
     return '/VirtualHostBase/{scheme}/{hostname}:{port}{site_path}/VirtualHostRoot'.format(
         scheme=parsed.scheme,
         hostname=parsed.hostname,
