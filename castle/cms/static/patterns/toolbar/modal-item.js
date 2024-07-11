@@ -18,6 +18,15 @@ define([
     onClick: function(e){
       e.preventDefault();
       cutils.createModalComponent(this.props.ModalComponent, this.props.id, this.getSettings());
+      setTimeout(
+        () => {
+          const activeTab = document.querySelector( '.modal-content nav a.active');
+          if( activeTab ) {
+            activeTab.focus(),
+          }
+        },
+        500,
+      )
     },
     getSettings: function(){
       return {
