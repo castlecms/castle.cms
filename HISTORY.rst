@@ -1,10 +1,18 @@
 Changelog
 =========
 
-2.23.3 (unreleased)
+2.24.1 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+2.24.0 (2024-07-10)
+-------------------
+
+- Add focus and tabindexes to modal add component (accessibility)
+- Don't display incorrect login statuses on screenreaders
+- Hide backend url check once more (and don't call code from backend for now)
 
 
 2.23.2 (2024-07-05)

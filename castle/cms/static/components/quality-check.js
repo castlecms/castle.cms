@@ -87,23 +87,12 @@ define([
     run: function(data, callback){
       return callback(!data.isTemplate);
     }
-  }, {
-    name: 'No Backend Urls',
-    warning: function ( component ) {
-      let errorMessage = 'A backend url for this site is visible in this content.';
-      try {
-        const containsBackendUrls = component.state.data.containsBackendUrls
-        if ( containsBackendUrls === 'ERROR' ) {
-          errorMessage = 'Unknown error while checking for backend urls.';
-        }
-      } catch (err) {
-        errorMessage = 'Unknown error while checking for backend urls.';
-      }
-      return D.span( {}, ': ' + errorMessage );
-    },
-    run: function ( data, callback ) {
-      return callback( data.containsBackendUrls === false );
-    }
+  // }, {
+  //   name: 'No Backend Urls',
+  //   warning: 'A backend url for this site is visible in this content.',
+  //   run: function ( data, callback ) {
+  //     return callback( !data.containsBackendUrls );
+  //   }
   } ];
 
   var ATDCheck = {

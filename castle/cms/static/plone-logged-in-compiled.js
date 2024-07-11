@@ -23397,14 +23397,21 @@ define('castle-url/components/add-content-modal',[
       var constrain = '';
       if(this.props.canConstrainTypes){
         constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
+          D.a({
+            href: this.props.constrainUrl,
+            className: 'plone-btn plone-btn-default',
+            tabIndex: 0,
+          }, 'Constrain allowed types')
         ]);
       }
       return D.div({ className: 'wrapper'}, [
         D.ul({ className: 'select-type'}, this.props.types.map(function(type){
           return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
+            D.a({
+              className: 'contenttype-' + type.safeId,
+              onClick: that.contentTypeClicked.bind(that, type),
+              tabIndex: 0,
+            }, type.title)
           );
         })),
         constrain
@@ -23446,8 +23453,12 @@ define('castle-url/components/add-content-modal',[
         D.div({ className: 'input-group'},[
           D.label({ className: 'input-group-addon'}, [
             'Folder ',
-            D.a({ href: '#', className: 'contenttype-folder',
-                  onClick: this.selectFolderClicked })
+            D.a({
+              href: '#',
+              className: 'contenttype-folder',
+              onClick: this.selectFolderClicked,
+              tabIndex: 0,
+            })
           ]),
           D.input({ type: 'text', className: 'form-control', id: 'contentLocation',
                   placeholder: 'Where on the site?', value: this.state.basePath,
@@ -23543,9 +23554,17 @@ define('castle-url/components/add-content-modal',[
           D.ul({}, this.state.createdContent.map(function(content){
             return D.li({}, [
               content.title + ' | ',
-              D.a({ href: content.url, target: '_blank' }, 'View'),
+              D.a({
+                href: content.url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'View'),
               ' | ',
-              D.a({ href: content.edit_url, target: '_blank' }, 'Edit')
+              D.a({
+                href: content.edit_url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'Edit')
             ]);
           })),
           D.hr({})
@@ -23774,7 +23793,8 @@ define('castle-url/components/add-content-modal',[
           [ D.a(
             {
               href: this.props.constrainUrl,
-              className: 'plone-btn plone-btn-default '
+              className: 'plone-btn plone-btn-default',
+              tabIndex: 0,
             },
             'Constrain allowed types'
           ) ]
@@ -23793,7 +23813,8 @@ define('castle-url/components/add-content-modal',[
                     D.a(
                       {
                         className: 'contenttype-' + type.formattedPortalType,
-                        onClick: that.contentTypeClicked.bind( that, type )
+                        onClick: that.contentTypeClicked.bind( that, type ),
+                        tabIndex: 0,
                       },
                       type.title
                     )
@@ -23856,8 +23877,12 @@ define('castle-url/components/add-content-modal',[
         D.div({ className: 'input-group'},[
           D.label({ className: 'input-group-addon'}, [
             'Folder ',
-            D.a({ href: '#', className: 'contenttype-folder',
-                  onClick: this.selectFolderClicked })
+            D.a({
+              href: '#',
+              className: 'contenttype-folder',
+              onClick: this.selectFolderClicked,
+              tabIndex: 0,
+            })
           ]),
           D.input({ type: 'text', className: 'form-control', id: 'contentLocation',
                   placeholder: 'Where on the site?', value: this.state.basePath,
@@ -23953,9 +23978,17 @@ define('castle-url/components/add-content-modal',[
           D.ul({}, this.state.createdContent.map(function(content){
             return D.li({}, [
               content.title + ' | ',
-              D.a({ href: content.url, target: '_blank' }, 'View'),
+              D.a({
+                href: content.url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'View'),
               ' | ',
-              D.a({ href: content.edit_url, target: '_blank' }, 'Edit')
+              D.a({
+                href: content.edit_url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'Edit')
             ]);
           })),
           D.hr({})
@@ -24067,8 +24100,13 @@ define('castle-url/components/add-content-modal',[
           label = label += ' ' + this.refs.tab.state.selectedType.title;
         }
       }
-      return D.a({ href: '#' + tabName, className: className,
-                   onClick: this.tabClicked.bind(this, tabName)}, label);
+
+      return D.a({
+        href: '#' + tabName,
+        className: className,
+        onClick: this.tabClicked.bind(this, tabName),
+        tabIndex: 0,
+      }, label);
     },
 
     tabClicked: function(tabName, e){
@@ -97401,6 +97439,15 @@ define('castle-url/patterns/toolbar/modal-item',[
     onClick: function(e){
       e.preventDefault();
       cutils.createModalComponent(this.props.ModalComponent, this.props.id, this.getSettings());
+      setTimeout(
+        () => {
+          const activeTab = document.querySelector( '.modal-content nav a.active');
+          if( activeTab ) {
+            activeTab.focus();
+          }
+        },
+        500
+      )
     },
     getSettings: function(){
       return {
@@ -97598,12 +97645,12 @@ define('castle-quality-check',[
     run: function(data, callback){
       return callback(!data.isTemplate);
     }
-  }, {
-    name: 'No Backend Urls',
-    warning: 'A backend url for this site is visible in this content.',
-    run: function ( data, callback ) {
-      return callback( !data.containsBackendUrls );
-    }
+  // }, {
+  //   name: 'No Backend Urls',
+  //   warning: 'A backend url for this site is visible in this content.',
+  //   run: function ( data, callback ) {
+  //     return callback( !data.containsBackendUrls );
+  //   }
   } ];
 
   var ATDCheck = {
@@ -100901,5 +100948,5 @@ require([
   }
 });
 
-define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only/castle/cms/static/plone-logged-in.js", function(){});
+define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only-master/castle/cms/static/plone-logged-in.js", function(){});
 
