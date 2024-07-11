@@ -5,6 +5,8 @@ import sys
 import time
 import traceback
 
+# Plone5.2 - "Globals" has been replaced by "App.config"
+from App.config import getConfiguration
 from DateTime import DateTime
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
@@ -53,8 +55,12 @@ class Storage(object):
         """ returns FS path for jbot storage.
         """
         # Plone5.2 - 'Globals' contained 'data_dir' variable 
+        # But App.config.getConfiguration() does not
         # set as '/var/filestorage/' for now
-        base_path = '/var/filestorage/'
+        try:
+            base_path = '/'.join(getConfiguration().data_dir.split('/')[:-1])
+        except Exception:
+            base_path = '/var/filestorage/'
         jbot_dir = os.path.join(base_path, 'jbot')
         site_id = '-'.join(self.site.getPhysicalPath()[1:])
         fs_path = os.path.join(jbot_dir, site_id, self.theme)
