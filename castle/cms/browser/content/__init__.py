@@ -882,7 +882,7 @@ class QualityCheckContent(BrowserView):
             'headersOrdered': self.are_headers_ordered(html),
             'html': html_parser.unescape(html),
             'isTemplate': self.context in get_template_repository_info()['templates'],
-            'containsBackendUrls': self.contains_backend_urls,
+            # 'containsBackendUrls': self.contains_backend_urls,
         })
 
 

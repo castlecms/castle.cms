@@ -244,4 +244,21 @@
     profile="castle.cms:default"
   />
 
+
+  <genericsetup:registerProfile
+    name="3016"
+    title="CastleCMS upgrade to 3016 profile"
+    directory="profiles/3016"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.16"
+    description="3016 - Recompile resources for accessibility updates"
+    source="*"
+    destination="3016"
+    handler=".upgrades.upgrade_3016"
+    profile="castle.cms:default"
+  />
+
 </configure>
