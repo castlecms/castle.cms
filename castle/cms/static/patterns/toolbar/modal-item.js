@@ -22,10 +22,10 @@ define([
         () => {
           const activeTab = document.querySelector( '.modal-content nav a.active');
           if( activeTab ) {
-            activeTab.focus(),
+            activeTab.focus();
           }
         },
-        500,
+        500
       )
     },
     getSettings: function(){
