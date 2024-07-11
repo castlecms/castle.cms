@@ -641,4 +641,21 @@
     profile="castle.cms:default"
   />
 
+
+  <genericsetup:registerProfile
+  name="2_6_42"
+  title="CastleCMS upgrade to 2.6.42 profile"
+  directory="profiles/2_6_42"
+  description=""
+  provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 2.6.42"
+    description="2.6.42 - Recompile resources for accessibile add content modal and hidden login statuses"
+    source="*"
+    destination="2642"
+    handler=".upgrades.upgrade_2_6_42"
+    profile="castle.cms:default"
+  />
+
 </configure>
