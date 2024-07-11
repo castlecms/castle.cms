@@ -196,14 +196,21 @@ define([
       var constrain = '';
       if(this.props.canConstrainTypes){
         constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
+          D.a({
+            href: this.props.constrainUrl,
+            className: 'plone-btn plone-btn-default',
+            tabIndex: 0,
+          }, 'Constrain allowed types')
         ]);
       }
       return D.div({ className: 'wrapper'}, [
         D.ul({ className: 'select-type'}, this.props.types.map(function(type){
           return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
+            D.a({
+              className: 'contenttype-' + type.safeId,
+              onClick: that.contentTypeClicked.bind(that, type),
+              tabIndex: 0,
+            }, type.title)
           );
         })),
         constrain
@@ -245,8 +252,12 @@ define([
         D.div({ className: 'input-group'},[
           D.label({ className: 'input-group-addon'}, [
             'Folder ',
-            D.a({ href: '#', className: 'contenttype-folder',
-                  onClick: this.selectFolderClicked })
+            D.a({
+              href: '#',
+              className: 'contenttype-folder',
+              onClick: this.selectFolderClicked,
+              tabIndex: 0,
+            })
           ]),
           D.input({ type: 'text', className: 'form-control', id: 'contentLocation',
                   placeholder: 'Where on the site?', value: this.state.basePath,
@@ -342,9 +353,17 @@ define([
           D.ul({}, this.state.createdContent.map(function(content){
             return D.li({}, [
               content.title + ' | ',
-              D.a({ href: content.url, target: '_blank' }, 'View'),
+              D.a({
+                href: content.url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'View'),
               ' | ',
-              D.a({ href: content.edit_url, target: '_blank' }, 'Edit')
+              D.a({
+                href: content.edit_url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'Edit')
             ]);
           })),
           D.hr({})
@@ -573,27 +592,28 @@ define([
           [ D.a(
             {
               href: this.props.constrainUrl,
-              className: 'plone-btn plone-btn-default '
+              className: 'plone-btn plone-btn-default',
+              tabIndex: 0,
             },
             'Constrain allowed types'
           ) ]
         ) :
         '';
       return D.div(
-        { className: 'wrapper'},
+        { className: 'wrapper' },
         [
           D.ul(
-            { className: 'select-type'},
+            { className: 'select-type' },
             this.props.templates.map(
-              function(type){
-                const liProps = { className: 'contenttype-' + type.safeId + '-container'}
-                if(type.isAllowed){
+              function ( type ) {
+                if ( type.isAllowed ) {
                   return D.li(
                     { className: 'contenttype-' + type.safeId + '-container' },
                     D.a(
                       {
                         className: 'contenttype-' + type.formattedPortalType,
-                        onClick: that.contentTypeClicked.bind( that, type )
+                        onClick: that.contentTypeClicked.bind( that, type ),
+                        tabIndex: 0,
                       },
                       type.title
                     )
@@ -656,8 +676,12 @@ define([
         D.div({ className: 'input-group'},[
           D.label({ className: 'input-group-addon'}, [
             'Folder ',
-            D.a({ href: '#', className: 'contenttype-folder',
-                  onClick: this.selectFolderClicked })
+            D.a({
+              href: '#',
+              className: 'contenttype-folder',
+              onClick: this.selectFolderClicked,
+              tabIndex: 0,
+            })
           ]),
           D.input({ type: 'text', className: 'form-control', id: 'contentLocation',
                   placeholder: 'Where on the site?', value: this.state.basePath,
@@ -753,9 +777,17 @@ define([
           D.ul({}, this.state.createdContent.map(function(content){
             return D.li({}, [
               content.title + ' | ',
-              D.a({ href: content.url, target: '_blank' }, 'View'),
+              D.a({
+                href: content.url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'View'),
               ' | ',
-              D.a({ href: content.edit_url, target: '_blank' }, 'Edit')
+              D.a({
+                href: content.edit_url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'Edit')
             ]);
           })),
           D.hr({})
@@ -867,8 +899,13 @@ define([
           label = label += ' ' + this.refs.tab.state.selectedType.title;
         }
       }
-      return D.a({ href: '#' + tabName, className: className,
-                   onClick: this.tabClicked.bind(this, tabName)}, label);
+
+      return D.a({
+        href: '#' + tabName,
+        className: className,
+        onClick: this.tabClicked.bind(this, tabName),
+        tabIndex: 0,
+      }, label);
     },
 
     tabClicked: function(tabName, e){
