@@ -4,7 +4,7 @@ Changelog
 3.0.0b139 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- CSS updates
 
 
 3.0.0b138 (2024-07-10)
