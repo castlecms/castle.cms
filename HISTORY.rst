@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.23.3 (unreleased)
+2.24.0 (2024-07-10)
 -------------------
 
 - Add focus and tabindexes to modal add component (accessibility)
