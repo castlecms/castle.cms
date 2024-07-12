@@ -22710,12 +22710,20 @@ define('castle-url/components/upload',[
           D.button({ className: 'btn btn-default castle-btn-edit', onClick: that.editImageClicked }, 'Edit Image'));
       }
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-remove', onClick: that.removeClicked },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-remove',
+          onClick: that.removeClicked,
+          'aria-label': 'Remove',
+        },
           D.span({ className: 'icon-remove' }))
       );
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-upload',
-                   onClick: that.approveClicked, disabled: !canApprove },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-upload',
+          onClick: that.approveClicked,
+          disabled: !canApprove,
+          'aria-label': 'Upload',
+      },
           D.span({ className: 'icon-ok' }))
       );
 
@@ -23109,7 +23117,12 @@ define('castle-url/components/upload',[
 
     renderHeader: function(){
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -23495,7 +23508,12 @@ define('castle-url/components/add-content-modal',[
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -23919,7 +23937,12 @@ define('castle-url/components/add-content-modal',[
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Close Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -23969,7 +23992,12 @@ define('castle-url/components/add-content-modal',[
                                 onClick: this.createAndEditClicked, disabled: disabled }, 'Create and Edit'));
         }
       }else{
-        buttons.push(D.button({ type: 'button', className: 'plone-btn plone-btn-primary', 'data-dismiss': 'modal' }, 'Done'));
+        buttons.push(D.button({
+          type: 'button',
+          className: 'plone-btn plone-btn-primary',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, 'Done'));
       }
       var contentList = '';
       if(this.state.createdContent.length > 0){
@@ -100968,5 +100996,5 @@ require([
   }
 });
 
-define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only-master/castle/cms/static/plone-logged-in.js", function(){});
+define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only/castle/cms/static/plone-logged-in.js", function(){});
 

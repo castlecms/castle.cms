@@ -294,7 +294,12 @@ define([
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -718,7 +723,12 @@ define([
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Close Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -768,7 +778,12 @@ define([
                                 onClick: this.createAndEditClicked, disabled: disabled }, 'Create and Edit'));
         }
       }else{
-        buttons.push(D.button({ type: 'button', className: 'plone-btn plone-btn-primary', 'data-dismiss': 'modal' }, 'Done'));
+        buttons.push(D.button({
+          type: 'button',
+          className: 'plone-btn plone-btn-primary',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, 'Done'));
       }
       var contentList = '';
       if(this.state.createdContent.length > 0){
