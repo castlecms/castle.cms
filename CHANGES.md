@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b140 (unreleased)
+3.0.0b140 (2024-07-12)
 ----------------------
 
 - nothing, just a new version
