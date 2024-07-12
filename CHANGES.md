@@ -4,7 +4,7 @@ Changelog
 3.0.0b140 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- nothing, just a new version
 
 
 3.0.0b139 (2024-07-11)
