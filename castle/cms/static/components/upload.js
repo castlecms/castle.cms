@@ -351,12 +351,20 @@ define([
           D.button({ className: 'btn btn-default castle-btn-edit', onClick: that.editImageClicked }, 'Edit Image'));
       }
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-remove', onClick: that.removeClicked },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-remove',
+          onClick: that.removeClicked,
+          'aria-label': 'Remove',
+        },
           D.span({ className: 'icon-remove' }))
       );
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-upload',
-                   onClick: that.approveClicked, disabled: !canApprove },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-upload',
+          onClick: that.approveClicked,
+          disabled: !canApprove,
+          'aria-label': 'Upload',
+      },
           D.span({ className: 'icon-ok' }))
       );
 

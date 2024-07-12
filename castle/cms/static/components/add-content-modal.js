@@ -718,7 +718,12 @@ define([
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Close Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
