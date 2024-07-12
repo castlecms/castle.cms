@@ -4,7 +4,7 @@ Changelog
 2.24.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- update secure-login.css
 
 
 2.24.0 (2024-07-10)
