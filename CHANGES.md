@@ -4,7 +4,7 @@ Changelog
 3.0.0b141 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Add aria-labels to some buttons
 
 
 3.0.0b140 (2024-07-12)
