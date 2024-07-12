@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b141 (unreleased)
+3.0.0b141 (2024-07-12)
 ----------------------
 
 - Add aria-labels to some buttons
