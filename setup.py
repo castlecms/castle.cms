@@ -67,7 +67,7 @@ setup(
 
         # the use of collective.elasticsearch in the 3.x+ version of castle.cms
         # is limited and should not be relied on.
-        'collective.elasticsearch >=4.0.0, <5.0.0',
+        # 'collective.elasticsearch >=4.0.0, <5.0.0',
 
         # python
         'boto3>=1.9.222',

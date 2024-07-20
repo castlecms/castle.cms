@@ -300,5 +300,4 @@ class CastleSettingsAdapter(PatternSettingsAdapter):
                 'uploadMultiple': False,
             },
         }
-        print('====== tinymce ===========')
         return {'data-pat-tinymce': json.dumps(configuration)}
