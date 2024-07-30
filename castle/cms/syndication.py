@@ -3,7 +3,8 @@ from castle.cms.utils import has_image
 from lxml.html import tostring
 from plone.app.blocks import gridsystem
 from plone.app.blocks import tiles
-from plone.app.blocks.layoutbehavior import ILayoutAware, getLayout
+from plone.app.blocks.layoutbehavior import ILayoutAware
+from plone.app.blocks.utils import getLayout
 from plone.namedfile.interfaces import INamedField
 from plone.outputfilters import apply_filters
 from plone.outputfilters.interfaces import IFilter
