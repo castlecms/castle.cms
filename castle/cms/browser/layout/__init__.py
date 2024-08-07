@@ -2,6 +2,7 @@ from castle.cms.interfaces import IDashboard
 from castle.cms.utils import is_mosaic_edit_form
 from plone import api
 from plone.app.blocks.browser import ContentLayoutView
+# from plone.app.blocks.layoutviews import ContentLayoutView
 from plone.app.layout.globals.layout import LayoutPolicy as BaseLayoutPolicy
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.registry.interfaces import IRegistry
