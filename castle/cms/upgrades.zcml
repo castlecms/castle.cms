@@ -192,4 +192,20 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:registerProfile
+    name="4000"
+    title="CastleCMS upgrade to 4000 profile"
+    directory="profiles/4000"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 4.0.0"
+    description="4000 - Additional upgrade profile for Plone 5.2"
+    source="*"
+    destination="4000"
+    handler=".upgrades.upgrade_4000"
+    profile="castle.cms:default"
+  />
+
 </configure>
