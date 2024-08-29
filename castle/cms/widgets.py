@@ -567,13 +567,17 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             icon = self.file_icon
         except Exception:
             icon = None
+        try:
+            thumb_width = self.thumb_width
+        except Exception:
+            thumb_width = None
         return {
             'exists': self.value is not None,
             'download_url': download_url,
             'filename': self.filename,
             'content_type': contentType,
             'icon': icon,
-            'thumb_width': self.thumb_width,
+            'thumb_width': thumb_width,
             'file_size': self.file_size,
             'doc_type': fct,
             'width': width,
