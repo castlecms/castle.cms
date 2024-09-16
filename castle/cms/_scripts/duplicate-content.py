@@ -29,6 +29,47 @@ args, _ = parser.parse_known_args()
 app = app  # noqa
 
 
+def generate_new_id(object_id, object_path):
+    """
+    Returns a new id formatted in the same way as a copy/pasted item
+
+    i.e. copy1_of_item
+    
+    """
+
+    # Regular expression to find the number suffix
+    pattern = re.compile(r'^(.+?)_(\d*)$')
+    
+    # Extract base name and number, if any
+    match = pattern.match(object_id)
+    if match:
+        base_name, num_str = match.groups()
+        start = int(num_str) if num_str else 0
+    else:
+        base_name = object_id
+        start = 0
+
+    # Check for existing paths
+    while True:
+        if start == 0:
+            new_id = base_name
+        else:
+            # Format id
+            parts = base_name.split('_', 1)
+            p1 = parts[0] + str(start)
+            p2 = '_' + parts[1]
+            new_id = '{}{}'.format(p1,p2)
+        
+        new_path = os.path.join(object_path, new_id)
+        
+        # Check if the item exists
+        obj = site.restrictedTraverse(new_path.strip('/'), None)
+        if obj is None:
+            return new_id
+        
+        start += 1
+
+
 def duplicate_content(site, object_path):
     """
     Export a Zope/Plone object to a .ZEXP file, modify the existing DB entity,
@@ -54,7 +95,7 @@ def duplicate_content(site, object_path):
 
     # Get parent directory of object
     container = aq_parent(obj)
-    
+
     try:
         # Export original object as .zexp (automatically goes to '/var/instance')
         container.manage_exportObject(obj.id)
@@ -89,17 +130,17 @@ def duplicate_content(site, object_path):
         return
 
     try:
-        # Change UUID of existing item
+        # Assign new UUID to existing item
         new_uuid = uuid.uuid4().hex
         setattr(obj, ATTRIBUTE_NAME, new_uuid)
     except Exception as e:
         logger.error("Error setting new UUID: {}".format(e))
         return
     
-    # Change name and unpublish existing item
+    # Assign new id and unpublish
     util = queryUtility(IIDNormalizer)
     new_id = util.normalize('copy_of_' + obj.id)
-
+    new_id = generate_new_id(new_id, object_path)
     # obj.title = obj.Title() + ' - Copy'
     api.content.transition(obj, to_state='private')
 
