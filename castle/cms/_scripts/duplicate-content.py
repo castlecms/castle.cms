@@ -10,13 +10,14 @@ from Acquisition import aq_parent
 from castle.cms.cron.utils import login_as_admin
 from castle.cms.cron.utils import setup_site
 
-import Globals
-import logging
 import os
+import re
 import argparse
 import shutil
 import uuid
+import logging
 import transaction
+import Globals
 
 logger = logging.getLogger(__name__)
 
@@ -28,11 +29,14 @@ args, _ = parser.parse_known_args()
 app = app  # noqa
 
 
-def export_zexp(site, object_path):
+def duplicate_content(site, object_path):
     """
-    Export a Zope/Plone object to a ZEXP file.
+    Export a Zope/Plone object to a .ZEXP file, modify the existing DB entity,
+        then re-import it from the file.
+    This is useful for duplicating large items that slow down or break the
+        normal copy/paste process.
     
-    :param site: Plone site object.
+    :param site: Plone site id.
     :param object_path: Path of the object within Zope to export.
     """
 
@@ -59,16 +63,22 @@ def export_zexp(site, object_path):
         return
 
     try:
-        # Move to 'import' directory
-        file = str(obj.id) + '.zexp'
-        base_path = '/'.join(Globals.data_dir.split('/')[:-1])
-        og_path = base_path + '/instance/' + file
+        # Move file to 'import' directory
+        file_name = str(obj.id) + '.zexp'
+        base_path = os.path.dirname(Globals.data_dir)
+        og_path = os.path.join(base_path, 'instance', file_name)
 
         if not os.path.exists(og_path):
             logger.error("File does not exist: '{}' ".format(og_path))
             return
 
-        export_path = base_path + '/instance/import'
+        file_name = str(obj.id) + '.zexp'
+        export_path = os.path.join(base_path, 'instance', 'import')
+        exported_file = os.path.join(export_path, file_name)
+
+        if os.path.exists(exported_file):
+            os.remove(exported_file)
+    
         shutil.move(og_path, export_path)
 
     except shutil.Error as e:
@@ -88,9 +98,9 @@ def export_zexp(site, object_path):
     
     # Change name and unpublish existing item
     util = queryUtility(IIDNormalizer)
-    new_id = util.normalize(obj.id + '-copy')
-    new_title = obj.Title() + ' Copy'
-    obj.title = new_title
+    new_id = util.normalize('copy_of_' + obj.id)
+
+    # obj.title = obj.Title() + ' - Copy'
     api.content.transition(obj, to_state='private')
 
     try:
@@ -100,17 +110,13 @@ def export_zexp(site, object_path):
         return
 
     obj.reindexObject()
-
-    try:
-        transaction.commit()
-    except Exception as e:
-        logger.error("Error committing transaction: {}".format(e))
+    transaction.commit()
     
     try:
-        # Import back into Zope
-        # container._importObjectFromFile(import_path, verify=0, set_owner=1)
-        container.manage_importObject(file)
+        # Import original item back into Zope
+        container.manage_importObject(file_name)
         transaction.commit()
+        os.remove(exported_file)
     except Exception as e:
         print("Error importing file: {}".format(e))
         return
@@ -122,7 +128,7 @@ if __name__ == '__main__':
     object_path = args.object_path
     if IPloneSiteRoot.providedBy(site):
         try:
-            export_zexp(site, object_path)
+            duplicate_content(site, object_path)
         except Exception:
             logger.error('Encountered error %s' % site, exc_info=True)
     else:
