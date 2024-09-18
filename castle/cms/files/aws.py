@@ -309,3 +309,12 @@ def create_if_not_exists(bucket, key, content_type, data, content_disposition=No
             data,
             content_disposition=content_disposition,
             make_public=make_public)
+
+def s3_obj_exists(bucket, key):
+    try:
+        # does a head request for a single key, will throw an error
+        # if not found (or elsewise)
+        bucket.Object(key).load()
+        return True
+    except botocore.exceptions.ClientError:
+        return False

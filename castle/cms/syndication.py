@@ -1,6 +1,8 @@
+from castle.cms.files import aws
 from castle.cms.theming import contentpanel_xpath
 from castle.cms.utils import has_image
 from lxml.html import tostring
+from plone import api
 from plone.app.blocks import gridsystem
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
@@ -48,6 +50,8 @@ class DexterityItem(adapters.DexterityItem):
                 self.field_name = primary.fieldname
         except TypeError:
             pass
+        bucket_name = api.portal.get_registry_record('castle.aws_s3_bucket_name')
+        self.s3_conn, self.bucket = aws.get_bucket(bucket_name)
 
     @property
     def file_length(self):
@@ -59,6 +63,10 @@ class DexterityItem(adapters.DexterityItem):
             except SystemError:
                 pass
         return 0
+
+    @property
+    def has_enclosure(self):
+        return self.file is not None or aws.s3_obj_exists(self.bucket, self.key)
 
     @property
     def has_image(self):
