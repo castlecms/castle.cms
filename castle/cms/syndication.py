@@ -1,8 +1,7 @@
-from castle.cms.files import aws
+from castle.cms.files.aws import uploaded
 from castle.cms.theming import contentpanel_xpath
 from castle.cms.utils import has_image
 from lxml.html import tostring
-from plone import api
 from plone.app.blocks import gridsystem
 from plone.app.blocks import tiles
 from plone.app.blocks.layoutbehavior import ILayoutAware
@@ -50,23 +49,39 @@ class DexterityItem(adapters.DexterityItem):
                 self.field_name = primary.fieldname
         except TypeError:
             pass
-        bucket_name = api.portal.get_registry_record('castle.aws_s3_bucket_name')
-        self.s3_conn, self.bucket = aws.get_bucket(bucket_name)
+
+    @property
+    def in_aws(self):
+        return uploaded(self.context)
+
+    @property
+    def has_local_file(self):
+        return self.file is not None and not self.in_aws
+
+    @property
+    def has_enclosure(self):
+        return self.in_aws or self.has_local_file
 
     @property
     def file_length(self):
-        if self.has_enclosure:
+        if self.in_aws:
+            try:
+                return self.context.file.original_size
+            except Exception:  # nosec B110
+                pass
+        if self.has_local_file:
             try:
                 return self.file.getSize()
-            except POSKeyError:
-                pass
-            except SystemError:
+            except Exception:  # nosec B110
                 pass
         return 0
 
     @property
-    def has_enclosure(self):
-        return self.file is not None or aws.s3_obj_exists(self.bucket, self.key)
+    def file_type(self):
+        if self.in_aws:
+            return self.context.file.original_content_type
+        elif self.has_local_file:
+            return self.file.contentType
 
     @property
     def has_image(self):
