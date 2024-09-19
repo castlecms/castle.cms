@@ -4,7 +4,7 @@ Changelog
 3.0.0b143 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Fix bug while swapping file in UploadNamedFileWidget
 
 
 3.0.0b142 (2024-09-18)
