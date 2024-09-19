@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 - update secure-login.css
+- update feed item xml generation to account for files moved to s3
 
 
 2.24.0 (2024-07-10)
