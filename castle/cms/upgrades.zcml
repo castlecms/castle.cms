@@ -261,4 +261,13 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.17"
+    description="3017 - Full body query listing"
+    source="*"
+    destination="3017"
+    handler=".upgrades.upgrade_3017"
+    profile="castle.cms:default"
+  />
+
 </configure>

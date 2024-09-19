@@ -435,6 +435,12 @@
     factory=".querylisting.TiledView"
     />
   <adapter
+    name="querylisting.full-content"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.FullContentView"
+  />
+  <adapter
     name="querylisting.tagged"
     provides="..interfaces.ITileView"
     for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"

@@ -1,0 +1,52 @@
+<!-- .dt-tagged {
+  ul {
+    padding-left: 0;
+  }
+  li {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+} -->
+
+<ul class="dt-tagged filter-listing" tal:define="results view/tile/results;
+                utils view/tile/utils;
+                df view/tile/display_fields;" style="${python: view.font_sizes.get('query_listing','')}">
+  <tal:item tal:repeat="item python: results['items']">
+    <div style="border-bottom: 1px solid #eee">
+      <li tal:define="url python: utils.get_object_url(item);
+                  effective item/effective|nothing;
+                  start item/start|nothing;
+                  end item/end|nothing;
+                  has_image python: 'image' in df and utils.has_image(item);" class="portal-type-${python: utils.normalize(item.portal_type)}">
+
+        <div class="row">
+          <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
+            <a href="${url}">
+              <div tal:replace="structure python: utils.focal_image_tag(item, 'mini', attempt_overlay=True)"></div>
+            </a>
+          </div>
+          <div class="col-lg-10 col-md-9 col-sm-8"
+            tal:attributes="class python: has_image and 'col-md-9' or 'col-md-12'">
+            <p class="pat-moment date" tal:content="python: utils.format_date(effective, 'notime')"
+              tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
+            <p tal:condition="python: 'eventstartend' in df and start and end">
+              <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
+              to
+              <span class="pat-moment date" tal:condition="python: start.date() == end.date()"
+                tal:content="python: utils.format_date(end, 'nodate')"></span>
+              <span class="pat-moment date" tal:condition="python: start.date() <> end.date()"
+                tal:content="python: utils.format_date(end)"></span>
+            </p>
+            <h2 class="title">
+              <a href="${url}">${item/Title}</a>
+            </h2>
+            <p class="body" tal:condition="python: 'body' in df and item.body">
+              ${item/body}
+            </p>
+            <p class="read-more"><a href="${url}" class="button">View</a></p>
+          </div>
+        </div>
+      </li>
+    </div>
+  </tal:item>
+</ul>

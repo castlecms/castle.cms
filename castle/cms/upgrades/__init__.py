@@ -2,6 +2,7 @@ from castle.cms.interfaces import (
     IAPISettings,
     ISecuritySchema,
 )
+from castle.cms.tiles.querylisting import IQueryListingTileSchema
 from importlib import import_module
 from logging import getLogger
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
@@ -141,3 +142,6 @@ upgrade_3013 = default_upgrade_factory('3013')
 upgrade_3014 = default_upgrade_factory('3014')
 upgrade_3015 = default_upgrade_factory('3015')
 upgrade_3016 = default_upgrade_factory('3016')
+
+def upgrade_3017(site, logger=None):
+    re_register_interface(IQueryListingTileSchema, 'castle')

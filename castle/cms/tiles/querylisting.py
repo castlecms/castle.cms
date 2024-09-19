@@ -89,6 +89,15 @@ class TiledView(BaseTileView):
     tile_name = 'querylisting'
 
 
+class FullContentView(BaseTileView):
+    name = 'full-content'
+    label = 'Full content'
+    preview = '++plone++castle/images/previews/querylisting/full-content.png'
+    order = 3
+    index = ViewPageTemplateFile('templates/querylisting/full-content.pt')
+    tile_name = 'querylisting'
+
+
 class TaggedView(BaseTileView):
     name = 'tagged'
     preview = '++plone++castle/images/previews/querylisting/tagged.png'
@@ -396,7 +405,8 @@ class IQueryListingTileSchema(model.Schema):
                 SimpleTerm('image', 'image', u'Image'),
                 SimpleTerm('date', 'date', u'Publication (Effective) Date'),
                 SimpleTerm('eventstartend', 'eventstartend', u'Event Start and End'),
-                SimpleTerm('description', 'description', u'Overview/Summary')
+                SimpleTerm('description', 'description', u'Overview/Summary'),
+                SimpleTerm('body', 'body', u'Text/Body')
             ])
         )
     )
