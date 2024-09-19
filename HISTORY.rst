@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.24.1 (unreleased)
+2.25.0 (2024-09-19)
 -------------------
 
 - update secure-login.css
