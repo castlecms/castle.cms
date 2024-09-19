@@ -831,17 +831,17 @@ class UploadNamedFileWidget(NamedFileWidget):
 
     @property
     def file_content_type(self):
-       try:
-          return super(UploadNamedFileWidget, self).file_content_type
-       except Exception:
-           return None
+        try:
+            return super(UploadNamedFileWidget, self).file_content_type
+        except Exception:
+            return None
 
     @property
     def file_icon(self):
-       try:
-          return super(UploadNamedFileWidget, self).file_icon
-       except Exception:
-           return None
+        try:
+            return super(UploadNamedFileWidget, self).file_icon
+        except Exception:
+            return None
 
     @property
     def pattern_options(self):
