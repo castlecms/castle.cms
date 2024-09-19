@@ -178,7 +178,7 @@ class PasteAsyncAction(paste.PasteActionView):
                 'submitText': 'Confirm',
                 'closeText': 'Cancel',
                 'title': 'Paste Async',
-            },
+            }
         }
 
 

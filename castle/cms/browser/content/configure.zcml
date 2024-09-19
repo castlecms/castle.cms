@@ -115,8 +115,6 @@
     permission="cmf.ListFolderContents"
     layer="castle.cms.interfaces.ICastleLayer"
     />
-
-        
   <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-rename"
