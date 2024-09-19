@@ -82,6 +82,17 @@
     />
 
   <browser:page
+      for="Products.CMFCore.interfaces._content.IFolderish"
+      name="fc-paste-async"
+      class=".fc.PasteAsyncActionView"
+      permission="cmf.ListFolderContents"
+      />
+
+  <utility component=".fc.PasteAsyncAction"
+        provides="plone.app.content.interfaces.IStructureAction"
+        name="paste-async" />
+
+  <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-cut"
     class=".fc.CutActionView"
@@ -104,6 +115,8 @@
     permission="cmf.ListFolderContents"
     layer="castle.cms.interfaces.ICastleLayer"
     />
+
+        
   <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"
     name="fc-rename"
