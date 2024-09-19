@@ -4,7 +4,7 @@ Changelog
 3.0.0b142 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Fix for s3 stored files included in feed item xml
 
 
 3.0.0b141 (2024-07-12)
