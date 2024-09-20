@@ -1,13 +1,3 @@
-<!-- .dt-tagged {
-  ul {
-    padding-left: 0;
-  }
-  li {
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 20px;
-  }
-} -->
-
 <ul class="dt-tagged filter-listing" tal:define="results view/tile/results;
                 utils view/tile/utils;
                 df view/tile/display_fields;" style="${python: view.font_sizes.get('query_listing','')}">
@@ -41,7 +31,7 @@
               <a href="${url}">${item/Title}</a>
             </h2>
             <p class="body" tal:condition="python: 'body' in df and item.body">
-              ${item/body}
+              ${python: item.body}
             </p>
             <p class="read-more"><a href="${url}" class="button">View</a></p>
           </div>

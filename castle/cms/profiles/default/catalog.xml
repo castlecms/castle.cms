@@ -51,4 +51,6 @@
 
   <column value="has_custom_markup"/>
 
+  <column value="body"/>
+
 </object>

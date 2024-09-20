@@ -1,9 +1,11 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_parent
+from bs4 import BeautifulSoup
 from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
+from plone.app.textfield import RichTextValue
 from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEvent
@@ -220,3 +222,16 @@ def self_or_child_has_title_description_and_image(obj):
 def has_custom_markup(image):
     if image.custom_markup:
         return True
+
+
+@indexer(IDexterityContent)
+def body(item):
+    text = getattr(item, 'text', '')
+    if text is not None:
+        if type(text) is RichTextValue:
+            output = getattr(text, 'output', '')
+            soup = BeautifulSoup(output, "html.parser")
+            text = soup.get_text()
+        return text
+    else:
+        return ''

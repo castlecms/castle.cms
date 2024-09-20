@@ -261,13 +261,25 @@
     profile="castle.cms:default"
   />
 
-  <genericsetup:upgradeStep
-    title="Upgrade CastleCMS to 3.0.17"
-    description="3017 - Full body query listing"
+  <genericsetup:registerProfile
+    name="3017"
+    title="CastleCMS upgrade to 3017 profile"
+    directory="profiles/3017"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeSteps
     source="*"
     destination="3017"
-    handler=".upgrades.upgrade_3017"
     profile="castle.cms:default"
-  />
+  >
+    <genericsetup:upgradeStep
+      title="add metadata column body"
+      handler="castle.cms.upgrades.upgrade_3017a"
+    />
+    <genericsetup:upgradeStep
+      title="index content body"
+      handler="castle.cms.upgrades.upgrade_3017b"
+    />
+  </genericsetup:upgradeSteps>
 
 </configure>
