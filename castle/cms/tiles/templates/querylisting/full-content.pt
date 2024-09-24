@@ -27,13 +27,12 @@
               <span class="pat-moment date" tal:condition="python: start.date() <> end.date()"
                 tal:content="python: utils.format_date(end)"></span>
             </p>
-            <h2 class="title">
+            <h2 class="fullcontent-title">
               <a href="${url}">${item/Title}</a>
             </h2>
             <p class="body" tal:condition="python: 'body' in df and item.body">
               ${python: item.body}
             </p>
-            <p class="read-more"><a href="${url}" class="button">View</a></p>
           </div>
         </div>
       </li>
