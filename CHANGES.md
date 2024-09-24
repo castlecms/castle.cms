@@ -4,7 +4,8 @@ Changelog
 3.0.0b144 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- add initial support for explicit asynchronous paste, intended for large objects
+  or large quantities of objects
 
 
 3.0.0b143 (2024-09-19)
