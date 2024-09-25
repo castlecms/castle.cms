@@ -9,7 +9,7 @@ from Products.CMFCore.utils import getToolByName
 from zope.interface import noLongerProvides
 
 import plone.api as api
-from plone.dexterity.interfaces import IDexterityItem
+from plone.dexterity.interfaces import IDexterityContent
 
 CASTLE_LOGGER = getLogger('castle.cms')
 PROFILE_ID = 'profile-castle.cms:default'
@@ -145,7 +145,7 @@ upgrade_3017a = default_upgrade_factory('3017')
 
 def upgrade_3017b(site, logger=CASTLE_LOGGER):
     logger.info('3017')
-    query = api.content.find(object_provides=IDexterityItem)
+    query = api.content.find(object_provides=IDexterityContent)
     for item in query:
         obj = item.getObject()
         print('reindexing object {} with body indexer'.format(obj))
