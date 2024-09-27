@@ -30,8 +30,8 @@
             <h2 class="fullcontent-title">
               <a href="${url}">${item/Title}</a>
             </h2>
-            <p class="body" tal:condition="python: 'body' in df and item.body">
-              ${python: item.body}
+            <p class="full-content" tal:condition="item.querylist_searchabletext" on-error="">
+              ${python: item.querylist_searchabletext}
             </p>
           </div>
         </div>

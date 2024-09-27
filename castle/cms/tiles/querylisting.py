@@ -406,7 +406,6 @@ class IQueryListingTileSchema(model.Schema):
                 SimpleTerm('date', 'date', u'Publication (Effective) Date'),
                 SimpleTerm('eventstartend', 'eventstartend', u'Event Start and End'),
                 SimpleTerm('description', 'description', u'Overview/Summary'),
-                SimpleTerm('body', 'body', u'Text/Body')
             ])
         )
     )

@@ -1,11 +1,9 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_parent
-from bs4 import BeautifulSoup
 from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
-from plone.app.textfield import RichTextValue
 from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEvent
@@ -20,6 +18,12 @@ from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import IHasDefaultImage
 from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.interfaces import ITrashed
+import logging
+from fbigov.contenttypes.interfaces.pressrelease import IPressRelease
+# from castle.cms.interfaces import IVideo, IAudio
+# from fbigov.contenttypes.interfaces.speech import ISpeech
+# from fbigov.contenttypes.interfaces.story import IStory
+# from fbigov.contenttypes.interfaces.testimony import ITestimony
 
 
 @indexer(IItem)
@@ -223,15 +227,40 @@ def has_custom_markup(image):
     if image.custom_markup:
         return True
 
+# full content query indexers
 
-@indexer(IDexterityContent)
-def body(item):
-    text = getattr(item, 'text', '')
-    if text is not None:
-        if type(text) is RichTextValue:
-            output = getattr(text, 'output', '')
-            soup = BeautifulSoup(output, "html.parser")
-            text = soup.get_text()
-        return text
-    else:
-        return ''
+def get_searchable_text(obj, _type):
+    searchable_text = getattr(obj, 'SearchableText', '').__call__()
+    logging.info('setting display_full_content for {} object to searchable text {}'.format(_type, searchable_text))
+    return searchable_text
+
+@indexer(IPressRelease)
+def press_release_body_content(item):
+    return get_searchable_text(item, 'Press Release')
+
+# @indexer(IFile)
+# def file_body_content(item):
+#     return get_searchable_text(item, 'File')
+
+# @indexer(IImage)
+# def image_body_content(item):
+#     return get_searchable_text(item, 'Image')
+
+# @indexer(IVideo)
+# def video_body_content(item):
+#     return get_searchable_text(item, 'Video')
+
+
+# @indexer(IAudio)
+# def audio_body_content(item):
+#     return get_searchable_text(item, 'Audio')
+
+
+# @indexer(IStory)
+# def story_body_content(item):
+#     return get_searchable_text(item, 'Story')
+
+
+# @indexer(ISpeech)
+# def speech_body_content(item):
+#     return get_searchable_text(item, 'Speech')

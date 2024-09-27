@@ -51,12 +51,12 @@
 
   <column value="has_custom_markup"/>
 
-  <index name="body" meta_type="ZCTextIndex">
-    <indexed_attr value="body"/>
+  <index name="querylist_searchabletext" meta_type="ZCTextIndex">
+    <indexed_attr value="querylist_searchabletext"/>
     <extra name="index_type" value="Okapi BM25 Rank"/>
     <extra name="lexicon_id" value="plone_lexicon"/>
   </index>
 
-  <column value="body"/>
+  <column value="querylist_searchabletext"/>
 
 </object>

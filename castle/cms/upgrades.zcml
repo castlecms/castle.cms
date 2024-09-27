@@ -273,11 +273,11 @@
     profile="castle.cms:default"
   >
     <genericsetup:upgradeStep
-      title="add metadata column body"
+      title="add metadata column querylist_searchabletext"
       handler="castle.cms.upgrades.upgrade_3017a"
     />
     <genericsetup:upgradeStep
-      title="index content body"
+      title="index querylist_searchabletext"
       handler="castle.cms.upgrades.upgrade_3017b"
     />
   </genericsetup:upgradeSteps>

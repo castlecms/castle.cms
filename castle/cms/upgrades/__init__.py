@@ -9,7 +9,11 @@ from Products.CMFCore.utils import getToolByName
 from zope.interface import noLongerProvides
 
 import plone.api as api
-from plone.dexterity.interfaces import IDexterityContent
+from fbigov.contenttypes.interfaces.pressrelease import IPressRelease
+# from castle.cms.interfaces import IVideo, IAudio
+# from fbigov.contenttypes.interfaces.speech import ISpeech
+# from fbigov.contenttypes.interfaces.story import IStory
+# from plone.app.contenttypes.interfaces import IFile, IImage
 
 CASTLE_LOGGER = getLogger('castle.cms')
 PROFILE_ID = 'profile-castle.cms:default'
@@ -144,9 +148,11 @@ upgrade_3016 = default_upgrade_factory('3016')
 upgrade_3017a = default_upgrade_factory('3017')
 
 def upgrade_3017b(site, logger=CASTLE_LOGGER):
-    logger.info('3017')
-    query = api.content.find(object_provides=IDexterityContent)
+    logger.info('3017b')
+    query = api.content.find(object_provides=[IPressRelease])  # , IFile, IImage, IVideo, IAudio, IStory, ISpeech])
     for item in query:
         obj = item.getObject()
-        print('reindexing object {} with body indexer'.format(obj))
-        obj.reindexObject(idxs=['body'])
+        print('reindexing object {} with querylist_searchabletext indexer'.format(obj))
+        obj.reindexObject(idxs=['querylist_searchabletext'])
+        import pdb; pdb.set_trace()
+    print('upgrade completed')
