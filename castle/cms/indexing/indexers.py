@@ -236,6 +236,7 @@ def get_searchable_text(obj, _type):
 
 @indexer(IPressRelease)
 def press_release_body_content(item):
+    print('*********reindexing {} with querylist_searchabletext indexer'.format(item))
     return get_searchable_text(item, 'Press Release')
 
 # @indexer(IFile)

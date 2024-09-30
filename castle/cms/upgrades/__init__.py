@@ -152,7 +152,5 @@ def upgrade_3017b(site, logger=CASTLE_LOGGER):
     query = api.content.find(object_provides=[IPressRelease])  # , IFile, IImage, IVideo, IAudio, IStory, ISpeech])
     for item in query:
         obj = item.getObject()
-        print('reindexing object {} with querylist_searchabletext indexer'.format(obj))
         obj.reindexObject(idxs=['querylist_searchabletext'])
-        import pdb; pdb.set_trace()
     print('upgrade completed')
