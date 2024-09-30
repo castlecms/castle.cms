@@ -22,10 +22,10 @@ from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.interfaces import ITrashed
 import logging
 from fbigov.contenttypes.interfaces.pressrelease import IPressRelease
-# from castle.cms.interfaces import IVideo, IAudio
-# from fbigov.contenttypes.interfaces.speech import ISpeech
-# from fbigov.contenttypes.interfaces.story import IStory
-# from fbigov.contenttypes.interfaces.testimony import ITestimony
+from castle.cms.interfaces import IVideo, IAudio
+from fbigov.contenttypes.interfaces.speech import ISpeech
+from fbigov.contenttypes.interfaces.story import IStory
+from fbigov.contenttypes.interfaces.testimony import ITestimony
 
 
 @indexer(IItem)
@@ -231,10 +231,8 @@ def has_custom_markup(image):
 
 # full content query indexers
 
-def get_searchable_text(obj, _type):
-    searchable_text = getattr(obj, 'SearchableText', '').__call__()
-    logging.info('setting display_full_content for {} object'.format(_type))
-    return searchable_text
+def get_description(obj, _type):
+    return obj.Description()
 
 def get_raw_text(obj, _type):
     logging.info('setting display_full_content for {} object'.format(_type))
@@ -251,29 +249,30 @@ def press_release_body_content(obj):
     return get_raw_text(obj, 'Press Release')
 
 @indexer(IFile)
-def file_body_content(item):
-    import pdb; pdb.set_trace()
-    return get_searchable_text(item, 'File')
+def file_body_content(obj):
+    return 'Click here for more information'
 
-# @indexer(IImage)
-# def image_body_content(item):
-#     return get_searchable_text(item, 'Image')
+@indexer(IImage)
+def image_body_content(obj):
+    return get_description(obj, 'Image')
 
-# @indexer(IVideo)
-# def video_body_content(item):
-#     return get_searchable_text(item, 'Video')
-
-
-# @indexer(IAudio)
-# def audio_body_content(item):
-#     return get_searchable_text(item, 'Audio')
+@indexer(IVideo)
+def video_body_content(obj):
+    return get_description(obj, 'Video')
 
 
-# @indexer(IStory)
-# def story_body_content(item):
-#     return get_searchable_text(item, 'Story')
+@indexer(IAudio)
+def audio_body_content(obj):
+    return get_description(obj, 'Audio')
 
+@indexer(IStory)
+def story_body_content(obj):
+    return get_description(obj, 'Story')
 
-# @indexer(ISpeech)
-# def speech_body_content(item):
-#     return get_searchable_text(item, 'Speech')
+@indexer(ISpeech)
+def speech_body_content(obj):
+    return get_raw_text(obj, 'Speech')
+
+@indexer(ITestimony)
+def testimony_body_content(obj):
+    return get_description(obj, 'Story')
