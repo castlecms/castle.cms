@@ -1,10 +1,12 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_parent
+from bs4 import BeautifulSoup
 from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
 from plone.app.contenttypes.interfaces import IFile, IImage
+from plone.app.textfield import RichTextValue
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEvent
 from plone.indexer.decorator import indexer
@@ -231,17 +233,27 @@ def has_custom_markup(image):
 
 def get_searchable_text(obj, _type):
     searchable_text = getattr(obj, 'SearchableText', '').__call__()
-    logging.info('setting display_full_content for {} object to searchable text {}'.format(_type, searchable_text))
+    logging.info('setting display_full_content for {} object'.format(_type))
     return searchable_text
 
-@indexer(IPressRelease)
-def press_release_body_content(item):
-    print('*********reindexing {} with querylist_searchabletext indexer'.format(item))
-    return get_searchable_text(item, 'Press Release')
+def get_raw_text(obj, _type):
+    logging.info('setting display_full_content for {} object'.format(_type))
+    text = getattr(obj, 'text', '')
+    if text is not None:
+        if type(text) is RichTextValue:
+            return text.raw
+        return text
+    else:
+        return ''
 
-# @indexer(IFile)
-# def file_body_content(item):
-#     return get_searchable_text(item, 'File')
+@indexer(IPressRelease)
+def press_release_body_content(obj):
+    return get_raw_text(obj, 'Press Release')
+
+@indexer(IFile)
+def file_body_content(item):
+    import pdb; pdb.set_trace()
+    return get_searchable_text(item, 'File')
 
 # @indexer(IImage)
 # def image_body_content(item):

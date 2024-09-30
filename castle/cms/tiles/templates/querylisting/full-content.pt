@@ -2,7 +2,7 @@
                 utils view/tile/utils;
                 df view/tile/display_fields;" style="${python: view.font_sizes.get('query_listing','')}">
   <tal:item tal:repeat="item python: results['items']">
-    <div style="border-bottom: 1px solid #eee">
+    <div>
       <li tal:define="url python: utils.get_object_url(item);
                   effective item/effective|nothing;
                   start item/start|nothing;
@@ -30,9 +30,12 @@
             <h2 class="fullcontent-title">
               <a href="${url}">${item/Title}</a>
             </h2>
-            <p class="full-content" tal:condition="item.querylist_searchabletext" on-error="">
-              ${python: item.querylist_searchabletext}
-            </p>
+            <div class="full-content"
+                 tal:on-error=""
+                 tal:condition="item/querylist_searchabletext"
+                 tal:content="structure item/querylist_searchabletext"
+            >
+          </div>
           </div>
         </div>
       </li>

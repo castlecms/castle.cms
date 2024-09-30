@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
   <index name="querylist_searchabletext" meta_type="ZCTextIndex">
-    <indexed_attr value="body"/>
+    <indexed_attr value="querylist_searchabletext"/>
     <extra name="index_type" value="Okapi BM25 Rank"/>
     <extra name="lexicon_id" value="plone_lexicon"/>
   </index>
