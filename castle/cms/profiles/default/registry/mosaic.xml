@@ -107,6 +107,7 @@
       <element>tile-remove-format</element>
       <element>grid-row-dark</element>
       <element>grid-row-remove-format</element>
+      <element>openai</element>
     </value>
   </record>
 
@@ -563,12 +564,24 @@
     <value key="weight">1000</value>
   </records>
 
+  <records interface="plone.app.mosaic.interfaces.IFormat"
+           prefix="plone.app.mosaic.richtext_toolbar.openai">
+    <value key="name">toolbar-openai</value>
+    <value key="category">selection</value>
+    <value key="label">OpenAI</value>
+    <value key="action">openai</value>
+    <value key="icon">false</value>
+    <value key="favorite">false</value>
+    <value key="weight">750</value>
+  </records>
+
   <record field="actions" interface="plone.app.mosaic.interfaces.IWidgetAction"
           name="plone.app.mosaic.widget_actions.plone_app_z3cform_wysiwyg_widget_WysiwygWidget.actions">
     <value purge="False">
       <element>toolbar-removeformat</element>
       <element>toolbar-table</element>
       <element>toolbar-code</element>
+      <element>toolbar-openai</element>
       <element>toolbar-indent</element>
       <element>toolbar-outdent</element>
     </value>
@@ -580,6 +593,7 @@
       <element>toolbar-removeformat</element>
       <element>toolbar-table</element>
       <element>toolbar-code</element>
+      <element>toolbar-openai</element>
       <element>toolbar-indent</element>
       <element>toolbar-outdent</element>
     </value>
@@ -591,6 +605,7 @@
       <element>toolbar-removeformat</element>
       <element>toolbar-table</element>
       <element>toolbar-code</element>
+      <element>toolbar-openai</element>
       <element>toolbar-indent</element>
       <element>toolbar-outdent</element>
     </value>
@@ -602,6 +617,7 @@
       <element>toolbar-removeformat</element>
       <element>toolbar-table</element>
       <element>toolbar-code</element>
+      <element>toolbar-openai</element>
       <element>toolbar-indent</element>
       <element>toolbar-outdent</element>
     </value>
@@ -612,15 +628,18 @@
       <element>toolbar-removeformat</element>
       <element>toolbar-table</element>
       <element>toolbar-code</element>
+      <element>toolbar-openai</element>
       <element>toolbar-indent</element>
       <element>toolbar-outdent</element>
     </value>
   </record>
+
   <record name="plone.app.mosaic.app_tiles.plone_app_standardtiles_rawhtml.available_actions">
     <value purge="False">
       <element>toolbar-removeformat</element>
       <element>toolbar-table</element>
       <element>toolbar-code</element>
+      <element>toolbar-openai</element>
       <element>toolbar-indent</element>
       <element>toolbar-outdent</element>
     </value>

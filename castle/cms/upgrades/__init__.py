@@ -2,6 +2,7 @@ from castle.cms.interfaces import (
     IAPISettings,
     ISecuritySchema,
 )
+from castle.cms.browser.controlpanel.openai import IOpenAISettings
 from importlib import import_module
 from logging import getLogger
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
@@ -141,3 +142,12 @@ upgrade_3013 = default_upgrade_factory('3013')
 upgrade_3014 = default_upgrade_factory('3014')
 upgrade_3015 = default_upgrade_factory('3015')
 upgrade_3016 = default_upgrade_factory('3016')
+
+def upgrade_3017_interface(setup_tool, logger=None):
+    registry = api.portal.get_tool('portal_registry')
+    registry.registerInterface(
+        IOpenAISettings,
+        prefix='castle',
+    )
+# profile upgrade won't run if included in method
+upgrade_3017_profile = default_upgrade_factory('3017')
