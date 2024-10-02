@@ -12,6 +12,7 @@ from OFS.CopySupport import cookie_path
 from OFS.CopySupport import CopyError
 from OFS.Moniker import Moniker
 from plone import api
+from plone.app.content.browser import actions
 from plone.app.content.browser.contents import FolderContentsView as BaseFolderContentsView
 from plone.app.content.browser.contents import copy
 from plone.app.content.browser.contents import cut
@@ -154,6 +155,52 @@ Try pasting a smaller number of items."""
             return self.paste_async(paste_data)
 
         return super(PasteActionView, self).__call__()
+
+
+@implementer(IStructureAction)
+class PasteAsyncAction(paste.PasteActionView):
+    template = ViewPageTemplateFile('templates/fc-paste-async.pt')
+    order = 10
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def get_options(self):
+        return {
+            'title': 'Paste Async',
+            'tooltip': 'Paste Asynchronously',
+            'id': 'paste-async',
+            'icon': 'paste',
+            'url': self.context.absolute_url() + '/@@fc-paste-async',
+            'form': {
+                'template': self.template(),
+                'submitText': 'Confirm',
+                'closeText': 'Cancel',
+                'title': 'Paste Async',
+            }
+        }
+
+
+class PasteAsyncActionView(actions.ObjectPasteView):
+
+    def __call__(self):
+        try:
+            paste_data = get_paste_data(self.request)
+        except CopyError:
+            return self.copy_error()
+
+        tasks.paste_items.delay(
+            self.request.form['folder'], paste_data['op'],
+            paste_data['mdatas'])
+        
+        return self.do_redirect(
+            self.canonical_object_url,
+            """You have selected to paste %i items asynchronously.
+This action can take a long time to accomplish. We will email you
+when the content is done being moved.""" % paste_data['count'],
+            'error'
+        )
 
 
 class DeleteActionView(delete.DeleteActionView):

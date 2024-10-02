@@ -97019,8 +97019,10 @@ define('castle-url/patterns/structure/js/views/app',[
         self.pasteAllowed = !!$.cookie('__cp');
         if (self.pasteAllowed) {
           self.buttons.get('paste').enable();
+          self.buttons.get('paste-async').enable();
         } else {
           self.buttons.get('paste').disable();
+          self.buttons.get('paste-async').disable();
         }
       }
     },
@@ -101188,5 +101190,5 @@ require([
   }
 });
 
-define("/Users/brian.duncan/fbigov-dev-repos/quality-check-backend-url-castle-only/castle/cms/static/plone-logged-in.js", function(){});
+define("/opt/castle/src/castle.cms/castle/cms/static/plone-logged-in.js", function(){});
 
