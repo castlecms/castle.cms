@@ -261,4 +261,25 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:registerProfile
+    name="3017"
+    title="CastleCMS upgrade to 3017 profile"
+    directory="profiles/3017"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeSteps
+    source="*"
+    destination="3017"
+    profile="castle.cms:default"
+  >
+    <genericsetup:upgradeStep
+      title="add metadata column querylist_searchabletext"
+      handler="castle.cms.upgrades.upgrade_3017a"
+    />
+    <genericsetup:upgradeStep
+      title="index querylist_searchabletext"
+      handler="castle.cms.upgrades.upgrade_3017b"
+    />
+  </genericsetup:upgradeSteps>
+
 </configure>

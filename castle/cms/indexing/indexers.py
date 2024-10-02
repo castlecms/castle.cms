@@ -1,10 +1,12 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_parent
+from bs4 import BeautifulSoup
 from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
 from plone.app.contenttypes.interfaces import IFile, IImage
+from plone.app.textfield import RichTextValue
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEvent
 from plone.indexer.decorator import indexer
@@ -18,6 +20,12 @@ from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import IHasDefaultImage
 from castle.cms.interfaces import IReferenceNamedImage
 from castle.cms.interfaces import ITrashed
+import logging
+from fbigov.contenttypes.interfaces.pressrelease import IPressRelease
+from castle.cms.interfaces import IVideo, IAudio
+from fbigov.contenttypes.interfaces.speech import ISpeech
+from fbigov.contenttypes.interfaces.story import IStory
+from fbigov.contenttypes.interfaces.testimony import ITestimony
 
 
 @indexer(IItem)
@@ -220,3 +228,51 @@ def self_or_child_has_title_description_and_image(obj):
 def has_custom_markup(image):
     if image.custom_markup:
         return True
+
+# full content query indexers
+
+def get_description(obj, _type):
+    return obj.Description()
+
+def get_raw_text(obj, _type):
+    logging.info('setting display_full_content for {} object'.format(_type))
+    text = getattr(obj, 'text', '')
+    if text is not None:
+        if type(text) is RichTextValue:
+            return text.raw
+        return text
+    else:
+        return ''
+
+@indexer(IPressRelease)
+def press_release_body_content(obj):
+    return get_raw_text(obj, 'Press Release')
+
+@indexer(IFile)
+def file_body_content(obj):
+    return 'Click here for more information'
+
+@indexer(IImage)
+def image_body_content(obj):
+    return get_description(obj, 'Image')
+
+@indexer(IVideo)
+def video_body_content(obj):
+    return get_description(obj, 'Video')
+
+
+@indexer(IAudio)
+def audio_body_content(obj):
+    return get_description(obj, 'Audio')
+
+@indexer(IStory)
+def story_body_content(obj):
+    return get_description(obj, 'Story')
+
+@indexer(ISpeech)
+def speech_body_content(obj):
+    return get_raw_text(obj, 'Speech')
+
+@indexer(ITestimony)
+def testimony_body_content(obj):
+    return get_description(obj, 'Story')
