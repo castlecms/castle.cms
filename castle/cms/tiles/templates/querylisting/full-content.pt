@@ -15,7 +15,10 @@
               <div tal:replace="structure python: utils.focal_image_tag(item, 'mini', attempt_overlay=True)"></div>
             </a>
           </div>
-          <div class="col-lg-10 col-md-9 col-sm-8"
+            <h2 class="fullcontent-title">
+              <a href="${url}">${item/Title}</a>
+            </h2>
+            <div class="col-lg-10 col-md-9 col-sm-8"
             tal:attributes="class python: has_image and 'col-md-9' or 'col-md-12'">
             <p class="pat-moment date" tal:content="python: utils.format_date(effective, 'notime')"
               tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
@@ -27,9 +30,6 @@
               <span class="pat-moment date" tal:condition="python: start.date() <> end.date()"
                 tal:content="python: utils.format_date(end)"></span>
             </p>
-            <h2 class="fullcontent-title">
-              <a href="${url}">${item/Title}</a>
-            </h2>
             <div class="full-content"
                  tal:on-error=""
                  tal:condition="item/querylist_searchabletext"

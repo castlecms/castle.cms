@@ -91,7 +91,7 @@ class TiledView(BaseTileView):
 
 class FullContentView(BaseTileView):
     name = 'full-content'
-    label = 'Full content'
+    label = 'Full Webpage'
     preview = '++plone++castle/images/previews/querylisting/full-content.png'
     order = 3
     index = ViewPageTemplateFile('templates/querylisting/full-content.pt')
