@@ -164,26 +164,121 @@
     handler=".upgrades.upgrade_3010"
     profile="castle.cms:default"
     />
-  
-  <genericsetup:registerProfile
-    name="3011"
-    title="CastleCMS upgrade to 3011 profile"
-    directory="profiles/3011"
-    description=""
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-  <genericsetup:upgradeSteps
+
+
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.11"
+    description="3011 - Remove ITemplate from all objects that provided it"
     source="*"
     destination="3011"
+    handler=".upgrades.upgrade_3011"
     profile="castle.cms:default"
-  >
-    <genericsetup:upgradeStep
-      title="3011a - Regster IOpenAISettings interface"
-      handler=".upgrades.upgrade_3011_interface"
-      />
-    <genericsetup:upgradeStep
-      title="3011b - Register profile"
-      handler=".upgrades.upgrade_3011_profile"
-      />
-  </genericsetup:upgradeSteps>
+    />
+
+
+  <genericsetup:registerProfile
+    name="3012"
+    title="CastleCMS upgrade to 3012 profile"
+    directory="profiles/3012"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.12"
+    description="3012 - Recompile resources and fix some view/ template actions"
+    source="*"
+    destination="3012"
+    handler=".upgrades.upgrade_3012"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3013"
+    title="CastleCMS upgrade to 3013 profile"
+    directory="profiles/3013"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.13"
+    description="3013 - Recompile resources for backend url quality check"
+    source="*"
+    destination="3013"
+    handler=".upgrades.upgrade_3013"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3014"
+    title="CastleCMS upgrade to 3014 profile"
+    directory="profiles/3014"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.14"
+    description="3014 - Recompile resources for removing backend url quality check"
+    source="*"
+    destination="3014"
+    handler=".upgrades.upgrade_3014"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3015"
+    title="CastleCMS upgrade to 3015 profile"
+    directory="profiles/3015"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.15"
+    description="3015 - Recompile resources for backend url quality check"
+    source="*"
+    destination="3015"
+    handler=".upgrades.upgrade_3015"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3016"
+    title="CastleCMS upgrade to 3016 profile"
+    directory="profiles/3016"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.16"
+    description="3016 - Recompile resources for accessibility updates"
+    source="*"
+    destination="3016"
+    handler=".upgrades.upgrade_3016"
+    profile="castle.cms:default"
+  />
+
+<genericsetup:registerProfile
+  name="3017"
+  title="CastleCMS upgrade to 3017 profile"
+  directory="profiles/3017"
+  description=""
+  provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+<genericsetup:upgradeSteps
+  source="*"
+  destination="3017"
+  profile="castle.cms:default"
+>
+  <genericsetup:upgradeStep
+    title="3017a - Regster IOpenAISettings interface"
+    handler=".upgrades.upgrade_3017_interface"
+    />
+  <genericsetup:upgradeStep
+    title="3017b - Register profile"
+    handler=".upgrades.upgrade_3017_profile"
+    />
+</genericsetup:upgradeSteps>
 </configure>

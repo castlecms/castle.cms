@@ -118,3 +118,11 @@ def upgrade_sites(argv=sys.argv):
 
 def link_report(argv=sys.argv):
     return run_it('_link_report')
+
+
+def auto_publish_retract(argv=sys.argv):
+    return run_it('_auto_publish_retract')
+
+
+def backend_url_check(argv=sys.argv):
+    return run_it('_backend_url_check')

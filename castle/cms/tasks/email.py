@@ -31,8 +31,8 @@ def send_email_to_subscribers(subject, html, categories=None, sender=None):
 
         query = urlencode({
             'email': subscriber.get('email'),
-            'code': subscriber.get('code')
-            })
+            'code': subscriber.get('code'),
+        })
 
         unsubscribe_url = '%s/@@unsubscribe?%s' % (
             public_url.rstrip('/'),

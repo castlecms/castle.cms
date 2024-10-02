@@ -351,12 +351,20 @@ define([
           D.button({ className: 'btn btn-default castle-btn-edit', onClick: that.editImageClicked }, 'Edit Image'));
       }
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-remove', onClick: that.removeClicked },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-remove',
+          onClick: that.removeClicked,
+          'aria-label': 'Remove',
+        },
           D.span({ className: 'icon-remove' }))
       );
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-upload',
-                   onClick: that.approveClicked, disabled: !canApprove },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-upload',
+          onClick: that.approveClicked,
+          disabled: !canApprove,
+          'aria-label': 'Upload',
+      },
           D.span({ className: 'icon-ok' }))
       );
 
@@ -663,7 +671,8 @@ define([
         that.renderFileList()
       ]
       var tabs = [
-        this.props.parent.renderTabItem('upload')
+        this.props.parent.renderTabItem('upload'),
+        this.props.parent.renderTabItem('templates')
       ]
       if (!that.state.update) {
         children.splice(1, 0, that.renderUploadLocation());
@@ -749,7 +758,12 @@ define([
 
     renderHeader: function(){
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),

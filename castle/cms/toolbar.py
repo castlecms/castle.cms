@@ -4,8 +4,7 @@ from Acquisition import aq_parent
 from castle.cms import caching
 from castle.cms.interfaces import IDashboard
 from castle.cms.interfaces import IToolbarModifier
-from castle.cms.interfaces import ITemplate
-from castle.cms.utils import get_chat_info
+from castle.cms.utils import get_chat_info, get_template_repository_info
 from copy import copy
 from json import dumps as json_dumps
 from logging import getLogger
@@ -187,8 +186,26 @@ class Utils(object):
         context = self.context
         if IDexterityItem.providedBy(context):
             context = aq_parent(context)
-
         return context.absolute_url()
+
+    def _get_view_url(self, use_parent=False):
+        context = self.context
+        if use_parent and IDexterityItem.providedBy(context):
+            context = aq_parent(context)
+        folder_has_default_page = (
+            context.portal_type == 'Folder' and
+            context.getDefaultPage() is not None
+        )
+        view_url = context.absolute_url()
+        if folder_has_default_page:
+            return view_url
+        return view_url + '/view'
+
+    def view_url(self):
+        return self._get_view_url()
+
+    def folder_view_url(self):
+        return self._get_view_url(True)
 
     def has_layout(self):
         return ILayoutAware.providedBy(self.context)
@@ -231,15 +248,14 @@ class Toolbar(BrowserView):
         """Return menu item entries in a TAL-friendly form."""
         data = {
             'types': [],
-            'templates': []
+            'templates': [],
+            'canConstrainTypes': False,
         }
         idnormalizer = queryUtility(IIDNormalizer)
 
         constraints = ISelectableConstrainTypes(self.folder, None)
-        data['canConstrainTypes'] = False
         if constraints is not None:
-            if constraints.canSetConstrainTypes() and \
-                    constraints.getDefaultAddableTypes():
+            if constraints.canSetConstrainTypes() and constraints.getDefaultAddableTypes():
                 data.update({
                     'canConstrainTypes': True,
                     'constrainUrl': '%s/folder_constraintypes_form' % (
@@ -254,27 +270,34 @@ class Toolbar(BrowserView):
         if not folder_path:
             folder_path = '/'
 
-        for t in self.folder.allowedContentTypes():
-            typeId = t.getId()
+        allowed_content_types = self.folder.allowedContentTypes()
+
+        for allowed_content_type in allowed_content_types:
+            typeId = allowed_content_type.getId()
             data['types'].append({
                 'id': typeId,
                 'safeId': idnormalizer.normalize(typeId),
-                'title': t.Title(),
-                'description': t.Description(),
+                'title': allowed_content_type.Title(),
+                'description': allowed_content_type.Description(),
                 'folderPath': folder_path
             })
-
         try:
-            site_templates = self.folder.template_list
-
-            for t in site_templates:
-                typeId = t.getId()
+            allowed_portal_types = [
+                allowed_content_type.getId()
+                for allowed_content_type in allowed_content_types
+            ]
+            for template in get_template_repository_info()['templates']:
+                typeId = template.getId()
+                portal_type = template.portal_type
                 data['templates'].append({
                     'id': typeId,
                     'safeId': idnormalizer.normalize(typeId),
-                    'title': t.Title(),
-                    'description': t.Description(),
-                    'folderPath': folder_path
+                    'title': template.Title(),
+                    'description': template.Description(),
+                    'folderPath': folder_path,
+                    'formattedPortalType': portal_type.lower().replace(' ',''),
+                    'unformattedPortalType': portal_type,
+                    'isAllowed': portal_type in allowed_portal_types,
                 })
         except AttributeError:
             pass
@@ -333,8 +356,13 @@ class Toolbar(BrowserView):
             if _checkPermission(ManageWorkflowPolicies, self.real_context):
                 placeful = True
 
-        # Objects marked as templates cannot transition to published state.
-        if ITemplate.providedBy(self.context):
+        template_repository_url = get_template_repository_info()['folder_url']
+        is_template = (
+            template_repository_url is not None and
+            self.context.absolute_url().startswith(template_repository_url)
+        )
+        if is_template:
+            # Templates cannot transition to published state.
             transitions = []
 
         return {
