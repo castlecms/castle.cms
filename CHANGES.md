@@ -73,6 +73,7 @@ Changelog
 3.0.0b134 (2024-06-06)
 ----------------------
 
+- update celery control panel
 - Fix mass copy/paste functionality
 - Handle additional edge case errors when reindexing
 
