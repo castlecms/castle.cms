@@ -176,6 +176,7 @@
     profile="castle.cms:default"
     />
 
+
   <genericsetup:registerProfile
     name="3012"
     title="CastleCMS upgrade to 3012 profile"
@@ -189,6 +190,74 @@
     source="*"
     destination="3012"
     handler=".upgrades.upgrade_3012"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3013"
+    title="CastleCMS upgrade to 3013 profile"
+    directory="profiles/3013"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.13"
+    description="3013 - Recompile resources for backend url quality check"
+    source="*"
+    destination="3013"
+    handler=".upgrades.upgrade_3013"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3014"
+    title="CastleCMS upgrade to 3014 profile"
+    directory="profiles/3014"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.14"
+    description="3014 - Recompile resources for removing backend url quality check"
+    source="*"
+    destination="3014"
+    handler=".upgrades.upgrade_3014"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3015"
+    title="CastleCMS upgrade to 3015 profile"
+    directory="profiles/3015"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.15"
+    description="3015 - Recompile resources for backend url quality check"
+    source="*"
+    destination="3015"
+    handler=".upgrades.upgrade_3015"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3016"
+    title="CastleCMS upgrade to 3016 profile"
+    directory="profiles/3016"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.16"
+    description="3016 - Recompile resources for accessibility updates"
+    source="*"
+    destination="3016"
+    handler=".upgrades.upgrade_3016"
     profile="castle.cms:default"
   />
 

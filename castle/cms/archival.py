@@ -22,9 +22,11 @@ from zope.interface import implements  # noqa: E402
 import hashlib  # noqa: E402
 import logging  # noqa: E402
 import plone.api as api  # noqa: E402
+import re
 import requests  # noqa: E402
 
 logger = logging.getLogger('castle.cms')
+from plone.api.validation import at_least_one_of, mutually_exclusive_parameters
 
 
 # gets all url() CSS directives
@@ -196,11 +198,14 @@ def _get_vhm_base_url(public_url, site_path):
     if not public_url:
         return site_path
     parsed = urlparse(public_url)
-    return '/VirtualHostBase/%s/%s:%i%s/VirtualHostRoot' % (
-        parsed.scheme,
-        parsed.netloc,
-        parsed.scheme == 'http' and 80 or 443,
-        site_path
+    port = parsed.port
+    if port is None:
+        port = 80 if parsed.scheme == 'http' else 403
+    return '/VirtualHostBase/{scheme}/{hostname}:{port}{site_path}/VirtualHostRoot'.format(
+        scheme=parsed.scheme,
+        hostname=parsed.hostname,
+        port=port,
+        site_path=site_path,
     )
 
 
@@ -249,25 +254,39 @@ class SubrequestUrlOpener(object):
         '/prev.gif'
     )
 
-    def __init__(self, migrator):
+    @mutually_exclusive_parameters('migrator', 'site')
+    @at_least_one_of('migrator', 'site')
+    def __init__(self, migrator=None, site=None, check_blacklist=True):
         self.migrator = migrator
-        self.site = migrator.site
+        if migrator is not None:
+            self.site = migrator.site
+        else:
+            self.site = site
+        self.check_blacklist = check_blacklist
         self.site_path = '/'.join(self.site.getPhysicalPath())
         self.public_url = api.portal.get_registry_record('plone.public_url')
         if not self.public_url:
             self.public_url = self.site.absolute_url()
         self.vhm_base = _get_vhm_base_url(self.public_url, self.site_path)
 
-    def __call__(self, url, use_vhm=True):
+    def get_vhm_url(self, url):
+        parsed = urlparse(url)
+        parsed_path = parsed.path.strip('/').split('/')
+        if parsed_path[0] == self.site_path.strip('/'):
+            parsed_path = parsed_path[1:]
+        final_path = '/' + '/'.join(parsed_path)
+        return self.vhm_base + final_path
+
+    def __call__(self, url, use_vhm=True, require_public_url=True):
         url = normalize_url(url)
         if not url:
             return
 
-        if not url.startswith(self.public_url):
+        if require_public_url is True and not url.startswith(self.public_url):
             return
 
-        if '++plone++production' in url:
-            front, end = url.rsplit('/', 1)
+        if '++plone++production' in url and self.check_blacklist:
+            front = url.rsplit('/', 1)
             # check blacklist
             for black_listed in self._blacklisted_content:
                 if url.startswith(front + black_listed):
@@ -279,11 +298,8 @@ class SubrequestUrlOpener(object):
             url = self.public_url + '/++plone++' + url.rsplit('++plone++', 1)[-1]  # noqa
 
         if use_vhm:
-            parsed = urlparse(url)
-            vhm_path = self.vhm_base + parsed.path
-            resp = subrequest(vhm_path)
-        else:
-            resp = subrequest(url)
+            url = self.get_vhm_url(url)
+        resp = subrequest(url)
         if resp.getStatus() == 404:
             return
 
