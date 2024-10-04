@@ -32,6 +32,12 @@ from zope.container.interfaces import INameChooser
 from zope.event import notify
 from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
+from zope.component.hooks import getSite
+from plone.app.contenttypes.interfaces import IDocument
+from zope.annotation.interfaces import IAnnotations
+from persistent.mapping import PersistentMapping
+from plone.namedfile.file import NamedBlobImage
+from ZODB.POSException import POSKeyError
 from re import sub
 
 from plone.app.content.browser.vocabulary import (
@@ -190,6 +196,50 @@ class PasteAsyncActionView(actions.ObjectPasteView):
         except CopyError:
             return self.copy_error()
 
+        # XXX: Experimental code block
+        # Can be removed in lieu of installing "experimental.gracefulblobmissing" package,
+        # which ignores missing blob errors
+
+        site = getSite()
+        for path in paste_data.get('paths'):
+            print(path)
+
+            try:
+                obj = site.restrictedTraverse(path.strip('/'), None)
+                print(obj)
+                if obj is None:
+                    logger.error("Object not found: '{}'".format(path))
+                    return
+            except Exception as e:
+                logger.error("Error retrieving object: {}".format(e))
+                return
+            
+        if IDocument.providedBy(obj):
+            annotations = IAnnotations(obj)
+
+            # The ANNOTATIONS_KEY_PREFIX ignores tiles with images/blobs
+            for key in annotations.keys():
+                data = annotations[key]
+
+                # PersistentMapping tiles contain the blobs we want
+                if isinstance(data, PersistentMapping):
+                    for item in data.values():
+                        if isinstance(item, dict) and isinstance(item.get('data'), NamedBlobImage):
+                            blobfile = item.get('data')
+                            blob = blobfile._blob
+                            try:
+                                # Check blob, opening may not be best approach
+                                f = blob.open('r')
+                                f.close()
+                            except POSKeyError:
+                                # Broken blob reference
+                                # XXX: Call save() on blob or reassign to generic fallback blob
+                                path_on_disk = blob._p_blob_committed
+                                pass
+
+        # XXX: end of block
+
+    
         tasks.paste_items.delay(
             self.request.form['folder'], paste_data['op'],
             paste_data['mdatas'])
