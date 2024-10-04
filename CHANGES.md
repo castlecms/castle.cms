@@ -1,10 +1,29 @@
 Changelog
 =========
 
-3.0.0b142 (unreleased)
+3.0.0b145 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b144 (2024-09-24)
+----------------------
+
+- add initial support for explicit asynchronous paste, intended for large objects
+  or large quantities of objects
+
+
+3.0.0b143 (2024-09-19)
+----------------------
+
+- Fix bug while swapping file in UploadNamedFileWidget
+
+
+3.0.0b142 (2024-09-18)
+----------------------
+
+- Fix for s3 stored files included in feed item xml
 
 
 3.0.0b141 (2024-07-12)
