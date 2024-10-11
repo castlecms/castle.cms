@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b145 (unreleased)
+3.0.0b145 (2024-10-11)
 ----------------------
 
 - update async paste to handle missing blob files
