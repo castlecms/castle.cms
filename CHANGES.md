@@ -4,7 +4,7 @@ Changelog
 3.0.0b145 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- update async paste to handle missing blob files
 
 
 3.0.0b144 (2024-09-24)
