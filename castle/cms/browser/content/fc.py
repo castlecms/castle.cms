@@ -37,7 +37,10 @@ from plone.app.contenttypes.interfaces import IDocument
 from zope.annotation.interfaces import IAnnotations
 from persistent.mapping import PersistentMapping
 from plone.namedfile.file import NamedBlobImage
-from ZODB.POSException import POSKeyError
+from ZODB.blob import FilesystemHelper
+from pkg_resources import resource_filename
+from shutil import copyfile
+import os
 from re import sub
 
 from plone.app.content.browser.vocabulary import (
@@ -190,23 +193,34 @@ class PasteAsyncAction(paste.PasteActionView):
 
 class PasteAsyncActionView(actions.ObjectPasteView):
 
+    def create_empty_blob(self, filename):
+        dirname = os.path.split(filename)[0]
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname, 0o700)
+
+        source = resource_filename(
+            'castle.cms',
+            'static/images/placeholder.png',
+        )
+
+        try:
+            copyfile(source, filename)
+        except Exception as e:
+            logger.error("Error creating replacement blob: {}".format(e))
+        
+        logger.info("Created missing blob for: %s", filename)
+
+
     def __call__(self):
         try:
             paste_data = get_paste_data(self.request)
         except CopyError:
             return self.copy_error()
 
-        # XXX: Experimental code block
-        # Can be removed in lieu of installing "experimental.gracefulblobmissing" package,
-        # which ignores missing blob errors
-
         site = getSite()
         for path in paste_data.get('paths'):
-            print(path)
-
             try:
                 obj = site.restrictedTraverse(path.strip('/'), None)
-                print(obj)
                 if obj is None:
                     logger.error("Object not found: '{}'".format(path))
                     return
@@ -214,35 +228,38 @@ class PasteAsyncActionView(actions.ObjectPasteView):
                 logger.error("Error retrieving object: {}".format(e))
                 return
             
+        # Set up FilesystemHelper to handle broken blob references, if any
+        conn = self.context._p_jar
+        storage = conn._storage
+        fshelper = storage.fshelper
+        base_dir = fshelper.base_dir
+        zeofshelper = FilesystemHelper(base_dir)
+        broken_items = []
+            
         if IDocument.providedBy(obj):
             annotations = IAnnotations(obj)
-
-            # The ANNOTATIONS_KEY_PREFIX ignores tiles with images/blobs
             for key in annotations.keys():
                 data = annotations[key]
-
-                # PersistentMapping tiles contain the blobs we want
+                
+                # PersistentMapping tiles contain the blobs we need
                 if isinstance(data, PersistentMapping):
                     for item in data.values():
                         if isinstance(item, dict) and isinstance(item.get('data'), NamedBlobImage):
                             blobfile = item.get('data')
                             blob = blobfile._blob
                             try:
-                                # Check blob, opening may not be best approach
-                                f = blob.open('r')
-                                f.close()
-                            except POSKeyError:
+                                # Check blob
+                                blob._p_activate()
+                            except Exception as e:
                                 # Broken blob reference
-                                # XXX: Call save() on blob or reassign to generic fallback blob
-                                path_on_disk = blob._p_blob_committed
-                                pass
-
-        # XXX: end of block
-
+                                broken_items.append('/'.join(obj.getPhysicalPath()))
+                                filename = zeofshelper.getBlobFilename(blob._p_oid, blob._p_serial)
+                                if not os.path.exists(filename):
+                                    self.create_empty_blob(filename)     
     
         tasks.paste_items.delay(
             self.request.form['folder'], paste_data['op'],
-            paste_data['mdatas'])
+            paste_data['mdatas'], broken_items)
         
         return self.do_redirect(
             self.canonical_object_url,
