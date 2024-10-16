@@ -78,15 +78,33 @@ def _paste_items(where, op, mdatas, fix_blobs):
     if email:
         name = user.getProperty('fullname') or user.getId()
         try:
-            utils.send_email(
-                recipients=email,
-                subject="Paste Operation Finished(Site: %s)" % (
+            subject="Paste Operation Finished(Site: %s)" % (
                     api.portal.get_registry_record('plone.site_title')),
-                html="""
+            html="""
     <p>Hi %s,</p>
 
     <p>The site has finished pasting items into /%s folder.</p>""" % (
-                    name, where.lstrip('/')))
+                    name, where.lstrip('/'))
+            if len(broken_items) > 0:
+                html+= """
+    <br />
+    <p>However, we detected broken file references
+        during the copy process. These references 
+        have been replaced with a blank placeholder image.
+    </p>
+    <br />
+    <p>Below are the pages containing these affected items:
+    </p>
+    <br />"""
+                for path in broken_items:
+                    html +="""
+    <p>%s</p>""" % (path)
+            utils.send_email(
+                recipients=email,
+                subject=subject,
+                html=html
+            )
+        
         except Exception:
             logger.warn('Could not send status email ', exc_info=True)
     

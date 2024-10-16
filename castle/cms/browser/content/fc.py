@@ -185,6 +185,24 @@ class PasteAsyncAction(paste.PasteActionView):
 
 class PasteAsyncActionView(actions.ObjectPasteView):
 
+    def create_empty_blob(self, filename):
+        dirname = os.path.split(filename)[0]
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname, 0o700)
+
+        source = resource_filename(
+            'castle.cms',
+            'static/images/placeholder.png',
+        )
+
+        try:
+            copyfile(source, filename)
+        except Exception as e:
+            logger.error("Error creating replacement blob: {}".format(e))
+        
+        logger.info("Created missing blob for: %s", filename)
+
+
     def __call__(self):
         try:
             paste_data = get_paste_data(self.request)
