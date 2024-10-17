@@ -33,14 +33,6 @@ from zope.event import notify
 from zope.interface import implementer
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.component.hooks import getSite
-from plone.app.contenttypes.interfaces import IDocument
-from zope.annotation.interfaces import IAnnotations
-from persistent.mapping import PersistentMapping
-from plone.namedfile.file import NamedBlobImage
-from ZODB.blob import FilesystemHelper
-from pkg_resources import resource_filename
-from shutil import copyfile
-import os
 from re import sub
 
 from plone.app.content.browser.vocabulary import (
@@ -227,39 +219,10 @@ class PasteAsyncActionView(actions.ObjectPasteView):
             except Exception as e:
                 logger.error("Error retrieving object: {}".format(e))
                 return
-            
-        # Set up FilesystemHelper to handle broken blob references, if any
-        conn = self.context._p_jar
-        storage = conn._storage
-        fshelper = storage.fshelper
-        base_dir = fshelper.base_dir
-        zeofshelper = FilesystemHelper(base_dir)
-        broken_items = []
-            
-        if IDocument.providedBy(obj):
-            annotations = IAnnotations(obj)
-            for key in annotations.keys():
-                data = annotations[key]
-                
-                # PersistentMapping tiles contain the blobs we need
-                if isinstance(data, PersistentMapping):
-                    for item in data.values():
-                        if isinstance(item, dict) and isinstance(item.get('data'), NamedBlobImage):
-                            blobfile = item.get('data')
-                            blob = blobfile._blob
-                            try:
-                                # Check blob
-                                blob._p_activate()
-                            except Exception as e:
-                                # Broken blob reference
-                                broken_items.append('/'.join(obj.getPhysicalPath()))
-                                filename = zeofshelper.getBlobFilename(blob._p_oid, blob._p_serial)
-                                if not os.path.exists(filename):
-                                    self.create_empty_blob(filename)     
     
         tasks.paste_items.delay(
             self.request.form['folder'], paste_data['op'],
-            paste_data['mdatas'], broken_items)
+            paste_data['mdatas'], fix_blobs=True)
         
         return self.do_redirect(
             self.canonical_object_url,

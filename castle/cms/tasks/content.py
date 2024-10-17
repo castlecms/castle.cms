@@ -1,3 +1,4 @@
+
 from AccessControl import Unauthorized
 from Acquisition import aq_parent
 from castle.cms import cache
@@ -12,6 +13,7 @@ from collective.celery.utils import getCelery
 
 import logging
 import transaction
+import os
 
 
 logger = logging.getLogger('castle.cms')
@@ -39,10 +41,13 @@ def paste_error_handle(where, op, mdatas):
 
 
 @retriable(on_retry_exhausted=paste_error_handle)
-def _paste_items(where, op, mdatas, broken_items):
+def _paste_items(where, op, mdatas, fix_blobs):
     logger.info('Copying a bunch of items')
     portal = api.portal.get()
     dest = portal.restrictedTraverse(str(where.lstrip('/')))
+
+    if fix_blobs:
+        os.environ["CASTLE_ALLOW_EXPERIMENTAL_BLOB_REPLACEMENT"] = 'True'
 
     if not getCelery().conf.task_always_eager:
         portal._p_jar.sync()
@@ -102,11 +107,13 @@ def _paste_items(where, op, mdatas, broken_items):
         
         except Exception:
             logger.warn('Could not send status email ', exc_info=True)
+    
+    os.environ.pop("CASTLE_ALLOW_EXPERIMENTAL_BLOB_REPLACEMENT", None)
 
 
 @task()
-def paste_items(where, op, mdatas, broken_items=[]):
-    _paste_items(where, op, mdatas, broken_items)
+def paste_items(where, op, mdatas, fix_blobs=None):
+    _paste_items(where, op, mdatas, fix_blobs)
 
 
 def delete_error_handle(where, op, mdatas):
