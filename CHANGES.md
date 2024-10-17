@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b146 (unreleased)
+3.0.0b146 (2024-10-17)
 ----------------------
 
 - bugfixes for async paste
