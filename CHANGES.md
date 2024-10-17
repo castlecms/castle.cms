@@ -4,7 +4,7 @@ Changelog
 3.0.0b146 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- bugfixes for async paste
 
 
 3.0.0b145 (2024-10-11)
