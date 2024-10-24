@@ -137,6 +137,10 @@ def upgrade_3011(site, logger=CASTLE_LOGGER):
 
 
 upgrade_3012 = default_upgrade_factory('3012')
-
+upgrade_3013 = default_upgrade_factory('3013')
+upgrade_3014 = default_upgrade_factory('3014')
+upgrade_3015 = default_upgrade_factory('3015')
+upgrade_3016 = default_upgrade_factory('3016')
+upgrade_3017 = default_upgrade_factory('3017')
 
 upgrade_4000 = default_upgrade_factory('4000')

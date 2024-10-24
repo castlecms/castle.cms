@@ -19416,12 +19416,20 @@ define('castle-url/components/upload',[
           D.button({ className: 'btn btn-default castle-btn-edit', onClick: that.editImageClicked }, 'Edit Image'));
       }
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-remove', onClick: that.removeClicked },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-remove',
+          onClick: that.removeClicked,
+          'aria-label': 'Remove',
+        },
           D.span({ className: 'icon-remove' }))
       );
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-upload',
-                   onClick: that.approveClicked, disabled: !canApprove },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-upload',
+          onClick: that.approveClicked,
+          disabled: !canApprove,
+          'aria-label': 'Upload',
+      },
           D.span({ className: 'icon-ok' }))
       );
 
@@ -19815,7 +19823,12 @@ define('castle-url/components/upload',[
 
     renderHeader: function(){
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -20103,14 +20116,21 @@ define('castle-url/components/add-content-modal',[
       var constrain = '';
       if(this.props.canConstrainTypes){
         constrain = D.div({ className: 'castle-constrain-types'}, [
-          D.a({ href: this.props.constrainUrl,
-                className: 'plone-btn plone-btn-default '}, 'Constrain allowed types')
+          D.a({
+            href: this.props.constrainUrl,
+            className: 'plone-btn plone-btn-default',
+            tabIndex: 0,
+          }, 'Constrain allowed types')
         ]);
       }
       return D.div({ className: 'wrapper'}, [
         D.ul({ className: 'select-type'}, this.props.types.map(function(type){
           return D.li({ className: 'contenttype-' + type.safeId + '-container'},
-            D.a({ className: 'contenttype-' + type.safeId, onClick: that.contentTypeClicked.bind(that, type)}, type.title)
+            D.a({
+              className: 'contenttype-' + type.safeId,
+              onClick: that.contentTypeClicked.bind(that, type),
+              tabIndex: 0,
+            }, type.title)
           );
         })),
         constrain
@@ -20152,8 +20172,12 @@ define('castle-url/components/add-content-modal',[
         D.div({ className: 'input-group'},[
           D.label({ className: 'input-group-addon'}, [
             'Folder ',
-            D.a({ href: '#', className: 'contenttype-folder',
-                  onClick: this.selectFolderClicked })
+            D.a({
+              href: '#',
+              className: 'contenttype-folder',
+              onClick: this.selectFolderClicked,
+              tabIndex: 0,
+            })
           ]),
           D.input({ type: 'text', className: 'form-control', id: 'contentLocation',
                   placeholder: 'Where on the site?', value: this.state.basePath,
@@ -20190,7 +20214,12 @@ define('castle-url/components/add-content-modal',[
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -20249,9 +20278,17 @@ define('castle-url/components/add-content-modal',[
           D.ul({}, this.state.createdContent.map(function(content){
             return D.li({}, [
               content.title + ' | ',
-              D.a({ href: content.url, target: '_blank' }, 'View'),
+              D.a({
+                href: content.url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'View'),
               ' | ',
-              D.a({ href: content.edit_url, target: '_blank' }, 'Edit')
+              D.a({
+                href: content.edit_url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'Edit')
             ]);
           })),
           D.hr({})
@@ -20480,27 +20517,28 @@ define('castle-url/components/add-content-modal',[
           [ D.a(
             {
               href: this.props.constrainUrl,
-              className: 'plone-btn plone-btn-default '
+              className: 'plone-btn plone-btn-default',
+              tabIndex: 0,
             },
             'Constrain allowed types'
           ) ]
         ) :
         '';
       return D.div(
-        { className: 'wrapper'},
+        { className: 'wrapper' },
         [
           D.ul(
-            { className: 'select-type'},
+            { className: 'select-type' },
             this.props.templates.map(
-              function(type){
-                const liProps = { className: 'contenttype-' + type.safeId + '-container'}
-                if(type.isAllowed){
+              function ( type ) {
+                if ( type.isAllowed ) {
                   return D.li(
                     { className: 'contenttype-' + type.safeId + '-container' },
                     D.a(
                       {
                         className: 'contenttype-' + type.formattedPortalType,
-                        onClick: that.contentTypeClicked.bind( that, type )
+                        onClick: that.contentTypeClicked.bind( that, type ),
+                        tabIndex: 0,
                       },
                       type.title
                     )
@@ -20563,8 +20601,12 @@ define('castle-url/components/add-content-modal',[
         D.div({ className: 'input-group'},[
           D.label({ className: 'input-group-addon'}, [
             'Folder ',
-            D.a({ href: '#', className: 'contenttype-folder',
-                  onClick: this.selectFolderClicked })
+            D.a({
+              href: '#',
+              className: 'contenttype-folder',
+              onClick: this.selectFolderClicked,
+              tabIndex: 0,
+            })
           ]),
           D.input({ type: 'text', className: 'form-control', id: 'contentLocation',
                   placeholder: 'Where on the site?', value: this.state.basePath,
@@ -20601,7 +20643,12 @@ define('castle-url/components/add-content-modal',[
         title += ' ' + this.state.selectedType.title;
       }
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Close Modal'
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),
@@ -20651,7 +20698,12 @@ define('castle-url/components/add-content-modal',[
                                 onClick: this.createAndEditClicked, disabled: disabled }, 'Create and Edit'));
         }
       }else{
-        buttons.push(D.button({ type: 'button', className: 'plone-btn plone-btn-primary', 'data-dismiss': 'modal' }, 'Done'));
+        buttons.push(D.button({
+          type: 'button',
+          className: 'plone-btn plone-btn-primary',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, 'Done'));
       }
       var contentList = '';
       if(this.state.createdContent.length > 0){
@@ -20660,9 +20712,17 @@ define('castle-url/components/add-content-modal',[
           D.ul({}, this.state.createdContent.map(function(content){
             return D.li({}, [
               content.title + ' | ',
-              D.a({ href: content.url, target: '_blank' }, 'View'),
+              D.a({
+                href: content.url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'View'),
               ' | ',
-              D.a({ href: content.edit_url, target: '_blank' }, 'Edit')
+              D.a({
+                href: content.edit_url,
+                target: '_blank',
+                tabIndex: 0,
+              }, 'Edit')
             ]);
           })),
           D.hr({})
@@ -20774,8 +20834,13 @@ define('castle-url/components/add-content-modal',[
           label = label += ' ' + this.refs.tab.state.selectedType.title;
         }
       }
-      return D.a({ href: '#' + tabName, className: className,
-                   onClick: this.tabClicked.bind(this, tabName)}, label);
+
+      return D.a({
+        href: '#' + tabName,
+        className: className,
+        onClick: this.tabClicked.bind(this, tabName),
+        tabIndex: 0,
+      }, label);
     },
 
     tabClicked: function(tabName, e){
@@ -93549,8 +93614,10 @@ define('castle-url/patterns/structure/js/views/app',[
         self.pasteAllowed = !!$.cookie('__cp');
         if (self.pasteAllowed) {
           self.buttons.get('paste').enable();
+          self.buttons.get('paste-async').enable();
         } else {
           self.buttons.get('paste').disable();
+          self.buttons.get('paste-async').disable();
         }
       }
     },
@@ -94190,7 +94257,7 @@ define('castle-url/patterns/toolbar/menu-item',[
 
 /* global localStorage */
 
-define('castle-url/patterns/toolbar/modal-item',[
+define( 'castle-url/patterns/toolbar/modal-item',[
   'jquery',
   'mockup-patterns-base',
   'pat-registry',
@@ -94199,25 +94266,34 @@ define('castle-url/patterns/toolbar/modal-item',[
   'castle-url/libs/react/react.min',
   'mockup-patterns-modal',
   'castle-url/patterns/toolbar/menu-item'
-], function ($, Base, Registry, utils, cutils, R, ModalPattern, MenuItemBase) {
+], function ( $, Base, Registry, utils, cutils, R, ModalPattern, MenuItemBase ) {
   'use strict';
 
   var D = R.DOM;
 
-  var ModalMenuItemBase = cutils.extend(MenuItemBase, {
-    onClick: function(e){
+  var ModalMenuItemBase = cutils.extend( MenuItemBase, {
+    onClick: function ( e ) {
       e.preventDefault();
-      cutils.createModalComponent(this.props.ModalComponent, this.props.id, this.getSettings());
+      cutils.createModalComponent( this.props.ModalComponent, this.props.id, this.getSettings() );
+      setTimeout(
+        () => {
+          const activeTab = document.querySelector( '.modal-content nav a.active' );
+          if ( activeTab ) {
+            activeTab.focus();
+          }
+        },
+        500
+      );
     },
-    getSettings: function(){
+    getSettings: function () {
       return {
         parent: this.props.parent
       };
     }
-  });
+  } );
 
   return ModalMenuItemBase;
-});
+} );
 
 /* global define */
 
@@ -94405,6 +94481,12 @@ define('castle-quality-check',[
     run: function(data, callback){
       return callback(!data.isTemplate);
     }
+  // }, {
+  //   name: 'No Backend Urls',
+  //   warning: 'A backend url for this site is visible in this content.',
+  //   run: function(data, callback){
+  //     return callback( !data.containsBackendUrls );
+  //   }
   }];
 
   var ATDCheck = {
