@@ -170,10 +170,14 @@ class Reporter(object):
         now = datetime.utcnow()
         relative = now - timedelta(seconds=self.recheck_delay)
         result = self.session.query(Url, Link.url_to).join(
-            Link, Link.url_to == Url.url).filter(
-                Url.last_checked_date < relative,
-                Link.site_id == self.site.getId()
-            ).order_by(Url.last_checked_date).limit(limit)
+            Link,
+            Link.url_to == Url.url
+        ).filter(
+            Url.last_checked_date < relative,
+            Link.site_id == self.site.getId()
+        ).order_by(
+            Url.last_checked_date
+        ).limit(limit)
         return [r[0] for r in result]
 
     @property

@@ -3,7 +3,6 @@ from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from castle.cms.fragments.interfaces import FRAGMENTS_DIRECTORY
 from castle.cms.fragments.interfaces import IFragmentsDirectory
-from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
 from plone.app.theming.utils import theming_policy
 from plone.registry.interfaces import IRegistry
@@ -17,6 +16,7 @@ from zope.publisher.browser import BrowserPage
 
 import logging
 import os
+import plone.api as api
 import threading
 import time
 

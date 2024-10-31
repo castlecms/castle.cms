@@ -4,35 +4,36 @@ from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()  # noqa
 
-from BTrees.OOBTree import OOBTree
-from castle.cms import theming
-from castle.cms.files import aws
-from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager
-from castle.cms.utils import normalize_url
-from DateTime import DateTime
-from lxml.html import fromstring
-from lxml.html import tostring
-from plone import api
-from plone.subrequest import subrequest
-from plone.uuid.interfaces import IUUID
-from urllib.parse import urlparse, urljoin, quote_plus
-from zope.component import getAllUtilitiesRegisteredFor
-from zope.globalrequest import getRequest
-from zope.interface import implementer
+from BTrees.OOBTree import OOBTree  # noqa: E402
+from castle.cms import theming  # noqa: E402
+from castle.cms.files import aws  # noqa: E402
+from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager  # noqa: E402
+from castle.cms.utils import normalize_url  # noqa: E402
+from DateTime import DateTime  # noqa: E402
+from lxml.html import fromstring  # noqa: E402
+from lxml.html import tostring  # noqa: E402
+from plone.subrequest import subrequest  # noqa: E402
+from plone.uuid.interfaces import IUUID  # noqa: E402
+from re import compile as re_compile  # noqa: E402
+from urllib.parse import urlparse, urljoin, quote_plus  # noqa: E402
+from zope.component import getAllUtilitiesRegisteredFor  # noqa: E402
+from zope.globalrequest import getRequest  # noqa: E402
+from zope.interface import implementer  # noqa: E402
 
-import hashlib
-import logging
+import hashlib  # noqa: E402
+import logging  # noqa: E402
+import plone.api as api  # noqa: E402
 import re
-import requests
-
+import requests  # noqa: E402
 
 logger = logging.getLogger('castle.cms')
+from plone.api.validation import at_least_one_of, mutually_exclusive_parameters
 
 
 # gets all url() CSS directives
-RE_CSS_URL = re.compile(r"""url\(["']?([^\)'"]+)['"]?\)""")
+RE_CSS_URL = re_compile(r"""url\(["']?([^\)'"]+)['"]?\)""")
 # inline css import...
-RE_CSS_IMPORTS = re.compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))["'];""")  # noqa
+RE_CSS_IMPORTS = re_compile(r"""\@import ["']([a-zA-Z0-9\+\.\-\/\:\_]+\.(?:css))["'];""")  # noqa
 
 CONTENT_KEY_PREFIX = 'archives/'
 RESOURCES_KEY_PREFIX = 'archiveresources/'
@@ -195,11 +196,14 @@ def _get_vhm_base_url(public_url, site_path):
     if not public_url:
         return site_path
     parsed = urlparse(public_url)
-    return '/VirtualHostBase/%s/%s:%i%s/VirtualHostRoot' % (
-        parsed.scheme,
-        parsed.netloc,
-        parsed.scheme == 'http' and 80 or 443,
-        site_path
+    port = parsed.port
+    if port is None:
+        port = 80 if parsed.scheme == 'http' else 403
+    return '/VirtualHostBase/{scheme}/{hostname}:{port}{site_path}/VirtualHostRoot'.format(
+        scheme=parsed.scheme,
+        hostname=parsed.hostname,
+        port=port,
+        site_path=site_path,
     )
 
 
@@ -248,25 +252,39 @@ class SubrequestUrlOpener(object):
         '/prev.gif'
     )
 
-    def __init__(self, migrator):
+    @mutually_exclusive_parameters('migrator', 'site')
+    @at_least_one_of('migrator', 'site')
+    def __init__(self, migrator=None, site=None, check_blacklist=True):
         self.migrator = migrator
-        self.site = migrator.site
+        if migrator is not None:
+            self.site = migrator.site
+        else:
+            self.site = site
+        self.check_blacklist = check_blacklist
         self.site_path = '/'.join(self.site.getPhysicalPath())
         self.public_url = api.portal.get_registry_record('plone.public_url')
         if not self.public_url:
             self.public_url = self.site.absolute_url()
         self.vhm_base = _get_vhm_base_url(self.public_url, self.site_path)
 
-    def __call__(self, url, use_vhm=True):
+    def get_vhm_url(self, url):
+        parsed = urlparse(url)
+        parsed_path = parsed.path.strip('/').split('/')
+        if parsed_path[0] == self.site_path.strip('/'):
+            parsed_path = parsed_path[1:]
+        final_path = '/' + '/'.join(parsed_path)
+        return self.vhm_base + final_path
+
+    def __call__(self, url, use_vhm=True, require_public_url=True):
         url = normalize_url(url)
         if not url:
             return
 
-        if not url.startswith(self.public_url):
+        if require_public_url is True and not url.startswith(self.public_url):
             return
 
-        if '++plone++production' in url:
-            front, end = url.rsplit('/', 1)
+        if '++plone++production' in url and self.check_blacklist:
+            front = url.rsplit('/', 1)
             # check blacklist
             for black_listed in self._blacklisted_content:
                 if url.startswith(front + black_listed):
@@ -278,11 +296,8 @@ class SubrequestUrlOpener(object):
             url = self.public_url + '/++plone++' + url.rsplit('++plone++', 1)[-1]  # noqa
 
         if use_vhm:
-            parsed = urlparse(url)
-            vhm_path = self.vhm_base + parsed.path
-            resp = subrequest(vhm_path)
-        else:
-            resp = subrequest(url)
+            url = self.get_vhm_url(url)
+        resp = subrequest(url)
         if resp.getStatus() == 404:
             return
 

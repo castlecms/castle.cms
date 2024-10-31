@@ -271,8 +271,8 @@ class MetaTileManager(BrowserView):
         tiles = data.get('tiles', []) or []
         tiles.append({
             'id': tile_id,
-            'type': tile_type
-            })
+            'type': tile_type,
+        })
         data['tiles'] = tiles
         meta_data_manager.set(data)
 

@@ -82,7 +82,7 @@ class Crawler(object):
         self.site = site
         self.settings = settings
         self.hpscatalog = hpscatalog
-        self.index_name = hpscrawl.index_name(hps.get_index_name())
+        self.index_name = hpscrawl.index_alias_name(hps.get_index_name())
 
         self.site._p_jar.sync()  # sync transactions
 
@@ -261,7 +261,10 @@ def crawl_site(site, full=False):
         return False
 
     hpscatalog = hps.get_catalog()
-    hpscrawl.ensure_index_exists(hpscatalog, hpscrawl.index_name(hps.get_index_name()))
+    index_name = hpscrawl.index_name(hps.get_index_name())
+    index_alias_name = hpscrawl.index_alias_name(hps.get_index_name())
+    hpscrawl.ensure_index_exists(hpscatalog, index_name)
+    hpscrawl.ensure_index_alias_exists(hpscatalog, index_alias_name, index_name)
     crawler = Crawler(site, settings, hpscatalog)
 
     if settings.crawler_index_archive:

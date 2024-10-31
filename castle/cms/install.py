@@ -29,8 +29,8 @@ class HiddenProducts(object):
             'plone.app.mosaic:default',
             'plone.app.drafts:default',
             'plone.app.blocks:default',
-            'plone.app.openid:default'
-            ]
+            'plone.app.openid:default',
+        ]
 
 
 FOOTER_HTML = """
@@ -67,7 +67,7 @@ FOOTER_HTML = """
     <div class="col-sm-12">
         <p class="copyright">
             Copyright <abbr title="Copyright symbol" i18n:name="copyright" i18n:attributes="title title_copyright;">&copy;</abbr> %s by Wildcard Corp.
-        </p> 
+        </p>
     </div>
 </div>""" % DateTime().year()  # noqa
 

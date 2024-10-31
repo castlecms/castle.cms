@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='3.0.0b129.dev0',
+    version='4.0.0a2.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('CHANGES.md')
@@ -23,9 +23,8 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
-        "Framework :: Plone :: 5.0",
         "Framework :: Plone",
-        "Framework :: Plone :: 5.1",
+        "Framework :: Plone :: 5.2",
         "Framework :: CastleCMS",
         "Framework :: CastleCMS :: Theme"
     ],
@@ -37,12 +36,11 @@ setup(
     namespace_packages=['castle'],
     install_requires=[
         # plone packages
-        # Plone 5.2- update reqs
-        'Products.CMFPlone>=5.2.12',
+        'Products.CMFPlone>=5.2.14',
         'mockup>=2.4.2.dev1',
         'plone.app.upgrade>=2.0.17',
         'plone.app.mosaic>=2.0.0.dev24',
-        # 'plone.app.blocks>=10.0.0', 
+        'plone.app.blocks>=10.0.0', 
         'Products.PloneKeywordManager>=2.2.1',
         'plone.schemaeditor>=2.0.18',
         'plone.namedfile>=3.0.10',
@@ -71,7 +69,6 @@ setup(
         # the use of collective.elasticsearch in the 3.x+ version of castle.cms
         # is limited and should not be relied on.
         # 'collective.elasticsearch >=4.0.0, <5.0.0',
-        'collective.elasticsearch',
 
         # python
         'boto3>=1.9.222',
@@ -133,10 +130,12 @@ setup(
       twitter-monitor = castle.cms.cron:twitter_monitor
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
+      backend-url-check = castle.cms.cron:backend_url_check
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
+      auto-publish-retract = castle.cms.cron:auto_publish_retract
       """,
     include_package_data=True,
     zip_safe=False,

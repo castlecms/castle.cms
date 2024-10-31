@@ -47,9 +47,6 @@ class ManageProductsView(quickinstaller.ManageProductsView):
         '''
         Also upgrade profiles
         '''
-        # XXX remove customization in future versions!!!
-        if not Products.CMFPlone.__version__.startswith('5.0'):
-            raise Exception('Incompatible upgrade mechanisms')
         if super(ManageProductsView, self).upgrade_product(product):
             messages = IStatusMessage(self.request)
             try:

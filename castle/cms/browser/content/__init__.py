@@ -2,6 +2,8 @@ import json
 import logging
 import math
 import os
+import plone.api as api
+import re
 import shutil
 import tempfile
 import time
@@ -13,18 +15,19 @@ from Acquisition import aq_parent
 from castle.cms import cache
 from castle.cms import commands
 from castle.cms import utils
+from castle.cms.archival import SubrequestUrlOpener
 from castle.cms.browser.utils import Utils
 from castle.cms.commands import exiftool
 from castle.cms.commands import qpdf
 from castle.cms.files import duplicates
-from castle.cms.interfaces import ITemplate, ITrashed
+from castle.cms.interfaces import ITrashed
+from castle.cms.utils import get_template_repository_info
 from castle.cms.utils import get_upload_fields
 from castle.cms.utils import publish_content
 from lxml.html import fromstring
 from OFS.interfaces import IFolder
 from OFS.ObjectManager import checkValidId
 from persistent.dict import PersistentDict
-from plone import api
 from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.blocks.vocabularies import AvailableSiteLayouts
 from plone.app.content.browser import i18n
@@ -130,15 +133,16 @@ class Creator(BrowserView):
                 'reason': 'No access'
             })
         self.catalog = api.portal.get_tool('portal_catalog')
-        if self.request.form.get('action') == 'check':
+        action = self.request.form.get('action')
+        if action == 'check':
             return self.check()
-        elif self.request.form.get('action') == 'create':
+        elif action == 'create':
             return self.create()
-        elif self.request.form.get('action') == 'create-from-template':
+        elif action == 'create-from-template':
             return self.create_object_from_template()
-        elif self.request.form.get('action') == 'remove':
+        elif action == 'remove':
             return self.remove_file_content()
-        elif self.request.form.get('action') == 'chunk-upload':
+        elif action == 'chunk-upload':
             return self.chunk_upload()
 
     def chunk_upload(self):
@@ -264,14 +268,17 @@ class Creator(BrowserView):
             pass
 
         aspect = ISelectableConstrainTypes(folder, None)
-        if (aspect and (
+        if aspect:
+            should_set_constrain_types = (
                 aspect.getConstrainTypesMode() != 1 or
-                [type_] != aspect.getImmediatelyAddableTypes())):
-            aspect.setConstrainTypesMode(1)
-            try:
-                aspect.setImmediatelyAddableTypes([type_])
-            except Exception:
-                pass
+                [type_] != aspect.getImmediatelyAddableTypes()
+            )
+            if should_set_constrain_types:
+                aspect.setConstrainTypesMode(1)
+                try:
+                    aspect.setImmediatelyAddableTypes([type_])
+                except Exception:
+                    pass
 
         if not getattr(folder, 'exclude_from_nav', False):
             # if auto generated path, exclude from nav
@@ -442,8 +449,12 @@ class Creator(BrowserView):
 
     def get_type_id(self):
         form = self.request.form
-        return form.get('selectedType[typeId]',
-                        form.get('selectedType[id]')).replace('%20', ' ')
+        type_id = form.get('selectedType[unformattedPortalType]', None)
+        if type_id is None:
+            type_id = form.get('selectedType[typeId]', None)
+        if type_id is None:
+            type_id = form.get('selectedType[id]', '') or ''
+        return type_id.replace('%20', ' ')
 
     def create(self):
         if self._check():
@@ -530,28 +541,23 @@ content in this location."""
             portal_types = getToolByName(self.context, 'portal_types')
             type_id = self.get_type_id()
 
-            # Templates need special handling based on type_id
-            try:
-                if ITemplate.providedBy(self.context['template-repository'][type_id]):
-                    type_id = self.context['template-repository'][type_id].portal_type
-            except KeyError:
-                pass
-
-            pt = portal_types[type_id]
-            add_perm = utils.get_permission_title(pt.add_permission)
+            add_permission = portal_types[type_id].add_permission
+            add_permission_title = utils.get_permission_title(add_permission)
 
             if valid and not self.can_add(folder, type_id):
                 valid = False
                 self.status = 'You are not allowed to add this content type here'
-            elif valid and not self.sm.checkPermission(add_perm, folder):
+            elif valid and not self.sm.checkPermission(add_permission_title, folder):
                 valid = False
                 self.status = 'You do not have permission to add content here.'
             elif valid and self.request.form['id'] in folder.objectIds():
                 valid = False
                 ob = folder[self.request.form['id']]
                 if ITrashed.providedBy(ob):
-                    self.status = ('Content in recycling bin with same id exists. '
-                                   'Delete, rename or restore recycled content to use this.')
+                    self.status = (
+                        'Content in recycling bin with same id exists. '
+                        'Delete, rename or restore recycled content to use this.'
+                    )
                 else:
                     self.status = 'Content with same ID already exists'
             elif not self.valid_id(folder, self.request.form['id']):
@@ -633,23 +639,19 @@ content in this location."""
 
     def create_object_from_template(self):
         if self._check():
-            site = getSite()
             template_title = self.request.form.get('selectedType[title]')
             new_id = self.request.form.get('id')
             new_title = self.request.form.get('title')
             path = self.request.form.get('basePath', '/')
             folder = utils.recursive_create_path(self.context, path)
-            template_repo = site['template-repository']
-
-            for t in template_repo.getChildNodes()._data:
-                if t.title == template_title:
+            for template in get_template_repository_info()['templates']:
+                if template.title == template_title:
                     obj = api.content.copy(
-                        source=t,
+                        source=template,
                         id=new_id,
                         target=folder
                     )
                     obj.title = new_title
-                    noLongerProvides(obj, ITemplate)
 
             transition_to = self.request.form.get('transitionTo')
             if transition_to:
@@ -740,26 +742,123 @@ class WorkflowPermissionChecker(object):
         return True
 
 
+class BackendUrlUtils(object):
+    # start of string
+    # optional http:// or https:// is catured as 'protocol'
+    # optional leading slashes are captured as 'leading_slashes'
+    # everything else is captured as 'url'
+    URL_PATTERN = r'^(?P<protocol>https?:\/\/)?(?P<leading_slashes>\/+)?(?P<url>.*)$'
+    UNSET = object()
+    _public_url = UNSET
+    _backend_urls = UNSET
+    _invalid_backend_urls = UNSET
+
+    @property
+    def backend_urls(self):
+        if getattr(self, '_backend_urls', self.UNSET) is self.UNSET:
+            formatted_backend_urls = []
+            backend_urls = api.portal.get_registry_record('plone.backend_url', default=[]) or []
+            for backend_url in backend_urls:
+                formatted_url = self.get_formatted_url(backend_url)
+                if formatted_url and isinstance(formatted_url, basestring):
+                    formatted_backend_urls.append(formatted_url)
+            self._backend_urls = formatted_backend_urls
+        return self._backend_urls
+
+    @property
+    def public_url(self):
+        if getattr(self, '_public_url', self.UNSET) is self.UNSET:
+            public_url = api.portal.get_registry_record('plone.public_url', default=None) or None
+            if public_url and isinstance(public_url, basestring):
+                self._public_url = public_url
+            else:
+                self._public_url = None
+        return self._public_url
+
+    @property
+    def invalid_backend_urls(self):
+        # if a site has the same backend and public url, do not consider it invalid
+        if getattr(self, '_invalid_backend_urls', self.UNSET) is self.UNSET:
+            public_url = self.public_url
+            backend_urls = self.backend_urls
+            if public_url is None:
+                self._invalid_backend_urls = backend_urls
+            else:
+                self._invalid_backend_urls = [
+                    backend_url
+                    for backend_url in backend_urls
+                    if backend_url != public_url
+                ]
+        return self._invalid_backend_urls
+
+    def get_formatted_url(self, url):
+        try:
+            # probably the only way to not get a match here is a non-string
+            match = re.match(self.URL_PATTERN, url)
+            return match.groupdict()['url']
+        except Exception:
+            return None
+
+    def get_invalid_backend_urls_found(self, content):
+        return [
+            invalid_backend_url
+            for invalid_backend_url in self.invalid_backend_urls
+            if invalid_backend_url in content
+        ]
+
+
 class QualityCheckContent(BrowserView):
+    QUALITY_CHECK_URL = '/@@quality-check'
 
-    def __call__(self):
+    @property
+    def formatted_url(self):
+        try:
+            end_index = None
+            if self.request.URL.endswith(self.QUALITY_CHECK_URL):
+                end_index = -1 * len(self.QUALITY_CHECK_URL)
+            return self.request.URL[:end_index]
+        except Exception:
+            return None
 
-        valid = True
+    @property
+    def subrequest_results(self):
+        opener = SubrequestUrlOpener(
+            site=api.portal.get(),
+            check_blacklist=False,
+        )
+        return opener(self.formatted_url, require_public_url=False)
+
+    @property
+    def contains_backend_urls(self):
+        subrequest_results = self.subrequest_results
+        subrequest_html = subrequest_results['data']
+        backend_utils = BackendUrlUtils()
+        backend_urls_found = backend_utils.get_invalid_backend_urls_found(subrequest_html)
+        if len(backend_urls_found) > 0:
+            logger.warn('There were backend urls found in the html')
+            logger.info('Backend urls found: {}'.format(repr(backend_urls_found)))
+            logger.info('Data searched for: ' + self.formatted_url)
+            return True
+        return False
+
+    @property
+    def are_links_valid(self):
         for link in getOutgoingLinks(self.context):
             state = api.content.get_state(obj=link.to_object, default='published')
             if state != 'published':
-                valid = False
-                break
+                return False
+        return True
 
-        headers_ordered = True
-
+    @property
+    def html(self):
         try:
             feed = SearchFeed(api.portal.get())
             adapter = queryMultiAdapter((self.context, feed), IFeedItem)
-            html = adapter.render_content_core().strip()
+            return adapter.render_content_core().strip()
         except Exception:
-            html = ''
+            return ''
 
+    def are_headers_ordered(self, html):
         if html:
             dom = fromstring(html)
             last = 1
@@ -768,23 +867,22 @@ class QualityCheckContent(BrowserView):
                 if idx - last > 1:
                     # means they skipped from say h1 -> h5
                     # h1 -> h2 is allowed
-                    headers_ordered = False
-                    break
+                    return False
                 last = idx
+        return True
 
-        is_template = False
-        if ITemplate.providedBy(self.context):
-            is_template = True
-
+    def __call__(self):
+        html = self.html
         self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps({
             'title': self.context.Title(),
             'id': self.context.getId(),
             'description': self.context.Description(),
-            'linksValid': valid,
-            'headersOrdered': headers_ordered,
+            'linksValid': self.are_links_valid,
+            'headersOrdered': self.are_headers_ordered(html),
             'html': html_parser.unescape(html),
-            'template': is_template
+            'isTemplate': self.context in get_template_repository_info()['templates'],
+            # 'containsBackendUrls': self.contains_backend_urls,
         })
 
 

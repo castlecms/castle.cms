@@ -5,10 +5,8 @@ from copy import deepcopy
 from io import BytesIO
 
 from castle.cms.browser import content
-from castle.cms.interfaces import ITemplate
-from castle.cms.tasks.template import save_as_template
+from castle.cms.tasks.template import move_to_templates, copy_to_templates
 from castle.cms.testing import CASTLE_PLONE_INTEGRATION_TESTING
-from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import login
@@ -23,6 +21,8 @@ from zope.component.hooks import getSite
 import six
 from six.moves import range
 
+import plone.api as api
+
 
 class TestContent(unittest.TestCase):
 
@@ -33,6 +33,10 @@ class TestContent(unittest.TestCase):
         self.request = self.layer['request']
         login(self.portal, TEST_USER_NAME)
         setRoles(self.portal, TEST_USER_ID, ('Member', 'Manager'))
+
+    @property
+    def template_list(self):
+        return api.portal.get()['template-repository'].listFolderContents()
 
     def test_dump_data(self):
         doc = api.content.create(
@@ -231,41 +235,43 @@ class TestContent(unittest.TestCase):
         # should not cause TypeError
         self.assertEquals(settings.feed_types, ())
 
-    def test_content_converted_to_template(self):
-        site = getSite()
+    def test_content_move_to_templates(self):
         obj = api.content.create(
             type='Document',
             id='template-document',
             title='Template Document',
             container=self.portal)
 
-        template_obj = save_as_template(obj, 'convert')
-        self.assertTrue(ITemplate.providedBy(template_obj))
-        self.assertTrue(template_obj in site.template_list)
+        template_obj = move_to_templates(obj, 'New Title')
+        self.assertIsNotNone(template_obj)
+        self.assertTrue(template_obj.getParentNode().getPhysicalPath()[-1] == 'template-repository')
+        self.assertTrue(template_obj in self.template_list)
         self.assertEqual(template_obj, obj)
+        self.assertEqual(template_obj.Title(), 'New Title')
 
-    def test_content_copied_to_template(self):
-        site = getSite()
+    def test_content_copy_to_templates(self):
         obj = api.content.create(
             type='Document',
             id='template-document',
             title='Template Document',
             container=self.portal)
 
-        template_obj = save_as_template(obj, 'copy')
-        self.assertTrue(ITemplate.providedBy(template_obj))
-        self.assertTrue(template_obj in site.template_list and obj not in site.template_list)
+        template_obj = copy_to_templates(obj, 'New Title')
+        self.assertTrue(template_obj.getParentNode().getPhysicalPath()[-1] == 'template-repository')
+        self.assertTrue(template_obj in self.template_list)
+        self.assertFalse(obj in self.template_list)
         self.assertNotEqual(template_obj, obj)
+        self.assertEqual(obj.Title(), 'Template Document')
+        self.assertEqual(template_obj.Title(), 'New Title')
 
     def test_create_content_from_template(self):
-        site = getSite()
         obj = api.content.create(
             type='Document',
             id='template-document',
             title='Template Document',
             container=self.portal)
 
-        template_obj = save_as_template(obj, 'convert')
+        template_obj = move_to_templates(obj, 'New Title')
 
         self.request.form.update({
             'action': 'create-from-template',
@@ -273,23 +279,26 @@ class TestContent(unittest.TestCase):
             'id': 'document-from-template',
             'title': 'Document From Template',
             'selectedType[id]': template_obj.id,
+            'selectedType[unformattedPortalType]': 'Document',
+            'selectedType[portalType]': 'document',
+            'selectedType[id]': template_obj.id,
             'selectedType[title]': template_obj.title,
-            'transitionTo': ''
+            'transitionTo': '',
         })
 
-        cc = content.Creator(self.portal, self.request)
-        data = json.loads(cc())
-        self.assertFalse(ITemplate.providedBy(data))
-        self.assertTrue(template_obj in site.template_list and data not in site.template_list)
+        content_creator = content.Creator(self.portal, self.request)
+        data = json.loads(content_creator())
+        self.assertTrue(template_obj.getParentNode().getPhysicalPath()[-1] == 'template-repository')
+        self.assertTrue(template_obj in self.template_list)
+        self.assertFalse(data in self.template_list)
 
     def test_template_action_in_toolbar(self):
-        pactions = api.portal.get_tool('portal_actions')
-        actions = pactions['toolbar_menu'].listActions()
-        temp_action_in_toolbar = False
-        for a in actions:
-            if a.id == 'convert_template':
-                temp_action_in_toolbar = True
-        self.assertTrue(temp_action_in_toolbar)
+        portal_actions = api.portal.get_tool('portal_actions')
+        action_ids = [
+            action.id
+            for action in portal_actions['toolbar_menu'].listActions()
+        ]
+        self.assertTrue('convert_template' in action_ids)
 
 
 class TestContentAccess(unittest.TestCase):

@@ -84,5 +84,5 @@ def log_request(request):
                 resp.headers.get('content-length', '0'),
                 referer,
                 user_agent
-                )
             )
+        )

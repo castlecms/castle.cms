@@ -7,7 +7,7 @@ from castle.cms.pwexpiry.config import _
 from castle.cms.pwexpiry.utils import days_since_event
 from DateTime import DateTime
 
-# Plone5.2 - 'Globals' no longer exists in zope 4, method exists elsewhere
+# Plone5.2 - InitializeClass moved from Globals to AccessControl
 from AccessControl.class_init import InitializeClass
 from plone import api
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile

@@ -1,10 +1,128 @@
 Changelog
 =========
 
-3.0.0b129 (unreleased)
+3.0.0b147 (unreleased)
 ----------------------
 
 - Nothing changed yet.
+
+
+3.0.0b146 (2024-10-17)
+----------------------
+
+- bugfixes for async paste
+
+
+3.0.0b145 (2024-10-11)
+----------------------
+
+- update async paste to handle missing blob files
+
+
+3.0.0b144 (2024-09-24)
+----------------------
+
+- add initial support for explicit asynchronous paste, intended for large objects
+  or large quantities of objects
+
+
+3.0.0b143 (2024-09-19)
+----------------------
+
+- Fix bug while swapping file in UploadNamedFileWidget
+
+
+3.0.0b142 (2024-09-18)
+----------------------
+
+- Fix for s3 stored files included in feed item xml
+
+
+3.0.0b141 (2024-07-12)
+----------------------
+
+- Add aria-labels to some buttons
+
+
+3.0.0b140 (2024-07-12)
+----------------------
+
+- nothing, just a new version
+
+
+3.0.0b139 (2024-07-11)
+----------------------
+
+- CSS updates
+
+
+3.0.0b138 (2024-07-10)
+----------------------
+
+- Add focus and tabindexes to modal add component (accessibility)
+- Don't display incorrect login statuses on screenreaders
+- Hide backend url check once more (and don't call code from backend for now)
+
+
+3.0.0b137 (2024-07-05)
+----------------------
+
+- Use VHM to correctly implement quality check for backend urls
+
+
+3.0.0b136 (2024-07-04)
+----------------------
+
+- Remove check for backend urls during quality check (for now)
+
+
+3.0.0b135 (2024-07-03)
+----------------------
+
+- Check for backend urls during quality check
+
+
+3.0.0b134 (2024-06-06)
+----------------------
+
+- Fix mass copy/paste functionality
+- Handle additional edge case errors when reindexing
+
+
+3.0.0b133 (2024-03-21)
+----------------------
+
+- castle crawler should generate an index alias and an index when it verifies they
+  exist, and then use the alias for all primary operations
+- mark the crawler mapping['url'] as _stored_ so opensearchpy stored_field parameter
+  can be used appropriately with it
+
+
+3.0.0b132 (2024-02-07)
+----------------------
+
+- bug fixes
+
+
+3.0.0b131 (2024-01-31)
+----------------------
+
+- try/catch in upgrade step
+
+
+3.0.0b130 (2024-01-31)
+----------------------
+
+- Adjust View Page actions to account for folder's default page view
+- Rework templates to be anything in the Template Repository (remove ITemplate)
+- Better display of templates and icons in add content modal
+
+
+3.0.0b129 (2023-12-07)
+----------------------
+
+- Create Content Redirectable behavior so Dexterity objects can act as redirects
+- Create an action to convert pages into folders with the original page as the default view
 
 
 3.0.0b128 (2023-11-20)

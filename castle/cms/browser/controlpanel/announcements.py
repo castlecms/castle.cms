@@ -272,8 +272,6 @@ class SubscribersLoadEmailTemplateForm(AutoExtensibleForm, form.Form):
     ignoreContext = True
 
 
-
-
 class IExportSubscribersForm(model.Schema):
     directives.widget('export_categories', SelectFieldWidget)
     export_categories = schema.List(

@@ -89,6 +89,18 @@ body.secure-login-template {
   padding: 10px 20px 0;
   float: left;
 }
+.castle-secure-login-forms-container:not(.requesting-auth-code) > div.castle-secure-login-form-requesting-auth-code {
+  display: none;
+}
+.castle-secure-login-forms-container:not(.check-credentials) > div.castle-secure-login-form-check-credentials {
+  display: none;
+}
+.castle-secure-login-forms-container:not(.country-blocked) > div.castle-secure-login-form-country-blocked {
+  display: none;
+}
+.castle-secure-login-forms-container:not(.country-block-requested) > div.castle-secure-login-form-country-block-requested {
+  display: none;
+}
 .castle-secure-login-forms-container.auth-code-sent {
   margin-left: -560px;
 }

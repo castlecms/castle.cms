@@ -568,12 +568,17 @@ class FocalNamedImageWidget(BaseNamedImageWidget):
             icon = self.file_icon
         except Exception:
             icon = None
+        try:
+            thumb_width = self.thumb_width
+        except Exception:
+            thumb_width = None
         return {
             'exists': self.value is not None,
             'download_url': download_url,
             'filename': self.filename,
             'content_type': contentType,
             'icon': icon,
+            'thumb_width': thumb_width,
             'file_size': self.file_size,
             'doc_type': fct,
             'width': width,
@@ -823,6 +828,20 @@ class NamedFileDataConverter(NamedDataConverter):
 class UploadNamedFileWidget(NamedFileWidget):
     klass = NamedFileWidget.klass + ' pat-upload-update'
     replacement = False
+
+    @property
+    def file_content_type(self):
+        try:
+            return super(UploadNamedFileWidget, self).file_content_type
+        except Exception:
+            return None
+
+    @property
+    def file_icon(self):
+        try:
+            return super(UploadNamedFileWidget, self).file_icon
+        except Exception:
+            return None
 
     @property
     def pattern_options(self):

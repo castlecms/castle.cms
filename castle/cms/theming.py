@@ -8,9 +8,8 @@ import json
 import logging
 import re
 from six.moves.urllib.parse import urljoin
-
-# Plone5.2 'Globals' removed in Zope 4
-# import Globals
+# Plone5.2 - "Globals" has been replaced by "App.config"
+from App.config import getConfiguration
 from Acquisition import aq_parent
 from castle.cms.utils import get_context_from_request
 from chameleon import PageTemplate
@@ -84,6 +83,7 @@ nonexistant_dexterity_control_panel_url_pattern = re.compile(r'{}$'.format(
     .replace('.', r'\.')
     .replace('?', r'\?')
 ))
+
 
 class ThemeTemplateLoader(PageTemplateLoader):
 
@@ -554,9 +554,7 @@ class _Transform(object):
 
 
 def getTransform(context, request):
-    # Plone5.2 - 'DevelopmentMode' was set to False in former 'Globals' import
-    # DevelopmentMode = Globals.DevelopmentMode
-    DevelopmentMode = False
+    DevelopmentMode = getConfiguration().debug_mode
     policy = theming_policy(request)
 
     # Obtain settings. Do nothing if not found
@@ -629,9 +627,7 @@ class Policy(ThemingPolicy):
 
         # Resolve DevelopmentMode late (i.e. not on import time) since it may
         # be set during import or test setup time
-        # Plone5.2 - 'DevelopmentMode' was set to False in old 'Globals'
-        # DevelopmentMode = Globals.DevelopmentMode
-        DevelopmentMode = False
+        DevelopmentMode = getConfiguration().debug_mode
 
         # Disable theming if the response sets a header
         if self.request.response.getHeader('X-Theme-Disabled'):
@@ -695,8 +691,7 @@ def transformIterable(self, result, encoding):
     except AttributeError:
         pass
 
-    # Plone5.2 TODO - 'DevelopmentMode' was set to False in 'Globals'. Remove?
-    DevelopmentMode = False
+    DevelopmentMode = getConfiguration().debug_mode
 
     try:
         # if we are here, it means we are rendering the the

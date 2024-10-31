@@ -1,3 +1,4 @@
+
 from AccessControl import Unauthorized
 from Acquisition import aq_parent
 from castle.cms import cache
@@ -13,6 +14,7 @@ from collective.celery.utils import getCelery
 import logging
 import transaction
 import six
+import os
 
 
 logger = logging.getLogger('castle.cms')
@@ -40,14 +42,14 @@ def paste_error_handle(where, op, mdatas):
 
 
 @retriable(on_retry_exhausted=paste_error_handle)
-def _paste_items(where, op, mdatas):
+def _paste_items(where, op, mdatas, fix_blobs):
     logger.info('Copying a bunch of items')
     portal = api.portal.get()
-    catalog = api.portal.get_tool('portal_catalog')
     dest = portal.restrictedTraverse(str(where.lstrip('/')))
 
-    count = 0
-    commit_count = 0
+    if fix_blobs:
+        os.environ["CASTLE_ALLOW_EXPERIMENTAL_BLOB_REPLACEMENT"] = 'True'
+
     if not getCelery().conf.task_always_eager:
         portal._p_jar.sync()
 
@@ -59,7 +61,6 @@ def _paste_items(where, op, mdatas):
         pass
 
     for mdata in mdatas[:]:
-        count += len(catalog(path={'query': '/'.join(mdata), 'depth': -1}))
         ob = portal.unrestrictedTraverse(str('/'.join(mdata)), None)
         if ob is None:
             continue
@@ -68,18 +69,6 @@ def _paste_items(where, op, mdatas):
             api.content.copy(ob, dest, safe_id=True)
         else:
             api.content.move(ob, dest, safe_id=True)
-
-        if count / 50 != commit_count:
-            # commit every 50 objects moved
-            transaction.commit()
-            commit_count = count / 50
-            if not getCelery().conf.task_always_eager:
-                portal._p_jar.sync()
-            # so we do not redo it
-            try:
-                mdatas.remove(mdata)
-            except Exception:
-                pass
 
     # we commit here so we can trigger conflict errors before
     # trying to send email
@@ -90,22 +79,42 @@ def _paste_items(where, op, mdatas):
     if email:
         name = user.getProperty('fullname') or user.getId()
         try:
-            utils.send_email(
-                recipients=email,
-                subject="Paste Operation Finished(Site: %s)" % (
+            subject="Paste Operation Finished(Site: %s)" % (
                     api.portal.get_registry_record('plone.site_title')),
-                html="""
+            html="""
     <p>Hi %s,</p>
 
     <p>The site has finished pasting items into /%s folder.</p>""" % (
-                    name, where.lstrip('/')))
+                    name, where.lstrip('/'))
+            if len(broken_items) > 0:
+                html+= """
+    <br />
+    <p>However, we detected broken file references
+        during the copy process. These references 
+        have been replaced with a blank placeholder image.
+    </p>
+    <br />
+    <p>Below are the pages containing these affected items:
+    </p>
+    <br />"""
+                for path in broken_items:
+                    html +="""
+    <p>%s</p>""" % (path)
+            utils.send_email(
+                recipients=email,
+                subject=subject,
+                html=html
+            )
+        
         except Exception:
             logger.warn('Could not send status email ', exc_info=True)
+    
+    os.environ.pop("CASTLE_ALLOW_EXPERIMENTAL_BLOB_REPLACEMENT", None)
 
 
 @task()
-def paste_items(where, op, mdatas):
-    _paste_items(where, op, mdatas)
+def paste_items(where, op, mdatas, fix_blobs=None):
+    _paste_items(where, op, mdatas, fix_blobs)
 
 
 def delete_error_handle(where, op, mdatas):

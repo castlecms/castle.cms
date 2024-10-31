@@ -9,7 +9,6 @@ from castle.cms.interfaces import ICastleLayer
 from castle.cms.lockout import LOGGED_IN_MARKER_KEY
 from castle.cms.lockout import SessionManager
 from castle.cms.utils import get_context_from_request
-from plone import api
 from plone.uuid.interfaces import IUUID
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
@@ -24,6 +23,7 @@ from zExceptions import NotFound
 
 import binascii
 import logging
+import plone.api as api
 
 
 try:

@@ -25,7 +25,6 @@ from zope.interface import Interface
 import logging
 import plone.api as api
 
-
 logger = logging.getLogger('castle.cms')
 
 
@@ -224,9 +223,3 @@ def on_youtube_video_state_changed(obj, event):
             tasks.youtube_video_state_changed.delay(obj)
         except CannotGetPortalError:
             pass
-
-
-def on_template_delete(obj, event):
-    site = getSite()
-    if obj in site.template_list:
-        site.template_list.remove(obj)

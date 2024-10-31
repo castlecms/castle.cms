@@ -5,8 +5,8 @@ import sys
 import time
 import traceback
 
-# Plone5.2 - 'Globals' no longer exists in Zope 4
-# import Globals
+# Plone5.2 - "Globals" has been replaced by "App.config"
+from App.config import getConfiguration
 from DateTime import DateTime
 from plone import api
 from plone.app.theming.interfaces import THEME_RESOURCE_NAME
@@ -56,9 +56,13 @@ class Storage(object):
     def _get_fs_path(self):
         """ returns FS path for jbot storage.
         """
-        # Plone5.2 TODO - Determine actual data_dir, set as '/var/filestorage/' for now
-        # base_path = '/'.join(Globals.data_dir.split('/')[:-1])
-        base_path = '/var/filestorage/'
+        # Plone5.2 - 'Globals' contained 'data_dir' variable 
+        # But App.config.getConfiguration() does not
+        # set as '/var/filestorage/' for now
+        try:
+            base_path = '/'.join(getConfiguration().data_dir.split('/')[:-1])
+        except Exception:
+            base_path = '/var/filestorage/'
         jbot_dir = os.path.join(base_path, 'jbot')
         site_id = '-'.join(self.site.getPhysicalPath()[1:])
         fs_path = os.path.join(jbot_dir, site_id, self.theme)

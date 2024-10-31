@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from plone.app.dexterity import _
 from plone.app.dexterity.browser import types
 from plone.z3cform import layout
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile

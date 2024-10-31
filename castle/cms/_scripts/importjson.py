@@ -207,12 +207,15 @@ class CastleImporter(object):
 
         skipped = False
         if data['portal_type'] in skip_types:
-            print(('Skipping omitted type {type}'
-                                            .format(type=data['portal_type'])))
+            print('Skipping omitted type {type}'.format(
+                type=data['portal_type']
+            ))
             skipped = True
         if only_types and data['portal_type'] not in only_types:
-            print(("Skipping {type} at {path}, not in only_types."
-                                .format(type=data['portal_type'], path=filepath)))
+            print("Skipping {type} at {path}, not in only_types.".format(
+                type=data['portal_type'],
+                path=filepath,
+            ))
             skipped = True
         if import_paths:
             do_import = False
@@ -223,19 +226,18 @@ class CastleImporter(object):
                     # Don't skip folders on the way to import_paths
                     do_import = True
             if not do_import:
-                print(("Skipping {path}, not in import_paths"
-                                    .format(path=filepath)))
+                print("Skipping {path}, not in import_paths".format(path=filepath))
                 skipped = True
         if skip_paths:
             for skip_path in skip_paths:
                 if filepath.lower().startswith('{}/{}'.format(args.export_directory, skip_path)):
-                    print(("Skipping {path}, in skip_paths"
-                                    .format(path=filepath)))
+                    print("Skipping {path}, in skip_paths".format(path=filepath))
                     skipped = True
         if skipped:
             if os.path.isdir(filepath) and len(os.listdir(filepath)):
-                logger.warn('{path} contains additional content that will be '
-                            'skipped.'.format(path=filepath))
+                logger.warn(
+                    '{path} contains additional content that will be skipped.'.format(path=filepath)
+                )
             return
 
         original_path = filepath[len(args.export_directory):]
@@ -279,13 +281,15 @@ class CastleImporter(object):
 
             obj = None
             if not args.overwrite and (_id in container.objectIds()):
-                print(('Skipping {path}, already exists. Use --overwrite to'
-                                            ' create anyway.'.format(path=path)))
+                print(
+                    'Skipping {path}, already exists. Use --overwrite to create anyway.'.format(path=path)
+                )
                 return
             elif (not ignore_uuids and api.content.get(UID=creation_data['_plone.uuid']) is not None):
-                logger.warn('Skipping {path}, content with its UUID already exists.'
-                                            'Use --ignore-uuids to create anyway.'
-                                                                .format(path=path))
+                logger.warn(
+                    'Skipping {path}, content with its UUID already exists.'
+                    'Use --ignore-uuids to create anyway.'.format(path=path)
+                )
                 return
             else:
                 try:
@@ -412,8 +416,10 @@ class CastleImporter(object):
             try:
                 self.import_object(path, container)
             except Exception:
-                logger.error('Error importing {path}'.format(path=filepath),
-                                                                exc_info=True)
+                logger.error(
+                    'Error importing {path}'.format(path=filepath),
+                    exc_info=True,
+                )
                 if stop_if_exception:
                     if pdb_if_exception:
                         import pdb

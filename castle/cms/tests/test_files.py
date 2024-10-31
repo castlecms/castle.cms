@@ -144,6 +144,11 @@ class TestAWS(unittest.TestCase):
         self.assertTrue(hasattr(fileOb.file, 'original_size'))
         self.assertTrue(hasattr(fileOb.file, 'original_content_type'))
 
+        # after move, it should still have values in original attributes
+        # which should have the same values as the original attributes
+        self.assertEqual(fileOb.file.file_length, fileOb.file.original_size)
+        self.assertEqual(fileOb.file.file_type, fileOb.file.original_content_type)
+
         # after move, there should be annotations on the object
         annotations = IAnnotations(fileOb)
         url = annotations[aws.STORAGE_KEY].get('url', None)
@@ -177,6 +182,11 @@ class TestAWS(unittest.TestCase):
         self.assertFalse(hasattr(fileOb.file, 'original_filename'))
         self.assertFalse(hasattr(fileOb.file, 'original_size'))
         self.assertFalse(hasattr(fileOb.file, 'original_content_type'))
+
+        # after move, it should still have values in original attributes
+        # which should have the same values as the original attributes
+        self.assertEqual(fileOb.file.file_length, fileOb.file.original_size)
+        self.assertEqual(fileOb.file.file_type, fileOb.file.original_content_type)
 
         # before move, there should be no annotations
         annotations = IAnnotations(fileOb)

@@ -204,11 +204,13 @@ The user requesting this access logged this information:
             backend_urls = self.context.portal_registry['plone.backend_url']
             only_allow_login_to_backend_urls = self.context.portal_registry['plone.only_allow_login_to_backend_urls']  # noqa
             portal_url = api.portal.get().absolute_url()
-            bad_domain = only_allow_login_to_backend_urls and \
-                         len(backend_urls) > 0 and \
-                         portal_url.rstrip('/') not in backend_urls and \
-                         portal_url.rstrip('/') + '/' not in backend_urls
-            if bad_domain:
+            is_bad_domain = (
+                only_allow_login_to_backend_urls and
+                len(backend_urls) > 0 and
+                portal_url.rstrip('/') not in backend_urls and
+                portal_url.rstrip('/') + '/' not in backend_urls
+            )
+            if is_bad_domain:
                 return json.dumps({
                     'success': False,
                     'message': translate(_(
