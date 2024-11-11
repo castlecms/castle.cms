@@ -77,7 +77,7 @@ setup(
         'requests >=2.7.0, <3',
         'requests_oauthlib >=0.5.0, <1',
         'oauth2client >=1.5.1, <2',
-        'redis >=2.10.5, <3',
+        # 'redis >=2.10.5, <3',
         'setuptools',
         'python-dateutil',
         'pyopenssl',

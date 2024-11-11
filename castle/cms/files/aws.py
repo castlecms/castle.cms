@@ -7,7 +7,7 @@ install_aliases()  # noqa
 
 import logging  # noqa: E402
 from datetime import datetime  # noqa: E402
-import StringIO  # noqa: E402
+from io import StringIO  # noqa: E402
 from time import time  # noqa: E402
 from urllib.parse import urlsplit, urlunsplit, quote, quote_plus  # noqa: E402
 import botocore  # noqa: E402
