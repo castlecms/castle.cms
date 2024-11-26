@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='3.0.0b147.dev0',
+    version='3.1.0b1.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('CHANGES.md')
@@ -65,10 +65,6 @@ setup(
         'collective.documentviewer>=5.0.4',
         'wildcard.hps>=1.4.0',
         'collective.celery>=1.1.4',
-
-        # the use of collective.elasticsearch in the 3.x+ version of castle.cms
-        # is limited and should not be relied on.
-        'collective.elasticsearch >=4.0.0, <5.0.0',
 
         # python
         'boto3>=1.9.222',

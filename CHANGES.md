@@ -1,10 +1,10 @@
 Changelog
 =========
 
-3.0.0b147 (unreleased)
+3.1.0b1 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- remove elasticsearch integration
 
 
 3.0.0b146 (2024-10-17)
