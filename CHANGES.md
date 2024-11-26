@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.1.0b1 (unreleased)
-----------------------
+3.1.0b1 (2024-11-26)
+--------------------
 
 - remove elasticsearch integration
 
