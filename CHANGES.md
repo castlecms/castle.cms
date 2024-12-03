@@ -4,7 +4,7 @@ Changelog
 3.0.0b147 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- add script to fix robot settings for pages
 
 
 3.0.0b146 (2024-10-17)
