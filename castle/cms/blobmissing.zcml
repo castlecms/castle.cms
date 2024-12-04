@@ -21,6 +21,7 @@
         description="Create the blob-file if it's missing."
         class="ZEO.ClientStorage.ClientStorage"
         original="loadBlob"
+        preserveOriginal="true"
         replacement=".blobmissing.patched_loadBlob"
         docstringWarning="true"
         />
