@@ -233,19 +233,22 @@ def reset_default_paths(paths, public_url, public_url_length):
             continue
         if path.startswith(public_url):
             path = path[public_url_length:]
-        content_object = api.content.get(path)
-        if content_object:
-            try:
-                del content_object.robot_configuration
-            except AttributeError:
-                print('Object at {} already had a default robot configuration'.format(path))
-            print('Current robot configuration for {path}: {configuration}'.format(
-                path=path,
-                configuration=content_object.robot_configuration,
-            ))
-        else:
-            print('Could not find object at {}'.format(path))
-            continue
+        try:
+            content_object = api.content.get(path)
+            if content_object:
+                try:
+                    del content_object.robot_configuration
+                except AttributeError:
+                    print('Object at {} already had a default robot configuration'.format(path))
+                print('Current robot configuration for {path}: {configuration}'.format(
+                    path=path,
+                    configuration=content_object.robot_configuration,
+                ))
+            else:
+                print('Could not find object at {}'.format(path))
+                continue
+        except Exception:
+            print('Error handling path {}. Continuing'.format(path))
         if is_time_to_try_commit(current_index):
             print(
                 '{percentage}% Complete ({current_index} of {total_count} objects processed). {commit_action}.'.format(  # noqa: E501
@@ -265,17 +268,20 @@ def set_empty_paths(paths, public_url, public_url_length):
         print('Beginning Empty values reset')
         if path.startswith(public_url):
             path = path[public_url_length:]
-        content_object = api.content.get(path)
-        if content_object:
-            current_index += 1
-            content_object.robot_configuration = []
-            print('Current robot configuration for {path}: {configuration}'.format(
-                path=path,
-                configuration=content_object.robot_configuration,
-            ))
-        else:
-            print('Could not find object at {}'.format(path))
-            continue
+        try:
+            content_object = api.content.get(path)
+            if content_object:
+                current_index += 1
+                content_object.robot_configuration = []
+                print('Current robot configuration for {path}: {configuration}'.format(
+                    path=path,
+                    configuration=content_object.robot_configuration,
+                ))
+            else:
+                print('Could not find object at {}'.format(path))
+                continue
+        except Exception:
+            print('Error handling path {}. Continuing'.format(path))
 
         if is_time_to_try_commit(current_index):
             print(
