@@ -1,24 +1,42 @@
-import argparse
-import transaction
-import os
-import plone.api as api
-
-from zope.component.hooks import setSite
-import csv
-from decimal import Decimal
 from castle.cms.behaviors.search import ISearch
+from decimal import Decimal
+import plone.api as api
+from zope.component.hooks import setSite
 
+import argparse
+import csv
+import json
+import os
+import transaction
+
+
+NO_VALUE = '<NO_VALUE>'
 
 parser = argparse.ArgumentParser(description='Fix any issues with None values in existing robot configs, and run a report on current values at the same time')  # noqa: E501
+
+# common to both scripts
 parser.add_argument('--site-id', dest='site_id', required=True)
-parser.add_argument('--dir-path', dest='dir_path', required=True)
-parser.add_argument('--file-name', dest='file_name', default='robot-report.csv')
-parser.add_argument('--commit', dest='should_commit', type=bool, default=False)
 parser.add_argument('--batch-size', dest='batch_size', type=int, default=50)
+parser.add_argument('--commit', dest='should_commit', action='store_true')
+
+# just for fix-none-values
+parser.add_argument('--fix-none-values', dest='fix_none_values', action='store_true')
+parser.add_argument('--dir-path', dest='dir_path')
+parser.add_argument('--file-name', dest='file_name', default='robot-report.csv')
+
+# just for reset-robot-configs
+parser.add_argument('--reset-robot-configs', dest='reset_robot_configs', action='store_true')
+parser.add_argument('--json-file-path', dest='json_file_path')
 
 parsed_args, _ = parser.parse_known_args()
 
-NO_VALUE = '<NO_VALUE>'
+if parsed_args.fix_none_values is True:
+    if not parsed_args.dir_path:
+        parser.error('--dir-path arg is required if --fix-none-values is specified')
+
+if parsed_args.reset_robot_configs is True:
+    if not parsed_args.json_file_path:
+        parser.error('--json-file-path arg is required if --reset-robot-configs is specified')
 
 
 class FileExistsError(Exception):
@@ -53,6 +71,19 @@ def get_status_info(content_object):
         ),
         'backend_robot_configuration_reset': False,
     }
+
+
+def conditionally_commit():
+    if parsed_args.should_commit is True:
+        transaction.commit()
+
+
+def get_commit_action():
+    return 'Committing' if parsed_args.should_commit is True else 'Not committing'
+
+
+def is_time_to_try_commit(current_index):
+    return current_index % parsed_args.batch_size == 0
 
 
 def fix_robot_configs():
@@ -108,26 +139,22 @@ def fix_robot_configs():
 
         report_data.append(content_status_info)
         current_index += 1
-        commit_action = 'Committing' if parsed_args.should_commit is True else 'Not committing'
-        if current_index % parsed_args.batch_size == 0:
+        if is_time_to_try_commit(current_index):
             print(
                 '{percentage}% Complete ({current_index} of {total_count} objects processed). {commit_action}.'.format(  # noqa: E501
                     percentage=round(Decimal(current_index) / Decimal(content_object_count) * 100, 2),
                     current_index=current_index,
                     total_count=content_object_count,
-                    commit_action=commit_action,
+                    commit_action=get_commit_action(),
                 )
             )
 
-            if parsed_args.should_commit is True:
-                transaction.commit()
+            conditionally_commit()
     print('100% Complete ({total_count} of {total_count} objects processed). {commit_action}.'.format(
         total_count=content_object_count,
-        commit_action=commit_action,
+        commit_action=get_commit_action(),
     ))
-
-    if parsed_args.should_commit is True:
-        transaction.commit()
+    conditionally_commit()
 
     reset_item_paths = [
         item_info['physical_path']
@@ -185,10 +212,104 @@ def write_report(report_data):
     print('Finished writing report')
 
 
+def get_paths():
+    with open(parsed_args.json_file_path, 'r') as json_file:
+        reset_data = json.load(json_file)
+        reset_default_paths = reset_data.get('reset_default_paths', [])
+        set_empty_paths = reset_data.get('set_empty_paths', [])
+        return {
+            'reset_default_paths': reset_default_paths,
+            'set_empty_paths': set_empty_paths,
+        }
+
+
+def reset_default_paths(paths, public_url, public_url_length):
+    total_path_count = len(paths['reset_default_paths'])
+    current_index = 0
+    for path in paths['reset_default_paths']:
+        print('Beginning Default values reset')
+        current_index += 1
+        if path in paths['set_empty_paths']:
+            continue
+        if path.startswith(public_url):
+            path = path[public_url_length:]
+        content_object = api.content.get(path)
+        if content_object:
+            try:
+                del content_object.robot_configuration
+            except AttributeError:
+                print('Object at {} already had a default robot configuration'.format(path))
+            print('Current robot configuration for {path}: {configuration}'.format(
+                path=path,
+                configuration=content_object.robot_configuration,
+            ))
+        else:
+            print('Could not find object at {}'.format(path))
+            continue
+        if is_time_to_try_commit(current_index):
+            print(
+                '{percentage}% Complete ({current_index} of {total_count} objects processed). {commit_action}.'.format(  # noqa: E501
+                    percentage=round(Decimal(current_index) / Decimal(total_path_count) * 100, 2),
+                    current_index=current_index,
+                    total_count=total_path_count,
+                    commit_action=get_commit_action(),
+                )
+            )
+            conditionally_commit()
+
+
+def set_empty_paths(paths, public_url, public_url_length):
+    total_path_count = len(paths['set_empty_paths'])
+    current_index = 0
+    for path in paths['set_empty_paths']:
+        print('Beginning Empty values reset')
+        if path.startswith(public_url):
+            path = path[public_url_length:]
+        content_object = api.content.get(path)
+        if content_object:
+            current_index += 1
+            content_object.robot_configuration = []
+            print('Current robot configuration for {path}: {configuration}'.format(
+                path=path,
+                configuration=content_object.robot_configuration,
+            ))
+        else:
+            print('Could not find object at {}'.format(path))
+            continue
+
+        if is_time_to_try_commit(current_index):
+            print(
+                '{percentage}% Complete ({current_index} of {total_count} objects processed). {commit_action}.'.format(  # noqa: E501
+                    percentage=round(Decimal(current_index) / Decimal(total_path_count) * 100, 2),
+                    current_index=current_index,
+                    total_count=total_path_count,
+                    commit_action=get_commit_action(),
+                )
+            )
+            conditionally_commit()
+
+
+def reset_robot_configs(paths):
+    public_url = api.portal.get_registry_record('plone.public_url', default='')
+    public_url_length = len(public_url)
+    total_path_count = len(paths['reset_default_paths']) + len(paths['set_empty_paths'])
+    reset_default_paths(paths, public_url, public_url_length)
+    set_empty_paths(paths, public_url, public_url_length)
+    print('100% Complete ({total_count} of {total_count} objects processed). {commit_action}.'.format(
+        total_count=total_path_count,
+        commit_action=get_commit_action(),
+    ))
+    conditionally_commit()
+
+
 if __name__ == '__main__':
-    verify_target_file_does_not_exist()
     site = app[parsed_args.site_id]  # noqa: F821
     setSite(site)
-    report_data = fix_robot_configs()
-    write_report(report_data)
+    if parsed_args.fix_none_values is True:
+        verify_target_file_does_not_exist()
+        report_data = fix_robot_configs()
+        write_report(report_data)
+    if parsed_args.reset_robot_configs is True:
+        paths = get_paths()
+        reset_robot_configs(paths)
     print("That's all folks! We hope you've enjoyed your scripting experience.")
