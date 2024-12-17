@@ -5,6 +5,8 @@ Changelog
 --------------------
 
 - add script to fix robot settings
+- add '@@' to site-icon url
+- show reason if 'Failure-Reason' header available on password reset error
 
 
 3.1.0b1 (2024-11-26)
