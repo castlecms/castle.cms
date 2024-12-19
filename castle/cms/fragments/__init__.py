@@ -147,7 +147,7 @@ class ThemeFragmentsDirectory(object):
         try:
             return fi.lastModifiedTimestamp
         except (AttributeError, KeyError):
-            return float(fi.bobobase_modification_time())
+            return float(fi._p_mtime)
 
     def get_from_cache(self, policy, theme_directory, name, template_path):
         mtime = policy.getCacheStorage()['mtime']
