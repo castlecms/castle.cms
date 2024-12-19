@@ -13,7 +13,6 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import implementer
 from zope.publisher.browser import BrowserPage
-from DateTime import DateTime  # noqa: E402
 
 import logging
 import os
@@ -148,7 +147,7 @@ class ThemeFragmentsDirectory(object):
         try:
             return fi.lastModifiedTimestamp
         except (AttributeError, KeyError):
-            return DateTime(fi._p_mtime)
+            return float(fi._p_mtime)
 
     def get_from_cache(self, policy, theme_directory, name, template_path):
         mtime = policy.getCacheStorage()['mtime']
