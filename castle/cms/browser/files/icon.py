@@ -1,5 +1,5 @@
 import logging
-from io import StringIO
+from io import BytesIO
 
 from castle.cms.browser.files.files import NamedFileDownload
 from castle.cms.interfaces import ISecureLoginAllowedView
@@ -73,8 +73,8 @@ img.save('logo.ico', sizes=icon_sizes)
             return data
 
     def scale_data(self, data, scale):
-        result = StringIO()
-        image = Image.open(StringIO(data))
+        result = BytesIO()
+        image = Image.open(BytesIO(data))
         image.thumbnail((scale, scale))
         image.save(result, "PNG")
         result.seek(0)
@@ -102,8 +102,8 @@ class FaviconView(IconView):
     filename = u'favicon.ico'
 
     def scale_data(self, data):
-        result = StringIO()
-        image = Image.open(StringIO(data))
+        result = BytesIO()
+        image = Image.open(BytesIO(data))
         image.save(result, "ICO")
         result.seek(0)
         return result.read()

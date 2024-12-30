@@ -1,6 +1,6 @@
 import base64
 import logging
-from io import StringIO
+from io import BytesIO
 from os import fstat
 
 import zope.publisher.interfaces
@@ -48,7 +48,7 @@ class DownloadAsPNG(BrowserView):
         fi = self.get_data()
         im = Image.open(fi)
 
-        changed = StringIO()
+        changed = BytesIO()
         im.save(changed, 'PNG')
         changed.seek(0)
         if hasattr(fi, 'close'):
