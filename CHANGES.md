@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1.0b2 (unreleased)
+3.1.0b2 (2025-01-10)
 --------------------
 
 - add script to fix robot settings
