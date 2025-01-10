@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b147 (unreleased)
+3.0.0b147 (2025-01-10)
 ----------------------
 
 - add '@@' to site-icon url
