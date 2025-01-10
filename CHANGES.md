@@ -4,7 +4,8 @@ Changelog
 3.0.0b147 (unreleased)
 ----------------------
 
-- add script to fix robot settings for pages
+- add '@@' to site-icon url
+- show reason if 'Failure-Reason' header available on password reset error
 
 
 3.0.0b146 (2024-10-17)
