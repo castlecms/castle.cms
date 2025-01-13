@@ -50,6 +50,8 @@ def truncate_text(text, max_words=30, more_link=None, clean=False):
     end_text_pos = 0
     words = 0
     open_tags = []
+    if isinstance(text, bytes):
+        text = text.decode('utf-8') 
     while words <= length:
         m = re_words.search(text, pos)
         if not m:
