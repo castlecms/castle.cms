@@ -112,16 +112,14 @@ class DownloadBlob(BrowserView):
             logger.info('Could not get blob data', exc_info=True)
             raise NotFound
 
-        # Python3 TODO - Check if working, not sure where this is called
-
         if data:
             is_blob = False
-            if isinstance(data, six.string_types):
-                length = len(data)
+            if isinstance(data, (str, bytes)):
+                length = len(data)  
             else:
                 is_blob = True
-                blobfi = NamedBlobFile(data).open()
-                length = blobfi.getSize()
+                with data.open() as blobfi:
+                    length = fstat(blobfi.fileno()).st_size 
 
             self.request.response.setHeader(
                 'Last-Modified',
@@ -133,16 +131,11 @@ class DownloadBlob(BrowserView):
             resp.setHeader('Content-Type', self.content_type)
 
             if is_blob:
-                # resp.setHeader('Accept-Ranges', 'bytes')
-                # range = handleRequestRange(
-                #     self.context, length, self.request,
-                #     self.request.response)
-                # return BlobStreamIterator(data, **range)
+                resp.setHeader('Accept-Ranges', 'bytes')
 
-                # Download instance comes with 'set_headers' and 'handle_request_range' methods
-                # Calling instance returns data stream
-                download_file = Download(blobfi)
-                return download_file()
+                with data.open() as blobfi:
+                    download_file = Download(blobfi, self.request)
+                    return download_file()
             else:
                 return data
         else:

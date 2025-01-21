@@ -208,7 +208,7 @@ class TileManager(object):
         if fi.__class__.__name__ == "FilesystemFile":
             data = IRawReadFile(fi).read()
         else:
-            data = str(fi.data)
+            data = fi.data
         return data
 
     def read_tile_config(self, directory):
