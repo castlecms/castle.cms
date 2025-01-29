@@ -69,6 +69,11 @@ Environment variables
 - CELERY_TASK_ALWAYS_EAGER: useful celery configuration to run tasks inline
 - REDIS_SERVER: redis server host:port configuration
 - LINK_REPORT_DB: db configuration string for link report
+- LINK_REPORT_BATCH_SIZE: defaults to 20. the amount of links to process at a time.
+- LINK_REPORT_RECHECK_DELAY: defaults to 7 days (in seconds). the amount of time to wait until rechecking a url.
+- LINK_REPORT_SLEEP_FOR_ALL: defaults to 0.0 (in seconds). the amount of artificial delay between each request request made by an individual worker thread.
+- LINK_REPORT_SLEEP_FOR_RATE_LIMIT: defaults to 0.2 (in seconds). the amount of artificial delay between consuming a response for additional urls to check (NOT a delay between requests to urls).
+- LINK_REPORT_SLEEP_AFTER_BATCH: defaults to 0.0 (in seconds). the amount of artificial delay between consuming batches of responses.
 - TWITTER_CLIENT_KEY: twitter oauth client id
 - TWITTER_CLIENT_SECRET: twitter oauth client secret
 - GOOGLE_CLIENT_ID: google oauth client id

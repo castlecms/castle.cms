@@ -4,7 +4,9 @@ Changelog
 3.1.0b3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- add environment configurable values for the the link-reporter: batch size, retry frequency,
+  and sleep between batches, individual fetches, and rate limiting new links onto the worker
+  queue.
 
 
 3.1.0b2 (2025-01-10)
