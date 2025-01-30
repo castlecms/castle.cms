@@ -37,8 +37,8 @@
     <li class="serverhowmany serverhowmany50 <% if(perPage == 50){ %>disabled<% } %>">
       <a href="#" class="">50</a>
     </li>
-    <li class="serverhowmany serverhowmany100000 <% if(perPage == 100000){ %>disabled<% } %>">
-      <a href="#" class="">All</a>
+    <li class="serverhowmany serverhowmany500 <% if(perPage == 500){ %>disabled<% } %>">
+      <a href="#" class="">500</a>
     </li>
   </ul>
 
