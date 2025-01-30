@@ -7,6 +7,7 @@ from plone.api.portal import get as get_portal
 from plone.api.portal import get_registry_record
 from plone.api.portal import set_registry_record
 from Products.CMFPlone.resources import add_resource_on_request
+from castle.cms.behaviors.search import ISearch
 
 
 class SlideshowView(BrowserView):
@@ -117,6 +118,23 @@ class SlideshowView(BrowserView):
             'mobile_vert': slide.get('vert', 'middle') if vert == 'default' else vert,
             'mobile_alignment': slide.get('text_alignment', 'center') if align == 'default' else align,
         }
+
+    @property
+    def robot_configuration(self):
+        search = ISearch(self.context, None)
+        if search is not None:
+            robot_tags = []
+            robot_configuration = getattr(
+                self.context,
+                'robot_configuration',
+                None,
+            ),
+            if 'index' not in robot_configuration:
+                robot_tags.append('noindex')
+            if 'follow' not in robot_configuration:
+                robot_tags.append('nofollow')
+            if len(robot_tags) > 0:
+                return ','.join(robot_tags)
 
 
 class SlideshowEditForm(edit.DefaultEditForm):

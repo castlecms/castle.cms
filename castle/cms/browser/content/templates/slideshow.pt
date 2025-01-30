@@ -1,4 +1,4 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US" 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"
   xmlns:tal="http://xml.zope.org/namespaces/tal">
   <meta name="viewport" content="initial-scale=1, width=device-width">
     <head>
@@ -8,6 +8,7 @@
       <link rel="stylesheet" href="${context/portal_url}/++plone++castle/libs/revealjs/dist/custom.css" />
       <!-- Flexbox Grid -->
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" />
+      <meta tal:condition="${view/robot_configuration}" name="robots" content="${view/robot_configuration}">
       <script type="module" src="${context/portal_url}/++plone++castle/libs/revealjs/dist/reveal.js"/>
     </head>
     <body>
