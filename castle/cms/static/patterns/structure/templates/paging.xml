@@ -10,7 +10,7 @@
       </a>
     </li>
     <% _.each(pages, function(p){ %>
-    <li class="<% if (currentPage == p) { %>active<% } %>">
+    <li class="<% if (currentPage == p) { %>active<% } %> <% if ('...' === p) { %>disabled<% } %>">
       <a href="#" class="page"><%- p %></a>
     </li>
     <% }); %>
