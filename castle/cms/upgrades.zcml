@@ -261,6 +261,7 @@
     profile="castle.cms:default"
   />
 
+
   <genericsetup:registerProfile
     name="3017"
     title="CastleCMS upgrade to 3017 profile"
@@ -274,6 +275,23 @@
     source="*"
     destination="3017"
     handler=".upgrades.upgrade_3017"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3018"
+    title="CastleCMS upgrade to 3018 profile"
+    directory="profiles/3018"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.18"
+    description="3018 - Recompile resources for paging 'all' => 500"
+    source="*"
+    destination="3018"
+    handler=".upgrades.upgrade_3018"
     profile="castle.cms:default"
   />
 
