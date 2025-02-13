@@ -100,38 +100,53 @@ class QueryAssembler(query.QueryAssembler):
                 searchq = searchq.get('query', '')
             searchq = searchq.lower().strip('*')
             query = {
-                'script_score': {
-                    'query': query,
-                    # "boost_mode": "sum",  # add score and modified score,
-                    'script': {
-                        'lang': 'painless',
-                        'source': '''int max_shares = 5000;
-                                        int max_popularity = 200000;
-                                        String[] socialFields = new String[4];
-                                        socialFields[0] = 'twitter';
-                                        socialFields[1] = 'facebook';
-                                        socialFields[2] = 'pinterest';
-                                        socialFields[3] = 'linkedin';
+                "function_score": {
+                    "query": query,
 
-                                        float boost = 1.0f;
-                                        float max_boost = 2.5f;
-                                        long shareCount = 0;
-
-                                        for (int i=0; i<socialFields.length; i++) {
-                                        String key = socialFields[i] + '_shares';
-                                        if(doc[key].size() != 0){
-                                            long docValue = doc[key].value;
-                                            shareCount += docValue;
-                                        }
-                                        }
-
-                                        boost += (shareCount / max_shares);
-                                        if (doc['page_views'].size() != 0) {
-                                        long docValue = doc['page_views'].value;
-                                        boost += (docValue / max_popularity);
-                                        }
-                                        boost = (float)Math.min(boost, max_boost);
-                                        return boost;'''
+                    # note: this scoring script really only should affect results IF
+                    # there are the appropriate fields on a document, eg -- twitter_shares,
+                    # facebook_shares, etc. These are, ultimatley, supposed to be a count
+                    # of shares/likes/reposts/whatever on that platform.
+                    #
+                    # the idea is that the more shared, the higher the boost that is applied
+                    # to the scoring.
+                    #
+                    # how are the share counts derived? from places like:
+                    #   - https://github.com/castlecms/castle.cms/blob/master/castle/cms/cron/_twitter_monitor.py
+                    #   - https://github.com/castlecms/castle.cms/blob/master/castle/cms/cron/_popularity.py
+                    #   - https://github.com/castlecms/castle.cms/blob/master/castle/cms/cron/_social_counts.py
+                    #
+                    # if these are not working, or not indexing those values to opensearch, then
+                    # this scoring script *shouldn't* affect the value. Eg, the "boost" that gets
+                    # returned *should* be 0
+                    "script_score": {
+                        "script": {
+                            "lang": "painless",
+                            "source": """int max_shares = 5000;
+                                         int max_popularity = 200000;
+                                         String[] socialFields = new String[4];
+                                         socialFields[0] = 'twitter';
+                                         socialFields[1] = 'facebook';
+                                         socialFields[2] = 'pinterest';
+                                         socialFields[3] = 'linkedin';
+                                         float boost = 1.0f;
+                                         float max_boost = 2.5f;
+                                         long shareCount = 0;
+                                         for (int i=0; i<socialFields.length; i++) {
+                                            String key = socialFields[i] + '_shares';
+                                            if(doc[key].size()!=0){
+                                                long docValue = doc[key].value;
+                                                shareCount += docValue;
+                                            }
+                                         }
+                                         boost += (shareCount / max_shares);
+                                         if (doc['page_views'].size()!=0) {
+                                           long docValue = doc['page_views'].value;
+                                           boost += (docValue / max_popularity);
+                                         }
+                                         boost = (float)Math.min(boost, max_boost);
+                                         return boost;"""
+                        }
                     }
                 }
             }

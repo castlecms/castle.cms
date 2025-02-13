@@ -120,7 +120,7 @@ define('mockup-patterns-inlinevalidation',[
           'input[type="password"], ' +
           'input[type="checkbox"], ' +
           'select, ' +
-          'textarea').on('blur', 
+          'textarea').on('blur',
 
           $.proxy(function (ev) {
             if (this.options.type === 'archetypes') {
@@ -1455,40 +1455,40 @@ define('mockup-patterns-querystring',[
 define("resource-plone-app-jquerytools-js", ["jquery"], function() {
   return (function() {
 /**
- * @license 
+ * @license
  * jQuery Tools @VERSION Overlay - Overlay base. Extend it.
- * 
+ *
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- * 
+ *
  * http://flowplayer.org/tools/overlay/
  *
  * Since: March 2008
- * Date: @DATE 
+ * Date: @DATE
  */
-(function($) { 
+(function($) {
 
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-	
+
 	$.tools.overlay = {
-		
+
 		addEffect: function(name, loadFn, closeFn) {
-			effects[name] = [loadFn, closeFn];	
+			effects[name] = [loadFn, closeFn];
 		},
-	
-		conf: {  
-			close: null,	
+
+		conf: {
+			close: null,
 			closeOnClick: true,
-			closeOnEsc: true,			
+			closeOnEsc: true,
 			closeSpeed: 'fast',
 			effect: 'default',
-			
+
 			// since 1.2. fixed positioning not supported by IE6
-			fixed: !/msie/.test(navigator.userAgent.toLowerCase()) || navigator.appVersion > 6, 
-			
-			left: 'center',		
+			fixed: !/msie/.test(navigator.userAgent.toLowerCase()) || navigator.appVersion > 6,
+
+			left: 'center',
 			load: false, // 1.2
-			mask: null,  
+			mask: null,
 			oneInstance: true,
 			speed: 'normal',
 			target: null, // target element to be overlayed. by default taken from [rel]
@@ -1496,207 +1496,207 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 		}
 	};
 
-	
+
 	var instances = [], effects = {};
-		
+
 	// the default effect. nice and easy!
-	$.tools.overlay.addEffect('default', 
-		
-		/* 
-			onLoad/onClose functions must be called otherwise none of the 
+	$.tools.overlay.addEffect('default',
+
+		/*
+			onLoad/onClose functions must be called otherwise none of the
 			user supplied callback methods won't be called
 		*/
 		function(pos, onLoad) {
-			
+
 			var conf = this.getConf(),
-				 w = $(window);				 
-				
+				 w = $(window);
+
 			if (!conf.fixed)  {
 				pos.top += w.scrollTop();
 				pos.left += w.scrollLeft();
-			} 
-				
-			pos.position = conf.fixed ? 'fixed' : 'absolute';
-			this.getOverlay().css(pos).fadeIn(conf.speed, onLoad); 
-			
-		}, function(onClose) {
-			this.getOverlay().fadeOut(this.getConf().closeSpeed, onClose); 			
-		}		
-	);		
+			}
 
-	
-	function Overlay(trigger, conf) {		
-		
+			pos.position = conf.fixed ? 'fixed' : 'absolute';
+			this.getOverlay().css(pos).fadeIn(conf.speed, onLoad);
+
+		}, function(onClose) {
+			this.getOverlay().fadeOut(this.getConf().closeSpeed, onClose);
+		}
+	);
+
+
+	function Overlay(trigger, conf) {
+
 		// private variables
 		var self = this,
 			 fire = trigger.add(self),
-			 w = $(window), 
-			 closers,            
+			 w = $(window),
+			 closers,
 			 overlay,
 			 opened,
 			 maskConf = $.tools.expose && (conf.mask || conf.expose),
-			 uid = Math.random().toString().slice(10);		
-		
-			 
+			 uid = Math.random().toString().slice(10);
+
+
 		// mask configuration
-		if (maskConf) {			
+		if (maskConf) {
 			if (typeof maskConf == 'string') { maskConf = {color: maskConf}; }
 			maskConf.closeOnClick = maskConf.closeOnEsc = false;
-		}			 
-		 
+		}
+
 		// get overlay and trigger
 		var jq = conf.target || trigger.attr("rel");
-		overlay = jq ? $(jq) : null || trigger;	
-		
+		overlay = jq ? $(jq) : null || trigger;
+
 		// overlay not found. cannot continue
 		if (!overlay.length) { throw "Could not find Overlay: " + jq; }
-		
+
 		// trigger's click event
 		if (trigger && trigger.index(overlay) == -1) {
-			trigger.click(function(e) {				
+			trigger.click(function(e) {
 				self.load(e);
 				return e.preventDefault();
 			});
-		}   			
-		
-		// API methods  
+		}
+
+		// API methods
 		$.extend(self, {
 
 			load: function(e) {
-				
+
 				// can be opened only once
 				if (self.isOpened()) { return self; }
-				
+
 				// find the effect
 		 		var eff = effects[conf.effect];
 		 		if (!eff) { throw "Overlay: cannot find effect : \"" + conf.effect + "\""; }
-				
+
 				// close other instances?
 				if (conf.oneInstance) {
 					$.each(instances, function() {
 						this.close(e);
 					});
 				}
-				
+
 				// onBeforeLoad
 				e = e || $.Event();
 				e.type = "onBeforeLoad";
-				fire.trigger(e);				
-				if (e.isDefaultPrevented()) { return self; }				
+				fire.trigger(e);
+				if (e.isDefaultPrevented()) { return self; }
 
 				// opened
 				opened = true;
-				
+
 				// possible mask effect
-				if (maskConf) { $(overlay).expose(maskConf); }				
-				
-				// position & dimensions 
-				var top = conf.top,					
+				if (maskConf) { $(overlay).expose(maskConf); }
+
+				// position & dimensions
+				var top = conf.top,
 					 left = conf.left,
 					 oWidth = overlay.outerWidth(true),
-					 oHeight = overlay.outerHeight(true); 
-				
+					 oHeight = overlay.outerHeight(true);
+
 				if (typeof top == 'string')  {
-					top = top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) : 
-						parseInt(top, 10) / 100 * w.height();			
-				}				
-				
+					top = top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) :
+						parseInt(top, 10) / 100 * w.height();
+				}
+
 				if (left == 'center') { left = Math.max((w.width() - oWidth) / 2, 0); }
 
-				
-		 		// load effect  		 		
-				eff[0].call(self, {top: top, left: left}, function() {					
+
+		 		// load effect
+				eff[0].call(self, {top: top, left: left}, function() {
 					if (opened) {
 						e.type = "onLoad";
 						fire.trigger(e);
 					}
-				}); 				
+				});
 
 				// mask.click closes overlay
 				if (maskConf && conf.closeOnClick) {
-					$.mask.getMask().one("click", self.close); 
+					$.mask.getMask().one("click", self.close);
 				}
-				
+
 				// when window is clicked outside overlay, we close
 				if (conf.closeOnClick) {
-					$(document).on("click." + uid, function(e) { 
-						if (!$(e.target).parents(overlay).length) { 
-							self.close(e); 
+					$(document).on("click." + uid, function(e) {
+						if (!$(e.target).parents(overlay).length) {
+							self.close(e);
 						}
-					});						
-				}						
-			
+					});
+				}
+
 				// keyboard::escape
-				if (conf.closeOnEsc) { 
+				if (conf.closeOnEsc) {
 
 					// one callback is enough if multiple instances are loaded simultaneously
 					$(document).on("keydown." + uid, function(e) {
-						if (e.keyCode == 27) { 
-							self.close(e);	 
+						if (e.keyCode == 27) {
+							self.close(e);
 						}
-					});			
+					});
 				}
 
-				
-				return self; 
-			}, 
-			
+
+				return self;
+			},
+
 			close: function(e) {
 
 				if (!self.isOpened()) { return self; }
-				
+
 				e = e || $.Event();
 				e.type = "onBeforeClose";
-				fire.trigger(e);				
-				if (e.isDefaultPrevented()) { return; }				
-				
+				fire.trigger(e);
+				if (e.isDefaultPrevented()) { return; }
+
 				opened = false;
-				
+
 				// close effect
 				effects[conf.effect][1].call(self, function() {
 					e.type = "onClose";
-					fire.trigger(e); 
+					fire.trigger(e);
 				});
-				
+
 				// unbind the keyboard / clicking actions
-				$(document).off("click." + uid + " keydown." + uid);		  
-				
+				$(document).off("click." + uid + " keydown." + uid);
+
 				if (maskConf) {
-					$.mask.close();		
+					$.mask.close();
 				}
-				 
+
 				return self;
-			}, 
-			
+			},
+
 			getOverlay: function() {
-				return overlay;	
+				return overlay;
 			},
-			
+
 			getTrigger: function() {
-				return trigger;	
+				return trigger;
 			},
-			
+
 			getClosers: function() {
-				return closers;	
-			},			
+				return closers;
+			},
 
 			isOpened: function()  {
 				return opened;
 			},
-			
+
 			// manipulate start, finish and speeds
 			getConf: function() {
-				return conf;	
-			}			
-			
+				return conf;
+			}
+
 		});
-		
-		// callbacks	
+
+		// callbacks
 		$.each("onBeforeLoad,onStart,onLoad,onBeforeClose,onClose".split(","), function(i, name) {
-				
+
 			// configuration
-			if ($.isFunction(conf[name])) { 
-				$(self).on(name, conf[name]); 
+			if ($.isFunction(conf[name])) {
+				$(self).on(name, conf[name]);
 			}
 
 			// API
@@ -1705,69 +1705,69 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 				return self;
 			};
 		});
-		
+
 		// close button
-		closers = overlay.find(conf.close || ".close");		
-		
+		closers = overlay.find(conf.close || ".close");
+
 		if (!closers.length && !conf.close) {
 			closers = $('<a class="close"></a>');
-			overlay.prepend(closers);	
-		}		
-		
-		closers.click(function(e) { 
-			self.close(e);  
-		});	
-		
+			overlay.prepend(closers);
+		}
+
+		closers.click(function(e) {
+			self.close(e);
+		});
+
 		// autoload
 		if (conf.load) { self.load(); }
-		
+
 	}
-	
+
 	// jQuery plugin initialization
-	$.fn.overlay = function(conf) {   
-		
+	$.fn.overlay = function(conf) {
+
 		// already constructed --> return API
 		var el = this.data("overlay");
-		if (el) { return el; }	  		 
-		
+		if (el) { return el; }
+
 		if ($.isFunction(conf)) {
-			conf = {onBeforeLoad: conf};	
+			conf = {onBeforeLoad: conf};
 		}
 
 		conf = $.extend(true, {}, $.tools.overlay.conf, conf);
-		
-		this.each(function() {		
+
+		this.each(function() {
 			el = new Overlay($(this), conf);
 			instances.push(el);
-			$(this).data("overlay", el);	
+			$(this).data("overlay", el);
 		});
-		
-		return conf.api ? el: this;		
-	}; 
-	
+
+		return conf.api ? el: this;
+	};
+
 })(jQuery);
 
 
 
 /**
- * @license 
+ * @license
  * jQuery Tools @VERSION Scrollable - New wave UI design
- * 
+ *
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- * 
+ *
  * http://flowplayer.org/tools/scrollable.html
  *
  * Since: March 2008
- * Date: @DATE 
+ * Date: @DATE
  */
-(function($) { 
+(function($) {
 
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-	
+
 	$.tools.scrollable = {
-		
-		conf: {	
+
+		conf: {
 			activeClass: 'active',
 			circular: false,
 			clonedClass: 'cloned',
@@ -1778,206 +1778,206 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 			items: '.items',
 			keyboard: true,
 			mousewheel: false,
-			next: '.next',   
-			prev: '.prev', 
+			next: '.next',
+			prev: '.prev',
 			size: 1,
 			speed: 400,
 			vertical: false,
 			touch: true,
 			wheelSpeed: 0
-		} 
+		}
 	};
-					
+
 	// get hidden element's width or height even though it's hidden
 	function dim(el, key) {
 		var v = parseInt(el.css(key), 10);
 		if (v) { return v; }
-		var s = el[0].currentStyle; 
-		return s && s.width && parseInt(s.width, 10);	
+		var s = el[0].currentStyle;
+		return s && s.width && parseInt(s.width, 10);
 	}
 
-	function find(root, query) { 
+	function find(root, query) {
 		var el = $(query);
 		return el.length < 2 ? el : root.parent().find(query);
 	}
-	
-	var current;		
-	
+
+	var current;
+
 	// constructor
-	function Scrollable(root, conf) {   
-		
+	function Scrollable(root, conf) {
+
 		// current instance
-		var self = this, 
+		var self = this,
 			 fire = root.add(self),
 			 itemWrap = root.children(),
 			 index = 0,
 			 vertical = conf.vertical;
-				
-		if (!current) { current = self; } 
+
+		if (!current) { current = self; }
 		if (itemWrap.length > 1) { itemWrap = $(conf.items, root); }
-		
-		
+
+
 		// in this version circular not supported when size > 1
-		if (conf.size > 1) { conf.circular = false; } 
-		
+		if (conf.size > 1) { conf.circular = false; }
+
 		// methods
 		$.extend(self, {
-				
+
 			getConf: function() {
-				return conf;	
-			},			
-			
+				return conf;
+			},
+
 			getIndex: function() {
-				return index;	
-			}, 
+				return index;
+			},
 
 			getSize: function() {
-				return self.getItems().size();	
+				return self.getItems().size();
 			},
 
 			getNaviButtons: function() {
-				return prev.add(next);	
+				return prev.add(next);
 			},
-			
+
 			getRoot: function() {
-				return root;	
+				return root;
 			},
-			
+
 			getItemWrap: function() {
-				return itemWrap;	
+				return itemWrap;
 			},
-			
+
 			getItems: function() {
-				return itemWrap.find(conf.item).not("." + conf.clonedClass);	
+				return itemWrap.find(conf.item).not("." + conf.clonedClass);
 			},
-							
+
 			move: function(offset, time) {
 				return self.seekTo(index + offset, time);
 			},
-			
+
 			next: function(time) {
-				return self.move(conf.size, time);	
+				return self.move(conf.size, time);
 			},
-			
+
 			prev: function(time) {
-				return self.move(-conf.size, time);	
+				return self.move(-conf.size, time);
 			},
-			
+
 			begin: function(time) {
-				return self.seekTo(0, time);	
+				return self.seekTo(0, time);
 			},
-			
+
 			end: function(time) {
-				return self.seekTo(self.getSize() -1, time);	
-			},	
-			
+				return self.seekTo(self.getSize() -1, time);
+			},
+
 			focus: function() {
 				current = self;
 				return self;
 			},
-			
+
 			addItem: function(item) {
 				item = $(item);
-				
+
 				if (!conf.circular)  {
 					itemWrap.append(item);
 					next.removeClass("disabled");
-					
+
 				} else {
 					itemWrap.children().last().before(item);
-					itemWrap.children().first().replaceWith(item.clone().addClass(conf.clonedClass)); 						
+					itemWrap.children().first().replaceWith(item.clone().addClass(conf.clonedClass));
 				}
-				
+
 				fire.trigger("onAddItem", [item]);
 				return self;
 			},
-			
-			
-			/* all seeking functions depend on this */		
-			seekTo: function(i, time, fn) {	
-				
+
+
+			/* all seeking functions depend on this */
+			seekTo: function(i, time, fn) {
+
 				// ensure numeric index
 				if (!i.jquery) { i *= 1; }
-				
+
 				// avoid seeking from end clone to the beginning
 				if (conf.circular && i === 0 && index == -1 && time !== 0) { return self; }
-				
-				// check that index is sane				
+
+				// check that index is sane
 				if (!conf.circular && i < 0 || i > self.getSize() || i < -1) { return self; }
-				
+
 				var item = i;
-			
+
 				if (i.jquery) {
-					i = self.getItems().index(i);	
-					
+					i = self.getItems().index(i);
+
 				} else {
 					item = self.getItems().eq(i);
-				}  
-				
+				}
+
 				// onBeforeSeek
-				var e = $.Event("onBeforeSeek"); 
+				var e = $.Event("onBeforeSeek");
 				if (!fn) {
-					fire.trigger(e, [i, time]);				
-					if (e.isDefaultPrevented() || !item.length) { return self; }			
-				}  
-	
-				var props = vertical ? {top: -item.position().top} : {left: -item.position().left};  
-				
+					fire.trigger(e, [i, time]);
+					if (e.isDefaultPrevented() || !item.length) { return self; }
+				}
+
+				var props = vertical ? {top: -item.position().top} : {left: -item.position().left};
+
 				index = i;
-				current = self;  
-				if (time === undefined) { time = conf.speed; }   
-				
-				itemWrap.animate(props, time, conf.easing, fn || function() { 
-					fire.trigger("onSeek", [i]);		
-				});	 
-				
-				return self; 
-			}					
-			
-		});
-				
-		// callbacks	
-		$.each(['onBeforeSeek', 'onSeek', 'onAddItem'], function(i, name) {
-				
-			// configuration
-			if ($.isFunction(conf[name])) { 
-				$(self).on(name, conf[name]); 
+				current = self;
+				if (time === undefined) { time = conf.speed; }
+
+				itemWrap.animate(props, time, conf.easing, fn || function() {
+					fire.trigger("onSeek", [i]);
+				});
+
+				return self;
 			}
-			
+
+		});
+
+		// callbacks
+		$.each(['onBeforeSeek', 'onSeek', 'onAddItem'], function(i, name) {
+
+			// configuration
+			if ($.isFunction(conf[name])) {
+				$(self).on(name, conf[name]);
+			}
+
 			self[name] = function(fn) {
 				if (fn) { $(self).on(name, fn); }
 				return self;
 			};
-		});  
-		
+		});
+
 		// circular loop
 		if (conf.circular) {
-			
+
 			var cloned1 = self.getItems().slice(-1).clone().prependTo(itemWrap),
 				 cloned2 = self.getItems().eq(1).clone().appendTo(itemWrap);
 
 			cloned1.add(cloned2).addClass(conf.clonedClass);
-			
+
 			self.onBeforeSeek(function(e, i, time) {
-				
+
 				if (e.isDefaultPrevented()) { return; }
-				
+
 				/*
 					1. animate to the clone without event triggering
 					2. seek to correct position with 0 speed
 				*/
 				if (i == -1) {
 					self.seekTo(cloned1, time, function()  {
-						self.end(0);		
-					});          
+						self.end(0);
+					});
 					return e.preventDefault();
-					
+
 				} else if (i == self.getSize()) {
 					self.seekTo(cloned2, time, function()  {
-						self.begin(0);		
-					});	
+						self.begin(0);
+					});
 				}
-				
+
 			});
 
 			// seek over the cloned item
@@ -2005,11 +2005,11 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 			}
 
 		}
-		
+
 		// next/prev buttons
 		var prev = find(root, conf.prev).click(function(e) { e.stopPropagation(); self.prev(); }),
-			 next = find(root, conf.next).click(function(e) { e.stopPropagation(); self.next(); }); 
-		
+			 next = find(root, conf.next).click(function(e) { e.stopPropagation(); self.next(); });
+
 		if (!conf.circular) {
 			self.onBeforeSeek(function(e, i) {
 				setTimeout(function() {
@@ -2019,16 +2019,16 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					}
 				}, 1);
 			});
-			
+
 			if (!conf.initialIndex) {
-				prev.addClass(conf.disabledClass);	
-			}			
+				prev.addClass(conf.disabledClass);
+			}
 		}
-			
+
 		if (self.getSize() < 2) {
-			prev.add(next).addClass(conf.disabledClass);	
+			prev.add(next).addClass(conf.disabledClass);
 		}
-			
+
 		// mousewheel support
 		if (conf.mousewheel && $.fn.mousewheel) {
 			root.mousewheel(function(e, delta)  {
@@ -2036,182 +2036,182 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					self.move(delta < 0 ? 1 : -1, conf.wheelSpeed || 50);
 					return false;
 				}
-			});			
+			});
 		}
-		
+
 		// touch event
 		if (conf.touch) {
 			var touch = {};
-			
+
 			itemWrap[0].ontouchstart = function(e) {
 				var t = e.touches[0];
 				touch.x = t.clientX;
 				touch.y = t.clientY;
 			};
-			
+
 			itemWrap[0].ontouchmove = function(e) {
-				
+
 				// only deal with one finger
-				if (e.touches.length == 1 && !itemWrap.is(":animated")) {			
+				if (e.touches.length == 1 && !itemWrap.is(":animated")) {
 					var t = e.touches[0],
 						 deltaX = touch.x - t.clientX,
 						 deltaY = touch.y - t.clientY;
-	
-					self[vertical && deltaY > 0 || !vertical && deltaX > 0 ? 'next' : 'prev']();				
+
+					self[vertical && deltaY > 0 || !vertical && deltaX > 0 ? 'next' : 'prev']();
 					e.preventDefault();
 				}
 			};
 		}
-		
+
 		if (conf.keyboard)  {
-			
+
 			$(document).on("keydown.scrollable", function(evt) {
 
 				// skip certain conditions
-				if (!conf.keyboard || evt.altKey || evt.ctrlKey || evt.metaKey || $(evt.target).is(":input")) { 
-					return; 
+				if (!conf.keyboard || evt.altKey || evt.ctrlKey || evt.metaKey || $(evt.target).is(":input")) {
+					return;
 				}
-				
+
 				// does this instance have focus?
 				if (conf.keyboard != 'static' && current != self) { return; }
-					
+
 				var key = evt.keyCode;
-			
+
 				if (vertical && (key == 38 || key == 40)) {
 					self.move(key == 38 ? -1 : 1);
 					return evt.preventDefault();
 				}
-				
-				if (!vertical && (key == 37 || key == 39)) {					
+
+				if (!vertical && (key == 37 || key == 39)) {
 					self.move(key == 37 ? -1 : 1);
 					return evt.preventDefault();
-				}	  
-				
-			});  
+				}
+
+			});
 		}
-		
+
 		// initial index
 		if (conf.initialIndex) {
 			self.seekTo(conf.initialIndex, 0, function() {});
 		}
-	} 
+	}
 
-		
+
 	// jQuery plugin implementation
-	$.fn.scrollable = function(conf) { 
-			
+	$.fn.scrollable = function(conf) {
+
 		// already constructed --> return API
 		var el = this.data("scrollable");
-		if (el) { return el; }		 
+		if (el) { return el; }
 
-		conf = $.extend({}, $.tools.scrollable.conf, conf); 
-		
-		this.each(function() {			
+		conf = $.extend({}, $.tools.scrollable.conf, conf);
+
+		this.each(function() {
 			el = new Scrollable($(this), conf);
-			$(this).data("scrollable", el);	
+			$(this).data("scrollable", el);
 		});
-		
-		return conf.api ? el: this; 
-		
+
+		return conf.api ? el: this;
+
 	};
-			
-	
+
+
 })(jQuery);
 
 
 /**
- * @license 
+ * @license
  * jQuery Tools @VERSION Tabs- The basics of UI design.
- * 
+ *
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- * 
+ *
  * http://flowplayer.org/tools/tabs/
  *
  * Since: November 2008
- * Date: @DATE 
- */  
+ * Date: @DATE
+ */
 (function($) {
-		
+
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-	
+
 	$.tools.tabs = {
-		
+
 		conf: {
 			tabs: 'a',
 			current: 'current',
 			onBeforeClick: null,
-			onClick: null, 
+			onClick: null,
 			effect: 'default',
 			initialEffect: false,   // whether or not to show effect in first init of tabs
-			initialIndex: 0,			
+			initialIndex: 0,
 			event: 'click',
 			rotate: false,
-			
+
       // slide effect
       slideUpSpeed: 400,
       slideDownSpeed: 400,
-			
+
 			// 1.2
 			history: false
 		},
-		
+
 		addEffect: function(name, fn) {
 			effects[name] = fn;
 		}
-		
+
 	};
-	
+
 	var effects = {
-		
+
 		// simple "toggle" effect
-		'default': function(i, done) { 
+		'default': function(i, done) {
 			this.getPanes().hide().eq(i).show();
 			done.call();
-		}, 
-		
+		},
+
 		/*
 			configuration:
 				- fadeOutSpeed (positive value does "crossfading")
 				- fadeInSpeed
 		*/
-		fade: function(i, done) {		
-			
+		fade: function(i, done) {
+
 			var conf = this.getConf(),
 				 speed = conf.fadeOutSpeed,
 				 panes = this.getPanes();
-			
+
 			if (speed) {
-				panes.fadeOut(speed);	
+				panes.fadeOut(speed);
 			} else {
-				panes.hide();	
+				panes.hide();
 			}
 
-			panes.eq(i).fadeIn(conf.fadeInSpeed, done);	
+			panes.eq(i).fadeIn(conf.fadeInSpeed, done);
 		},
-		
+
 		// for basic accordions
 		slide: function(i, done) {
 		  var conf = this.getConf();
-		  
+
 			this.getPanes().slideUp(conf.slideUpSpeed);
-			this.getPanes().eq(i).slideDown(conf.slideDownSpeed, done);			 
-		}, 
+			this.getPanes().eq(i).slideDown(conf.slideDownSpeed, done);
+		},
 
 		/**
 		 * AJAX effect
 		 */
-		ajax: function(i, done)  {			
-			this.getPanes().eq(0).load(this.getTabs().eq(i).attr("href"), done);	
-		}		
-	};   	
-	
+		ajax: function(i, done)  {
+			this.getPanes().eq(0).load(this.getTabs().eq(i).attr("href"), done);
+		}
+	};
+
 	/**
 	 * Horizontal accordion
-	 * 
+	 *
 	 * @deprecated will be replaced with a more robust implementation
 	*/
-	
+
 	var
 	  /**
 	  *   @type {Boolean}
@@ -2223,23 +2223,23 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 	  animating,
 	  /**
 	  *   @type {Number}
-	  *   
+	  *
 	  *   Initial width of tab panes
 	  */
 	  w;
-	 
+
 	$.tools.tabs.addEffect("horizontal", function(i, done) {
 	  if (animating) return;    // don't allow other animations
-	  
+
 	  var nextPane = this.getPanes().eq(i),
 	      currentPane = this.getCurrentPane();
-	      
+
 		// store original width of a pane into memory
 		w || ( w = this.getPanes().eq(0).width() );
 		animating = true;
-		
+
 		nextPane.show(); // hidden by default
-		
+
 		// animate current pane's width to zero
     // animate next pane's width at the same time for smooth animation
     currentPane.animate({width: 0}, {
@@ -2254,61 +2254,61 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
     });
     // Dirty hack...  onLoad, currentPant will be empty and nextPane will be the first pane
     // If this is the case, manually run callback since the animation never occured, and reset animating
-    if (!currentPane.length){ 
-      done.call(); 
+    if (!currentPane.length){
+      done.call();
       animating = false;
     }
-	});	
+	});
 
-	
+
 	function Tabs(root, paneSelector, conf) {
-		
+
 		var self = this,
         trigger = root.add(this),
         tabs = root.find(conf.tabs),
         panes = paneSelector.jquery ? paneSelector : root.children(paneSelector),
         current;
-			 
-		
+
+
 		// make sure tabs and panes are found
 		if (!tabs.length)  { tabs = root.children(); }
 		if (!panes.length) { panes = root.parent().find(paneSelector); }
 		if (!panes.length) { panes = $(paneSelector); }
-		
-		
+
+
 		// public methods
-		$.extend(this, {				
+		$.extend(this, {
 			click: function(i, e) {
-			  
+
 				var tab = tabs.eq(i),
 				    firstRender = !root.data('tabs');
-				
+
 				if (typeof i == 'string' && i.replace("#", "")) {
 					tab = tabs.filter("[href*=\"" + i.replace("#", "") + "\"]");
 					i = Math.max(tabs.index(tab), 0);
 				}
-								
+
 				if (conf.rotate) {
-					var last = tabs.length -1; 
+					var last = tabs.length -1;
 					if (i < 0) { return self.click(last, e); }
-					if (i > last) { return self.click(0, e); }						
+					if (i > last) { return self.click(0, e); }
 				}
-				
+
 				if (!tab.length) {
 					if (current >= 0) { return self; }
 					i = conf.initialIndex;
 					tab = tabs.eq(i);
-				}				
-				
+				}
+
 				// current tab is being clicked
 				if (i === current) { return self; }
-				
-				// possibility to cancel click action				
+
+				// possibility to cancel click action
 				e = e || $.Event();
 				e.type = "onBeforeClick";
-				trigger.trigger(e, [i]);				
+				trigger.trigger(e, [i]);
 				if (e.isDefaultPrevented()) { return; }
-				
+
         // if firstRender, only run effect if initialEffect is set, otherwise default
 				var effect = firstRender ? conf.initialEffect && conf.effect || 'default' : conf.effect;
 
@@ -2318,89 +2318,89 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					// onClick callback
 					e.type = "onClick";
 					trigger.trigger(e, [i]);
-				});			
-				
+				});
+
 				// default behaviour
-				tabs.removeClass(conf.current);	
-				tab.addClass(conf.current);				
-				
+				tabs.removeClass(conf.current);
+				tab.addClass(conf.current);
+
 				return self;
 			},
-			
+
 			getConf: function() {
-				return conf;	
+				return conf;
 			},
 
 			getTabs: function() {
-				return tabs;	
+				return tabs;
 			},
-			
+
 			getPanes: function() {
-				return panes;	
+				return panes;
 			},
-			
+
 			getCurrentPane: function() {
-				return panes.eq(current);	
+				return panes.eq(current);
 			},
-			
+
 			getCurrentTab: function() {
-				return tabs.eq(current);	
+				return tabs.eq(current);
 			},
-			
+
 			getIndex: function() {
-				return current;	
-			}, 
-			
+				return current;
+			},
+
 			next: function() {
 				return self.click(current + 1);
 			},
-			
+
 			prev: function() {
-				return self.click(current - 1);	
+				return self.click(current - 1);
 			},
-			
+
 			destroy: function() {
 				tabs.off(conf.event).removeClass(conf.current);
-				panes.find("a[href^=\"#\"]").off("click.T"); 
+				panes.find("a[href^=\"#\"]").off("click.T");
 				return self;
 			}
-		
+
 		});
 
-		// callbacks	
+		// callbacks
 		$.each("onBeforeClick,onClick".split(","), function(i, name) {
-				
+
 			// configuration
 			if ($.isFunction(conf[name])) {
-				$(self).on(name, conf[name]); 
+				$(self).on(name, conf[name]);
 			}
 
 			// API
 			self[name] = function(fn) {
 				if (fn) { $(self).on(name, fn); }
-				return self;	
+				return self;
 			};
 		});
-	
-		
+
+
 		if (conf.history && $.fn.history) {
 			$.tools.history.init(tabs);
 			conf.event = 'history';
-		}	
-		
+		}
+
 		// setup click actions for each tab
-		tabs.each(function(i) { 				
+		tabs.each(function(i) {
 			$(this).on(conf.event, function(e) {
 				self.click(i, e);
 				return e.preventDefault();
-			});			
+			});
 		});
-		
+
 		// cross tab anchor link
 		panes.find("a[href^=\"#\"]").on("click.T", function(e) {
-			self.click($(this).attr("href"), e);		
-		}); 
-		
+			self.click($(this).attr("href"), e);
+		});
+
 		// open initial tab
 		if (location.hash && conf.tabs == "a" && root.find("[href=\"" +location.hash+ "\"]").length) {
 			self.click(location.hash);
@@ -2409,185 +2409,185 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 			if (conf.initialIndex === 0 || conf.initialIndex > 0) {
 				self.click(conf.initialIndex);
 			}
-		}				
-		
+		}
+
 	}
-	
-	
+
+
 	// jQuery plugin implementation
 	$.fn.tabs = function(paneSelector, conf) {
-		
+
 		// return existing instance
 		var el = this.data("tabs");
-		if (el) { 
-			el.destroy();	
+		if (el) {
+			el.destroy();
 			this.removeData("tabs");
 		}
 
 		if ($.isFunction(conf)) {
 			conf = {onBeforeClick: conf};
 		}
-		
+
 		// setup conf
-		conf = $.extend({}, $.tools.tabs.conf, conf);		
-		
-		
-		this.each(function() {				
+		conf = $.extend({}, $.tools.tabs.conf, conf);
+
+
+		this.each(function() {
 			el = new Tabs($(this), paneSelector, conf);
-			$(this).data("tabs", el); 
-		});		
-		
-		return conf.api ? el: this;		
-	};		
-		
-}) (jQuery); 
+			$(this).data("tabs", el);
+		});
+
+		return conf.api ? el: this;
+	};
+
+}) (jQuery);
 
 
 
 
 /**
- * @license 
+ * @license
  * jQuery Tools @VERSION History "Back button for AJAX apps"
- * 
+ *
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- * 
+ *
  * http://flowplayer.org/tools/toolbox/history.html
- * 
+ *
  * Since: Mar 2010
- * Date: @DATE 
+ * Date: @DATE
  */
 (function($) {
-		
-	var hash, iframe, links, inited;		
-	
+
+	var hash, iframe, links, inited;
+
 	$.tools = $.tools || {version: '@VERSION'};
-	
+
 	$.tools.history = {
-	
+
 		init: function(els) {
-			
+
 			if (inited) { return; }
-			
+
 			// IE
 			if ($.browser.msie && $.browser.version < '8') {
-				
+
 				// create iframe that is constantly checked for hash changes
 				if (!iframe) {
 					iframe = $("<iframe/>").attr("src", "javascript:false;").hide().get(0);
 					$("body").append(iframe);
-									
+
 					setInterval(function() {
-						var idoc = iframe.contentWindow.document, 
+						var idoc = iframe.contentWindow.document,
 							 h = idoc.location.hash;
-					
-						if (hash !== h) {						
+
+						if (hash !== h) {
 							$(window).trigger("hash", h);
 						}
 					}, 100);
-					
+
 					setIframeLocation(location.hash || '#');
 				}
 
-				
+
 			// other browsers scans for location.hash changes directly without iframe hack
-			} else { 
+			} else {
 				setInterval(function() {
 					var h = location.hash;
 					if (h !== hash) {
 						$(window).trigger("hash", h);
-					}						
+					}
 				}, 100);
 			}
 
 			links = !links ? els : links.add(els);
-			
+
 			els.click(function(e) {
 				var href = $(this).attr("href");
 				if (iframe) { setIframeLocation(href); }
-				
+
 				// handle non-anchor links
 				if (href.slice(0, 1) != "#") {
 					location.href = "#" + href;
-					return e.preventDefault();		
+					return e.preventDefault();
 				}
-				
-			}); 
-			
+
+			});
+
 			inited = true;
-		}	
-	};  
-	
+		}
+	};
+
 
 	function setIframeLocation(h) {
 		if (h) {
 			var doc = iframe.contentWindow.document;
-			doc.open().close();	
+			doc.open().close();
 			doc.location.hash = h;
 		}
-	} 
-		 
+	}
+
 	// global histroy change listener
-	$(window).on("hash", function(e, h)  { 
+	$(window).on("hash", function(e, h)  {
 		if (h) {
 			links.filter(function() {
 			  var href = $(this).attr("href");
-			  return href == h || href == h.replace("#", ""); 
-			}).trigger("history", [h]);	
+			  return href == h || href == h.replace("#", "");
+			}).trigger("history", [h]);
 		} else {
-			links.eq(0).trigger("history", [h]);	
+			links.eq(0).trigger("history", [h]);
 		}
 
 		hash = h;
 
 	});
-		
-	
+
+
 	// jQuery plugin implementation
 	$.fn.history = function(fn) {
-			
+
 		$.tools.history.init(this);
 
 		// return jQuery
-		return this.on("history", fn);		
-	};	
-		
-})(jQuery); 
+		return this.on("history", fn);
+	};
+
+})(jQuery);
 
 
 
 /**
- * @license 
+ * @license
  * jQuery Tools @VERSION / Expose - Dim the lights
- * 
+ *
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- * 
+ *
  * http://flowplayer.org/tools/toolbox/expose.html
  *
  * Since: Mar 2010
- * Date: @DATE 
+ * Date: @DATE
  */
-(function($) { 	
+(function($) {
 
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-	
+
 	var tool;
-	
+
 	tool = $.tools.expose = {
-		
-		conf: {	
+
+		conf: {
 			maskId: 'exposeMask',
 			loadSpeed: 'slow',
 			closeSpeed: 'fast',
 			closeOnClick: true,
 			closeOnEsc: true,
-			
+
 			// css settings
 			zIndex: 9998,
 			opacity: 0.8,
 			startOpacity: 0,
 			color: '#fff',
-			
+
 			// callbacks
 			onLoad: null,
 			onClose: null
@@ -2596,185 +2596,185 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 
 	/* one of the greatest headaches in the tool. finally made it */
 	function viewport() {
-				
+
 		// the horror case
 		if (/msie/.test(navigator.userAgent.toLowerCase())) {
-			
+
 			// if there are no scrollbars then use window.height
 			var d = $(document).height(), w = $(window).height();
-			
+
 			return [
 				window.innerWidth || 							// ie7+
-				document.documentElement.clientWidth || 	// ie6  
+				document.documentElement.clientWidth || 	// ie6
 				document.body.clientWidth, 					// ie6 quirks mode
 				d - w < 20 ? w : d
 			];
-		} 
-		
+		}
+
 		// other well behaving browsers
-		return [$(document).width(), $(document).height()]; 
-	} 
-	
+		return [$(document).width(), $(document).height()];
+	}
+
 	function call(fn) {
 		if (fn) { return fn.call($.mask); }
 	}
-	
-	var mask, exposed, loaded, config, overlayIndex;		
-	
-	
+
+	var mask, exposed, loaded, config, overlayIndex;
+
+
 	$.mask = {
-		
+
 		load: function(conf, els) {
-			
+
 			// already loaded ?
-			if (loaded) { return this; }			
-			
+			if (loaded) { return this; }
+
 			// configuration
 			if (typeof conf == 'string') {
-				conf = {color: conf};	
+				conf = {color: conf};
 			}
-			
+
 			// use latest config
 			conf = conf || config;
-			
+
 			config = conf = $.extend($.extend({}, tool.conf), conf);
 
 			// get the mask
 			mask = $("#" + conf.maskId);
-				
+
 			// or create it
 			if (!mask.length) {
 				mask = $('<div/>').attr("id", conf.maskId);
 				$("body").append(mask);
 			}
-			
-			// set position and dimensions 			
+
+			// set position and dimensions
 			var size = viewport();
-				
-			mask.css({				
-				position:'absolute', 
-				top: 0, 
+
+			mask.css({
+				position:'absolute',
+				top: 0,
 				left: 0,
 				width: size[0],
 				height: size[1],
 				display: 'none',
-				opacity: conf.startOpacity,					 		
-				zIndex: conf.zIndex 
+				opacity: conf.startOpacity,
+				zIndex: conf.zIndex
 			});
-			
+
 			if (conf.color) {
-				mask.css("backgroundColor", conf.color);	
-			}			
-			
+				mask.css("backgroundColor", conf.color);
+			}
+
 			// onBeforeLoad
 			if (call(conf.onBeforeLoad) === false) {
 				return this;
 			}
-			
+
 			// esc button
-			if (conf.closeOnEsc) {						
-				$(document).on("keydown.mask", function(e) {							
+			if (conf.closeOnEsc) {
+				$(document).on("keydown.mask", function(e) {
 					if (e.keyCode == 27) {
-						$.mask.close(e);	
-					}		
-				});			
+						$.mask.close(e);
+					}
+				});
 			}
-			
+
 			// mask click closes
 			if (conf.closeOnClick) {
 				mask.on("click.mask", function(e)  {
-					$.mask.close(e);		
-				});					
-			}			
-			
+					$.mask.close(e);
+				});
+			}
+
 			// resize mask when window is resized
 			$(window).on("resize.mask", function() {
 				$.mask.fit();
 			});
-			
+
 			// exposed elements
 			if (els && els.length) {
-				
+
 				overlayIndex = els.eq(0).css("zIndex");
 
 				// make sure element is positioned absolutely or relatively
 				$.each(els, function() {
 					var el = $(this);
 					if (!/relative|absolute|fixed/i.test(el.css("position"))) {
-						el.css("position", "relative");		
-					}					
+						el.css("position", "relative");
+					}
 				});
-			 
+
 				// make elements sit on top of the mask
-				exposed = els.css({ zIndex: Math.max(conf.zIndex + 1, overlayIndex == 'auto' ? 0 : overlayIndex)});			
-			}	
-			
+				exposed = els.css({ zIndex: Math.max(conf.zIndex + 1, overlayIndex == 'auto' ? 0 : overlayIndex)});
+			}
+
 			// reveal mask
 			mask.css({display: 'block'}).fadeTo(conf.loadSpeed, conf.opacity, function() {
-				$.mask.fit(); 
+				$.mask.fit();
 				call(conf.onLoad);
 				loaded = "full";
 			});
-			
-			loaded = true;			
-			return this;				
+
+			loaded = true;
+			return this;
 		},
-		
+
 		close: function() {
 			if (loaded) {
-				
+
 				// onBeforeClose
 				if (call(config.onBeforeClose) === false) { return this; }
-					
-				mask.fadeOut(config.closeSpeed, function()  {										
+
+				mask.fadeOut(config.closeSpeed, function()  {
 					if (exposed) {
-						exposed.css({zIndex: overlayIndex});						
-					}				
+						exposed.css({zIndex: overlayIndex});
+					}
 					loaded = false;
 					call(config.onClose);
-				});				
-				
+				});
+
 				// unbind various event listeners
 				$(document).off("keydown.mask");
 				mask.off("click.mask");
-				$(window).off("resize.mask");  
+				$(window).off("resize.mask");
 			}
-			
-			return this; 
+
+			return this;
 		},
-		
+
 		fit: function() {
 			if (loaded) {
-				var size = viewport();				
+				var size = viewport();
 				mask.css({width: size[0], height: size[1]});
-			}				
+			}
 		},
-		
+
 		getMask: function() {
-			return mask;	
+			return mask;
 		},
-		
+
 		isLoaded: function(fully) {
-			return fully ? loaded == 'full' : loaded;	
-		}, 
-		
-		getConf: function() {
-			return config;	
+			return fully ? loaded == 'full' : loaded;
 		},
-		
+
+		getConf: function() {
+			return config;
+		},
+
 		getExposed: function() {
-			return exposed;	
-		}		
+			return exposed;
+		}
 	};
-	
+
 	$.fn.mask = function(conf) {
 		$.mask.load(conf);
-		return this;		
-	};			
-	
+		return this;
+	};
+
 	$.fn.expose = function(conf) {
 		$.mask.load(conf, this);
-		return this;			
+		return this;
 	};
 
 
@@ -2782,73 +2782,73 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 
 
 /**
- * @license 
+ * @license
  * jQuery Tools @VERSION Tooltip - UI essentials
- * 
+ *
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- * 
+ *
  * http://flowplayer.org/tools/tooltip/
  *
  * Since: November 2008
- * Date: @DATE 
+ * Date: @DATE
  */
-(function($) { 	
+(function($) {
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-	
+
 	$.tools.tooltip = {
-		
-		conf: { 
-			
+
+		conf: {
+
 			// default effect variables
-			effect: 'toggle',			
+			effect: 'toggle',
 			fadeOutSpeed: "fast",
 			predelay: 0,
 			delay: 30,
-			opacity: 1,			
+			opacity: 1,
 			tip: 0,
             fadeIE: false, // enables fade effect in IE
-			
+
 			// 'top', 'bottom', 'right', 'left', 'center'
-			position: ['top', 'center'], 
+			position: ['top', 'center'],
 			offset: [0, 0],
 			relative: false,
 			cancelDefault: true,
-			
-			// type to event mapping 
+
+			// type to event mapping
 			events: {
 				def: 			"mouseenter,mouseleave",
 				input: 		"focus,blur",
 				widget:		"focus mouseenter,blur mouseleave",
 				tooltip:		"mouseenter,mouseleave"
 			},
-			
+
 			// 1.2
 			layout: '<div/>',
 			tipClass: 'tooltip'
 		},
-		
+
 		addEffect: function(name, loadFn, hideFn) {
-			effects[name] = [loadFn, hideFn];	
-		} 
+			effects[name] = [loadFn, hideFn];
+		}
 	};
-	
-	
-	var effects = { 
-		toggle: [ 
-			function(done) { 
+
+
+	var effects = {
+		toggle: [
+			function(done) {
 				var conf = this.getConf(), tip = this.getTip(), o = conf.opacity;
 				if (o < 1) { tip.css({opacity: o}); }
 				tip.show();
 				done.call();
 			},
-			
-			function(done) { 
+
+			function(done) {
 				this.getTip().hide();
 				done.call();
-			} 
+			}
 		],
-		
+
 		fade: [
 			function(done) {
 				var conf = this.getConf();
@@ -2870,138 +2870,138 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					done();
 				}
 			}
-		]		
-	};   
+		]
+	};
 
-		
-	/* calculate tip position relative to the trigger */  	
-	function getPosition(trigger, tip, conf) {	
 
-		
-		// get origin top/left position 
-		var top = conf.relative ? trigger.position().top : trigger.offset().top, 
+	/* calculate tip position relative to the trigger */
+	function getPosition(trigger, tip, conf) {
+
+
+		// get origin top/left position
+		var top = conf.relative ? trigger.position().top : trigger.offset().top,
 			 left = conf.relative ? trigger.position().left : trigger.offset().left,
 			 pos = conf.position[0];
 
 		top  -= tip.outerHeight() - conf.offset[0];
 		left += trigger.outerWidth() + conf.offset[1];
-		
+
 		// iPad position fix
 		if (/iPad/i.test(navigator.userAgent)) {
 			top -= $(window).scrollTop();
 		}
-		
-		// adjust Y		
+
+		// adjust Y
 		var height = tip.outerHeight() + trigger.outerHeight();
 		if (pos == 'center') 	{ top += height / 2; }
 		if (pos == 'bottom') 	{ top += height; }
-		
-		
+
+
 		// adjust X
-		pos = conf.position[1]; 	
+		pos = conf.position[1];
 		var width = tip.outerWidth() + trigger.outerWidth();
 		if (pos == 'center') 	{ left -= width / 2; }
-		if (pos == 'left')   	{ left -= width; }	 
-		
-		return {top: top, left: left};
-	}		
+		if (pos == 'left')   	{ left -= width; }
 
-	
-	
+		return {top: top, left: left};
+	}
+
+
+
 	function Tooltip(trigger, conf) {
 
-		var self = this, 
+		var self = this,
 			 fire = trigger.add(self),
 			 tip,
 			 timer = 0,
-			 pretimer = 0, 
+			 pretimer = 0,
 			 title = trigger.attr("title"),
 			 tipAttr = trigger.attr("data-tooltip"),
 			 effect = effects[conf.effect],
 			 shown,
-				 
+
 			 // get show/hide configuration
-			 isInput = trigger.is(":input"), 
-			 isWidget = isInput && trigger.is(":checkbox, :radio, select, :button, :submit"),			
+			 isInput = trigger.is(":input"),
+			 isWidget = isInput && trigger.is(":checkbox, :radio, select, :button, :submit"),
 			 type = trigger.attr("type"),
-			 evt = conf.events[type] || conf.events[isInput ? (isWidget ? 'widget' : 'input') : 'def']; 
-		
-		
+			 evt = conf.events[type] || conf.events[isInput ? (isWidget ? 'widget' : 'input') : 'def'];
+
+
 		// check that configuration is sane
-		if (!effect) { throw "Nonexistent effect \"" + conf.effect + "\""; }					
-		
-		evt = evt.split(/,\s*/); 
-		if (evt.length != 2) { throw "Tooltip: bad events configuration for " + type; } 
-		
-		
-		// trigger --> show  
+		if (!effect) { throw "Nonexistent effect \"" + conf.effect + "\""; }
+
+		evt = evt.split(/,\s*/);
+		if (evt.length != 2) { throw "Tooltip: bad events configuration for " + type; }
+
+
+		// trigger --> show
 		trigger.on(evt[0], function(e) {
 
 			clearTimeout(timer);
 			if (conf.predelay) {
-				pretimer = setTimeout(function() { self.show(e); }, conf.predelay);	
-				
+				pretimer = setTimeout(function() { self.show(e); }, conf.predelay);
+
 			} else {
-				self.show(e);	
+				self.show(e);
 			}
-			
+
 		// trigger --> hide
 		}).on(evt[1], function(e)  {
 			clearTimeout(pretimer);
 			if (conf.delay)  {
-				timer = setTimeout(function() { self.hide(e); }, conf.delay);	
-				
+				timer = setTimeout(function() { self.hide(e); }, conf.delay);
+
 			} else {
-				self.hide(e);		
+				self.hide(e);
 			}
-			
-		}); 
-		
-		
+
+		});
+
+
 		// remove default title
-		if (title && conf.cancelDefault) { 
+		if (title && conf.cancelDefault) {
 			trigger.removeAttr("title");
-			trigger.data("title", title);			
-		}		
-		
+			trigger.data("title", title);
+		}
+
 		$.extend(self, {
-				
-			show: function(e) {  
+
+			show: function(e) {
 
 				// tip not initialized yet
 				if (!tip) {
-					
-					// data-tooltip 
+
+					// data-tooltip
 					if (tipAttr) {
 						tip = $(tipAttr);
 
 					// single tip element for all
-					} else if (conf.tip) { 
+					} else if (conf.tip) {
 						tip = $(conf.tip).eq(0);
-						
+
 					// autogenerated tooltip
-					} else if (title) { 
+					} else if (title) {
 						tip = $(conf.layout).addClass(conf.tipClass).appendTo(document.body)
 							.hide().append(title);
 
 					// manual tooltip
-					} else {	
+					} else {
 						tip = trigger.find('.' + conf.tipClass);
 						if (!tip.length) { tip = trigger.next(); }
-						if (!tip.length) { tip = trigger.parent().next(); } 	 
+						if (!tip.length) { tip = trigger.parent().next(); }
 					}
-					
+
 					if (!tip.length) { throw "Cannot find tooltip for " + trigger;	}
-				} 
-			 	
-			 	if (self.isShown()) { return self; }  
-				
+				}
+
+			 	if (self.isShown()) { return self; }
+
 			 	// stop previous animation
-			 	tip.stop(true, true); 			 	
-			 	
+			 	tip.stop(true, true);
+
 				// get position
-				var pos = getPosition(trigger, tip, conf);			
-		
+				var pos = getPosition(trigger, tip, conf);
+
 				// restore title for single tooltip element
 				if (conf.tip) {
 					tip.html(trigger.data("title"));
@@ -3010,97 +3010,97 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 				// onBeforeShow
 				e = $.Event();
 				e.type = "onBeforeShow";
-				fire.trigger(e, [pos]);				
+				fire.trigger(e, [pos]);
 				if (e.isDefaultPrevented()) { return self; }
-		
-				
+
+
 				// onBeforeShow may have altered the configuration
 				pos = getPosition(trigger, tip, conf);
-				
+
 				// set position
-				tip.css({position:'absolute', top: pos.top, left: pos.left});					
-				
+				tip.css({position:'absolute', top: pos.top, left: pos.left});
+
 				shown = true;
-				
-				// invoke effect 
+
+				// invoke effect
 				effect[0].call(self, function() {
 					e.type = "onShow";
 					shown = 'full';
-					fire.trigger(e);		 
-				});					
+					fire.trigger(e);
+				});
 
-	 	
-				// tooltip events       
+
+				// tooltip events
 				var event = conf.events.tooltip.split(/,\s*/);
 
 				if (!tip.data("__set")) {
-					
-					tip.off(event[0]).on(event[0], function() { 
+
+					tip.off(event[0]).on(event[0], function() {
 						clearTimeout(timer);
 						clearTimeout(pretimer);
 					});
-					
-					if (event[1] && !trigger.is("input:not(:checkbox, :radio), textarea")) { 					
+
+					if (event[1] && !trigger.is("input:not(:checkbox, :radio), textarea")) {
 						tip.off(event[1]).on(event[1], function(e) {
-	
+
 							// being moved to the trigger element
 							if (e.relatedTarget != trigger[0]) {
 								trigger.trigger(evt[1].split(" ")[0]);
 							}
-						}); 
-					} 
-					
+						});
+					}
+
 					// bind agein for if same tip element
 					if (!conf.tip) tip.data("__set", true);
 				}
-				
+
 				return self;
 			},
-			
+
 			hide: function(e) {
 
 				if (!tip || !self.isShown()) { return self; }
-			
+
 				// onBeforeHide
 				e = $.Event();
 				e.type = "onBeforeHide";
-				fire.trigger(e);				
+				fire.trigger(e);
 				if (e.isDefaultPrevented()) { return; }
-	
+
 				shown = false;
-				
+
 				effects[conf.effect][1].call(self, function() {
 					e.type = "onHide";
-					fire.trigger(e);		 
+					fire.trigger(e);
 				});
-				
+
 				return self;
 			},
-			
+
 			isShown: function(fully) {
-				return fully ? shown == 'full' : shown;	
+				return fully ? shown == 'full' : shown;
 			},
-				
+
 			getConf: function() {
-				return conf;	
+				return conf;
 			},
-				
+
 			getTip: function() {
-				return tip;	
+				return tip;
 			},
-			
+
 			getTrigger: function() {
-				return trigger;	
-			}		
+				return trigger;
+			}
 
-		});		
+		});
 
-		// callbacks	
+		// callbacks
 		$.each("onHide,onBeforeShow,onShow,onBeforeHide".split(","), function(i, name) {
-				
+
 			// configuration
-			if ($.isFunction(conf[name])) { 
-				$(self).on(name, conf[name]); 
+			if ($.isFunction(conf[name])) {
+				$(self).on(name, conf[name]);
 			}
 
 			// API
@@ -3109,36 +3109,36 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 				return self;
 			};
 		});
-		
+
 	}
-		
-	
+
+
 	// jQuery plugin implementation
 	$.fn.tooltip = function(conf) {
-		
+
 		// return existing instance
 		var api = this.data("tooltip");
 		if (api) { return api; }
 
 		conf = $.extend(true, {}, $.tools.tooltip.conf, conf);
-		
+
 		// position can also be given as string
 		if (typeof conf.position == 'string') {
-			conf.position = conf.position.split(/,?\s/);	
+			conf.position = conf.position.split(/,?\s/);
 		}
-		
+
 		// install tooltip for each entry in jQuery object
 		this.each(function() {
-			api = new Tooltip($(this), conf); 
-			$(this).data("tooltip", api); 
+			api = new Tooltip($(this), conf);
+			$(this).data("tooltip", api);
 		});
-		
-		return conf.api ? api: this;		 
+
+		return conf.api ? api: this;
 	};
-		
+
 }) (jQuery);
 
-		
+
 
 
 
@@ -3304,7 +3304,7 @@ define("jquery.tmpl", ["jquery"], function() {
 			if ( options && options.wrapped ) {
 				updateWrapped( options, options.wrapped );
 			}
-			ret = jQuery.isArray( data ) ? 
+			ret = jQuery.isArray( data ) ?
 				jQuery.map( data, function( dataItem ) {
 					return dataItem ? newTmplItem( options, parentItem, tmpl, dataItem ) : null;
 				}) :
@@ -3349,10 +3349,10 @@ define("jquery.tmpl", ["jquery"], function() {
 				return typeof name === "string" ? (jQuery.template[name] = tmpl) : tmpl;
 			}
 			// Return named compiled template
-			return name ? (typeof name !== "string" ? jQuery.template( null, name ): 
-				(jQuery.template[name] || 
-					// If not in map, treat as a selector. (If integrated with core, use quickExpr.exec) 
-					jQuery.template( null, htmlExpr.test( name ) ? name : jQuery( name )))) : null; 
+			return name ? (typeof name !== "string" ? jQuery.template( null, name ):
+				(jQuery.template[name] ||
+					// If not in map, treat as a selector. (If integrated with core, use quickExpr.exec)
+					jQuery.template( null, htmlExpr.test( name ) ? name : jQuery( name )))) : null;
 		},
 
 		encode: function( text ) {
@@ -3367,7 +3367,7 @@ define("jquery.tmpl", ["jquery"], function() {
 				_default: { $2: "null" },
 				open: "if($notnull_1){_=_.concat($item.nest($1,$2));}"
 				// tmpl target parameter can be of type function, so use $1, not $1a (so not auto detection of functions)
-				// This means that {{tmpl foo}} treats foo as a template (which IS a function). 
+				// This means that {{tmpl foo}} treats foo as a template (which IS a function).
 				// Explicit parens can be used if foo is a function that returns a template: {{tmpl foo()}}.
 			},
 			"wrap": {
@@ -3389,7 +3389,7 @@ define("jquery.tmpl", ["jquery"], function() {
 				open: "}else if(($notnull_1) && $1a){"
 			},
 			"html": {
-				// Unecoded expression evaluation. 
+				// Unecoded expression evaluation.
 				open: "if($notnull_1){_.push($1a);}"
 			},
 			"=": {
@@ -3428,16 +3428,16 @@ define("jquery.tmpl", ["jquery"], function() {
 	//========================== Private helper functions, used by code above ==========================
 
 	function build( tmplItem, nested, content ) {
-		// Convert hierarchical content into flat string array 
+		// Convert hierarchical content into flat string array
 		// and finally return array of fragments ready for DOM insertion
 		var frag, ret = content ? jQuery.map( content, function( item ) {
-			return (typeof item === "string") ? 
+			return (typeof item === "string") ?
 				// Insert template item annotations, to be converted to jQuery.data( "tmplItem" ) when elems are inserted into DOM.
 				(tmplItem.key ? item.replace( /(<\w+)(?=[\s>])(?![^>]*_tmplitem)([^>]*)/g, "$1 " + tmplItmAtt + "=\"" + tmplItem.key + "\" $2" ) : item) :
 				// This is a child template item. Build nested template.
 				build( item, tmplItem, item._ctnt );
-		}) : 
-		// If content is not defined, insert tmplItem directly. Not a template item. May be a string, or a string array, e.g. from {{html $item.html()}}. 
+		}) :
+		// If content is not defined, insert tmplItem directly. Not a template item. May be a string, or a string array, e.g. from {{html $item.html()}}.
 		tmplItem;
 		if ( nested ) {
 			return ret;
@@ -3494,7 +3494,7 @@ define("jquery.tmpl", ["jquery"], function() {
 						parens = "";
 					}
 					if ( target ) {
-						target = unescape( target ); 
+						target = unescape( target );
 						args = args ? ("," + unescape( args ) + ")") : (parens ? ")" : "");
 						// Support for target being things like a.toLowerCase();
 						// In that case don't call with template item as 'this' pointer. Just evaluate...
@@ -3504,7 +3504,7 @@ define("jquery.tmpl", ["jquery"], function() {
 						exprAutoFnDetect = expr = def.$1 || "null";
 					}
 					fnargs = unescape( fnargs );
-					return "');" + 
+					return "');" +
 						tag[ slash ? "close" : "open" ]
 							.split( "$notnull_1" ).join( target ? "typeof(" + target + ")!=='undefined' && (" + target + ")!=null" : "true" )
 							.split( "$1a" ).join( exprAutoFnDetect )
@@ -3522,8 +3522,8 @@ define("jquery.tmpl", ["jquery"], function() {
 		);
 	}
 	function updateWrapped( options, wrapped ) {
-		// Build the wrapped content. 
-		options._wrap = build( options, true, 
+		// Build the wrapped content.
+		options._wrap = build( options, true,
 			// Suport imperative scenario in which options.wrapped can be set to a selector or an HTML string.
 			jQuery.isArray( wrapped ) ? wrapped : [htmlExpr.test( wrapped ) ? wrapped : jQuery( wrapped ).html()]
 		).join("");
@@ -3583,9 +3583,9 @@ define("jquery.tmpl", ["jquery"], function() {
 			}
 			if ( tmplItem ) {
 				pntItem = tmplItem;
-				// Find the template item of the parent element. 
+				// Find the template item of the parent element.
 				// (Using !=, not !==, since pntItem.key is number, and pntNode may be a string)
-				while ( pntItem && pntItem.key != pntNode ) { 
+				while ( pntItem && pntItem.key != pntNode ) {
 					// Add this element as a top-level node for this rendered template item, as well as for any
 					// ancestor items between this item and the item of its parent element
 					pntItem.nodes.push( el );
@@ -3599,7 +3599,7 @@ define("jquery.tmpl", ["jquery"], function() {
 			}
 			function cloneTmplItem( key ) {
 				key = key + keySuffix;
-				tmplItem = newClonedItems[key] = 
+				tmplItem = newClonedItems[key] =
 					(newClonedItems[key] || newTmplItem( tmplItem, newTmplItems[tmplItem.parent.key + keySuffix] || tmplItem.parent, null, true ));
 			}
 		}
@@ -3623,7 +3623,7 @@ define("jquery.tmpl", ["jquery"], function() {
 		// nested template, using {{wrap}} tag
 		var options = call.options || {};
 		options.wrapped = wrapped;
-		// Apply the template, which may incorporate wrapped content, 
+		// Apply the template, which may incorporate wrapped content,
 		return jQuery.tmpl( jQuery.template( call.tmpl ), call.data, options, call.item );
 	}
 
@@ -5453,21 +5453,21 @@ define("jqtree", ["jquery"], function() {
   return (function() {
 /*!
  * JqTree 1.4.1
- * 
+ *
  * Copyright 2017 Marco Braak
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -11322,7 +11322,7 @@ define('moxie/core/utils/Basic', [], function() {
 		// the snippet below is awesome, however it fails to detect null, undefined and arguments types in IE lte 8
 		return ({}).toString.call(o).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
 	};
-		
+
 	/**
 	Extends the specified object with another object.
 
@@ -11350,7 +11350,7 @@ define('moxie/core/utils/Basic', [], function() {
 		});
 		return target;
 	};
-		
+
 	/**
 	Executes the callback function for each item in array/object. If you return false in the
 	callback it will break the loop.
@@ -11386,7 +11386,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Checks if object is empty.
-	
+
 	@method isEmptyObj
 	@static
 	@param {Object} o Object to check.
@@ -11443,7 +11443,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Recieve an array of functions (usually async) to call in parallel, each  function
-	receives a callback as first argument that it should call, when it completes. After 
+	receives a callback as first argument that it should call, when it completes. After
 	everything is complete, main callback is called. Passing truthy value to the
 	callback as a first argument will interrupt the process and invoke main callback
 	immediately.
@@ -11461,7 +11461,7 @@ define('moxie/core/utils/Basic', [], function() {
 				if (error) {
 					return cb(error);
 				}
-				
+
 				var args = [].slice.call(arguments);
 				args.shift(); // strip error - undefined or not
 
@@ -11471,15 +11471,15 @@ define('moxie/core/utils/Basic', [], function() {
 				if (count === num) {
 					cbArgs.unshift(null);
 					cb.apply(this, cbArgs);
-				} 
+				}
 			});
 		});
 	};
-	
-	
+
+
 	/**
 	Find an element in array and return it's index if present, otherwise return -1.
-	
+
 	@method inArray
 	@static
 	@param {Mixed} needle Element to find
@@ -11491,7 +11491,7 @@ define('moxie/core/utils/Basic', [], function() {
 			if (Array.prototype.indexOf) {
 				return Array.prototype.indexOf.call(array, needle);
 			}
-		
+
 			for (var i = 0, length = array.length; i < length; i++) {
 				if (array[i] === needle) {
 					return i;
@@ -11525,7 +11525,7 @@ define('moxie/core/utils/Basic', [], function() {
 		for (var i in needles) {
 			if (inArray(needles[i], array) === -1) {
 				diff.push(needles[i]);
-			}	
+			}
 		}
 		return diff.length ? diff : false;
 	};
@@ -11549,11 +11549,11 @@ define('moxie/core/utils/Basic', [], function() {
 		});
 		return result.length ? result : null;
 	};
-	
-	
+
+
 	/**
 	Forces anything into an array.
-	
+
 	@method toArray
 	@static
 	@param {Object} obj Object with length field.
@@ -11568,14 +11568,14 @@ define('moxie/core/utils/Basic', [], function() {
 
 		return arr;
 	};
-	
-			
+
+
 	/**
 	Generates an unique ID. The only way a user would be able to get the same ID is if the two persons
-	at the same exact millisecond manage to get the same 5 random numbers between 0-65535; it also uses 
-	a counter so each ID is guaranteed to be unique for the given page. It is more probable for the earth 
+	at the same exact millisecond manage to get the same 5 random numbers between 0-65535; it also uses
+	a counter so each ID is guaranteed to be unique for the given page. It is more probable for the earth
 	to be hit with an asteroid.
-	
+
 	@method guid
 	@static
 	@param {String} prefix to prepend (by default 'o' will be prepended).
@@ -11584,22 +11584,22 @@ define('moxie/core/utils/Basic', [], function() {
 	*/
 	var guid = (function() {
 		var counter = 0;
-		
+
 		return function(prefix) {
 			var guid = new Date().getTime().toString(32), i;
 
 			for (i = 0; i < 5; i++) {
 				guid += Math.floor(Math.random() * 65535).toString(32);
 			}
-			
+
 			return (prefix || 'o_') + guid + (counter++).toString(32);
 		};
 	}());
-	
+
 
 	/**
 	Trims white spaces around the string
-	
+
 	@method trim
 	@static
 	@param {String} str
@@ -11615,7 +11615,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Parses the specified size string into a byte value. For example 10kb becomes 10240.
-	
+
 	@method parseSizeStr
 	@static
 	@param {String/Number} size String to parse or number to just pass through.
@@ -11625,7 +11625,7 @@ define('moxie/core/utils/Basic', [], function() {
 		if (typeof(size) !== 'string') {
 			return size;
 		}
-		
+
 		var muls = {
 				t: 1099511627776,
 				g: 1073741824,
@@ -11638,7 +11638,7 @@ define('moxie/core/utils/Basic', [], function() {
 		size = /^([0-9\.]+)([tmgk]?)$/.exec(size.toLowerCase().replace(/[^0-9\.tmkg]/g, ''));
 		mul = size[2];
 		size = +size[1];
-		
+
 		if (muls.hasOwnProperty(mul)) {
 			size *= muls[mul];
 		}
@@ -11660,7 +11660,7 @@ define('moxie/core/utils/Basic', [], function() {
 			return typeOf(value) !== 'undefined' ? value : '';
 		});
 	};
-	
+
 
 	return {
 		guid: guid,
@@ -11695,7 +11695,7 @@ define('moxie/core/utils/Basic', [], function() {
 define("moxie/core/utils/Env", [
 	"moxie/core/utils/Basic"
 ], function(Basic) {
-	
+
 	/**
 	 * UAParser.js v0.7.7
 	 * Lightweight JavaScript-based User-Agent string parser
@@ -11898,7 +11898,7 @@ define("moxie/core/utils/Env", [
 	    var regexes = {
 
 	        browser : [[
-	        
+
 	            // Presto based
 	            /(opera\smini)\/([\w\.-]+)/i,                                       // Opera Mini
 	            /(opera\s[mobiletab]+).+version\/([\w\.-]+)/i,                      // Opera Mobi/Tablet
@@ -12287,7 +12287,7 @@ define("moxie/core/utils/Env", [
 					du.onload = function() {
 						caps.use_data_uri = (du.width === 1 && du.height === 1);
 					};
-					
+
 					setTimeout(function() {
 						du.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
 					}, 1);
@@ -12328,14 +12328,14 @@ define("moxie/core/utils/Env", [
 		can: can,
 
 		uaParser: UAParser,
-		
+
 		browser: uaResult.browser.name,
 		version: uaResult.browser.version,
 		os: uaResult.os.name, // everybody intuitively types it in a lowercase for some reason
 		osVersion: uaResult.os.version,
 
 		verComp: version_compare,
-		
+
 		swf_url: "../flash/Moxie.swf",
 		xap_url: "../silverlight/Moxie.xap",
 		global_event_dispatcher: "moxie.core.EventTarget.instance.dispatchEvent"
@@ -12352,7 +12352,7 @@ define("moxie/core/utils/Env", [
 		};
 
 		Env.log = function() {
-			
+
 			function logObj(data) {
 				// TODO: this should recursively print out the object in a pretty way
 				console.appendChild(document.createTextNode(data + "\n"));
@@ -12468,7 +12468,7 @@ define("moxie/core/utils/Mime", [
 	"moxie/core/utils/Basic",
 	"moxie/core/I18n"
 ], function(Basic, I18n) {
-	
+
 	var mimeData = "" +
 		"application/msword,doc dot," +
 		"application/pdf,pdf," +
@@ -12519,12 +12519,12 @@ define("moxie/core/utils/Mime", [
 		"video/3gpp,3gpp 3gp," +
 		"video/3gpp2,3g2," +
 		"video/vnd.rn-realvideo,rv," +
-		"video/ogg,ogv," + 
+		"video/ogg,ogv," +
 		"video/x-matroska,mkv," +
 		"application/vnd.oasis.opendocument.formula-template,otf," +
 		"application/octet-stream,exe";
-	
-	
+
+
 	var Mime = {
 
 		mimes: {},
@@ -12534,7 +12534,7 @@ define("moxie/core/utils/Mime", [
 		// Parses the default mime types string into a mimes and extensions lookup maps
 		addMimeType: function (mimeData) {
 			var items = mimeData.split(/,/), i, ii, ext;
-			
+
 			for (i = 0; i < items.length; i += 2) {
 				ext = items[i + 1].split(/ /);
 
@@ -12550,13 +12550,13 @@ define("moxie/core/utils/Mime", [
 
 		extList2mimes: function (filters, addMissingExtensions) {
 			var self = this, ext, i, ii, type, mimes = [];
-			
+
 			// convert extensions to mime types list
 			for (i = 0; i < filters.length; i++) {
 				ext = filters[i].extensions.split(/\s*,\s*/);
 
 				for (ii = 0; ii < ext.length; ii++) {
-					
+
 					// if there's an asterisk in the list, then accept attribute is not required
 					if (ext[ii] === '*') {
 						return [];
@@ -12582,7 +12582,7 @@ define("moxie/core/utils/Mime", [
 
 		mimes2exts: function(mimes) {
 			var self = this, exts = [];
-			
+
 			Basic.each(mimes, function(mime) {
 				if (mime === '*') {
 					exts = [];
@@ -12592,7 +12592,7 @@ define("moxie/core/utils/Mime", [
 				// check if this thing looks like mime type
 				var m = mime.match(/^(\w+)\/(\*|\w+)$/);
 				if (m) {
-					if (m[2] === '*') { 
+					if (m[2] === '*') {
 						// wildcard mime type detected
 						Basic.each(self.extensions, function(arr, mime) {
 							if ((new RegExp('^' + m[1] + '/')).test(mime)) {
@@ -12616,12 +12616,12 @@ define("moxie/core/utils/Mime", [
 			}
 
 			exts = this.mimes2exts(mimes);
-			
+
 			accept.push({
 				title: I18n.translate('Files'),
 				extensions: exts.length ? exts.join(',') : '*'
 			});
-			
+
 			// save original mimes string
 			accept.mimes = mimes;
 
@@ -12868,25 +12868,25 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": RuntimeError " + this.code;
 			}
-			
+
 			Basic.extend(RuntimeError, namecodes);
 			RuntimeError.prototype = Error.prototype;
 			return RuntimeError;
 		}()),
-		
+
 		OperationNotAllowedException: (function() {
-			
+
 			function OperationNotAllowedException(code) {
 				this.code = code;
 				this.name = 'OperationNotAllowedException';
 			}
-			
+
 			Basic.extend(OperationNotAllowedException, {
 				NOT_ALLOWED_ERR: 1
 			});
-			
+
 			OperationNotAllowedException.prototype = Error.prototype;
-			
+
 			return OperationNotAllowedException;
 		}()),
 
@@ -12902,7 +12902,7 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": ImageError " + this.code;
 			}
-			
+
 			Basic.extend(ImageError, namecodes);
 			ImageError.prototype = Error.prototype;
 
@@ -12926,12 +12926,12 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": FileException " + this.code;
 			}
-			
+
 			Basic.extend(FileException, namecodes);
 			FileException.prototype = Error.prototype;
 			return FileException;
 		}()),
-		
+
 		DOMException: (function() {
 			var namecodes = {
 				INDEX_SIZE_ERR: 1,
@@ -12966,24 +12966,24 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": DOMException " + this.code;
 			}
-			
+
 			Basic.extend(DOMException, namecodes);
 			DOMException.prototype = Error.prototype;
 			return DOMException;
 		}()),
-		
+
 		EventException: (function() {
 			function EventException(code) {
 				this.code = code;
 				this.name = 'EventException';
 			}
-			
+
 			Basic.extend(EventException, {
 				UNSPECIFIED_EVENT_TYPE_ERR: 0
 			});
-			
+
 			EventException.prototype = Error.prototype;
-			
+
 			return EventException;
 		}())
 	};
@@ -13015,9 +13015,9 @@ define('moxie/core/EventTarget', [
 	function EventTarget() {
 		// hash of event listeners by object uid
 		var eventpool = {};
-				
+
 		Basic.extend(this, {
-			
+
 			/**
 			Unique id of the event dispatcher, usually overriden by children
 
@@ -13025,7 +13025,7 @@ define('moxie/core/EventTarget', [
 			@type String
 			*/
 			uid: null,
-			
+
 			/**
 			Can be called from within a child  in order to acquire uniqie id in automated manner
 
@@ -13053,9 +13053,9 @@ define('moxie/core/EventTarget', [
 				if (!this.hasOwnProperty('uid')) {
 					this.uid = Basic.guid('uid_');
 				}
-				
+
 				type = Basic.trim(type);
-				
+
 				if (/\s/.test(type)) {
 					// multiple event types were passed for one handler
 					Basic.each(type.split(/\s+/), function(type) {
@@ -13063,19 +13063,19 @@ define('moxie/core/EventTarget', [
 					});
 					return;
 				}
-				
+
 				type = type.toLowerCase();
 				priority = parseInt(priority, 10) || 0;
-				
+
 				list = eventpool[this.uid] && eventpool[this.uid][type] || [];
 				list.push({fn : fn, priority : priority, scope : scope || this});
-				
+
 				if (!eventpool[this.uid]) {
 					eventpool[this.uid] = {};
 				}
 				eventpool[this.uid][type] = list;
 			},
-			
+
 			/**
 			Check if any handlers were registered to the specified event
 
@@ -13087,7 +13087,7 @@ define('moxie/core/EventTarget', [
 				var list = type ? eventpool[this.uid] && eventpool[this.uid][type] : eventpool[this.uid];
 				return list ? list : false;
 			},
-			
+
 			/**
 			Unregister the handler from the event, or if former was not specified - unregister all handlers
 
@@ -13097,9 +13097,9 @@ define('moxie/core/EventTarget', [
 			*/
 			removeEventListener: function(type, fn) {
 				type = type.toLowerCase();
-	
+
 				var list = eventpool[this.uid] && eventpool[this.uid][type], i;
-	
+
 				if (list) {
 					if (fn) {
 						for (i = list.length - 1; i >= 0; i--) {
@@ -13111,11 +13111,11 @@ define('moxie/core/EventTarget', [
 					} else {
 						list = [];
 					}
-	
+
 					// delete event list if it has become empty
 					if (!list.length) {
 						delete eventpool[this.uid][type];
-						
+
 						// and object specific entry in a hash if it has no more listeners attached
 						if (Basic.isEmptyObj(eventpool[this.uid])) {
 							delete eventpool[this.uid];
@@ -13123,7 +13123,7 @@ define('moxie/core/EventTarget', [
 					}
 				}
 			},
-			
+
 			/**
 			Remove all event handlers from the object
 
@@ -13134,7 +13134,7 @@ define('moxie/core/EventTarget', [
 					delete eventpool[this.uid];
 				}
 			},
-			
+
 			/**
 			Dispatch the event
 
@@ -13145,7 +13145,7 @@ define('moxie/core/EventTarget', [
 			*/
 			dispatchEvent: function(type) {
 				var uid, list, args, tmpEvt, evt = {}, result = true, undef;
-				
+
 				if (Basic.typeOf(type) !== 'string') {
 					// we can't use original object directly (because of Silverlight)
 					tmpEvt = type;
@@ -13162,7 +13162,7 @@ define('moxie/core/EventTarget', [
 						throw new x.EventException(x.EventException.UNSPECIFIED_EVENT_TYPE_ERR);
 					}
 				}
-				
+
 				// check if event is meant to be dispatched on an object having specific uid
 				if (type.indexOf('::') !== -1) {
 					(function(arr) {
@@ -13172,24 +13172,24 @@ define('moxie/core/EventTarget', [
 				} else {
 					uid = this.uid;
 				}
-				
+
 				type = type.toLowerCase();
-								
+
 				list = eventpool[uid] && eventpool[uid][type];
 
 				if (list) {
 					// sort event list by prority
 					list.sort(function(a, b) { return b.priority - a.priority; });
-					
+
 					args = [].slice.call(arguments);
-					
+
 					// first argument will be pseudo-event object
 					args.shift();
 					evt.type = type;
 					args.unshift(evt);
 
 					if (MXI_DEBUG && Env.debug.events) {
-						Env.log("Event '%s' fired on %u", evt.type, uid);	
+						Env.log("Event '%s' fired on %u", evt.type, uid);
 					}
 
 					// Dispatch event to all listeners
@@ -13218,7 +13218,7 @@ define('moxie/core/EventTarget', [
 				}
 				return result;
 			},
-			
+
 			/**
 			Alias for addEventListener
 
@@ -13228,7 +13228,7 @@ define('moxie/core/EventTarget', [
 			bind: function() {
 				this.addEventListener.apply(this, arguments);
 			},
-			
+
 			/**
 			Alias for removeEventListener
 
@@ -13238,7 +13238,7 @@ define('moxie/core/EventTarget', [
 			unbind: function() {
 				this.removeEventListener.apply(this, arguments);
 			},
-			
+
 			/**
 			Alias for removeAllEventListeners
 
@@ -13248,7 +13248,7 @@ define('moxie/core/EventTarget', [
 			unbindAll: function() {
 				this.removeAllEventListeners.apply(this, arguments);
 			},
-			
+
 			/**
 			Alias for dispatchEvent
 
@@ -13258,7 +13258,7 @@ define('moxie/core/EventTarget', [
 			trigger: function() {
 				return this.dispatchEvent.apply(this, arguments);
 			},
-			
+
 
 			/**
 			Handle properties of on[event] type.
@@ -13280,15 +13280,15 @@ define('moxie/core/EventTarget', [
 				Basic.each(dispatches, function(prop) {
 					prop = 'on' + prop.toLowerCase(prop);
 					if (Basic.typeOf(self[prop]) === 'undefined') {
-						self[prop] = null; 
+						self[prop] = null;
 					}
 				});
 			}
-			
+
 		});
 	}
 
-	EventTarget.instance = new EventTarget(); 
+	EventTarget.instance = new EventTarget();
 
 	return EventTarget;
 });
@@ -13358,10 +13358,10 @@ define('moxie/runtime/Runtime', [
 		@type Object
 		*/
 		caps = Basic.extend({
-			// Runtime can: 
+			// Runtime can:
 			// provide access to raw binary data of the file
 			access_binary: false,
-			// provide access to raw binary data of the image (image extension is optional) 
+			// provide access to raw binary data of the image (image extension is optional)
 			access_image_binary: false,
 			// display binary data as thumbs for example
 			display_media: false,
@@ -13375,7 +13375,7 @@ define('moxie/runtime/Runtime', [
 			resize_image: false,
 			// periodically report how many bytes of total in the file were uploaded (loaded)
 			report_upload_progress: false,
-			// provide access to the headers of http response 
+			// provide access to the headers of http response
 			return_response_headers: false,
 			// support response of specific type, which should be passed as an argument
 			// e.g. runtime.can('return_response_type', 'blob')
@@ -13409,17 +13409,17 @@ define('moxie/runtime/Runtime', [
 			// e.g. runtime.can('use_http_method', 'put')
 			use_http_method: true
 		}, caps);
-			
-	
+
+
 		// default to the mode that is compatible with preferred caps
 		if (options.preferred_caps) {
 			defaultMode = Runtime.getMode(modeCaps, options.preferred_caps, defaultMode);
 		}
 
 		if (MXI_DEBUG && Env.debug.runtime) {
-			Env.log("\tdefault mode: %s", defaultMode);	
+			Env.log("\tdefault mode: %s", defaultMode);
 		}
-		
+
 		// small extension factory here (is meant to be extended with actual extensions constructors)
 		_shim = (function() {
 			var objpool = {};
@@ -13653,7 +13653,7 @@ define('moxie/runtime/Runtime', [
 		// once we got the mode, test against all caps
 		if (this.mode && options.required_caps && !this.can(options.required_caps)) {
 			this.mode = false;
-		}	
+		}
 	}
 
 
@@ -13808,7 +13808,7 @@ define('moxie/runtime/Runtime', [
 	@static
 	@param {Object} modeCaps Set of capabilities that depend on particular runtime mode
 	@param {Object} [requiredCaps] Supplied set of capabilities to find operational mode for
-	@param {String|Boolean} [defaultMode='browser'] Default mode to use 
+	@param {String|Boolean} [defaultMode='browser'] Default mode to use
 	@return {String|Boolean} Compatible operational mode
 	*/
 	Runtime.getMode = function(modeCaps, requiredCaps, defaultMode) {
@@ -13828,22 +13828,22 @@ define('moxie/runtime/Runtime', [
 					if (typeof(capMode) === 'string') {
 						capMode = [capMode];
 					}
-					
+
 					if (!mode) {
-						mode = capMode;						
+						mode = capMode;
 					} else if (!(mode = Basic.arrayIntersect(mode, capMode))) {
 						// if cap requires conflicting mode - runtime cannot fulfill required caps
 
 						if (MXI_DEBUG && Env.debug.runtime) {
-							Env.log("\t\t%c: %v (conflicting mode requested: %s)", cap, value, capMode);	
+							Env.log("\t\t%c: %v (conflicting mode requested: %s)", cap, value, capMode);
 						}
 
 						return (mode = false);
-					}					
+					}
 				}
 
 				if (MXI_DEBUG && Env.debug.runtime) {
-					Env.log("\t\t%c: %v (compatible modes: %s)", cap, value, mode);	
+					Env.log("\t\t%c: %v (compatible modes: %s)", cap, value, mode);
 				}
 			});
 
@@ -13853,7 +13853,7 @@ define('moxie/runtime/Runtime', [
 				return false;
 			}
 		}
-		return defaultMode; 
+		return defaultMode;
 	};
 
 
@@ -13987,7 +13987,7 @@ define('moxie/runtime/RuntimeClient', [
 					/*runtime.bind('Exception', function() { });*/
 
 					if (MXI_DEBUG && Env.debug.runtime) {
-						Env.log("\tselected mode: %s", runtime.mode);	
+						Env.log("\tselected mode: %s", runtime.mode);
 					}
 
 					// check if runtime managed to pick-up operational mode
@@ -14054,7 +14054,7 @@ define('moxie/runtime/RuntimeClient', [
 
 			/**
 			Handy shortcut to safely invoke runtime extension methods.
-			
+
 			@private
 			@method exec
 			@return {Mixed} Whatever runtime extension method returns
@@ -14110,7 +14110,7 @@ define('moxie/file/FileInput', [
 		@param {String} [options.file='file'] Name of the file field (not the filename).
 		@param {Boolean} [options.multiple=false] Enable selection of multiple files.
 		@param {Boolean} [options.directory=false] Turn file input into the folder input (cannot be both at the same time).
-		@param {String|DOMElement} [options.container] DOM Element to use as a container for file-picker. Defaults to parentNode 
+		@param {String|DOMElement} [options.container] DOM Element to use as a container for file-picker. Defaults to parentNode
 		for _browse\_button_.
 		@param {Object|String} [options.required_caps] Set of required capabilities, that chosen runtime must support.
 
@@ -14147,7 +14147,7 @@ define('moxie/file/FileInput', [
 		'ready',
 
 		/**
-		Dispatched right after [ready](#event_ready) event, and whenever [refresh()](#method_refresh) is invoked. 
+		Dispatched right after [ready](#event_ready) event, and whenever [refresh()](#method_refresh) is invoked.
 		Check [corresponding documentation entry](#method_refresh) for more info.
 
 		@event refresh
@@ -14201,7 +14201,7 @@ define('moxie/file/FileInput', [
 
 	function FileInput(options) {
 		if (MXI_DEBUG) {
-			Env.log("Instantiating FileInput...");	
+			Env.log("Instantiating FileInput...");
 		}
 
 		var self = this,
@@ -14230,14 +14230,14 @@ define('moxie/file/FileInput', [
 			required_caps: false,
 			container: browseButton.parentNode || document.body
 		};
-		
+
 		options = Basic.extend({}, defaults, options);
 
 		// convert to object representation
 		if (typeof(options.required_caps) === 'string') {
 			options.required_caps = Runtime.parseCaps(options.required_caps);
 		}
-					
+
 		// normalize accept option (could be list of mime types or array of title/extensions pairs)
 		if (typeof(options.accept) === 'string') {
 			options.accept = Mime.mimes2extList(options.accept);
@@ -14255,9 +14255,9 @@ define('moxie/file/FileInput', [
 		}
 
 		container = browseButton = null; // IE
-						
+
 		RuntimeClient.call(self);
-		
+
 		Basic.extend(self, {
 			/**
 			Unique id of the component
@@ -14269,7 +14269,7 @@ define('moxie/file/FileInput', [
 			@default UID
 			*/
 			uid: Basic.guid('uid_'),
-			
+
 			/**
 			Unique id of the connected runtime, if any.
 
@@ -14287,7 +14287,7 @@ define('moxie/file/FileInput', [
 			@type {String}
 			*/
 			shimid: null,
-			
+
 			/**
 			Array of selected mOxie.File objects
 
@@ -14314,7 +14314,7 @@ define('moxie/file/FileInput', [
 					// re-position and resize shim container
 					self.bind('Refresh', function() {
 						var pos, size, browseButton, shimContainer;
-						
+
 						browseButton = Dom.get(options.browse_button);
 						shimContainer = Dom.get(runtime.shimid); // do not use runtime.getShimContainer(), since it will create container if it doesn't exist
 
@@ -14333,7 +14333,7 @@ define('moxie/file/FileInput', [
 						}
 						shimContainer = browseButton = null;
 					});
-					
+
 					runtime.exec.call(self, 'FileInput', 'init', options);
 				});
 
@@ -14386,7 +14386,7 @@ define('moxie/file/FileInput', [
 					Basic.each(this.files, function(file) {
 						file.destroy();
 					});
-				} 
+				}
 				this.files = null;
 
 				this.unbindAll();
@@ -14427,7 +14427,7 @@ define('moxie/core/utils/Encode', [], function() {
 	var utf8_encode = function(str) {
 		return unescape(encodeURIComponent(str));
 	};
-	
+
 	/**
 	Decode UTF-8 encoded string
 
@@ -14439,7 +14439,7 @@ define('moxie/core/utils/Encode', [], function() {
 	var utf8_decode = function(str_data) {
 		return decodeURIComponent(escape(str_data));
 	};
-	
+
 	/**
 	Decode Base64 encoded string (uses browser's default method if available),
 	from: https://raw.github.com/kvz/phpjs/master/functions/url/base64_decode.js
@@ -14508,7 +14508,7 @@ define('moxie/core/utils/Encode', [], function() {
 
 		return utf8 ? utf8_decode(dec) : dec;
 	};
-	
+
 	/**
 	Base64 encode string (uses browser's default method if available),
 	from: https://raw.github.com/kvz/phpjs/master/functions/url/base64_encode.js
@@ -14598,7 +14598,7 @@ define('moxie/file/Blob', [
 	'moxie/core/utils/Encode',
 	'moxie/runtime/RuntimeClient'
 ], function(Basic, Encode, RuntimeClient) {
-	
+
 	var blobpool = {};
 
 	/**
@@ -14627,7 +14627,7 @@ define('moxie/file/Blob', [
 
 		RuntimeClient.call(this);
 
-		if (ruid) {	
+		if (ruid) {
 			this.connectRuntime(ruid);
 		}
 
@@ -14638,7 +14638,7 @@ define('moxie/file/Blob', [
 		}
 
 		Basic.extend(this, {
-			
+
 			/**
 			Unique id of the component
 
@@ -14646,16 +14646,16 @@ define('moxie/file/Blob', [
 			@type {String}
 			*/
 			uid: blob.uid || Basic.guid('uid_'),
-			
+
 			/**
-			Unique id of the connected runtime, if falsy, then runtime will have to be initialized 
+			Unique id of the connected runtime, if falsy, then runtime will have to be initialized
 			before this Blob can be used, modified or sent
 
 			@property ruid
 			@type {String}
 			*/
 			ruid: ruid,
-	
+
 			/**
 			Size of blob
 
@@ -14664,7 +14664,7 @@ define('moxie/file/Blob', [
 			@default 0
 			*/
 			size: blob.size || 0,
-			
+
 			/**
 			Mime type of blob
 
@@ -14673,12 +14673,12 @@ define('moxie/file/Blob', [
 			@default ''
 			*/
 			type: blob.type || '',
-			
+
 			/**
 			@method slice
 			@param {Number} [start=0]
 			*/
-			slice: function(start, end, type) {		
+			slice: function(start, end, type) {
 				if (this.isDetached()) {
 					return _sliceDetached.apply(this, arguments);
 				}
@@ -14693,12 +14693,12 @@ define('moxie/file/Blob', [
 			*/
 			getSource: function() {
 				if (!blobpool[this.uid]) {
-					return null;	
+					return null;
 				}
 				return blobpool[this.uid];
 			},
 
-			/** 
+			/**
 			Detaches blob from any runtime that it depends on and initialize with standalone value
 
 			@method detach
@@ -14728,7 +14728,7 @@ define('moxie/file/Blob', [
 
 			/**
 			Checks if blob is standalone (detached of any runtime)
-			
+
 			@method isDetached
 			@protected
 			@return {Boolean}
@@ -14736,8 +14736,8 @@ define('moxie/file/Blob', [
 			isDetached: function() {
 				return !this.ruid && Basic.typeOf(blobpool[this.uid]) === 'string';
 			},
-			
-			/** 
+
+			/**
 			Destroy Blob and free any resources it was using
 
 			@method destroy
@@ -14748,14 +14748,14 @@ define('moxie/file/Blob', [
 			}
 		});
 
-		
+
 		if (blob.data) {
 			this.detach(blob.data); // auto-detach if payload has been passed
 		} else {
-			blobpool[this.uid] = blob;	
+			blobpool[this.uid] = blob;
 		}
 	}
-	
+
 	return Blob;
 });
 
@@ -14802,13 +14802,13 @@ define('moxie/file/File', [
 		} else if (this.type) {
 			var prefix = this.type.split('/')[0];
 			name = Basic.guid((prefix !== '' ? prefix : 'file') + '_');
-			
+
 			if (Mime.extensions[this.type]) {
 				name += '.' + Mime.extensions[this.type][0]; // append proper extension if possible
 			}
 		}
-		
-		
+
+
 		Basic.extend(this, {
 			/**
 			File name
@@ -14827,7 +14827,7 @@ define('moxie/file/File', [
 			@default ''
 			*/
 			relativePath: '',
-			
+
 			/**
 			Date of last modification
 
@@ -14868,8 +14868,8 @@ define('moxie/file/FileDrop', [
 	'moxie/core/utils/Mime'
 ], function(I18n, Dom, x, Basic, Env, File, RuntimeClient, EventTarget, Mime) {
 	/**
-	Turn arbitrary DOM element to a drop zone accepting files. Converts selected files to _File_ objects, to be used 
-	in conjunction with _Image_, preloaded in memory with _FileReader_ or uploaded to a server through 
+	Turn arbitrary DOM element to a drop zone accepting files. Converts selected files to _File_ objects, to be used
+	in conjunction with _Image_, preloaded in memory with _FileReader_ or uploaded to a server through
 	_XMLHttpRequest_.
 
 	@example
@@ -14907,7 +14907,7 @@ define('moxie/file/FileDrop', [
 		@event ready
 		@param {Object} event
 		*/
-		'ready', 
+		'ready',
 
 		/**
 		Dispatched when dragging cursor enters the drop zone.
@@ -14923,7 +14923,7 @@ define('moxie/file/FileDrop', [
 		@event dragleave
 		@param {Object} event
 		*/
-		'dragleave', 
+		'dragleave',
 
 		/**
 		Dispatched when file is dropped onto the drop zone.
@@ -14931,7 +14931,7 @@ define('moxie/file/FileDrop', [
 		@event drop
 		@param {Object} event
 		*/
-		'drop', 
+		'drop',
 
 		/**
 		Dispatched if error occurs.
@@ -14944,7 +14944,7 @@ define('moxie/file/FileDrop', [
 
 	function FileDrop(options) {
 		if (MXI_DEBUG) {
-			Env.log("Instantiating FileDrop...");	
+			Env.log("Instantiating FileDrop...");
 		}
 
 		var self = this, defaults;
@@ -14964,7 +14964,7 @@ define('moxie/file/FileDrop', [
 				drag_and_drop: true
 			}
 		};
-		
+
 		options = typeof(options) === 'object' ? Basic.extend({}, defaults, options) : defaults;
 
 		// this will help us to find proper default container
@@ -14974,7 +14974,7 @@ define('moxie/file/FileDrop', [
 		if (Dom.getStyle(options.container, 'position') === 'static') {
 			options.container.style.position = 'relative';
 		}
-					
+
 		// normalize accept option (could be list of mime types or array of title/extensions pairs)
 		if (typeof(options.accept) === 'string') {
 			options.accept = Mime.mimes2extList(options.accept);
@@ -14989,13 +14989,13 @@ define('moxie/file/FileDrop', [
 
 			files: null,
 
-			init: function() {		
+			init: function() {
 				self.bind('RuntimeInit', function(e, runtime) {
 					self.ruid = runtime.uid;
 					runtime.exec.call(self, 'FileDrop', 'init', options);
 					self.dispatchEvent('ready');
 				});
-							
+
 				// runtime needs: options.required_features, options.runtime_order and options.container
 				self.connectRuntime(options); // throws RuntimeError
 			},
@@ -15007,7 +15007,7 @@ define('moxie/file/FileDrop', [
 					this.disconnectRuntime();
 				}
 				this.files = null;
-				
+
 				this.unbindAll();
 			}
 		});
@@ -15051,47 +15051,47 @@ define('moxie/file/FileReader', [
 	*/
 	var dispatches = [
 
-		/** 
+		/**
 		Dispatched when the read starts.
 
 		@event loadstart
 		@param {Object} event
 		*/
-		'loadstart', 
+		'loadstart',
 
-		/** 
+		/**
 		Dispatched while reading (and decoding) blob, and reporting partial Blob data (progess.loaded/progress.total).
 
 		@event progress
 		@param {Object} event
 		*/
-		'progress', 
+		'progress',
 
-		/** 
+		/**
 		Dispatched when the read has successfully completed.
 
 		@event load
 		@param {Object} event
 		*/
-		'load', 
+		'load',
 
-		/** 
+		/**
 		Dispatched when the read has been aborted. For instance, by invoking the abort() method.
 
 		@event abort
 		@param {Object} event
 		*/
-		'abort', 
+		'abort',
 
-		/** 
+		/**
 		Dispatched when the read has failed.
 
 		@event error
 		@param {Object} event
 		*/
-		'error', 
+		'error',
 
-		/** 
+		/**
 		Dispatched when the request has completed (either in success or failure).
 
 		@event loadend
@@ -15099,7 +15099,7 @@ define('moxie/file/FileReader', [
 		*/
 		'loadend'
 	];
-	
+
 	function FileReader() {
 
 		RuntimeClient.call(this);
@@ -15122,7 +15122,7 @@ define('moxie/file/FileReader', [
 			@default FileReader.EMPTY
 			*/
 			readyState: FileReader.EMPTY,
-			
+
 			/**
 			Result of the successful read operation.
 
@@ -15130,7 +15130,7 @@ define('moxie/file/FileReader', [
 			@type {String}
 			*/
 			result: null,
-			
+
 			/**
 			Stores the error of failed asynchronous read operation.
 
@@ -15138,7 +15138,7 @@ define('moxie/file/FileReader', [
 			@type {DOMError}
 			*/
 			error: null,
-			
+
 			/**
 			Initiates reading of File/Blob object contents to binary string.
 
@@ -15148,7 +15148,7 @@ define('moxie/file/FileReader', [
 			readAsBinaryString: function(blob) {
 				_read.call(this, 'readAsBinaryString', blob);
 			},
-			
+
 			/**
 			Initiates reading of File/Blob object contents to dataURL string.
 
@@ -15158,7 +15158,7 @@ define('moxie/file/FileReader', [
 			readAsDataURL: function(blob) {
 				_read.call(this, 'readAsDataURL', blob);
 			},
-			
+
 			/**
 			Initiates reading of File/Blob object contents to string.
 
@@ -15168,7 +15168,7 @@ define('moxie/file/FileReader', [
 			readAsText: function(blob) {
 				_read.call(this, 'readAsText', blob);
 			},
-			
+
 			/**
 			Aborts preloading process.
 
@@ -15176,7 +15176,7 @@ define('moxie/file/FileReader', [
 			*/
 			abort: function() {
 				this.result = null;
-				
+
 				if (Basic.inArray(this.readyState, [FileReader.EMPTY, FileReader.DONE]) !== -1) {
 					return;
 				} else if (this.readyState === FileReader.LOADING) {
@@ -15184,7 +15184,7 @@ define('moxie/file/FileReader', [
 				}
 
 				this.exec('FileReader', 'abort');
-				
+
 				this.trigger('abort');
 				this.trigger('loadend');
 			},
@@ -15209,14 +15209,14 @@ define('moxie/file/FileReader', [
 			this.readyState = FileReader.DONE;
 			this.error = err;
 		}, 999);
-		
+
 		this.bind('Load', function(e) {
 			this.readyState = FileReader.DONE;
 		}, 999);
 
-		
+
 		function _read(op, blob) {
-			var self = this;			
+			var self = this;
 
 			this.trigger('loadstart');
 
@@ -15235,7 +15235,7 @@ define('moxie/file/FileReader', [
 
 			this.result = null;
 			this.readyState = FileReader.LOADING;
-			
+
 			if (blob.isDetached()) {
 				var src = blob.getSource();
 				switch (op) {
@@ -15256,7 +15256,7 @@ define('moxie/file/FileReader', [
 			}
 		}
 	}
-	
+
 	/**
 	Initial FileReader state
 
@@ -15329,7 +15329,7 @@ define('moxie/core/utils/Url', [], function() {
 		, regex = /^(?:([^:\/?#]+):)?(?:\/\/()(?:(?:()(?:([^:@\/]*):?([^:@\/]*))?@)?([^:\/?#]*)(?::(\d*))?))?()(?:(()(?:(?:[^?#\/]*\/)*)()(?:[^?#]*))(?:\\?([^#]*))?(?:#(.*))?)/
 		, m = regex.exec(url || '')
 		;
-					
+
 		while (i--) {
 			if (m[i]) {
 				uri[key[i]] = m[i];
@@ -15364,8 +15364,8 @@ define('moxie/core/utils/Url', [], function() {
 
 		if (!uri.port) {
 			uri.port = ports[uri.scheme] || 80;
-		} 
-		
+		}
+
 		uri.port = parseInt(uri.port, 10);
 
 		if (!uri.path) {
@@ -15407,11 +15407,11 @@ define('moxie/core/utils/Url', [], function() {
 		function origin(url) {
 			return [url.scheme, url.host, url.port].join('/');
 		}
-			
+
 		if (typeof url === 'string') {
 			url = parseUrl(url);
-		}	
-		
+		}
+
 		return origin(parseUrl()) === origin(url);
 	};
 
@@ -15450,7 +15450,7 @@ define('moxie/runtime/RuntimeTarget', [
 	*/
 	function RuntimeTarget() {
 		this.uid = Basic.guid('uid_');
-		
+
 		RuntimeClient.call(this);
 
 		this.destroy = function() {
@@ -15499,15 +15499,15 @@ define('moxie/file/FileReaderSync', [
 			readAsBinaryString: function(blob) {
 				return _read.call(this, 'readAsBinaryString', blob);
 			},
-			
+
 			readAsDataURL: function(blob) {
 				return _read.call(this, 'readAsDataURL', blob);
 			},
-			
+
 			/*readAsArrayBuffer: function(blob) {
 				return _read.call(this, 'readAsArrayBuffer', blob);
 			},*/
-			
+
 			readAsText: function(blob) {
 				return _read.call(this, 'readAsText', blob);
 			}
@@ -15744,7 +15744,7 @@ define("moxie/xhr/XMLHttpRequest", [
 	function XMLHttpRequestUpload() {
 		this.uid = Basic.guid('uid_');
 	}
-	
+
 	XMLHttpRequestUpload.prototype = EventTarget.instance;
 
 	/**
@@ -15771,10 +15771,10 @@ define("moxie/xhr/XMLHttpRequest", [
 		'loadend'
 
 		// readystatechange (for historical reasons)
-	]; 
-	
+	];
+
 	var NATIVE = 1, RUNTIME = 2;
-					
+
 	function XMLHttpRequest() {
 		var self = this,
 			// this (together with _p() @see below) is here to gracefully upgrade to setter/getter syntax where possible
@@ -15840,7 +15840,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				/**
 				Returns the response type. Can be set to change the response type. Values are:
 				the empty string (default), "arraybuffer", "blob", "document", "json", and "text".
-				
+
 				@property responseType
 				@type String
 				*/
@@ -15848,7 +15848,7 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				/**
 				Returns the document response entity body.
-				
+
 				Throws an "InvalidStateError" exception if responseType is not the empty string or "document".
 
 				@property responseXML
@@ -15858,7 +15858,7 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				/**
 				Returns the text response entity body.
-				
+
 				Throws an "InvalidStateError" exception if responseType is not the empty string or "text".
 
 				@property responseText
@@ -15869,7 +15869,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				/**
 				Returns the response entity body (http://www.w3.org/TR/XMLHttpRequest/#response-entity-body).
 				Can become: ArrayBuffer, Blob, Document, JSON, Text
-				
+
 				@property response
 				@type Mixed
 				*/
@@ -15906,7 +15906,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			_responseHeadersBag
 			;
 
-		
+
 		Basic.extend(this, props, {
 			/**
 			Unique id of the component
@@ -15915,7 +15915,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@type String
 			*/
 			uid: Basic.guid('uid_'),
-			
+
 			/**
 			Target for Upload events
 
@@ -15923,7 +15923,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@type XMLHttpRequestUpload
 			*/
 			upload: new XMLHttpRequestUpload(),
-			
+
 
 			/**
 			Sets the request method, request URL, synchronous flag, request username, and request password.
@@ -15951,12 +15951,12 @@ define("moxie/xhr/XMLHttpRequest", [
 			*/
 			open: function(method, url, async, user, password) {
 				var urlp;
-				
+
 				// first two arguments are required
 				if (!method || !url) {
 					throw new x.DOMException(x.DOMException.SYNTAX_ERR);
 				}
-				
+
 				// 2 - check if any code point in method is higher than U+00FF or after deflating method it does not match the method
 				if (/[\u0100-\uffff]/.test(method) || Encode.utf8_encode(method) !== method) {
 					throw new x.DOMException(x.DOMException.SYNTAX_ERR);
@@ -15966,8 +15966,8 @@ define("moxie/xhr/XMLHttpRequest", [
 				if (!!~Basic.inArray(method.toUpperCase(), ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'TRACE', 'TRACK'])) {
 					_method = method.toUpperCase();
 				}
-				
-				
+
+
 				// 4 - allowing these methods poses a security risk
 				if (!!~Basic.inArray(_method, ['CONNECT', 'TRACE', 'TRACK'])) {
 					throw new x.DOMException(x.DOMException.SECURITY_ERR);
@@ -15975,15 +15975,15 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				// 5
 				url = Encode.utf8_encode(url);
-				
+
 				// 6 - Resolve url relative to the XMLHttpRequest base URL. If the algorithm returns an error, throw a "SyntaxError".
 				urlp = Url.parseUrl(url);
 
 				_same_origin_flag = Url.hasSameOrigin(urlp);
-																
+
 				// 7 - manually build up absolute url
 				_url = Url.resolveUrl(url);
-		
+
 				// 9-10, 12-13
 				if ((user || password) && !_same_origin_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_ACCESS_ERR);
@@ -15991,16 +15991,16 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				_user = user || urlp.user;
 				_password = password || urlp.pass;
-				
+
 				// 11
 				_async = async || true;
-				
+
 				if (_async === false && (_p('timeout') || _p('withCredentials') || _p('responseType') !== "")) {
 					throw new x.DOMException(x.DOMException.INVALID_ACCESS_ERR);
 				}
-				
+
 				// 14 - terminate abort()
-				
+
 				// 15 - terminate send()
 
 				// 18
@@ -16011,11 +16011,11 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				// 19
 				_p('readyState', XMLHttpRequest.OPENED);
-				
+
 				// 20
 				this.dispatchEvent('readystatechange');
 			},
-			
+
 			/**
 			Appends an header to the list of author request headers, or if header is already
 			in the list of author request headers, combines its value with value.
@@ -16023,7 +16023,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			Throws an "InvalidStateError" exception if the state is not OPENED or if the send() flag is set.
 			Throws a "SyntaxError" exception if header is not a valid HTTP header field name or if value
 			is not a valid HTTP header field value.
-			
+
 			@method setRequestHeader
 			@param {String} header
 			@param {String|Number} value
@@ -16052,7 +16052,7 @@ define("moxie/xhr/XMLHttpRequest", [
 						"user-agent",
 						"via"
 					];
-				
+
 				// 1-2
 				if (_p('readyState') !== XMLHttpRequest.OPENED || _send_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
@@ -16070,7 +16070,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				}*/
 
 				header = Basic.trim(header).toLowerCase();
-				
+
 				// setting of proxy-* and sec-* headers is prohibited by spec
 				if (!!~Basic.inArray(header, uaHeaders) || /^(proxy\-|sec\-)/.test(header)) {
 					return false;
@@ -16079,7 +16079,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				// camelize
 				// browsers lowercase header names (at least for custom ones)
 				// header = header.replace(/\b\w/g, function($1) { return $1.toUpperCase(); });
-				
+
 				if (!_headers[header]) {
 					_headers[header] = value;
 				} else {
@@ -16100,7 +16100,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			},
 
 			/**
-			Returns the header field value from the response of which the field name matches header, 
+			Returns the header field value from the response of which the field name matches header,
 			unless the field name is Set-Cookie or Set-Cookie2.
 
 			@method getResponseHeader
@@ -16135,7 +16135,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				}
 				return null;
 			},
-			
+
 			/**
 			Sets the Content-Type header for the response to mime.
 			Throws an "InvalidStateError" exception if the state is LOADING or DONE.
@@ -16146,7 +16146,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			*/
 			overrideMimeType: function(mime) {
 				var matches, charset;
-			
+
 				// 1
 				if (!!~Basic.inArray(_p('readyState'), [XMLHttpRequest.LOADING, XMLHttpRequest.DONE])) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
@@ -16170,7 +16170,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				_finalMime = mime;
 				_finalCharset = charset;
 			},
-			
+
 			/**
 			Initiates the request. The optional argument provides the request entity body.
 			The argument is ignored if request method is GET or HEAD.
@@ -16181,7 +16181,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@param {Blob|Document|String|FormData} [data] Request entity body
 			@param {Object} [options] Set of requirements and pre-requisities for runtime initialization
 			*/
-			send: function(data, options) {					
+			send: function(data, options) {
 				if (Basic.typeOf(options) === 'string') {
 					_options = { ruid: options };
 				} else if (!options) {
@@ -16189,19 +16189,19 @@ define("moxie/xhr/XMLHttpRequest", [
 				} else {
 					_options = options;
 				}
-															
+
 				// 1-2
 				if (this.readyState !== XMLHttpRequest.OPENED || _send_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
 				}
-				
-				// 3					
+
+				// 3
 				// sending Blob
 				if (data instanceof Blob) {
 					_options.ruid = data.ruid;
 					_mimeType = data.type || 'application/octet-stream';
 				}
-				
+
 				// FormData
 				else if (data instanceof FormData) {
 					if (data.hasBlob()) {
@@ -16210,12 +16210,12 @@ define("moxie/xhr/XMLHttpRequest", [
 						_mimeType = blob.type || 'application/octet-stream';
 					}
 				}
-				
+
 				// DOMString
 				else if (typeof data === 'string') {
 					_encoding = 'UTF-8';
 					_mimeType = 'text/plain;charset=UTF-8';
-					
+
 					// data should be converted to Unicode and encoded as UTF-8
 					data = Encode.utf8_encode(data);
 				}
@@ -16246,10 +16246,10 @@ define("moxie/xhr/XMLHttpRequest", [
 				// 8.5 - Return the send() method call, but continue running the steps in this algorithm.
 				_doXHR.call(this, data);
 			},
-			
+
 			/**
 			Cancels any network activity.
-			
+
 			@method abort
 			*/
 			abort: function() {
@@ -16456,18 +16456,18 @@ define("moxie/xhr/XMLHttpRequest", [
 				}
 			}
 		}
-		
+
 		/*
 		function _toASCII(str, AllowUnassigned, UseSTD3ASCIIRules) {
 			// TODO: http://tools.ietf.org/html/rfc3490#section-4.1
 			return str.toLowerCase();
 		}
 		*/
-		
-		
+
+
 		function _doXHR(data) {
 			var self = this;
-			
+
 			_start_time = new Date().getTime();
 
 			_xhr = new RuntimeTarget();
@@ -16487,12 +16487,12 @@ define("moxie/xhr/XMLHttpRequest", [
 					self.dispatchEvent('readystatechange');
 
 					self.dispatchEvent(e);
-					
+
 					if (_upload_events_flag) {
 						self.upload.dispatchEvent(e);
 					}
 				});
-				
+
 				_xhr.bind('Progress', function(e) {
 					if (_p('readyState') !== XMLHttpRequest.LOADING) {
 						_p('readyState', XMLHttpRequest.LOADING); // LoadStart unreliable (in Flash for example)
@@ -16500,7 +16500,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					}
 					self.dispatchEvent(e);
 				});
-				
+
 				_xhr.bind('UploadProgress', function(e) {
 					if (_upload_events_flag) {
 						self.upload.dispatchEvent({
@@ -16511,12 +16511,12 @@ define("moxie/xhr/XMLHttpRequest", [
 						});
 					}
 				});
-				
+
 				_xhr.bind('Load', function(e) {
 					_p('readyState', XMLHttpRequest.DONE);
 					_p('status', Number(runtime.exec.call(_xhr, 'XMLHttpRequest', 'getStatus') || 0));
 					_p('statusText', httpCode[_p('status')] || "");
-					
+
 					_p('response', runtime.exec.call(_xhr, 'XMLHttpRequest', 'getResponse', _p('responseType')));
 
 					if (!!~Basic.inArray(_p('responseType'), ['text', ''])) {
@@ -16528,7 +16528,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					_responseHeaders = runtime.exec.call(_xhr, 'XMLHttpRequest', 'getAllResponseHeaders');
 
 					self.dispatchEvent('readystatechange');
-					
+
 					if (_p('status') > 0) { // status 0 usually means that server is unreachable
 						if (_upload_events_flag) {
 							self.upload.dispatchEvent(e);
@@ -16545,7 +16545,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					self.dispatchEvent(e);
 					loadEnd();
 				});
-				
+
 				_xhr.bind('Error', function(e) {
 					_error_flag = true;
 					_p('readyState', XMLHttpRequest.DONE);
@@ -16590,7 +16590,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			if (!_same_origin_flag) {
 				_options.required_caps.do_cors = true;
 			}
-			
+
 
 			if (_options.ruid) { // we do not need to wait if we can connect directly
 				exec(_xhr.connectRuntime(_options));
@@ -16604,8 +16604,8 @@ define("moxie/xhr/XMLHttpRequest", [
 				_xhr.connectRuntime(_options);
 			}
 		}
-	
-		
+
+
 		function _reset() {
 			_p('responseText', "");
 			_p('responseXML', null);
@@ -16621,7 +16621,7 @@ define("moxie/xhr/XMLHttpRequest", [
 	XMLHttpRequest.HEADERS_RECEIVED = 2;
 	XMLHttpRequest.LOADING = 3;
 	XMLHttpRequest.DONE = 4;
-	
+
 	XMLHttpRequest.prototype = EventTarget.instance;
 
 	return XMLHttpRequest;
@@ -16813,7 +16813,7 @@ define("moxie/image/Image", [
 
 		/**
 		Dispatched when resize operation is complete.
-		
+
 		@event resize
 		@param {Object} event
 		*/
@@ -16916,15 +16916,15 @@ define("moxie/image/Image", [
 			},
 
 			/**
-			Loads image from various sources. Currently the source for new image can be: mOxie.Image, mOxie.Blob/mOxie.File, 
-			native Blob/File, dataUrl or URL. Depending on the type of the source, arguments - differ. When source is URL, 
+			Loads image from various sources. Currently the source for new image can be: mOxie.Image, mOxie.Blob/mOxie.File,
+			native Blob/File, dataUrl or URL. Depending on the type of the source, arguments - differ. When source is URL,
 			Image will be downloaded from remote destination and loaded in memory.
 
 			@example
 				var img = new mOxie.Image();
 				img.onload = function() {
 					var blob = img.getAsBlob();
-					
+
 					var formData = new mOxie.FormData();
 					formData.append('file', blob);
 
@@ -16936,7 +16936,7 @@ define("moxie/image/Image", [
 					xhr.send(formData);
 				};
 				img.load("http://www.moxiecode.com/images/mox-logo.jpg"); // notice file extension (.jpg)
-			
+
 
 			@method load
 			@param {Image|Blob|File|String} src Source for the image
@@ -16999,7 +16999,7 @@ define("moxie/image/Image", [
 
 			/**
 			Alias for downsize(width, height, true). (see downsize)
-			
+
 			@method crop
 			@param {Number} width Resulting width
 			@param {Number} [height=width] Resulting height (optional, if not supplied will default to width)
@@ -17065,8 +17065,8 @@ define("moxie/image/Image", [
 			},
 
 			/**
-			Embeds a visual representation of the image into the specified node. Depending on the runtime, 
-			it might be a canvas, an img node or a thrid party shim object (Flash or SilverLight - very rare, 
+			Embeds a visual representation of the image into the specified node. Depending on the runtime,
+			it might be a canvas, an img node or a thrid party shim object (Flash or SilverLight - very rare,
 			can be used in legacy browsers that do not have canvas or proper dataURI support).
 
 			@method embed
@@ -17089,7 +17089,7 @@ define("moxie/image/Image", [
 					type: this.type || 'image/jpeg',
 					quality: 90
 				}, opts || {});
-				
+
 
 				function render(type, quality) {
 					var img = this;
@@ -17165,7 +17165,7 @@ define("moxie/image/Image", [
 					if (!this.size) { // only preloaded image objects can be used as source
 						throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
 					}
-					
+
 					// high-resolution images cannot be consistently handled across the runtimes
 					if (this.width > Image.MAX_RESIZE_WIDTH || this.height > Image.MAX_RESIZE_HEIGHT) {
 						//throw new x.ImageError(x.ImageError.MAX_RESOLUTION_ERR);
@@ -17234,7 +17234,7 @@ define("moxie/image/Image", [
 				this.name = info.name;
 			}
 		}
-		
+
 
 		function _load(src) {
 			var srcType = Basic.typeOf(src);
@@ -17356,7 +17356,7 @@ define("moxie/image/Image", [
 
 	// virtual world will crash on you if image has a resolution higher than this:
 	Image.MAX_RESIZE_WIDTH = 8192;
-	Image.MAX_RESIZE_HEIGHT = 8192; 
+	Image.MAX_RESIZE_HEIGHT = 8192;
 
 	Image.prototype = EventTarget.instance;
 
@@ -17389,9 +17389,9 @@ define("moxie/runtime/html5/Runtime", [
 	"moxie/runtime/Runtime",
 	"moxie/core/utils/Env"
 ], function(Basic, x, Runtime, Env) {
-	
+
 	var type = "html5", extensions = {};
-	
+
 	function Html5Runtime(options) {
 		var I = this
 		, Test = Runtime.capTest
@@ -17409,13 +17409,13 @@ define("moxie/runtime/html5/Runtime", [
 					// this comes directly from Modernizr: http://www.modernizr.com/
 					var div = document.createElement('div');
 					// IE has support for drag and drop since version 5, but doesn't support dropping files from desktop
-					return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 
+					return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) &&
 						(Env.browser !== 'IE' || Env.verComp(Env.version, 9, '>'));
 				}()),
 				filter_by_extension: Test(function() { // if you know how to feature-detect this, please suggest
 					return !(
-						(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) || 
-						(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) || 
+						(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) ||
+						(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) ||
 						(Env.browser === 'Safari' && Env.verComp(Env.version, 7, '<')) ||
 						(Env.browser === 'Firefox' && Env.verComp(Env.version, 37, '<'))
 					);
@@ -17424,7 +17424,7 @@ define("moxie/runtime/html5/Runtime", [
 				return_response_type: function(responseType) {
 					if (responseType === 'json' && !!window.JSON) { // we can fake this one even if it's not supported
 						return true;
-					} 
+					}
 					return Env.can('return_response_type', responseType);
 				},
 				return_status_code: True,
@@ -17462,7 +17462,7 @@ define("moxie/runtime/html5/Runtime", [
 					);
 				},
 				upload_filesize: True
-			}, 
+			},
 			arguments[2]
 		);
 
@@ -17507,7 +17507,7 @@ define('moxie/core/utils/Events', [
 	'moxie/core/utils/Basic'
 ], function(Basic) {
 	var eventhash = {}, uid = 'moxie_' + Basic.guid();
-	
+
 	// IE W3C like event funcs
 	function preventDefault() {
 		this.returnValue = false;
@@ -17520,7 +17520,7 @@ define('moxie/core/utils/Events', [
 	/**
 	Adds an event handler to the specified object and store reference to the handler
 	in objects internal Plupload registry (@see removeEvent).
-	
+
 	@method addEvent
 	@for Utils
 	@static
@@ -17531,13 +17531,13 @@ define('moxie/core/utils/Events', [
 	*/
 	var addEvent = function(obj, name, callback, key) {
 		var func, events;
-					
+
 		name = name.toLowerCase();
 
 		// Add event listener
 		if (obj.addEventListener) {
 			func = callback;
-			
+
 			obj.addEventListener(name, func, false);
 		} else if (obj.attachEvent) {
 			func = function() {
@@ -17555,34 +17555,34 @@ define('moxie/core/utils/Events', [
 
 			obj.attachEvent('on' + name, func);
 		}
-		
+
 		// Log event handler to objects internal mOxie registry
 		if (!obj[uid]) {
 			obj[uid] = Basic.guid();
 		}
-		
+
 		if (!eventhash.hasOwnProperty(obj[uid])) {
 			eventhash[obj[uid]] = {};
 		}
-		
+
 		events = eventhash[obj[uid]];
-		
+
 		if (!events.hasOwnProperty(name)) {
 			events[name] = [];
 		}
-				
+
 		events[name].push({
 			func: func,
 			orig: callback, // store original callback for IE
 			key: key
 		});
 	};
-	
-	
+
+
 	/**
 	Remove event handler from the specified object. If third argument (callback)
 	is not specified remove all events with the specified name.
-	
+
 	@method removeEvent
 	@static
 	@param {Object} obj DOM element to remove event listener(s) from.
@@ -17591,15 +17591,15 @@ define('moxie/core/utils/Events', [
 	*/
 	var removeEvent = function(obj, name, callback) {
 		var type, undef;
-		
+
 		name = name.toLowerCase();
-		
+
 		if (obj[uid] && eventhash[obj[uid]] && eventhash[obj[uid]][name]) {
 			type = eventhash[obj[uid]][name];
 		} else {
 			return;
 		}
-			
+
 		for (var i = type.length - 1; i >= 0; i--) {
 			// undefined or not, key should match
 			if (type[i].orig === callback || type[i].key === callback) {
@@ -17608,27 +17608,27 @@ define('moxie/core/utils/Events', [
 				} else if (obj.detachEvent) {
 					obj.detachEvent('on'+name, type[i].func);
 				}
-				
+
 				type[i].orig = null;
 				type[i].func = null;
 				type.splice(i, 1);
-				
+
 				// If callback was passed we are done here, otherwise proceed
 				if (callback !== undef) {
 					break;
 				}
 			}
 		}
-		
+
 		// If event array got empty, remove it
 		if (!type.length) {
 			delete eventhash[obj[uid]][name];
 		}
-		
+
 		// If mOxie registry has become empty, remove it
 		if (Basic.isEmptyObj(eventhash[obj[uid]])) {
 			delete eventhash[obj[uid]];
-			
+
 			// IE doesn't let you remove DOM object property with - delete
 			try {
 				delete obj[uid];
@@ -17637,21 +17637,21 @@ define('moxie/core/utils/Events', [
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	Remove all kind of events from the specified object
-	
+
 	@method removeAllEvents
 	@static
 	@param {Object} obj DOM element to remove event listeners from.
 	@param {String} [key] unique key to match, when removing events.
 	*/
-	var removeAllEvents = function(obj, key) {		
+	var removeAllEvents = function(obj, key) {
 		if (!obj || !obj[uid]) {
 			return;
 		}
-		
+
 		Basic.each(eventhash[obj[uid]], function(events, name) {
 			removeEvent(obj, name, key);
 		});
@@ -17689,7 +17689,7 @@ define("moxie/runtime/html5/file/FileInput", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, File, Basic, Dom, Events, Mime, Env) {
-	
+
 	function FileInput() {
 		var _options;
 
@@ -17705,7 +17705,7 @@ define("moxie/runtime/html5/file/FileInput", [
 				shimContainer = I.getShimContainer();
 
 				shimContainer.innerHTML = '<input id="' + I.uid +'" type="file" style="font-size:999px;opacity:0;"' +
-					(_options.multiple && I.can('select_multiple') ? 'multiple' : '') + 
+					(_options.multiple && I.can('select_multiple') ? 'multiple' : '') +
 					(_options.directory && I.can('select_folder') ? 'webkitdirectory directory' : '') + // Chrome 11+
 					(mimes ? ' accept="' + mimes.join(',') + '"' : '') + ' />';
 
@@ -17781,7 +17781,7 @@ define("moxie/runtime/html5/file/FileInput", [
 						if (file.webkitRelativePath) {
 							relativePath = '/' + file.webkitRelativePath.replace(/^\//, '');
 						}
-						
+
 						file = new File(I.uid, file);
 						file.relativePath = relativePath;
 
@@ -17826,11 +17826,11 @@ define("moxie/runtime/html5/file/FileInput", [
 				, shim = I.getShim()
 				, shimContainer = I.getShimContainer()
 				;
-				
+
 				Events.removeAllEvents(shimContainer, this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.container), this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.browse_button), this.uid);
-				
+
 				if (shimContainer) {
 					shimContainer.innerHTML = '';
 				}
@@ -17918,7 +17918,7 @@ define("moxie/runtime/html5/file/FileDrop", [
 	"moxie/core/utils/Events",
 	"moxie/core/utils/Mime"
 ], function(extensions, File, Basic, Dom, Events, Mime) {
-	
+
 	function FileDrop() {
 		var _files = [], _allowedExts = [], _options, _ruid;
 
@@ -18000,7 +18000,7 @@ define("moxie/runtime/html5/file/FileDrop", [
 			}
 		}
 
-		
+
 		function _extractExts(accept) {
 			var exts = [];
 			for (var i = 0; i < accept.length; i++) {
@@ -18090,7 +18090,7 @@ define("moxie/runtime/html5/file/FileDrop", [
 			// ...and you thought FileReader was crazy...
 			getEntries(function() {
 				_readEntries(entries, cb);
-			}); 
+			});
 		}
 	}
 
@@ -18118,7 +18118,7 @@ define("moxie/runtime/html5/file/FileReader", [
 	"moxie/core/utils/Encode",
 	"moxie/core/utils/Basic"
 ], function(extensions, Encode, Basic) {
-	
+
 	function FileReader() {
 		var _fr, _convertToBinary = false;
 
@@ -18206,7 +18206,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 	"moxie/core/Exceptions",
 	"moxie/core/utils/Env"
 ], function(extensions, Basic, Mime, Url, File, Blob, FormData, x, Env) {
-	
+
 	function XMLHttpRequest() {
 		var self = this
 		, _xhr
@@ -18245,7 +18245,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 							// Android browsers (default one and Dolphin) seem to have the same issue, see: #613
 							_preloadAndSend.call(target, meta, data);
 							return; // _preloadAndSend will reinvoke send() with transmutated FormData =%D
-						}	
+						}
 					}
 
 					// transfer fields to real FormData
@@ -18292,22 +18292,22 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 				// ... otherwise simulate XHR L2
 				} else {
 					_xhr.onreadystatechange = function onReadyStateChange() {
-						
+
 						// fake Level 2 events
 						switch (_xhr.readyState) {
-							
+
 							case 1: // XMLHttpRequest.OPENED
 								// readystatechanged is fired twice for OPENED state (in IE and Mozilla) - neu
 								break;
-							
+
 							// looks like HEADERS_RECEIVED (state 2) is not reported in Opera (or it's old versions) - neu
 							case 2: // XMLHttpRequest.HEADERS_RECEIVED
 								break;
-								
-							case 3: // XMLHttpRequest.LOADING 
+
+							case 3: // XMLHttpRequest.LOADING
 								// try to fire progress event for not XHR L2
 								var total, loaded;
-								
+
 								try {
 									if (Url.hasSameOrigin(meta.url)) { // Content-Length not accessible for cross-domain on some browsers
 										total = _xhr.getResponseHeader('Content-Length') || 0; // old Safari throws an exception here
@@ -18327,7 +18327,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 									loaded: loaded
 								});
 								break;
-								
+
 							case 4: // XMLHttpRequest.DONE
 								// release readystatechange handler (mostly for IE)
 								_xhr.onreadystatechange = function() {};
@@ -18337,12 +18337,12 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 									target.trigger('error');
 								} else {
 									target.trigger('load');
-								}							
+								}
 								break;
 						}
 					};
 				}
-				
+
 
 				// set request headers
 				if (!Basic.isEmptyObj(meta.headers)) {
@@ -18398,8 +18398,8 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 					switch (responseType) {
 						case 'blob':
 							var file = new File(I.uid, _xhr.response);
-							
-							// try to extract file name from content-disposition if possible (might be - not, if CORS for example)	
+
+							// try to extract file name from content-disposition if possible (might be - not, if CORS for example)
 							var disposition = _xhr.getResponseHeader('Content-Disposition');
 							if (disposition) {
 								// extract filename from response header if available
@@ -18430,7 +18430,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 					}
 				} catch(ex) {
 					return null;
-				}				
+				}
 			},
 
 			getAllResponseHeaders: function() {
@@ -18455,10 +18455,10 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 		// here we go... ugly fix for ugly bug
 		function _preloadAndSend(meta, data) {
 			var target = this, blob, fr;
-				
+
 			// get original blob
 			blob = data.getBlob().getSource();
-			
+
 			// preload blob in memory to be sent as binary string
 			fr = new window.FileReader();
 			fr.onload = function() {
@@ -18473,7 +18473,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 			fr.readAsBinaryString(blob);
 		}
 
-		
+
 		function _getNativeXHR() {
 			if (window.XMLHttpRequest && !(Env.browser === 'IE' && Env.verComp(Env.version, 8, '<'))) { // IE7 has native XHR but it's buggy
 				return new window.XMLHttpRequest();
@@ -18488,12 +18488,12 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 				})();
 			}
 		}
-		
+
 		// @credits Sergey Ilinsky	(http://www.ilinsky.com/)
 		function _getDocument(xhr) {
 			var rXML = xhr.responseXML;
 			var rText = xhr.responseText;
-			
+
 			// Try parsing responseText (@see: http://www.ilinsky.com/articles/XMLHttpRequest/#bugs-ie-responseXML-content-type)
 			if (Env.browser === 'IE' && rText && rXML && !rXML.documentElement && /[^\/]+\/[^\+]+\+xml/.test(xhr.getResponseHeader("Content-Type"))) {
 				rXML = new window.ActiveXObject("Microsoft.XMLDOM");
@@ -18501,7 +18501,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 				rXML.validateOnParse = false;
 				rXML.loadXML(rText);
 			}
-	
+
 			// Check if there is no error in document
 			if (rXML) {
 				if ((Env.browser === 'IE' && rXML.parseError !== 0) || !rXML.documentElement || rXML.documentElement.tagName === "parsererror") {
@@ -18528,7 +18528,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 
 			// append multipart parameters
 			fd.each(function(value, name) {
-				// Firefox 3.6 failed to convert multibyte characters to UTF-8 in sendAsBinary(), 
+				// Firefox 3.6 failed to convert multibyte characters to UTF-8 in sendAsBinary(),
 				// so we try it here ourselves with: unescape(encodeURIComponent(value))
 				if (value instanceof Blob) {
 					// Build RFC2388 blob
@@ -18572,7 +18572,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 	"moxie/core/utils/Basic"
 ], function(Basic) {
 
-	
+
 	function BinaryReader(data) {
 		if (data instanceof ArrayBuffer) {
 			ArrayBufferReader.apply(this, arguments);
@@ -18583,7 +18583,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 	 
 
 	Basic.extend(BinaryReader.prototype, {
-		
+
 		littleEndian: false,
 
 
@@ -18593,9 +18593,9 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 			if (idx + size > this.length()) {
 				throw new Error("You are trying to read outside the source boundaries.");
 			}
-			
-			mv = this.littleEndian 
-				? 0 
+
+			mv = this.littleEndian
+				? 0
 				: -8 * (size - 1)
 			;
 
@@ -18613,8 +18613,8 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 				throw new Error("You are trying to write outside the source boundaries.");
 			}
 
-			mv = this.littleEndian 
-				? 0 
+			mv = this.littleEndian
+				? 0
 				: -8 * (size - 1)
 			;
 
@@ -18670,7 +18670,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 		var _dv = new DataView(data);
 
 		Basic.extend(this, {
-			
+
 			readByteAt: function(idx) {
 				return _dv.getUint8(idx);
 			},
@@ -18679,7 +18679,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 			writeByteAt: function(idx, value) {
 				_dv.setUint8(idx, value);
 			},
-			
+
 
 			SEGMENT: function(idx, size, value) {
 				switch (arguments.length) {
@@ -18694,7 +18694,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 							value = new ArrayBuffer();
 						}
 
-						if (value instanceof ArrayBuffer) {					
+						if (value instanceof ArrayBuffer) {
 							var arr = new Uint8Array(this.length() - size + value.byteLength);
 							if (idx > 0) {
 								arr.set(new Uint8Array(data.slice(0, idx)), 0);
@@ -18727,7 +18727,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 
 	function UTF16StringReader(data) {
 		Basic.extend(this, {
-			
+
 			readByteAt: function(idx) {
 				return data.charCodeAt(idx);
 			},
@@ -18754,7 +18754,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 
 			length: function() {
 				return data ? data.length : 0;
-			}, 
+			},
 
 			clear: function() {
 				data = null;
@@ -18783,7 +18783,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  */
- 
+
 /**
 @class moxie/runtime/html5/image/JPEGHeaders
 @private
@@ -18792,7 +18792,7 @@ define("moxie/runtime/html5/image/JPEGHeaders", [
 	"moxie/runtime/html5/utils/BinaryReader",
 	"moxie/core/Exceptions"
 ], function(BinaryReader, x) {
-	
+
 	return function JPEGHeaders(data) {
 		var headers = [], _br, idx, marker, length = 0;
 
@@ -18871,7 +18871,7 @@ define("moxie/runtime/html5/image/JPEGHeaders", [
 				while (i--) {
 					br.SEGMENT(headers[i].start, headers[i].length, '');
 				}
-				
+
 				data = br.SEGMENT();
 				br.clear();
 				return data;
@@ -18937,10 +18937,10 @@ define("moxie/runtime/html5/image/ExifParser", [
 	"moxie/runtime/html5/utils/BinaryReader",
 	"moxie/core/Exceptions"
 ], function(Basic, BinaryReader, x) {
-	
+
 	function ExifParser(data) {
 		var __super__, tags, tagDescs, offsets, idx, Tiff;
-		
+
 		BinaryReader.call(this, data);
 
 		tags = {
@@ -19118,7 +19118,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 		offsets = {
 			tiffHeader: 10
 		};
-		
+
 		idx = offsets.tiffHeader;
 
 		__super__ = {
@@ -19127,7 +19127,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 
 		// Public functions
 		Basic.extend(this, {
-			
+
 			read: function() {
 				try {
 					return ExifParser.prototype.read.apply(this, arguments);
@@ -19216,7 +19216,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 				if (offsets.IFD1) {
 					try {
 						var IFD1Tags = extractTags.call(this, offsets.IFD1, tags.thumb);
-						
+
 						if ('JPEGInterchangeFormat' in IFD1Tags) {
 							return this.SEGMENT(offsets.tiffHeader + IFD1Tags.JPEGInterchangeFormat, IFD1Tags.JPEGInterchangeFormatLength);
 						}
@@ -19281,7 +19281,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 		function extractTags(IFD_offset, tags2extract) {
 			var data = this;
 			var length, i, tag, type, count, size, offset, value, values = [], hash = {};
-			
+
 			var types = {
 				1 : 'BYTE',
 				7 : 'UNDEFINED',
@@ -19339,7 +19339,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 				// in case we left the boundaries of data throw an early exception
 				if (offset + size * count >= this.length()) {
 					throw new x.ImageError(x.ImageError.INVALID_META_ERR);
-				} 
+				}
 
 				// special care for the string
 				if (type === 'ASCII') {
@@ -19428,7 +19428,7 @@ define("moxie/runtime/html5/image/JPEG", [
 	"moxie/runtime/html5/utils/BinaryReader",
 	"moxie/runtime/html5/image/ExifParser"
 ], function(Basic, x, JPEGHeaders, BinaryReader, ExifParser) {
-	
+
 	function JPEG(data) {
 		var _br, _hm, _ep, _info;
 
@@ -19552,7 +19552,7 @@ define("moxie/runtime/html5/image/JPEG", [
 
 
 		function _purge() {
-			if (!_ep || !_hm || !_br) { 
+			if (!_ep || !_hm || !_br) {
 				return; // ignore any repeating purge requests
 			}
 			_ep.clear();
@@ -19586,7 +19586,7 @@ define("moxie/runtime/html5/image/PNG", [
 	"moxie/core/utils/Basic",
 	"moxie/runtime/html5/utils/BinaryReader"
 ], function(x, Basic, BinaryReader) {
-	
+
 	function PNG(data) {
 		var _br, _hm, _ep, _info;
 
@@ -19968,7 +19968,7 @@ define("moxie/runtime/html5/image/Image", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, Basic, x, Encode, Blob, File, ImageInfo, MegaPixel, Mime, Env) {
-	
+
 	function HTML5Image() {
 		var me = this
 		, _img, _imgInfo, _canvas, _binStr, _blob
@@ -20236,7 +20236,7 @@ define("moxie/runtime/html5/image/Image", [
 
 				scale = Math.max(width/img.width, height/img.height);
 			}
-		
+
 			// we only downsize here
 			if (scale > 1 && !crop && preserveHeaders) {
 				this.trigger('Resize');
@@ -20249,7 +20249,7 @@ define("moxie/runtime/html5/image/Image", [
 			}
 
 			// calculate dimensions of proportionally resized image
-			destWidth = Math.round(img.width * scale);	
+			destWidth = Math.round(img.width * scale);
 			destHeight = Math.round(img.height * scale);
 
 			// scale image and canvas
@@ -20286,7 +20286,7 @@ define("moxie/runtime/html5/image/Image", [
 
 
 		function _drawToCanvas(img, canvas, x, y, w, h) {
-			if (Env.OS === 'iOS') { 
+			if (Env.OS === 'iOS') {
 				// avoid squish bug in iOS6
 				MegaPixel.renderTo(img, canvas, { width: w, height: h, x: x, y: y });
 			} else {
@@ -20408,7 +20408,7 @@ define("moxie/runtime/flash/Runtime", [
 	"moxie/core/Exceptions",
 	"moxie/runtime/Runtime"
 ], function(Basic, Env, Dom, x, Runtime) {
-	
+
 	var type = 'flash', extensions = {};
 
 	/**
@@ -20440,7 +20440,7 @@ define("moxie/runtime/flash/Runtime", [
 	Cross-browser SWF removal
     	- Especially needed to safely and completely remove a SWF in Internet Explorer
 
-   	Originated from SWFObject v2.2 <http://code.google.com/p/swfobject/> 
+   	Originated from SWFObject v2.2 <http://code.google.com/p/swfobject/>
 	*/
 	function removeSWF(id) {
         var obj = Dom.get(id);
@@ -20505,7 +20505,7 @@ define("moxie/runtime/flash/Runtime", [
 			return_response_type: function(responseType) {
 				if (responseType === 'json' && !!window.JSON) {
 					return true;
-				} 
+				}
 				return !Basic.arrayDiff(responseType, ['', 'text', 'document']) || I.mode === 'browser';
 			},
 			return_status_code: function(code) {
@@ -20536,7 +20536,7 @@ define("moxie/runtime/flash/Runtime", [
 			use_http_method: function(methods) {
 				return !Basic.arrayDiff(methods, ['GET', 'POST']);
 			}
-		}, { 
+		}, {
 			// capabilities that require specific mode
 			access_binary: function(value) {
 				return value ? 'browser' : 'client';
@@ -20574,7 +20574,7 @@ define("moxie/runtime/flash/Runtime", [
 		// minimal requirement for Flash Player version
 		if (getShimVersion() < 11.3) {
 			if (MXI_DEBUG && Env.debug.runtime) {
-				Env.log("\tFlash didn't meet minimal version requirement (11.3).");	
+				Env.log("\tFlash didn't meet minimal version requirement (11.3).");
 			}
 
 			this.mode = false; // with falsy mode, runtime won't operable, no matter what the mode was before
@@ -20636,7 +20636,7 @@ define("moxie/runtime/flash/Runtime", [
 						I.trigger("Error", new x.RuntimeError(x.RuntimeError.NOT_INIT_ERR));
 
 						if (MXI_DEBUG && Env.debug.runtime) {
-							Env.log("\tFlash failed to initialize within a specified period of time (typically 5s).");	
+							Env.log("\tFlash failed to initialize within a specified period of time (typically 5s).");
 						}
 					}
 				}, 5000);
@@ -20681,8 +20681,8 @@ define("moxie/runtime/flash/file/FileInput", [
 	"moxie/file/File",
 	"moxie/core/utils/Basic"
 ], function(extensions, File, Basic) {
-	
-	var FileInput = {		
+
+	var FileInput = {
 		init: function(options) {
 			var comp = this, I = this.getRuntime();
 
@@ -20833,7 +20833,7 @@ define("moxie/runtime/flash/file/FileReaderSync", [
 	"moxie/runtime/flash/Runtime",
 	"moxie/core/utils/Encode"
 ], function(extensions, Encode) {
-	
+
 	function _formatData(data, op) {
 		switch (op) {
 			case 'readAsText':
@@ -20892,7 +20892,7 @@ define("moxie/runtime/flash/xhr/XMLHttpRequest", [
 	"moxie/xhr/FormData",
 	"moxie/runtime/Transporter"
 ], function(extensions, Basic, Blob, File, FileReaderSync, FormData, Transporter) {
-	
+
 	var XMLHttpRequest = {
 
 		send: function(meta, data) {
@@ -20949,7 +20949,7 @@ define("moxie/runtime/flash/xhr/XMLHttpRequest", [
 					if (blob.isDetached()) {
 						attachBlob(blob, function(attachedBlob) {
 							blob.destroy();
-							appendBlob(blobField, attachedBlob);		
+							appendBlob(blobField, attachedBlob);
 						});
 					} else {
 						appendBlob(blobField, blob);
@@ -20983,7 +20983,7 @@ define("moxie/runtime/flash/xhr/XMLHttpRequest", [
 					return blob;
 				}
 
-				try { 
+				try {
 					frs = new FileReaderSync();
 
 					if (!!~Basic.inArray(responseType, ["", "text"])) {
@@ -21075,7 +21075,7 @@ define("moxie/runtime/flash/image/Image", [
 	"moxie/file/Blob",
 	"moxie/file/FileReaderSync"
 ], function(extensions, Basic, Transporter, Blob, FileReaderSync) {
-	
+
 	var Image = {
 		loadFromBlob: function(blob) {
 			var comp = this, self = comp.getRuntime();
@@ -21165,7 +21165,7 @@ define("moxie/runtime/silverlight/Runtime", [
 	"moxie/core/Exceptions",
 	"moxie/runtime/Runtime"
 ], function(Basic, Env, Dom, x, Runtime) {
-	
+
 	var type = "silverlight", extensions = {};
 
 	function isInstalled(version) {
@@ -21274,7 +21274,7 @@ define("moxie/runtime/silverlight/Runtime", [
 			use_http_method: function(methods) {
 				return I.mode === 'client' || !Basic.arrayDiff(methods, ['GET', 'POST']);
 			}
-		}, { 
+		}, {
 			// capabilities that require specific mode
 			return_response_headers: function(value) {
 				return value ? 'client' : 'browser';
@@ -21297,7 +21297,7 @@ define("moxie/runtime/silverlight/Runtime", [
 		// minimal requirement
 		if (!isInstalled('2.0.31005.0') || Env.browser === 'Opera') {
 			if (MXI_DEBUG && Env.debug.runtime) {
-				Env.log("\tSilverlight is not installed or minimal version (2.0.31005.0) requirement not met (not likely).");	
+				Env.log("\tSilverlight is not installed or minimal version (2.0.31005.0) requirement not met (not likely).");
 			}
 
 			this.mode = false;
@@ -21333,7 +21333,7 @@ define("moxie/runtime/silverlight/Runtime", [
 						I.trigger("Error", new x.RuntimeError(x.RuntimeError.NOT_INIT_ERR));
 
 						if (MXI_DEBUG && Env.debug.runtime) {
-							Env.log("\Silverlight failed to initialize within a specified period of time (5-10s).");	
+							Env.log("\Silverlight failed to initialize within a specified period of time (5-10s).");
 						}
 					}
 				}, Env.OS !== 'Windows'? 10000 : 5000); // give it more time to initialize in non Windows OS (like Mac)
@@ -21350,7 +21350,7 @@ define("moxie/runtime/silverlight/Runtime", [
 		}, extensions);
 	}
 
-	Runtime.addConstructor(type, SilverlightRuntime); 
+	Runtime.addConstructor(type, SilverlightRuntime);
 
 	return extensions;
 });
@@ -21376,7 +21376,7 @@ define("moxie/runtime/silverlight/file/FileInput", [
 	"moxie/file/File",
 	"moxie/core/utils/Basic"
 ], function(extensions, File, Basic) {
-	
+
 	var FileInput = {
 		init: function(options) {
 			var comp = this, I = this.getRuntime();
@@ -21396,7 +21396,7 @@ define("moxie/runtime/silverlight/file/FileInput", [
 					comp.files.push(new File(I.uid, file));
 				});
 			}, 999);
-			
+
 			this.getRuntime().shimExec.call(this, 'FileInput', 'init', toFilters(options.accept), options.name, options.multiple);
 			this.trigger('ready');
 		}
@@ -21447,7 +21447,7 @@ define("moxie/runtime/silverlight/file/Blob", [
 */
 define("moxie/runtime/silverlight/file/FileDrop", [
 	"moxie/runtime/silverlight/Runtime",
-	"moxie/core/utils/Dom", 
+	"moxie/core/utils/Dom",
 	"moxie/core/utils/Events"
 ], function(extensions, Dom, Events) {
 
@@ -21596,7 +21596,7 @@ define("moxie/runtime/silverlight/runtime/Transporter", [
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  */
- 
+
 /**
 @class moxie/runtime/silverlight/image/Image
 @private
@@ -21685,7 +21685,7 @@ define("moxie/runtime/html4/Runtime", [
 	"moxie/runtime/Runtime",
 	"moxie/core/utils/Env"
 ], function(Basic, x, Runtime, Env) {
-	
+
 	var type = 'html4', extensions = {};
 
 	function Html4Runtime(options) {
@@ -21702,8 +21702,8 @@ define("moxie/runtime/html4/Runtime", [
 			drag_and_drop: false,
 			filter_by_extension: Test(function() { // if you know how to feature-detect this, please suggest
 				return !(
-					(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) || 
-					(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) || 
+					(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) ||
+					(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) ||
 					(Env.browser === 'Safari' && Env.verComp(Env.version, 7, '<')) ||
 					(Env.browser === 'Firefox' && Env.verComp(Env.version, 37, '<'))
 				);
@@ -21716,7 +21716,7 @@ define("moxie/runtime/html4/Runtime", [
 			return_response_type: function(responseType) {
 				if (responseType === 'json' && !!window.JSON) {
 					return true;
-				} 
+				}
 				return !!~Basic.inArray(responseType, ['text', 'document', '']);
 			},
 			return_status_code: function(code) {
@@ -21794,7 +21794,7 @@ define("moxie/runtime/html4/file/FileInput", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, File, Basic, Dom, Events, Mime, Env) {
-	
+
 	function FileInput() {
 		var _uid, _mimes = [], _options;
 
@@ -21881,15 +21881,15 @@ define("moxie/runtime/html4/file/FileInput", [
 				file = new File(I.uid, file);
 
 				// clear event handler
-				this.onchange = function() {}; 
-				addInput.call(comp); 
+				this.onchange = function() {};
+				addInput.call(comp);
 
 				comp.files = [file];
 
 				// substitute all ids with file uids (consider file.uid read-only - we cannot do it the other way around)
 				input.setAttribute('id', file.uid);
 				form.setAttribute('id', file.uid + '_form');
-				
+
 				comp.trigger('change');
 
 				input = form = null;
@@ -21988,11 +21988,11 @@ define("moxie/runtime/html4/file/FileInput", [
 				, shim = I.getShim()
 				, shimContainer = I.getShimContainer()
 				;
-				
+
 				Events.removeAllEvents(shimContainer, this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.container), this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.browse_button), this.uid);
-				
+
 				if (shimContainer) {
 					shimContainer.innerHTML = '';
 				}
@@ -22056,7 +22056,7 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 	"moxie/file/Blob",
 	"moxie/xhr/FormData"
 ], function(extensions, Basic, Dom, Url, x, Events, Blob, FormData) {
-	
+
 	function XMLHttpRequest() {
 		var _status, _response, _iframe;
 
@@ -22170,8 +22170,8 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 								});
 								return;
 							}
-						}	
-					
+						}
+
 						cleanup.call(target, function() {
 							target.trigger('load');
 						});
@@ -22248,7 +22248,7 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 						} catch (ex) {
 							return null;
 						}
-					} 
+					}
 				} else if ('document' === responseType) {
 
 				}
@@ -88462,7 +88462,7 @@ define("tinymce-compat3x", ["tinymce"], function() {
  *
  * - Download link implementation(/view vs download)
  * - Modal popup implementation
- * 
+ *
  * ToDo:
  * - extend from plone instead of copy/paste
  * - or, should be rewritten with react?
@@ -89321,7 +89321,7 @@ define('castle-url/patterns/focalpointselect',[
           var imageUID = $relatedItems[0].value;
           var videoUID = $relatedItems[1].value;
         } catch (err) {}
-        
+
         var that = self;
         if (!imageUID && !videoUID) {
           self.component.setState({
@@ -89343,18 +89343,18 @@ define('castle-url/patterns/focalpointselect',[
             that.component.setState({ image_focal_point: data.focal_point });
           });
         }
-      } 
+      }
 
       $relatedItems.on('change', getMediaData);
-            
+
       var uid = $relatedItems.val()
       if(!uid) {
         try{
           uid = $relatedItems[1].value;
         } catch (err) {
         }
-      } 
-      
+      }
+
       if(uid){
         getMediaData();
       }
@@ -91512,7 +91512,7 @@ define('castle-url/patterns/structure//js/views/actionmenu',[
 });
 
 
-define('text!castle-url/patterns/structure//templates/tablerow.xml',[],function () { return '<td class="selection"><input type="checkbox" <% if(selected){ %> checked="checked" <% } %>/></td>\n\n<td class="title">\n  <div class="pull-left">\n    <a href="<%- viewURL %>"\n        class="manage state-<%- review_state %> contenttype-<%- contenttype %>"\n        title="<%- portal_type %>">\n      <% if(Title){ %>\n        <%- Title %>\n      <% } else { %>\n        <em><%- id %></em>\n      <% } %>\n    </a>\n    <% if(expired){ %>\n      <span class="plone-item-expired"><%- _t(\'Expired\') %></span>\n    <% } %>\n  </div>\n  <% if(attributes["getIcon"] ){ %>\n  <img class="image-<%- iconSize %> pull-right" src="<%- getURL %>/@@images/image/<%- iconSize %>">\n  <% } %>\n</td>\n\n<% _.each(activeColumns, function(column) { %>\n  <% if(_.has(availableColumns, column)) { %>\n    <td class="<%- column %>"><%- attributes[column] %></td>\n  <% } %>\n<% }); %>\n\n<td class="actionmenu-container"></td>\n';});
+define('text!castle-url/patterns/structure//templates/tablerow.xml',[],function () { return '<td class="selection"><input type="checkbox" <% if(selected){ %> checked="checked" <% } %>/></td>\n\n<td class="title">\n  <div class="pull-left">\n    <a href="<%- viewURL %>"\n        class="manage state-<%- review_state %> contenttype-<%- contenttype %>"\n        title="<%- portal_type %>">\n      <% if(Title){ %>\n        <%- Title %>\n      <% } else { %>\n        <em><%- id %></em>\n      <% } %>\n    </a>\n    <% if(expired){ %>\n      <span class="plone-item-expired"><%- _t(\'Expired\') %></span>\n    <% } %>\n  </div>\n  <% if(attributes["getIcon"] ){ %>\n  <img class="image-<%- iconSize %> pull-right" data-image-src="<%- getURL %>/@@images/image/<%- iconSize %>">\n  <% } %>\n</td>\n\n<% _.each(activeColumns, function(column) { %>\n  <% if(_.has(availableColumns, column)) { %>\n    <td class="<%- column %>"><%- attributes[column] %></td>\n  <% } %>\n<% }); %>\n\n<td class="actionmenu-container"></td>\n';});
 
 !function(a,b){"object"==typeof exports&&"undefined"!=typeof module?module.exports=b():"function"==typeof define&&define.amd?define('moment',b):a.moment=b()}(this,function(){"use strict";function a(){return Md.apply(null,arguments)}function b(a){Md=a}function c(a){return"[object Array]"===Object.prototype.toString.call(a)}function d(a){return a instanceof Date||"[object Date]"===Object.prototype.toString.call(a)}function e(a,b){var c,d=[];for(c=0;c<a.length;++c)d.push(b(a[c],c));return d}function f(a,b){return Object.prototype.hasOwnProperty.call(a,b)}function g(a,b){for(var c in b)f(b,c)&&(a[c]=b[c]);return f(b,"toString")&&(a.toString=b.toString),f(b,"valueOf")&&(a.valueOf=b.valueOf),a}function h(a,b,c,d){return Ca(a,b,c,d,!0).utc()}function i(){return{empty:!1,unusedTokens:[],unusedInput:[],overflow:-2,charsLeftOver:0,nullInput:!1,invalidMonth:null,invalidFormat:!1,userInvalidated:!1,iso:!1}}function j(a){return null==a._pf&&(a._pf=i()),a._pf}function k(a){if(null==a._isValid){var b=j(a);a._isValid=!(isNaN(a._d.getTime())||!(b.overflow<0)||b.empty||b.invalidMonth||b.invalidWeekday||b.nullInput||b.invalidFormat||b.userInvalidated),a._strict&&(a._isValid=a._isValid&&0===b.charsLeftOver&&0===b.unusedTokens.length&&void 0===b.bigHour)}return a._isValid}function l(a){var b=h(NaN);return null!=a?g(j(b),a):j(b).userInvalidated=!0,b}function m(a,b){var c,d,e;if("undefined"!=typeof b._isAMomentObject&&(a._isAMomentObject=b._isAMomentObject),"undefined"!=typeof b._i&&(a._i=b._i),"undefined"!=typeof b._f&&(a._f=b._f),"undefined"!=typeof b._l&&(a._l=b._l),"undefined"!=typeof b._strict&&(a._strict=b._strict),"undefined"!=typeof b._tzm&&(a._tzm=b._tzm),"undefined"!=typeof b._isUTC&&(a._isUTC=b._isUTC),"undefined"!=typeof b._offset&&(a._offset=b._offset),"undefined"!=typeof b._pf&&(a._pf=j(b)),"undefined"!=typeof b._locale&&(a._locale=b._locale),Od.length>0)for(c in Od)d=Od[c],e=b[d],"undefined"!=typeof e&&(a[d]=e);return a}function n(b){m(this,b),this._d=new Date(null!=b._d?b._d.getTime():NaN),Pd===!1&&(Pd=!0,a.updateOffset(this),Pd=!1)}function o(a){return a instanceof n||null!=a&&null!=a._isAMomentObject}function p(a){return 0>a?Math.ceil(a):Math.floor(a)}function q(a){var b=+a,c=0;return 0!==b&&isFinite(b)&&(c=p(b)),c}function r(a,b,c){var d,e=Math.min(a.length,b.length),f=Math.abs(a.length-b.length),g=0;for(d=0;e>d;d++)(c&&a[d]!==b[d]||!c&&q(a[d])!==q(b[d]))&&g++;return g+f}function s(){}function t(a){return a?a.toLowerCase().replace("_","-"):a}function u(a){for(var b,c,d,e,f=0;f<a.length;){for(e=t(a[f]).split("-"),b=e.length,c=t(a[f+1]),c=c?c.split("-"):null;b>0;){if(d=v(e.slice(0,b).join("-")))return d;if(c&&c.length>=b&&r(e,c,!0)>=b-1)break;b--}f++}return null}function v(a){var b=null;if(!Qd[a]&&"undefined"!=typeof module&&module&&module.exports)try{b=Nd._abbr,require("./locale/"+a),w(b)}catch(c){}return Qd[a]}function w(a,b){var c;return a&&(c="undefined"==typeof b?y(a):x(a,b),c&&(Nd=c)),Nd._abbr}function x(a,b){return null!==b?(b.abbr=a,Qd[a]=Qd[a]||new s,Qd[a].set(b),w(a),Qd[a]):(delete Qd[a],null)}function y(a){var b;if(a&&a._locale&&a._locale._abbr&&(a=a._locale._abbr),!a)return Nd;if(!c(a)){if(b=v(a))return b;a=[a]}return u(a)}function z(a,b){var c=a.toLowerCase();Rd[c]=Rd[c+"s"]=Rd[b]=a}function A(a){return"string"==typeof a?Rd[a]||Rd[a.toLowerCase()]:void 0}function B(a){var b,c,d={};for(c in a)f(a,c)&&(b=A(c),b&&(d[b]=a[c]));return d}function C(b,c){return function(d){return null!=d?(E(this,b,d),a.updateOffset(this,c),this):D(this,b)}}function D(a,b){return a._d["get"+(a._isUTC?"UTC":"")+b]()}function E(a,b,c){return a._d["set"+(a._isUTC?"UTC":"")+b](c)}function F(a,b){var c;if("object"==typeof a)for(c in a)this.set(c,a[c]);else if(a=A(a),"function"==typeof this[a])return this[a](b);return this}function G(a,b,c){var d=""+Math.abs(a),e=b-d.length,f=a>=0;return(f?c?"+":"":"-")+Math.pow(10,Math.max(0,e)).toString().substr(1)+d}function H(a,b,c,d){var e=d;"string"==typeof d&&(e=function(){return this[d]()}),a&&(Vd[a]=e),b&&(Vd[b[0]]=function(){return G(e.apply(this,arguments),b[1],b[2])}),c&&(Vd[c]=function(){return this.localeData().ordinal(e.apply(this,arguments),a)})}function I(a){return a.match(/\[[\s\S]/)?a.replace(/^\[|\]$/g,""):a.replace(/\\/g,"")}function J(a){var b,c,d=a.match(Sd);for(b=0,c=d.length;c>b;b++)Vd[d[b]]?d[b]=Vd[d[b]]:d[b]=I(d[b]);return function(e){var f="";for(b=0;c>b;b++)f+=d[b]instanceof Function?d[b].call(e,a):d[b];return f}}function K(a,b){return a.isValid()?(b=L(b,a.localeData()),Ud[b]=Ud[b]||J(b),Ud[b](a)):a.localeData().invalidDate()}function L(a,b){function c(a){return b.longDateFormat(a)||a}var d=5;for(Td.lastIndex=0;d>=0&&Td.test(a);)a=a.replace(Td,c),Td.lastIndex=0,d-=1;return a}function M(a){return"function"==typeof a&&"[object Function]"===Object.prototype.toString.call(a)}function N(a,b,c){ie[a]=M(b)?b:function(a){return a&&c?c:b}}function O(a,b){return f(ie,a)?ie[a](b._strict,b._locale):new RegExp(P(a))}function P(a){return a.replace("\\","").replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g,function(a,b,c,d,e){return b||c||d||e}).replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&")}function Q(a,b){var c,d=b;for("string"==typeof a&&(a=[a]),"number"==typeof b&&(d=function(a,c){c[b]=q(a)}),c=0;c<a.length;c++)je[a[c]]=d}function R(a,b){Q(a,function(a,c,d,e){d._w=d._w||{},b(a,d._w,d,e)})}function S(a,b,c){null!=b&&f(je,a)&&je[a](b,c._a,c,a)}function T(a,b){return new Date(Date.UTC(a,b+1,0)).getUTCDate()}function U(a){return this._months[a.month()]}function V(a){return this._monthsShort[a.month()]}function W(a,b,c){var d,e,f;for(this._monthsParse||(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[]),d=0;12>d;d++){if(e=h([2e3,d]),c&&!this._longMonthsParse[d]&&(this._longMonthsParse[d]=new RegExp("^"+this.months(e,"").replace(".","")+"$","i"),this._shortMonthsParse[d]=new RegExp("^"+this.monthsShort(e,"").replace(".","")+"$","i")),c||this._monthsParse[d]||(f="^"+this.months(e,"")+"|^"+this.monthsShort(e,""),this._monthsParse[d]=new RegExp(f.replace(".",""),"i")),c&&"MMMM"===b&&this._longMonthsParse[d].test(a))return d;if(c&&"MMM"===b&&this._shortMonthsParse[d].test(a))return d;if(!c&&this._monthsParse[d].test(a))return d}}function X(a,b){var c;return"string"==typeof b&&(b=a.localeData().monthsParse(b),"number"!=typeof b)?a:(c=Math.min(a.date(),T(a.year(),b)),a._d["set"+(a._isUTC?"UTC":"")+"Month"](b,c),a)}function Y(b){return null!=b?(X(this,b),a.updateOffset(this,!0),this):D(this,"Month")}function Z(){return T(this.year(),this.month())}function $(a){var b,c=a._a;return c&&-2===j(a).overflow&&(b=c[le]<0||c[le]>11?le:c[me]<1||c[me]>T(c[ke],c[le])?me:c[ne]<0||c[ne]>24||24===c[ne]&&(0!==c[oe]||0!==c[pe]||0!==c[qe])?ne:c[oe]<0||c[oe]>59?oe:c[pe]<0||c[pe]>59?pe:c[qe]<0||c[qe]>999?qe:-1,j(a)._overflowDayOfYear&&(ke>b||b>me)&&(b=me),j(a).overflow=b),a}function _(b){a.suppressDeprecationWarnings===!1&&"undefined"!=typeof console&&console.warn&&console.warn("Deprecation warning: "+b)}function aa(a,b){var c=!0;return g(function(){return c&&(_(a+"\n"+(new Error).stack),c=!1),b.apply(this,arguments)},b)}function ba(a,b){te[a]||(_(b),te[a]=!0)}function ca(a){var b,c,d=a._i,e=ue.exec(d);if(e){for(j(a).iso=!0,b=0,c=ve.length;c>b;b++)if(ve[b][1].exec(d)){a._f=ve[b][0];break}for(b=0,c=we.length;c>b;b++)if(we[b][1].exec(d)){a._f+=(e[6]||" ")+we[b][0];break}d.match(fe)&&(a._f+="Z"),va(a)}else a._isValid=!1}function da(b){var c=xe.exec(b._i);return null!==c?void(b._d=new Date(+c[1])):(ca(b),void(b._isValid===!1&&(delete b._isValid,a.createFromInputFallback(b))))}function ea(a,b,c,d,e,f,g){var h=new Date(a,b,c,d,e,f,g);return 1970>a&&h.setFullYear(a),h}function fa(a){var b=new Date(Date.UTC.apply(null,arguments));return 1970>a&&b.setUTCFullYear(a),b}function ga(a){return ha(a)?366:365}function ha(a){return a%4===0&&a%100!==0||a%400===0}function ia(){return ha(this.year())}function ja(a,b,c){var d,e=c-b,f=c-a.day();return f>e&&(f-=7),e-7>f&&(f+=7),d=Da(a).add(f,"d"),{week:Math.ceil(d.dayOfYear()/7),year:d.year()}}function ka(a){return ja(a,this._week.dow,this._week.doy).week}function la(){return this._week.dow}function ma(){return this._week.doy}function na(a){var b=this.localeData().week(this);return null==a?b:this.add(7*(a-b),"d")}function oa(a){var b=ja(this,1,4).week;return null==a?b:this.add(7*(a-b),"d")}function pa(a,b,c,d,e){var f,g=6+e-d,h=fa(a,0,1+g),i=h.getUTCDay();return e>i&&(i+=7),c=null!=c?1*c:e,f=1+g+7*(b-1)-i+c,{year:f>0?a:a-1,dayOfYear:f>0?f:ga(a-1)+f}}function qa(a){var b=Math.round((this.clone().startOf("day")-this.clone().startOf("year"))/864e5)+1;return null==a?b:this.add(a-b,"d")}function ra(a,b,c){return null!=a?a:null!=b?b:c}function sa(a){var b=new Date;return a._useUTC?[b.getUTCFullYear(),b.getUTCMonth(),b.getUTCDate()]:[b.getFullYear(),b.getMonth(),b.getDate()]}function ta(a){var b,c,d,e,f=[];if(!a._d){for(d=sa(a),a._w&&null==a._a[me]&&null==a._a[le]&&ua(a),a._dayOfYear&&(e=ra(a._a[ke],d[ke]),a._dayOfYear>ga(e)&&(j(a)._overflowDayOfYear=!0),c=fa(e,0,a._dayOfYear),a._a[le]=c.getUTCMonth(),a._a[me]=c.getUTCDate()),b=0;3>b&&null==a._a[b];++b)a._a[b]=f[b]=d[b];for(;7>b;b++)a._a[b]=f[b]=null==a._a[b]?2===b?1:0:a._a[b];24===a._a[ne]&&0===a._a[oe]&&0===a._a[pe]&&0===a._a[qe]&&(a._nextDay=!0,a._a[ne]=0),a._d=(a._useUTC?fa:ea).apply(null,f),null!=a._tzm&&a._d.setUTCMinutes(a._d.getUTCMinutes()-a._tzm),a._nextDay&&(a._a[ne]=24)}}function ua(a){var b,c,d,e,f,g,h;b=a._w,null!=b.GG||null!=b.W||null!=b.E?(f=1,g=4,c=ra(b.GG,a._a[ke],ja(Da(),1,4).year),d=ra(b.W,1),e=ra(b.E,1)):(f=a._locale._week.dow,g=a._locale._week.doy,c=ra(b.gg,a._a[ke],ja(Da(),f,g).year),d=ra(b.w,1),null!=b.d?(e=b.d,f>e&&++d):e=null!=b.e?b.e+f:f),h=pa(c,d,e,g,f),a._a[ke]=h.year,a._dayOfYear=h.dayOfYear}function va(b){if(b._f===a.ISO_8601)return void ca(b);b._a=[],j(b).empty=!0;var c,d,e,f,g,h=""+b._i,i=h.length,k=0;for(e=L(b._f,b._locale).match(Sd)||[],c=0;c<e.length;c++)f=e[c],d=(h.match(O(f,b))||[])[0],d&&(g=h.substr(0,h.indexOf(d)),g.length>0&&j(b).unusedInput.push(g),h=h.slice(h.indexOf(d)+d.length),k+=d.length),Vd[f]?(d?j(b).empty=!1:j(b).unusedTokens.push(f),S(f,d,b)):b._strict&&!d&&j(b).unusedTokens.push(f);j(b).charsLeftOver=i-k,h.length>0&&j(b).unusedInput.push(h),j(b).bigHour===!0&&b._a[ne]<=12&&b._a[ne]>0&&(j(b).bigHour=void 0),b._a[ne]=wa(b._locale,b._a[ne],b._meridiem),ta(b),$(b)}function wa(a,b,c){var d;return null==c?b:null!=a.meridiemHour?a.meridiemHour(b,c):null!=a.isPM?(d=a.isPM(c),d&&12>b&&(b+=12),d||12!==b||(b=0),b):b}function xa(a){var b,c,d,e,f;if(0===a._f.length)return j(a).invalidFormat=!0,void(a._d=new Date(NaN));for(e=0;e<a._f.length;e++)f=0,b=m({},a),null!=a._useUTC&&(b._useUTC=a._useUTC),b._f=a._f[e],va(b),k(b)&&(f+=j(b).charsLeftOver,f+=10*j(b).unusedTokens.length,j(b).score=f,(null==d||d>f)&&(d=f,c=b));g(a,c||b)}function ya(a){if(!a._d){var b=B(a._i);a._a=[b.year,b.month,b.day||b.date,b.hour,b.minute,b.second,b.millisecond],ta(a)}}function za(a){var b=new n($(Aa(a)));return b._nextDay&&(b.add(1,"d"),b._nextDay=void 0),b}function Aa(a){var b=a._i,e=a._f;return a._locale=a._locale||y(a._l),null===b||void 0===e&&""===b?l({nullInput:!0}):("string"==typeof b&&(a._i=b=a._locale.preparse(b)),o(b)?new n($(b)):(c(e)?xa(a):e?va(a):d(b)?a._d=b:Ba(a),a))}function Ba(b){var f=b._i;void 0===f?b._d=new Date:d(f)?b._d=new Date(+f):"string"==typeof f?da(b):c(f)?(b._a=e(f.slice(0),function(a){return parseInt(a,10)}),ta(b)):"object"==typeof f?ya(b):"number"==typeof f?b._d=new Date(f):a.createFromInputFallback(b)}function Ca(a,b,c,d,e){var f={};return"boolean"==typeof c&&(d=c,c=void 0),f._isAMomentObject=!0,f._useUTC=f._isUTC=e,f._l=c,f._i=a,f._f=b,f._strict=d,za(f)}function Da(a,b,c,d){return Ca(a,b,c,d,!1)}function Ea(a,b){var d,e;if(1===b.length&&c(b[0])&&(b=b[0]),!b.length)return Da();for(d=b[0],e=1;e<b.length;++e)(!b[e].isValid()||b[e][a](d))&&(d=b[e]);return d}function Fa(){var a=[].slice.call(arguments,0);return Ea("isBefore",a)}function Ga(){var a=[].slice.call(arguments,0);return Ea("isAfter",a)}function Ha(a){var b=B(a),c=b.year||0,d=b.quarter||0,e=b.month||0,f=b.week||0,g=b.day||0,h=b.hour||0,i=b.minute||0,j=b.second||0,k=b.millisecond||0;this._milliseconds=+k+1e3*j+6e4*i+36e5*h,this._days=+g+7*f,this._months=+e+3*d+12*c,this._data={},this._locale=y(),this._bubble()}function Ia(a){return a instanceof Ha}function Ja(a,b){H(a,0,0,function(){var a=this.utcOffset(),c="+";return 0>a&&(a=-a,c="-"),c+G(~~(a/60),2)+b+G(~~a%60,2)})}function Ka(a){var b=(a||"").match(fe)||[],c=b[b.length-1]||[],d=(c+"").match(Ce)||["-",0,0],e=+(60*d[1])+q(d[2]);return"+"===d[0]?e:-e}function La(b,c){var e,f;return c._isUTC?(e=c.clone(),f=(o(b)||d(b)?+b:+Da(b))-+e,e._d.setTime(+e._d+f),a.updateOffset(e,!1),e):Da(b).local()}function Ma(a){return 15*-Math.round(a._d.getTimezoneOffset()/15)}function Na(b,c){var d,e=this._offset||0;return null!=b?("string"==typeof b&&(b=Ka(b)),Math.abs(b)<16&&(b=60*b),!this._isUTC&&c&&(d=Ma(this)),this._offset=b,this._isUTC=!0,null!=d&&this.add(d,"m"),e!==b&&(!c||this._changeInProgress?bb(this,Ya(b-e,"m"),1,!1):this._changeInProgress||(this._changeInProgress=!0,a.updateOffset(this,!0),this._changeInProgress=null)),this):this._isUTC?e:Ma(this)}function Oa(a,b){return null!=a?("string"!=typeof a&&(a=-a),this.utcOffset(a,b),this):-this.utcOffset()}function Pa(a){return this.utcOffset(0,a)}function Qa(a){return this._isUTC&&(this.utcOffset(0,a),this._isUTC=!1,a&&this.subtract(Ma(this),"m")),this}function Ra(){return this._tzm?this.utcOffset(this._tzm):"string"==typeof this._i&&this.utcOffset(Ka(this._i)),this}function Sa(a){return a=a?Da(a).utcOffset():0,(this.utcOffset()-a)%60===0}function Ta(){return this.utcOffset()>this.clone().month(0).utcOffset()||this.utcOffset()>this.clone().month(5).utcOffset()}function Ua(){if("undefined"!=typeof this._isDSTShifted)return this._isDSTShifted;var a={};if(m(a,this),a=Aa(a),a._a){var b=a._isUTC?h(a._a):Da(a._a);this._isDSTShifted=this.isValid()&&r(a._a,b.toArray())>0}else this._isDSTShifted=!1;return this._isDSTShifted}function Va(){return!this._isUTC}function Wa(){return this._isUTC}function Xa(){return this._isUTC&&0===this._offset}function Ya(a,b){var c,d,e,g=a,h=null;return Ia(a)?g={ms:a._milliseconds,d:a._days,M:a._months}:"number"==typeof a?(g={},b?g[b]=a:g.milliseconds=a):(h=De.exec(a))?(c="-"===h[1]?-1:1,g={y:0,d:q(h[me])*c,h:q(h[ne])*c,m:q(h[oe])*c,s:q(h[pe])*c,ms:q(h[qe])*c}):(h=Ee.exec(a))?(c="-"===h[1]?-1:1,g={y:Za(h[2],c),M:Za(h[3],c),d:Za(h[4],c),h:Za(h[5],c),m:Za(h[6],c),s:Za(h[7],c),w:Za(h[8],c)}):null==g?g={}:"object"==typeof g&&("from"in g||"to"in g)&&(e=_a(Da(g.from),Da(g.to)),g={},g.ms=e.milliseconds,g.M=e.months),d=new Ha(g),Ia(a)&&f(a,"_locale")&&(d._locale=a._locale),d}function Za(a,b){var c=a&&parseFloat(a.replace(",","."));return(isNaN(c)?0:c)*b}function $a(a,b){var c={milliseconds:0,months:0};return c.months=b.month()-a.month()+12*(b.year()-a.year()),a.clone().add(c.months,"M").isAfter(b)&&--c.months,c.milliseconds=+b-+a.clone().add(c.months,"M"),c}function _a(a,b){var c;return b=La(b,a),a.isBefore(b)?c=$a(a,b):(c=$a(b,a),c.milliseconds=-c.milliseconds,c.months=-c.months),c}function ab(a,b){return function(c,d){var e,f;return null===d||isNaN(+d)||(ba(b,"moment()."+b+"(period, number) is deprecated. Please use moment()."+b+"(number, period)."),f=c,c=d,d=f),c="string"==typeof c?+c:c,e=Ya(c,d),bb(this,e,a),this}}function bb(b,c,d,e){var f=c._milliseconds,g=c._days,h=c._months;e=null==e?!0:e,f&&b._d.setTime(+b._d+f*d),g&&E(b,"Date",D(b,"Date")+g*d),h&&X(b,D(b,"Month")+h*d),e&&a.updateOffset(b,g||h)}function cb(a,b){var c=a||Da(),d=La(c,this).startOf("day"),e=this.diff(d,"days",!0),f=-6>e?"sameElse":-1>e?"lastWeek":0>e?"lastDay":1>e?"sameDay":2>e?"nextDay":7>e?"nextWeek":"sameElse";return this.format(b&&b[f]||this.localeData().calendar(f,this,Da(c)))}function db(){return new n(this)}function eb(a,b){var c;return b=A("undefined"!=typeof b?b:"millisecond"),"millisecond"===b?(a=o(a)?a:Da(a),+this>+a):(c=o(a)?+a:+Da(a),c<+this.clone().startOf(b))}function fb(a,b){var c;return b=A("undefined"!=typeof b?b:"millisecond"),"millisecond"===b?(a=o(a)?a:Da(a),+a>+this):(c=o(a)?+a:+Da(a),+this.clone().endOf(b)<c)}function gb(a,b,c){return this.isAfter(a,c)&&this.isBefore(b,c)}function hb(a,b){var c;return b=A(b||"millisecond"),"millisecond"===b?(a=o(a)?a:Da(a),+this===+a):(c=+Da(a),+this.clone().startOf(b)<=c&&c<=+this.clone().endOf(b))}function ib(a,b,c){var d,e,f=La(a,this),g=6e4*(f.utcOffset()-this.utcOffset());return b=A(b),"year"===b||"month"===b||"quarter"===b?(e=jb(this,f),"quarter"===b?e/=3:"year"===b&&(e/=12)):(d=this-f,e="second"===b?d/1e3:"minute"===b?d/6e4:"hour"===b?d/36e5:"day"===b?(d-g)/864e5:"week"===b?(d-g)/6048e5:d),c?e:p(e)}function jb(a,b){var c,d,e=12*(b.year()-a.year())+(b.month()-a.month()),f=a.clone().add(e,"months");return 0>b-f?(c=a.clone().add(e-1,"months"),d=(b-f)/(f-c)):(c=a.clone().add(e+1,"months"),d=(b-f)/(c-f)),-(e+d)}function kb(){return this.clone().locale("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")}function lb(){var a=this.clone().utc();return 0<a.year()&&a.year()<=9999?"function"==typeof Date.prototype.toISOString?this.toDate().toISOString():K(a,"YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"):K(a,"YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]")}function mb(b){var c=K(this,b||a.defaultFormat);return this.localeData().postformat(c)}function nb(a,b){return this.isValid()?Ya({to:this,from:a}).locale(this.locale()).humanize(!b):this.localeData().invalidDate()}function ob(a){return this.from(Da(),a)}function pb(a,b){return this.isValid()?Ya({from:this,to:a}).locale(this.locale()).humanize(!b):this.localeData().invalidDate()}function qb(a){return this.to(Da(),a)}function rb(a){var b;return void 0===a?this._locale._abbr:(b=y(a),null!=b&&(this._locale=b),this)}function sb(){return this._locale}function tb(a){switch(a=A(a)){case"year":this.month(0);case"quarter":case"month":this.date(1);case"week":case"isoWeek":case"day":this.hours(0);case"hour":this.minutes(0);case"minute":this.seconds(0);case"second":this.milliseconds(0)}return"week"===a&&this.weekday(0),"isoWeek"===a&&this.isoWeekday(1),"quarter"===a&&this.month(3*Math.floor(this.month()/3)),this}function ub(a){return a=A(a),void 0===a||"millisecond"===a?this:this.startOf(a).add(1,"isoWeek"===a?"week":a).subtract(1,"ms")}function vb(){return+this._d-6e4*(this._offset||0)}function wb(){return Math.floor(+this/1e3)}function xb(){return this._offset?new Date(+this):this._d}function yb(){var a=this;return[a.year(),a.month(),a.date(),a.hour(),a.minute(),a.second(),a.millisecond()]}function zb(){var a=this;return{years:a.year(),months:a.month(),date:a.date(),hours:a.hours(),minutes:a.minutes(),seconds:a.seconds(),milliseconds:a.milliseconds()}}function Ab(){return k(this)}function Bb(){return g({},j(this))}function Cb(){return j(this).overflow}function Db(a,b){H(0,[a,a.length],0,b)}function Eb(a,b,c){return ja(Da([a,11,31+b-c]),b,c).week}function Fb(a){var b=ja(this,this.localeData()._week.dow,this.localeData()._week.doy).year;return null==a?b:this.add(a-b,"y")}function Gb(a){var b=ja(this,1,4).year;return null==a?b:this.add(a-b,"y")}function Hb(){return Eb(this.year(),1,4)}function Ib(){var a=this.localeData()._week;return Eb(this.year(),a.dow,a.doy)}function Jb(a){return null==a?Math.ceil((this.month()+1)/3):this.month(3*(a-1)+this.month()%3)}function Kb(a,b){return"string"!=typeof a?a:isNaN(a)?(a=b.weekdaysParse(a),"number"==typeof a?a:null):parseInt(a,10)}function Lb(a){return this._weekdays[a.day()]}function Mb(a){return this._weekdaysShort[a.day()]}function Nb(a){return this._weekdaysMin[a.day()]}function Ob(a){var b,c,d;for(this._weekdaysParse=this._weekdaysParse||[],b=0;7>b;b++)if(this._weekdaysParse[b]||(c=Da([2e3,1]).day(b),d="^"+this.weekdays(c,"")+"|^"+this.weekdaysShort(c,"")+"|^"+this.weekdaysMin(c,""),this._weekdaysParse[b]=new RegExp(d.replace(".",""),"i")),this._weekdaysParse[b].test(a))return b}function Pb(a){var b=this._isUTC?this._d.getUTCDay():this._d.getDay();return null!=a?(a=Kb(a,this.localeData()),this.add(a-b,"d")):b}function Qb(a){var b=(this.day()+7-this.localeData()._week.dow)%7;return null==a?b:this.add(a-b,"d")}function Rb(a){return null==a?this.day()||7:this.day(this.day()%7?a:a-7)}function Sb(a,b){H(a,0,0,function(){return this.localeData().meridiem(this.hours(),this.minutes(),b)})}function Tb(a,b){return b._meridiemParse}function Ub(a){return"p"===(a+"").toLowerCase().charAt(0)}function Vb(a,b,c){return a>11?c?"pm":"PM":c?"am":"AM"}function Wb(a,b){b[qe]=q(1e3*("0."+a))}function Xb(){return this._isUTC?"UTC":""}function Yb(){return this._isUTC?"Coordinated Universal Time":""}function Zb(a){return Da(1e3*a)}function $b(){return Da.apply(null,arguments).parseZone()}function _b(a,b,c){var d=this._calendar[a];return"function"==typeof d?d.call(b,c):d}function ac(a){var b=this._longDateFormat[a],c=this._longDateFormat[a.toUpperCase()];return b||!c?b:(this._longDateFormat[a]=c.replace(/MMMM|MM|DD|dddd/g,function(a){return a.slice(1)}),this._longDateFormat[a])}function bc(){return this._invalidDate}function cc(a){return this._ordinal.replace("%d",a)}function dc(a){return a}function ec(a,b,c,d){var e=this._relativeTime[c];return"function"==typeof e?e(a,b,c,d):e.replace(/%d/i,a)}function fc(a,b){var c=this._relativeTime[a>0?"future":"past"];return"function"==typeof c?c(b):c.replace(/%s/i,b)}function gc(a){var b,c;for(c in a)b=a[c],"function"==typeof b?this[c]=b:this["_"+c]=b;this._ordinalParseLenient=new RegExp(this._ordinalParse.source+"|"+/\d{1,2}/.source)}function hc(a,b,c,d){var e=y(),f=h().set(d,b);return e[c](f,a)}function ic(a,b,c,d,e){if("number"==typeof a&&(b=a,a=void 0),a=a||"",null!=b)return hc(a,b,c,e);var f,g=[];for(f=0;d>f;f++)g[f]=hc(a,f,c,e);return g}function jc(a,b){return ic(a,b,"months",12,"month")}function kc(a,b){return ic(a,b,"monthsShort",12,"month")}function lc(a,b){return ic(a,b,"weekdays",7,"day")}function mc(a,b){return ic(a,b,"weekdaysShort",7,"day")}function nc(a,b){return ic(a,b,"weekdaysMin",7,"day")}function oc(){var a=this._data;return this._milliseconds=_e(this._milliseconds),this._days=_e(this._days),this._months=_e(this._months),a.milliseconds=_e(a.milliseconds),a.seconds=_e(a.seconds),a.minutes=_e(a.minutes),a.hours=_e(a.hours),a.months=_e(a.months),a.years=_e(a.years),this}function pc(a,b,c,d){var e=Ya(b,c);return a._milliseconds+=d*e._milliseconds,a._days+=d*e._days,a._months+=d*e._months,a._bubble()}function qc(a,b){return pc(this,a,b,1)}function rc(a,b){return pc(this,a,b,-1)}function sc(a){return 0>a?Math.floor(a):Math.ceil(a)}function tc(){var a,b,c,d,e,f=this._milliseconds,g=this._days,h=this._months,i=this._data;return f>=0&&g>=0&&h>=0||0>=f&&0>=g&&0>=h||(f+=864e5*sc(vc(h)+g),g=0,h=0),i.milliseconds=f%1e3,a=p(f/1e3),i.seconds=a%60,b=p(a/60),i.minutes=b%60,c=p(b/60),i.hours=c%24,g+=p(c/24),e=p(uc(g)),h+=e,g-=sc(vc(e)),d=p(h/12),h%=12,i.days=g,i.months=h,i.years=d,this}function uc(a){return 4800*a/146097}function vc(a){return 146097*a/4800}function wc(a){var b,c,d=this._milliseconds;if(a=A(a),"month"===a||"year"===a)return b=this._days+d/864e5,c=this._months+uc(b),"month"===a?c:c/12;switch(b=this._days+Math.round(vc(this._months)),a){case"week":return b/7+d/6048e5;case"day":return b+d/864e5;case"hour":return 24*b+d/36e5;case"minute":return 1440*b+d/6e4;case"second":return 86400*b+d/1e3;case"millisecond":return Math.floor(864e5*b)+d;default:throw new Error("Unknown unit "+a)}}function xc(){return this._milliseconds+864e5*this._days+this._months%12*2592e6+31536e6*q(this._months/12)}function yc(a){return function(){return this.as(a)}}function zc(a){return a=A(a),this[a+"s"]()}function Ac(a){return function(){return this._data[a]}}function Bc(){return p(this.days()/7)}function Cc(a,b,c,d,e){return e.relativeTime(b||1,!!c,a,d)}function Dc(a,b,c){var d=Ya(a).abs(),e=qf(d.as("s")),f=qf(d.as("m")),g=qf(d.as("h")),h=qf(d.as("d")),i=qf(d.as("M")),j=qf(d.as("y")),k=e<rf.s&&["s",e]||1===f&&["m"]||f<rf.m&&["mm",f]||1===g&&["h"]||g<rf.h&&["hh",g]||1===h&&["d"]||h<rf.d&&["dd",h]||1===i&&["M"]||i<rf.M&&["MM",i]||1===j&&["y"]||["yy",j];return k[2]=b,k[3]=+a>0,k[4]=c,Cc.apply(null,k)}function Ec(a,b){return void 0===rf[a]?!1:void 0===b?rf[a]:(rf[a]=b,!0)}function Fc(a){var b=this.localeData(),c=Dc(this,!a,b);return a&&(c=b.pastFuture(+this,c)),b.postformat(c)}function Gc(){var a,b,c,d=sf(this._milliseconds)/1e3,e=sf(this._days),f=sf(this._months);a=p(d/60),b=p(a/60),d%=60,a%=60,c=p(f/12),f%=12;var g=c,h=f,i=e,j=b,k=a,l=d,m=this.asSeconds();return m?(0>m?"-":"")+"P"+(g?g+"Y":"")+(h?h+"M":"")+(i?i+"D":"")+(j||k||l?"T":"")+(j?j+"H":"")+(k?k+"M":"")+(l?l+"S":""):"P0D"}
 //! moment.js locale configuration
@@ -92626,7 +92626,7 @@ define('castle-url/patterns/structure//js/views/selectionbutton',[
 });
 
 
-define('text!castle-url/patterns/structure/templates/paging.xml',[],function () { return '  <ul class="pagination pagination-sm pagination-centered">\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverfirst">\n        &laquo;\n      </a>\n    </li>\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverprevious">\n        &lt;\n      </a>\n    </li>\n    <% _.each(pages, function(p){ %>\n    <li class="<% if (currentPage == p) { %>active<% } %>">\n      <a href="#" class="page"><%- p %></a>\n    </li>\n    <% }); %>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="servernext">\n        &gt;\n      </a>\n    </li>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="serverlast">\n        &raquo;\n      </a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled"><a href="#"><%- _t("Show:") %></a></li>\n    <li class="serverhowmany serverhowmany15 <% if(perPage == 15){ %>disabled<% } %>">\n      <a href="#" class="">15</a>\n    </li>\n    <li class="serverhowmany serverhowmany30 <% if(perPage == 30){ %>disabled<% } %>">\n      <a href="#" class="">30</a>\n    </li>\n    <li class="serverhowmany serverhowmany50 <% if(perPage == 50){ %>disabled<% } %>">\n      <a href="#" class="">50</a>\n    </li>\n    <li class="serverhowmany serverhowmany100000 <% if(perPage == 100000){ %>disabled<% } %>">\n      <a href="#" class="">All</a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled">\n      <a href="#">\n        <%- _t("Page:") %> <span class="current"><%- currentPage %></span>\n        <%- _t("of") %>\n        <span class="total"><%- totalPages %></span>\n              <%- _t("shown") %>\n      </a>\n    </li>\n  </ul>\n';});
+define('text!castle-url/patterns/structure/templates/paging.xml',[],function () { return '  <ul class="pagination pagination-sm pagination-centered">\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverfirst">\n        &laquo;\n      </a>\n    </li>\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverprevious">\n        &lt;\n      </a>\n    </li>\n    <% _.each(pages, function(p){ %>\n    <li class="<% if (currentPage == p) { %>active<% } %> <% if ("..." === p) { %>disabled<% } %>">\n      <a href="#" class="page"><%- p %></a>\n    </li>\n    <% }); %>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="servernext">\n        &gt;\n      </a>\n    </li>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="serverlast">\n        &raquo;\n      </a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled"><a href="#"><%- _t("Show:") %></a></li>\n    <li class="serverhowmany serverhowmany15 <% if(perPage == 15){ %>disabled<% } %>">\n      <a href="#" class="">15</a>\n    </li>\n    <li class="serverhowmany serverhowmany30 <% if(perPage == 30){ %>disabled<% } %>">\n      <a href="#" class="">30</a>\n    </li>\n    <li class="serverhowmany serverhowmany50 <% if(perPage == 50){ %>disabled<% } %>">\n      <a href="#" class="">50</a>\n    </li>\n    <li class="serverhowmany serverhowmany500 <% if(perPage == 500){ %>disabled<% } %>">\n      <a href="#" class="">500</a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled">\n      <a href="#">\n        <%- _t("Page:") %> <span class="current"><%- currentPage %></span>\n        <%- _t("of") %>\n        <span class="total"><%- totalPages %></span>\n              <%- _t("shown") %>\n      </a>\n    </li>\n  </ul>\n';});
 
 define( 'castle-url/patterns/structure//js/views/paging',[
   'jquery',
@@ -92756,8 +92756,10 @@ define( 'castle-url/patterns/structure//js/views/paging',[
     },
     gotoPage: function ( e ) {
       e.preventDefault();
-      var page = $( e.target ).text();
-      this.collection.goTo( page );
+      const page = $( e.target ).text();
+      if(page !== '...' ){
+        this.collection.goTo( page );
+      }
     },
     changeCount: function ( e ) {
       e.preventDefault();
@@ -93083,9 +93085,9 @@ define('castle-url/patterns/structure//js/views/textfilter',[
 
     /*
     This is a list of all available events you can register on a dropzone object.
-    
+
     You can register an event handler like this:
-    
+
         dropzone.on("dragEnter", function() { });
      */
 
@@ -94594,7 +94596,7 @@ define('castle-url/patterns/structure//js/views/textfilter',[
 
 
   /*
-  
+
   Bugfix for iOS 6 and 7
   Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
   based on the work of https://github.com/stomita/ios-imagefile-megapixel
@@ -97349,6 +97351,60 @@ define('castle-url/patterns/structure/pattern',[
 
       self.view = new AppView(self.options);
       self.$el.append(self.view.render().$el);
+
+      const isImageVisible = imageElement => {
+        const imageRectangle = imageElement.getBoundingClientRect();
+        const height = window.innerHeight || document.documentElement.clientHeight;
+        const width = window.innerWidth || document.documentElement.clientWidth;
+        return (
+          imageRectangle.top >= 0 &&
+          imageRectangle.left >= 0 &&
+          imageRectangle.bottom <= height &&
+          imageRectangle.right <= width
+        );
+      };
+
+      const imageIntersectionObserver = new IntersectionObserver(
+        ( observees, observer ) => {
+          observees.forEach(
+            observee => {
+              if ( observee.isIntersecting ) {
+                const imageElement = observee.target;
+                const { imageSrc } = imageElement.dataset;
+                if ( !!imageSrc && !imageElement.src ) {
+                  setTimeout(
+                    () => {
+                      if ( isImageVisible( imageElement ) ) {
+                        imageElement.src = imageSrc;
+                        imageElement.removeAttribute( 'data-image-src' );
+                        observer.unobserve( imageElement );
+                      }
+                    },
+                    300
+                  );
+                } else {
+                  observer.unobserve( imageElement );
+                }
+              }
+            } );
+        } );
+
+      const imageMutationObserverCallback = ( records, observer ) => {
+        const shouldResetIntersectionObserver = records.some(
+          record => record.target.matches( 'div.order-support' )
+        );
+        if ( shouldResetIntersectionObserver ) {
+          imageIntersectionObserver.disconnect();
+          document.querySelectorAll( '[data-image-src]' ).forEach(
+            imageElement => imageIntersectionObserver.observe( imageElement )
+          );
+        }
+      };
+      (new MutationObserver( imageMutationObserverCallback )).observe(
+        document.querySelector( 'body' ),
+        { childList: true, subtree: true }
+      );
+
     }
   });
 
@@ -100603,7 +100659,7 @@ define('castle-url/patterns/widgets',[
   'castle-url/libs/react/react.min',
 ], function($, Base, R) {
   "use strict";
-  
+
   var D = R.DOM;
 
   var UploadFieldsWidgetComponent = R.createClass({
@@ -100750,7 +100806,7 @@ define('castle-url/patterns/widgets',[
 
 });
 
-  
+
 
 
 
