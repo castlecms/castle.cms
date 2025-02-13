@@ -4,6 +4,9 @@ Changelog
 3.1.0b3 (unreleased)
 --------------------
 
+- add environment configurable values for the the link-reporter: batch size, retry frequency,
+  and sleep between batches, individual fetches, and rate limiting new links onto the worker
+  queue.
 - tweak sample site content script
 - folder_contents paginator changes:
 - fix bug breaking paginator when clicking "..." page button
