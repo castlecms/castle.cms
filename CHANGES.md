@@ -5,11 +5,11 @@ Changelog
 --------------------
 
 - tweak sample site content script
--
 - folder_contents paginator changes:
 - fix bug breaking paginator when clicking "..." page button
 - change "all" to 500
 - only load thumbnail images as they become visible
+- tweak the custom query assembler to wrap the query and scoring script properly for an opensearch "function_score" query
 
 
 3.1.0b2 (2025-01-10)
