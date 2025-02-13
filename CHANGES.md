@@ -4,7 +4,7 @@ Changelog
 3.1.0b3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- tweak the custom query assembler to wrap the query and scoring script properly for an opensearch "function_score" query
 
 
 3.1.0b2 (2025-01-10)
