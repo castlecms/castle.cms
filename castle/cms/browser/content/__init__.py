@@ -168,6 +168,15 @@ class TmpUploadFile(object):
         if not self.info.get('field_name', '').startswith('tmp_'):
             shutil.rmtree(self.info["tmp_dir"])
 
+    def check(self, chunk, chunk_size, total_size):
+        # check things are matching up
+        if self.info['last_chunk'] != chunk - 1:
+            raise Exception('Invalid chunk sequence')
+        if self.info['total_size'] != total_size:
+            raise Exception('Invalid total size')
+        if self.info['chunk_size'] != chunk_size:
+            raise Exception('Inconsistent chunk size')
+
 
 class Creator(BrowserView):
     """
@@ -218,13 +227,7 @@ class Creator(BrowserView):
 
         else:
             tmp_file = TmpUploadFile(load=True, prefix=cache_key_prefix + _id)
-            # check things are matching up
-            if tmp_file.info['last_chunk'] != chunk - 1:
-                raise Exception('Invalid chunk sequence')
-            if tmp_file.info['total_size'] != total_size:
-                raise Exception('Invalid total size')
-            if tmp_file.info['chunk_size'] != chunk_size:
-                raise Exception('Inconsistent chunk size')
+            tmp_file.check(chunk, chunk_size, total_size)
             tmp_file.info['last_chunk'] = chunk
 
         tmp_file.write_chunk(self.requst.form['file'])
