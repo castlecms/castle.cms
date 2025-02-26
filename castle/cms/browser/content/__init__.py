@@ -129,20 +129,18 @@ class TmpUploadFile(object):
 
         _id = utils.get_random_string(50)
         self.prefix = prefix + _id
-        self.tmp_dir = tempfile.mkdtemp(dir=self.base_tmp_dir)
+        self.tmp_dir = os.path.join(self.base_tmp_dir, self.prefix)
         self.metadata_path = os.path.join(self.base_tmp_dir, self.prefix, "metadata.json")
         self.info = dict(
             id=_id,
             tmp_dir=self.tmp_dir,
             tmp_file=os.path.join(self.tmp_dir, filename),
-            tmp_metadata_dir=os.path.join(self.base_tmp_dir, self.prefix),
             last_chunk=1,
             chunk_size=chunk_size,
             total_size=total_size,
             name=filename,
         )
-        # Probably don't need two directories
-        os.makedirs(self.info["tmp_metadata_dir"])
+        os.makedirs(self.tmp_dir)
 
     def load(self):
         with open(self.metadata_path, 'r') as fin:
@@ -171,7 +169,6 @@ class TmpUploadFile(object):
         # tmp_ files need to stick around and be managed later
         if not self.info.get('field_name', '').startswith('tmp_'):
             shutil.rmtree(self.info["tmp_dir"])
-            shutil.rmtree(self.info["tmp_metadata_dir"])
 
     def check(self, chunk, chunk_size, total_size):
         # check things are matching up
