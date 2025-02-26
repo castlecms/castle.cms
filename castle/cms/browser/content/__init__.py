@@ -123,22 +123,26 @@ class TmpUploadFile(object):
         self.base_tmp_dir = os.getenv("CASTLECMS_TMP_FILE_DIR", tempfile.gettempdir())
 
         if load:
-            self.metadata_path = os.path.join(self.base_tmp_dir, prefix, ".metadata")
+            self.metadata_path = os.path.join(self.base_tmp_dir, prefix, "metadata.json")
             self.load()
             return
 
         _id = utils.get_random_string(50)
         self.prefix = prefix + _id
-        self.metadata_path = os.path.join(self.base_tmp_dir, self.prefix, ".metadata")
+        self.tmp_dir = tempfile.mkdtemp(dir=self.base_tmp_dir)
+        self.metadata_path = os.path.join(self.base_tmp_dir, self.prefix, "metadata.json")
         self.info = dict(
             id=_id,
-            tmp_dir=tempfile.mkdtemp(dir=self.base_tmp_dir),
-            tmp_filename=os.path.join(self.tmp_dir, filename),
+            tmp_dir=self.tmp_dir,
+            tmp_file=os.path.join(self.tmp_dir, filename),
+            tmp_metadata_dir=os.path.join(self.base_tmp_dir, self.prefix),
             last_chunk=1,
             chunk_size=chunk_size,
             total_size=total_size,
             name=filename,
         )
+        # Probably don't need two directories
+        os.makedirs(self.info["tmp_metadata_dir"])
 
     def load(self):
         with open(self.metadata_path, 'r') as fin:
@@ -154,9 +158,9 @@ class TmpUploadFile(object):
             mode = 'ab+'
             # if we're not on the first chunk, and there's no temp file, then
             # there's an issue
-            if not os.path.exists(self.info['tmp_filename']):
+            if not os.path.exists(self.info['tmp_file']):
                 raise Exception('No tmp upload file found')
-        with open(self.info['tmp_filename'], mode) as fin:
+        with open(self.info['tmp_file'], mode) as fin:
             while True:
                 data = formdata.read(2 << 16)
                 if not data:
@@ -167,6 +171,7 @@ class TmpUploadFile(object):
         # tmp_ files need to stick around and be managed later
         if not self.info.get('field_name', '').startswith('tmp_'):
             shutil.rmtree(self.info["tmp_dir"])
+            shutil.rmtree(self.info["tmp_metadata_dir"])
 
     def check(self, chunk, chunk_size, total_size):
         # check things are matching up
@@ -230,7 +235,7 @@ class Creator(BrowserView):
             tmp_file.check(chunk, chunk_size, total_size)
             tmp_file.info['last_chunk'] = chunk
 
-        tmp_file.write_chunk(self.requst.form['file'])
+        tmp_file.write_chunk(chunk, self.request.form['file'])
 
         if chunk == total_chunks:
             # finish upload
