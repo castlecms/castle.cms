@@ -22741,6 +22741,12 @@ define('castle-url/components/upload',[
         utils.loading.hide();
         return;
       }
+      if (chunk === 1){
+        const expectedFileSizeElement = document.querySelector( 'input#form-widgets-expected_file_size' );
+        if(expectedFileSizeElement){
+          expectedFileSizeElement.value = file.size;
+        }
+      }
       utils.loading.show();
       var xhr = new mOxie.XMLHttpRequest();
       var fd = new mOxie.FormData();
