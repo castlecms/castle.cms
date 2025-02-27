@@ -288,11 +288,12 @@
   />
   <genericsetup:upgradeStep
     title="Upgrade CastleCMS to 3.0.18"
-    description="3018 - Recompile resources for paging 'all' => 500"
+    description="3018 - Move Video schema from xml to python & Recompile resources for paging 'all' => 500, video upload check"
     source="*"
     destination="3018"
     handler=".upgrades.upgrade_3018"
     profile="castle.cms:default"
   />
+
 
 </configure>
