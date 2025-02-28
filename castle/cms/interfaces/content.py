@@ -81,8 +81,8 @@ class IVideo(IMedia):
         if expected_file_size:
             if file_size != expected_file_size:
                 error_message = (
-                    u'The file {} is not the expected size. '
-                    u'This means the file is probably corrupted. '
+                    u'The file {} is not the expected size, '
+                    u'indicating a problem during the upload process. '
                     u'Please try to upload again.'
                 ).format(getattr(data.file, 'filename', ''))
                 raise Invalid(error_message)
