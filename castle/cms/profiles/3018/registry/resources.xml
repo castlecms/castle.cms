@@ -4,7 +4,7 @@
 
   <records prefix="plone.bundles/plone-logged-in"
     interface='Products.CMFPlone.interfaces.IBundleRegistry'>
-    <value key="last_compilation">2025-01-30 00:00:00</value>
+    <value key="last_compilation">2025-02-27 00:00:00</value>
   </records>
 
 </registry>

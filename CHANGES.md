@@ -13,6 +13,8 @@ Changelog
 - change "all" to 500
 - only load thumbnail images as they become visible
 - tweak the custom query assembler to wrap the query and scoring script properly for an opensearch "function_score" query
+- handle possible async upload to s3 error
+- change video to python-based schema to validate updated file size
 
 
 3.1.0b2 (2025-01-10)
