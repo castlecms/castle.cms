@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1.0b3 (unreleased)
+3.1.0b3 (2025-03-03)
 --------------------
 
 - add environment configurable values for the the link-reporter: batch size, retry frequency,
