@@ -26,15 +26,14 @@ def patched_loadBlob(self, oid, serial):
     # directory, then assume that it doesn't exist on the server
     # and return None.
 
-    blob_filename = self.fshelper.getBlobFilename(oid, serial)
-    allow_experimental = os.getenv("CASTLE_ALLOW_EXPERIMENTAL_BLOB_REPLACEMENT", None)
+    if self.fshelper is None:
+        raise POSException.Unsupported("No blob cache directory is configured.")
 
+    blob_filename = self.fshelper.getBlobFilename(oid, serial)
+
+    allow_experimental = os.getenv("CASTLE_ALLOW_EXPERIMENTAL_BLOB_REPLACEMENT", None)
     if allow_experimental is None:
-        # Exhibit original behavior if blob replacement is not enabled
-        if not os.path.exists(blob_filename):
-            logger.error("No blob file at path: %s", blob_filename)
-            raise POSKeyError("No blob file", oid, serial)
-        return blob_filename
+        return self._old_loadBlob(oid, serial)
     
     if self.shared_blob_dir:
         if os.path.exists(blob_filename):

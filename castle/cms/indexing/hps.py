@@ -12,7 +12,6 @@ from wildcard.hps.interfaces import IQueryAssembler
 from wildcard.hps.opensearch import WildcardHPSCatalog
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from collective.elasticsearch.manager import ElasticSearchManager
 
 
 logger = logging.getLogger("Plone")
@@ -155,13 +154,6 @@ def gen_audit_query(
         query["sort"] = sortquery
 
     return query
-
-
-def index_in_es(obj):
-    catalog = api.portal.get_tool('portal_catalog')
-    es = ElasticSearchManager(catalog)
-    if es.enabled:
-        es.bulk([], {IUUID(obj): obj}, [], es)
 
 
 def get_index_summary(index_name, terms, agg_agg_terms=None, filter_terms=None):

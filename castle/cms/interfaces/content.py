@@ -1,14 +1,23 @@
-from plone.namedfile.interfaces import INamedImage
-from zope.interface import Attribute
 from OFS.interfaces import IApplication
+from plone.api.portal import get_registry_record
 from plone.app.contenttypes.interfaces import IFile
+from plone.app.textfield import RichText
+from plone.autoform import directives
+from plone.namedfile.field import NamedBlobFile
+from plone.namedfile.interfaces import INamedImage
 from plone.supermodel import model
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
-from zope.interface import Interface
-from zope import schema
-from plone.api.portal import get_registry_record
-from zope.interface import provider
+from zope.interface import (
+    Attribute,
+    Interface,
+    Invalid,
+    invariant,
+    provider,
+)
 from zope.schema.interfaces import IContextAwareDefaultFactory
+from z3c.form.interfaces import IEditForm
+
+import zope.schema as schema
 
 
 class ICastleApplication(IApplication):
@@ -24,7 +33,59 @@ class IMedia(model.Schema, IFile):
 
 
 class IVideo(IMedia):
-    pass
+    title = schema.TextLine(
+        title=u'New Title',
+        required=False,
+    )
+
+    description = schema.Text(
+      title=u'New Summary',
+      required=False,
+    )
+
+    file = NamedBlobFile(
+        title=u'Video File',
+        required=False,
+    )
+
+    directives.mode(expected_file_size='hidden')
+    expected_file_size = schema.TextLine(
+      required=False,
+    )
+
+    youtube_url = schema.TextLine(
+      title=u'YouTube URL',
+      required=False,
+    )
+
+    directives.omitted(IEditForm, 'upload_to_youtube')
+    upload_to_youtube = schema.Bool(
+        title=u'Upload to YouTube',
+        required=False,
+    )
+
+    transcript = RichText(
+      title=u'Transcript',
+      required=False,
+    )
+
+    subtitle_file = NamedBlobFile(
+      title=u'Subtitle File',
+      required=False,
+    )
+
+    @invariant
+    def file_size_validator(data):
+        expected_file_size = data.expected_file_size
+        file_size = str(getattr(data.file, 'size', 0))
+        if expected_file_size:
+            if file_size != expected_file_size:
+                error_message = (
+                    u'The file {} is not the expected size, '
+                    u'indicating a problem during the upload process. '
+                    u'Please try to upload again.'
+                ).format(getattr(data.file, 'filename', ''))
+                raise Invalid(error_message)
 
 
 class IAudio(IMedia):

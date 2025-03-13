@@ -31,6 +31,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--file', dest='file', default=False)
 parser.add_argument('--site-id', dest='site_id', default='Plone')
 parser.add_argument('--limit', dest='limit', default=20, type=int)
+parser.add_argument('--batch-size', dest='batch_size', default=10, type=int)
 args, _ = parser.parse_known_args()
 
 user = app.acl_users.getUser('admin')  # noqa
@@ -55,7 +56,7 @@ while len(parsed) < args.limit:
             anchors = base_dom.cssselect('#bodyContent a')
         anchor = random.choice(anchors)
         url = anchor.attrib.get('href')
-        if (url.startswith('//') or 'Template:' in url or 'Wikipedia:' in url or  # noqa
+        if (not url or url.startswith('//') or 'Template:' in url or 'Wikipedia:' in url or
                 'Category:' in url or 'index.php' in url or 'File:' in url or
                 'Help:' in url or 'Portal:' in url or 'Talk:' in url):
             continue
@@ -103,5 +104,8 @@ while len(parsed) < args.limit:
     obj.reindexObject()
 
     parsed.append(found_url)
+
+    if len(parsed) % args.batch_size == 0:
+        transaction.commit()
 
 transaction.commit()

@@ -94,24 +94,39 @@ def move_file(obj):
         'ContentDisposition': disposition,
     }
 
-    # Upload to AWS
-    # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
-    #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
-    # note: upload_fileobj() does a multipart upload, which is why
-    #   chunked uploading is no longer performed explicitly
-    #   see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_fileobj  # noqa
-    blob_fi = obj.file._blob.open('r')
-    bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
+    try:
+        is_complete = False
+        # Upload to AWS
+        # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
+        #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
+        # note: upload_fileobj() does a multipart upload, which is why
+        #   chunked uploading is no longer performed explicitly
+        #   see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_fileobj  # noqa
 
-    # Delete data from ZODB, but leave a reference
-    if not getCelery().conf.task_always_eager:
-        obj._p_jar.sync()
-    obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
-    obj.file.original_filename = filename
-    obj.file.original_content_type = content_type
-    obj.file.original_size = size
+        blob_fi = obj.file._blob.open('r')
+        bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 
-    set_permission(obj)
+        s3_metadata = bucket.Object(key)
+        is_complete = s3_metadata.content_length == size
+
+        if is_complete:
+            # Delete data from ZODB, but leave a reference
+            if not getCelery().conf.task_always_eager:
+                obj._p_jar.sync()
+            obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
+            obj.file.original_filename = filename
+            obj.file.original_content_type = content_type
+            obj.file.original_size = size
+
+            set_permission(obj)
+    except Exception as exc:
+        logger.warning(exc)
+    finally:
+        if is_complete:
+            logger.info('{} uploaded to s3 successfully with key {}'.format(filename, key))
+        else:
+            logger.error(filename + ' failed to upload correctly')
+
 
 
 def set_permission(obj):
@@ -131,7 +146,8 @@ def set_permission(obj):
             'error reading object {key} in bucket {name}'.format(
                 key=key,
                 name=bucket.name),
-            log_exc=True)
+                exc_info=True,
+            )
         return
 
     # is the object public?

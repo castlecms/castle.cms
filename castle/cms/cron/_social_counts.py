@@ -11,7 +11,7 @@ import transaction
 from AccessControl.SecurityManagement import newSecurityManager
 from Acquisition import aq_parent
 from BTrees.OOBTree import OOBTree
-from castle.cms.indexing.hps import index_in_es
+# from castle.cms.indexing.hps import index_in_es
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import clear_object_cache, retriable
 from plone.app.redirector.interfaces import IRedirectionStorage
@@ -215,7 +215,7 @@ def get_social_counts(site, obj, site_url, count_types, count=0):
 
     transaction.commit()
 
-    index_in_es(obj)
+    # index_in_es(obj)
 
     if count % 200 == 0:
         clear_object_cache(site)

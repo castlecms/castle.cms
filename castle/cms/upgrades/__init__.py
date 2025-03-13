@@ -142,5 +142,7 @@ upgrade_3014 = default_upgrade_factory('3014')
 upgrade_3015 = default_upgrade_factory('3015')
 upgrade_3016 = default_upgrade_factory('3016')
 upgrade_3017 = default_upgrade_factory('3017')
+upgrade_3018 = default_upgrade_factory('3018')
 
 upgrade_4000 = default_upgrade_factory('4000')
+

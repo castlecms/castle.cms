@@ -24,9 +24,9 @@ class IconView(NamedFileDownload):
     a bit insane all the icon sizes we need but this is the world we live in...
 
 
-<link rel="apple-touch-icon" sizes="180x180" href="/site-icon.png">
-<link rel="icon" type="image/png" href="/site-icon.png?scale=32" sizes="32x32">
-<link rel="icon" type="image/png" href="//site-icon.png?scale=16" sizes="16x16">
+<link rel="apple-touch-icon" sizes="180x180" href="/@@site-icon.png">
+<link rel="icon" type="image/png" href="/@@site-icon.png?scale=32" sizes="32x32">
+<link rel="icon" type="image/png" href="/@@site-icon.png?scale=16" sizes="16x16">
 <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
 
 <!-- can't do this one!!! no way to convert to svg -->
@@ -133,12 +133,12 @@ class ManifestView(NamedFileDownload):
     "name": "%(site_title)s",
     "icons": [
         {
-            "src": "%(url)s/site-icon.png?scale=192",
+            "src": "%(url)s/@@site-icon.png?scale=192",
             "sizes": "192x192",
             "type": "image\/png"
         },
         {
-            "src": "%(url)s/site-icon.png?scale=512",
+            "src": "%(url)s/@@site-icon.png?scale=512",
             "sizes": "512x512",
             "type": "image\/png"
         }
@@ -162,7 +162,7 @@ class BrowserConfigView(NamedFileDownload):
 <browserconfig>
   <msapplication>
     <tile>
-      <square150x150logo src="{url}/site-icon.png?scale=150"/>
+      <square150x150logo src="{url}/@@site-icon.png?scale=150"/>
       <TileColor>#da532c</TileColor>
     </tile>
   </msapplication>
