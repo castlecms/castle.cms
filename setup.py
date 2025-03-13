@@ -62,7 +62,6 @@ setup(
 
         # add-ons
         'collective.documentviewer>=6.0.3',
-        # 'collective.elasticsearch>=2.0.5<3',
         'wildcard.hps>=1.4.0',
         'collective.celery>=1.1.4',
 
