@@ -76,7 +76,11 @@ class ISiteSchema(controlpanel.ISiteSchema):
         default=u"Castle",
         required=False)
 
-    site_icon = schema.ASCII(
+    # Python 3 - The latest version of 'plone.formwidget.multifile' expects
+    # this field to provide the 'IBytes' interface. Though the ASCII schema is a
+    # restricted form of the Bytes schema, Zope does not provide the 'IBytes' interface
+    # for it
+    site_icon = schema.Bytes(
         title=u"Site Icon",
         description=u'CastleCMS will use this icon to generate all the various '
                     u'icons for mobile devices necessary',

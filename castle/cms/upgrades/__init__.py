@@ -1,6 +1,7 @@
 from castle.cms.interfaces import (
     IAPISettings,
     ISecuritySchema,
+    ISiteSchema
 )
 from importlib import import_module
 from logging import getLogger
@@ -146,3 +147,7 @@ upgrade_3018 = default_upgrade_factory('3018')
 
 upgrade_4000 = default_upgrade_factory('4000')
 
+
+def upgrade_4001(site, logger=None):
+    # switch site_icon from ASCII to bytes
+    re_register_interface(ISiteSchema, 'plone')
