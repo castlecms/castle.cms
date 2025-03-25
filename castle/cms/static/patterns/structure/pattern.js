@@ -209,6 +209,61 @@ define([
 
       self.view = new AppView(self.options);
       self.$el.append(self.view.render().$el);
+
+      const isImageVisible = imageElement => {
+        const imageRectangle = imageElement.getBoundingClientRect();
+        const height = window.innerHeight || document.documentElement.clientHeight;
+        const width = window.innerWidth || document.documentElement.clientWidth;
+        return (
+          imageRectangle.top >= 0 &&
+          imageRectangle.left >= 0 &&
+          imageRectangle.bottom <= height &&
+          imageRectangle.right <= width
+        );
+      };
+
+      const imageIntersectionObserver = new IntersectionObserver(
+        ( observees, observer ) => {
+          observees.forEach(
+            observee => {
+              if ( observee.isIntersecting ) {
+                const imageElement = observee.target;
+                const { imageSrc } = imageElement.dataset;
+                if ( !!imageSrc && !imageElement.src ) {
+                  setTimeout(
+                    () => {
+                      if ( isImageVisible( imageElement ) ) {
+                        imageElement.src = imageSrc;
+                        imageElement.removeAttribute( 'data-image-src' );
+                        observer.unobserve( imageElement );
+                      }
+                    },
+                    300
+                  );
+                } else {
+                  observer.unobserve( imageElement );
+                }
+              }
+            } );
+        } );
+
+      const imageMutationObserverCallback = ( records, observer ) => {
+        const shouldResetIntersectionObserver = records.some(
+          record => record.target.matches( 'div.order-support' )
+        );
+        if ( shouldResetIntersectionObserver ) {
+          imageIntersectionObserver.disconnect();
+          document.querySelectorAll( '[data-image-src]' ).forEach(
+            imageElement => imageIntersectionObserver.observe( imageElement )
+          );
+        }
+      };
+
+      ( new MutationObserver( imageMutationObserverCallback ) ).observe(
+        document.querySelector( 'body' ),
+        { childList: true, subtree: true }
+      );
+
     }
   });
 

@@ -258,6 +258,7 @@
     profile="castle.cms:default"
   />
 
+
   <genericsetup:registerProfile
     name="3017"
     title="CastleCMS upgrade to 3017 profile"
@@ -274,6 +275,23 @@
     profile="castle.cms:default"
   />
 
+
+  <genericsetup:registerProfile
+    name="3018"
+    title="CastleCMS upgrade to 3018 profile"
+    directory="profiles/3018"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.18"
+    description="3018 - Move Video schema from xml to python, Recompile resources for paging 'all' => 500, video upload check"
+    source="*"
+    destination="3018"
+    handler=".upgrades.upgrade_3018"
+    profile="castle.cms:default"
+  />
+
   <genericsetup:registerProfile
     name="4000"
     title="CastleCMS upgrade to 4000 profile"
@@ -287,5 +305,6 @@
     handler=".upgrades.upgrade_4000"
     profile="castle.cms:default"
   />
+
 
 </configure>

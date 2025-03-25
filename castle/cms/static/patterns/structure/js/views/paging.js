@@ -126,8 +126,10 @@ define( [
     },
     gotoPage: function ( e ) {
       e.preventDefault();
-      var page = $( e.target ).text();
-      this.collection.goTo( page );
+      const page = $( e.target ).text();
+      if(page !== '...' ){
+        this.collection.goTo( page );
+      }
     },
     changeCount: function ( e ) {
       e.preventDefault();
