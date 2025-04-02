@@ -1,7 +1,6 @@
 from castle.cms.interfaces import (
     IAPISettings,
-    ISecuritySchema,
-    ISiteSchema
+    ISecuritySchema
 )
 from importlib import import_module
 from logging import getLogger
@@ -148,6 +147,15 @@ upgrade_3018 = default_upgrade_factory('3018')
 upgrade_4000 = default_upgrade_factory('4000')
 
 
+# def upgrade_4001(site, logger=None):
+#     # switch site_icon from ASCII to bytes
+#     re_register_interface(ISiteSchema, 'plone')
+
+
+# from Products.CMFPlone.interfaces import ISiteSchema
+from castle.cms.interfaces import ISiteSchema
+from plone.app.upgrade.v52.final import migrate_record_from_ascii_to_bytes
+
 def upgrade_4001(site, logger=None):
-    # switch site_icon from ASCII to bytes
-    re_register_interface(ISiteSchema, 'plone')
+    # The plone 'site_logo' is already converted in the plone 5.2 upgrade profiles
+    migrate_record_from_ascii_to_bytes("site_icon", ISiteSchema, prefix="plone")

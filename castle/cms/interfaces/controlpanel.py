@@ -76,10 +76,10 @@ class ISiteSchema(controlpanel.ISiteSchema):
         default=u"Castle",
         required=False)
 
-    # Python 3 - The latest version of 'plone.formwidget.multifile' expects
-    # this field to provide the 'IBytes' interface. Though the ASCII schema is a
-    # restricted form of the Bytes schema, Zope does not provide the 'IBytes' interface
-    # for it
+    # Python 3 - The latest version of 'plone.formwidget.namedfile' switched
+    # this field from ASCII to Bytes
+    # XXX: Changing this field to bytes and running a migration causes the icon to disappear
+    # The icon can then be uploaded and downloaded, but it still appears as a broken link
     site_icon = schema.Bytes(
         title=u"Site Icon",
         description=u'CastleCMS will use this icon to generate all the various '
