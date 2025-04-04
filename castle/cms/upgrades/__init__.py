@@ -152,10 +152,13 @@ upgrade_4000 = default_upgrade_factory('4000')
 #     re_register_interface(ISiteSchema, 'plone')
 
 
-# from Products.CMFPlone.interfaces import ISiteSchema
+# from Products.CMFPlone.interfaces import ISiteSchema as PloneSchema
 from castle.cms.interfaces import ISiteSchema
 from plone.app.upgrade.v52.final import migrate_record_from_ascii_to_bytes
 
 def upgrade_4001(site, logger=None):
     # The plone 'site_logo' is already converted in the plone 5.2 upgrade profiles
+    # the site_logo gets removed here for some reason
     migrate_record_from_ascii_to_bytes("site_icon", ISiteSchema, prefix="plone")
+    
+    # migrate_record_from_ascii_to_bytes("site_logo", PloneSchema, prefix="plone")
