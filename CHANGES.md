@@ -4,7 +4,7 @@ Changelog
 3.1.0b5 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- no changes
 
 
 3.1.0b4 (2025-04-07)
