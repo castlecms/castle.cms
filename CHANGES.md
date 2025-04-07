@@ -4,7 +4,7 @@ Changelog
 3.1.0b4 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- fix newly introduced bug that prevented Videos from adapting IPrimaryField
 
 
 3.1.0b3 (2025-03-03)
