@@ -1,12 +1,17 @@
 from castle.cms.interfaces import (
     IAPISettings,
-    ISecuritySchema
+    ISecuritySchema,
+    ISiteSchema
 )
 from importlib import import_module
 from logging import getLogger
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 from Products.CMFCore.utils import getToolByName
 from zope.interface import noLongerProvides
+from plone.registry import field
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+import six
 
 import plone.api as api
 
@@ -147,18 +152,48 @@ upgrade_3018 = default_upgrade_factory('3018')
 upgrade_4000 = default_upgrade_factory('4000')
 
 
-# def upgrade_4001(site, logger=None):
-#     # switch site_icon from ASCII to bytes
-#     re_register_interface(ISiteSchema, 'plone')
+def upgrade_4001(site, logger=CASTLE_LOGGER):
+    # A modified version of Plone's migrate_record_from_ascii_to_bytes
+    # Migrates site_icon from Bytes to ASCII then restores site_logo value
+    field_name = "plone.site_icon"
+    iface = ISiteSchema
+    prefix = "plone"
 
+    registry = getUtility(IRegistry)
+    record = registry.records.get(field_name, None)
+    if record is None:
+        registry.registerInterface(iface, prefix=prefix)
+        return
 
-# from Products.CMFPlone.interfaces import ISiteSchema as PloneSchema
-from castle.cms.interfaces import ISiteSchema
-from plone.app.upgrade.v52.final import migrate_record_from_ascii_to_bytes
-
-def upgrade_4001(site, logger=None):
-    # The plone 'site_logo' is already converted in the plone 5.2 upgrade profiles
-    # the site_logo gets removed here for some reason
-    migrate_record_from_ascii_to_bytes("site_icon", ISiteSchema, prefix="plone")
+    original_value = record.value
+    if not isinstance(record.field, field.ASCII) and (
+        original_value is None or isinstance(original_value, bytes)
+    ):
+        registry.registerInterface(iface, prefix=prefix)
+        return
     
-    # migrate_record_from_ascii_to_bytes("site_logo", PloneSchema, prefix="plone")
+    # Get site_logo as well before it's deleted
+    site_logo_record = registry.records.get("plone.site_logo")
+    site_logo_value = site_logo_record.value
+
+    # Delete ASCII record
+    del registry.records[field_name]
+    registry.registerInterface(iface, prefix=prefix)
+    if original_value is None:
+        logger.info("Replaced empty %s ASCII (native string) field with Bytes field.", field_name)
+        return
+    new_record = registry.records[field_name]
+    if isinstance(original_value, six.text_type):
+        new_value = new_record.field.fromUnicode(original_value)
+    elif isinstance(original_value, bytes):
+        new_value = original_value
+    else:
+        return
+
+    # Save the new value.
+    new_record.value = new_value
+
+    # Restore site_logo value, if any
+    if site_logo_value is not None:
+        new_record = registry.records["plone.site_logo"]
+        new_record.value = new_record.field.fromUnicode(site_logo_value)
