@@ -199,7 +199,7 @@ def _get_vhm_base_url(public_url, site_path):
     parsed = urlparse(public_url)
     port = parsed.port
     if port is None:
-        port = 80 if parsed.scheme == 'http' else 403
+        port = 80 if parsed.scheme == 'http' else 443
     return '/VirtualHostBase/{scheme}/{hostname}:{port}{site_path}/VirtualHostRoot'.format(
         scheme=parsed.scheme,
         hostname=parsed.hostname,
@@ -276,7 +276,7 @@ class SubrequestUrlOpener(object):
         final_path = '/' + '/'.join(parsed_path)
         return self.vhm_base + final_path
 
-    def __call__(self, url, use_vhm=True, require_public_url=True):
+    def __call__(self, url, use_vhm=True, require_public_url=True, root=None):
         url = normalize_url(url)
         if not url:
             return
@@ -298,7 +298,7 @@ class SubrequestUrlOpener(object):
 
         if use_vhm:
             url = self.get_vhm_url(url)
-        resp = subrequest(url)
+        resp = subrequest(url, root=root)
         if resp.getStatus() == 404:
             return
 
