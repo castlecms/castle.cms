@@ -132,6 +132,7 @@ setup(
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
       auto-publish-retract = castle.cms.cron:auto_publish_retract
+      clean_tmp_dir = castle.cms.cron:clean_tmp_dir
       """,
     include_package_data=True,
     zip_safe=False,
