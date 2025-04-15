@@ -383,6 +383,8 @@ outline: 2px dashed orange;
 
     def __call__(self):
         self.request.response.setHeader('X-Theme-Applied', 'true')
+        # Set content-type header so that slots render correctly in the iframe
+        self.request.response.setHeader('Content-Type', 'text/html; charset=utf-8')
         layout = self.request.get('layout')
         transform = theming.getTransform(self.context, self.request)
 
@@ -454,8 +456,4 @@ outline: 2px dashed orange;
 
         transform.dynamic_grid(dom.tree)
 
-        """
-        Plone5.2 TODO - The DOM string is not being converted back to HTML properly after it is returned.
-                        Instead, it appears as raw HTML code in the 'Slots' modal.
-        """
         return tostring(dom.tree)
