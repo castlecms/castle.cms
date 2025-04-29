@@ -383,6 +383,7 @@ define([
         return;
       }
       if (chunk === 1){
+        // TODO: Set new_upload field here or elsewhere
         const expectedFileSizeElement = document.querySelector( 'input#form-widgets-expected_file_size' );
         if(expectedFileSizeElement){
           expectedFileSizeElement.value = file.size;
