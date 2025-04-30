@@ -74,6 +74,7 @@
             <guid tal:content="item/guid" />
             <pubDate tal:content="item/published/rfc822|item/modified/rfc822|nothing" />
             <itunes:keywords tal:content="python: ', '.join(item.categories)" />
+            <link>${context/portal_url}</link>
         </item>
     </channel>
 </rss>
