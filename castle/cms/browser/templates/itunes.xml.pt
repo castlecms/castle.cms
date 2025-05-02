@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:itunesu="http://www.itunesu.com/feed"
      xmlns:atom="http://www.w3.org/2005/Atom"
      version="2.0"
@@ -37,7 +38,6 @@
               <itunes:email tal:condition="email_override" tal:content="email_override" />
           </itunes:owner>
         </tal:block>
-        <itunes:summary tal:content="feed/description" />
         <description tal:content="feed/description" />
         <tal:block tal:condition="settings/podcast_image">
           <image>
@@ -55,7 +55,7 @@
             <itunes:image href="${feed/logo}" />
           </image>
         </tal:block>
-        <itunes:explicit>no</itunes:explicit>
+        <itunes:explicit>false</itunes:explicit>
         <item tal:repeat="item feed/items">
             <title tal:content="item/title" />
             <tal:block tal:condition="not:author_override">
@@ -65,7 +65,7 @@
             <tal:block tal:condition="author_override">
               <itunes:author  tal:content="author_override" />
             </tal:block>
-            <itunes:summary tal:content="item/description" />
+            <description tal:content="item/description" />
             <tal:con tal:condition="item/has_enclosure">
                 <enclosure tal:attributes="url item/file_url;
                                            length item/file_length;
