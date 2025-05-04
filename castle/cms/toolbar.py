@@ -582,7 +582,7 @@ class Toolbar(BrowserView):
                                       ['object_buttons', 'object'])
 
         breadcrumbs_view = getMultiAdapter((self.real_context, self.request),
-                                           name='breadcrumbs_view')
+                                           name='castle_breadcrumbs_view')
 
         user_menu = self.get_menu('user_menu', ['user'])
         management_menu = self.get_menu('management_menu')
