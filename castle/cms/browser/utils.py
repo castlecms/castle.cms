@@ -38,6 +38,7 @@ from zope.interface import alsoProvides
 from zope.interface import implements
 from zope.viewlet.interfaces import IViewlet
 from zope.viewlet.interfaces import IViewletManager
+from plone.app.uuid.utils import uuidToCatalogBrain
 
 import json
 
@@ -368,9 +369,19 @@ class Utils(BrowserView):
         attributes=None,
         focal=None,
         attempt_overlay=False,
+        use_alternate_image=False
     ):
-        # read https://github.com/jonom/jquery-focuspoint on how to calc
-        image_info = utils.get_image_info(brain)
+        if use_alternate_image and brain.alternate_image:
+            # we have to manually retrieve the alternate 'Image' object here
+            # so we can get the proper url for 'src'
+            uid = brain.alternate_image.reference
+            brain = uuidToCatalogBrain(uid)
+            image_info = utils.get_image_info(brain)
+            brain = brain.getObject()
+
+        else:
+            # read https://github.com/jonom/jquery-focuspoint on how to calc
+            image_info = utils.get_image_info(brain)
 
         image_attributes = {}
         if attributes is not None:
