@@ -50,11 +50,6 @@ class IVideo(IMedia):
         required=False,
     )
 
-    directives.mode(new_file_upload='hidden')
-    new_file_upload = schema.Bool(
-      required=False,
-    )
-
     directives.mode(expected_file_size='hidden')
     expected_file_size = schema.TextLine(
       required=False,
@@ -83,10 +78,9 @@ class IVideo(IMedia):
 
     @invariant
     def file_size_validator(data):
-        new_file_upload = data.new_file_upload
         expected_file_size = data.expected_file_size
         file_size = str(getattr(data.file, 'size', 0))
-        if expected_file_size and new_file_upload:
+        if expected_file_size and data.file:
             if file_size != expected_file_size:
                 error_message = (
                     u'The file {} is not the expected size, '
