@@ -88,5 +88,10 @@ require([
         ytUrl.removeAttribute('readonly');
       }
     });
+
+    const videoForm = document.querySelector("form.pt-Video");
+    if(videoForm){
+      document.querySelectorAll('div.pat-inlinevalidation').forEach(b=>b.removeAttribute('data-pat-inlinevalidation'));
+    }
   });
 });

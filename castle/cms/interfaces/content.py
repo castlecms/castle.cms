@@ -80,7 +80,7 @@ class IVideo(IMedia):
     def file_size_validator(data):
         expected_file_size = data.expected_file_size
         file_size = str(getattr(data.file, 'size', 0))
-        if expected_file_size:
+        if expected_file_size and data.file:
             if file_size != expected_file_size:
                 error_message = (
                     u'The file {} is not the expected size, '
