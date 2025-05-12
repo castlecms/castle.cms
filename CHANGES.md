@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1.0b6 (unreleased)
+3.1.0b6 (2025-05-12)
 --------------------
 
 - fixes for editing video content types
