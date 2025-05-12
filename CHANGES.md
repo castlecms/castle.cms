@@ -4,7 +4,8 @@ Changelog
 3.1.0b6 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- fixes for editing video content types
+- update itunes rss xml format
 
 
 3.1.0b5 (2025-04-07)
