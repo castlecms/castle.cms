@@ -137,6 +137,13 @@
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
       <value key="js">++plone++castle/patterns/structure/</value>
   </records>
+  <!-- needed to redefine -->
+  <records prefix="plone"
+          interface="zope.interface.Interface">
+    <value key="lessvariables" purge="False">
+      <element key="barcelonetaPath">\"{site_url}/++theme++barceloneta/\"</element>
+    </value>
+  </records>
 
   <records prefix="plone.resources/add-content-modal"
             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
