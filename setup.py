@@ -131,6 +131,7 @@ setup(
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
+      send-pwreset-emails = castle.cms._scripts.send_pwreset_emails:setup_and_run
       auto-publish-retract = castle.cms.cron:auto_publish_retract
       """,
     include_package_data=True,
