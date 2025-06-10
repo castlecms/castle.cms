@@ -4,7 +4,7 @@ Changelog
 3.1.0b7 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- add a script for resetting multiple account passwords all at once
 
 
 3.1.0b6 (2025-05-12)
