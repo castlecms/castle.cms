@@ -4,7 +4,7 @@ Changelog
 3.1.0b8 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- add script to parse worker logs for @@content-creator endpoint errors
 
 
 3.1.0b7 (2025-06-09)

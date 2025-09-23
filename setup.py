@@ -133,6 +133,7 @@ setup(
       report-users = castle.cms._scripts.report_users:setup_and_run
       send-pwreset-emails = castle.cms._scripts.send_pwreset_emails:setup_and_run
       auto-publish-retract = castle.cms.cron:auto_publish_retract
+      check-endpoint = castle.cms.cron:_check_endpoint
       """,
     include_package_data=True,
     zip_safe=False,
