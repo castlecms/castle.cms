@@ -91,7 +91,7 @@ def _get_parsed_args():
 
 
 def run(app):
-    singleton.SingleInstance('check_endpoint')
+    singleton.SingleInstance('check_content_creator_endpoint')
     args = _get_parsed_args()
     site = app[args.site_id]
     file_path = args.filepath

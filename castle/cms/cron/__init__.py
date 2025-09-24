@@ -128,5 +128,5 @@ def backend_url_check(argv=sys.argv):
     return run_it('_backend_url_check')
 
 
-def check_endpoint(argv=sys.argv):
-    return run_it('_check_endpoint')
+def check_content_creator_endpoint(argv=sys.argv):
+    return run_it('_check_content_creator_endpoint')
