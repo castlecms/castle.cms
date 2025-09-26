@@ -140,6 +140,7 @@ Changelog
 3.0.0b134 (2024-06-06)
 ----------------------
 
+- change all references of md5 to sha256
 - Fix mass copy/paste functionality
 - Handle additional edge case errors when reindexing
 

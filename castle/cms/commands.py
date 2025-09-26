@@ -195,6 +195,41 @@ except IOError:
     logger.warn('gs not installed. Some metadata might remain in PDF files.')
 
 
+class SHA256SubProcess(BaseSubProcess):
+    """
+    To get sha256 hash of files on the filesystem so
+    large files do not need to be loaded into
+    memory to be checked
+    """
+    if os.name == 'nt':
+        bin_name = 'sha256sum.exe'
+    else:
+        bin_name = 'sha256sum'
+
+    def __call__(self, filepath):
+        cmd = [self.binary, filepath]
+        hashval = self._run_command(cmd)
+        try:
+            val = hashval.split('=')[1].strip()
+            return val
+        except:
+            try:
+                val = hashval.split('  ')[0].strip()
+                return val
+            except IOError:
+                logger.exception("No sha256 installed. castle.cms "
+                                "will not be able to detect sha256 of files.")
+                return None
+
+
+try:
+    sha256 = SHA256SubProcess()
+except IOError:
+    sha256 = None
+
+
+# keep the md5 classes for any residual objects that use it for hashed values
+# if object uses md5 hash, it should be marked with the attribut useforsecurity = False
 class MD5SubProcess(BaseSubProcess):
     """
     To get md5 hash of files on the filesystem so
