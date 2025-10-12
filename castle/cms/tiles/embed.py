@@ -7,12 +7,13 @@ from zope.component import getUtility
 from zope.interface import implements
 from zope.interface import Interface
 
-
 class EmbedTile(BaseTile):
     implements(IPersistentTile)
 
     def render(self):
         content = self.data.get('code', '') or ''
+        if '<script>' in content:
+            return 'Unable to render.  Javascript is not allowed in embed tiles.'
         site_url = portal_url = api.portal.get_tool('portal_url')
         site_url = portal_url()
         registry = getUtility(IRegistry)
