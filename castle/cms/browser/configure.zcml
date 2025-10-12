@@ -309,7 +309,7 @@
 
   <browser:page
     for="*"
-    name="breadcrumbs_view"
+    name="castle_breadcrumbs_view"
     class=".navigation.PhysicalNavigationBreadcrumbs"
     permission="zope2.View"
     allowed_attributes="breadcrumbs"
