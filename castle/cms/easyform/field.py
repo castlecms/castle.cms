@@ -2,6 +2,7 @@ import ast
 from plone.uuid.interfaces import IUUID
 
 from castle.cms.utils import parse_query_from_data
+from castle.cms.vocabularies import castle_vocabularies
 from castle.cms.widgets import QueryFieldWidget
 from plone.autoform import directives as form
 from plone.schemaeditor.fields import FieldFactory
@@ -14,6 +15,8 @@ from zope.globalrequest import getRequest
 from zope.i18nmessageid import MessageFactory
 from zope.interface import alsoProvides
 from zope.interface import implementer
+from zope.interface import Invalid
+from zope.interface import invariant
 from zope.schema.interfaces import IChoice
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IField
@@ -162,4 +165,111 @@ def getQueryChoiceFieldSchema(field):
 @implementer(IQueryChoiceFieldSchema)
 @adapter(IQueryChoice)
 class TextLineQueryChoiceField(TextLineChoiceField):
+    pass
+
+
+@implementer(IContextSourceBinder)
+class CastleChoiceSource(object):
+    __name__ = 'CastleChoiceSource'
+
+    def __init__(self, field):
+        self.field = field
+
+    def get_cache_key(self, context):
+        return 'easyform-source-value--{}-{}'.format(
+            IUUID(context, 'default'), self.field.__name__)
+
+    def __call__(self, context):
+        default_none_val = SimpleVocabulary.createTerm(None, None, None)
+        if self.field.possible_values == []:
+            if self.field.vocabulary_name == None:
+                return SimpleVocabulary([])
+            else:
+                try:
+                    vocab = castle_vocabularies[self.field.vocabulary_name](context)
+                except TypeError:
+                    vocab = castle_vocabularies[self.field.vocabulary_name]
+                vocab._terms.insert(0, default_none_val)
+                return vocab
+        else:
+            terms = [default_none_val]
+            for term in self.field.possible_values:
+                terms.append(
+                    SimpleVocabulary.createTerm(term, term, term))
+
+            return SimpleVocabulary(terms)
+
+
+# so we can still resolve correctly
+alsoProvides(CastleChoiceSource, IContextSourceBinder)
+
+
+class ICastleChoice(IChoice):
+    possible_values = schema.List(
+        title=u'Possible values',
+        description=u'Enter allowed choices one per line.',
+        value_type=schema.TextLine(),
+        required=False
+    )
+
+    vocabulary_name = schema.Choice(
+        title=u'Vocabulary name',
+        description=u'Vocabulary name to lookup in the vocabulary registry',
+        values=castle_vocabularies.keys(),
+        required=False
+    )
+
+    @invariant
+    def validate(data):
+        if data.possible_values and data.vocabulary_name:
+            msg = 'You can not set a vocabulary name AND vocabulary values. Please clear values field or set "No value" for vocabulary name.'
+            raise Invalid(_(msg))
+
+
+@implementer(ICastleChoice)
+class CastleChoice(schema.Choice):
+
+    def __init__(self, possible_values=[], vocabulary_name=None, **kw):
+        self.possible_values = possible_values
+        self.vocabulary_name = vocabulary_name
+        kw['source'] = CastleChoiceSource(self)  # bind to field
+        super(CastleChoice, self).__init__(**kw)
+
+
+CastleChoiceFactory = FieldFactory(
+    CastleChoice, _(u'label_castle_choice_field', default=u'Choice (no default value)'),
+    source=CastleChoiceSource)
+
+
+class ICastleChoiceFieldSchema(IField):
+    possible_values = schema.List(
+        title=u'Possible values',
+        description=u'Enter allowed choices one per line.',
+        value_type=schema.TextLine(),
+        required=False
+    )
+
+    vocabulary_name = schema.Choice(
+        title=u'Vocabulary name',
+        description=u'Vocabulary name to lookup in the vocabulary registry',
+        values=castle_vocabularies.keys(),
+        required=False
+    )
+
+    @invariant
+    def validate(data):
+        if data.possible_values and data.vocabulary_name:
+            msg = 'You can not set a vocabulary name AND vocabulary values. Please clear values field or set "No value" for vocabulary name.'
+            raise Invalid(_(msg))
+
+
+@implementer(IFieldEditFormSchema)
+@adapter(ICastleChoice)
+def getCastleChoiceFieldSchema(field):
+    return ICastleChoiceFieldSchema
+
+
+@implementer(ICastleChoiceFieldSchema)
+@adapter(ICastleChoice)
+class TextLineCastleChoiceField(TextLineChoiceField):
     pass
