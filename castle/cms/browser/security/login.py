@@ -340,8 +340,11 @@ The user requesting this access logged this information:
                code=code)
 
         send_email(
-            [email], "Authorization code(%s)" % site_settings.site_title,
-            html=html)
+            [email],
+            "Authorization code(%s)" % site_settings.site_title,
+            html=html,
+            include_priority_header=True,
+        )
 
         return True
 
