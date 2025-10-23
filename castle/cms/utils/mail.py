@@ -17,7 +17,14 @@ def get_email_from_address():
     return mail_settings.email_from_address
 
 
-def send_email(recipients=None, subject=None, html='', text='', sender=None):
+def send_email(
+    recipients=None,
+    subject=None,
+    html='',
+    text='',
+    sender=None,
+    include_priority_header=False,
+):
     if isinstance(recipients, basestring):
         recipients = [recipients]
 
@@ -54,6 +61,8 @@ def send_email(recipients=None, subject=None, html='', text='', sender=None):
         if html:
             part = MIMEText(html, 'html')
             msg.attach(part)
-
+        if include_priority_header is True:
+            del msg['X-CASTLEMTA-PRIORITY']
+            msg['X-CASTLEMTA-PRIORITY'] = 'priority'
         mailhost = api.portal.get_tool('MailHost')
         mailhost.send(msg.as_string())
