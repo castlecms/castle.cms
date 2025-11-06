@@ -4,6 +4,9 @@ from castle.cms.services.google import analytics
 from plone import api
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
+from google.analytics.admin import AnalyticsAdminServiceClient
+from google.analytics.data import BetaAnalyticsDataClient
+from google.analytics.data_v1beta.types import RunReportRequest
 
 import json
 
@@ -38,7 +41,8 @@ class AnalyticsView(BrowserView):
             result = None
 
         if result is None:
-            service = analytics.get_ga_service()
+            # service = analytics.get_ga_service()
+            service = BetaAnalyticsDataClient()
             if not service:
                 return {'error': 'Could not get GA Service'}
 
