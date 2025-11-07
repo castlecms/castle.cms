@@ -67,9 +67,10 @@ setup(
 
         # python
         'boto3>=1.9.222',
-        'google-api-python-client >=1.4.2, <2',
+        'google-api-python-client >=2.152.0',
         'google-analytics-data >=0.18.6',
         'google-auth>=2.5.0',
+        'google-api-core >= 2.19.1',
         'requests >=2.7.0, <3',
         'requests_oauthlib >=0.5.0, <1',
         'oauth2client >=1.5.1, <2',

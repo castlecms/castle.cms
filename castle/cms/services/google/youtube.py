@@ -3,7 +3,7 @@ import logging
 import mimetypes
 import time
 
-from apiclient.http import MediaFileUpload
+from googleapiclient.http import MediaFileUpload
 from castle.cms.interfaces import IUploadedToYoutube
 from collective.celery.utils import getCelery
 from plone.registry.interfaces import IRegistry

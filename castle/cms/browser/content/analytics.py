@@ -1,12 +1,12 @@
 from castle.cms import cache
 from castle.cms import social
 from castle.cms.services.google import analytics
-from plone import api
-from Products.Five import BrowserView
-from zope.component import getMultiAdapter
 from google.analytics.admin import AnalyticsAdminServiceClient
 from google.analytics.data import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import RunReportRequest
+from plone import api
+from Products.Five import BrowserView
+from zope.component import getMultiAdapter
 
 import json
 
@@ -46,7 +46,8 @@ class AnalyticsView(BrowserView):
             if not service:
                 return {'error': 'Could not get GA Service'}
 
-            profile = self.get_ga_profile(service)
+            # profile = self.get_ga_profile(service)
+            profile = analytics.get_ga4_profile(service)
             if not profile:
                 return {'error': 'Could not get GA Profile'}
 
