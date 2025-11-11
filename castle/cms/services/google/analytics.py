@@ -1,6 +1,7 @@
 from google.analytics.admin import AnalyticsAdminServiceClient
 from google.analytics.data import BetaAnalyticsDataClient
-from google.analytics.data_v1beta.types import RunReportRequest
+from google.analytics.admin_v1alpha.types import ListPropertiesRequest
+from google.analytics.data_v1beta.types import RunReportRequest, DateRange, Dimension, Metric
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
@@ -67,22 +68,28 @@ def get_ga4_profile(service):
     accounts = list(admin_client.list_accounts())
     first_account = accounts[0]
     if first_account:
-        properties = admin_client.list_properties(parent=first_account.name)
+        request = ListPropertiesRequest(
+            filter=f"parent:{first_account.name}"
+        )
+        properties = admin_client.list_properties(request=request)
         for prop in properties:
             print(f"  Property: {prop.name} ({prop.display_name})")
             
             if prop.name.endswith(ga_id):
                 property_id = prop.name.split('/')[-1]
+            else:
+                return None
 
-                request = RunReportRequest(
-                    property=f"properties/{property_id}",
-                    dimensions=[{"name": "city"}],
-                    metrics=[{"name": "activeUsers"}],
-                    limit=5,
-                )
+            request = RunReportRequest(
+                property=f"properties/{property_id}",
+                dimensions=[Dimension(name="city")],
+                metrics=[Metric(name="activeUsers")],
+                date_ranges=[DateRange(start_date="2024-01-01", end_date="today")],
+                limit=5,
+            )
 
-                response = service.run_report(request)
-                for row in response.rows:
-                    print(row.dimension_values[0].value, row.metric_values[0].value)
+            response = service.run_report(request)
+            for row in response.rows:
+                print(row.dimension_values[0].value, row.metric_values[0].value)
 
     return None
