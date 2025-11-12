@@ -364,7 +364,7 @@ class IAPISettings(Interface):
         required=False,
     )
 
-    google_api_service_key_file = schema.ASCII(
+    google_api_service_key_file = schema.Bytes(
         title=u"Google API Service Key File",
         description=u'Private key file',
         required=False,

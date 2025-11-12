@@ -316,5 +316,14 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 4.0.2"
+    description="4002 - Upgrade for Plone 5.2 and Python 3"
+    source="*"
+    destination="4002"
+    handler=".upgrades.upgrade_4002"
+    profile="castle.cms:default"
+  />
+
 
 </configure>

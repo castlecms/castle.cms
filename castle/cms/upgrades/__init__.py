@@ -197,3 +197,8 @@ def upgrade_4001(site, logger=CASTLE_LOGGER):
     if site_logo_value is not None:
         new_record = registry.records["plone.site_logo"]
         new_record.value = new_record.field.fromUnicode(site_logo_value)
+
+
+def upgrade_4002(site, logger=CASTLE_LOGGER):
+    # more ga4 migration
+    re_register_interface(IAPISettings, 'castle')
