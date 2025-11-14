@@ -1,7 +1,12 @@
+import os
+import tempfile
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import pkcs12
+from cryptography.hazmat.backends import default_backend
 from google.analytics.admin import AnalyticsAdminServiceClient
-from google.analytics.data import BetaAnalyticsDataClient
 from google.analytics.admin_v1alpha.types import ListPropertiesRequest
 from google.analytics.data_v1beta.types import RunReportRequest, DateRange, Dimension, Metric
+from google.oauth2 import service_account
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
@@ -57,14 +62,67 @@ def get_ga_profile(service):
     return None
 
 
-def get_ga4_profile(service):
+def get_ga4_credentials():
+    registry = getUtility(IRegistry)
+    api_key = registry.get('castle.google_api_service_key_file', None)
+    service_account_email = registry.get('castle.google_api_email', None)
+
+    if not api_key:
+        raise ValueError("No Google API service key found in registry")
+
+    filename, key_bytes = b64decode_file(api_key)
+    if not key_bytes:
+        raise ValueError("Decoded key file is empty")
+
+    scopes = ["https://www.googleapis.com/auth/analytics.readonly"]
+
+    # .JSON
+    if key_bytes.strip().startswith(b"{"):
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp:
+            tmp.write(key_bytes)
+            tmp.flush()
+            key_path = tmp.name
+
+        credentials = service_account.Credentials.from_service_account_file(
+            key_path, scopes=scopes
+        )
+        os.unlink(key_path)
+        return credentials
+
+    # .p12 (legacy)
+    if not service_account_email:
+        raise ValueError("Service account email is required for .p12 keys")
+
+    private_key, certificate, _ = pkcs12.load_key_and_certificates(
+        key_bytes, b"notasecret", backend=default_backend()
+    )
+    if not private_key:
+        raise ValueError("No private key found in .p12 data")
+
+    # serialize private key from .p12 file manually
+    key_info = {
+        "type": "service_account",
+        "client_email": service_account_email,
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "private_key": private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        ).decode("utf-8")
+    }
+
+    credentials = service_account.Credentials.from_service_account_info(
+        key_info, scopes=scopes
+    )
+    return credentials
+
+
+def get_ga4_property(admin_client):
     registry = getUtility(IRegistry)
     ga_id = registry.get('castle.google_analytics_id', None)
     if not ga_id:
         return
 
-    admin_client = AnalyticsAdminServiceClient()
-    accounts = admin_client.list_accounts()
     accounts = list(admin_client.list_accounts())
     first_account = accounts[0]
     if first_account:
@@ -73,23 +131,8 @@ def get_ga4_profile(service):
         )
         properties = admin_client.list_properties(request=request)
         for prop in properties:
-            print(f"  Property: {prop.name} ({prop.display_name})")
-            
             if prop.name.endswith(ga_id):
                 property_id = prop.name.split('/')[-1]
-            else:
-                return None
-
-            request = RunReportRequest(
-                property=f"properties/{property_id}",
-                dimensions=[Dimension(name="city")],
-                metrics=[Metric(name="activeUsers")],
-                date_ranges=[DateRange(start_date="2024-01-01", end_date="today")],
-                limit=5,
-            )
-
-            response = service.run_report(request)
-            for row in response.rows:
-                print(row.dimension_values[0].value, row.metric_values[0].value)
+                return property_id
 
     return None
