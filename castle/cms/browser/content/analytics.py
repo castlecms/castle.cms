@@ -3,7 +3,13 @@ from castle.cms import social
 from castle.cms.services.google import analytics
 from google.analytics.admin import AnalyticsAdminServiceClient
 from google.analytics.data import BetaAnalyticsDataClient
-from google.analytics.data_v1beta.types import RunReportRequest, DateRange, Dimension, Metric
+from google.analytics.data_v1beta.types import (
+    RunReportRequest,
+    RunRealtimeReportRequest,
+    DateRange,
+    Dimension,
+    Metric
+)
 from plone import api
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
@@ -55,6 +61,42 @@ class AnalyticsView(BrowserView):
             property_id = analytics.get_ga4_property(admin_client)
             if not property_id:
                 return {'error': 'Could not get GA4 property'}
+            
+            try:
+                if self.request.get('type') == 'realtime':
+                    response = data_client.run_realtime_report(
+                        RunRealtimeReportRequest(
+                            property=f"properties/{property_id}",
+                            dimensions=[Dimension(name="city")],
+                            metrics=[Metric(name="activeUsers")],
+                            limit=5,                         
+                            order_bys=[
+                                {
+                                    "metric": {"metric_name": "activeUsers"},
+                                    "desc": True
+                                }
+                            ]
+                        )
+                    )
+                else:
+                    response = data_client.run_report(
+                        RunReportRequest(
+                            property=f"properties/{property_id}",
+                            dimensions=[Dimension(name="pageTitle")],
+                            metrics=[Metric(name="eventCount")],
+                            date_ranges=[DateRange(start_date="7daysAgo", end_date="0daysAgo")],
+                            limit=5,
+                            order_bys=[{
+                                "metric": {"metric_name": "eventCount"},
+                                "desc": True
+                            }]
+                        )
+                )
+                for row in response.rows:
+                    print(row.dimension_values[0].value, row.metric_values[0].value)
+            finally:
+                if data_client is not None:
+                    data_client.transport.grpc_channel.close() 
 
             # if self.request.get('type') == 'realtime':
             #     ga = service.data().realtime()
@@ -78,25 +120,7 @@ class AnalyticsView(BrowserView):
             # else:
             #     result = {'error': 'GA query execution yielded no result.'}
 
-
-            try:
-                request = RunReportRequest(
-                    property=f"properties/{property_id}",
-                    dimensions=[Dimension(name="city")],
-                    metrics=[Metric(name="activeUsers")],
-                    date_ranges=[DateRange(start_date="2024-01-01", end_date="today")],
-                    limit=5,
-                )
-
-                response = data_client.run_report(request)
-                for row in response.rows:
-                    print(row.dimension_values[0].value, row.metric_values[0].value)
-            finally:
-                if data_client is not None:
-                    data_client.transport.grpc_channel.close() 
-
         # return result
-        return None
 
     def get_ga_profile(self, service):
         cache_key = '%s-ga-profile' % '-'.join(api.portal.get().getPhysicalPath()[1:])

@@ -3,9 +3,7 @@ import tempfile
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.hazmat.backends import default_backend
-from google.analytics.admin import AnalyticsAdminServiceClient
 from google.analytics.admin_v1alpha.types import ListPropertiesRequest
-from google.analytics.data_v1beta.types import RunReportRequest, DateRange, Dimension, Metric
 from google.oauth2 import service_account
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
