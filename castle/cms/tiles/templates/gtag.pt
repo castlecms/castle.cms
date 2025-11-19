@@ -7,6 +7,8 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', '${view/gst_id}');
+      gtag('config', '${view/gst_id}', {
+        page_path: window.location.pathname
+      });
     </script>
 </html>

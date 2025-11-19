@@ -24,7 +24,7 @@ class AnalyticsView(BrowserView):
         self.request.response.setHeader('Content-type', 'application/json')
         paths = self.get_paths()
         if self.request.get('api') == 'ga':
-            data = self.ga_api_call(paths)
+            data = self.ga4_api_call(paths)
         else:
             data = social.get_stats(self.context)
             if data:
@@ -35,7 +35,7 @@ class AnalyticsView(BrowserView):
             'data': data
         })
 
-    def ga_api_call(self, paths):
+    def ga4_api_call(self, paths):
         params = json.loads(self.request.get('params'))
 
         if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
@@ -95,13 +95,14 @@ class AnalyticsView(BrowserView):
                                 "desc": True
                             }]
                         )
-                )
+                    )
 
             finally:
                 if data_client is not None:
                     data_client.transport.grpc_channel.close() 
 
-        return response if response.rows else None
+        return response if response.get('rows') else None
+
 
     def get_ga_profile(self, service):
         cache_key = '%s-ga-profile' % '-'.join(api.portal.get().getPhysicalPath()[1:])
@@ -113,6 +114,7 @@ class AnalyticsView(BrowserView):
             profile = analytics.get_ga_profile(service)
             cache.set(cache_key, profile, 60 * 60 * 1)
         return profile
+
 
     def get_paths(self):
         site_path = '/'.join(api.portal.get().getPhysicalPath())

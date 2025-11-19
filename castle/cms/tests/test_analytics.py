@@ -53,7 +53,7 @@ class TestAnalytics(unittest.TestCase):
         self.request.form.update({
             'params': json.dumps({'foo': 'bar'})
         })
-        view.ga_api_call(['/'])
+        view.ga4_api_call(['/'])
         self.assertEquals(get_ga_service.call_count, 1)
         self.assertEquals(get_ga_profile.call_count, 1)
 
