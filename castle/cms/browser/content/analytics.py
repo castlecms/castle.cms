@@ -1,3 +1,4 @@
+import os
 from castle.cms import cache
 from castle.cms import social
 from castle.cms.services.google import analytics
@@ -36,6 +37,9 @@ class AnalyticsView(BrowserView):
 
     def ga_api_call(self, paths):
         params = json.loads(self.request.get('params'))
+
+        if os.environ.get("GOOGLE_ANALYTICS_IS_DEV", False):
+            return analytics.get_mock_ga4_data(params)
 
         cache_key = '-'.join(api.portal.get().getPhysicalPath()[1:])
         for key, value in params.items():
@@ -92,35 +96,12 @@ class AnalyticsView(BrowserView):
                             }]
                         )
                 )
-                for row in response.rows:
-                    print(row.dimension_values[0].value, row.metric_values[0].value)
+
             finally:
                 if data_client is not None:
                     data_client.transport.grpc_channel.close() 
 
-            # if self.request.get('type') == 'realtime':
-            #     ga = service.data().realtime()
-            #     if not params.pop('global', False):
-            #         # need to restrict by filters
-            #         path_query = ','.join(['rt:pagePath==%s' % p for p in paths])
-            #         params['filters'] = path_query
-            # else:
-            #     if not params.pop('global', False):
-            #         # need to restrict by filters
-            #         path_query = ','.join(['ga:pagePath==%s' % p for p in paths])
-            #         params['filters'] = path_query
-            #     ga = service.data().ga()
-
-            # query = ga.get(ids='ga:' + profile, **params)
-            # result = query.execute()
-            # if result:
-            #     cache_duration = self.request.get('cache_duration')
-            #     if cache_duration:
-            #         cache.set(cache_key, result, int(cache_duration))
-            # else:
-            #     result = {'error': 'GA query execution yielded no result.'}
-
-        # return result
+        return response if response.rows else None
 
     def get_ga_profile(self, service):
         cache_key = '%s-ga-profile' % '-'.join(api.portal.get().getPhysicalPath()[1:])

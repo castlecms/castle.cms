@@ -1,10 +1,13 @@
+import json
 import os
+import random
 import tempfile
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.hazmat.backends import default_backend
 from google.analytics.admin_v1alpha.types import ListPropertiesRequest
 from google.oauth2 import service_account
+from plone import api
 from plone.formwidget.namedfile.converter import b64decode_file
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
@@ -134,3 +137,20 @@ def get_ga4_property(admin_client):
                 return property_id
 
     return None
+
+
+def get_mock_ga4_data(params):
+    paths = []
+    site_contents = api.portal.get().listFolderContents()
+    for page in site_contents:
+        paths.append(page.absolute_url_path())
+
+    data = {'rows': []}
+    if params['global']:
+        for path in paths:
+            data['rows'].append([path, random.randrange(0, 50)])
+    else:
+        path = api.portal.get().absolute_url_path()
+        data['rows'].append([path, random.randrange(0, 50)])
+    return data
+

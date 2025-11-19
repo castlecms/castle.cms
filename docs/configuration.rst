@@ -78,6 +78,8 @@ Environment variables
 - TWITTER_CLIENT_SECRET: twitter oauth client secret
 - GOOGLE_CLIENT_ID: google oauth client id
 - GOOGLE_CLIENT_SECRET: google oauth client secret
+- GOOGLE_ANALYTICS_PROPERTY_ID: google analytics 4 property id
+- GOOGLE_ANALYTICS_IS_DEV: return mock analytics data for development
 
 
 Defaults
