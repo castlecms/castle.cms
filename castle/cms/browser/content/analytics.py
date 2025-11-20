@@ -109,18 +109,6 @@ class AnalyticsView(BrowserView):
         return response if response.rows else None
 
 
-    def get_ga_profile(self, service):
-        cache_key = '%s-ga-profile' % '-'.join(api.portal.get().getPhysicalPath()[1:])
-        try:
-            profile = cache.get(cache_key)
-        except Exception:
-            profile = None
-        if profile is None:
-            profile = analytics.get_ga_profile(service)
-            cache.set(cache_key, profile, 60 * 60 * 1)
-        return profile
-
-
     def get_paths(self):
         site_path = '/'.join(api.portal.get().getPhysicalPath())
         context_path = '/'.join(self.context.getPhysicalPath())

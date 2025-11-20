@@ -14,6 +14,7 @@ from plone.app.testing import setRoles
 from zope.annotation.interfaces import IAnnotations
 
 
+# Python3 TODO - update these for ga4
 class TestAnalytics(unittest.TestCase):
 
     layer = CASTLE_PLONE_INTEGRATION_TESTING
@@ -44,8 +45,7 @@ class TestAnalytics(unittest.TestCase):
 
     @mock.patch('castle.cms.cache.get')
     @mock.patch('castle.cms.cache.set')
-    @mock.patch('castle.cms.services.google.analytics.get_ga_profile')
-    @mock.patch('castle.cms.services.google.analytics.get_ga_service')
+    @mock.patch('castle.cms.services.google.analytics.get_ga4_service')
     def test_ga_api_call(self, get_ga_service, get_ga_profile,
                          cache_set, cache_get):
         cache_get.side_effect = KeyError()
