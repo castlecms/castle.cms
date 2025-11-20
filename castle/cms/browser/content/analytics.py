@@ -51,7 +51,6 @@ class AnalyticsView(BrowserView):
             result = None
 
         if result is None:
-            # service = analytics.get_ga_service()
             credentials = analytics.get_ga4_credentials()
             data_client = BetaAnalyticsDataClient(credentials=credentials)
             if not data_client:
@@ -61,22 +60,27 @@ class AnalyticsView(BrowserView):
             if not admin_client:
                 return {'error': 'Could not get GA4 admin client'}
 
-            # profile = self.get_ga_profile(service)
             property_id = analytics.get_ga4_property(admin_client)
             if not property_id:
                 return {'error': 'Could not get GA4 property'}
+            
+            dimension = params.get('dimensions')
+            metric = params.get('metrics')
+            limit = params.get('max_results')
+            start_date = params.get('start_date', None)
+            end_date = params.get('end_date', None)
             
             try:
                 if self.request.get('type') == 'realtime':
                     response = data_client.run_realtime_report(
                         RunRealtimeReportRequest(
                             property=f"properties/{property_id}",
-                            dimensions=[Dimension(name="city")],
-                            metrics=[Metric(name="activeUsers")],
-                            limit=5,                         
+                            dimensions=[Dimension(name=dimension)],
+                            metrics=[Metric(name=metric)],
+                            limit=limit,                         
                             order_bys=[
                                 {
-                                    "metric": {"metric_name": "activeUsers"},
+                                    "metric": {"metric_name": metric},
                                     "desc": True
                                 }
                             ]
@@ -86,22 +90,23 @@ class AnalyticsView(BrowserView):
                     response = data_client.run_report(
                         RunReportRequest(
                             property=f"properties/{property_id}",
-                            dimensions=[Dimension(name="pageTitle")],
-                            metrics=[Metric(name="eventCount")],
-                            date_ranges=[DateRange(start_date="7daysAgo", end_date="0daysAgo")],
-                            limit=5,
+                            dimensions=[Dimension(name=dimension)],
+                            metrics=[Metric(name=metric)],
+                            date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+                            limit=limit,
                             order_bys=[{
-                                "metric": {"metric_name": "eventCount"},
+                                "metric": {"metric_name": metric},
                                 "desc": True
                             }]
                         )
                     )
 
             finally:
+                # Python3 TODO - Maybe cache this instead of closing it every time?
                 if data_client is not None:
                     data_client.transport.grpc_channel.close() 
 
-        return response if response.get('rows') else None
+        return response if response.rows else None
 
 
     def get_ga_profile(self, service):

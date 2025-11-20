@@ -1514,40 +1514,40 @@ define('mockup-patterns-querystring',[
 define("resource-plone-app-jquerytools-js", ["jquery"], function() {
   return (function() {
 /**
- * @license
+ * @license 
  * jQuery Tools @VERSION Overlay - Overlay base. Extend it.
- *
+ * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- *
+ * 
  * http://flowplayer.org/tools/overlay/
  *
  * Since: March 2008
- * Date: @DATE
+ * Date: @DATE 
  */
-(function($) {
+(function($) { 
 
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-
+	
 	$.tools.overlay = {
-
+		
 		addEffect: function(name, loadFn, closeFn) {
-			effects[name] = [loadFn, closeFn];
+			effects[name] = [loadFn, closeFn];	
 		},
-
-		conf: {
-			close: null,
+	
+		conf: {  
+			close: null,	
 			closeOnClick: true,
-			closeOnEsc: true,
+			closeOnEsc: true,			
 			closeSpeed: 'fast',
 			effect: 'default',
-
+			
 			// since 1.2. fixed positioning not supported by IE6
-			fixed: !/msie/.test(navigator.userAgent.toLowerCase()) || navigator.appVersion > 6,
-
-			left: 'center',
+			fixed: !/msie/.test(navigator.userAgent.toLowerCase()) || navigator.appVersion > 6, 
+			
+			left: 'center',		
 			load: false, // 1.2
-			mask: null,
+			mask: null,  
 			oneInstance: true,
 			speed: 'normal',
 			target: null, // target element to be overlayed. by default taken from [rel]
@@ -1555,207 +1555,207 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 		}
 	};
 
-
+	
 	var instances = [], effects = {};
-
+		
 	// the default effect. nice and easy!
-	$.tools.overlay.addEffect('default',
-
-		/*
-			onLoad/onClose functions must be called otherwise none of the
+	$.tools.overlay.addEffect('default', 
+		
+		/* 
+			onLoad/onClose functions must be called otherwise none of the 
 			user supplied callback methods won't be called
 		*/
 		function(pos, onLoad) {
-
+			
 			var conf = this.getConf(),
-				 w = $(window);
-
+				 w = $(window);				 
+				
 			if (!conf.fixed)  {
 				pos.top += w.scrollTop();
 				pos.left += w.scrollLeft();
-			}
-
+			} 
+				
 			pos.position = conf.fixed ? 'fixed' : 'absolute';
-			this.getOverlay().css(pos).fadeIn(conf.speed, onLoad);
-
+			this.getOverlay().css(pos).fadeIn(conf.speed, onLoad); 
+			
 		}, function(onClose) {
-			this.getOverlay().fadeOut(this.getConf().closeSpeed, onClose);
-		}
-	);
+			this.getOverlay().fadeOut(this.getConf().closeSpeed, onClose); 			
+		}		
+	);		
 
-
-	function Overlay(trigger, conf) {
-
+	
+	function Overlay(trigger, conf) {		
+		
 		// private variables
 		var self = this,
 			 fire = trigger.add(self),
-			 w = $(window),
-			 closers,
+			 w = $(window), 
+			 closers,            
 			 overlay,
 			 opened,
 			 maskConf = $.tools.expose && (conf.mask || conf.expose),
-			 uid = Math.random().toString().slice(10);
-
-
+			 uid = Math.random().toString().slice(10);		
+		
+			 
 		// mask configuration
-		if (maskConf) {
+		if (maskConf) {			
 			if (typeof maskConf == 'string') { maskConf = {color: maskConf}; }
 			maskConf.closeOnClick = maskConf.closeOnEsc = false;
-		}
-
+		}			 
+		 
 		// get overlay and trigger
 		var jq = conf.target || trigger.attr("rel");
-		overlay = jq ? $(jq) : null || trigger;
-
+		overlay = jq ? $(jq) : null || trigger;	
+		
 		// overlay not found. cannot continue
 		if (!overlay.length) { throw "Could not find Overlay: " + jq; }
-
+		
 		// trigger's click event
 		if (trigger && trigger.index(overlay) == -1) {
-			trigger.click(function(e) {
+			trigger.click(function(e) {				
 				self.load(e);
 				return e.preventDefault();
 			});
-		}
-
-		// API methods
+		}   			
+		
+		// API methods  
 		$.extend(self, {
 
 			load: function(e) {
-
+				
 				// can be opened only once
 				if (self.isOpened()) { return self; }
-
+				
 				// find the effect
 		 		var eff = effects[conf.effect];
 		 		if (!eff) { throw "Overlay: cannot find effect : \"" + conf.effect + "\""; }
-
+				
 				// close other instances?
 				if (conf.oneInstance) {
 					$.each(instances, function() {
 						this.close(e);
 					});
 				}
-
+				
 				// onBeforeLoad
 				e = e || $.Event();
 				e.type = "onBeforeLoad";
-				fire.trigger(e);
-				if (e.isDefaultPrevented()) { return self; }
+				fire.trigger(e);				
+				if (e.isDefaultPrevented()) { return self; }				
 
 				// opened
 				opened = true;
-
+				
 				// possible mask effect
-				if (maskConf) { $(overlay).expose(maskConf); }
-
-				// position & dimensions
-				var top = conf.top,
+				if (maskConf) { $(overlay).expose(maskConf); }				
+				
+				// position & dimensions 
+				var top = conf.top,					
 					 left = conf.left,
 					 oWidth = overlay.outerWidth(true),
-					 oHeight = overlay.outerHeight(true);
-
+					 oHeight = overlay.outerHeight(true); 
+				
 				if (typeof top == 'string')  {
-					top = top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) :
-						parseInt(top, 10) / 100 * w.height();
-				}
-
+					top = top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) : 
+						parseInt(top, 10) / 100 * w.height();			
+				}				
+				
 				if (left == 'center') { left = Math.max((w.width() - oWidth) / 2, 0); }
 
-
-		 		// load effect
-				eff[0].call(self, {top: top, left: left}, function() {
+				
+		 		// load effect  		 		
+				eff[0].call(self, {top: top, left: left}, function() {					
 					if (opened) {
 						e.type = "onLoad";
 						fire.trigger(e);
 					}
-				});
+				}); 				
 
 				// mask.click closes overlay
 				if (maskConf && conf.closeOnClick) {
-					$.mask.getMask().one("click", self.close);
+					$.mask.getMask().one("click", self.close); 
 				}
-
+				
 				// when window is clicked outside overlay, we close
 				if (conf.closeOnClick) {
-					$(document).on("click." + uid, function(e) {
-						if (!$(e.target).parents(overlay).length) {
-							self.close(e);
+					$(document).on("click." + uid, function(e) { 
+						if (!$(e.target).parents(overlay).length) { 
+							self.close(e); 
 						}
-					});
-				}
-
+					});						
+				}						
+			
 				// keyboard::escape
-				if (conf.closeOnEsc) {
+				if (conf.closeOnEsc) { 
 
 					// one callback is enough if multiple instances are loaded simultaneously
 					$(document).on("keydown." + uid, function(e) {
-						if (e.keyCode == 27) {
-							self.close(e);
+						if (e.keyCode == 27) { 
+							self.close(e);	 
 						}
-					});
+					});			
 				}
 
-
-				return self;
-			},
-
+				
+				return self; 
+			}, 
+			
 			close: function(e) {
 
 				if (!self.isOpened()) { return self; }
-
+				
 				e = e || $.Event();
 				e.type = "onBeforeClose";
-				fire.trigger(e);
-				if (e.isDefaultPrevented()) { return; }
-
+				fire.trigger(e);				
+				if (e.isDefaultPrevented()) { return; }				
+				
 				opened = false;
-
+				
 				// close effect
 				effects[conf.effect][1].call(self, function() {
 					e.type = "onClose";
-					fire.trigger(e);
+					fire.trigger(e); 
 				});
-
+				
 				// unbind the keyboard / clicking actions
-				$(document).off("click." + uid + " keydown." + uid);
-
+				$(document).off("click." + uid + " keydown." + uid);		  
+				
 				if (maskConf) {
-					$.mask.close();
+					$.mask.close();		
 				}
-
+				 
 				return self;
-			},
-
+			}, 
+			
 			getOverlay: function() {
-				return overlay;
+				return overlay;	
 			},
-
+			
 			getTrigger: function() {
-				return trigger;
+				return trigger;	
 			},
-
+			
 			getClosers: function() {
-				return closers;
-			},
+				return closers;	
+			},			
 
 			isOpened: function()  {
 				return opened;
 			},
-
+			
 			// manipulate start, finish and speeds
 			getConf: function() {
-				return conf;
-			}
-
+				return conf;	
+			}			
+			
 		});
-
-		// callbacks
+		
+		// callbacks	
 		$.each("onBeforeLoad,onStart,onLoad,onBeforeClose,onClose".split(","), function(i, name) {
-
+				
 			// configuration
-			if ($.isFunction(conf[name])) {
-				$(self).on(name, conf[name]);
+			if ($.isFunction(conf[name])) { 
+				$(self).on(name, conf[name]); 
 			}
 
 			// API
@@ -1764,69 +1764,69 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 				return self;
 			};
 		});
-
+		
 		// close button
-		closers = overlay.find(conf.close || ".close");
-
+		closers = overlay.find(conf.close || ".close");		
+		
 		if (!closers.length && !conf.close) {
 			closers = $('<a class="close"></a>');
-			overlay.prepend(closers);
-		}
-
-		closers.click(function(e) {
-			self.close(e);
-		});
-
+			overlay.prepend(closers);	
+		}		
+		
+		closers.click(function(e) { 
+			self.close(e);  
+		});	
+		
 		// autoload
 		if (conf.load) { self.load(); }
-
+		
 	}
-
+	
 	// jQuery plugin initialization
-	$.fn.overlay = function(conf) {
-
+	$.fn.overlay = function(conf) {   
+		
 		// already constructed --> return API
 		var el = this.data("overlay");
-		if (el) { return el; }
-
+		if (el) { return el; }	  		 
+		
 		if ($.isFunction(conf)) {
-			conf = {onBeforeLoad: conf};
+			conf = {onBeforeLoad: conf};	
 		}
 
 		conf = $.extend(true, {}, $.tools.overlay.conf, conf);
-
-		this.each(function() {
+		
+		this.each(function() {		
 			el = new Overlay($(this), conf);
 			instances.push(el);
-			$(this).data("overlay", el);
+			$(this).data("overlay", el);	
 		});
-
-		return conf.api ? el: this;
-	};
-
+		
+		return conf.api ? el: this;		
+	}; 
+	
 })(jQuery);
 
 
 
 /**
- * @license
+ * @license 
  * jQuery Tools @VERSION Scrollable - New wave UI design
- *
+ * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- *
+ * 
  * http://flowplayer.org/tools/scrollable.html
  *
  * Since: March 2008
- * Date: @DATE
+ * Date: @DATE 
  */
-(function($) {
+(function($) { 
 
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-
+	
 	$.tools.scrollable = {
-
-		conf: {
+		
+		conf: {	
 			activeClass: 'active',
 			circular: false,
 			clonedClass: 'cloned',
@@ -1837,206 +1837,206 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 			items: '.items',
 			keyboard: true,
 			mousewheel: false,
-			next: '.next',
-			prev: '.prev',
+			next: '.next',   
+			prev: '.prev', 
 			size: 1,
 			speed: 400,
 			vertical: false,
 			touch: true,
 			wheelSpeed: 0
-		}
+		} 
 	};
-
+					
 	// get hidden element's width or height even though it's hidden
 	function dim(el, key) {
 		var v = parseInt(el.css(key), 10);
 		if (v) { return v; }
-		var s = el[0].currentStyle;
-		return s && s.width && parseInt(s.width, 10);
+		var s = el[0].currentStyle; 
+		return s && s.width && parseInt(s.width, 10);	
 	}
 
-	function find(root, query) {
+	function find(root, query) { 
 		var el = $(query);
 		return el.length < 2 ? el : root.parent().find(query);
 	}
-
-	var current;
-
+	
+	var current;		
+	
 	// constructor
-	function Scrollable(root, conf) {
-
+	function Scrollable(root, conf) {   
+		
 		// current instance
-		var self = this,
+		var self = this, 
 			 fire = root.add(self),
 			 itemWrap = root.children(),
 			 index = 0,
 			 vertical = conf.vertical;
-
-		if (!current) { current = self; }
+				
+		if (!current) { current = self; } 
 		if (itemWrap.length > 1) { itemWrap = $(conf.items, root); }
-
-
+		
+		
 		// in this version circular not supported when size > 1
-		if (conf.size > 1) { conf.circular = false; }
-
+		if (conf.size > 1) { conf.circular = false; } 
+		
 		// methods
 		$.extend(self, {
-
+				
 			getConf: function() {
-				return conf;
-			},
-
+				return conf;	
+			},			
+			
 			getIndex: function() {
-				return index;
-			},
+				return index;	
+			}, 
 
 			getSize: function() {
-				return self.getItems().size();
+				return self.getItems().size();	
 			},
 
 			getNaviButtons: function() {
-				return prev.add(next);
+				return prev.add(next);	
 			},
-
+			
 			getRoot: function() {
-				return root;
+				return root;	
 			},
-
+			
 			getItemWrap: function() {
-				return itemWrap;
+				return itemWrap;	
 			},
-
+			
 			getItems: function() {
-				return itemWrap.find(conf.item).not("." + conf.clonedClass);
+				return itemWrap.find(conf.item).not("." + conf.clonedClass);	
 			},
-
+							
 			move: function(offset, time) {
 				return self.seekTo(index + offset, time);
 			},
-
+			
 			next: function(time) {
-				return self.move(conf.size, time);
+				return self.move(conf.size, time);	
 			},
-
+			
 			prev: function(time) {
-				return self.move(-conf.size, time);
+				return self.move(-conf.size, time);	
 			},
-
+			
 			begin: function(time) {
-				return self.seekTo(0, time);
+				return self.seekTo(0, time);	
 			},
-
+			
 			end: function(time) {
-				return self.seekTo(self.getSize() -1, time);
-			},
-
+				return self.seekTo(self.getSize() -1, time);	
+			},	
+			
 			focus: function() {
 				current = self;
 				return self;
 			},
-
+			
 			addItem: function(item) {
 				item = $(item);
-
+				
 				if (!conf.circular)  {
 					itemWrap.append(item);
 					next.removeClass("disabled");
-
+					
 				} else {
 					itemWrap.children().last().before(item);
-					itemWrap.children().first().replaceWith(item.clone().addClass(conf.clonedClass));
+					itemWrap.children().first().replaceWith(item.clone().addClass(conf.clonedClass)); 						
 				}
-
+				
 				fire.trigger("onAddItem", [item]);
 				return self;
 			},
-
-
-			/* all seeking functions depend on this */
-			seekTo: function(i, time, fn) {
-
+			
+			
+			/* all seeking functions depend on this */		
+			seekTo: function(i, time, fn) {	
+				
 				// ensure numeric index
 				if (!i.jquery) { i *= 1; }
-
+				
 				// avoid seeking from end clone to the beginning
 				if (conf.circular && i === 0 && index == -1 && time !== 0) { return self; }
-
-				// check that index is sane
+				
+				// check that index is sane				
 				if (!conf.circular && i < 0 || i > self.getSize() || i < -1) { return self; }
-
+				
 				var item = i;
-
+			
 				if (i.jquery) {
-					i = self.getItems().index(i);
-
+					i = self.getItems().index(i);	
+					
 				} else {
 					item = self.getItems().eq(i);
-				}
-
+				}  
+				
 				// onBeforeSeek
-				var e = $.Event("onBeforeSeek");
+				var e = $.Event("onBeforeSeek"); 
 				if (!fn) {
-					fire.trigger(e, [i, time]);
-					if (e.isDefaultPrevented() || !item.length) { return self; }
-				}
-
-				var props = vertical ? {top: -item.position().top} : {left: -item.position().left};
-
+					fire.trigger(e, [i, time]);				
+					if (e.isDefaultPrevented() || !item.length) { return self; }			
+				}  
+	
+				var props = vertical ? {top: -item.position().top} : {left: -item.position().left};  
+				
 				index = i;
-				current = self;
-				if (time === undefined) { time = conf.speed; }
-
-				itemWrap.animate(props, time, conf.easing, fn || function() {
-					fire.trigger("onSeek", [i]);
-				});
-
-				return self;
-			}
-
+				current = self;  
+				if (time === undefined) { time = conf.speed; }   
+				
+				itemWrap.animate(props, time, conf.easing, fn || function() { 
+					fire.trigger("onSeek", [i]);		
+				});	 
+				
+				return self; 
+			}					
+			
 		});
-
-		// callbacks
+				
+		// callbacks	
 		$.each(['onBeforeSeek', 'onSeek', 'onAddItem'], function(i, name) {
-
+				
 			// configuration
-			if ($.isFunction(conf[name])) {
-				$(self).on(name, conf[name]);
+			if ($.isFunction(conf[name])) { 
+				$(self).on(name, conf[name]); 
 			}
-
+			
 			self[name] = function(fn) {
 				if (fn) { $(self).on(name, fn); }
 				return self;
 			};
-		});
-
+		});  
+		
 		// circular loop
 		if (conf.circular) {
-
+			
 			var cloned1 = self.getItems().slice(-1).clone().prependTo(itemWrap),
 				 cloned2 = self.getItems().eq(1).clone().appendTo(itemWrap);
 
 			cloned1.add(cloned2).addClass(conf.clonedClass);
-
+			
 			self.onBeforeSeek(function(e, i, time) {
-
+				
 				if (e.isDefaultPrevented()) { return; }
-
+				
 				/*
 					1. animate to the clone without event triggering
 					2. seek to correct position with 0 speed
 				*/
 				if (i == -1) {
 					self.seekTo(cloned1, time, function()  {
-						self.end(0);
-					});
+						self.end(0);		
+					});          
 					return e.preventDefault();
-
+					
 				} else if (i == self.getSize()) {
 					self.seekTo(cloned2, time, function()  {
-						self.begin(0);
-					});
+						self.begin(0);		
+					});	
 				}
-
+				
 			});
 
 			// seek over the cloned item
@@ -2064,11 +2064,11 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 			}
 
 		}
-
+		
 		// next/prev buttons
 		var prev = find(root, conf.prev).click(function(e) { e.stopPropagation(); self.prev(); }),
-			 next = find(root, conf.next).click(function(e) { e.stopPropagation(); self.next(); });
-
+			 next = find(root, conf.next).click(function(e) { e.stopPropagation(); self.next(); }); 
+		
 		if (!conf.circular) {
 			self.onBeforeSeek(function(e, i) {
 				setTimeout(function() {
@@ -2078,16 +2078,16 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					}
 				}, 1);
 			});
-
+			
 			if (!conf.initialIndex) {
-				prev.addClass(conf.disabledClass);
-			}
+				prev.addClass(conf.disabledClass);	
+			}			
 		}
-
+			
 		if (self.getSize() < 2) {
-			prev.add(next).addClass(conf.disabledClass);
+			prev.add(next).addClass(conf.disabledClass);	
 		}
-
+			
 		// mousewheel support
 		if (conf.mousewheel && $.fn.mousewheel) {
 			root.mousewheel(function(e, delta)  {
@@ -2095,182 +2095,182 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					self.move(delta < 0 ? 1 : -1, conf.wheelSpeed || 50);
 					return false;
 				}
-			});
+			});			
 		}
-
+		
 		// touch event
 		if (conf.touch) {
 			var touch = {};
-
+			
 			itemWrap[0].ontouchstart = function(e) {
 				var t = e.touches[0];
 				touch.x = t.clientX;
 				touch.y = t.clientY;
 			};
-
+			
 			itemWrap[0].ontouchmove = function(e) {
-
+				
 				// only deal with one finger
-				if (e.touches.length == 1 && !itemWrap.is(":animated")) {
+				if (e.touches.length == 1 && !itemWrap.is(":animated")) {			
 					var t = e.touches[0],
 						 deltaX = touch.x - t.clientX,
 						 deltaY = touch.y - t.clientY;
-
-					self[vertical && deltaY > 0 || !vertical && deltaX > 0 ? 'next' : 'prev']();
+	
+					self[vertical && deltaY > 0 || !vertical && deltaX > 0 ? 'next' : 'prev']();				
 					e.preventDefault();
 				}
 			};
 		}
-
+		
 		if (conf.keyboard)  {
-
+			
 			$(document).on("keydown.scrollable", function(evt) {
 
 				// skip certain conditions
-				if (!conf.keyboard || evt.altKey || evt.ctrlKey || evt.metaKey || $(evt.target).is(":input")) {
-					return;
+				if (!conf.keyboard || evt.altKey || evt.ctrlKey || evt.metaKey || $(evt.target).is(":input")) { 
+					return; 
 				}
-
+				
 				// does this instance have focus?
 				if (conf.keyboard != 'static' && current != self) { return; }
-
+					
 				var key = evt.keyCode;
-
+			
 				if (vertical && (key == 38 || key == 40)) {
 					self.move(key == 38 ? -1 : 1);
 					return evt.preventDefault();
 				}
-
-				if (!vertical && (key == 37 || key == 39)) {
+				
+				if (!vertical && (key == 37 || key == 39)) {					
 					self.move(key == 37 ? -1 : 1);
 					return evt.preventDefault();
-				}
-
-			});
+				}	  
+				
+			});  
 		}
-
+		
 		// initial index
 		if (conf.initialIndex) {
 			self.seekTo(conf.initialIndex, 0, function() {});
 		}
-	}
+	} 
 
-
+		
 	// jQuery plugin implementation
-	$.fn.scrollable = function(conf) {
-
+	$.fn.scrollable = function(conf) { 
+			
 		// already constructed --> return API
 		var el = this.data("scrollable");
-		if (el) { return el; }
+		if (el) { return el; }		 
 
-		conf = $.extend({}, $.tools.scrollable.conf, conf);
-
-		this.each(function() {
+		conf = $.extend({}, $.tools.scrollable.conf, conf); 
+		
+		this.each(function() {			
 			el = new Scrollable($(this), conf);
-			$(this).data("scrollable", el);
+			$(this).data("scrollable", el);	
 		});
-
-		return conf.api ? el: this;
-
+		
+		return conf.api ? el: this; 
+		
 	};
-
-
+			
+	
 })(jQuery);
 
 
 /**
- * @license
+ * @license 
  * jQuery Tools @VERSION Tabs- The basics of UI design.
- *
+ * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- *
+ * 
  * http://flowplayer.org/tools/tabs/
  *
  * Since: November 2008
- * Date: @DATE
- */
+ * Date: @DATE 
+ */  
 (function($) {
-
+		
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-
+	
 	$.tools.tabs = {
-
+		
 		conf: {
 			tabs: 'a',
 			current: 'current',
 			onBeforeClick: null,
-			onClick: null,
+			onClick: null, 
 			effect: 'default',
 			initialEffect: false,   // whether or not to show effect in first init of tabs
-			initialIndex: 0,
+			initialIndex: 0,			
 			event: 'click',
 			rotate: false,
-
+			
       // slide effect
       slideUpSpeed: 400,
       slideDownSpeed: 400,
-
+			
 			// 1.2
 			history: false
 		},
-
+		
 		addEffect: function(name, fn) {
 			effects[name] = fn;
 		}
-
+		
 	};
-
+	
 	var effects = {
-
+		
 		// simple "toggle" effect
-		'default': function(i, done) {
+		'default': function(i, done) { 
 			this.getPanes().hide().eq(i).show();
 			done.call();
-		},
-
+		}, 
+		
 		/*
 			configuration:
 				- fadeOutSpeed (positive value does "crossfading")
 				- fadeInSpeed
 		*/
-		fade: function(i, done) {
-
+		fade: function(i, done) {		
+			
 			var conf = this.getConf(),
 				 speed = conf.fadeOutSpeed,
 				 panes = this.getPanes();
-
+			
 			if (speed) {
-				panes.fadeOut(speed);
+				panes.fadeOut(speed);	
 			} else {
-				panes.hide();
+				panes.hide();	
 			}
 
-			panes.eq(i).fadeIn(conf.fadeInSpeed, done);
+			panes.eq(i).fadeIn(conf.fadeInSpeed, done);	
 		},
-
+		
 		// for basic accordions
 		slide: function(i, done) {
 		  var conf = this.getConf();
-
+		  
 			this.getPanes().slideUp(conf.slideUpSpeed);
-			this.getPanes().eq(i).slideDown(conf.slideDownSpeed, done);
-		},
+			this.getPanes().eq(i).slideDown(conf.slideDownSpeed, done);			 
+		}, 
 
 		/**
 		 * AJAX effect
 		 */
-		ajax: function(i, done)  {
-			this.getPanes().eq(0).load(this.getTabs().eq(i).attr("href"), done);
-		}
-	};
-
+		ajax: function(i, done)  {			
+			this.getPanes().eq(0).load(this.getTabs().eq(i).attr("href"), done);	
+		}		
+	};   	
+	
 	/**
 	 * Horizontal accordion
-	 *
+	 * 
 	 * @deprecated will be replaced with a more robust implementation
 	*/
-
+	
 	var
 	  /**
 	  *   @type {Boolean}
@@ -2282,23 +2282,23 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 	  animating,
 	  /**
 	  *   @type {Number}
-	  *
+	  *   
 	  *   Initial width of tab panes
 	  */
 	  w;
-
+	 
 	$.tools.tabs.addEffect("horizontal", function(i, done) {
 	  if (animating) return;    // don't allow other animations
-
+	  
 	  var nextPane = this.getPanes().eq(i),
 	      currentPane = this.getCurrentPane();
-
+	      
 		// store original width of a pane into memory
 		w || ( w = this.getPanes().eq(0).width() );
 		animating = true;
-
+		
 		nextPane.show(); // hidden by default
-
+		
 		// animate current pane's width to zero
     // animate next pane's width at the same time for smooth animation
     currentPane.animate({width: 0}, {
@@ -2313,61 +2313,61 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
     });
     // Dirty hack...  onLoad, currentPant will be empty and nextPane will be the first pane
     // If this is the case, manually run callback since the animation never occured, and reset animating
-    if (!currentPane.length){
-      done.call();
+    if (!currentPane.length){ 
+      done.call(); 
       animating = false;
     }
-	});
+	});	
 
-
+	
 	function Tabs(root, paneSelector, conf) {
-
+		
 		var self = this,
         trigger = root.add(this),
         tabs = root.find(conf.tabs),
         panes = paneSelector.jquery ? paneSelector : root.children(paneSelector),
         current;
-
-
+			 
+		
 		// make sure tabs and panes are found
 		if (!tabs.length)  { tabs = root.children(); }
 		if (!panes.length) { panes = root.parent().find(paneSelector); }
 		if (!panes.length) { panes = $(paneSelector); }
-
-
+		
+		
 		// public methods
-		$.extend(this, {
+		$.extend(this, {				
 			click: function(i, e) {
-
+			  
 				var tab = tabs.eq(i),
 				    firstRender = !root.data('tabs');
-
+				
 				if (typeof i == 'string' && i.replace("#", "")) {
 					tab = tabs.filter("[href*=\"" + i.replace("#", "") + "\"]");
 					i = Math.max(tabs.index(tab), 0);
 				}
-
+								
 				if (conf.rotate) {
-					var last = tabs.length -1;
+					var last = tabs.length -1; 
 					if (i < 0) { return self.click(last, e); }
-					if (i > last) { return self.click(0, e); }
+					if (i > last) { return self.click(0, e); }						
 				}
-
+				
 				if (!tab.length) {
 					if (current >= 0) { return self; }
 					i = conf.initialIndex;
 					tab = tabs.eq(i);
-				}
-
+				}				
+				
 				// current tab is being clicked
 				if (i === current) { return self; }
-
-				// possibility to cancel click action
+				
+				// possibility to cancel click action				
 				e = e || $.Event();
 				e.type = "onBeforeClick";
-				trigger.trigger(e, [i]);
+				trigger.trigger(e, [i]);				
 				if (e.isDefaultPrevented()) { return; }
-
+				
         // if firstRender, only run effect if initialEffect is set, otherwise default
 				var effect = firstRender ? conf.initialEffect && conf.effect || 'default' : conf.effect;
 
@@ -2377,89 +2377,89 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					// onClick callback
 					e.type = "onClick";
 					trigger.trigger(e, [i]);
-				});
-
+				});			
+				
 				// default behaviour
-				tabs.removeClass(conf.current);
-				tab.addClass(conf.current);
-
+				tabs.removeClass(conf.current);	
+				tab.addClass(conf.current);				
+				
 				return self;
 			},
-
+			
 			getConf: function() {
-				return conf;
+				return conf;	
 			},
 
 			getTabs: function() {
-				return tabs;
+				return tabs;	
 			},
-
+			
 			getPanes: function() {
-				return panes;
+				return panes;	
 			},
-
+			
 			getCurrentPane: function() {
-				return panes.eq(current);
+				return panes.eq(current);	
 			},
-
+			
 			getCurrentTab: function() {
-				return tabs.eq(current);
+				return tabs.eq(current);	
 			},
-
+			
 			getIndex: function() {
-				return current;
-			},
-
+				return current;	
+			}, 
+			
 			next: function() {
 				return self.click(current + 1);
 			},
-
+			
 			prev: function() {
-				return self.click(current - 1);
+				return self.click(current - 1);	
 			},
-
+			
 			destroy: function() {
 				tabs.off(conf.event).removeClass(conf.current);
-				panes.find("a[href^=\"#\"]").off("click.T");
+				panes.find("a[href^=\"#\"]").off("click.T"); 
 				return self;
 			}
-
+		
 		});
 
-		// callbacks
+		// callbacks	
 		$.each("onBeforeClick,onClick".split(","), function(i, name) {
-
+				
 			// configuration
 			if ($.isFunction(conf[name])) {
-				$(self).on(name, conf[name]);
+				$(self).on(name, conf[name]); 
 			}
 
 			// API
 			self[name] = function(fn) {
 				if (fn) { $(self).on(name, fn); }
-				return self;
+				return self;	
 			};
 		});
-
-
+	
+		
 		if (conf.history && $.fn.history) {
 			$.tools.history.init(tabs);
 			conf.event = 'history';
-		}
-
+		}	
+		
 		// setup click actions for each tab
-		tabs.each(function(i) {
+		tabs.each(function(i) { 				
 			$(this).on(conf.event, function(e) {
 				self.click(i, e);
 				return e.preventDefault();
-			});
+			});			
 		});
-
+		
 		// cross tab anchor link
 		panes.find("a[href^=\"#\"]").on("click.T", function(e) {
-			self.click($(this).attr("href"), e);
-		});
-
+			self.click($(this).attr("href"), e);		
+		}); 
+		
 		// open initial tab
 		if (location.hash && conf.tabs == "a" && root.find("[href=\"" +location.hash+ "\"]").length) {
 			self.click(location.hash);
@@ -2468,185 +2468,185 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 			if (conf.initialIndex === 0 || conf.initialIndex > 0) {
 				self.click(conf.initialIndex);
 			}
-		}
-
+		}				
+		
 	}
-
-
+	
+	
 	// jQuery plugin implementation
 	$.fn.tabs = function(paneSelector, conf) {
-
+		
 		// return existing instance
 		var el = this.data("tabs");
-		if (el) {
-			el.destroy();
+		if (el) { 
+			el.destroy();	
 			this.removeData("tabs");
 		}
 
 		if ($.isFunction(conf)) {
 			conf = {onBeforeClick: conf};
 		}
-
+		
 		// setup conf
-		conf = $.extend({}, $.tools.tabs.conf, conf);
-
-
-		this.each(function() {
+		conf = $.extend({}, $.tools.tabs.conf, conf);		
+		
+		
+		this.each(function() {				
 			el = new Tabs($(this), paneSelector, conf);
-			$(this).data("tabs", el);
-		});
-
-		return conf.api ? el: this;
-	};
-
-}) (jQuery);
+			$(this).data("tabs", el); 
+		});		
+		
+		return conf.api ? el: this;		
+	};		
+		
+}) (jQuery); 
 
 
 
 
 /**
- * @license
+ * @license 
  * jQuery Tools @VERSION History "Back button for AJAX apps"
- *
+ * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- *
+ * 
  * http://flowplayer.org/tools/toolbox/history.html
- *
+ * 
  * Since: Mar 2010
- * Date: @DATE
+ * Date: @DATE 
  */
 (function($) {
-
-	var hash, iframe, links, inited;
-
+		
+	var hash, iframe, links, inited;		
+	
 	$.tools = $.tools || {version: '@VERSION'};
-
+	
 	$.tools.history = {
-
+	
 		init: function(els) {
-
+			
 			if (inited) { return; }
-
+			
 			// IE
 			if ($.browser.msie && $.browser.version < '8') {
-
+				
 				// create iframe that is constantly checked for hash changes
 				if (!iframe) {
 					iframe = $("<iframe/>").attr("src", "javascript:false;").hide().get(0);
 					$("body").append(iframe);
-
+									
 					setInterval(function() {
-						var idoc = iframe.contentWindow.document,
+						var idoc = iframe.contentWindow.document, 
 							 h = idoc.location.hash;
-
-						if (hash !== h) {
+					
+						if (hash !== h) {						
 							$(window).trigger("hash", h);
 						}
 					}, 100);
-
+					
 					setIframeLocation(location.hash || '#');
 				}
 
-
+				
 			// other browsers scans for location.hash changes directly without iframe hack
-			} else {
+			} else { 
 				setInterval(function() {
 					var h = location.hash;
 					if (h !== hash) {
 						$(window).trigger("hash", h);
-					}
+					}						
 				}, 100);
 			}
 
 			links = !links ? els : links.add(els);
-
+			
 			els.click(function(e) {
 				var href = $(this).attr("href");
 				if (iframe) { setIframeLocation(href); }
-
+				
 				// handle non-anchor links
 				if (href.slice(0, 1) != "#") {
 					location.href = "#" + href;
-					return e.preventDefault();
+					return e.preventDefault();		
 				}
-
-			});
-
+				
+			}); 
+			
 			inited = true;
-		}
-	};
-
+		}	
+	};  
+	
 
 	function setIframeLocation(h) {
 		if (h) {
 			var doc = iframe.contentWindow.document;
-			doc.open().close();
+			doc.open().close();	
 			doc.location.hash = h;
 		}
-	}
-
+	} 
+		 
 	// global histroy change listener
-	$(window).on("hash", function(e, h)  {
+	$(window).on("hash", function(e, h)  { 
 		if (h) {
 			links.filter(function() {
 			  var href = $(this).attr("href");
-			  return href == h || href == h.replace("#", "");
-			}).trigger("history", [h]);
+			  return href == h || href == h.replace("#", ""); 
+			}).trigger("history", [h]);	
 		} else {
-			links.eq(0).trigger("history", [h]);
+			links.eq(0).trigger("history", [h]);	
 		}
 
 		hash = h;
 
 	});
-
-
+		
+	
 	// jQuery plugin implementation
 	$.fn.history = function(fn) {
-
+			
 		$.tools.history.init(this);
 
 		// return jQuery
-		return this.on("history", fn);
-	};
-
-})(jQuery);
+		return this.on("history", fn);		
+	};	
+		
+})(jQuery); 
 
 
 
 /**
- * @license
+ * @license 
  * jQuery Tools @VERSION / Expose - Dim the lights
- *
+ * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- *
+ * 
  * http://flowplayer.org/tools/toolbox/expose.html
  *
  * Since: Mar 2010
- * Date: @DATE
+ * Date: @DATE 
  */
-(function($) {
+(function($) { 	
 
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-
+	
 	var tool;
-
+	
 	tool = $.tools.expose = {
-
-		conf: {
+		
+		conf: {	
 			maskId: 'exposeMask',
 			loadSpeed: 'slow',
 			closeSpeed: 'fast',
 			closeOnClick: true,
 			closeOnEsc: true,
-
+			
 			// css settings
 			zIndex: 9998,
 			opacity: 0.8,
 			startOpacity: 0,
 			color: '#fff',
-
+			
 			// callbacks
 			onLoad: null,
 			onClose: null
@@ -2655,185 +2655,185 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 
 	/* one of the greatest headaches in the tool. finally made it */
 	function viewport() {
-
+				
 		// the horror case
 		if (/msie/.test(navigator.userAgent.toLowerCase())) {
-
+			
 			// if there are no scrollbars then use window.height
 			var d = $(document).height(), w = $(window).height();
-
+			
 			return [
 				window.innerWidth || 							// ie7+
-				document.documentElement.clientWidth || 	// ie6
+				document.documentElement.clientWidth || 	// ie6  
 				document.body.clientWidth, 					// ie6 quirks mode
 				d - w < 20 ? w : d
 			];
-		}
-
+		} 
+		
 		// other well behaving browsers
-		return [$(document).width(), $(document).height()];
-	}
-
+		return [$(document).width(), $(document).height()]; 
+	} 
+	
 	function call(fn) {
 		if (fn) { return fn.call($.mask); }
 	}
-
-	var mask, exposed, loaded, config, overlayIndex;
-
-
+	
+	var mask, exposed, loaded, config, overlayIndex;		
+	
+	
 	$.mask = {
-
+		
 		load: function(conf, els) {
-
+			
 			// already loaded ?
-			if (loaded) { return this; }
-
+			if (loaded) { return this; }			
+			
 			// configuration
 			if (typeof conf == 'string') {
-				conf = {color: conf};
+				conf = {color: conf};	
 			}
-
+			
 			// use latest config
 			conf = conf || config;
-
+			
 			config = conf = $.extend($.extend({}, tool.conf), conf);
 
 			// get the mask
 			mask = $("#" + conf.maskId);
-
+				
 			// or create it
 			if (!mask.length) {
 				mask = $('<div/>').attr("id", conf.maskId);
 				$("body").append(mask);
 			}
-
-			// set position and dimensions
+			
+			// set position and dimensions 			
 			var size = viewport();
-
-			mask.css({
-				position:'absolute',
-				top: 0,
+				
+			mask.css({				
+				position:'absolute', 
+				top: 0, 
 				left: 0,
 				width: size[0],
 				height: size[1],
 				display: 'none',
-				opacity: conf.startOpacity,
-				zIndex: conf.zIndex
+				opacity: conf.startOpacity,					 		
+				zIndex: conf.zIndex 
 			});
-
+			
 			if (conf.color) {
-				mask.css("backgroundColor", conf.color);
-			}
-
+				mask.css("backgroundColor", conf.color);	
+			}			
+			
 			// onBeforeLoad
 			if (call(conf.onBeforeLoad) === false) {
 				return this;
 			}
-
+			
 			// esc button
-			if (conf.closeOnEsc) {
-				$(document).on("keydown.mask", function(e) {
+			if (conf.closeOnEsc) {						
+				$(document).on("keydown.mask", function(e) {							
 					if (e.keyCode == 27) {
-						$.mask.close(e);
-					}
-				});
+						$.mask.close(e);	
+					}		
+				});			
 			}
-
+			
 			// mask click closes
 			if (conf.closeOnClick) {
 				mask.on("click.mask", function(e)  {
-					$.mask.close(e);
-				});
-			}
-
+					$.mask.close(e);		
+				});					
+			}			
+			
 			// resize mask when window is resized
 			$(window).on("resize.mask", function() {
 				$.mask.fit();
 			});
-
+			
 			// exposed elements
 			if (els && els.length) {
-
+				
 				overlayIndex = els.eq(0).css("zIndex");
 
 				// make sure element is positioned absolutely or relatively
 				$.each(els, function() {
 					var el = $(this);
 					if (!/relative|absolute|fixed/i.test(el.css("position"))) {
-						el.css("position", "relative");
-					}
+						el.css("position", "relative");		
+					}					
 				});
-
+			 
 				// make elements sit on top of the mask
-				exposed = els.css({ zIndex: Math.max(conf.zIndex + 1, overlayIndex == 'auto' ? 0 : overlayIndex)});
-			}
-
+				exposed = els.css({ zIndex: Math.max(conf.zIndex + 1, overlayIndex == 'auto' ? 0 : overlayIndex)});			
+			}	
+			
 			// reveal mask
 			mask.css({display: 'block'}).fadeTo(conf.loadSpeed, conf.opacity, function() {
-				$.mask.fit();
+				$.mask.fit(); 
 				call(conf.onLoad);
 				loaded = "full";
 			});
-
-			loaded = true;
-			return this;
+			
+			loaded = true;			
+			return this;				
 		},
-
+		
 		close: function() {
 			if (loaded) {
-
+				
 				// onBeforeClose
 				if (call(config.onBeforeClose) === false) { return this; }
-
-				mask.fadeOut(config.closeSpeed, function()  {
+					
+				mask.fadeOut(config.closeSpeed, function()  {										
 					if (exposed) {
-						exposed.css({zIndex: overlayIndex});
-					}
+						exposed.css({zIndex: overlayIndex});						
+					}				
 					loaded = false;
 					call(config.onClose);
-				});
-
+				});				
+				
 				// unbind various event listeners
 				$(document).off("keydown.mask");
 				mask.off("click.mask");
-				$(window).off("resize.mask");
+				$(window).off("resize.mask");  
 			}
-
-			return this;
+			
+			return this; 
 		},
-
+		
 		fit: function() {
 			if (loaded) {
-				var size = viewport();
+				var size = viewport();				
 				mask.css({width: size[0], height: size[1]});
-			}
+			}				
 		},
-
+		
 		getMask: function() {
-			return mask;
+			return mask;	
 		},
-
+		
 		isLoaded: function(fully) {
-			return fully ? loaded == 'full' : loaded;
-		},
-
+			return fully ? loaded == 'full' : loaded;	
+		}, 
+		
 		getConf: function() {
-			return config;
+			return config;	
 		},
-
+		
 		getExposed: function() {
-			return exposed;
-		}
+			return exposed;	
+		}		
 	};
-
+	
 	$.fn.mask = function(conf) {
 		$.mask.load(conf);
-		return this;
-	};
-
+		return this;		
+	};			
+	
 	$.fn.expose = function(conf) {
 		$.mask.load(conf, this);
-		return this;
+		return this;			
 	};
 
 
@@ -2841,73 +2841,73 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 
 
 /**
- * @license
+ * @license 
  * jQuery Tools @VERSION Tooltip - UI essentials
- *
+ * 
  * NO COPYRIGHTS OR LICENSES. DO WHAT YOU LIKE.
- *
+ * 
  * http://flowplayer.org/tools/tooltip/
  *
  * Since: November 2008
- * Date: @DATE
+ * Date: @DATE 
  */
-(function($) {
+(function($) { 	
 	// static constructs
 	$.tools = $.tools || {version: '@VERSION'};
-
+	
 	$.tools.tooltip = {
-
-		conf: {
-
+		
+		conf: { 
+			
 			// default effect variables
-			effect: 'toggle',
+			effect: 'toggle',			
 			fadeOutSpeed: "fast",
 			predelay: 0,
 			delay: 30,
-			opacity: 1,
+			opacity: 1,			
 			tip: 0,
             fadeIE: false, // enables fade effect in IE
-
+			
 			// 'top', 'bottom', 'right', 'left', 'center'
-			position: ['top', 'center'],
+			position: ['top', 'center'], 
 			offset: [0, 0],
 			relative: false,
 			cancelDefault: true,
-
-			// type to event mapping
+			
+			// type to event mapping 
 			events: {
 				def: 			"mouseenter,mouseleave",
 				input: 		"focus,blur",
 				widget:		"focus mouseenter,blur mouseleave",
 				tooltip:		"mouseenter,mouseleave"
 			},
-
+			
 			// 1.2
 			layout: '<div/>',
 			tipClass: 'tooltip'
 		},
-
+		
 		addEffect: function(name, loadFn, hideFn) {
-			effects[name] = [loadFn, hideFn];
-		}
+			effects[name] = [loadFn, hideFn];	
+		} 
 	};
-
-
-	var effects = {
-		toggle: [
-			function(done) {
+	
+	
+	var effects = { 
+		toggle: [ 
+			function(done) { 
 				var conf = this.getConf(), tip = this.getTip(), o = conf.opacity;
 				if (o < 1) { tip.css({opacity: o}); }
 				tip.show();
 				done.call();
 			},
-
-			function(done) {
+			
+			function(done) { 
 				this.getTip().hide();
 				done.call();
-			}
+			} 
 		],
-
+		
 		fade: [
 			function(done) {
 				var conf = this.getConf();
@@ -2929,138 +2929,138 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 					done();
 				}
 			}
-		]
-	};
+		]		
+	};   
 
+		
+	/* calculate tip position relative to the trigger */  	
+	function getPosition(trigger, tip, conf) {	
 
-	/* calculate tip position relative to the trigger */
-	function getPosition(trigger, tip, conf) {
-
-
-		// get origin top/left position
-		var top = conf.relative ? trigger.position().top : trigger.offset().top,
+		
+		// get origin top/left position 
+		var top = conf.relative ? trigger.position().top : trigger.offset().top, 
 			 left = conf.relative ? trigger.position().left : trigger.offset().left,
 			 pos = conf.position[0];
 
 		top  -= tip.outerHeight() - conf.offset[0];
 		left += trigger.outerWidth() + conf.offset[1];
-
+		
 		// iPad position fix
 		if (/iPad/i.test(navigator.userAgent)) {
 			top -= $(window).scrollTop();
 		}
-
-		// adjust Y
+		
+		// adjust Y		
 		var height = tip.outerHeight() + trigger.outerHeight();
 		if (pos == 'center') 	{ top += height / 2; }
 		if (pos == 'bottom') 	{ top += height; }
-
-
+		
+		
 		// adjust X
-		pos = conf.position[1];
+		pos = conf.position[1]; 	
 		var width = tip.outerWidth() + trigger.outerWidth();
 		if (pos == 'center') 	{ left -= width / 2; }
-		if (pos == 'left')   	{ left -= width; }
-
+		if (pos == 'left')   	{ left -= width; }	 
+		
 		return {top: top, left: left};
-	}
+	}		
 
-
-
+	
+	
 	function Tooltip(trigger, conf) {
 
-		var self = this,
+		var self = this, 
 			 fire = trigger.add(self),
 			 tip,
 			 timer = 0,
-			 pretimer = 0,
+			 pretimer = 0, 
 			 title = trigger.attr("title"),
 			 tipAttr = trigger.attr("data-tooltip"),
 			 effect = effects[conf.effect],
 			 shown,
-
+				 
 			 // get show/hide configuration
-			 isInput = trigger.is(":input"),
-			 isWidget = isInput && trigger.is(":checkbox, :radio, select, :button, :submit"),
+			 isInput = trigger.is(":input"), 
+			 isWidget = isInput && trigger.is(":checkbox, :radio, select, :button, :submit"),			
 			 type = trigger.attr("type"),
-			 evt = conf.events[type] || conf.events[isInput ? (isWidget ? 'widget' : 'input') : 'def'];
-
-
+			 evt = conf.events[type] || conf.events[isInput ? (isWidget ? 'widget' : 'input') : 'def']; 
+		
+		
 		// check that configuration is sane
-		if (!effect) { throw "Nonexistent effect \"" + conf.effect + "\""; }
-
-		evt = evt.split(/,\s*/);
-		if (evt.length != 2) { throw "Tooltip: bad events configuration for " + type; }
-
-
-		// trigger --> show
+		if (!effect) { throw "Nonexistent effect \"" + conf.effect + "\""; }					
+		
+		evt = evt.split(/,\s*/); 
+		if (evt.length != 2) { throw "Tooltip: bad events configuration for " + type; } 
+		
+		
+		// trigger --> show  
 		trigger.on(evt[0], function(e) {
 
 			clearTimeout(timer);
 			if (conf.predelay) {
-				pretimer = setTimeout(function() { self.show(e); }, conf.predelay);
-
+				pretimer = setTimeout(function() { self.show(e); }, conf.predelay);	
+				
 			} else {
-				self.show(e);
+				self.show(e);	
 			}
-
+			
 		// trigger --> hide
 		}).on(evt[1], function(e)  {
 			clearTimeout(pretimer);
 			if (conf.delay)  {
-				timer = setTimeout(function() { self.hide(e); }, conf.delay);
-
+				timer = setTimeout(function() { self.hide(e); }, conf.delay);	
+				
 			} else {
-				self.hide(e);
+				self.hide(e);		
 			}
-
-		});
-
-
+			
+		}); 
+		
+		
 		// remove default title
-		if (title && conf.cancelDefault) {
+		if (title && conf.cancelDefault) { 
 			trigger.removeAttr("title");
-			trigger.data("title", title);
-		}
-
+			trigger.data("title", title);			
+		}		
+		
 		$.extend(self, {
-
-			show: function(e) {
+				
+			show: function(e) {  
 
 				// tip not initialized yet
 				if (!tip) {
-
-					// data-tooltip
+					
+					// data-tooltip 
 					if (tipAttr) {
 						tip = $(tipAttr);
 
 					// single tip element for all
-					} else if (conf.tip) {
+					} else if (conf.tip) { 
 						tip = $(conf.tip).eq(0);
-
+						
 					// autogenerated tooltip
-					} else if (title) {
+					} else if (title) { 
 						tip = $(conf.layout).addClass(conf.tipClass).appendTo(document.body)
 							.hide().append(title);
 
 					// manual tooltip
-					} else {
+					} else {	
 						tip = trigger.find('.' + conf.tipClass);
 						if (!tip.length) { tip = trigger.next(); }
-						if (!tip.length) { tip = trigger.parent().next(); }
+						if (!tip.length) { tip = trigger.parent().next(); } 	 
 					}
-
+					
 					if (!tip.length) { throw "Cannot find tooltip for " + trigger;	}
-				}
-
-			 	if (self.isShown()) { return self; }
-
+				} 
+			 	
+			 	if (self.isShown()) { return self; }  
+				
 			 	// stop previous animation
-			 	tip.stop(true, true);
-
+			 	tip.stop(true, true); 			 	
+			 	
 				// get position
-				var pos = getPosition(trigger, tip, conf);
-
+				var pos = getPosition(trigger, tip, conf);			
+		
 				// restore title for single tooltip element
 				if (conf.tip) {
 					tip.html(trigger.data("title"));
@@ -3069,97 +3069,97 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 				// onBeforeShow
 				e = $.Event();
 				e.type = "onBeforeShow";
-				fire.trigger(e, [pos]);
+				fire.trigger(e, [pos]);				
 				if (e.isDefaultPrevented()) { return self; }
-
-
+		
+				
 				// onBeforeShow may have altered the configuration
 				pos = getPosition(trigger, tip, conf);
-
+				
 				// set position
-				tip.css({position:'absolute', top: pos.top, left: pos.left});
-
+				tip.css({position:'absolute', top: pos.top, left: pos.left});					
+				
 				shown = true;
-
-				// invoke effect
+				
+				// invoke effect 
 				effect[0].call(self, function() {
 					e.type = "onShow";
 					shown = 'full';
-					fire.trigger(e);
-				});
+					fire.trigger(e);		 
+				});					
 
-
-				// tooltip events
+	 	
+				// tooltip events       
 				var event = conf.events.tooltip.split(/,\s*/);
 
 				if (!tip.data("__set")) {
-
-					tip.off(event[0]).on(event[0], function() {
+					
+					tip.off(event[0]).on(event[0], function() { 
 						clearTimeout(timer);
 						clearTimeout(pretimer);
 					});
-
-					if (event[1] && !trigger.is("input:not(:checkbox, :radio), textarea")) {
+					
+					if (event[1] && !trigger.is("input:not(:checkbox, :radio), textarea")) { 					
 						tip.off(event[1]).on(event[1], function(e) {
-
+	
 							// being moved to the trigger element
 							if (e.relatedTarget != trigger[0]) {
 								trigger.trigger(evt[1].split(" ")[0]);
 							}
-						});
-					}
-
+						}); 
+					} 
+					
 					// bind agein for if same tip element
 					if (!conf.tip) tip.data("__set", true);
 				}
-
+				
 				return self;
 			},
-
+			
 			hide: function(e) {
 
 				if (!tip || !self.isShown()) { return self; }
-
+			
 				// onBeforeHide
 				e = $.Event();
 				e.type = "onBeforeHide";
-				fire.trigger(e);
+				fire.trigger(e);				
 				if (e.isDefaultPrevented()) { return; }
-
+	
 				shown = false;
-
+				
 				effects[conf.effect][1].call(self, function() {
 					e.type = "onHide";
-					fire.trigger(e);
+					fire.trigger(e);		 
 				});
-
+				
 				return self;
 			},
-
+			
 			isShown: function(fully) {
-				return fully ? shown == 'full' : shown;
+				return fully ? shown == 'full' : shown;	
 			},
-
+				
 			getConf: function() {
-				return conf;
+				return conf;	
 			},
-
+				
 			getTip: function() {
-				return tip;
+				return tip;	
 			},
-
+			
 			getTrigger: function() {
-				return trigger;
-			}
+				return trigger;	
+			}		
 
-		});
+		});		
 
-		// callbacks
+		// callbacks	
 		$.each("onHide,onBeforeShow,onShow,onBeforeHide".split(","), function(i, name) {
-
+				
 			// configuration
-			if ($.isFunction(conf[name])) {
-				$(self).on(name, conf[name]);
+			if ($.isFunction(conf[name])) { 
+				$(self).on(name, conf[name]); 
 			}
 
 			// API
@@ -3168,36 +3168,36 @@ define("resource-plone-app-jquerytools-js", ["jquery"], function() {
 				return self;
 			};
 		});
-
+		
 	}
-
-
+		
+	
 	// jQuery plugin implementation
 	$.fn.tooltip = function(conf) {
-
+		
 		// return existing instance
 		var api = this.data("tooltip");
 		if (api) { return api; }
 
 		conf = $.extend(true, {}, $.tools.tooltip.conf, conf);
-
+		
 		// position can also be given as string
 		if (typeof conf.position == 'string') {
-			conf.position = conf.position.split(/,?\s/);
+			conf.position = conf.position.split(/,?\s/);	
 		}
-
+		
 		// install tooltip for each entry in jQuery object
 		this.each(function() {
-			api = new Tooltip($(this), conf);
-			$(this).data("tooltip", api);
+			api = new Tooltip($(this), conf); 
+			$(this).data("tooltip", api); 
 		});
-
-		return conf.api ? api: this;
+		
+		return conf.api ? api: this;		 
 	};
-
+		
 }) (jQuery);
 
-
+		
 
 
 
@@ -3363,7 +3363,7 @@ define("jquery.tmpl", ["jquery"], function() {
 			if ( options && options.wrapped ) {
 				updateWrapped( options, options.wrapped );
 			}
-			ret = jQuery.isArray( data ) ?
+			ret = jQuery.isArray( data ) ? 
 				jQuery.map( data, function( dataItem ) {
 					return dataItem ? newTmplItem( options, parentItem, tmpl, dataItem ) : null;
 				}) :
@@ -3408,10 +3408,10 @@ define("jquery.tmpl", ["jquery"], function() {
 				return typeof name === "string" ? (jQuery.template[name] = tmpl) : tmpl;
 			}
 			// Return named compiled template
-			return name ? (typeof name !== "string" ? jQuery.template( null, name ):
-				(jQuery.template[name] ||
-					// If not in map, treat as a selector. (If integrated with core, use quickExpr.exec)
-					jQuery.template( null, htmlExpr.test( name ) ? name : jQuery( name )))) : null;
+			return name ? (typeof name !== "string" ? jQuery.template( null, name ): 
+				(jQuery.template[name] || 
+					// If not in map, treat as a selector. (If integrated with core, use quickExpr.exec) 
+					jQuery.template( null, htmlExpr.test( name ) ? name : jQuery( name )))) : null; 
 		},
 
 		encode: function( text ) {
@@ -3426,7 +3426,7 @@ define("jquery.tmpl", ["jquery"], function() {
 				_default: { $2: "null" },
 				open: "if($notnull_1){_=_.concat($item.nest($1,$2));}"
 				// tmpl target parameter can be of type function, so use $1, not $1a (so not auto detection of functions)
-				// This means that {{tmpl foo}} treats foo as a template (which IS a function).
+				// This means that {{tmpl foo}} treats foo as a template (which IS a function). 
 				// Explicit parens can be used if foo is a function that returns a template: {{tmpl foo()}}.
 			},
 			"wrap": {
@@ -3448,7 +3448,7 @@ define("jquery.tmpl", ["jquery"], function() {
 				open: "}else if(($notnull_1) && $1a){"
 			},
 			"html": {
-				// Unecoded expression evaluation.
+				// Unecoded expression evaluation. 
 				open: "if($notnull_1){_.push($1a);}"
 			},
 			"=": {
@@ -3487,16 +3487,16 @@ define("jquery.tmpl", ["jquery"], function() {
 	//========================== Private helper functions, used by code above ==========================
 
 	function build( tmplItem, nested, content ) {
-		// Convert hierarchical content into flat string array
+		// Convert hierarchical content into flat string array 
 		// and finally return array of fragments ready for DOM insertion
 		var frag, ret = content ? jQuery.map( content, function( item ) {
-			return (typeof item === "string") ?
+			return (typeof item === "string") ? 
 				// Insert template item annotations, to be converted to jQuery.data( "tmplItem" ) when elems are inserted into DOM.
 				(tmplItem.key ? item.replace( /(<\w+)(?=[\s>])(?![^>]*_tmplitem)([^>]*)/g, "$1 " + tmplItmAtt + "=\"" + tmplItem.key + "\" $2" ) : item) :
 				// This is a child template item. Build nested template.
 				build( item, tmplItem, item._ctnt );
-		}) :
-		// If content is not defined, insert tmplItem directly. Not a template item. May be a string, or a string array, e.g. from {{html $item.html()}}.
+		}) : 
+		// If content is not defined, insert tmplItem directly. Not a template item. May be a string, or a string array, e.g. from {{html $item.html()}}. 
 		tmplItem;
 		if ( nested ) {
 			return ret;
@@ -3553,7 +3553,7 @@ define("jquery.tmpl", ["jquery"], function() {
 						parens = "";
 					}
 					if ( target ) {
-						target = unescape( target );
+						target = unescape( target ); 
 						args = args ? ("," + unescape( args ) + ")") : (parens ? ")" : "");
 						// Support for target being things like a.toLowerCase();
 						// In that case don't call with template item as 'this' pointer. Just evaluate...
@@ -3563,7 +3563,7 @@ define("jquery.tmpl", ["jquery"], function() {
 						exprAutoFnDetect = expr = def.$1 || "null";
 					}
 					fnargs = unescape( fnargs );
-					return "');" +
+					return "');" + 
 						tag[ slash ? "close" : "open" ]
 							.split( "$notnull_1" ).join( target ? "typeof(" + target + ")!=='undefined' && (" + target + ")!=null" : "true" )
 							.split( "$1a" ).join( exprAutoFnDetect )
@@ -3581,8 +3581,8 @@ define("jquery.tmpl", ["jquery"], function() {
 		);
 	}
 	function updateWrapped( options, wrapped ) {
-		// Build the wrapped content.
-		options._wrap = build( options, true,
+		// Build the wrapped content. 
+		options._wrap = build( options, true, 
 			// Suport imperative scenario in which options.wrapped can be set to a selector or an HTML string.
 			jQuery.isArray( wrapped ) ? wrapped : [htmlExpr.test( wrapped ) ? wrapped : jQuery( wrapped ).html()]
 		).join("");
@@ -3642,9 +3642,9 @@ define("jquery.tmpl", ["jquery"], function() {
 			}
 			if ( tmplItem ) {
 				pntItem = tmplItem;
-				// Find the template item of the parent element.
+				// Find the template item of the parent element. 
 				// (Using !=, not !==, since pntItem.key is number, and pntNode may be a string)
-				while ( pntItem && pntItem.key != pntNode ) {
+				while ( pntItem && pntItem.key != pntNode ) { 
 					// Add this element as a top-level node for this rendered template item, as well as for any
 					// ancestor items between this item and the item of its parent element
 					pntItem.nodes.push( el );
@@ -3658,7 +3658,7 @@ define("jquery.tmpl", ["jquery"], function() {
 			}
 			function cloneTmplItem( key ) {
 				key = key + keySuffix;
-				tmplItem = newClonedItems[key] =
+				tmplItem = newClonedItems[key] = 
 					(newClonedItems[key] || newTmplItem( tmplItem, newTmplItems[tmplItem.parent.key + keySuffix] || tmplItem.parent, null, true ));
 			}
 		}
@@ -3682,7 +3682,7 @@ define("jquery.tmpl", ["jquery"], function() {
 		// nested template, using {{wrap}} tag
 		var options = call.options || {};
 		options.wrapped = wrapped;
-		// Apply the template, which may incorporate wrapped content,
+		// Apply the template, which may incorporate wrapped content, 
 		return jQuery.tmpl( jQuery.template( call.tmpl ), call.data, options, call.item );
 	}
 
@@ -5511,3408 +5511,23 @@ define('mockup-patterns-recurrence',[
 define("jqtree", ["jquery"], function() {
   return (function() {
 /*!
- * JqTree 1.4.1
- *
- * Copyright 2017 Marco Braak
- *
+ * JqTree 1.4.10
+ * 
+ * Copyright 2019 Marco Braak
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- */
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var Position;
-(function (Position) {
-    Position[Position["Before"] = 1] = "Before";
-    Position[Position["After"] = 2] = "After";
-    Position[Position["Inside"] = 3] = "Inside";
-    Position[Position["None"] = 4] = "None";
-})(Position = exports.Position || (exports.Position = {}));
-exports.position_names = {
-    before: Position.Before,
-    after: Position.After,
-    inside: Position.Inside,
-    none: Position.None
-};
-function getPositionName(position) {
-    for (var name_1 in exports.position_names) {
-        if (exports.position_names.hasOwnProperty(name_1)) {
-            if (exports.position_names[name_1] === position) {
-                return name_1;
-            }
-        }
-    }
-    return "";
-}
-exports.getPositionName = getPositionName;
-function getPosition(name) {
-    return exports.position_names[name];
-}
-exports.getPosition = getPosition;
-var Node = (function () {
-    function Node(o, is_root, node_class) {
-        if (is_root === void 0) { is_root = false; }
-        if (node_class === void 0) { node_class = Node; }
-        this.name = "";
-        this.setData(o);
-        this.children = [];
-        this.parent = null;
-        if (is_root) {
-            this.id_mapping = {};
-            this.tree = this;
-            this.node_class = node_class;
-        }
-    }
-    /*
-    Set the data of this node.
-
-    setData(string): set the name of the node
-    setdata(object): set attributes of the node
-
-    Examples:
-        setdata('node1')
-
-        setData({ name: 'node1', id: 1});
-
-        setData({ name: 'node2', id: 2, color: 'green'});
-
-    * This is an internal function; it is not in the docs
-    * Does not remove existing node values
-    */
-    Node.prototype.setData = function (o) {
-        var _this = this;
-        var setName = function (name) {
-            if (name != null) {
-                _this.name = name;
-            }
-        };
-        if (!o) {
-            return;
-        }
-        else if (typeof o !== "object") {
-            setName(o);
-        }
-        else {
-            for (var key in o) {
-                if (o.hasOwnProperty(key)) {
-                    var value = o[key];
-                    if (key === "label") {
-                        // You can use the 'label' key instead of 'name'; this is a legacy feature
-                        setName(value);
-                    }
-                    else if (key !== "children") {
-                        // You can't update the children using this function
-                        this[key] = value;
-                    }
-                }
-            }
-        }
-    };
-    /*
-    Create tree from data.
-
-    Structure of data is:
-    [
-        {
-            label: 'node1',
-            children: [
-                { label: 'child1' },
-                { label: 'child2' }
-            ]
-        },
-        {
-            label: 'node2'
-        }
-    ]
-    */
-    Node.prototype.loadFromData = function (data) {
-        this.removeChildren();
-        for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
-            var o = data_1[_i];
-            var node = new this.tree.node_class(o);
-            this.addChild(node);
-            if (typeof o === "object" && o["children"]) {
-                node.loadFromData(o["children"]);
-            }
-        }
-    };
-    /*
-    Add child.
-
-    tree.addChild(
-        new Node('child1')
-    );
-    */
-    Node.prototype.addChild = function (node) {
-        this.children.push(node);
-        node._setParent(this);
-    };
-    /*
-    Add child at position. Index starts at 0.
-
-    tree.addChildAtPosition(
-        new Node('abc'),
-        1
-    );
-    */
-    Node.prototype.addChildAtPosition = function (node, index) {
-        this.children.splice(index, 0, node);
-        node._setParent(this);
-    };
-    /*
-    Remove child. This also removes the children of the node.
-
-    tree.removeChild(tree.children[0]);
-    */
-    Node.prototype.removeChild = function (node) {
-        // remove children from the index
-        node.removeChildren();
-        this._removeChild(node);
-    };
-    /*
-    Get child index.
-
-    var index = getChildIndex(node);
-    */
-    Node.prototype.getChildIndex = function (node) {
-        return $.inArray(node, this.children);
-    };
-    /*
-    Does the tree have children?
-
-    if (tree.hasChildren()) {
-        //
-    }
-    */
-    Node.prototype.hasChildren = function () {
-        return this.children.length !== 0;
-    };
-    Node.prototype.isFolder = function () {
-        return this.hasChildren() || this.load_on_demand;
-    };
-    /*
-    Iterate over all the nodes in the tree.
-
-    Calls callback with (node, level).
-
-    The callback must return true to continue the iteration on current node.
-
-    tree.iterate(
-        function(node, level) {
-           console.log(node.name);
-
-           // stop iteration after level 2
-           return (level <= 2);
-        }
-    );
-
-    */
-    Node.prototype.iterate = function (callback) {
-        var _iterate = function (node, level) {
-            if (node.children) {
-                for (var _i = 0, _a = node.children; _i < _a.length; _i++) {
-                    var child = _a[_i];
-                    var result = callback(child, level);
-                    if (result && child.hasChildren()) {
-                        _iterate(child, level + 1);
-                    }
-                }
-            }
-        };
-        _iterate(this, 0);
-    };
-    /*
-    Move node relative to another node.
-
-    Argument position: Position.BEFORE, Position.AFTER or Position.Inside
-
-    // move node1 after node2
-    tree.moveNode(node1, node2, Position.AFTER);
-    */
-    Node.prototype.moveNode = function (moved_node, target_node, position) {
-        if (!moved_node.parent || moved_node.isParentOf(target_node)) {
-            // - Node is parent of target node
-            // - Or, parent is empty
-            return;
-        }
-        else {
-            moved_node.parent._removeChild(moved_node);
-            if (position === Position.After) {
-                if (target_node.parent) {
-                    target_node.parent.addChildAtPosition(moved_node, target_node.parent.getChildIndex(target_node) + 1);
-                }
-            }
-            else if (position === Position.Before) {
-                if (target_node.parent) {
-                    target_node.parent.addChildAtPosition(moved_node, target_node.parent.getChildIndex(target_node));
-                }
-            }
-            else if (position === Position.Inside) {
-                // move inside as first child
-                target_node.addChildAtPosition(moved_node, 0);
-            }
-        }
-    };
-    /*
-    Get the tree as data.
-    */
-    Node.prototype.getData = function (include_parent) {
-        if (include_parent === void 0) { include_parent = false; }
-        function getDataFromNodes(nodes) {
-            return nodes.map(function (node) {
-                var tmp_node = {};
-                for (var k in node) {
-                    if (["parent", "children", "element", "tree"].indexOf(k) === -1 &&
-                        Object.prototype.hasOwnProperty.call(node, k)) {
-                        var v = node[k];
-                        tmp_node[k] = v;
-                    }
-                }
-                if (node.hasChildren()) {
-                    tmp_node["children"] = getDataFromNodes(node.children);
-                }
-                return tmp_node;
-            });
-        }
-        if (include_parent) {
-            return getDataFromNodes([this]);
-        }
-        else {
-            return getDataFromNodes(this.children);
-        }
-    };
-    Node.prototype.getNodeByName = function (name) {
-        return this.getNodeByCallback(function (node) { return node.name === name; });
-    };
-    Node.prototype.getNodeByCallback = function (callback) {
-        var result = null;
-        this.iterate(function (node) {
-            if (callback(node)) {
-                result = node;
-                return false;
-            }
-            else {
-                return true;
-            }
-        });
-        return result;
-    };
-    Node.prototype.addAfter = function (node_info) {
-        if (!this.parent) {
-            return null;
-        }
-        else {
-            var node = new this.tree.node_class(node_info);
-            var child_index = this.parent.getChildIndex(this);
-            this.parent.addChildAtPosition(node, child_index + 1);
-            if (typeof node_info === "object" && node_info["children"] && node_info["children"].length) {
-                node.loadFromData(node_info["children"]);
-            }
-            return node;
-        }
-    };
-    Node.prototype.addBefore = function (node_info) {
-        if (!this.parent) {
-            return null;
-        }
-        else {
-            var node = new this.tree.node_class(node_info);
-            var child_index = this.parent.getChildIndex(this);
-            this.parent.addChildAtPosition(node, child_index);
-            if (typeof node_info === "object" && node_info["children"] && node_info["children"].length) {
-                node.loadFromData(node_info["children"]);
-            }
-            return node;
-        }
-    };
-    Node.prototype.addParent = function (node_info) {
-        if (!this.parent) {
-            return null;
-        }
-        else {
-            var new_parent = new this.tree.node_class(node_info);
-            new_parent._setParent(this.tree);
-            var original_parent = this.parent;
-            for (var _i = 0, _a = original_parent.children; _i < _a.length; _i++) {
-                var child = _a[_i];
-                new_parent.addChild(child);
-            }
-            original_parent.children = [];
-            original_parent.addChild(new_parent);
-            return new_parent;
-        }
-    };
-    Node.prototype.remove = function () {
-        if (this.parent) {
-            this.parent.removeChild(this);
-            this.parent = null;
-        }
-    };
-    Node.prototype.append = function (node_info) {
-        var node = new this.tree.node_class(node_info);
-        this.addChild(node);
-        if (typeof node_info === "object" && node_info["children"] && node_info["children"].length) {
-            node.loadFromData(node_info["children"]);
-        }
-        return node;
-    };
-    Node.prototype.prepend = function (node_info) {
-        var node = new this.tree.node_class(node_info);
-        this.addChildAtPosition(node, 0);
-        if (typeof node_info === "object" && node_info["children"] && node_info["children"].length) {
-            node.loadFromData(node_info["children"]);
-        }
-        return node;
-    };
-    Node.prototype.isParentOf = function (node) {
-        var parent = node.parent;
-        while (parent) {
-            if (parent === this) {
-                return true;
-            }
-            parent = parent.parent;
-        }
-        return false;
-    };
-    Node.prototype.getLevel = function () {
-        var level = 0;
-        var node = this;
-        while (node.parent) {
-            level += 1;
-            node = node.parent;
-        }
-        return level;
-    };
-    Node.prototype.getNodeById = function (node_id) {
-        return this.id_mapping[node_id];
-    };
-    Node.prototype.addNodeToIndex = function (node) {
-        if (node.id != null) {
-            this.id_mapping[node.id] = node;
-        }
-    };
-    Node.prototype.removeNodeFromIndex = function (node) {
-        if (node.id != null) {
-            delete this.id_mapping[node.id];
-        }
-    };
-    Node.prototype.removeChildren = function () {
-        var _this = this;
-        this.iterate(function (child) {
-            _this.tree.removeNodeFromIndex(child);
-            return true;
-        });
-        this.children = [];
-    };
-    Node.prototype.getPreviousSibling = function () {
-        if (!this.parent) {
-            return null;
-        }
-        else {
-            var previous_index = this.parent.getChildIndex(this) - 1;
-            if (previous_index >= 0) {
-                return this.parent.children[previous_index];
-            }
-            else {
-                return null;
-            }
-        }
-    };
-    Node.prototype.getNextSibling = function () {
-        if (!this.parent) {
-            return null;
-        }
-        else {
-            var next_index = this.parent.getChildIndex(this) + 1;
-            if (next_index < this.parent.children.length) {
-                return this.parent.children[next_index];
-            }
-            else {
-                return null;
-            }
-        }
-    };
-    Node.prototype.getNodesByProperty = function (key, value) {
-        return this.filter(function (node) { return node[key] === value; });
-    };
-    Node.prototype.filter = function (f) {
-        var result = [];
-        this.iterate(function (node) {
-            if (f(node)) {
-                result.push(node);
-            }
-            return true;
-        });
-        return result;
-    };
-    Node.prototype.getNextNode = function (include_children) {
-        if (include_children === void 0) { include_children = true; }
-        if (include_children && this.hasChildren() && this.is_open) {
-            // First child
-            return this.children[0];
-        }
-        else {
-            if (!this.parent) {
-                return null;
-            }
-            else {
-                var next_sibling = this.getNextSibling();
-                if (next_sibling) {
-                    // Next sibling
-                    return next_sibling;
-                }
-                else {
-                    // Next node of parent
-                    return this.parent.getNextNode(false);
-                }
-            }
-        }
-    };
-    Node.prototype.getPreviousNode = function () {
-        if (!this.parent) {
-            return null;
-        }
-        else {
-            var previous_sibling = this.getPreviousSibling();
-            if (previous_sibling) {
-                if (!previous_sibling.hasChildren() || !previous_sibling.is_open) {
-                    // Previous sibling
-                    return previous_sibling;
-                }
-                else {
-                    // Last child of previous sibling
-                    return previous_sibling.getLastChild();
-                }
-            }
-            else {
-                return this.getParent();
-            }
-        }
-    };
-    Node.prototype.getParent = function () {
-        // Return parent except if it is the root node
-        if (!this.parent) {
-            return null;
-        }
-        else if (!this.parent.parent) {
-            // Root node -> null
-            return null;
-        }
-        else {
-            return this.parent;
-        }
-    };
-    Node.prototype.getLastChild = function () {
-        if (!this.hasChildren()) {
-            return null;
-        }
-        else {
-            var last_child = this.children[this.children.length - 1];
-            if (!last_child.hasChildren() || !last_child.is_open) {
-                return last_child;
-            }
-            else {
-                return last_child.getLastChild();
-            }
-        }
-    };
-    // Init Node from data without making it the root of the tree
-    Node.prototype.initFromData = function (data) {
-        var _this = this;
-        var addNode = function (node_data) {
-            _this.setData(node_data);
-            if (node_data["children"]) {
-                addChildren(node_data["children"]);
-            }
-        };
-        var addChildren = function (children_data) {
-            for (var _i = 0, children_data_1 = children_data; _i < children_data_1.length; _i++) {
-                var child = children_data_1[_i];
-                var node = new _this.tree.node_class("");
-                node.initFromData(child);
-                _this.addChild(node);
-            }
-        };
-        addNode(data);
-    };
-    Node.prototype._setParent = function (parent) {
-        this.parent = parent;
-        this.tree = parent.tree;
-        this.tree.addNodeToIndex(this);
-    };
-    Node.prototype._removeChild = function (node) {
-        this.children.splice(this.getChildIndex(node), 1);
-        this.tree.removeNodeFromIndex(node);
-    };
-    return Node;
-}());
-exports.Node = Node;
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-function isInt(n) {
-    return typeof n === "number" && n % 1 === 0;
-}
-exports.isInt = isInt;
-function isFunction(v) {
-    return typeof v === "function";
-}
-exports.isFunction = isFunction;
-// Escape a string for HTML interpolation; copied from underscore js
-function html_escape(text) {
-    return ("" + text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#x27;")
-        .replace(/\//g, "&#x2F;");
-}
-exports.html_escape = html_escape;
-function getBoolString(value) {
-    if (value) {
-        return "true";
-    }
-    else {
-        return "false";
-    }
-}
-exports.getBoolString = getBoolString;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var SimpleWidget = (function () {
-    function SimpleWidget(el, options) {
-        this.$el = $(el);
-        var defaults = this.constructor.defaults;
-        this.options = $.extend({}, defaults, options);
-    }
-    SimpleWidget.register = function (widget_class, widget_name) {
-        var getDataKey = function () { return "simple_widget_" + widget_name; };
-        function getWidgetData(el, data_key) {
-            var widget = $.data(el, data_key);
-            if (widget && (widget instanceof SimpleWidget)) {
-                return widget;
-            }
-            else {
-                return null;
-            }
-        }
-        function createWidget($el, options) {
-            var data_key = getDataKey();
-            for (var _i = 0, _a = $el.get(); _i < _a.length; _i++) {
-                var el = _a[_i];
-                var existing_widget = getWidgetData(el, data_key);
-                if (!existing_widget) {
-                    var widget = new widget_class(el, options);
-                    if (!$.data(el, data_key)) {
-                        $.data(el, data_key, widget);
-                    }
-                    // Call init after setting data, so we can call methods
-                    widget._init();
-                }
-            }
-            return $el;
-        }
-        function destroyWidget($el) {
-            var data_key = getDataKey();
-            for (var _i = 0, _a = $el.get(); _i < _a.length; _i++) {
-                var el = _a[_i];
-                var widget = getWidgetData(el, data_key);
-                if (widget) {
-                    widget.destroy();
-                }
-                $.removeData(el, data_key);
-            }
-        }
-        function callFunction($el, function_name, args) {
-            var result = null;
-            for (var _i = 0, _a = $el.get(); _i < _a.length; _i++) {
-                var el = _a[_i];
-                var widget = $.data(el, getDataKey());
-                if (widget && (widget instanceof SimpleWidget)) {
-                    var widget_function = widget[function_name];
-                    if (widget_function && (typeof widget_function === "function")) {
-                        result = widget_function.apply(widget, args);
-                    }
-                }
-            }
-            return result;
-        }
-        // tslint:disable-next-line: only-arrow-functions
-        $.fn[widget_name] = function (argument1) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            var $el = this;
-            if (argument1 === undefined || typeof argument1 === "object") {
-                var options = argument1;
-                return createWidget($el, options);
-            }
-            else if (typeof argument1 === "string" && argument1[0] !== "_") {
-                var function_name = argument1;
-                if (function_name === "destroy") {
-                    return destroyWidget($el);
-                }
-                else if (function_name === "get_widget_class") {
-                    return widget_class;
-                }
-                else {
-                    return callFunction($el, function_name, args);
-                }
-            }
-        };
-    };
-    SimpleWidget.prototype.destroy = function () {
-        this._deinit();
-    };
-    SimpleWidget.prototype._init = function () {
-        //
-    };
-    SimpleWidget.prototype._deinit = function () {
-        //
-    };
-    return SimpleWidget;
-}());
-SimpleWidget.defaults = {};
-exports["default"] = SimpleWidget;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-exports.__esModule = true;
-var version_1 = __webpack_require__(12);
-var drag_and_drop_handler_1 = __webpack_require__(4);
-var elements_renderer_1 = __webpack_require__(5);
-var key_handler_1 = __webpack_require__(6);
-var mouse_widget_1 = __webpack_require__(7);
-var save_state_handler_1 = __webpack_require__(9);
-var scroll_handler_1 = __webpack_require__(10);
-var select_node_handler_1 = __webpack_require__(11);
-var simple_widget_1 = __webpack_require__(2);
-var node_1 = __webpack_require__(0);
-var util_1 = __webpack_require__(1);
-var node_element_1 = __webpack_require__(8);
-var JqTreeWidget = (function (_super) {
-    __extends(JqTreeWidget, _super);
-    function JqTreeWidget() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    JqTreeWidget.prototype.toggle = function (node, slide_param) {
-        var slide = slide_param == null ? this.options.slide : slide_param;
-        if (node.is_open) {
-            this.closeNode(node, slide);
-        }
-        else {
-            this.openNode(node, slide);
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.getTree = function () {
-        return this.tree;
-    };
-    JqTreeWidget.prototype.selectNode = function (node) {
-        this._selectNode(node, false);
-        return this.element;
-    };
-    JqTreeWidget.prototype.getSelectedNode = function () {
-        if (this.select_node_handler) {
-            return this.select_node_handler.getSelectedNode();
-        }
-        else {
-            return false;
-        }
-    };
-    JqTreeWidget.prototype.toJson = function () {
-        return JSON.stringify(this.tree.getData());
-    };
-    JqTreeWidget.prototype.loadData = function (data, parent_node) {
-        this._loadData(data, parent_node);
-        return this.element;
-    };
-    /*
-    signatures:
-    - loadDataFromUrl(url, parent_node=null, on_finished=null)
-        loadDataFromUrl('/my_data');
-        loadDataFromUrl('/my_data', node1);
-        loadDataFromUrl('/my_data', node1, function() { console.log('finished'); });
-        loadDataFromUrl('/my_data', null, function() { console.log('finished'); });
-
-    - loadDataFromUrl(parent_node=null, on_finished=null)
-        loadDataFromUrl();
-        loadDataFromUrl(node1);
-        loadDataFromUrl(null, function() { console.log('finished'); });
-        loadDataFromUrl(node1, function() { console.log('finished'); });
-    */
-    JqTreeWidget.prototype.loadDataFromUrl = function (param1, param2, param3) {
-        if ($.type(param1) === "string") {
-            // first parameter is url
-            this._loadDataFromUrl(param1, param2, param3);
-        }
-        else {
-            // first parameter is not url
-            this._loadDataFromUrl(null, param1, param2);
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.reload = function (on_finished) {
-        this._loadDataFromUrl(null, null, on_finished);
-        return this.element;
-    };
-    JqTreeWidget.prototype.getNodeById = function (node_id) {
-        return this.tree.getNodeById(node_id);
-    };
-    JqTreeWidget.prototype.getNodeByName = function (name) {
-        return this.tree.getNodeByName(name);
-    };
-    JqTreeWidget.prototype.getNodesByProperty = function (key, value) {
-        return this.tree.getNodesByProperty(key, value);
-    };
-    JqTreeWidget.prototype.getNodeByHtmlElement = function (element) {
-        return this._getNode($(element));
-    };
-    JqTreeWidget.prototype.getNodeByCallback = function (callback) {
-        return this.tree.getNodeByCallback(callback);
-    };
-    JqTreeWidget.prototype.openNode = function (node, param1, param2) {
-        var _this = this;
-        var parseParams = function () {
-            var on_finished;
-            var slide;
-            if (util_1.isFunction(param1)) {
-                on_finished = param1;
-                slide = null;
-            }
-            else {
-                slide = param1;
-                on_finished = param2;
-            }
-            if (slide == null) {
-                slide = _this.options.slide;
-            }
-            return [slide, on_finished];
-        };
-        var _a = parseParams(), slide = _a[0], on_finished = _a[1];
-        if (node) {
-            this._openNode(node, slide, on_finished);
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.closeNode = function (node, slide_param) {
-        var slide = slide_param == null ? this.options.slide : slide_param;
-        if (node.isFolder()) {
-            new node_element_1.FolderElement(node, this).close(slide);
-            this._saveState();
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.isDragging = function () {
-        if (this.dnd_handler) {
-            return this.dnd_handler.is_dragging;
-        }
-        else {
-            return false;
-        }
-    };
-    JqTreeWidget.prototype.refreshHitAreas = function () {
-        if (this.dnd_handler) {
-            this.dnd_handler.refresh();
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.addNodeAfter = function (new_node_info, existing_node) {
-        var new_node = existing_node.addAfter(new_node_info);
-        if (new_node) {
-            this._refreshElements(existing_node.parent);
-        }
-        return new_node;
-    };
-    JqTreeWidget.prototype.addNodeBefore = function (new_node_info, existing_node) {
-        var new_node = existing_node.addBefore(new_node_info);
-        if (new_node) {
-            this._refreshElements(existing_node.parent);
-        }
-        return new_node;
-    };
-    JqTreeWidget.prototype.addParentNode = function (new_node_info, existing_node) {
-        var new_node = existing_node.addParent(new_node_info);
-        if (new_node) {
-            this._refreshElements(new_node.parent);
-        }
-        return new_node;
-    };
-    JqTreeWidget.prototype.removeNode = function (node) {
-        if (node.parent && this.select_node_handler) {
-            this.select_node_handler.removeFromSelection(node, true); // including children
-            node.remove();
-            this._refreshElements(node.parent);
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.appendNode = function (new_node_info, parent_node_param) {
-        var parent_node = parent_node_param || this.tree;
-        var node = parent_node.append(new_node_info);
-        this._refreshElements(parent_node);
-        return node;
-    };
-    JqTreeWidget.prototype.prependNode = function (new_node_info, parent_node_param) {
-        var parent_node = !parent_node_param ? this.tree : parent_node_param;
-        var node = parent_node.prepend(new_node_info);
-        this._refreshElements(parent_node);
-        return node;
-    };
-    JqTreeWidget.prototype.updateNode = function (node, data) {
-        var id_is_changed = data.id && data.id !== node.id;
-        if (id_is_changed) {
-            this.tree.removeNodeFromIndex(node);
-        }
-        node.setData(data);
-        if (id_is_changed) {
-            this.tree.addNodeToIndex(node);
-        }
-        if (typeof data === "object" && data.children) {
-            node.removeChildren();
-            if (data.children.length) {
-                node.loadFromData(data.children);
-            }
-        }
-        this.renderer.renderFromNode(node);
-        this._selectCurrentNode();
-        return this.element;
-    };
-    JqTreeWidget.prototype.moveNode = function (node, target_node, position) {
-        var position_index = node_1.getPosition(position);
-        this.tree.moveNode(node, target_node, position_index);
-        this._refreshElements(null);
-        return this.element;
-    };
-    JqTreeWidget.prototype.getStateFromStorage = function () {
-        if (this.save_state_handler) {
-            return this.save_state_handler.getStateFromStorage();
-        }
-    };
-    JqTreeWidget.prototype.addToSelection = function (node) {
-        if (node && this.select_node_handler) {
-            this.select_node_handler.addToSelection(node);
-            this._getNodeElementForNode(node).select();
-            this._saveState();
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.getSelectedNodes = function () {
-        if (!this.select_node_handler) {
-            return [];
-        }
-        else {
-            return this.select_node_handler.getSelectedNodes();
-        }
-    };
-    JqTreeWidget.prototype.isNodeSelected = function (node) {
-        if (!this.select_node_handler) {
-            return false;
-        }
-        else {
-            return this.select_node_handler.isNodeSelected(node);
-        }
-    };
-    JqTreeWidget.prototype.removeFromSelection = function (node) {
-        if (this.select_node_handler) {
-            this.select_node_handler.removeFromSelection(node);
-            this._getNodeElementForNode(node).deselect();
-            this._saveState();
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.scrollToNode = function (node) {
-        if (this.scroll_handler) {
-            var $element = $(node.element);
-            var top_1 = $element.offset().top - this.$el.offset().top;
-            this.scroll_handler.scrollTo(top_1);
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.getState = function () {
-        if (this.save_state_handler) {
-            return this.save_state_handler.getState();
-        }
-    };
-    JqTreeWidget.prototype.setState = function (state) {
-        if (this.save_state_handler) {
-            this.save_state_handler.setInitialState(state);
-            this._refreshElements(null);
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.setOption = function (option, value) {
-        this.options[option] = value;
-        return this.element;
-    };
-    JqTreeWidget.prototype.moveDown = function () {
-        if (this.key_handler) {
-            this.key_handler.moveDown();
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.moveUp = function () {
-        if (this.key_handler) {
-            this.key_handler.moveUp();
-        }
-        return this.element;
-    };
-    JqTreeWidget.prototype.getVersion = function () {
-        return version_1["default"];
-    };
-    JqTreeWidget.prototype.testGenerateHitAreas = function (moving_node) {
-        if (!this.dnd_handler) {
-            return [];
-        }
-        else {
-            this.dnd_handler.current_item = this._getNodeElementForNode(moving_node);
-            this.dnd_handler.generateHitAreas();
-            return this.dnd_handler.hit_areas;
-        }
-    };
-    JqTreeWidget.prototype._triggerEvent = function (event_name, values) {
-        var event = $.Event(event_name);
-        $.extend(event, values);
-        this.element.trigger(event);
-        return event;
-    };
-    JqTreeWidget.prototype._openNode = function (node, slide, on_finished) {
-        var _this = this;
-        if (slide === void 0) { slide = true; }
-        var doOpenNode = function (_node, _slide, _on_finished) {
-            var folder_element = new node_element_1.FolderElement(_node, _this);
-            folder_element.open(_on_finished, _slide);
-        };
-        if (node.isFolder()) {
-            if (node.load_on_demand) {
-                this._loadFolderOnDemand(node, slide, on_finished);
-            }
-            else {
-                var parent_1 = node.parent;
-                while (parent_1) {
-                    // nb: do not open root element
-                    if (parent_1.parent) {
-                        doOpenNode(parent_1, false, null);
-                    }
-                    parent_1 = parent_1.parent;
-                }
-                doOpenNode(node, slide, on_finished);
-                this._saveState();
-            }
-        }
-    };
-    /*
-    Redraw the tree or part of the tree.
-     from_node: redraw this subtree
-    */
-    JqTreeWidget.prototype._refreshElements = function (from_node) {
-        this.renderer.render(from_node);
-        this._triggerEvent("tree.refresh");
-    };
-    JqTreeWidget.prototype._getNodeElementForNode = function (node) {
-        if (node.isFolder()) {
-            return new node_element_1.FolderElement(node, this);
-        }
-        else {
-            return new node_element_1.NodeElement(node, this);
-        }
-    };
-    JqTreeWidget.prototype._getNodeElement = function ($element) {
-        var node = this._getNode($element);
-        if (node) {
-            return this._getNodeElementForNode(node);
-        }
-        else {
-            return null;
-        }
-    };
-    JqTreeWidget.prototype._containsElement = function (element) {
-        var node = this._getNode($(element));
-        return node != null && node.tree === this.tree;
-    };
-    JqTreeWidget.prototype._init = function () {
-        _super.prototype._init.call(this);
-        this.element = this.$el;
-        this.mouse_delay = 300;
-        this.is_initialized = false;
-        this.options.rtl = this._getRtlOption();
-        if (!this.options.closedIcon) {
-            this.options.closedIcon = this._getDefaultClosedIcon();
-        }
-        this.renderer = new elements_renderer_1["default"](this);
-        if (save_state_handler_1["default"] != null) {
-            this.save_state_handler = new save_state_handler_1["default"](this);
-        }
-        else {
-            this.options.saveState = false;
-        }
-        if (select_node_handler_1["default"] != null) {
-            this.select_node_handler = new select_node_handler_1["default"](this);
-        }
-        if (drag_and_drop_handler_1.DragAndDropHandler != null) {
-            this.dnd_handler = new drag_and_drop_handler_1.DragAndDropHandler(this);
-        }
-        else {
-            this.options.dragAndDrop = false;
-        }
-        if (scroll_handler_1["default"] != null) {
-            this.scroll_handler = new scroll_handler_1["default"](this);
-        }
-        if (key_handler_1["default"] != null && select_node_handler_1["default"] != null) {
-            this.key_handler = new key_handler_1["default"](this);
-        }
-        this._initData();
-        this.element.click($.proxy(this._click, this));
-        this.element.dblclick($.proxy(this._dblclick, this));
-        if (this.options.useContextMenu) {
-            this.element.on("contextmenu", $.proxy(this._contextmenu, this));
-        }
-    };
-    JqTreeWidget.prototype._deinit = function () {
-        this.element.empty();
-        this.element.off();
-        if (this.key_handler) {
-            this.key_handler.deinit();
-        }
-        this.tree = new node_1.Node({}, true);
-        _super.prototype._deinit.call(this);
-    };
-    JqTreeWidget.prototype._mouseCapture = function (position_info) {
-        if (this.options.dragAndDrop && this.dnd_handler) {
-            return this.dnd_handler.mouseCapture(position_info);
-        }
-        else {
-            return false;
-        }
-    };
-    JqTreeWidget.prototype._mouseStart = function (position_info) {
-        if (this.options.dragAndDrop && this.dnd_handler) {
-            return this.dnd_handler.mouseStart(position_info);
-        }
-        else {
-            return false;
-        }
-    };
-    JqTreeWidget.prototype._mouseDrag = function (position_info) {
-        if (this.options.dragAndDrop && this.dnd_handler) {
-            var result = this.dnd_handler.mouseDrag(position_info);
-            if (this.scroll_handler) {
-                this.scroll_handler.checkScrolling();
-            }
-            return result;
-        }
-        else {
-            return false;
-        }
-    };
-    JqTreeWidget.prototype._mouseStop = function (position_info) {
-        if (this.options.dragAndDrop && this.dnd_handler) {
-            return this.dnd_handler.mouseStop(position_info);
-        }
-        else {
-            return false;
-        }
-    };
-    JqTreeWidget.prototype._initData = function () {
-        if (this.options.data) {
-            this._loadData(this.options.data, null);
-        }
-        else {
-            var data_url = this._getDataUrlInfo(null);
-            if (data_url) {
-                this._loadDataFromUrl(null, null, null);
-            }
-            else {
-                this._loadData([], null);
-            }
-        }
-    };
-    JqTreeWidget.prototype._getDataUrlInfo = function (node) {
-        var _this = this;
-        var data_url = this.options.dataUrl || this.element.data("url");
-        var getUrlFromString = function () {
-            var url_info = { url: data_url };
-            if (node && node.id) {
-                // Load on demand of a subtree; add node parameter
-                var data = { node: node.id };
-                // tslint:disable-next-line: no-string-literal
-                url_info["data"] = data;
-            }
-            else {
-                // Add selected_node parameter
-                var selected_node_id = _this._getNodeIdToBeSelected();
-                if (selected_node_id) {
-                    var data = { selected_node: selected_node_id };
-                    // tslint:disable-next-line: no-string-literal
-                    url_info["data"] = data;
-                }
-            }
-            return url_info;
-        };
-        if ($.isFunction(data_url)) {
-            return data_url(node);
-        }
-        else if ($.type(data_url) === "string") {
-            return getUrlFromString();
-        }
-        else {
-            return data_url;
-        }
-    };
-    JqTreeWidget.prototype._getNodeIdToBeSelected = function () {
-        if (this.options.saveState && this.save_state_handler) {
-            return this.save_state_handler.getNodeIdToBeSelected();
-        }
-        else {
-            return null;
-        }
-    };
-    JqTreeWidget.prototype._initTree = function (data) {
-        var _this = this;
-        var doInit = function () {
-            if (!_this.is_initialized) {
-                _this.is_initialized = true;
-                _this._triggerEvent("tree.init");
-            }
-        };
-        this.tree = new this.options.nodeClass(null, true, this.options.nodeClass);
-        if (this.select_node_handler) {
-            this.select_node_handler.clear();
-        }
-        this.tree.loadFromData(data);
-        var must_load_on_demand = this._setInitialState();
-        this._refreshElements(null);
-        if (!must_load_on_demand) {
-            doInit();
-        }
-        else {
-            // Load data on demand and then init the tree
-            this._setInitialStateOnDemand(doInit);
-        }
-    };
-    // Set initial state, either by restoring the state or auto-opening nodes
-    // result: must load nodes on demand?
-    JqTreeWidget.prototype._setInitialState = function () {
-        var _this = this;
-        var restoreState = function () {
-            // result: is state restored, must load on demand?
-            if (!(_this.options.saveState && _this.save_state_handler)) {
-                return [false, false];
-            }
-            else {
-                var state = _this.save_state_handler.getStateFromStorage();
-                if (!state) {
-                    return [false, false];
-                }
-                else {
-                    var must_load_on_demand_1 = _this.save_state_handler.setInitialState(state);
-                    // return true: the state is restored
-                    return [true, must_load_on_demand_1];
-                }
-            }
-        };
-        var autoOpenNodes = function () {
-            // result: must load on demand?
-            if (_this.options.autoOpen === false) {
-                return false;
-            }
-            var max_level = _this._getAutoOpenMaxLevel();
-            var must_load_on_demand = false;
-            _this.tree.iterate(function (node, level) {
-                if (node.load_on_demand) {
-                    must_load_on_demand = true;
-                    return false;
-                }
-                else if (!node.hasChildren()) {
-                    return false;
-                }
-                else {
-                    node.is_open = true;
-                    return (level !== max_level);
-                }
-            });
-            return must_load_on_demand;
-        };
-        // tslint:disable-next-line: prefer-const
-        var _a = restoreState(), is_restored = _a[0], must_load_on_demand = _a[1];
-        if (!is_restored) {
-            must_load_on_demand = autoOpenNodes();
-        }
-        return must_load_on_demand;
-    };
-    // Set the initial state for nodes that are loaded on demand
-    // Call cb_finished when done
-    JqTreeWidget.prototype._setInitialStateOnDemand = function (cb_finished) {
-        var _this = this;
-        var restoreState = function () {
-            if (!(_this.options.saveState && _this.save_state_handler)) {
-                return false;
-            }
-            else {
-                var state = _this.save_state_handler.getStateFromStorage();
-                if (!state) {
-                    return false;
-                }
-                else {
-                    _this.save_state_handler.setInitialStateOnDemand(state, cb_finished);
-                    return true;
-                }
-            }
-        };
-        var autoOpenNodes = function () {
-            var max_level = _this._getAutoOpenMaxLevel();
-            var loading_count = 0;
-            var loadAndOpenNode = function (node) {
-                loading_count += 1;
-                _this._openNode(node, false, function () {
-                    loading_count -= 1;
-                    openNodes();
-                });
-            };
-            var openNodes = function () {
-                _this.tree.iterate(function (node, level) {
-                    if (node.load_on_demand) {
-                        if (!node.is_loading) {
-                            loadAndOpenNode(node);
-                        }
-                        return false;
-                    }
-                    else {
-                        _this._openNode(node, false, null);
-                        return (level !== max_level);
-                    }
-                });
-                if (loading_count === 0) {
-                    cb_finished();
-                }
-            };
-            openNodes();
-        };
-        if (!restoreState()) {
-            autoOpenNodes();
-        }
-    };
-    JqTreeWidget.prototype._getAutoOpenMaxLevel = function () {
-        if (this.options.autoOpen === true) {
-            return -1;
-        }
-        else {
-            return parseInt(this.options.autoOpen, 10);
-        }
-    };
-    JqTreeWidget.prototype._click = function (e) {
-        var click_target = this._getClickTarget(e.target);
-        if (click_target) {
-            if (click_target.type === "button") {
-                this.toggle(click_target.node, this.options.slide);
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            else if (click_target.type === "label") {
-                var node = click_target.node;
-                var event_1 = this._triggerEvent("tree.click", {
-                    node: node,
-                    click_event: e
-                });
-                if (!event_1.isDefaultPrevented()) {
-                    this._selectNode(node, true);
-                }
-            }
-        }
-    };
-    JqTreeWidget.prototype._dblclick = function (e) {
-        var click_target = this._getClickTarget(e.target);
-        if (click_target && click_target.type === "label") {
-            this._triggerEvent("tree.dblclick", {
-                node: click_target.node,
-                click_event: e
-            });
-        }
-    };
-    JqTreeWidget.prototype._getClickTarget = function (element) {
-        var $target = $(element);
-        var $button = $target.closest(".jqtree-toggler");
-        if ($button.length) {
-            var node = this._getNode($button);
-            if (node) {
-                return {
-                    type: "button",
-                    node: node
-                };
-            }
-        }
-        else {
-            var $el = $target.closest(".jqtree-element");
-            if ($el.length) {
-                var node = this._getNode($el);
-                if (node) {
-                    return {
-                        type: "label",
-                        node: node
-                    };
-                }
-            }
-        }
-        return null;
-    };
-    JqTreeWidget.prototype._getNode = function ($element) {
-        var $li = $element.closest("li.jqtree_common");
-        if ($li.length === 0) {
-            return null;
-        }
-        else {
-            return $li.data("node");
-        }
-    };
-    JqTreeWidget.prototype._contextmenu = function (e) {
-        var $div = $(e.target).closest("ul.jqtree-tree .jqtree-element");
-        if ($div.length) {
-            var node = this._getNode($div);
-            if (node) {
-                e.preventDefault();
-                e.stopPropagation();
-                this._triggerEvent("tree.contextmenu", {
-                    node: node,
-                    click_event: e
-                });
-                return false;
-            }
-        }
-        return null;
-    };
-    JqTreeWidget.prototype._saveState = function () {
-        if (this.options.saveState && this.save_state_handler) {
-            this.save_state_handler.saveState();
-        }
-    };
-    JqTreeWidget.prototype._selectCurrentNode = function () {
-        var node = this.getSelectedNode();
-        if (node) {
-            var node_element = this._getNodeElementForNode(node);
-            if (node_element) {
-                node_element.select();
-            }
-        }
-    };
-    JqTreeWidget.prototype._deselectCurrentNode = function () {
-        var node = this.getSelectedNode();
-        if (node) {
-            this.removeFromSelection(node);
-        }
-    };
-    JqTreeWidget.prototype._getDefaultClosedIcon = function () {
-        if (this.options.rtl) {
-            // triangle to the left
-            return "&#x25c0;";
-        }
-        else {
-            // triangle to the right
-            return "&#x25ba;";
-        }
-    };
-    JqTreeWidget.prototype._getRtlOption = function () {
-        if (this.options.rtl != null) {
-            return this.options.rtl;
-        }
-        else {
-            var data_rtl = this.element.data("rtl");
-            if (data_rtl != null && data_rtl !== false) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    };
-    JqTreeWidget.prototype._notifyLoading = function (is_loading, node, $el) {
-        if (this.options.onLoading) {
-            this.options.onLoading(is_loading, node, $el);
-        }
-    };
-    JqTreeWidget.prototype._selectNode = function (node, must_toggle) {
-        var _this = this;
-        if (must_toggle === void 0) { must_toggle = false; }
-        if (!this.select_node_handler) {
-            return;
-        }
-        var canSelect = function () {
-            if (_this.options.onCanSelectNode) {
-                return _this.options.selectable && _this.options.onCanSelectNode(node);
-            }
-            else {
-                return _this.options.selectable;
-            }
-        };
-        var openParents = function () {
-            var parent = node.parent;
-            if (parent && parent.parent && !parent.is_open) {
-                _this.openNode(parent, false);
-            }
-        };
-        var saveState = function () {
-            if (_this.options.saveState && _this.save_state_handler) {
-                _this.save_state_handler.saveState();
-            }
-        };
-        if (!node) {
-            // Called with empty node -> deselect current node
-            this._deselectCurrentNode();
-            saveState();
-            return;
-        }
-        if (!canSelect()) {
-            return;
-        }
-        if (this.select_node_handler.isNodeSelected(node)) {
-            if (must_toggle) {
-                this._deselectCurrentNode();
-                this._triggerEvent("tree.select", {
-                    node: null,
-                    previous_node: node
-                });
-            }
-        }
-        else {
-            var deselected_node = this.getSelectedNode();
-            this._deselectCurrentNode();
-            this.addToSelection(node);
-            this._triggerEvent("tree.select", {
-                node: node,
-                deselected_node: deselected_node
-            });
-            openParents();
-        }
-        saveState();
-    };
-    JqTreeWidget.prototype._loadData = function (data, parent_node) {
-        if (!data) {
-            return;
-        }
-        else {
-            this._triggerEvent("tree.load_data", { tree_data: data });
-            if (parent_node) {
-                this._deselectNodes(parent_node);
-                this._loadSubtree(data, parent_node);
-            }
-            else {
-                this._initTree(data);
-            }
-            if (this.isDragging() && this.dnd_handler) {
-                this.dnd_handler.refresh();
-            }
-        }
-    };
-    JqTreeWidget.prototype._deselectNodes = function (parent_node) {
-        if (this.select_node_handler) {
-            var selected_nodes_under_parent = this.select_node_handler.getSelectedNodesUnder(parent_node);
-            for (var _i = 0, selected_nodes_under_parent_1 = selected_nodes_under_parent; _i < selected_nodes_under_parent_1.length; _i++) {
-                var n = selected_nodes_under_parent_1[_i];
-                this.select_node_handler.removeFromSelection(n);
-            }
-        }
-    };
-    JqTreeWidget.prototype._loadSubtree = function (data, parent_node) {
-        parent_node.loadFromData(data);
-        parent_node.load_on_demand = false;
-        parent_node.is_loading = false;
-        this._refreshElements(parent_node);
-    };
-    JqTreeWidget.prototype._loadDataFromUrl = function (url_info_param, parent_node, on_finished) {
-        var _this = this;
-        var $el = null;
-        var url_info = url_info_param;
-        var addLoadingClass = function () {
-            $el = parent_node ? $(parent_node.element) : _this.element;
-            $el.addClass("jqtree-loading");
-            _this._notifyLoading(true, parent_node, $el);
-        };
-        var removeLoadingClass = function () {
-            if ($el) {
-                $el.removeClass("jqtree-loading");
-                _this._notifyLoading(false, parent_node, $el);
-            }
-        };
-        var parseUrlInfo = function () {
-            if ($.type(url_info) === "string") {
-                return { url: url_info };
-            }
-            if (!url_info.method) {
-                url_info.method = "get";
-            }
-            return url_info;
-        };
-        var handeLoadData = function (data) {
-            removeLoadingClass();
-            _this._loadData(data, parent_node);
-            if (on_finished && $.isFunction(on_finished)) {
-                on_finished();
-            }
-        };
-        var getDataFromResponse = function (response) { return ($.isArray(response) || typeof response === "object"
-            ? response
-            : response != null ? $.parseJSON(response) : []); };
-        var filterData = function (data) { return (_this.options.dataFilter ? _this.options.dataFilter(data) : data); };
-        var handleSuccess = function (response) {
-            var data = filterData(getDataFromResponse(response));
-            handeLoadData(data);
-        };
-        var handleError = function (response) {
-            removeLoadingClass();
-            if (_this.options.onLoadFailed) {
-                _this.options.onLoadFailed(response);
-            }
-        };
-        var loadDataFromUrlInfo = function () {
-            var _url_info = parseUrlInfo();
-            $.ajax($.extend({}, _url_info, {
-                method: url_info.method != null ? url_info.method.toUpperCase() : "GET",
-                cache: false,
-                dataType: "json",
-                success: handleSuccess,
-                error: handleError
-            }));
-        };
-        if (!url_info_param) {
-            // Generate url for node
-            url_info = this._getDataUrlInfo(parent_node);
-        }
-        addLoadingClass();
-        if (!url_info) {
-            removeLoadingClass();
-            return;
-        }
-        else if ($.isArray(url_info)) {
-            handeLoadData(url_info);
-            return;
-        }
-        else {
-            loadDataFromUrlInfo();
-            return;
-        }
-    };
-    JqTreeWidget.prototype._loadFolderOnDemand = function (node, slide, on_finished) {
-        var _this = this;
-        if (slide === void 0) { slide = true; }
-        node.is_loading = true;
-        this._loadDataFromUrl(null, node, function () {
-            _this._openNode(node, slide, on_finished);
-        });
-    };
-    return JqTreeWidget;
-}(mouse_widget_1["default"]));
-JqTreeWidget.defaults = {
-    autoOpen: false,
-    saveState: false,
-    dragAndDrop: false,
-    selectable: true,
-    useContextMenu: true,
-    onCanSelectNode: null,
-    onSetStateFromStorage: null,
-    onGetStateFromStorage: null,
-    onCreateLi: null,
-    onIsMoveHandle: null,
-    // Can this node be moved?
-    onCanMove: null,
-    // Can this node be moved to this position? function(moved_node, target_node, position)
-    onCanMoveTo: null,
-    onLoadFailed: null,
-    autoEscape: true,
-    dataUrl: null,
-    // The symbol to use for a closed node - ► BLACK RIGHT-POINTING POINTER
-    // http://www.fileformat.info/info/unicode/char/25ba/index.htm
-    closedIcon: null,
-    // The symbol to use for an open node - ▼ BLACK DOWN-POINTING TRIANGLE
-    // http://www.fileformat.info/info/unicode/char/25bc/index.htm
-    openedIcon: "&#x25bc;",
-    slide: true,
-    nodeClass: node_1.Node,
-    dataFilter: null,
-    keyboardSupport: true,
-    openFolderDelay: 500,
-    rtl: false,
-    onDragMove: null,
-    onDragStop: null,
-    buttonLeft: true,
-    onLoading: null
-};
-simple_widget_1["default"].register(JqTreeWidget, "tree");
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-exports.__esModule = true;
-var node_1 = __webpack_require__(0);
-var util_1 = __webpack_require__(1);
-var DragAndDropHandler = (function () {
-    function DragAndDropHandler(tree_widget) {
-        this.tree_widget = tree_widget;
-        this.hovered_area = null;
-        this.$ghost = null;
-        this.hit_areas = [];
-        this.is_dragging = false;
-        this.current_item = null;
-    }
-    DragAndDropHandler.prototype.mouseCapture = function (position_info) {
-        var $element = $(position_info.target);
-        if (!this.mustCaptureElement($element)) {
-            return null;
-        }
-        if (this.tree_widget.options.onIsMoveHandle && !this.tree_widget.options.onIsMoveHandle($element)) {
-            return null;
-        }
-        var node_element = this.tree_widget._getNodeElement($element);
-        if (node_element && this.tree_widget.options.onCanMove) {
-            if (!this.tree_widget.options.onCanMove(node_element.node)) {
-                node_element = null;
-            }
-        }
-        this.current_item = node_element;
-        return (this.current_item != null);
-    };
-    DragAndDropHandler.prototype.generateHitAreas = function () {
-        if (!this.current_item) {
-            this.hit_areas = [];
-        }
-        else {
-            var hit_areas_generator = new HitAreasGenerator(this.tree_widget.tree, this.current_item.node, this.getTreeDimensions().bottom);
-            this.hit_areas = hit_areas_generator.generate();
-        }
-    };
-    DragAndDropHandler.prototype.mouseStart = function (position_info) {
-        if (!this.current_item) {
-            return false;
-        }
-        else {
-            this.refresh();
-            var offset = $(position_info.target).offset();
-            var node = this.current_item.node;
-            var node_name = this.tree_widget.options.autoEscape ? util_1.html_escape(node.name) : node.name;
-            this.drag_element = new DragElement(node_name, position_info.page_x - offset.left, position_info.page_y - offset.top, this.tree_widget.element);
-            this.is_dragging = true;
-            this.current_item.$element.addClass("jqtree-moving");
-            return true;
-        }
-    };
-    DragAndDropHandler.prototype.mouseDrag = function (position_info) {
-        if (!this.current_item || !this.drag_element) {
-            return false;
-        }
-        else {
-            this.drag_element.move(position_info.page_x, position_info.page_y);
-            var area = this.findHoveredArea(position_info.page_x, position_info.page_y);
-            var can_move_to = this.canMoveToArea(area);
-            if (can_move_to && area) {
-                if (!area.node.isFolder()) {
-                    this.stopOpenFolderTimer();
-                }
-                if (this.hovered_area !== area) {
-                    this.hovered_area = area;
-                    // If this is a closed folder, start timer to open it
-                    if (this.mustOpenFolderTimer(area)) {
-                        this.startOpenFolderTimer(area.node);
-                    }
-                    else {
-                        this.stopOpenFolderTimer();
-                    }
-                    this.updateDropHint();
-                }
-            }
-            else {
-                this.removeHover();
-                this.removeDropHint();
-                this.stopOpenFolderTimer();
-            }
-            if (!area) {
-                if (this.tree_widget.options.onDragMove) {
-                    this.tree_widget.options.onDragMove(this.current_item.node, position_info.original_event);
-                }
-            }
-            return true;
-        }
-    };
-    DragAndDropHandler.prototype.mouseStop = function (position_info) {
-        this.moveItem(position_info);
-        this.clear();
-        this.removeHover();
-        this.removeDropHint();
-        this.removeHitAreas();
-        var current_item = this.current_item;
-        if (this.current_item) {
-            this.current_item.$element.removeClass("jqtree-moving");
-            this.current_item = null;
-        }
-        this.is_dragging = false;
-        if (!this.hovered_area && current_item) {
-            if (this.tree_widget.options.onDragStop) {
-                this.tree_widget.options.onDragStop(current_item.node, position_info.original_event);
-            }
-        }
-        return false;
-    };
-    DragAndDropHandler.prototype.refresh = function () {
-        this.removeHitAreas();
-        if (this.current_item) {
-            this.generateHitAreas();
-            this.current_item = this.tree_widget._getNodeElementForNode(this.current_item.node);
-            if (this.is_dragging) {
-                this.current_item.$element.addClass("jqtree-moving");
-            }
-        }
-    };
-    DragAndDropHandler.prototype.mustCaptureElement = function ($element) {
-        return !$element.is("input,select,textarea");
-    };
-    DragAndDropHandler.prototype.canMoveToArea = function (area) {
-        if (!area || !this.current_item) {
-            return false;
-        }
-        else if (this.tree_widget.options.onCanMoveTo) {
-            var position_name = node_1.getPositionName(area.position);
-            return this.tree_widget.options.onCanMoveTo(this.current_item.node, area.node, position_name);
-        }
-        else {
-            return true;
-        }
-    };
-    DragAndDropHandler.prototype.removeHitAreas = function () {
-        this.hit_areas = [];
-    };
-    DragAndDropHandler.prototype.clear = function () {
-        if (this.drag_element) {
-            this.drag_element.remove();
-            this.drag_element = null;
-        }
-    };
-    DragAndDropHandler.prototype.removeDropHint = function () {
-        if (this.previous_ghost) {
-            this.previous_ghost.remove();
-        }
-    };
-    DragAndDropHandler.prototype.removeHover = function () {
-        this.hovered_area = null;
-    };
-    DragAndDropHandler.prototype.findHoveredArea = function (x, y) {
-        var dimensions = this.getTreeDimensions();
-        if (x < dimensions.left ||
-            y < dimensions.top ||
-            x > dimensions.right ||
-            y > dimensions.bottom) {
-            return null;
-        }
-        var low = 0;
-        var high = this.hit_areas.length;
-        while (low < high) {
-            // tslint:disable-next-line: no-bitwise
-            var mid = (low + high) >> 1;
-            var area = this.hit_areas[mid];
-            if (y < area.top) {
-                high = mid;
-            }
-            else if (y > area.bottom) {
-                low = mid + 1;
-            }
-            else {
-                return area;
-            }
-        }
-        return null;
-    };
-    DragAndDropHandler.prototype.mustOpenFolderTimer = function (area) {
-        var node = area.node;
-        return (node.isFolder() &&
-            !node.is_open &&
-            area.position === node_1.Position.Inside);
-    };
-    DragAndDropHandler.prototype.updateDropHint = function () {
-        if (!this.hovered_area) {
-            return;
-        }
-        // remove previous drop hint
-        this.removeDropHint();
-        // add new drop hint
-        var node_element = this.tree_widget._getNodeElementForNode(this.hovered_area.node);
-        this.previous_ghost = node_element.addDropHint(this.hovered_area.position);
-    };
-    DragAndDropHandler.prototype.startOpenFolderTimer = function (folder) {
-        var _this = this;
-        var openFolder = function () {
-            _this.tree_widget._openNode(folder, _this.tree_widget.options.slide, function () {
-                _this.refresh();
-                _this.updateDropHint();
-            });
-        };
-        this.stopOpenFolderTimer();
-        this.open_folder_timer = setTimeout(openFolder, this.tree_widget.options.openFolderDelay);
-    };
-    DragAndDropHandler.prototype.stopOpenFolderTimer = function () {
-        if (this.open_folder_timer) {
-            clearTimeout(this.open_folder_timer);
-            this.open_folder_timer = null;
-        }
-    };
-    DragAndDropHandler.prototype.moveItem = function (position_info) {
-        var _this = this;
-        if (this.current_item &&
-            this.hovered_area &&
-            this.hovered_area.position !== node_1.Position.None &&
-            this.canMoveToArea(this.hovered_area)) {
-            var moved_node_1 = this.current_item.node;
-            var target_node_1 = this.hovered_area.node;
-            var position_1 = this.hovered_area.position;
-            var previous_parent = moved_node_1.parent;
-            if (position_1 === node_1.Position.Inside) {
-                this.hovered_area.node.is_open = true;
-            }
-            var doMove = function () {
-                _this.tree_widget.tree.moveNode(moved_node_1, target_node_1, position_1);
-                _this.tree_widget.element.empty();
-                _this.tree_widget._refreshElements(null);
-            };
-            var event_1 = this.tree_widget._triggerEvent("tree.move", {
-                move_info: {
-                    moved_node: moved_node_1,
-                    target_node: target_node_1,
-                    position: node_1.getPositionName(position_1),
-                    previous_parent: previous_parent,
-                    do_move: doMove,
-                    original_event: position_info.original_event
-                }
-            });
-            if (!event_1.isDefaultPrevented()) {
-                doMove();
-            }
-        }
-    };
-    DragAndDropHandler.prototype.getTreeDimensions = function () {
-        // Return the dimensions of the tree. Add a margin to the bottom to allow
-        // for some to drag-and-drop the last element.
-        var offset = this.tree_widget.element.offset();
-        return {
-            left: offset.left,
-            top: offset.top,
-            right: offset.left + this.tree_widget.element.width(),
-            bottom: offset.top + this.tree_widget.element.height() + 16
-        };
-    };
-    return DragAndDropHandler;
-}());
-exports.DragAndDropHandler = DragAndDropHandler;
-var VisibleNodeIterator = (function () {
-    function VisibleNodeIterator(tree) {
-        this.tree = tree;
-    }
-    VisibleNodeIterator.prototype.iterate = function () {
-        var _this = this;
-        var is_first_node = true;
-        var _iterateNode = function (node, next_node) {
-            var must_iterate_inside = ((node.is_open || !node.element) && node.hasChildren());
-            var $element = null;
-            if (node.element) {
-                $element = $(node.element);
-                if (!$element.is(":visible")) {
-                    return;
-                }
-                if (is_first_node) {
-                    _this.handleFirstNode(node);
-                    is_first_node = false;
-                }
-                if (!node.hasChildren()) {
-                    _this.handleNode(node, next_node, $element);
-                }
-                else if (node.is_open) {
-                    if (!_this.handleOpenFolder(node, $element)) {
-                        must_iterate_inside = false;
-                    }
-                }
-                else {
-                    _this.handleClosedFolder(node, next_node, $element);
-                }
-            }
-            if (must_iterate_inside) {
-                var children_length_1 = node.children.length;
-                node.children.forEach(function (_, i) {
-                    if (i === (children_length_1 - 1)) {
-                        _iterateNode(node.children[i], null);
-                    }
-                    else {
-                        _iterateNode(node.children[i], node.children[i + 1]);
-                    }
-                });
-                if (node.is_open && $element) {
-                    _this.handleAfterOpenFolder(node, next_node);
-                }
-            }
-        };
-        _iterateNode(this.tree, null);
-    };
-    return VisibleNodeIterator;
-}());
-var HitAreasGenerator = (function (_super) {
-    __extends(HitAreasGenerator, _super);
-    function HitAreasGenerator(tree, current_node, tree_bottom) {
-        var _this = _super.call(this, tree) || this;
-        _this.current_node = current_node;
-        _this.tree_bottom = tree_bottom;
-        return _this;
-    }
-    HitAreasGenerator.prototype.generate = function () {
-        this.positions = [];
-        this.last_top = 0;
-        this.iterate();
-        return this.generateHitAreas(this.positions);
-    };
-    HitAreasGenerator.prototype.generateHitAreas = function (positions) {
-        var previous_top = -1;
-        var group = [];
-        var hit_areas = [];
-        for (var _i = 0, positions_1 = positions; _i < positions_1.length; _i++) {
-            var position = positions_1[_i];
-            if (position.top !== previous_top && group.length) {
-                if (group.length) {
-                    this.generateHitAreasForGroup(hit_areas, group, previous_top, position.top);
-                }
-                previous_top = position.top;
-                group = [];
-            }
-            group.push(position);
-        }
-        this.generateHitAreasForGroup(hit_areas, group, previous_top, this.tree_bottom);
-        return hit_areas;
-    };
-    HitAreasGenerator.prototype.handleOpenFolder = function (node, $element) {
-        if (node === this.current_node) {
-            // Cannot move inside current item
-            // Stop iterating
-            return false;
-        }
-        // Cannot move before current item
-        if (node.children[0] !== this.current_node) {
-            this.addPosition(node, node_1.Position.Inside, this.getTop($element));
-        }
-        // Continue iterating
-        return true;
-    };
-    HitAreasGenerator.prototype.handleClosedFolder = function (node, next_node, $element) {
-        var top = this.getTop($element);
-        if (node === this.current_node) {
-            // Cannot move after current item
-            this.addPosition(node, node_1.Position.None, top);
-        }
-        else {
-            this.addPosition(node, node_1.Position.Inside, top);
-            // Cannot move before current item
-            if (next_node !== this.current_node) {
-                this.addPosition(node, node_1.Position.After, top);
-            }
-        }
-    };
-    HitAreasGenerator.prototype.handleFirstNode = function (node) {
-        if (node !== this.current_node) {
-            this.addPosition(node, node_1.Position.Before, this.getTop($(node.element)));
-        }
-    };
-    HitAreasGenerator.prototype.handleAfterOpenFolder = function (node, next_node) {
-        if (node === this.current_node ||
-            next_node === this.current_node) {
-            // Cannot move before or after current item
-            this.addPosition(node, node_1.Position.None, this.last_top);
-        }
-        else {
-            this.addPosition(node, node_1.Position.After, this.last_top);
-        }
-    };
-    HitAreasGenerator.prototype.handleNode = function (node, next_node, $element) {
-        var top = this.getTop($element);
-        if (node === this.current_node) {
-            // Cannot move inside current item
-            this.addPosition(node, node_1.Position.None, top);
-        }
-        else {
-            this.addPosition(node, node_1.Position.Inside, top);
-        }
-        if (next_node === this.current_node ||
-            node === this.current_node) {
-            // Cannot move before or after current item
-            this.addPosition(node, node_1.Position.None, top);
-        }
-        else {
-            this.addPosition(node, node_1.Position.After, top);
-        }
-    };
-    HitAreasGenerator.prototype.getTop = function ($element) {
-        return $element.offset().top;
-    };
-    HitAreasGenerator.prototype.addPosition = function (node, position, top) {
-        var area = {
-            top: top,
-            bottom: 0,
-            node: node,
-            position: position
-        };
-        this.positions.push(area);
-        this.last_top = top;
-    };
-    HitAreasGenerator.prototype.generateHitAreasForGroup = function (hit_areas, positions_in_group, top, bottom) {
-        // limit positions in group
-        var position_count = Math.min(positions_in_group.length, 4);
-        var area_height = Math.round((bottom - top) / position_count);
-        var area_top = top;
-        var i = 0;
-        while (i < position_count) {
-            var position = positions_in_group[i];
-            hit_areas.push({
-                top: area_top,
-                bottom: area_top + area_height,
-                node: position.node,
-                position: position.position
-            });
-            area_top += area_height;
-            i += 1;
-        }
-    };
-    return HitAreasGenerator;
-}(VisibleNodeIterator));
-exports.HitAreasGenerator = HitAreasGenerator;
-var DragElement = (function () {
-    function DragElement(node_name, offset_x, offset_y, $tree) {
-        this.offset_x = offset_x;
-        this.offset_y = offset_y;
-        this.$element = $("<span class=\"jqtree-title jqtree-dragging\">" + node_name + "</span>");
-        this.$element.css("position", "absolute");
-        $tree.append(this.$element);
-    }
-    DragElement.prototype.move = function (page_x, page_y) {
-        this.$element.offset({
-            left: page_x - this.offset_x,
-            top: page_y - this.offset_y
-        });
-    };
-    DragElement.prototype.remove = function () {
-        this.$element.remove();
-    };
-    return DragElement;
-}());
-exports.DragElement = DragElement;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var util_1 = __webpack_require__(1);
-var ElementsRenderer = (function () {
-    function ElementsRenderer(tree_widget) {
-        this.tree_widget = tree_widget;
-        this.opened_icon_element = this.createButtonElement(tree_widget.options.openedIcon);
-        this.closed_icon_element = this.createButtonElement(tree_widget.options.closedIcon);
-    }
-    ElementsRenderer.prototype.render = function (from_node) {
-        if (from_node && from_node.parent) {
-            this.renderFromNode(from_node);
-        }
-        else {
-            this.renderFromRoot();
-        }
-    };
-    ElementsRenderer.prototype.renderFromRoot = function () {
-        var $element = this.tree_widget.element;
-        $element.empty();
-        this.createDomElements($element[0], this.tree_widget.tree.children, true, 1);
-    };
-    ElementsRenderer.prototype.renderFromNode = function (node) {
-        // remember current li
-        var $previous_li = $(node.element);
-        // create element
-        var li = this.createLi(node, node.getLevel());
-        this.attachNodeData(node, li);
-        // add element to dom
-        $previous_li.after(li);
-        // remove previous li
-        $previous_li.remove();
-        // create children
-        if (node.children) {
-            this.createDomElements(li, node.children, false, node.getLevel() + 1);
-        }
-    };
-    ElementsRenderer.prototype.createDomElements = function (element, children, is_root_node, level) {
-        var ul = this.createUl(is_root_node);
-        element.appendChild(ul);
-        for (var _i = 0, children_1 = children; _i < children_1.length; _i++) {
-            var child = children_1[_i];
-            var li = this.createLi(child, level);
-            ul.appendChild(li);
-            this.attachNodeData(child, li);
-            if (child.hasChildren()) {
-                this.createDomElements(li, child.children, false, level + 1);
-            }
-        }
-    };
-    ElementsRenderer.prototype.attachNodeData = function (node, li) {
-        node.element = li;
-        $(li).data("node", node);
-    };
-    ElementsRenderer.prototype.createUl = function (is_root_node) {
-        var class_string;
-        var role;
-        if (!is_root_node) {
-            class_string = "";
-            role = "group";
-        }
-        else {
-            class_string = "jqtree-tree";
-            role = "tree";
-            if (this.tree_widget.options.rtl) {
-                class_string += " jqtree-rtl";
-            }
-        }
-        var ul = document.createElement("ul");
-        ul.className = "jqtree_common " + class_string;
-        ul.setAttribute("role", role);
-        return ul;
-    };
-    ElementsRenderer.prototype.createLi = function (node, level) {
-        var is_selected = Boolean(this.tree_widget.select_node_handler &&
-            this.tree_widget.select_node_handler.isNodeSelected(node));
-        var li = node.isFolder()
-            ? this.createFolderLi(node, level, is_selected)
-            : this.createNodeLi(node, level, is_selected);
-        if (this.tree_widget.options.onCreateLi) {
-            this.tree_widget.options.onCreateLi(node, $(li), is_selected);
-        }
-        return li;
-    };
-    ElementsRenderer.prototype.createFolderLi = function (node, level, is_selected) {
-        var button_classes = this.getButtonClasses(node);
-        var folder_classes = this.getFolderClasses(node, is_selected);
-        var icon_element = node.is_open ? this.opened_icon_element : this.closed_icon_element;
-        // li
-        var li = document.createElement("li");
-        li.className = "jqtree_common " + folder_classes;
-        li.setAttribute("role", "presentation");
-        // div
-        var div = document.createElement("div");
-        div.className = "jqtree-element jqtree_common";
-        div.setAttribute("role", "presentation");
-        li.appendChild(div);
-        // button link
-        var button_link = document.createElement("a");
-        button_link.className = button_classes;
-        button_link.appendChild(icon_element.cloneNode(false));
-        button_link.setAttribute("role", "presentation");
-        button_link.setAttribute("aria-hidden", "true");
-        if (this.tree_widget.options.buttonLeft) {
-            div.appendChild(button_link);
-        }
-        // title span
-        div.appendChild(this.createTitleSpan(node.name, level, is_selected, node.is_open, true));
-        if (!this.tree_widget.options.buttonLeft) {
-            div.appendChild(button_link);
-        }
-        return li;
-    };
-    ElementsRenderer.prototype.createNodeLi = function (node, level, is_selected) {
-        var li_classes = ["jqtree_common"];
-        if (is_selected) {
-            li_classes.push("jqtree-selected");
-        }
-        var class_string = li_classes.join(" ");
-        // li
-        var li = document.createElement("li");
-        li.className = class_string;
-        li.setAttribute("role", "presentation");
-        // div
-        var div = document.createElement("div");
-        div.className = "jqtree-element jqtree_common";
-        div.setAttribute("role", "presentation");
-        li.appendChild(div);
-        // title span
-        div.appendChild(this.createTitleSpan(node.name, level, is_selected, node.is_open, false));
-        return li;
-    };
-    ElementsRenderer.prototype.createTitleSpan = function (node_name, level, is_selected, is_open, is_folder) {
-        var title_span = document.createElement("span");
-        var classes = "jqtree-title jqtree_common";
-        if (is_folder) {
-            classes += " jqtree-title-folder";
-        }
-        title_span.className = classes;
-        title_span.setAttribute("role", "treeitem");
-        title_span.setAttribute("aria-level", "" + level);
-        title_span.setAttribute("aria-selected", util_1.getBoolString(is_selected));
-        title_span.setAttribute("aria-expanded", util_1.getBoolString(is_open));
-        if (is_selected) {
-            title_span.setAttribute("tabindex", "0");
-        }
-        title_span.innerHTML = this.escapeIfNecessary(node_name);
-        return title_span;
-    };
-    ElementsRenderer.prototype.getButtonClasses = function (node) {
-        var classes = ["jqtree-toggler", "jqtree_common"];
-        if (!node.is_open) {
-            classes.push("jqtree-closed");
-        }
-        if (this.tree_widget.options.buttonLeft) {
-            classes.push("jqtree-toggler-left");
-        }
-        else {
-            classes.push("jqtree-toggler-right");
-        }
-        return classes.join(" ");
-    };
-    ElementsRenderer.prototype.getFolderClasses = function (node, is_selected) {
-        var classes = ["jqtree-folder"];
-        if (!node.is_open) {
-            classes.push("jqtree-closed");
-        }
-        if (is_selected) {
-            classes.push("jqtree-selected");
-        }
-        if (node.is_loading) {
-            classes.push("jqtree-loading");
-        }
-        return classes.join(" ");
-    };
-    ElementsRenderer.prototype.escapeIfNecessary = function (value) {
-        if (this.tree_widget.options.autoEscape) {
-            return util_1.html_escape(value);
-        }
-        else {
-            return value;
-        }
-    };
-    ElementsRenderer.prototype.createButtonElement = function (value) {
-        if (typeof value === "string") {
-            // convert value to html
-            var div = document.createElement("div");
-            div.innerHTML = value;
-            return document.createTextNode(div.innerHTML);
-        }
-        else {
-            return $(value)[0];
-        }
-    };
-    return ElementsRenderer;
-}());
-exports["default"] = ElementsRenderer;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var KeyHandler = (function () {
-    function KeyHandler(tree_widget) {
-        this.tree_widget = tree_widget;
-        if (tree_widget.options.keyboardSupport) {
-            $(document).on("keydown.jqtree", $.proxy(this.handleKeyDown, this));
-        }
-    }
-    KeyHandler.prototype.deinit = function () {
-        $(document).off("keydown.jqtree");
-    };
-    KeyHandler.prototype.moveDown = function () {
-        var node = this.tree_widget.getSelectedNode();
-        if (node) {
-            return this.selectNode(node.getNextNode());
-        }
-        else {
-            return false;
-        }
-    };
-    KeyHandler.prototype.moveUp = function () {
-        var node = this.tree_widget.getSelectedNode();
-        if (node) {
-            return this.selectNode(node.getPreviousNode());
-        }
-        else {
-            return false;
-        }
-    };
-    KeyHandler.prototype.moveRight = function () {
-        var node = this.tree_widget.getSelectedNode();
-        if (!node) {
-            return true;
-        }
-        else if (!node.isFolder()) {
-            return true;
-        }
-        else {
-            // folder node
-            if (node.is_open) {
-                // Right moves to the first child of an open node
-                return this.selectNode(node.getNextNode());
-            }
-            else {
-                // Right expands a closed node
-                this.tree_widget.openNode(node);
-                return false;
-            }
-        }
-    };
-    KeyHandler.prototype.moveLeft = function () {
-        var node = this.tree_widget.getSelectedNode();
-        if (!node) {
-            return true;
-        }
-        else if (node.isFolder() && node.is_open) {
-            // Left on an open node closes the node
-            this.tree_widget.closeNode(node);
-            return false;
-        }
-        else {
-            // Left on a closed or end node moves focus to the node's parent
-            return this.selectNode(node.getParent());
-        }
-    };
-    KeyHandler.prototype.handleKeyDown = function (e) {
-        if (!this.canHandleKeyboard()) {
-            return true;
-        }
-        else {
-            var key = e.which;
-            switch (key) {
-                case KeyHandler.DOWN:
-                    return this.moveDown();
-                case KeyHandler.UP:
-                    return this.moveUp();
-                case KeyHandler.RIGHT:
-                    return this.moveRight();
-                case KeyHandler.LEFT:
-                    return this.moveLeft();
-                default:
-                    return true;
-            }
-        }
-    };
-    KeyHandler.prototype.selectNode = function (node) {
-        if (!node) {
-            return true;
-        }
-        else {
-            this.tree_widget.selectNode(node);
-            if (this.tree_widget.scroll_handler &&
-                (!this.tree_widget.scroll_handler.isScrolledIntoView($(node.element).find(".jqtree-element")))) {
-                this.tree_widget.scrollToNode(node);
-            }
-            return false;
-        }
-    };
-    KeyHandler.prototype.canHandleKeyboard = function () {
-        return (this.tree_widget.options.keyboardSupport &&
-            this.isFocusOnTree() &&
-            this.tree_widget.getSelectedNode() != null);
-    };
-    KeyHandler.prototype.isFocusOnTree = function () {
-        var active_element = document.activeElement;
-        return (active_element &&
-            active_element.tagName === "SPAN" &&
-            this.tree_widget._containsElement(active_element));
-    };
-    return KeyHandler;
-}());
-KeyHandler.LEFT = 37;
-KeyHandler.UP = 38;
-KeyHandler.RIGHT = 39;
-KeyHandler.DOWN = 40;
-exports["default"] = KeyHandler;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-exports.__esModule = true;
-/*
-This widget does the same a the mouse widget in jqueryui.
-*/
-var simple_widget_1 = __webpack_require__(2);
-var MouseWidget = (function (_super) {
-    __extends(MouseWidget, _super);
-    function MouseWidget() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    MouseWidget.prototype.setMouseDelay = function (mouse_delay) {
-        this.mouse_delay = mouse_delay;
-    };
-    MouseWidget.prototype._init = function () {
-        this.$el.on("mousedown.mousewidget", $.proxy(this._mouseDown, this));
-        this.$el.on("touchstart.mousewidget", $.proxy(this._touchStart, this));
-        this.is_mouse_started = false;
-        this.mouse_delay = 0;
-        this._mouse_delay_timer = null;
-        this._is_mouse_delay_met = true;
-        this.mouse_down_info = null;
-    };
-    MouseWidget.prototype._deinit = function () {
-        this.$el.off("mousedown.mousewidget");
-        this.$el.off("touchstart.mousewidget");
-        var $document = $(document);
-        $document.off("mousemove.mousewidget");
-        $document.off("mouseup.mousewidget");
-    };
-    MouseWidget.prototype._mouseDown = function (e) {
-        // Is left mouse button?
-        if (e.which !== 1) {
-            return;
-        }
-        var result = this._handleMouseDown(this._getPositionInfo(e));
-        if (result) {
-            e.preventDefault();
-        }
-        return result;
-    };
-    MouseWidget.prototype._handleMouseDown = function (position_info) {
-        // We may have missed mouseup (out of window)
-        if (this.is_mouse_started) {
-            this._handleMouseUp(position_info);
-        }
-        this.mouse_down_info = position_info;
-        if (!this._mouseCapture(position_info)) {
-            return;
-        }
-        this._handleStartMouse();
-        return true;
-    };
-    MouseWidget.prototype._handleStartMouse = function () {
-        var $document = $(document);
-        $document.on("mousemove.mousewidget", $.proxy(this._mouseMove, this));
-        $document.on("touchmove.mousewidget", $.proxy(this._touchMove, this));
-        $document.on("mouseup.mousewidget", $.proxy(this._mouseUp, this));
-        $document.on("touchend.mousewidget", $.proxy(this._touchEnd, this));
-        if (this.mouse_delay) {
-            this._startMouseDelayTimer();
-        }
-    };
-    MouseWidget.prototype._startMouseDelayTimer = function () {
-        var _this = this;
-        if (this._mouse_delay_timer) {
-            clearTimeout(this._mouse_delay_timer);
-        }
-        this._mouse_delay_timer = setTimeout(function () {
-            _this._is_mouse_delay_met = true;
-        }, this.mouse_delay);
-        this._is_mouse_delay_met = false;
-    };
-    MouseWidget.prototype._mouseMove = function (e) {
-        return this._handleMouseMove(e, this._getPositionInfo(e));
-    };
-    MouseWidget.prototype._handleMouseMove = function (e, position_info) {
-        if (this.is_mouse_started) {
-            this._mouseDrag(position_info);
-            return e.preventDefault();
-        }
-        if (this.mouse_delay && !this._is_mouse_delay_met) {
-            return true;
-        }
-        if (this.mouse_down_info) {
-            this.is_mouse_started = this._mouseStart(this.mouse_down_info) !== false;
-        }
-        if (this.is_mouse_started) {
-            this._mouseDrag(position_info);
-        }
-        else {
-            this._handleMouseUp(position_info);
-        }
-        return !this.is_mouse_started;
-    };
-    MouseWidget.prototype._getPositionInfo = function (e) {
-        return {
-            page_x: e.pageX,
-            page_y: e.pageY,
-            target: e.target,
-            original_event: e
-        };
-    };
-    MouseWidget.prototype._mouseUp = function (e) {
-        return this._handleMouseUp(this._getPositionInfo(e));
-    };
-    MouseWidget.prototype._handleMouseUp = function (position_info) {
-        var $document = $(document);
-        $document.off("mousemove.mousewidget");
-        $document.off("touchmove.mousewidget");
-        $document.off("mouseup.mousewidget");
-        $document.off("touchend.mousewidget");
-        if (this.is_mouse_started) {
-            this.is_mouse_started = false;
-            this._mouseStop(position_info);
-        }
-    };
-    MouseWidget.prototype._touchStart = function (e) {
-        var touch_event = e.originalEvent;
-        if (touch_event.touches.length > 1) {
-            return;
-        }
-        var touch = touch_event.changedTouches[0];
-        return this._handleMouseDown(this._getPositionInfo(touch));
-    };
-    MouseWidget.prototype._touchMove = function (e) {
-        var touch_event = e.originalEvent;
-        if (touch_event.touches.length > 1) {
-            return;
-        }
-        var touch = touch_event.changedTouches[0];
-        return this._handleMouseMove(e, this._getPositionInfo(touch));
-    };
-    MouseWidget.prototype._touchEnd = function (e) {
-        var touch_event = e.originalEvent;
-        if (touch_event.touches.length > 1) {
-            return;
-        }
-        var touch = touch_event.changedTouches[0];
-        return this._handleMouseUp(this._getPositionInfo(touch));
-    };
-    return MouseWidget;
-}(simple_widget_1["default"]));
-exports["default"] = MouseWidget;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-exports.__esModule = true;
-var node_1 = __webpack_require__(0);
-var NodeElement = (function () {
-    function NodeElement(node, tree_widget) {
-        this.init(node, tree_widget);
-    }
-    NodeElement.prototype.init = function (node, tree_widget) {
-        this.node = node;
-        this.tree_widget = tree_widget;
-        if (!node.element) {
-            node.element = this.tree_widget.element.get(0);
-        }
-        this.$element = $(node.element);
-    };
-    NodeElement.prototype.addDropHint = function (position) {
-        if (position === node_1.Position.Inside) {
-            return new BorderDropHint(this.$element);
-        }
-        else {
-            return new GhostDropHint(this.node, this.$element, position);
-        }
-    };
-    NodeElement.prototype.select = function () {
-        var $li = this.getLi();
-        $li.addClass("jqtree-selected");
-        $li.attr("aria-selected", "true");
-        var $span = this.getSpan();
-        $span.attr("tabindex", 0);
-        $span.focus();
-    };
-    NodeElement.prototype.deselect = function () {
-        var $li = this.getLi();
-        $li.removeClass("jqtree-selected");
-        $li.attr("aria-selected", "false");
-        var $span = this.getSpan();
-        $span.attr("tabindex", -1);
-        $span.blur();
-    };
-    NodeElement.prototype.getUl = function () {
-        return this.$element.children("ul:first");
-    };
-    NodeElement.prototype.getSpan = function () {
-        return this.$element.children(".jqtree-element").find("span.jqtree-title");
-    };
-    NodeElement.prototype.getLi = function () {
-        return this.$element;
-    };
-    return NodeElement;
-}());
-exports.NodeElement = NodeElement;
-var FolderElement = (function (_super) {
-    __extends(FolderElement, _super);
-    function FolderElement() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    FolderElement.prototype.open = function (on_finished, slide) {
-        var _this = this;
-        if (slide === void 0) { slide = true; }
-        if (!this.node.is_open) {
-            this.node.is_open = true;
-            var $button = this.getButton();
-            $button.removeClass("jqtree-closed");
-            $button.html("");
-            var button_el = $button.get(0);
-            if (button_el) {
-                var icon = this.tree_widget.renderer.opened_icon_element.cloneNode(false);
-                button_el.appendChild(icon);
-            }
-            var doOpen = function () {
-                var $li = _this.getLi();
-                $li.removeClass("jqtree-closed");
-                var $span = _this.getSpan();
-                $span.attr("aria-expanded", "true");
-                if (on_finished) {
-                    on_finished(_this.node);
-                }
-                _this.tree_widget._triggerEvent("tree.open", { node: _this.node });
-            };
-            if (slide) {
-                this.getUl().slideDown("fast", doOpen);
-            }
-            else {
-                this.getUl().show();
-                doOpen();
-            }
-        }
-    };
-    FolderElement.prototype.close = function (slide) {
-        var _this = this;
-        if (slide === void 0) { slide = true; }
-        if (this.node.is_open) {
-            this.node.is_open = false;
-            var $button = this.getButton();
-            $button.addClass("jqtree-closed");
-            $button.html("");
-            var button_el = $button.get(0);
-            if (button_el) {
-                var icon = this.tree_widget.renderer.closed_icon_element.cloneNode(false);
-                button_el.appendChild(icon);
-            }
-            var doClose = function () {
-                var $li = _this.getLi();
-                $li.addClass("jqtree-closed");
-                var $span = _this.getSpan();
-                $span.attr("aria-expanded", "false");
-                _this.tree_widget._triggerEvent("tree.close", { node: _this.node });
-            };
-            if (slide) {
-                this.getUl().slideUp("fast", doClose);
-            }
-            else {
-                this.getUl().hide();
-                doClose();
-            }
-        }
-    };
-    FolderElement.prototype.addDropHint = function (position) {
-        if (!this.node.is_open && position === node_1.Position.Inside) {
-            return new BorderDropHint(this.$element);
-        }
-        else {
-            return new GhostDropHint(this.node, this.$element, position);
-        }
-    };
-    FolderElement.prototype.getButton = function () {
-        return this.$element.children(".jqtree-element").find("a.jqtree-toggler");
-    };
-    return FolderElement;
-}(NodeElement));
-exports.FolderElement = FolderElement;
-var BorderDropHint = (function () {
-    function BorderDropHint($element) {
-        var $div = $element.children(".jqtree-element");
-        var width = $element.width() - 4;
-        this.$hint = $('<span class="jqtree-border"></span>');
-        $div.append(this.$hint);
-        this.$hint.css({
-            width: width,
-            height: $div.outerHeight() - 4
-        });
-    }
-    BorderDropHint.prototype.remove = function () {
-        this.$hint.remove();
-    };
-    return BorderDropHint;
-}());
-exports.BorderDropHint = BorderDropHint;
-var GhostDropHint = (function () {
-    function GhostDropHint(node, $element, position) {
-        this.$element = $element;
-        this.node = node;
-        this.$ghost = $("<li class=\"jqtree_common jqtree-ghost\"><span class=\"jqtree_common jqtree-circle\"></span>\n            <span class=\"jqtree_common jqtree-line\"></span></li>");
-        if (position === node_1.Position.After) {
-            this.moveAfter();
-        }
-        else if (position === node_1.Position.Before) {
-            this.moveBefore();
-        }
-        else if (position === node_1.Position.Inside) {
-            if (node.isFolder() && node.is_open) {
-                this.moveInsideOpenFolder();
-            }
-            else {
-                this.moveInside();
-            }
-        }
-    }
-    GhostDropHint.prototype.remove = function () {
-        this.$ghost.remove();
-    };
-    GhostDropHint.prototype.moveAfter = function () {
-        this.$element.after(this.$ghost);
-    };
-    GhostDropHint.prototype.moveBefore = function () {
-        this.$element.before(this.$ghost);
-    };
-    GhostDropHint.prototype.moveInsideOpenFolder = function () {
-        $(this.node.children[0].element).before(this.$ghost);
-    };
-    GhostDropHint.prototype.moveInside = function () {
-        this.$element.after(this.$ghost);
-        this.$ghost.addClass("jqtree-inside");
-    };
-    return GhostDropHint;
-}());
-exports.GhostDropHint = GhostDropHint;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var util_1 = __webpack_require__(1);
-var SaveStateHandler = (function () {
-    function SaveStateHandler(tree_widget) {
-        this.tree_widget = tree_widget;
-    }
-    SaveStateHandler.prototype.saveState = function () {
-        var state = JSON.stringify(this.getState());
-        if (this.tree_widget.options.onSetStateFromStorage) {
-            this.tree_widget.options.onSetStateFromStorage(state);
-        }
-        else if (this.supportsLocalStorage()) {
-            localStorage.setItem(this.getKeyName(), state);
-        }
-    };
-    SaveStateHandler.prototype.getStateFromStorage = function () {
-        var json_data = this._loadFromStorage();
-        if (json_data) {
-            return this._parseState(json_data);
-        }
-        else {
-            return null;
-        }
-    };
-    SaveStateHandler.prototype.getState = function () {
-        var _this = this;
-        var getOpenNodeIds = function () {
-            var open_nodes = [];
-            _this.tree_widget.tree.iterate(function (node) {
-                if (node.is_open &&
-                    node.id &&
-                    node.hasChildren()) {
-                    open_nodes.push(node.id);
-                }
-                return true;
-            });
-            return open_nodes;
-        };
-        var getSelectedNodeIds = function () { return _this.tree_widget.getSelectedNodes().map(function (n) { return n.id; }); };
-        return {
-            open_nodes: getOpenNodeIds(),
-            selected_node: getSelectedNodeIds()
-        };
-    };
-    /*
-    Set initial state
-    Don't handle nodes that are loaded on demand
-
-    result: must load on demand
-    */
-    SaveStateHandler.prototype.setInitialState = function (state) {
-        if (!state) {
-            return false;
-        }
-        else {
-            var must_load_on_demand = false;
-            if (state.open_nodes) {
-                must_load_on_demand = this._openInitialNodes(state.open_nodes);
-            }
-            if (state.selected_node) {
-                this._resetSelection();
-                this._selectInitialNodes(state.selected_node);
-            }
-            return must_load_on_demand;
-        }
-    };
-    SaveStateHandler.prototype.setInitialStateOnDemand = function (state, cb_finished) {
-        if (state) {
-            this._setInitialStateOnDemand(state.open_nodes, state.selected_node, cb_finished);
-        }
-        else {
-            cb_finished();
-        }
-    };
-    SaveStateHandler.prototype.getNodeIdToBeSelected = function () {
-        var state = this.getStateFromStorage();
-        if (state && state.selected_node) {
-            return state.selected_node[0];
-        }
-        else {
-            return null;
-        }
-    };
-    SaveStateHandler.prototype._parseState = function (json_data) {
-        var state = $.parseJSON(json_data);
-        // Check if selected_node is an int (instead of an array)
-        if (state && state.selected_node && util_1.isInt(state.selected_node)) {
-            // Convert to array
-            state.selected_node = [state.selected_node];
-        }
-        return state;
-    };
-    SaveStateHandler.prototype._loadFromStorage = function () {
-        if (this.tree_widget.options.onGetStateFromStorage) {
-            return this.tree_widget.options.onGetStateFromStorage();
-        }
-        else if (this.supportsLocalStorage()) {
-            return localStorage.getItem(this.getKeyName());
-        }
-    };
-    SaveStateHandler.prototype._openInitialNodes = function (node_ids) {
-        var must_load_on_demand = false;
-        for (var _i = 0, node_ids_1 = node_ids; _i < node_ids_1.length; _i++) {
-            var node_id = node_ids_1[_i];
-            var node = this.tree_widget.getNodeById(node_id);
-            if (node) {
-                if (!node.load_on_demand) {
-                    node.is_open = true;
-                }
-                else {
-                    must_load_on_demand = true;
-                }
-            }
-        }
-        return must_load_on_demand;
-    };
-    SaveStateHandler.prototype._selectInitialNodes = function (node_ids) {
-        var select_count = 0;
-        for (var _i = 0, node_ids_2 = node_ids; _i < node_ids_2.length; _i++) {
-            var node_id = node_ids_2[_i];
-            var node = this.tree_widget.getNodeById(node_id);
-            if (node) {
-                select_count += 1;
-                if (this.tree_widget.select_node_handler) {
-                    this.tree_widget.select_node_handler.addToSelection(node);
-                }
-            }
-        }
-        return select_count !== 0;
-    };
-    SaveStateHandler.prototype._resetSelection = function () {
-        var select_node_handler = this.tree_widget.select_node_handler;
-        if (select_node_handler) {
-            var selected_nodes = select_node_handler.getSelectedNodes();
-            selected_nodes.forEach(function (node) {
-                select_node_handler.removeFromSelection(node);
-            });
-        }
-    };
-    SaveStateHandler.prototype._setInitialStateOnDemand = function (node_ids_param, selected_nodes, cb_finished) {
-        var _this = this;
-        var loading_count = 0;
-        var node_ids = node_ids_param;
-        var openNodes = function () {
-            var new_nodes_ids = [];
-            for (var _i = 0, node_ids_3 = node_ids; _i < node_ids_3.length; _i++) {
-                var node_id = node_ids_3[_i];
-                var node = _this.tree_widget.getNodeById(node_id);
-                if (!node) {
-                    new_nodes_ids.push(node_id);
-                }
-                else {
-                    if (!node.is_loading) {
-                        if (node.load_on_demand) {
-                            loadAndOpenNode(node);
-                        }
-                        else {
-                            _this.tree_widget._openNode(node, false, null);
-                        }
-                    }
-                }
-            }
-            node_ids = new_nodes_ids;
-            if (_this._selectInitialNodes(selected_nodes)) {
-                _this.tree_widget._refreshElements(null);
-            }
-            if (loading_count === 0) {
-                cb_finished();
-            }
-        };
-        var loadAndOpenNode = function (node) {
-            loading_count += 1;
-            _this.tree_widget._openNode(node, false, function () {
-                loading_count -= 1;
-                openNodes();
-            });
-        };
-        openNodes();
-    };
-    SaveStateHandler.prototype.getKeyName = function () {
-        if (typeof this.tree_widget.options.saveState === "string") {
-            return this.tree_widget.options.saveState;
-        }
-        else {
-            return "tree";
-        }
-    };
-    SaveStateHandler.prototype.supportsLocalStorage = function () {
-        var testSupport = function () {
-            // Is local storage supported?
-            if (localStorage == null) {
-                return false;
-            }
-            else {
-                // Check if it's possible to store an item. Safari does not allow this in private browsing mode.
-                try {
-                    var key = "_storage_test";
-                    sessionStorage.setItem(key, "value");
-                    sessionStorage.removeItem(key);
-                }
-                catch (error) {
-                    return false;
-                }
-                return true;
-            }
-        };
-        if (this._supportsLocalStorage == null) {
-            this._supportsLocalStorage = testSupport();
-        }
-        return this._supportsLocalStorage;
-    };
-    return SaveStateHandler;
-}());
-exports["default"] = SaveStateHandler;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var ScrollHandler = (function () {
-    function ScrollHandler(tree_widget) {
-        this.tree_widget = tree_widget;
-        this.previous_top = -1;
-        this.is_initialized = false;
-    }
-    ScrollHandler.prototype.checkScrolling = function () {
-        this._ensureInit();
-        if (this.tree_widget.dnd_handler) {
-            var hovered_area = this.tree_widget.dnd_handler.hovered_area;
-            if (hovered_area && hovered_area.top !== this.previous_top) {
-                this.previous_top = hovered_area.top;
-                if (this.$scroll_parent) {
-                    this._handleScrollingWithScrollParent(hovered_area);
-                }
-                else {
-                    this._handleScrollingWithDocument(hovered_area);
-                }
-            }
-        }
-    };
-    ScrollHandler.prototype.scrollTo = function (top) {
-        this._ensureInit();
-        if (this.$scroll_parent) {
-            this.$scroll_parent[0].scrollTop = top;
-        }
-        else {
-            var tree_top = this.tree_widget.$el.offset().top;
-            $(document).scrollTop(top + tree_top);
-        }
-    };
-    ScrollHandler.prototype.isScrolledIntoView = function ($element) {
-        this._ensureInit();
-        var element_bottom;
-        var view_bottom;
-        var element_top;
-        var view_top;
-        if (this.$scroll_parent) {
-            view_top = 0;
-            view_bottom = this.$scroll_parent.height();
-            element_top = $element.offset().top - this.scroll_parent_top;
-            element_bottom = element_top + $element.height();
-        }
-        else {
-            view_top = $(window).scrollTop();
-            view_bottom = view_top + $(window).height();
-            element_top = $element.offset().top;
-            element_bottom = element_top + $element.height();
-        }
-        return ((element_bottom <= view_bottom) && (element_top >= view_top));
-    };
-    ScrollHandler.prototype._initScrollParent = function () {
-        var _this = this;
-        var getParentWithOverflow = function () {
-            var css_attributes = ["overflow", "overflow-y"];
-            var hasOverFlow = function ($el) {
-                for (var _i = 0, css_attributes_1 = css_attributes; _i < css_attributes_1.length; _i++) {
-                    var attr = css_attributes_1[_i];
-                    var overflow_value = $el.css(attr);
-                    if (overflow_value === "auto" || overflow_value === "scroll") {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            if (hasOverFlow(_this.tree_widget.$el)) {
-                return _this.tree_widget.$el;
-            }
-            for (var _i = 0, _a = _this.tree_widget.$el.parents().get(); _i < _a.length; _i++) {
-                var el = _a[_i];
-                var $el = $(el);
-                if (hasOverFlow($el)) {
-                    return $el;
-                }
-            }
-            return null;
-        };
-        var setDocumentAsScrollParent = function () {
-            _this.scroll_parent_top = 0;
-            _this.$scroll_parent = null;
-        };
-        if (this.tree_widget.$el.css("position") === "fixed") {
-            setDocumentAsScrollParent();
-        }
-        var $scroll_parent = getParentWithOverflow();
-        if ($scroll_parent && $scroll_parent.length && $scroll_parent[0].tagName !== "HTML") {
-            this.$scroll_parent = $scroll_parent;
-            this.scroll_parent_top = this.$scroll_parent.offset().top;
-        }
-        else {
-            setDocumentAsScrollParent();
-        }
-        this.is_initialized = true;
-    };
-    ScrollHandler.prototype._ensureInit = function () {
-        if (!this.is_initialized) {
-            this._initScrollParent();
-        }
-    };
-    ScrollHandler.prototype._handleScrollingWithScrollParent = function (area) {
-        if (!this.$scroll_parent) {
-            return;
-        }
-        else {
-            var distance_bottom = this.scroll_parent_top + this.$scroll_parent[0].offsetHeight - area.bottom;
-            if (distance_bottom < 20) {
-                this.$scroll_parent[0].scrollTop += 20;
-                this.tree_widget.refreshHitAreas();
-                this.previous_top = -1;
-            }
-            else if ((area.top - this.scroll_parent_top) < 20) {
-                this.$scroll_parent[0].scrollTop -= 20;
-                this.tree_widget.refreshHitAreas();
-                this.previous_top = -1;
-            }
-        }
-    };
-    ScrollHandler.prototype._handleScrollingWithDocument = function (area) {
-        var distance_top = area.top - $(document).scrollTop();
-        if (distance_top < 20) {
-            $(document).scrollTop($(document).scrollTop() - 20);
-        }
-        else if ($(window).height() - (area.bottom - $(document).scrollTop()) < 20) {
-            $(document).scrollTop($(document).scrollTop() + 20);
-        }
-    };
-    return ScrollHandler;
-}());
-exports["default"] = ScrollHandler;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var SelectNodeHandler = (function () {
-    function SelectNodeHandler(tree_widget) {
-        this.tree_widget = tree_widget;
-        this.clear();
-    }
-    SelectNodeHandler.prototype.getSelectedNode = function () {
-        var selected_nodes = this.getSelectedNodes();
-        if (selected_nodes.length) {
-            return selected_nodes[0];
-        }
-        else {
-            return false;
-        }
-    };
-    SelectNodeHandler.prototype.getSelectedNodes = function () {
-        if (this.selected_single_node) {
-            return [this.selected_single_node];
-        }
-        else {
-            var selected_nodes = [];
-            for (var id in this.selected_nodes) {
-                if (this.selected_nodes.hasOwnProperty(id)) {
-                    var node = this.tree_widget.getNodeById(id);
-                    if (node) {
-                        selected_nodes.push(node);
-                    }
-                }
-            }
-            return selected_nodes;
-        }
-    };
-    SelectNodeHandler.prototype.getSelectedNodesUnder = function (parent) {
-        if (this.selected_single_node) {
-            if (parent.isParentOf(this.selected_single_node)) {
-                return [this.selected_single_node];
-            }
-            else {
-                return [];
-            }
-        }
-        else {
-            var selected_nodes = [];
-            for (var id in this.selected_nodes) {
-                if (this.selected_nodes.hasOwnProperty(id)) {
-                    var node = this.tree_widget.getNodeById(id);
-                    if (node && parent.isParentOf(node)) {
-                        selected_nodes.push(node);
-                    }
-                }
-            }
-            return selected_nodes;
-        }
-    };
-    SelectNodeHandler.prototype.isNodeSelected = function (node) {
-        if (!node) {
-            return false;
-        }
-        else if (node.id != null) {
-            if (this.selected_nodes[node.id]) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else if (this.selected_single_node) {
-            return this.selected_single_node.element === node.element;
-        }
-        else {
-            return false;
-        }
-    };
-    SelectNodeHandler.prototype.clear = function () {
-        this.selected_nodes = {};
-        this.selected_single_node = null;
-    };
-    SelectNodeHandler.prototype.removeFromSelection = function (node, include_children) {
-        var _this = this;
-        if (include_children === void 0) { include_children = false; }
-        if (node.id == null) {
-            if (this.selected_single_node && node.element === this.selected_single_node.element) {
-                this.selected_single_node = null;
-            }
-        }
-        else {
-            delete this.selected_nodes[node.id];
-            if (include_children) {
-                node.iterate(function () {
-                    delete _this.selected_nodes[node.id];
-                    return true;
-                });
-            }
-        }
-    };
-    SelectNodeHandler.prototype.addToSelection = function (node) {
-        if (node.id != null) {
-            this.selected_nodes[node.id] = true;
-        }
-        else {
-            this.selected_single_node = node;
-        }
-    };
-    return SelectNodeHandler;
-}());
-exports["default"] = SelectNodeHandler;
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-
-exports.__esModule = true;
-var version = "1.4.1";
-exports["default"] = version;
-
-
-/***/ }),
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(3);
-
-
-/***/ })
-/******/ ]);
+ * 
+ */!function(e){var t={};function o(n){if(t[n])return t[n].exports;var r=t[n]={i:n,l:!1,exports:{}};return e[n].call(r.exports,r,r.exports,o),r.l=!0,r.exports}o.m=e,o.c=t,o.d=function(e,t,n){o.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:n})},o.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},o.t=function(e,t){if(1&t&&(e=o(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(o.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var r in e)o.d(n,r,function(t){return e[t]}.bind(null,r));return n},o.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return o.d(t,"a",t),t},o.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},o.p="",o(o.s=16)}([function(e,t,o){"use strict";var n;t.__esModule=!0,function(e){e[e.Before=1]="Before",e[e.After=2]="After",e[e.Inside=3]="Inside",e[e.None=4]="None"}(n=t.Position||(t.Position={}));var r={before:n.Before,after:n.After,inside:n.Inside,none:n.None};t.getPositionName=function(e){for(var t in r)if(r.hasOwnProperty(t)&&r[t]===e)return t;return""},t.getPosition=function(e){return r[e]};var i=function(){function e(t,o,n){void 0===o&&(o=!1),void 0===n&&(n=e),this.name="",this.setData(t),this.children=[],this.parent=null,o&&(this.idMapping={},this.tree=this,this.nodeClass=n)}return e.prototype.setData=function(e){var t=this,o=function(e){null!=e&&(t.name=e)};if(e)if("object"!=typeof e)o(e);else for(var n in e)if(e.hasOwnProperty(n)){var r=e[n];"label"===n?o(r):"children"!==n&&(this[n]=r)}},e.prototype.loadFromData=function(e){this.removeChildren();for(var t=0,o=e;t<o.length;t++){var n=o[t],r=new this.tree.nodeClass(n);this.addChild(r),"object"==typeof n&&n.children&&r.loadFromData(n.children)}},e.prototype.addChild=function(e){this.children.push(e),e._setParent(this)},e.prototype.addChildAtPosition=function(e,t){this.children.splice(t,0,e),e._setParent(this)},e.prototype.removeChild=function(e){e.removeChildren(),this._removeChild(e)},e.prototype.getChildIndex=function(e){return jQuery.inArray(e,this.children)},e.prototype.hasChildren=function(){return 0!==this.children.length},e.prototype.isFolder=function(){return this.hasChildren()||this.load_on_demand},e.prototype.iterate=function(e){var t=function(o,n){if(o.children)for(var r=0,i=o.children;r<i.length;r++){var s=i[r];e(s,n)&&s.hasChildren()&&t(s,n+1)}};t(this,0)},e.prototype.moveNode=function(e,t,o){e.parent&&!e.isParentOf(t)&&(e.parent._removeChild(e),o===n.After?t.parent&&t.parent.addChildAtPosition(e,t.parent.getChildIndex(t)+1):o===n.Before?t.parent&&t.parent.addChildAtPosition(e,t.parent.getChildIndex(t)):o===n.Inside&&t.addChildAtPosition(e,0))},e.prototype.getData=function(e){function t(e){return e.map(function(e){var o={};for(var n in e)if(-1===["parent","children","element","tree"].indexOf(n)&&Object.prototype.hasOwnProperty.call(e,n)){var r=e[n];o[n]=r}return e.hasChildren()&&(o.children=t(e.children)),o})}return void 0===e&&(e=!1),t(e?[this]:this.children)},e.prototype.getNodeByName=function(e){return this.getNodeByCallback(function(t){return t.name===e})},e.prototype.getNodeByCallback=function(e){var t=null;return this.iterate(function(o){return!e(o)||(t=o,!1)}),t},e.prototype.addAfter=function(e){if(this.parent){var t=new this.tree.nodeClass(e),o=this.parent.getChildIndex(this);return this.parent.addChildAtPosition(t,o+1),"object"==typeof e&&e.children&&e.children.length&&t.loadFromData(e.children),t}return null},e.prototype.addBefore=function(e){if(this.parent){var t=new this.tree.nodeClass(e),o=this.parent.getChildIndex(this);return this.parent.addChildAtPosition(t,o),"object"==typeof e&&e.children&&e.children.length&&t.loadFromData(e.children),t}return null},e.prototype.addParent=function(e){if(this.parent){var t=new this.tree.nodeClass(e);t._setParent(this.tree);for(var o=this.parent,n=0,r=o.children;n<r.length;n++){var i=r[n];t.addChild(i)}return o.children=[],o.addChild(t),t}return null},e.prototype.remove=function(){this.parent&&(this.parent.removeChild(this),this.parent=null)},e.prototype.append=function(e){var t=new this.tree.nodeClass(e);return this.addChild(t),"object"==typeof e&&e.children&&e.children.length&&t.loadFromData(e.children),t},e.prototype.prepend=function(e){var t=new this.tree.nodeClass(e);return this.addChildAtPosition(t,0),"object"==typeof e&&e.children&&e.children.length&&t.loadFromData(e.children),t},e.prototype.isParentOf=function(e){for(var t=e.parent;t;){if(t===this)return!0;t=t.parent}return!1},e.prototype.getLevel=function(){for(var e=0,t=this;t.parent;)e+=1,t=t.parent;return e},e.prototype.getNodeById=function(e){return this.idMapping[e]},e.prototype.addNodeToIndex=function(e){null!=e.id&&(this.idMapping[e.id]=e)},e.prototype.removeNodeFromIndex=function(e){null!=e.id&&delete this.idMapping[e.id]},e.prototype.removeChildren=function(){var e=this;this.iterate(function(t){return e.tree.removeNodeFromIndex(t),!0}),this.children=[]},e.prototype.getPreviousSibling=function(){if(this.parent){var e=this.parent.getChildIndex(this)-1;return e>=0?this.parent.children[e]:null}return null},e.prototype.getNextSibling=function(){if(this.parent){var e=this.parent.getChildIndex(this)+1;return e<this.parent.children.length?this.parent.children[e]:null}return null},e.prototype.getNodesByProperty=function(e,t){return this.filter(function(o){return o[e]===t})},e.prototype.filter=function(e){var t=[];return this.iterate(function(o){return e(o)&&t.push(o),!0}),t},e.prototype.getNextNode=function(e){if(void 0===e&&(e=!0),e&&this.hasChildren()&&this.is_open)return this.children[0];if(this.parent){var t=this.getNextSibling();return t||this.parent.getNextNode(!1)}return null},e.prototype.getPreviousNode=function(){if(this.parent){var e=this.getPreviousSibling();return e?e.hasChildren()&&e.is_open?e.getLastChild():e:this.getParent()}return null},e.prototype.getParent=function(){return this.parent&&this.parent.parent?this.parent:null},e.prototype.getLastChild=function(){if(this.hasChildren()){var e=this.children[this.children.length-1];return e.hasChildren()&&e.is_open?e.getLastChild():e}return null},e.prototype.initFromData=function(e){var t,o=this,n=function(e){for(var t=0,n=e;t<n.length;t++){var r=n[t],i=new o.tree.nodeClass("");i.initFromData(r),o.addChild(i)}};t=e,o.setData(t),t.children&&n(t.children)},e.prototype._setParent=function(e){this.parent=e,this.tree=e.tree,this.tree.addNodeToIndex(this)},e.prototype._removeChild=function(e){this.children.splice(this.getChildIndex(e),1),this.tree.removeNodeFromIndex(e)},e}();t.Node=i},function(e,t,o){"use strict";t.__esModule=!0,t.isInt=function(e){return"number"==typeof e&&e%1==0},t.isFunction=function(e){return"function"==typeof e},t.htmlEscape=function(e){return(""+e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#x27;").replace(/\//g,"&#x2F;")},t.getBoolString=function(e){return e?"true":"false"}},function(e,t){e.exports=jQuery},function(e,t,o){"use strict";t.__esModule=!0;var n=function(){function e(e,t){this.$el=jQuery(e);var o=this.constructor.defaults;this.options=jQuery.extend({},o,t)}return e.register=function(t,o){var n=function(){return"simple_widget_"+o};function r(t,o){var n=jQuery.data(t,o);return n&&n instanceof e?n:null}jQuery.fn[o]=function(o){for(var i=[],s=1;s<arguments.length;s++)i[s-1]=arguments[s];if(void 0===o||"object"==typeof o)return function(e,o){for(var i=n(),s=0,a=e.get();s<a.length;s++){var l=a[s];if(!r(l,i)){var d=new t(l,o);jQuery.data(l,i)||jQuery.data(l,i,d),d._init()}}return e}(this,o);if("string"==typeof o&&"_"!==o[0]){var a=o;return"destroy"===a?function(e){for(var t=n(),o=0,i=e.get();o<i.length;o++){var s=i[o],a=r(s,t);a&&a.destroy(),jQuery.removeData(s,t)}}(this):"get_widget_class"===a?t:function(t,o,r){for(var i=null,s=0,a=t.get();s<a.length;s++){var l=a[s],d=jQuery.data(l,n());if(d&&d instanceof e){var u=d[o];u&&"function"==typeof u&&(i=u.apply(d,r))}}return i}(this,a,i)}}},e.prototype.destroy=function(){this._deinit()},e.prototype._init=function(){},e.prototype._deinit=function(){},e.defaults={},e}();t.default=n},function(e,t,o){"use strict";var n,r=this&&this.__extends||(n=function(e,t){return(n=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)t.hasOwnProperty(o)&&(e[o]=t[o])})(e,t)},function(e,t){function o(){this.constructor=e}n(e,t),e.prototype=null===t?Object.create(t):(o.prototype=t.prototype,new o)});t.__esModule=!0;var i=o(5),s=o(2),a=o(6),l=o(7),d=o(8),u=o(9),h=o(10),p=o(11),c=o(12),f=o(13),g=o(3),m=o(0),v=o(1),y=o(14),_="Node parameter is empty",N=function(e){function t(){var t=null!==e&&e.apply(this,arguments)||this;return t._handleClick=function(e){var o=t._getClickTarget(e.target);if(o)if("button"===o.type)t.toggle(o.node,t.options.slide),e.preventDefault(),e.stopPropagation();else if("label"===o.type){var n=o.node;t._triggerEvent("tree.click",{node:n,click_event:e}).isDefaultPrevented()||t._selectNode(n,!0)}},t._handleDblclick=function(e){var o=t._getClickTarget(e.target);o&&"label"===o.type&&t._triggerEvent("tree.dblclick",{node:o.node,click_event:e})},t._handleContextmenu=function(e){var o=s(e.target).closest("ul.jqtree-tree .jqtree-element");if(o.length){var n=t._getNode(o);if(n)return e.preventDefault(),e.stopPropagation(),t._triggerEvent("tree.contextmenu",{node:n,click_event:e}),!1}return null},t}return r(t,e),t.prototype.toggle=function(e,t){if(!e)throw Error(_);var o=null==t?this.options.slide:t;return e.is_open?this.closeNode(e,o):this.openNode(e,o),this.element},t.prototype.getTree=function(){return this.tree},t.prototype.selectNode=function(e){return this._selectNode(e,!1),this.element},t.prototype.getSelectedNode=function(){return!!this.selectNodeHandler&&this.selectNodeHandler.getSelectedNode()},t.prototype.toJson=function(){return JSON.stringify(this.tree.getData())},t.prototype.loadData=function(e,t){return this._loadData(e,t),this.element},t.prototype.loadDataFromUrl=function(e,t,o){return"string"==typeof e?this._loadDataFromUrl(e,t,o):this._loadDataFromUrl(null,e,t),this.element},t.prototype.reload=function(e){return this._loadDataFromUrl(null,null,e),this.element},t.prototype.getNodeById=function(e){return this.tree.getNodeById(e)},t.prototype.getNodeByName=function(e){return this.tree.getNodeByName(e)},t.prototype.getNodesByProperty=function(e,t){return this.tree.getNodesByProperty(e,t)},t.prototype.getNodeByHtmlElement=function(e){return this._getNode(s(e))},t.prototype.getNodeByCallback=function(e){return this.tree.getNodeByCallback(e)},t.prototype.openNode=function(e,t,o){var n=this;if(!e)throw Error(_);var r=function(){var e,r;return v.isFunction(t)?(e=t,r=null):(r=t,e=o),null==r&&(r=n.options.slide),[r,e]}(),i=r[0],s=r[1];return this._openNode(e,i,s),this.element},t.prototype.closeNode=function(e,t){if(!e)throw Error(_);var o=null==t?this.options.slide:t;return e.isFolder()&&(new y.FolderElement(e,this).close(o,this.options.animationSpeed),this._saveState()),this.element},t.prototype.isDragging=function(){return!!this.dndHandler&&this.dndHandler.isDragging},t.prototype.refreshHitAreas=function(){return this.dndHandler&&this.dndHandler.refresh(),this.element},t.prototype.addNodeAfter=function(e,t){var o=t.addAfter(e);return o&&this._refreshElements(t.parent),o},t.prototype.addNodeBefore=function(e,t){if(!t)throw Error("Parameter is empty: existingNode");var o=t.addBefore(e);return o&&this._refreshElements(t.parent),o},t.prototype.addParentNode=function(e,t){if(!t)throw Error("Parameter is empty: existingNode");var o=t.addParent(e);return o&&this._refreshElements(o.parent),o},t.prototype.removeNode=function(e){if(!e)throw Error(_);var t=e;return t.parent&&this.selectNodeHandler&&(this.selectNodeHandler.removeFromSelection(t,!0),t.remove(),this._refreshElements(t.parent)),this.element},t.prototype.appendNode=function(e,t){var o=t||this.tree,n=o.append(e);return this._refreshElements(o),n},t.prototype.prependNode=function(e,t){var o=t||this.tree,n=o.prepend(e);return this._refreshElements(o),n},t.prototype.updateNode=function(e,t){if(!e)throw Error(_);var o=t.id&&t.id!==e.id;return o&&this.tree.removeNodeFromIndex(e),e.setData(t),o&&this.tree.addNodeToIndex(e),"object"==typeof t&&t.children&&(e.removeChildren(),t.children.length&&e.loadFromData(t.children)),this._refreshElements(e),this._selectCurrentNode(),this.element},t.prototype.moveNode=function(e,t,o){if(!e)throw Error(_);if(!t)throw Error("Parameter is empty: targetNode");var n=m.getPosition(o);return this.tree.moveNode(e,t,n),this._refreshElements(null),this.element},t.prototype.getStateFromStorage=function(){if(this.saveStateHandler)return this.saveStateHandler.getStateFromStorage()},t.prototype.addToSelection=function(e,t){if(!e)throw Error(_);var o=e;return this.selectNodeHandler&&(this.selectNodeHandler.addToSelection(o),this._getNodeElementForNode(o).select(t||!0),this._saveState()),this.element},t.prototype.getSelectedNodes=function(){return this.selectNodeHandler?this.selectNodeHandler.getSelectedNodes():[]},t.prototype.isNodeSelected=function(e){if(!e)throw Error(_);return!!this.selectNodeHandler&&this.selectNodeHandler.isNodeSelected(e)},t.prototype.removeFromSelection=function(e){if(!e)throw Error(_);return this.selectNodeHandler&&(this.selectNodeHandler.removeFromSelection(e),this._getNodeElementForNode(e).deselect(),this._saveState()),this.element},t.prototype.scrollToNode=function(e){if(!e)throw Error(_);if(this.scrollHandler){var t=s(e.element).offset(),o=t?t.top:0,n=this.$el.offset(),r=o-(n?n.top:0);this.scrollHandler.scrollToY(r)}return this.element},t.prototype.getState=function(){if(this.saveStateHandler)return this.saveStateHandler.getState()},t.prototype.setState=function(e){return this.saveStateHandler&&(this.saveStateHandler.setInitialState(e),this._refreshElements(null)),this.element},t.prototype.setOption=function(e,t){return this.options[e]=t,this.element},t.prototype.moveDown=function(){return this.keyHandler&&this.keyHandler.moveDown(),this.element},t.prototype.moveUp=function(){return this.keyHandler&&this.keyHandler.moveUp(),this.element},t.prototype.getVersion=function(){return i.default},t.prototype.testGenerateHitAreas=function(e){return this.dndHandler?(this.dndHandler.currentItem=this._getNodeElementForNode(e),this.dndHandler.generateHitAreas(),this.dndHandler.hitAreas):[]},t.prototype._triggerEvent=function(e,t){var o=s.Event(e);return s.extend(o,t),this.element.trigger(o),o},t.prototype._openNode=function(e,t,o){var n=this;void 0===t&&(t=!0);var r=function(e,t,o){new y.FolderElement(e,n).open(o,t,n.options.animationSpeed)};if(e.isFolder())if(e.load_on_demand)this._loadFolderOnDemand(e,t,o);else{for(var i=e.parent;i;)i.parent&&r(i,!1,null),i=i.parent;r(e,t,o),this._saveState()}},t.prototype._refreshElements=function(e){this.renderer.render(e),this._triggerEvent("tree.refresh")},t.prototype._getNodeElementForNode=function(e){return e.isFolder()?new y.FolderElement(e,this):new y.NodeElement(e,this)},t.prototype._getNodeElement=function(e){var t=this._getNode(e);return t?this._getNodeElementForNode(t):null},t.prototype._containsElement=function(e){var t=this._getNode(s(e));return null!=t&&t.tree===this.tree},t.prototype._getScrollLeft=function(){return this.scrollHandler&&this.scrollHandler.getScrollLeft()||0},t.prototype._init=function(){e.prototype._init.call(this),this.element=this.$el,this.mouseDelay=300,this.isInitialized=!1,this.options.rtl=this._getRtlOption(),null===this.options.closedIcon&&(this.options.closedIcon=this._getDefaultClosedIcon()),this.renderer=new l.default(this),this.dataLoader=new d.default(this),null!=p.default?this.saveStateHandler=new p.default(this):this.options.saveState=!1,null!=f.default&&(this.selectNodeHandler=new f.default(this)),null!=a.DragAndDropHandler?this.dndHandler=new a.DragAndDropHandler(this):this.options.dragAndDrop=!1,null!=c.default&&(this.scrollHandler=new c.default(this)),null!=u.default&&null!=f.default&&(this.keyHandler=new u.default(this)),this._initData(),this.element.click(this._handleClick),this.element.dblclick(this._handleDblclick),this.options.useContextMenu&&this.element.on("contextmenu",this._handleContextmenu)},t.prototype._deinit=function(){this.element.empty(),this.element.off(),this.keyHandler&&this.keyHandler.deinit(),this.tree=new m.Node({},!0),e.prototype._deinit.call(this)},t.prototype._mouseCapture=function(e){return!(!this.options.dragAndDrop||!this.dndHandler)&&this.dndHandler.mouseCapture(e)},t.prototype._mouseStart=function(e){return!(!this.options.dragAndDrop||!this.dndHandler)&&this.dndHandler.mouseStart(e)},t.prototype._mouseDrag=function(e){if(this.options.dragAndDrop&&this.dndHandler){var t=this.dndHandler.mouseDrag(e);return this.scrollHandler&&this.scrollHandler.checkScrolling(),t}return!1},t.prototype._mouseStop=function(e){return!(!this.options.dragAndDrop||!this.dndHandler)&&this.dndHandler.mouseStop(e)},t.prototype._initData=function(){this.options.data?this._loadData(this.options.data,null):this._getDataUrlInfo(null)?this._loadDataFromUrl(null,null,null):this._loadData([],null)},t.prototype._getDataUrlInfo=function(e){var t,o=this,n=this.options.dataUrl||this.element.data("url"),r=function(t){if(e&&e.id){var n={node:e.id};t.data=n}else{var r=o._getNodeIdToBeSelected();if(r){n={selected_node:r};t.data=n}}};return"function"==typeof n?n(e):"string"==typeof n?(r(t={url:n}),t):"object"==typeof n?(r(n),n):n},t.prototype._getNodeIdToBeSelected=function(){return this.options.saveState&&this.saveStateHandler?this.saveStateHandler.getNodeIdToBeSelected():null},t.prototype._initTree=function(e){var t=this,o=function(){t.isInitialized||(t.isInitialized=!0,t._triggerEvent("tree.init"))};this.tree=new this.options.nodeClass(null,!0,this.options.nodeClass),this.selectNodeHandler&&this.selectNodeHandler.clear(),this.tree.loadFromData(e);var n=this._setInitialState();this._refreshElements(null),n?this._setInitialStateOnDemand(o):o()},t.prototype._setInitialState=function(){var e=this,t=function(){if(e.options.saveState&&e.saveStateHandler){var t=e.saveStateHandler.getStateFromStorage();return t?[!0,e.saveStateHandler.setInitialState(t)]:[!1,!1]}return[!1,!1]}(),o=t[0],n=t[1];return o||(n=function(){if(!1===e.options.autoOpen)return!1;var t=e._getAutoOpenMaxLevel(),o=!1;return e.tree.iterate(function(e,n){return e.load_on_demand?(o=!0,!1):!!e.hasChildren()&&(e.is_open=!0,n!==t)}),o}()),n},t.prototype._setInitialStateOnDemand=function(e){var t,o,n,r=this;(function(){if(r.options.saveState&&r.saveStateHandler){var t=r.saveStateHandler.getStateFromStorage();return!!t&&(r.saveStateHandler.setInitialStateOnDemand(t,e),!0)}return!1})()||(t=r._getAutoOpenMaxLevel(),o=0,(n=function(){r.tree.iterate(function(e,i){return e.load_on_demand?(e.is_loading||function(e){o+=1,r._openNode(e,!1,function(){o-=1,n()})}(e),!1):(r._openNode(e,!1,null),i!==t)}),0===o&&e()})())},t.prototype._getAutoOpenMaxLevel=function(){return!0===this.options.autoOpen?-1:parseInt(this.options.autoOpen,10)},t.prototype._getClickTarget=function(e){var t=s(e),o=t.closest(".jqtree-toggler");if(o.length){if(n=this._getNode(o))return{type:"button",node:n}}else{var n,r=t.closest(".jqtree-element");if(r.length)if(n=this._getNode(r))return{type:"label",node:n}}return null},t.prototype._getNode=function(e){var t=e.closest("li.jqtree_common");return 0===t.length?null:t.data("node")},t.prototype._saveState=function(){this.options.saveState&&this.saveStateHandler&&this.saveStateHandler.saveState()},t.prototype._selectCurrentNode=function(){var e=this.getSelectedNode();if(e){var t=this._getNodeElementForNode(e);t&&t.select(!0)}},t.prototype._deselectCurrentNode=function(){var e=this.getSelectedNode();e&&this.removeFromSelection(e)},t.prototype._getDefaultClosedIcon=function(){return this.options.rtl?"&#x25c0;":"&#x25ba;"},t.prototype._getRtlOption=function(){if(null!=this.options.rtl)return this.options.rtl;var e=this.element.data("rtl");return null!=e&&!1!==e},t.prototype._selectNode=function(e,t){var o=this;if(void 0===t&&(t=!1),this.selectNodeHandler){var n=function(){o.options.saveState&&o.saveStateHandler&&o.saveStateHandler.saveState()};if(!e)return this._deselectCurrentNode(),void n();if(o.options.onCanSelectNode?o.options.selectable&&o.options.onCanSelectNode(e):o.options.selectable){var r,i=e;if(this.selectNodeHandler.isNodeSelected(i))t&&(this._deselectCurrentNode(),this._triggerEvent("tree.select",{node:null,previous_node:i}));else{var s=this.getSelectedNode();this._deselectCurrentNode(),this.addToSelection(i),this._triggerEvent("tree.select",{node:i,deselected_node:s}),(r=e.parent)&&r.parent&&!r.is_open&&o.openNode(r,!1)}n()}}},t.prototype._loadData=function(e,t){e&&(this._triggerEvent("tree.load_data",{tree_data:e}),t?(this._deselectNodes(t),this._loadSubtree(e,t)):this._initTree(e),this.isDragging()&&this.dndHandler&&this.dndHandler.refresh())},t.prototype._deselectNodes=function(e){if(this.selectNodeHandler)for(var t=0,o=this.selectNodeHandler.getSelectedNodesUnder(e);t<o.length;t++){var n=o[t];this.selectNodeHandler.removeFromSelection(n)}},t.prototype._loadSubtree=function(e,t){t.loadFromData(e),t.load_on_demand=!1,t.is_loading=!1,this._refreshElements(t)},t.prototype._loadDataFromUrl=function(e,t,o){var n=e||this._getDataUrlInfo(t);this.dataLoader.loadFromUrl(n,t,o)},t.prototype._loadFolderOnDemand=function(e,t,o){var n=this;void 0===t&&(t=!0),e.is_loading=!0,this._loadDataFromUrl(null,e,function(){n._openNode(e,t,o)})},t.defaults={animationSpeed:"fast",autoOpen:!1,saveState:!1,dragAndDrop:!1,selectable:!0,useContextMenu:!0,onCanSelectNode:null,onSetStateFromStorage:null,onGetStateFromStorage:null,onCreateLi:null,onIsMoveHandle:null,onCanMove:null,onCanMoveTo:null,onLoadFailed:null,autoEscape:!0,dataUrl:null,closedIcon:null,openedIcon:"&#x25bc;",slide:!0,nodeClass:m.Node,dataFilter:null,keyboardSupport:!0,openFolderDelay:500,rtl:!1,onDragMove:null,onDragStop:null,buttonLeft:!0,onLoading:null,tabIndex:0},t}(h.default);g.default.register(N,"tree")},function(e,t,o){"use strict";t.__esModule=!0;t.default="1.4.10"},function(e,t,o){"use strict";var n,r=this&&this.__extends||(n=function(e,t){return(n=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)t.hasOwnProperty(o)&&(e[o]=t[o])})(e,t)},function(e,t){function o(){this.constructor=e}n(e,t),e.prototype=null===t?Object.create(t):(o.prototype=t.prototype,new o)});t.__esModule=!0;var i=o(2),s=o(0),a=o(1),l=function(){function e(e){this.treeWidget=e,this.hoveredArea=null,this.hitAreas=[],this.isDragging=!1,this.currentItem=null,this.positionInfo=null}return e.prototype.mouseCapture=function(e){var t=i(e.target);if(!this.mustCaptureElement(t))return null;if(this.treeWidget.options.onIsMoveHandle&&!this.treeWidget.options.onIsMoveHandle(t))return null;var o=this.treeWidget._getNodeElement(t);return o&&this.treeWidget.options.onCanMove&&(this.treeWidget.options.onCanMove(o.node)||(o=null)),this.currentItem=o,null!=this.currentItem},e.prototype.generateHitAreas=function(){if(this.currentItem){var e=new d(this.treeWidget.tree,this.currentItem.node,this.getTreeDimensions().bottom);this.hitAreas=e.generate()}else this.hitAreas=[]},e.prototype.mouseStart=function(e){if(this.currentItem&&void 0!==e.pageX&&void 0!==e.pageY){this.refresh();var t=i(e.target).offset(),o=t?t.left:0,n=t?t.top:0,r=this.currentItem.node,s=this.treeWidget.options.autoEscape?a.htmlEscape(r.name):r.name;return this.dragElement=new u(s,e.pageX-o,e.pageY-n,this.treeWidget.element),this.isDragging=!0,this.positionInfo=e,this.currentItem.$element.addClass("jqtree-moving"),!0}return!1},e.prototype.mouseDrag=function(e){if(this.currentItem&&this.dragElement&&void 0!==e.pageX&&void 0!==e.pageY){this.dragElement.move(e.pageX,e.pageY),this.positionInfo=e;var t=this.findHoveredArea(e.pageX,e.pageY);return this.canMoveToArea(t)&&t?(t.node.isFolder()||this.stopOpenFolderTimer(),this.hoveredArea!==t&&(this.hoveredArea=t,this.mustOpenFolderTimer(t)?this.startOpenFolderTimer(t.node):this.stopOpenFolderTimer(),this.updateDropHint())):(this.removeHover(),this.removeDropHint(),this.stopOpenFolderTimer()),t||this.treeWidget.options.onDragMove&&this.treeWidget.options.onDragMove(this.currentItem.node,e.originalEvent),!0}return!1},e.prototype.mouseStop=function(e){this.moveItem(e),this.clear(),this.removeHover(),this.removeDropHint(),this.removeHitAreas();var t=this.currentItem;return this.currentItem&&(this.currentItem.$element.removeClass("jqtree-moving"),this.currentItem=null),this.isDragging=!1,this.positionInfo=null,!this.hoveredArea&&t&&this.treeWidget.options.onDragStop&&this.treeWidget.options.onDragStop(t.node,e.originalEvent),!1},e.prototype.refresh=function(){this.removeHitAreas(),this.currentItem&&(this.generateHitAreas(),this.currentItem=this.treeWidget._getNodeElementForNode(this.currentItem.node),this.isDragging&&this.currentItem.$element.addClass("jqtree-moving"))},e.prototype.mustCaptureElement=function(e){return!e.is("input,select,textarea")},e.prototype.canMoveToArea=function(e){if(e&&this.currentItem){if(this.treeWidget.options.onCanMoveTo){var t=s.getPositionName(e.position);return this.treeWidget.options.onCanMoveTo(this.currentItem.node,e.node,t)}return!0}return!1},e.prototype.removeHitAreas=function(){this.hitAreas=[]},e.prototype.clear=function(){this.dragElement&&(this.dragElement.remove(),this.dragElement=null)},e.prototype.removeDropHint=function(){this.previousGhost&&this.previousGhost.remove()},e.prototype.removeHover=function(){this.hoveredArea=null},e.prototype.findHoveredArea=function(e,t){var o=this.getTreeDimensions();if(e<o.left||t<o.top||e>o.right||t>o.bottom)return null;for(var n=0,r=this.hitAreas.length;n<r;){var i=n+r>>1,s=this.hitAreas[i];if(t<s.top)r=i;else{if(!(t>s.bottom))return s;n=i+1}}return null},e.prototype.mustOpenFolderTimer=function(e){var t=e.node;return t.isFolder()&&!t.is_open&&e.position===s.Position.Inside},e.prototype.updateDropHint=function(){if(this.hoveredArea){this.removeDropHint();var e=this.treeWidget._getNodeElementForNode(this.hoveredArea.node);this.previousGhost=e.addDropHint(this.hoveredArea.position)}},e.prototype.startOpenFolderTimer=function(e){var t=this;this.stopOpenFolderTimer(),this.openFolderTimer=window.setTimeout(function(){t.treeWidget._openNode(e,t.treeWidget.options.slide,function(){t.refresh(),t.updateDropHint()})},this.treeWidget.options.openFolderDelay)},e.prototype.stopOpenFolderTimer=function(){this.openFolderTimer&&(clearTimeout(this.openFolderTimer),this.openFolderTimer=null)},e.prototype.moveItem=function(e){var t=this;if(this.currentItem&&this.hoveredArea&&this.hoveredArea.position!==s.Position.None&&this.canMoveToArea(this.hoveredArea)){var o=this.currentItem.node,n=this.hoveredArea.node,r=this.hoveredArea.position,i=o.parent;r===s.Position.Inside&&(this.hoveredArea.node.is_open=!0);var a=function(){t.treeWidget.tree.moveNode(o,n,r),t.treeWidget.element.empty(),t.treeWidget._refreshElements(null)};this.treeWidget._triggerEvent("tree.move",{move_info:{moved_node:o,target_node:n,position:s.getPositionName(r),previous_parent:i,do_move:a,original_event:e.originalEvent}}).isDefaultPrevented()||a()}},e.prototype.getTreeDimensions=function(){var e=this.treeWidget.element.offset();if(e){var t=this.treeWidget.element,o=t.width()||0,n=t.height()||0,r=e.left+this.treeWidget._getScrollLeft();return{left:r,top:e.top,right:r+o,bottom:e.top+n+16}}return{left:0,top:0,right:0,bottom:0}},e}();t.DragAndDropHandler=l;var d=function(e){function t(t,o,n){var r=e.call(this,t)||this;return r.currentNode=o,r.treeBottom=n,r}return r(t,e),t.prototype.generate=function(){return this.positions=[],this.lastTop=0,this.iterate(),this.generateHitAreas(this.positions)},t.prototype.generateHitAreas=function(e){for(var t=-1,o=[],n=[],r=0,i=e;r<i.length;r++){var s=i[r];s.top!==t&&o.length&&(o.length&&this.generateHitAreasForGroup(n,o,t,s.top),t=s.top,o=[]),o.push(s)}return this.generateHitAreasForGroup(n,o,t,this.treeBottom),n},t.prototype.handleOpenFolder=function(e,t){return e!==this.currentNode&&(e.children[0]!==this.currentNode&&this.addPosition(e,s.Position.Inside,this.getTop(t)),!0)},t.prototype.handleClosedFolder=function(e,t,o){var n=this.getTop(o);e===this.currentNode?this.addPosition(e,s.Position.None,n):(this.addPosition(e,s.Position.Inside,n),t!==this.currentNode&&this.addPosition(e,s.Position.After,n))},t.prototype.handleFirstNode=function(e){e!==this.currentNode&&this.addPosition(e,s.Position.Before,this.getTop(i(e.element)))},t.prototype.handleAfterOpenFolder=function(e,t){e===this.currentNode||t===this.currentNode?this.addPosition(e,s.Position.None,this.lastTop):this.addPosition(e,s.Position.After,this.lastTop)},t.prototype.handleNode=function(e,t,o){var n=this.getTop(o);e===this.currentNode?this.addPosition(e,s.Position.None,n):this.addPosition(e,s.Position.Inside,n),t===this.currentNode||e===this.currentNode?this.addPosition(e,s.Position.None,n):this.addPosition(e,s.Position.After,n)},t.prototype.getTop=function(e){var t=e.offset();return t?t.top:0},t.prototype.addPosition=function(e,t,o){var n={top:o,bottom:0,node:e,position:t};this.positions.push(n),this.lastTop=o},t.prototype.generateHitAreasForGroup=function(e,t,o,n){for(var r=Math.min(t.length,4),i=Math.round((n-o)/r),s=o,a=0;a<r;){var l=t[a];e.push({top:s,bottom:s+i,node:l.node,position:l.position}),s+=i,a+=1}},t}(function(){function e(e){this.tree=e}return e.prototype.iterate=function(){var e=this,t=!0,o=function(n,r){var s=(n.is_open||!n.element)&&n.hasChildren(),a=null;if(n.element){if(!(a=i(n.element)).is(":visible"))return;t&&(e.handleFirstNode(n),t=!1),n.hasChildren()?n.is_open?e.handleOpenFolder(n,a)||(s=!1):e.handleClosedFolder(n,r,a):e.handleNode(n,r,a)}if(s){var l=n.children.length;n.children.forEach(function(e,t){o(n.children[t],t===l-1?null:n.children[t+1])}),n.is_open&&a&&e.handleAfterOpenFolder(n,r)}};o(this.tree,null)},e}());t.HitAreasGenerator=d;var u=function(){function e(e,t,o,n){this.offsetX=t,this.offsetY=o,this.$element=i('<span class="jqtree-title jqtree-dragging">'+e+"</span>"),this.$element.css("position","absolute"),n.append(this.$element)}return e.prototype.move=function(e,t){this.$element.offset({left:e-this.offsetX,top:t-this.offsetY})},e.prototype.remove=function(){this.$element.remove()},e}()},function(e,t,o){"use strict";t.__esModule=!0;var n=o(1),r=function(){function e(e){this.treeWidget=e,this.openedIconElement=this.createButtonElement(e.options.openedIcon),this.closedIconElement=this.createButtonElement(e.options.closedIcon)}return e.prototype.render=function(e){e&&e.parent?this.renderFromNode(e):this.renderFromRoot()},e.prototype.renderFromRoot=function(){var e=this.treeWidget.element;e.empty(),this.createDomElements(e[0],this.treeWidget.tree.children,!0,1)},e.prototype.renderFromNode=function(e){var t=jQuery(e.element),o=this.createLi(e,e.getLevel());this.attachNodeData(e,o),t.after(o),t.remove(),e.children&&this.createDomElements(o,e.children,!1,e.getLevel()+1)},e.prototype.createDomElements=function(e,t,o,n){var r=this.createUl(o);e.appendChild(r);for(var i=0,s=t;i<s.length;i++){var a=s[i],l=this.createLi(a,n);r.appendChild(l),this.attachNodeData(a,l),a.hasChildren()&&this.createDomElements(l,a.children,!1,n+1)}},e.prototype.attachNodeData=function(e,t){e.element=t,jQuery(t).data("node",e)},e.prototype.createUl=function(e){var t,o;e?(t="jqtree-tree",o="tree",this.treeWidget.options.rtl&&(t+=" jqtree-rtl")):(t="",o="group");var n=document.createElement("ul");return n.className="jqtree_common "+t,n.setAttribute("role",o),n},e.prototype.createLi=function(e,t){var o=Boolean(this.treeWidget.selectNodeHandler&&this.treeWidget.selectNodeHandler.isNodeSelected(e)),n=e.isFolder()?this.createFolderLi(e,t,o):this.createNodeLi(e,t,o);return this.treeWidget.options.onCreateLi&&this.treeWidget.options.onCreateLi(e,jQuery(n),o),n},e.prototype.createFolderLi=function(e,t,o){var n=this.getButtonClasses(e),r=this.getFolderClasses(e,o),i=e.is_open?this.openedIconElement:this.closedIconElement,s=document.createElement("li");s.className="jqtree_common "+r,s.setAttribute("role","presentation");var a=document.createElement("div");a.className="jqtree-element jqtree_common",a.setAttribute("role","presentation"),s.appendChild(a);var l=document.createElement("a");return l.className=n,l.appendChild(i.cloneNode(!0)),l.setAttribute("role","presentation"),l.setAttribute("aria-hidden","true"),this.treeWidget.options.buttonLeft&&a.appendChild(l),a.appendChild(this.createTitleSpan(e.name,t,o,e.is_open,!0)),this.treeWidget.options.buttonLeft||a.appendChild(l),s},e.prototype.createNodeLi=function(e,t,o){var n=["jqtree_common"];o&&n.push("jqtree-selected");var r=n.join(" "),i=document.createElement("li");i.className=r,i.setAttribute("role","presentation");var s=document.createElement("div");return s.className="jqtree-element jqtree_common",s.setAttribute("role","presentation"),i.appendChild(s),s.appendChild(this.createTitleSpan(e.name,t,o,e.is_open,!1)),i},e.prototype.createTitleSpan=function(e,t,o,r,i){var s=document.createElement("span"),a="jqtree-title jqtree_common";return i&&(a+=" jqtree-title-folder"),s.className=a,s.setAttribute("role","treeitem"),s.setAttribute("aria-level",""+t),s.setAttribute("aria-selected",n.getBoolString(o)),s.setAttribute("aria-expanded",n.getBoolString(r)),o&&s.setAttribute("tabindex",this.treeWidget.options.tabIndex),s.innerHTML=this.escapeIfNecessary(e),s},e.prototype.getButtonClasses=function(e){var t=["jqtree-toggler","jqtree_common"];return e.is_open||t.push("jqtree-closed"),this.treeWidget.options.buttonLeft?t.push("jqtree-toggler-left"):t.push("jqtree-toggler-right"),t.join(" ")},e.prototype.getFolderClasses=function(e,t){var o=["jqtree-folder"];return e.is_open||o.push("jqtree-closed"),t&&o.push("jqtree-selected"),e.is_loading&&o.push("jqtree-loading"),o.join(" ")},e.prototype.escapeIfNecessary=function(e){return this.treeWidget.options.autoEscape?n.htmlEscape(e):e},e.prototype.createButtonElement=function(e){if("string"==typeof e){var t=document.createElement("div");return t.innerHTML=e,document.createTextNode(t.innerHTML)}return jQuery(e)[0]},e}();t.default=r},function(e,t,o){"use strict";t.__esModule=!0;var n=function(){function e(e){this.treeWidget=e}return e.prototype.loadFromUrl=function(e,t,o){var n=this;if(e){var r=this.getDomElement(t);this.addLoadingClass(r),this.notifyLoading(!0,t,r);var i=function(){n.removeLoadingClass(r),n.notifyLoading(!1,t,r)};this.submitRequest(e,function(e){i(),n.treeWidget.loadData(n.parseData(e),t),o&&"function"==typeof o&&o()},function(e){i();var t=n.treeWidget.options.onLoadFailed;t&&t(e)})}},e.prototype.addLoadingClass=function(e){e&&e.addClass("jqtree-loading")},e.prototype.removeLoadingClass=function(e){e&&e.removeClass("jqtree-loading")},e.prototype.getDomElement=function(e){return e?jQuery(e.element):this.treeWidget.element},e.prototype.notifyLoading=function(e,t,o){var n=this.treeWidget.options.onLoading;n&&n(e,t,o),this.treeWidget._triggerEvent("tree.loading_data",{isLoading:e,node:t,$el:o})},e.prototype.submitRequest=function(e,t,o){var n=jQuery.extend({method:"GET"},"string"==typeof e?{url:e}:e,{cache:!1,dataType:"json",success:t,error:o});n.method=n.method.toUpperCase(),jQuery.ajax(n)},e.prototype.parseData=function(e){var t=this.treeWidget.options.dataFilter,o=e instanceof Array||"object"==typeof e?e:null!=e?jQuery.parseJSON(e):[];return t?t(o):o},e}();t.default=n},function(e,t,o){"use strict";t.__esModule=!0;var n=function(){function e(t){var o=this;this.handleKeyDown=function(t){if(!o.canHandleKeyboard())return!0;switch(t.which){case e.DOWN:return o.moveDown();case e.UP:return o.moveUp();case e.RIGHT:return o.moveRight();case e.LEFT:return o.moveLeft();default:return!0}},this.treeWidget=t,t.options.keyboardSupport&&jQuery(document).on("keydown.jqtree",this.handleKeyDown)}return e.prototype.deinit=function(){jQuery(document).off("keydown.jqtree")},e.prototype.moveDown=function(){var e=this.treeWidget.getSelectedNode();return!!e&&this.selectNode(e.getNextNode())},e.prototype.moveUp=function(){var e=this.treeWidget.getSelectedNode();return!!e&&this.selectNode(e.getPreviousNode())},e.prototype.moveRight=function(){var e=this.treeWidget.getSelectedNode();return!e||(!e.isFolder()||(e.is_open?this.selectNode(e.getNextNode()):(this.treeWidget.openNode(e),!1)))},e.prototype.moveLeft=function(){var e=this.treeWidget.getSelectedNode();return!e||(e.isFolder()&&e.is_open?(this.treeWidget.closeNode(e),!1):this.selectNode(e.getParent()))},e.prototype.selectNode=function(e){return!e||(this.treeWidget.selectNode(e),this.treeWidget.scrollHandler&&!this.treeWidget.scrollHandler.isScrolledIntoView(jQuery(e.element).find(".jqtree-element"))&&this.treeWidget.scrollToNode(e),!1)},e.prototype.canHandleKeyboard=function(){return this.treeWidget.options.keyboardSupport&&this.isFocusOnTree()&&null!=this.treeWidget.getSelectedNode()},e.prototype.isFocusOnTree=function(){var e=document.activeElement;return Boolean(e&&"SPAN"===e.tagName&&this.treeWidget._containsElement(e))},e.LEFT=37,e.UP=38,e.RIGHT=39,e.DOWN=40,e}();t.default=n},function(e,t,o){"use strict";var n,r=this&&this.__extends||(n=function(e,t){return(n=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)t.hasOwnProperty(o)&&(e[o]=t[o])})(e,t)},function(e,t){function o(){this.constructor=e}n(e,t),e.prototype=null===t?Object.create(t):(o.prototype=t.prototype,new o)});t.__esModule=!0;var i=function(e){function t(){var t=null!==e&&e.apply(this,arguments)||this;return t.mouseDown=function(e){if(1===e.which){var o=t._handleMouseDown(t._getPositionInfo(e));return o&&e.preventDefault(),o}},t.mouseMove=function(e){return t._handleMouseMove(e,t._getPositionInfo(e))},t.mouseUp=function(e){return t._handleMouseUp(t._getPositionInfo(e))},t.touchStart=function(e){var o=e.originalEvent;if(!(o.touches.length>1)){var n=o.changedTouches[0];return t._handleMouseDown(t._getPositionInfo(n))}},t.touchMove=function(e){var o=e.originalEvent;if(!(o.touches.length>1)){var n=o.changedTouches[0];return t._handleMouseMove(e,t._getPositionInfo(n))}},t.touchEnd=function(e){var o=e.originalEvent;if(!(o.touches.length>1)){var n=o.changedTouches[0];return t._handleMouseUp(t._getPositionInfo(n))}},t}return r(t,e),t.prototype.setMouseDelay=function(e){this.mouseDelay=e},t.prototype._init=function(){this.$el.on("mousedown.mousewidget",this.mouseDown),this.$el.on("touchstart.mousewidget",this.touchStart),this.isMouseStarted=!1,this.mouseDelay=0,this.mouseDelayTimer=null,this.isMouseDelayMet=!0,this.mouseDownInfo=null},t.prototype._deinit=function(){this.$el.off("mousedown.mousewidget"),this.$el.off("touchstart.mousewidget");var e=jQuery(document);e.off("mousemove.mousewidget"),e.off("mouseup.mousewidget")},t.prototype._handleMouseDown=function(e){if(this.isMouseStarted&&this._handleMouseUp(e),this.mouseDownInfo=e,this._mouseCapture(e))return this._handleStartMouse(),!0},t.prototype._handleStartMouse=function(){var e=jQuery(document);e.on("mousemove.mousewidget",this.mouseMove),e.on("touchmove.mousewidget",this.touchMove),e.on("mouseup.mousewidget",this.mouseUp),e.on("touchend.mousewidget",this.touchEnd),this.mouseDelay&&this._startMouseDelayTimer()},t.prototype._startMouseDelayTimer=function(){var e=this;this.mouseDelayTimer&&clearTimeout(this.mouseDelayTimer),this.mouseDelayTimer=window.setTimeout(function(){e.isMouseDelayMet=!0},this.mouseDelay),this.isMouseDelayMet=!1},t.prototype._handleMouseMove=function(e,t){return this.isMouseStarted?(this._mouseDrag(t),e.preventDefault()):!(!this.mouseDelay||this.isMouseDelayMet)||(this.mouseDownInfo&&(this.isMouseStarted=!1!==this._mouseStart(this.mouseDownInfo)),this.isMouseStarted?this._mouseDrag(t):this._handleMouseUp(t),!this.isMouseStarted)},t.prototype._getPositionInfo=function(e){return{pageX:e.pageX,pageY:e.pageY,target:e.target,originalEvent:e}},t.prototype._handleMouseUp=function(e){var t=jQuery(document);t.off("mousemove.mousewidget"),t.off("touchmove.mousewidget"),t.off("mouseup.mousewidget"),t.off("touchend.mousewidget"),this.isMouseStarted&&(this.isMouseStarted=!1,this._mouseStop(e))},t}(o(3).default);t.default=i},function(e,t,o){"use strict";t.__esModule=!0;var n=o(1),r=function(){function e(e){this.treeWidget=e}return e.prototype.saveState=function(){var e=JSON.stringify(this.getState());this.treeWidget.options.onSetStateFromStorage?this.treeWidget.options.onSetStateFromStorage(e):this.supportsLocalStorage()&&localStorage.setItem(this.getKeyName(),e)},e.prototype.getStateFromStorage=function(){var e=this._loadFromStorage();return e?this._parseState(e):null},e.prototype.getState=function(){var e,t=this;return{open_nodes:(e=[],t.treeWidget.tree.iterate(function(t){return t.is_open&&t.id&&t.hasChildren()&&e.push(t.id),!0}),e),selected_node:t.treeWidget.getSelectedNodes().map(function(e){return e.id})}},e.prototype.setInitialState=function(e){if(e){var t=!1;return e.open_nodes&&(t=this._openInitialNodes(e.open_nodes)),e.selected_node&&(this._resetSelection(),this._selectInitialNodes(e.selected_node)),t}return!1},e.prototype.setInitialStateOnDemand=function(e,t){e?this._setInitialStateOnDemand(e.open_nodes,e.selected_node,t):t()},e.prototype.getNodeIdToBeSelected=function(){var e=this.getStateFromStorage();return e&&e.selected_node?e.selected_node[0]:null},e.prototype._parseState=function(e){var t=jQuery.parseJSON(e);return t&&t.selected_node&&n.isInt(t.selected_node)&&(t.selected_node=[t.selected_node]),t},e.prototype._loadFromStorage=function(){return this.treeWidget.options.onGetStateFromStorage?this.treeWidget.options.onGetStateFromStorage():this.supportsLocalStorage()?localStorage.getItem(this.getKeyName()):void 0},e.prototype._openInitialNodes=function(e){for(var t=!1,o=0,n=e;o<n.length;o++){var r=n[o],i=this.treeWidget.getNodeById(r);i&&(i.load_on_demand?t=!0:i.is_open=!0)}return t},e.prototype._selectInitialNodes=function(e){for(var t=0,o=0,n=e;o<n.length;o++){var r=n[o],i=this.treeWidget.getNodeById(r);i&&(t+=1,this.treeWidget.selectNodeHandler&&this.treeWidget.selectNodeHandler.addToSelection(i))}return 0!==t},e.prototype._resetSelection=function(){var e=this.treeWidget.selectNodeHandler;e&&e.getSelectedNodes().forEach(function(t){e.removeFromSelection(t)})},e.prototype._setInitialStateOnDemand=function(e,t,o){var n=this,r=0,i=e,s=function(){for(var e=[],s=0,l=i;s<l.length;s++){var d=l[s],u=n.treeWidget.getNodeById(d);u?u.is_loading||(u.load_on_demand?a(u):n.treeWidget._openNode(u,!1,null)):e.push(d)}i=e,n._selectInitialNodes(t)&&n.treeWidget._refreshElements(null),0===r&&o()},a=function(e){r+=1,n.treeWidget._openNode(e,!1,function(){r-=1,s()})};s()},e.prototype.getKeyName=function(){return"string"==typeof this.treeWidget.options.saveState?this.treeWidget.options.saveState:"tree"},e.prototype.supportsLocalStorage=function(){return null==this._supportsLocalStorage&&(this._supportsLocalStorage=function(){if(null==localStorage)return!1;try{var e="_storage_test";sessionStorage.setItem(e,"value"),sessionStorage.removeItem(e)}catch(e){return!1}return!0}()),this._supportsLocalStorage},e}();t.default=r},function(e,t,o){"use strict";t.__esModule=!0;var n=function(){function e(e){this.treeWidget=e,this.previousTop=-1,this.isInitialized=!1}return e.prototype.checkScrolling=function(){this.ensureInit(),this.checkVerticalScrolling(),this.checkHorizontalScrolling()},e.prototype.scrollToY=function(e){if(this.ensureInit(),this.$scrollParent)this.$scrollParent[0].scrollTop=e;else{var t=this.treeWidget.$el.offset(),o=t?t.top:0;jQuery(document).scrollTop(e+o)}},e.prototype.isScrolledIntoView=function(e){var t,o,n,r;this.ensureInit();var i,s=e.height()||0;this.$scrollParent?(r=0,o=this.$scrollParent.height()||0,t=(n=((i=e.offset())?i.top:0)-this.scrollParentTop)+s):(o=(r=jQuery(window).scrollTop()||0)+(jQuery(window).height()||0),t=(n=(i=e.offset())?i.top:0)+s);return t<=o&&n>=r},e.prototype.getScrollLeft=function(){return this.$scrollParent&&this.$scrollParent.scrollLeft()||0},e.prototype.initScrollParent=function(){var e=this,t=function(){e.scrollParentTop=0,e.$scrollParent=null};"fixed"===this.treeWidget.$el.css("position")&&t();var o=function(){var t=["overflow","overflow-y"],o=function(e){for(var o=0,n=t;o<n.length;o++){var r=n[o],i=e.css(r);if("auto"===i||"scroll"===i)return!0}return!1};if(o(e.treeWidget.$el))return e.treeWidget.$el;for(var n=0,r=e.treeWidget.$el.parents().get();n<r.length;n++){var i=r[n],s=jQuery(i);if(o(s))return s}return null}();if(o&&o.length&&"HTML"!==o[0].tagName){this.$scrollParent=o;var n=this.$scrollParent.offset();this.scrollParentTop=n?n.top:0}else t();this.isInitialized=!0},e.prototype.ensureInit=function(){this.isInitialized||this.initScrollParent()},e.prototype.handleVerticalScrollingWithScrollParent=function(e){var t=this.$scrollParent&&this.$scrollParent[0];t&&(this.scrollParentTop+t.offsetHeight-e.bottom<20?(t.scrollTop+=20,this.treeWidget.refreshHitAreas(),this.previousTop=-1):e.top-this.scrollParentTop<20&&(t.scrollTop-=20,this.treeWidget.refreshHitAreas(),this.previousTop=-1))},e.prototype.handleVerticalScrollingWithDocument=function(e){var t=jQuery(document).scrollTop()||0;e.top-t<20?jQuery(document).scrollTop(t-20):(jQuery(window).height()||0)-(e.bottom-t)<20&&jQuery(document).scrollTop(t+20)},e.prototype.checkVerticalScrolling=function(){var e=this.treeWidget.dndHandler&&this.treeWidget.dndHandler.hoveredArea;e&&e.top!==this.previousTop&&(this.previousTop=e.top,this.$scrollParent?this.handleVerticalScrollingWithScrollParent(e):this.handleVerticalScrollingWithDocument(e))},e.prototype.checkHorizontalScrolling=function(){var e=this.treeWidget.dndHandler&&this.treeWidget.dndHandler.positionInfo;e&&(this.$scrollParent?this.handleHorizontalScrollingWithParent(e):this.handleHorizontalScrollingWithDocument(e))},e.prototype.handleHorizontalScrollingWithParent=function(e){if(void 0!==e.pageX&&void 0!==e.pageY){var t=this.$scrollParent,o=t&&t.offset();if(t&&o){var n=t[0],r=n.scrollLeft+n.clientWidth<n.scrollWidth,i=n.scrollLeft>0,s=o.left+n.clientWidth,a=o.left,l=e.pageX>s-20,d=e.pageX<a+20;l&&r?n.scrollLeft=Math.min(n.scrollLeft+20,n.scrollWidth):d&&i&&(n.scrollLeft=Math.max(n.scrollLeft-20,0))}}},e.prototype.handleHorizontalScrollingWithDocument=function(e){if(void 0!==e.pageX&&void 0!==e.pageY){var t=jQuery(document),o=t.scrollLeft()||0,n=jQuery(window).width()||0,r=o>0,i=e.pageX>n-20,s=e.pageX-o<20;i?t.scrollLeft(o+20):s&&r&&t.scrollLeft(Math.max(o-20,0))}},e}();t.default=n},function(e,t,o){"use strict";t.__esModule=!0;var n=function(){function e(e){this.treeWidget=e,this.clear()}return e.prototype.getSelectedNode=function(){var e=this.getSelectedNodes();return!!e.length&&e[0]},e.prototype.getSelectedNodes=function(){if(this.selectedSingleNode)return[this.selectedSingleNode];var e=[];for(var t in this.selectedNodes)if(this.selectedNodes.hasOwnProperty(t)){var o=this.treeWidget.getNodeById(t);o&&e.push(o)}return e},e.prototype.getSelectedNodesUnder=function(e){if(this.selectedSingleNode)return e.isParentOf(this.selectedSingleNode)?[this.selectedSingleNode]:[];var t=[];for(var o in this.selectedNodes)if(this.selectedNodes.hasOwnProperty(o)){var n=this.treeWidget.getNodeById(o);n&&e.isParentOf(n)&&t.push(n)}return t},e.prototype.isNodeSelected=function(e){return!!e&&(null!=e.id?!!this.selectedNodes[e.id]:!!this.selectedSingleNode&&this.selectedSingleNode.element===e.element)},e.prototype.clear=function(){this.selectedNodes={},this.selectedSingleNode=null},e.prototype.removeFromSelection=function(e,t){var o=this;void 0===t&&(t=!1),null==e.id?this.selectedSingleNode&&e.element===this.selectedSingleNode.element&&(this.selectedSingleNode=null):(delete this.selectedNodes[e.id],t&&e.iterate(function(){return delete o.selectedNodes[e.id],!0}))},e.prototype.addToSelection=function(e){null!=e.id?this.selectedNodes[e.id]=!0:this.selectedSingleNode=e},e}();t.default=n},function(e,t,o){"use strict";var n,r=this&&this.__extends||(n=function(e,t){return(n=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)t.hasOwnProperty(o)&&(e[o]=t[o])})(e,t)},function(e,t){function o(){this.constructor=e}n(e,t),e.prototype=null===t?Object.create(t):(o.prototype=t.prototype,new o)});t.__esModule=!0;var i=o(0),s=function(){function e(e,t){this.init(e,t)}return e.prototype.init=function(e,t){this.node=e,this.treeWidget=t,e.element||(e.element=this.treeWidget.element.get(0)),this.$element=jQuery(e.element)},e.prototype.addDropHint=function(e){return this.mustShowBorderDropHint(e)?new l(this.$element,this.treeWidget._getScrollLeft()):new d(this.node,this.$element,e)},e.prototype.select=function(e){var t=this.getLi();t.addClass("jqtree-selected"),t.attr("aria-selected","true");var o=this.getSpan();o.attr("tabindex",this.treeWidget.options.tabIndex),e&&o.focus()},e.prototype.deselect=function(){var e=this.getLi();e.removeClass("jqtree-selected"),e.attr("aria-selected","false");var t=this.getSpan();t.removeAttr("tabindex"),t.blur()},e.prototype.getUl=function(){return this.$element.children("ul:first")},e.prototype.getSpan=function(){return this.$element.children(".jqtree-element").find("span.jqtree-title")},e.prototype.getLi=function(){return this.$element},e.prototype.mustShowBorderDropHint=function(e){return e===i.Position.Inside},e}();t.NodeElement=s;var a=function(e){function t(){return null!==e&&e.apply(this,arguments)||this}return r(t,e),t.prototype.open=function(e,t,o){var n=this;if(void 0===t&&(t=!0),void 0===o&&(o="fast"),!this.node.is_open){this.node.is_open=!0;var r=this.getButton();r.removeClass("jqtree-closed"),r.html("");var i=r.get(0);if(i){var s=this.treeWidget.renderer.openedIconElement.cloneNode(!0);i.appendChild(s)}var a=function(){n.getLi().removeClass("jqtree-closed"),n.getSpan().attr("aria-expanded","true"),e&&e(n.node),n.treeWidget._triggerEvent("tree.open",{node:n.node})};t?this.getUl().slideDown(o,a):(this.getUl().show(),a())}},t.prototype.close=function(e,t){var o=this;if(void 0===e&&(e=!0),void 0===t&&(t="fast"),this.node.is_open){this.node.is_open=!1;var n=this.getButton();n.addClass("jqtree-closed"),n.html("");var r=n.get(0);if(r){var i=this.treeWidget.renderer.closedIconElement.cloneNode(!0);r.appendChild(i)}var s=function(){o.getLi().addClass("jqtree-closed"),o.getSpan().attr("aria-expanded","false"),o.treeWidget._triggerEvent("tree.close",{node:o.node})};e?this.getUl().slideUp(t,s):(this.getUl().hide(),s())}},t.prototype.mustShowBorderDropHint=function(e){return!this.node.is_open&&e===i.Position.Inside},t.prototype.getButton=function(){return this.$element.children(".jqtree-element").find("a.jqtree-toggler")},t}(s);t.FolderElement=a;var l=function(){function e(e,t){var o=e.children(".jqtree-element"),n=e.width()||0,r=Math.max(n+t-4,0),i=o.outerHeight()||0,s=Math.max(i-4,0);this.$hint=jQuery('<span class="jqtree-border"></span>'),o.append(this.$hint),this.$hint.css({width:r,height:s})}return e.prototype.remove=function(){this.$hint.remove()},e}();t.BorderDropHint=l;var d=function(){function e(e,t,o){this.$element=t,this.node=e,this.$ghost=jQuery('<li class="jqtree_common jqtree-ghost"><span class="jqtree_common jqtree-circle"></span>\n            <span class="jqtree_common jqtree-line"></span></li>'),o===i.Position.After?this.moveAfter():o===i.Position.Before?this.moveBefore():o===i.Position.Inside&&(e.isFolder()&&e.is_open?this.moveInsideOpenFolder():this.moveInside())}return e.prototype.remove=function(){this.$ghost.remove()},e.prototype.moveAfter=function(){this.$element.after(this.$ghost)},e.prototype.moveBefore=function(){this.$element.before(this.$ghost)},e.prototype.moveInsideOpenFolder=function(){jQuery(this.node.children[0].element).before(this.$ghost)},e.prototype.moveInside=function(){this.$element.after(this.$ghost),this.$ghost.addClass("jqtree-inside")},e}()},,function(e,t,o){e.exports=o(4)}]);
 
   }).apply(root, arguments);
 });
@@ -11413,7 +8028,7 @@ define('moxie/core/utils/Basic', [], function() {
 		// the snippet below is awesome, however it fails to detect null, undefined and arguments types in IE lte 8
 		return ({}).toString.call(o).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
 	};
-
+		
 	/**
 	Extends the specified object with another object.
 
@@ -11441,7 +8056,7 @@ define('moxie/core/utils/Basic', [], function() {
 		});
 		return target;
 	};
-
+		
 	/**
 	Executes the callback function for each item in array/object. If you return false in the
 	callback it will break the loop.
@@ -11477,7 +8092,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Checks if object is empty.
-
+	
 	@method isEmptyObj
 	@static
 	@param {Object} o Object to check.
@@ -11534,7 +8149,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Recieve an array of functions (usually async) to call in parallel, each  function
-	receives a callback as first argument that it should call, when it completes. After
+	receives a callback as first argument that it should call, when it completes. After 
 	everything is complete, main callback is called. Passing truthy value to the
 	callback as a first argument will interrupt the process and invoke main callback
 	immediately.
@@ -11552,7 +8167,7 @@ define('moxie/core/utils/Basic', [], function() {
 				if (error) {
 					return cb(error);
 				}
-
+				
 				var args = [].slice.call(arguments);
 				args.shift(); // strip error - undefined or not
 
@@ -11562,15 +8177,15 @@ define('moxie/core/utils/Basic', [], function() {
 				if (count === num) {
 					cbArgs.unshift(null);
 					cb.apply(this, cbArgs);
-				}
+				} 
 			});
 		});
 	};
-
-
+	
+	
 	/**
 	Find an element in array and return it's index if present, otherwise return -1.
-
+	
 	@method inArray
 	@static
 	@param {Mixed} needle Element to find
@@ -11582,7 +8197,7 @@ define('moxie/core/utils/Basic', [], function() {
 			if (Array.prototype.indexOf) {
 				return Array.prototype.indexOf.call(array, needle);
 			}
-
+		
 			for (var i = 0, length = array.length; i < length; i++) {
 				if (array[i] === needle) {
 					return i;
@@ -11616,7 +8231,7 @@ define('moxie/core/utils/Basic', [], function() {
 		for (var i in needles) {
 			if (inArray(needles[i], array) === -1) {
 				diff.push(needles[i]);
-			}
+			}	
 		}
 		return diff.length ? diff : false;
 	};
@@ -11640,11 +8255,11 @@ define('moxie/core/utils/Basic', [], function() {
 		});
 		return result.length ? result : null;
 	};
-
-
+	
+	
 	/**
 	Forces anything into an array.
-
+	
 	@method toArray
 	@static
 	@param {Object} obj Object with length field.
@@ -11659,14 +8274,14 @@ define('moxie/core/utils/Basic', [], function() {
 
 		return arr;
 	};
-
-
+	
+			
 	/**
 	Generates an unique ID. The only way a user would be able to get the same ID is if the two persons
-	at the same exact millisecond manage to get the same 5 random numbers between 0-65535; it also uses
-	a counter so each ID is guaranteed to be unique for the given page. It is more probable for the earth
+	at the same exact millisecond manage to get the same 5 random numbers between 0-65535; it also uses 
+	a counter so each ID is guaranteed to be unique for the given page. It is more probable for the earth 
 	to be hit with an asteroid.
-
+	
 	@method guid
 	@static
 	@param {String} prefix to prepend (by default 'o' will be prepended).
@@ -11675,22 +8290,22 @@ define('moxie/core/utils/Basic', [], function() {
 	*/
 	var guid = (function() {
 		var counter = 0;
-
+		
 		return function(prefix) {
 			var guid = new Date().getTime().toString(32), i;
 
 			for (i = 0; i < 5; i++) {
 				guid += Math.floor(Math.random() * 65535).toString(32);
 			}
-
+			
 			return (prefix || 'o_') + guid + (counter++).toString(32);
 		};
 	}());
-
+	
 
 	/**
 	Trims white spaces around the string
-
+	
 	@method trim
 	@static
 	@param {String} str
@@ -11706,7 +8321,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Parses the specified size string into a byte value. For example 10kb becomes 10240.
-
+	
 	@method parseSizeStr
 	@static
 	@param {String/Number} size String to parse or number to just pass through.
@@ -11716,7 +8331,7 @@ define('moxie/core/utils/Basic', [], function() {
 		if (typeof(size) !== 'string') {
 			return size;
 		}
-
+		
 		var muls = {
 				t: 1099511627776,
 				g: 1073741824,
@@ -11729,7 +8344,7 @@ define('moxie/core/utils/Basic', [], function() {
 		size = /^([0-9\.]+)([tmgk]?)$/.exec(size.toLowerCase().replace(/[^0-9\.tmkg]/g, ''));
 		mul = size[2];
 		size = +size[1];
-
+		
 		if (muls.hasOwnProperty(mul)) {
 			size *= muls[mul];
 		}
@@ -11751,7 +8366,7 @@ define('moxie/core/utils/Basic', [], function() {
 			return typeOf(value) !== 'undefined' ? value : '';
 		});
 	};
-
+	
 
 	return {
 		guid: guid,
@@ -11786,7 +8401,7 @@ define('moxie/core/utils/Basic', [], function() {
 define("moxie/core/utils/Env", [
 	"moxie/core/utils/Basic"
 ], function(Basic) {
-
+	
 	/**
 	 * UAParser.js v0.7.7
 	 * Lightweight JavaScript-based User-Agent string parser
@@ -11989,7 +8604,7 @@ define("moxie/core/utils/Env", [
 	    var regexes = {
 
 	        browser : [[
-
+	        
 	            // Presto based
 	            /(opera\smini)\/([\w\.-]+)/i,                                       // Opera Mini
 	            /(opera\s[mobiletab]+).+version\/([\w\.-]+)/i,                      // Opera Mobi/Tablet
@@ -12378,7 +8993,7 @@ define("moxie/core/utils/Env", [
 					du.onload = function() {
 						caps.use_data_uri = (du.width === 1 && du.height === 1);
 					};
-
+					
 					setTimeout(function() {
 						du.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
 					}, 1);
@@ -12419,14 +9034,14 @@ define("moxie/core/utils/Env", [
 		can: can,
 
 		uaParser: UAParser,
-
+		
 		browser: uaResult.browser.name,
 		version: uaResult.browser.version,
 		os: uaResult.os.name, // everybody intuitively types it in a lowercase for some reason
 		osVersion: uaResult.os.version,
 
 		verComp: version_compare,
-
+		
 		swf_url: "../flash/Moxie.swf",
 		xap_url: "../silverlight/Moxie.xap",
 		global_event_dispatcher: "moxie.core.EventTarget.instance.dispatchEvent"
@@ -12443,7 +9058,7 @@ define("moxie/core/utils/Env", [
 		};
 
 		Env.log = function() {
-
+			
 			function logObj(data) {
 				// TODO: this should recursively print out the object in a pretty way
 				console.appendChild(document.createTextNode(data + "\n"));
@@ -12559,7 +9174,7 @@ define("moxie/core/utils/Mime", [
 	"moxie/core/utils/Basic",
 	"moxie/core/I18n"
 ], function(Basic, I18n) {
-
+	
 	var mimeData = "" +
 		"application/msword,doc dot," +
 		"application/pdf,pdf," +
@@ -12610,12 +9225,12 @@ define("moxie/core/utils/Mime", [
 		"video/3gpp,3gpp 3gp," +
 		"video/3gpp2,3g2," +
 		"video/vnd.rn-realvideo,rv," +
-		"video/ogg,ogv," +
+		"video/ogg,ogv," + 
 		"video/x-matroska,mkv," +
 		"application/vnd.oasis.opendocument.formula-template,otf," +
 		"application/octet-stream,exe";
-
-
+	
+	
 	var Mime = {
 
 		mimes: {},
@@ -12625,7 +9240,7 @@ define("moxie/core/utils/Mime", [
 		// Parses the default mime types string into a mimes and extensions lookup maps
 		addMimeType: function (mimeData) {
 			var items = mimeData.split(/,/), i, ii, ext;
-
+			
 			for (i = 0; i < items.length; i += 2) {
 				ext = items[i + 1].split(/ /);
 
@@ -12641,13 +9256,13 @@ define("moxie/core/utils/Mime", [
 
 		extList2mimes: function (filters, addMissingExtensions) {
 			var self = this, ext, i, ii, type, mimes = [];
-
+			
 			// convert extensions to mime types list
 			for (i = 0; i < filters.length; i++) {
 				ext = filters[i].extensions.split(/\s*,\s*/);
 
 				for (ii = 0; ii < ext.length; ii++) {
-
+					
 					// if there's an asterisk in the list, then accept attribute is not required
 					if (ext[ii] === '*') {
 						return [];
@@ -12673,7 +9288,7 @@ define("moxie/core/utils/Mime", [
 
 		mimes2exts: function(mimes) {
 			var self = this, exts = [];
-
+			
 			Basic.each(mimes, function(mime) {
 				if (mime === '*') {
 					exts = [];
@@ -12683,7 +9298,7 @@ define("moxie/core/utils/Mime", [
 				// check if this thing looks like mime type
 				var m = mime.match(/^(\w+)\/(\*|\w+)$/);
 				if (m) {
-					if (m[2] === '*') {
+					if (m[2] === '*') { 
 						// wildcard mime type detected
 						Basic.each(self.extensions, function(arr, mime) {
 							if ((new RegExp('^' + m[1] + '/')).test(mime)) {
@@ -12707,12 +9322,12 @@ define("moxie/core/utils/Mime", [
 			}
 
 			exts = this.mimes2exts(mimes);
-
+			
 			accept.push({
 				title: I18n.translate('Files'),
 				extensions: exts.length ? exts.join(',') : '*'
 			});
-
+			
 			// save original mimes string
 			accept.mimes = mimes;
 
@@ -12959,25 +9574,25 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": RuntimeError " + this.code;
 			}
-
+			
 			Basic.extend(RuntimeError, namecodes);
 			RuntimeError.prototype = Error.prototype;
 			return RuntimeError;
 		}()),
-
+		
 		OperationNotAllowedException: (function() {
-
+			
 			function OperationNotAllowedException(code) {
 				this.code = code;
 				this.name = 'OperationNotAllowedException';
 			}
-
+			
 			Basic.extend(OperationNotAllowedException, {
 				NOT_ALLOWED_ERR: 1
 			});
-
+			
 			OperationNotAllowedException.prototype = Error.prototype;
-
+			
 			return OperationNotAllowedException;
 		}()),
 
@@ -12993,7 +9608,7 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": ImageError " + this.code;
 			}
-
+			
 			Basic.extend(ImageError, namecodes);
 			ImageError.prototype = Error.prototype;
 
@@ -13017,12 +9632,12 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": FileException " + this.code;
 			}
-
+			
 			Basic.extend(FileException, namecodes);
 			FileException.prototype = Error.prototype;
 			return FileException;
 		}()),
-
+		
 		DOMException: (function() {
 			var namecodes = {
 				INDEX_SIZE_ERR: 1,
@@ -13057,24 +9672,24 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": DOMException " + this.code;
 			}
-
+			
 			Basic.extend(DOMException, namecodes);
 			DOMException.prototype = Error.prototype;
 			return DOMException;
 		}()),
-
+		
 		EventException: (function() {
 			function EventException(code) {
 				this.code = code;
 				this.name = 'EventException';
 			}
-
+			
 			Basic.extend(EventException, {
 				UNSPECIFIED_EVENT_TYPE_ERR: 0
 			});
-
+			
 			EventException.prototype = Error.prototype;
-
+			
 			return EventException;
 		}())
 	};
@@ -13106,9 +9721,9 @@ define('moxie/core/EventTarget', [
 	function EventTarget() {
 		// hash of event listeners by object uid
 		var eventpool = {};
-
+				
 		Basic.extend(this, {
-
+			
 			/**
 			Unique id of the event dispatcher, usually overriden by children
 
@@ -13116,7 +9731,7 @@ define('moxie/core/EventTarget', [
 			@type String
 			*/
 			uid: null,
-
+			
 			/**
 			Can be called from within a child  in order to acquire uniqie id in automated manner
 
@@ -13144,9 +9759,9 @@ define('moxie/core/EventTarget', [
 				if (!this.hasOwnProperty('uid')) {
 					this.uid = Basic.guid('uid_');
 				}
-
+				
 				type = Basic.trim(type);
-
+				
 				if (/\s/.test(type)) {
 					// multiple event types were passed for one handler
 					Basic.each(type.split(/\s+/), function(type) {
@@ -13154,19 +9769,19 @@ define('moxie/core/EventTarget', [
 					});
 					return;
 				}
-
+				
 				type = type.toLowerCase();
 				priority = parseInt(priority, 10) || 0;
-
+				
 				list = eventpool[this.uid] && eventpool[this.uid][type] || [];
 				list.push({fn : fn, priority : priority, scope : scope || this});
-
+				
 				if (!eventpool[this.uid]) {
 					eventpool[this.uid] = {};
 				}
 				eventpool[this.uid][type] = list;
 			},
-
+			
 			/**
 			Check if any handlers were registered to the specified event
 
@@ -13178,7 +9793,7 @@ define('moxie/core/EventTarget', [
 				var list = type ? eventpool[this.uid] && eventpool[this.uid][type] : eventpool[this.uid];
 				return list ? list : false;
 			},
-
+			
 			/**
 			Unregister the handler from the event, or if former was not specified - unregister all handlers
 
@@ -13188,9 +9803,9 @@ define('moxie/core/EventTarget', [
 			*/
 			removeEventListener: function(type, fn) {
 				type = type.toLowerCase();
-
+	
 				var list = eventpool[this.uid] && eventpool[this.uid][type], i;
-
+	
 				if (list) {
 					if (fn) {
 						for (i = list.length - 1; i >= 0; i--) {
@@ -13202,11 +9817,11 @@ define('moxie/core/EventTarget', [
 					} else {
 						list = [];
 					}
-
+	
 					// delete event list if it has become empty
 					if (!list.length) {
 						delete eventpool[this.uid][type];
-
+						
 						// and object specific entry in a hash if it has no more listeners attached
 						if (Basic.isEmptyObj(eventpool[this.uid])) {
 							delete eventpool[this.uid];
@@ -13214,7 +9829,7 @@ define('moxie/core/EventTarget', [
 					}
 				}
 			},
-
+			
 			/**
 			Remove all event handlers from the object
 
@@ -13225,7 +9840,7 @@ define('moxie/core/EventTarget', [
 					delete eventpool[this.uid];
 				}
 			},
-
+			
 			/**
 			Dispatch the event
 
@@ -13236,7 +9851,7 @@ define('moxie/core/EventTarget', [
 			*/
 			dispatchEvent: function(type) {
 				var uid, list, args, tmpEvt, evt = {}, result = true, undef;
-
+				
 				if (Basic.typeOf(type) !== 'string') {
 					// we can't use original object directly (because of Silverlight)
 					tmpEvt = type;
@@ -13253,7 +9868,7 @@ define('moxie/core/EventTarget', [
 						throw new x.EventException(x.EventException.UNSPECIFIED_EVENT_TYPE_ERR);
 					}
 				}
-
+				
 				// check if event is meant to be dispatched on an object having specific uid
 				if (type.indexOf('::') !== -1) {
 					(function(arr) {
@@ -13263,24 +9878,24 @@ define('moxie/core/EventTarget', [
 				} else {
 					uid = this.uid;
 				}
-
+				
 				type = type.toLowerCase();
-
+								
 				list = eventpool[uid] && eventpool[uid][type];
 
 				if (list) {
 					// sort event list by prority
 					list.sort(function(a, b) { return b.priority - a.priority; });
-
+					
 					args = [].slice.call(arguments);
-
+					
 					// first argument will be pseudo-event object
 					args.shift();
 					evt.type = type;
 					args.unshift(evt);
 
 					if (MXI_DEBUG && Env.debug.events) {
-						Env.log("Event '%s' fired on %u", evt.type, uid);
+						Env.log("Event '%s' fired on %u", evt.type, uid);	
 					}
 
 					// Dispatch event to all listeners
@@ -13309,7 +9924,7 @@ define('moxie/core/EventTarget', [
 				}
 				return result;
 			},
-
+			
 			/**
 			Alias for addEventListener
 
@@ -13319,7 +9934,7 @@ define('moxie/core/EventTarget', [
 			bind: function() {
 				this.addEventListener.apply(this, arguments);
 			},
-
+			
 			/**
 			Alias for removeEventListener
 
@@ -13329,7 +9944,7 @@ define('moxie/core/EventTarget', [
 			unbind: function() {
 				this.removeEventListener.apply(this, arguments);
 			},
-
+			
 			/**
 			Alias for removeAllEventListeners
 
@@ -13339,7 +9954,7 @@ define('moxie/core/EventTarget', [
 			unbindAll: function() {
 				this.removeAllEventListeners.apply(this, arguments);
 			},
-
+			
 			/**
 			Alias for dispatchEvent
 
@@ -13349,7 +9964,7 @@ define('moxie/core/EventTarget', [
 			trigger: function() {
 				return this.dispatchEvent.apply(this, arguments);
 			},
-
+			
 
 			/**
 			Handle properties of on[event] type.
@@ -13371,15 +9986,15 @@ define('moxie/core/EventTarget', [
 				Basic.each(dispatches, function(prop) {
 					prop = 'on' + prop.toLowerCase(prop);
 					if (Basic.typeOf(self[prop]) === 'undefined') {
-						self[prop] = null;
+						self[prop] = null; 
 					}
 				});
 			}
-
+			
 		});
 	}
 
-	EventTarget.instance = new EventTarget();
+	EventTarget.instance = new EventTarget(); 
 
 	return EventTarget;
 });
@@ -13449,10 +10064,10 @@ define('moxie/runtime/Runtime', [
 		@type Object
 		*/
 		caps = Basic.extend({
-			// Runtime can:
+			// Runtime can: 
 			// provide access to raw binary data of the file
 			access_binary: false,
-			// provide access to raw binary data of the image (image extension is optional)
+			// provide access to raw binary data of the image (image extension is optional) 
 			access_image_binary: false,
 			// display binary data as thumbs for example
 			display_media: false,
@@ -13466,7 +10081,7 @@ define('moxie/runtime/Runtime', [
 			resize_image: false,
 			// periodically report how many bytes of total in the file were uploaded (loaded)
 			report_upload_progress: false,
-			// provide access to the headers of http response
+			// provide access to the headers of http response 
 			return_response_headers: false,
 			// support response of specific type, which should be passed as an argument
 			// e.g. runtime.can('return_response_type', 'blob')
@@ -13500,17 +10115,17 @@ define('moxie/runtime/Runtime', [
 			// e.g. runtime.can('use_http_method', 'put')
 			use_http_method: true
 		}, caps);
-
-
+			
+	
 		// default to the mode that is compatible with preferred caps
 		if (options.preferred_caps) {
 			defaultMode = Runtime.getMode(modeCaps, options.preferred_caps, defaultMode);
 		}
 
 		if (MXI_DEBUG && Env.debug.runtime) {
-			Env.log("\tdefault mode: %s", defaultMode);
+			Env.log("\tdefault mode: %s", defaultMode);	
 		}
-
+		
 		// small extension factory here (is meant to be extended with actual extensions constructors)
 		_shim = (function() {
 			var objpool = {};
@@ -13744,7 +10359,7 @@ define('moxie/runtime/Runtime', [
 		// once we got the mode, test against all caps
 		if (this.mode && options.required_caps && !this.can(options.required_caps)) {
 			this.mode = false;
-		}
+		}	
 	}
 
 
@@ -13899,7 +10514,7 @@ define('moxie/runtime/Runtime', [
 	@static
 	@param {Object} modeCaps Set of capabilities that depend on particular runtime mode
 	@param {Object} [requiredCaps] Supplied set of capabilities to find operational mode for
-	@param {String|Boolean} [defaultMode='browser'] Default mode to use
+	@param {String|Boolean} [defaultMode='browser'] Default mode to use 
 	@return {String|Boolean} Compatible operational mode
 	*/
 	Runtime.getMode = function(modeCaps, requiredCaps, defaultMode) {
@@ -13919,22 +10534,22 @@ define('moxie/runtime/Runtime', [
 					if (typeof(capMode) === 'string') {
 						capMode = [capMode];
 					}
-
+					
 					if (!mode) {
-						mode = capMode;
+						mode = capMode;						
 					} else if (!(mode = Basic.arrayIntersect(mode, capMode))) {
 						// if cap requires conflicting mode - runtime cannot fulfill required caps
 
 						if (MXI_DEBUG && Env.debug.runtime) {
-							Env.log("\t\t%c: %v (conflicting mode requested: %s)", cap, value, capMode);
+							Env.log("\t\t%c: %v (conflicting mode requested: %s)", cap, value, capMode);	
 						}
 
 						return (mode = false);
-					}
+					}					
 				}
 
 				if (MXI_DEBUG && Env.debug.runtime) {
-					Env.log("\t\t%c: %v (compatible modes: %s)", cap, value, mode);
+					Env.log("\t\t%c: %v (compatible modes: %s)", cap, value, mode);	
 				}
 			});
 
@@ -13944,7 +10559,7 @@ define('moxie/runtime/Runtime', [
 				return false;
 			}
 		}
-		return defaultMode;
+		return defaultMode; 
 	};
 
 
@@ -14078,7 +10693,7 @@ define('moxie/runtime/RuntimeClient', [
 					/*runtime.bind('Exception', function() { });*/
 
 					if (MXI_DEBUG && Env.debug.runtime) {
-						Env.log("\tselected mode: %s", runtime.mode);
+						Env.log("\tselected mode: %s", runtime.mode);	
 					}
 
 					// check if runtime managed to pick-up operational mode
@@ -14145,7 +10760,7 @@ define('moxie/runtime/RuntimeClient', [
 
 			/**
 			Handy shortcut to safely invoke runtime extension methods.
-
+			
 			@private
 			@method exec
 			@return {Mixed} Whatever runtime extension method returns
@@ -14201,7 +10816,7 @@ define('moxie/file/FileInput', [
 		@param {String} [options.file='file'] Name of the file field (not the filename).
 		@param {Boolean} [options.multiple=false] Enable selection of multiple files.
 		@param {Boolean} [options.directory=false] Turn file input into the folder input (cannot be both at the same time).
-		@param {String|DOMElement} [options.container] DOM Element to use as a container for file-picker. Defaults to parentNode
+		@param {String|DOMElement} [options.container] DOM Element to use as a container for file-picker. Defaults to parentNode 
 		for _browse\_button_.
 		@param {Object|String} [options.required_caps] Set of required capabilities, that chosen runtime must support.
 
@@ -14238,7 +10853,7 @@ define('moxie/file/FileInput', [
 		'ready',
 
 		/**
-		Dispatched right after [ready](#event_ready) event, and whenever [refresh()](#method_refresh) is invoked.
+		Dispatched right after [ready](#event_ready) event, and whenever [refresh()](#method_refresh) is invoked. 
 		Check [corresponding documentation entry](#method_refresh) for more info.
 
 		@event refresh
@@ -14292,7 +10907,7 @@ define('moxie/file/FileInput', [
 
 	function FileInput(options) {
 		if (MXI_DEBUG) {
-			Env.log("Instantiating FileInput...");
+			Env.log("Instantiating FileInput...");	
 		}
 
 		var self = this,
@@ -14321,14 +10936,14 @@ define('moxie/file/FileInput', [
 			required_caps: false,
 			container: browseButton.parentNode || document.body
 		};
-
+		
 		options = Basic.extend({}, defaults, options);
 
 		// convert to object representation
 		if (typeof(options.required_caps) === 'string') {
 			options.required_caps = Runtime.parseCaps(options.required_caps);
 		}
-
+					
 		// normalize accept option (could be list of mime types or array of title/extensions pairs)
 		if (typeof(options.accept) === 'string') {
 			options.accept = Mime.mimes2extList(options.accept);
@@ -14346,9 +10961,9 @@ define('moxie/file/FileInput', [
 		}
 
 		container = browseButton = null; // IE
-
+						
 		RuntimeClient.call(self);
-
+		
 		Basic.extend(self, {
 			/**
 			Unique id of the component
@@ -14360,7 +10975,7 @@ define('moxie/file/FileInput', [
 			@default UID
 			*/
 			uid: Basic.guid('uid_'),
-
+			
 			/**
 			Unique id of the connected runtime, if any.
 
@@ -14378,7 +10993,7 @@ define('moxie/file/FileInput', [
 			@type {String}
 			*/
 			shimid: null,
-
+			
 			/**
 			Array of selected mOxie.File objects
 
@@ -14405,7 +11020,7 @@ define('moxie/file/FileInput', [
 					// re-position and resize shim container
 					self.bind('Refresh', function() {
 						var pos, size, browseButton, shimContainer;
-
+						
 						browseButton = Dom.get(options.browse_button);
 						shimContainer = Dom.get(runtime.shimid); // do not use runtime.getShimContainer(), since it will create container if it doesn't exist
 
@@ -14424,7 +11039,7 @@ define('moxie/file/FileInput', [
 						}
 						shimContainer = browseButton = null;
 					});
-
+					
 					runtime.exec.call(self, 'FileInput', 'init', options);
 				});
 
@@ -14477,7 +11092,7 @@ define('moxie/file/FileInput', [
 					Basic.each(this.files, function(file) {
 						file.destroy();
 					});
-				}
+				} 
 				this.files = null;
 
 				this.unbindAll();
@@ -14518,7 +11133,7 @@ define('moxie/core/utils/Encode', [], function() {
 	var utf8_encode = function(str) {
 		return unescape(encodeURIComponent(str));
 	};
-
+	
 	/**
 	Decode UTF-8 encoded string
 
@@ -14530,7 +11145,7 @@ define('moxie/core/utils/Encode', [], function() {
 	var utf8_decode = function(str_data) {
 		return decodeURIComponent(escape(str_data));
 	};
-
+	
 	/**
 	Decode Base64 encoded string (uses browser's default method if available),
 	from: https://raw.github.com/kvz/phpjs/master/functions/url/base64_decode.js
@@ -14599,7 +11214,7 @@ define('moxie/core/utils/Encode', [], function() {
 
 		return utf8 ? utf8_decode(dec) : dec;
 	};
-
+	
 	/**
 	Base64 encode string (uses browser's default method if available),
 	from: https://raw.github.com/kvz/phpjs/master/functions/url/base64_encode.js
@@ -14689,7 +11304,7 @@ define('moxie/file/Blob', [
 	'moxie/core/utils/Encode',
 	'moxie/runtime/RuntimeClient'
 ], function(Basic, Encode, RuntimeClient) {
-
+	
 	var blobpool = {};
 
 	/**
@@ -14718,7 +11333,7 @@ define('moxie/file/Blob', [
 
 		RuntimeClient.call(this);
 
-		if (ruid) {
+		if (ruid) {	
 			this.connectRuntime(ruid);
 		}
 
@@ -14729,7 +11344,7 @@ define('moxie/file/Blob', [
 		}
 
 		Basic.extend(this, {
-
+			
 			/**
 			Unique id of the component
 
@@ -14737,16 +11352,16 @@ define('moxie/file/Blob', [
 			@type {String}
 			*/
 			uid: blob.uid || Basic.guid('uid_'),
-
+			
 			/**
-			Unique id of the connected runtime, if falsy, then runtime will have to be initialized
+			Unique id of the connected runtime, if falsy, then runtime will have to be initialized 
 			before this Blob can be used, modified or sent
 
 			@property ruid
 			@type {String}
 			*/
 			ruid: ruid,
-
+	
 			/**
 			Size of blob
 
@@ -14755,7 +11370,7 @@ define('moxie/file/Blob', [
 			@default 0
 			*/
 			size: blob.size || 0,
-
+			
 			/**
 			Mime type of blob
 
@@ -14764,12 +11379,12 @@ define('moxie/file/Blob', [
 			@default ''
 			*/
 			type: blob.type || '',
-
+			
 			/**
 			@method slice
 			@param {Number} [start=0]
 			*/
-			slice: function(start, end, type) {
+			slice: function(start, end, type) {		
 				if (this.isDetached()) {
 					return _sliceDetached.apply(this, arguments);
 				}
@@ -14784,12 +11399,12 @@ define('moxie/file/Blob', [
 			*/
 			getSource: function() {
 				if (!blobpool[this.uid]) {
-					return null;
+					return null;	
 				}
 				return blobpool[this.uid];
 			},
 
-			/**
+			/** 
 			Detaches blob from any runtime that it depends on and initialize with standalone value
 
 			@method detach
@@ -14819,7 +11434,7 @@ define('moxie/file/Blob', [
 
 			/**
 			Checks if blob is standalone (detached of any runtime)
-
+			
 			@method isDetached
 			@protected
 			@return {Boolean}
@@ -14827,8 +11442,8 @@ define('moxie/file/Blob', [
 			isDetached: function() {
 				return !this.ruid && Basic.typeOf(blobpool[this.uid]) === 'string';
 			},
-
-			/**
+			
+			/** 
 			Destroy Blob and free any resources it was using
 
 			@method destroy
@@ -14839,14 +11454,14 @@ define('moxie/file/Blob', [
 			}
 		});
 
-
+		
 		if (blob.data) {
 			this.detach(blob.data); // auto-detach if payload has been passed
 		} else {
-			blobpool[this.uid] = blob;
+			blobpool[this.uid] = blob;	
 		}
 	}
-
+	
 	return Blob;
 });
 
@@ -14893,13 +11508,13 @@ define('moxie/file/File', [
 		} else if (this.type) {
 			var prefix = this.type.split('/')[0];
 			name = Basic.guid((prefix !== '' ? prefix : 'file') + '_');
-
+			
 			if (Mime.extensions[this.type]) {
 				name += '.' + Mime.extensions[this.type][0]; // append proper extension if possible
 			}
 		}
-
-
+		
+		
 		Basic.extend(this, {
 			/**
 			File name
@@ -14918,7 +11533,7 @@ define('moxie/file/File', [
 			@default ''
 			*/
 			relativePath: '',
-
+			
 			/**
 			Date of last modification
 
@@ -14959,8 +11574,8 @@ define('moxie/file/FileDrop', [
 	'moxie/core/utils/Mime'
 ], function(I18n, Dom, x, Basic, Env, File, RuntimeClient, EventTarget, Mime) {
 	/**
-	Turn arbitrary DOM element to a drop zone accepting files. Converts selected files to _File_ objects, to be used
-	in conjunction with _Image_, preloaded in memory with _FileReader_ or uploaded to a server through
+	Turn arbitrary DOM element to a drop zone accepting files. Converts selected files to _File_ objects, to be used 
+	in conjunction with _Image_, preloaded in memory with _FileReader_ or uploaded to a server through 
 	_XMLHttpRequest_.
 
 	@example
@@ -14998,7 +11613,7 @@ define('moxie/file/FileDrop', [
 		@event ready
 		@param {Object} event
 		*/
-		'ready',
+		'ready', 
 
 		/**
 		Dispatched when dragging cursor enters the drop zone.
@@ -15014,7 +11629,7 @@ define('moxie/file/FileDrop', [
 		@event dragleave
 		@param {Object} event
 		*/
-		'dragleave',
+		'dragleave', 
 
 		/**
 		Dispatched when file is dropped onto the drop zone.
@@ -15022,7 +11637,7 @@ define('moxie/file/FileDrop', [
 		@event drop
 		@param {Object} event
 		*/
-		'drop',
+		'drop', 
 
 		/**
 		Dispatched if error occurs.
@@ -15035,7 +11650,7 @@ define('moxie/file/FileDrop', [
 
 	function FileDrop(options) {
 		if (MXI_DEBUG) {
-			Env.log("Instantiating FileDrop...");
+			Env.log("Instantiating FileDrop...");	
 		}
 
 		var self = this, defaults;
@@ -15055,7 +11670,7 @@ define('moxie/file/FileDrop', [
 				drag_and_drop: true
 			}
 		};
-
+		
 		options = typeof(options) === 'object' ? Basic.extend({}, defaults, options) : defaults;
 
 		// this will help us to find proper default container
@@ -15065,7 +11680,7 @@ define('moxie/file/FileDrop', [
 		if (Dom.getStyle(options.container, 'position') === 'static') {
 			options.container.style.position = 'relative';
 		}
-
+					
 		// normalize accept option (could be list of mime types or array of title/extensions pairs)
 		if (typeof(options.accept) === 'string') {
 			options.accept = Mime.mimes2extList(options.accept);
@@ -15080,13 +11695,13 @@ define('moxie/file/FileDrop', [
 
 			files: null,
 
-			init: function() {
+			init: function() {		
 				self.bind('RuntimeInit', function(e, runtime) {
 					self.ruid = runtime.uid;
 					runtime.exec.call(self, 'FileDrop', 'init', options);
 					self.dispatchEvent('ready');
 				});
-
+							
 				// runtime needs: options.required_features, options.runtime_order and options.container
 				self.connectRuntime(options); // throws RuntimeError
 			},
@@ -15098,7 +11713,7 @@ define('moxie/file/FileDrop', [
 					this.disconnectRuntime();
 				}
 				this.files = null;
-
+				
 				this.unbindAll();
 			}
 		});
@@ -15142,47 +11757,47 @@ define('moxie/file/FileReader', [
 	*/
 	var dispatches = [
 
-		/**
+		/** 
 		Dispatched when the read starts.
 
 		@event loadstart
 		@param {Object} event
 		*/
-		'loadstart',
+		'loadstart', 
 
-		/**
+		/** 
 		Dispatched while reading (and decoding) blob, and reporting partial Blob data (progess.loaded/progress.total).
 
 		@event progress
 		@param {Object} event
 		*/
-		'progress',
+		'progress', 
 
-		/**
+		/** 
 		Dispatched when the read has successfully completed.
 
 		@event load
 		@param {Object} event
 		*/
-		'load',
+		'load', 
 
-		/**
+		/** 
 		Dispatched when the read has been aborted. For instance, by invoking the abort() method.
 
 		@event abort
 		@param {Object} event
 		*/
-		'abort',
+		'abort', 
 
-		/**
+		/** 
 		Dispatched when the read has failed.
 
 		@event error
 		@param {Object} event
 		*/
-		'error',
+		'error', 
 
-		/**
+		/** 
 		Dispatched when the request has completed (either in success or failure).
 
 		@event loadend
@@ -15190,7 +11805,7 @@ define('moxie/file/FileReader', [
 		*/
 		'loadend'
 	];
-
+	
 	function FileReader() {
 
 		RuntimeClient.call(this);
@@ -15213,7 +11828,7 @@ define('moxie/file/FileReader', [
 			@default FileReader.EMPTY
 			*/
 			readyState: FileReader.EMPTY,
-
+			
 			/**
 			Result of the successful read operation.
 
@@ -15221,7 +11836,7 @@ define('moxie/file/FileReader', [
 			@type {String}
 			*/
 			result: null,
-
+			
 			/**
 			Stores the error of failed asynchronous read operation.
 
@@ -15229,7 +11844,7 @@ define('moxie/file/FileReader', [
 			@type {DOMError}
 			*/
 			error: null,
-
+			
 			/**
 			Initiates reading of File/Blob object contents to binary string.
 
@@ -15239,7 +11854,7 @@ define('moxie/file/FileReader', [
 			readAsBinaryString: function(blob) {
 				_read.call(this, 'readAsBinaryString', blob);
 			},
-
+			
 			/**
 			Initiates reading of File/Blob object contents to dataURL string.
 
@@ -15249,7 +11864,7 @@ define('moxie/file/FileReader', [
 			readAsDataURL: function(blob) {
 				_read.call(this, 'readAsDataURL', blob);
 			},
-
+			
 			/**
 			Initiates reading of File/Blob object contents to string.
 
@@ -15259,7 +11874,7 @@ define('moxie/file/FileReader', [
 			readAsText: function(blob) {
 				_read.call(this, 'readAsText', blob);
 			},
-
+			
 			/**
 			Aborts preloading process.
 
@@ -15267,7 +11882,7 @@ define('moxie/file/FileReader', [
 			*/
 			abort: function() {
 				this.result = null;
-
+				
 				if (Basic.inArray(this.readyState, [FileReader.EMPTY, FileReader.DONE]) !== -1) {
 					return;
 				} else if (this.readyState === FileReader.LOADING) {
@@ -15275,7 +11890,7 @@ define('moxie/file/FileReader', [
 				}
 
 				this.exec('FileReader', 'abort');
-
+				
 				this.trigger('abort');
 				this.trigger('loadend');
 			},
@@ -15300,14 +11915,14 @@ define('moxie/file/FileReader', [
 			this.readyState = FileReader.DONE;
 			this.error = err;
 		}, 999);
-
+		
 		this.bind('Load', function(e) {
 			this.readyState = FileReader.DONE;
 		}, 999);
 
-
+		
 		function _read(op, blob) {
-			var self = this;
+			var self = this;			
 
 			this.trigger('loadstart');
 
@@ -15326,7 +11941,7 @@ define('moxie/file/FileReader', [
 
 			this.result = null;
 			this.readyState = FileReader.LOADING;
-
+			
 			if (blob.isDetached()) {
 				var src = blob.getSource();
 				switch (op) {
@@ -15347,7 +11962,7 @@ define('moxie/file/FileReader', [
 			}
 		}
 	}
-
+	
 	/**
 	Initial FileReader state
 
@@ -15420,7 +12035,7 @@ define('moxie/core/utils/Url', [], function() {
 		, regex = /^(?:([^:\/?#]+):)?(?:\/\/()(?:(?:()(?:([^:@\/]*):?([^:@\/]*))?@)?([^:\/?#]*)(?::(\d*))?))?()(?:(()(?:(?:[^?#\/]*\/)*)()(?:[^?#]*))(?:\\?([^#]*))?(?:#(.*))?)/
 		, m = regex.exec(url || '')
 		;
-
+					
 		while (i--) {
 			if (m[i]) {
 				uri[key[i]] = m[i];
@@ -15455,8 +12070,8 @@ define('moxie/core/utils/Url', [], function() {
 
 		if (!uri.port) {
 			uri.port = ports[uri.scheme] || 80;
-		}
-
+		} 
+		
 		uri.port = parseInt(uri.port, 10);
 
 		if (!uri.path) {
@@ -15498,11 +12113,11 @@ define('moxie/core/utils/Url', [], function() {
 		function origin(url) {
 			return [url.scheme, url.host, url.port].join('/');
 		}
-
+			
 		if (typeof url === 'string') {
 			url = parseUrl(url);
-		}
-
+		}	
+		
 		return origin(parseUrl()) === origin(url);
 	};
 
@@ -15541,7 +12156,7 @@ define('moxie/runtime/RuntimeTarget', [
 	*/
 	function RuntimeTarget() {
 		this.uid = Basic.guid('uid_');
-
+		
 		RuntimeClient.call(this);
 
 		this.destroy = function() {
@@ -15590,15 +12205,15 @@ define('moxie/file/FileReaderSync', [
 			readAsBinaryString: function(blob) {
 				return _read.call(this, 'readAsBinaryString', blob);
 			},
-
+			
 			readAsDataURL: function(blob) {
 				return _read.call(this, 'readAsDataURL', blob);
 			},
-
+			
 			/*readAsArrayBuffer: function(blob) {
 				return _read.call(this, 'readAsArrayBuffer', blob);
 			},*/
-
+			
 			readAsText: function(blob) {
 				return _read.call(this, 'readAsText', blob);
 			}
@@ -15835,7 +12450,7 @@ define("moxie/xhr/XMLHttpRequest", [
 	function XMLHttpRequestUpload() {
 		this.uid = Basic.guid('uid_');
 	}
-
+	
 	XMLHttpRequestUpload.prototype = EventTarget.instance;
 
 	/**
@@ -15862,10 +12477,10 @@ define("moxie/xhr/XMLHttpRequest", [
 		'loadend'
 
 		// readystatechange (for historical reasons)
-	];
-
+	]; 
+	
 	var NATIVE = 1, RUNTIME = 2;
-
+					
 	function XMLHttpRequest() {
 		var self = this,
 			// this (together with _p() @see below) is here to gracefully upgrade to setter/getter syntax where possible
@@ -15931,7 +12546,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				/**
 				Returns the response type. Can be set to change the response type. Values are:
 				the empty string (default), "arraybuffer", "blob", "document", "json", and "text".
-
+				
 				@property responseType
 				@type String
 				*/
@@ -15939,7 +12554,7 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				/**
 				Returns the document response entity body.
-
+				
 				Throws an "InvalidStateError" exception if responseType is not the empty string or "document".
 
 				@property responseXML
@@ -15949,7 +12564,7 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				/**
 				Returns the text response entity body.
-
+				
 				Throws an "InvalidStateError" exception if responseType is not the empty string or "text".
 
 				@property responseText
@@ -15960,7 +12575,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				/**
 				Returns the response entity body (http://www.w3.org/TR/XMLHttpRequest/#response-entity-body).
 				Can become: ArrayBuffer, Blob, Document, JSON, Text
-
+				
 				@property response
 				@type Mixed
 				*/
@@ -15997,7 +12612,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			_responseHeadersBag
 			;
 
-
+		
 		Basic.extend(this, props, {
 			/**
 			Unique id of the component
@@ -16006,7 +12621,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@type String
 			*/
 			uid: Basic.guid('uid_'),
-
+			
 			/**
 			Target for Upload events
 
@@ -16014,7 +12629,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@type XMLHttpRequestUpload
 			*/
 			upload: new XMLHttpRequestUpload(),
-
+			
 
 			/**
 			Sets the request method, request URL, synchronous flag, request username, and request password.
@@ -16042,12 +12657,12 @@ define("moxie/xhr/XMLHttpRequest", [
 			*/
 			open: function(method, url, async, user, password) {
 				var urlp;
-
+				
 				// first two arguments are required
 				if (!method || !url) {
 					throw new x.DOMException(x.DOMException.SYNTAX_ERR);
 				}
-
+				
 				// 2 - check if any code point in method is higher than U+00FF or after deflating method it does not match the method
 				if (/[\u0100-\uffff]/.test(method) || Encode.utf8_encode(method) !== method) {
 					throw new x.DOMException(x.DOMException.SYNTAX_ERR);
@@ -16057,8 +12672,8 @@ define("moxie/xhr/XMLHttpRequest", [
 				if (!!~Basic.inArray(method.toUpperCase(), ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'TRACE', 'TRACK'])) {
 					_method = method.toUpperCase();
 				}
-
-
+				
+				
 				// 4 - allowing these methods poses a security risk
 				if (!!~Basic.inArray(_method, ['CONNECT', 'TRACE', 'TRACK'])) {
 					throw new x.DOMException(x.DOMException.SECURITY_ERR);
@@ -16066,15 +12681,15 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				// 5
 				url = Encode.utf8_encode(url);
-
+				
 				// 6 - Resolve url relative to the XMLHttpRequest base URL. If the algorithm returns an error, throw a "SyntaxError".
 				urlp = Url.parseUrl(url);
 
 				_same_origin_flag = Url.hasSameOrigin(urlp);
-
+																
 				// 7 - manually build up absolute url
 				_url = Url.resolveUrl(url);
-
+		
 				// 9-10, 12-13
 				if ((user || password) && !_same_origin_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_ACCESS_ERR);
@@ -16082,16 +12697,16 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				_user = user || urlp.user;
 				_password = password || urlp.pass;
-
+				
 				// 11
 				_async = async || true;
-
+				
 				if (_async === false && (_p('timeout') || _p('withCredentials') || _p('responseType') !== "")) {
 					throw new x.DOMException(x.DOMException.INVALID_ACCESS_ERR);
 				}
-
+				
 				// 14 - terminate abort()
-
+				
 				// 15 - terminate send()
 
 				// 18
@@ -16102,11 +12717,11 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				// 19
 				_p('readyState', XMLHttpRequest.OPENED);
-
+				
 				// 20
 				this.dispatchEvent('readystatechange');
 			},
-
+			
 			/**
 			Appends an header to the list of author request headers, or if header is already
 			in the list of author request headers, combines its value with value.
@@ -16114,7 +12729,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			Throws an "InvalidStateError" exception if the state is not OPENED or if the send() flag is set.
 			Throws a "SyntaxError" exception if header is not a valid HTTP header field name or if value
 			is not a valid HTTP header field value.
-
+			
 			@method setRequestHeader
 			@param {String} header
 			@param {String|Number} value
@@ -16143,7 +12758,7 @@ define("moxie/xhr/XMLHttpRequest", [
 						"user-agent",
 						"via"
 					];
-
+				
 				// 1-2
 				if (_p('readyState') !== XMLHttpRequest.OPENED || _send_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
@@ -16161,7 +12776,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				}*/
 
 				header = Basic.trim(header).toLowerCase();
-
+				
 				// setting of proxy-* and sec-* headers is prohibited by spec
 				if (!!~Basic.inArray(header, uaHeaders) || /^(proxy\-|sec\-)/.test(header)) {
 					return false;
@@ -16170,7 +12785,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				// camelize
 				// browsers lowercase header names (at least for custom ones)
 				// header = header.replace(/\b\w/g, function($1) { return $1.toUpperCase(); });
-
+				
 				if (!_headers[header]) {
 					_headers[header] = value;
 				} else {
@@ -16191,7 +12806,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			},
 
 			/**
-			Returns the header field value from the response of which the field name matches header,
+			Returns the header field value from the response of which the field name matches header, 
 			unless the field name is Set-Cookie or Set-Cookie2.
 
 			@method getResponseHeader
@@ -16226,7 +12841,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				}
 				return null;
 			},
-
+			
 			/**
 			Sets the Content-Type header for the response to mime.
 			Throws an "InvalidStateError" exception if the state is LOADING or DONE.
@@ -16237,7 +12852,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			*/
 			overrideMimeType: function(mime) {
 				var matches, charset;
-
+			
 				// 1
 				if (!!~Basic.inArray(_p('readyState'), [XMLHttpRequest.LOADING, XMLHttpRequest.DONE])) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
@@ -16261,7 +12876,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				_finalMime = mime;
 				_finalCharset = charset;
 			},
-
+			
 			/**
 			Initiates the request. The optional argument provides the request entity body.
 			The argument is ignored if request method is GET or HEAD.
@@ -16272,7 +12887,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@param {Blob|Document|String|FormData} [data] Request entity body
 			@param {Object} [options] Set of requirements and pre-requisities for runtime initialization
 			*/
-			send: function(data, options) {
+			send: function(data, options) {					
 				if (Basic.typeOf(options) === 'string') {
 					_options = { ruid: options };
 				} else if (!options) {
@@ -16280,19 +12895,19 @@ define("moxie/xhr/XMLHttpRequest", [
 				} else {
 					_options = options;
 				}
-
+															
 				// 1-2
 				if (this.readyState !== XMLHttpRequest.OPENED || _send_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
 				}
-
-				// 3
+				
+				// 3					
 				// sending Blob
 				if (data instanceof Blob) {
 					_options.ruid = data.ruid;
 					_mimeType = data.type || 'application/octet-stream';
 				}
-
+				
 				// FormData
 				else if (data instanceof FormData) {
 					if (data.hasBlob()) {
@@ -16301,12 +12916,12 @@ define("moxie/xhr/XMLHttpRequest", [
 						_mimeType = blob.type || 'application/octet-stream';
 					}
 				}
-
+				
 				// DOMString
 				else if (typeof data === 'string') {
 					_encoding = 'UTF-8';
 					_mimeType = 'text/plain;charset=UTF-8';
-
+					
 					// data should be converted to Unicode and encoded as UTF-8
 					data = Encode.utf8_encode(data);
 				}
@@ -16337,10 +12952,10 @@ define("moxie/xhr/XMLHttpRequest", [
 				// 8.5 - Return the send() method call, but continue running the steps in this algorithm.
 				_doXHR.call(this, data);
 			},
-
+			
 			/**
 			Cancels any network activity.
-
+			
 			@method abort
 			*/
 			abort: function() {
@@ -16547,18 +13162,18 @@ define("moxie/xhr/XMLHttpRequest", [
 				}
 			}
 		}
-
+		
 		/*
 		function _toASCII(str, AllowUnassigned, UseSTD3ASCIIRules) {
 			// TODO: http://tools.ietf.org/html/rfc3490#section-4.1
 			return str.toLowerCase();
 		}
 		*/
-
-
+		
+		
 		function _doXHR(data) {
 			var self = this;
-
+			
 			_start_time = new Date().getTime();
 
 			_xhr = new RuntimeTarget();
@@ -16578,12 +13193,12 @@ define("moxie/xhr/XMLHttpRequest", [
 					self.dispatchEvent('readystatechange');
 
 					self.dispatchEvent(e);
-
+					
 					if (_upload_events_flag) {
 						self.upload.dispatchEvent(e);
 					}
 				});
-
+				
 				_xhr.bind('Progress', function(e) {
 					if (_p('readyState') !== XMLHttpRequest.LOADING) {
 						_p('readyState', XMLHttpRequest.LOADING); // LoadStart unreliable (in Flash for example)
@@ -16591,7 +13206,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					}
 					self.dispatchEvent(e);
 				});
-
+				
 				_xhr.bind('UploadProgress', function(e) {
 					if (_upload_events_flag) {
 						self.upload.dispatchEvent({
@@ -16602,12 +13217,12 @@ define("moxie/xhr/XMLHttpRequest", [
 						});
 					}
 				});
-
+				
 				_xhr.bind('Load', function(e) {
 					_p('readyState', XMLHttpRequest.DONE);
 					_p('status', Number(runtime.exec.call(_xhr, 'XMLHttpRequest', 'getStatus') || 0));
 					_p('statusText', httpCode[_p('status')] || "");
-
+					
 					_p('response', runtime.exec.call(_xhr, 'XMLHttpRequest', 'getResponse', _p('responseType')));
 
 					if (!!~Basic.inArray(_p('responseType'), ['text', ''])) {
@@ -16619,7 +13234,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					_responseHeaders = runtime.exec.call(_xhr, 'XMLHttpRequest', 'getAllResponseHeaders');
 
 					self.dispatchEvent('readystatechange');
-
+					
 					if (_p('status') > 0) { // status 0 usually means that server is unreachable
 						if (_upload_events_flag) {
 							self.upload.dispatchEvent(e);
@@ -16636,7 +13251,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					self.dispatchEvent(e);
 					loadEnd();
 				});
-
+				
 				_xhr.bind('Error', function(e) {
 					_error_flag = true;
 					_p('readyState', XMLHttpRequest.DONE);
@@ -16681,7 +13296,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			if (!_same_origin_flag) {
 				_options.required_caps.do_cors = true;
 			}
-
+			
 
 			if (_options.ruid) { // we do not need to wait if we can connect directly
 				exec(_xhr.connectRuntime(_options));
@@ -16695,8 +13310,8 @@ define("moxie/xhr/XMLHttpRequest", [
 				_xhr.connectRuntime(_options);
 			}
 		}
-
-
+	
+		
 		function _reset() {
 			_p('responseText', "");
 			_p('responseXML', null);
@@ -16712,7 +13327,7 @@ define("moxie/xhr/XMLHttpRequest", [
 	XMLHttpRequest.HEADERS_RECEIVED = 2;
 	XMLHttpRequest.LOADING = 3;
 	XMLHttpRequest.DONE = 4;
-
+	
 	XMLHttpRequest.prototype = EventTarget.instance;
 
 	return XMLHttpRequest;
@@ -16904,7 +13519,7 @@ define("moxie/image/Image", [
 
 		/**
 		Dispatched when resize operation is complete.
-
+		
 		@event resize
 		@param {Object} event
 		*/
@@ -17007,15 +13622,15 @@ define("moxie/image/Image", [
 			},
 
 			/**
-			Loads image from various sources. Currently the source for new image can be: mOxie.Image, mOxie.Blob/mOxie.File,
-			native Blob/File, dataUrl or URL. Depending on the type of the source, arguments - differ. When source is URL,
+			Loads image from various sources. Currently the source for new image can be: mOxie.Image, mOxie.Blob/mOxie.File, 
+			native Blob/File, dataUrl or URL. Depending on the type of the source, arguments - differ. When source is URL, 
 			Image will be downloaded from remote destination and loaded in memory.
 
 			@example
 				var img = new mOxie.Image();
 				img.onload = function() {
 					var blob = img.getAsBlob();
-
+					
 					var formData = new mOxie.FormData();
 					formData.append('file', blob);
 
@@ -17027,7 +13642,7 @@ define("moxie/image/Image", [
 					xhr.send(formData);
 				};
 				img.load("http://www.moxiecode.com/images/mox-logo.jpg"); // notice file extension (.jpg)
-
+			
 
 			@method load
 			@param {Image|Blob|File|String} src Source for the image
@@ -17090,7 +13705,7 @@ define("moxie/image/Image", [
 
 			/**
 			Alias for downsize(width, height, true). (see downsize)
-
+			
 			@method crop
 			@param {Number} width Resulting width
 			@param {Number} [height=width] Resulting height (optional, if not supplied will default to width)
@@ -17156,8 +13771,8 @@ define("moxie/image/Image", [
 			},
 
 			/**
-			Embeds a visual representation of the image into the specified node. Depending on the runtime,
-			it might be a canvas, an img node or a thrid party shim object (Flash or SilverLight - very rare,
+			Embeds a visual representation of the image into the specified node. Depending on the runtime, 
+			it might be a canvas, an img node or a thrid party shim object (Flash or SilverLight - very rare, 
 			can be used in legacy browsers that do not have canvas or proper dataURI support).
 
 			@method embed
@@ -17180,7 +13795,7 @@ define("moxie/image/Image", [
 					type: this.type || 'image/jpeg',
 					quality: 90
 				}, opts || {});
-
+				
 
 				function render(type, quality) {
 					var img = this;
@@ -17256,7 +13871,7 @@ define("moxie/image/Image", [
 					if (!this.size) { // only preloaded image objects can be used as source
 						throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
 					}
-
+					
 					// high-resolution images cannot be consistently handled across the runtimes
 					if (this.width > Image.MAX_RESIZE_WIDTH || this.height > Image.MAX_RESIZE_HEIGHT) {
 						//throw new x.ImageError(x.ImageError.MAX_RESOLUTION_ERR);
@@ -17325,7 +13940,7 @@ define("moxie/image/Image", [
 				this.name = info.name;
 			}
 		}
-
+		
 
 		function _load(src) {
 			var srcType = Basic.typeOf(src);
@@ -17447,7 +14062,7 @@ define("moxie/image/Image", [
 
 	// virtual world will crash on you if image has a resolution higher than this:
 	Image.MAX_RESIZE_WIDTH = 8192;
-	Image.MAX_RESIZE_HEIGHT = 8192;
+	Image.MAX_RESIZE_HEIGHT = 8192; 
 
 	Image.prototype = EventTarget.instance;
 
@@ -17480,9 +14095,9 @@ define("moxie/runtime/html5/Runtime", [
 	"moxie/runtime/Runtime",
 	"moxie/core/utils/Env"
 ], function(Basic, x, Runtime, Env) {
-
+	
 	var type = "html5", extensions = {};
-
+	
 	function Html5Runtime(options) {
 		var I = this
 		, Test = Runtime.capTest
@@ -17500,13 +14115,13 @@ define("moxie/runtime/html5/Runtime", [
 					// this comes directly from Modernizr: http://www.modernizr.com/
 					var div = document.createElement('div');
 					// IE has support for drag and drop since version 5, but doesn't support dropping files from desktop
-					return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) &&
+					return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 
 						(Env.browser !== 'IE' || Env.verComp(Env.version, 9, '>'));
 				}()),
 				filter_by_extension: Test(function() { // if you know how to feature-detect this, please suggest
 					return !(
-						(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) ||
-						(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) ||
+						(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) || 
+						(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) || 
 						(Env.browser === 'Safari' && Env.verComp(Env.version, 7, '<')) ||
 						(Env.browser === 'Firefox' && Env.verComp(Env.version, 37, '<'))
 					);
@@ -17515,7 +14130,7 @@ define("moxie/runtime/html5/Runtime", [
 				return_response_type: function(responseType) {
 					if (responseType === 'json' && !!window.JSON) { // we can fake this one even if it's not supported
 						return true;
-					}
+					} 
 					return Env.can('return_response_type', responseType);
 				},
 				return_status_code: True,
@@ -17553,7 +14168,7 @@ define("moxie/runtime/html5/Runtime", [
 					);
 				},
 				upload_filesize: True
-			},
+			}, 
 			arguments[2]
 		);
 
@@ -17598,7 +14213,7 @@ define('moxie/core/utils/Events', [
 	'moxie/core/utils/Basic'
 ], function(Basic) {
 	var eventhash = {}, uid = 'moxie_' + Basic.guid();
-
+	
 	// IE W3C like event funcs
 	function preventDefault() {
 		this.returnValue = false;
@@ -17611,7 +14226,7 @@ define('moxie/core/utils/Events', [
 	/**
 	Adds an event handler to the specified object and store reference to the handler
 	in objects internal Plupload registry (@see removeEvent).
-
+	
 	@method addEvent
 	@for Utils
 	@static
@@ -17622,13 +14237,13 @@ define('moxie/core/utils/Events', [
 	*/
 	var addEvent = function(obj, name, callback, key) {
 		var func, events;
-
+					
 		name = name.toLowerCase();
 
 		// Add event listener
 		if (obj.addEventListener) {
 			func = callback;
-
+			
 			obj.addEventListener(name, func, false);
 		} else if (obj.attachEvent) {
 			func = function() {
@@ -17646,34 +14261,34 @@ define('moxie/core/utils/Events', [
 
 			obj.attachEvent('on' + name, func);
 		}
-
+		
 		// Log event handler to objects internal mOxie registry
 		if (!obj[uid]) {
 			obj[uid] = Basic.guid();
 		}
-
+		
 		if (!eventhash.hasOwnProperty(obj[uid])) {
 			eventhash[obj[uid]] = {};
 		}
-
+		
 		events = eventhash[obj[uid]];
-
+		
 		if (!events.hasOwnProperty(name)) {
 			events[name] = [];
 		}
-
+				
 		events[name].push({
 			func: func,
 			orig: callback, // store original callback for IE
 			key: key
 		});
 	};
-
-
+	
+	
 	/**
 	Remove event handler from the specified object. If third argument (callback)
 	is not specified remove all events with the specified name.
-
+	
 	@method removeEvent
 	@static
 	@param {Object} obj DOM element to remove event listener(s) from.
@@ -17682,15 +14297,15 @@ define('moxie/core/utils/Events', [
 	*/
 	var removeEvent = function(obj, name, callback) {
 		var type, undef;
-
+		
 		name = name.toLowerCase();
-
+		
 		if (obj[uid] && eventhash[obj[uid]] && eventhash[obj[uid]][name]) {
 			type = eventhash[obj[uid]][name];
 		} else {
 			return;
 		}
-
+			
 		for (var i = type.length - 1; i >= 0; i--) {
 			// undefined or not, key should match
 			if (type[i].orig === callback || type[i].key === callback) {
@@ -17699,27 +14314,27 @@ define('moxie/core/utils/Events', [
 				} else if (obj.detachEvent) {
 					obj.detachEvent('on'+name, type[i].func);
 				}
-
+				
 				type[i].orig = null;
 				type[i].func = null;
 				type.splice(i, 1);
-
+				
 				// If callback was passed we are done here, otherwise proceed
 				if (callback !== undef) {
 					break;
 				}
 			}
 		}
-
+		
 		// If event array got empty, remove it
 		if (!type.length) {
 			delete eventhash[obj[uid]][name];
 		}
-
+		
 		// If mOxie registry has become empty, remove it
 		if (Basic.isEmptyObj(eventhash[obj[uid]])) {
 			delete eventhash[obj[uid]];
-
+			
 			// IE doesn't let you remove DOM object property with - delete
 			try {
 				delete obj[uid];
@@ -17728,21 +14343,21 @@ define('moxie/core/utils/Events', [
 			}
 		}
 	};
-
-
+	
+	
 	/**
 	Remove all kind of events from the specified object
-
+	
 	@method removeAllEvents
 	@static
 	@param {Object} obj DOM element to remove event listeners from.
 	@param {String} [key] unique key to match, when removing events.
 	*/
-	var removeAllEvents = function(obj, key) {
+	var removeAllEvents = function(obj, key) {		
 		if (!obj || !obj[uid]) {
 			return;
 		}
-
+		
 		Basic.each(eventhash[obj[uid]], function(events, name) {
 			removeEvent(obj, name, key);
 		});
@@ -17780,7 +14395,7 @@ define("moxie/runtime/html5/file/FileInput", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, File, Basic, Dom, Events, Mime, Env) {
-
+	
 	function FileInput() {
 		var _options;
 
@@ -17796,7 +14411,7 @@ define("moxie/runtime/html5/file/FileInput", [
 				shimContainer = I.getShimContainer();
 
 				shimContainer.innerHTML = '<input id="' + I.uid +'" type="file" style="font-size:999px;opacity:0;"' +
-					(_options.multiple && I.can('select_multiple') ? 'multiple' : '') +
+					(_options.multiple && I.can('select_multiple') ? 'multiple' : '') + 
 					(_options.directory && I.can('select_folder') ? 'webkitdirectory directory' : '') + // Chrome 11+
 					(mimes ? ' accept="' + mimes.join(',') + '"' : '') + ' />';
 
@@ -17872,7 +14487,7 @@ define("moxie/runtime/html5/file/FileInput", [
 						if (file.webkitRelativePath) {
 							relativePath = '/' + file.webkitRelativePath.replace(/^\//, '');
 						}
-
+						
 						file = new File(I.uid, file);
 						file.relativePath = relativePath;
 
@@ -17917,11 +14532,11 @@ define("moxie/runtime/html5/file/FileInput", [
 				, shim = I.getShim()
 				, shimContainer = I.getShimContainer()
 				;
-
+				
 				Events.removeAllEvents(shimContainer, this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.container), this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.browse_button), this.uid);
-
+				
 				if (shimContainer) {
 					shimContainer.innerHTML = '';
 				}
@@ -18009,7 +14624,7 @@ define("moxie/runtime/html5/file/FileDrop", [
 	"moxie/core/utils/Events",
 	"moxie/core/utils/Mime"
 ], function(extensions, File, Basic, Dom, Events, Mime) {
-
+	
 	function FileDrop() {
 		var _files = [], _allowedExts = [], _options, _ruid;
 
@@ -18091,7 +14706,7 @@ define("moxie/runtime/html5/file/FileDrop", [
 			}
 		}
 
-
+		
 		function _extractExts(accept) {
 			var exts = [];
 			for (var i = 0; i < accept.length; i++) {
@@ -18181,7 +14796,7 @@ define("moxie/runtime/html5/file/FileDrop", [
 			// ...and you thought FileReader was crazy...
 			getEntries(function() {
 				_readEntries(entries, cb);
-			});
+			}); 
 		}
 	}
 
@@ -18209,7 +14824,7 @@ define("moxie/runtime/html5/file/FileReader", [
 	"moxie/core/utils/Encode",
 	"moxie/core/utils/Basic"
 ], function(extensions, Encode, Basic) {
-
+	
 	function FileReader() {
 		var _fr, _convertToBinary = false;
 
@@ -18297,7 +14912,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 	"moxie/core/Exceptions",
 	"moxie/core/utils/Env"
 ], function(extensions, Basic, Mime, Url, File, Blob, FormData, x, Env) {
-
+	
 	function XMLHttpRequest() {
 		var self = this
 		, _xhr
@@ -18336,7 +14951,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 							// Android browsers (default one and Dolphin) seem to have the same issue, see: #613
 							_preloadAndSend.call(target, meta, data);
 							return; // _preloadAndSend will reinvoke send() with transmutated FormData =%D
-						}
+						}	
 					}
 
 					// transfer fields to real FormData
@@ -18383,22 +14998,22 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 				// ... otherwise simulate XHR L2
 				} else {
 					_xhr.onreadystatechange = function onReadyStateChange() {
-
+						
 						// fake Level 2 events
 						switch (_xhr.readyState) {
-
+							
 							case 1: // XMLHttpRequest.OPENED
 								// readystatechanged is fired twice for OPENED state (in IE and Mozilla) - neu
 								break;
-
+							
 							// looks like HEADERS_RECEIVED (state 2) is not reported in Opera (or it's old versions) - neu
 							case 2: // XMLHttpRequest.HEADERS_RECEIVED
 								break;
-
-							case 3: // XMLHttpRequest.LOADING
+								
+							case 3: // XMLHttpRequest.LOADING 
 								// try to fire progress event for not XHR L2
 								var total, loaded;
-
+								
 								try {
 									if (Url.hasSameOrigin(meta.url)) { // Content-Length not accessible for cross-domain on some browsers
 										total = _xhr.getResponseHeader('Content-Length') || 0; // old Safari throws an exception here
@@ -18418,7 +15033,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 									loaded: loaded
 								});
 								break;
-
+								
 							case 4: // XMLHttpRequest.DONE
 								// release readystatechange handler (mostly for IE)
 								_xhr.onreadystatechange = function() {};
@@ -18428,12 +15043,12 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 									target.trigger('error');
 								} else {
 									target.trigger('load');
-								}
+								}							
 								break;
 						}
 					};
 				}
-
+				
 
 				// set request headers
 				if (!Basic.isEmptyObj(meta.headers)) {
@@ -18489,8 +15104,8 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 					switch (responseType) {
 						case 'blob':
 							var file = new File(I.uid, _xhr.response);
-
-							// try to extract file name from content-disposition if possible (might be - not, if CORS for example)
+							
+							// try to extract file name from content-disposition if possible (might be - not, if CORS for example)	
 							var disposition = _xhr.getResponseHeader('Content-Disposition');
 							if (disposition) {
 								// extract filename from response header if available
@@ -18521,7 +15136,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 					}
 				} catch(ex) {
 					return null;
-				}
+				}				
 			},
 
 			getAllResponseHeaders: function() {
@@ -18546,10 +15161,10 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 		// here we go... ugly fix for ugly bug
 		function _preloadAndSend(meta, data) {
 			var target = this, blob, fr;
-
+				
 			// get original blob
 			blob = data.getBlob().getSource();
-
+			
 			// preload blob in memory to be sent as binary string
 			fr = new window.FileReader();
 			fr.onload = function() {
@@ -18564,7 +15179,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 			fr.readAsBinaryString(blob);
 		}
 
-
+		
 		function _getNativeXHR() {
 			if (window.XMLHttpRequest && !(Env.browser === 'IE' && Env.verComp(Env.version, 8, '<'))) { // IE7 has native XHR but it's buggy
 				return new window.XMLHttpRequest();
@@ -18579,12 +15194,12 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 				})();
 			}
 		}
-
+		
 		// @credits Sergey Ilinsky	(http://www.ilinsky.com/)
 		function _getDocument(xhr) {
 			var rXML = xhr.responseXML;
 			var rText = xhr.responseText;
-
+			
 			// Try parsing responseText (@see: http://www.ilinsky.com/articles/XMLHttpRequest/#bugs-ie-responseXML-content-type)
 			if (Env.browser === 'IE' && rText && rXML && !rXML.documentElement && /[^\/]+\/[^\+]+\+xml/.test(xhr.getResponseHeader("Content-Type"))) {
 				rXML = new window.ActiveXObject("Microsoft.XMLDOM");
@@ -18592,7 +15207,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 				rXML.validateOnParse = false;
 				rXML.loadXML(rText);
 			}
-
+	
 			// Check if there is no error in document
 			if (rXML) {
 				if ((Env.browser === 'IE' && rXML.parseError !== 0) || !rXML.documentElement || rXML.documentElement.tagName === "parsererror") {
@@ -18619,7 +15234,7 @@ define("moxie/runtime/html5/xhr/XMLHttpRequest", [
 
 			// append multipart parameters
 			fd.each(function(value, name) {
-				// Firefox 3.6 failed to convert multibyte characters to UTF-8 in sendAsBinary(),
+				// Firefox 3.6 failed to convert multibyte characters to UTF-8 in sendAsBinary(), 
 				// so we try it here ourselves with: unescape(encodeURIComponent(value))
 				if (value instanceof Blob) {
 					// Build RFC2388 blob
@@ -18663,7 +15278,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 	"moxie/core/utils/Basic"
 ], function(Basic) {
 
-
+	
 	function BinaryReader(data) {
 		if (data instanceof ArrayBuffer) {
 			ArrayBufferReader.apply(this, arguments);
@@ -18674,7 +15289,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 	 
 
 	Basic.extend(BinaryReader.prototype, {
-
+		
 		littleEndian: false,
 
 
@@ -18684,9 +15299,9 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 			if (idx + size > this.length()) {
 				throw new Error("You are trying to read outside the source boundaries.");
 			}
-
-			mv = this.littleEndian
-				? 0
+			
+			mv = this.littleEndian 
+				? 0 
 				: -8 * (size - 1)
 			;
 
@@ -18704,8 +15319,8 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 				throw new Error("You are trying to write outside the source boundaries.");
 			}
 
-			mv = this.littleEndian
-				? 0
+			mv = this.littleEndian 
+				? 0 
 				: -8 * (size - 1)
 			;
 
@@ -18761,7 +15376,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 		var _dv = new DataView(data);
 
 		Basic.extend(this, {
-
+			
 			readByteAt: function(idx) {
 				return _dv.getUint8(idx);
 			},
@@ -18770,7 +15385,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 			writeByteAt: function(idx, value) {
 				_dv.setUint8(idx, value);
 			},
-
+			
 
 			SEGMENT: function(idx, size, value) {
 				switch (arguments.length) {
@@ -18785,7 +15400,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 							value = new ArrayBuffer();
 						}
 
-						if (value instanceof ArrayBuffer) {
+						if (value instanceof ArrayBuffer) {					
 							var arr = new Uint8Array(this.length() - size + value.byteLength);
 							if (idx > 0) {
 								arr.set(new Uint8Array(data.slice(0, idx)), 0);
@@ -18818,7 +15433,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 
 	function UTF16StringReader(data) {
 		Basic.extend(this, {
-
+			
 			readByteAt: function(idx) {
 				return data.charCodeAt(idx);
 			},
@@ -18845,7 +15460,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
 
 			length: function() {
 				return data ? data.length : 0;
-			},
+			}, 
 
 			clear: function() {
 				data = null;
@@ -18874,7 +15489,7 @@ define("moxie/runtime/html5/utils/BinaryReader", [
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  */
-
+ 
 /**
 @class moxie/runtime/html5/image/JPEGHeaders
 @private
@@ -18883,7 +15498,7 @@ define("moxie/runtime/html5/image/JPEGHeaders", [
 	"moxie/runtime/html5/utils/BinaryReader",
 	"moxie/core/Exceptions"
 ], function(BinaryReader, x) {
-
+	
 	return function JPEGHeaders(data) {
 		var headers = [], _br, idx, marker, length = 0;
 
@@ -18962,7 +15577,7 @@ define("moxie/runtime/html5/image/JPEGHeaders", [
 				while (i--) {
 					br.SEGMENT(headers[i].start, headers[i].length, '');
 				}
-
+				
 				data = br.SEGMENT();
 				br.clear();
 				return data;
@@ -19028,10 +15643,10 @@ define("moxie/runtime/html5/image/ExifParser", [
 	"moxie/runtime/html5/utils/BinaryReader",
 	"moxie/core/Exceptions"
 ], function(Basic, BinaryReader, x) {
-
+	
 	function ExifParser(data) {
 		var __super__, tags, tagDescs, offsets, idx, Tiff;
-
+		
 		BinaryReader.call(this, data);
 
 		tags = {
@@ -19209,7 +15824,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 		offsets = {
 			tiffHeader: 10
 		};
-
+		
 		idx = offsets.tiffHeader;
 
 		__super__ = {
@@ -19218,7 +15833,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 
 		// Public functions
 		Basic.extend(this, {
-
+			
 			read: function() {
 				try {
 					return ExifParser.prototype.read.apply(this, arguments);
@@ -19307,7 +15922,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 				if (offsets.IFD1) {
 					try {
 						var IFD1Tags = extractTags.call(this, offsets.IFD1, tags.thumb);
-
+						
 						if ('JPEGInterchangeFormat' in IFD1Tags) {
 							return this.SEGMENT(offsets.tiffHeader + IFD1Tags.JPEGInterchangeFormat, IFD1Tags.JPEGInterchangeFormatLength);
 						}
@@ -19372,7 +15987,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 		function extractTags(IFD_offset, tags2extract) {
 			var data = this;
 			var length, i, tag, type, count, size, offset, value, values = [], hash = {};
-
+			
 			var types = {
 				1 : 'BYTE',
 				7 : 'UNDEFINED',
@@ -19430,7 +16045,7 @@ define("moxie/runtime/html5/image/ExifParser", [
 				// in case we left the boundaries of data throw an early exception
 				if (offset + size * count >= this.length()) {
 					throw new x.ImageError(x.ImageError.INVALID_META_ERR);
-				}
+				} 
 
 				// special care for the string
 				if (type === 'ASCII') {
@@ -19519,7 +16134,7 @@ define("moxie/runtime/html5/image/JPEG", [
 	"moxie/runtime/html5/utils/BinaryReader",
 	"moxie/runtime/html5/image/ExifParser"
 ], function(Basic, x, JPEGHeaders, BinaryReader, ExifParser) {
-
+	
 	function JPEG(data) {
 		var _br, _hm, _ep, _info;
 
@@ -19643,7 +16258,7 @@ define("moxie/runtime/html5/image/JPEG", [
 
 
 		function _purge() {
-			if (!_ep || !_hm || !_br) {
+			if (!_ep || !_hm || !_br) { 
 				return; // ignore any repeating purge requests
 			}
 			_ep.clear();
@@ -19677,7 +16292,7 @@ define("moxie/runtime/html5/image/PNG", [
 	"moxie/core/utils/Basic",
 	"moxie/runtime/html5/utils/BinaryReader"
 ], function(x, Basic, BinaryReader) {
-
+	
 	function PNG(data) {
 		var _br, _hm, _ep, _info;
 
@@ -20059,7 +16674,7 @@ define("moxie/runtime/html5/image/Image", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, Basic, x, Encode, Blob, File, ImageInfo, MegaPixel, Mime, Env) {
-
+	
 	function HTML5Image() {
 		var me = this
 		, _img, _imgInfo, _canvas, _binStr, _blob
@@ -20327,7 +16942,7 @@ define("moxie/runtime/html5/image/Image", [
 
 				scale = Math.max(width/img.width, height/img.height);
 			}
-
+		
 			// we only downsize here
 			if (scale > 1 && !crop && preserveHeaders) {
 				this.trigger('Resize');
@@ -20340,7 +16955,7 @@ define("moxie/runtime/html5/image/Image", [
 			}
 
 			// calculate dimensions of proportionally resized image
-			destWidth = Math.round(img.width * scale);
+			destWidth = Math.round(img.width * scale);	
 			destHeight = Math.round(img.height * scale);
 
 			// scale image and canvas
@@ -20377,7 +16992,7 @@ define("moxie/runtime/html5/image/Image", [
 
 
 		function _drawToCanvas(img, canvas, x, y, w, h) {
-			if (Env.OS === 'iOS') {
+			if (Env.OS === 'iOS') { 
 				// avoid squish bug in iOS6
 				MegaPixel.renderTo(img, canvas, { width: w, height: h, x: x, y: y });
 			} else {
@@ -20499,7 +17114,7 @@ define("moxie/runtime/flash/Runtime", [
 	"moxie/core/Exceptions",
 	"moxie/runtime/Runtime"
 ], function(Basic, Env, Dom, x, Runtime) {
-
+	
 	var type = 'flash', extensions = {};
 
 	/**
@@ -20531,7 +17146,7 @@ define("moxie/runtime/flash/Runtime", [
 	Cross-browser SWF removal
     	- Especially needed to safely and completely remove a SWF in Internet Explorer
 
-   	Originated from SWFObject v2.2 <http://code.google.com/p/swfobject/>
+   	Originated from SWFObject v2.2 <http://code.google.com/p/swfobject/> 
 	*/
 	function removeSWF(id) {
         var obj = Dom.get(id);
@@ -20596,7 +17211,7 @@ define("moxie/runtime/flash/Runtime", [
 			return_response_type: function(responseType) {
 				if (responseType === 'json' && !!window.JSON) {
 					return true;
-				}
+				} 
 				return !Basic.arrayDiff(responseType, ['', 'text', 'document']) || I.mode === 'browser';
 			},
 			return_status_code: function(code) {
@@ -20627,7 +17242,7 @@ define("moxie/runtime/flash/Runtime", [
 			use_http_method: function(methods) {
 				return !Basic.arrayDiff(methods, ['GET', 'POST']);
 			}
-		}, {
+		}, { 
 			// capabilities that require specific mode
 			access_binary: function(value) {
 				return value ? 'browser' : 'client';
@@ -20665,7 +17280,7 @@ define("moxie/runtime/flash/Runtime", [
 		// minimal requirement for Flash Player version
 		if (getShimVersion() < 11.3) {
 			if (MXI_DEBUG && Env.debug.runtime) {
-				Env.log("\tFlash didn't meet minimal version requirement (11.3).");
+				Env.log("\tFlash didn't meet minimal version requirement (11.3).");	
 			}
 
 			this.mode = false; // with falsy mode, runtime won't operable, no matter what the mode was before
@@ -20727,7 +17342,7 @@ define("moxie/runtime/flash/Runtime", [
 						I.trigger("Error", new x.RuntimeError(x.RuntimeError.NOT_INIT_ERR));
 
 						if (MXI_DEBUG && Env.debug.runtime) {
-							Env.log("\tFlash failed to initialize within a specified period of time (typically 5s).");
+							Env.log("\tFlash failed to initialize within a specified period of time (typically 5s).");	
 						}
 					}
 				}, 5000);
@@ -20772,8 +17387,8 @@ define("moxie/runtime/flash/file/FileInput", [
 	"moxie/file/File",
 	"moxie/core/utils/Basic"
 ], function(extensions, File, Basic) {
-
-	var FileInput = {
+	
+	var FileInput = {		
 		init: function(options) {
 			var comp = this, I = this.getRuntime();
 
@@ -20924,7 +17539,7 @@ define("moxie/runtime/flash/file/FileReaderSync", [
 	"moxie/runtime/flash/Runtime",
 	"moxie/core/utils/Encode"
 ], function(extensions, Encode) {
-
+	
 	function _formatData(data, op) {
 		switch (op) {
 			case 'readAsText':
@@ -20983,7 +17598,7 @@ define("moxie/runtime/flash/xhr/XMLHttpRequest", [
 	"moxie/xhr/FormData",
 	"moxie/runtime/Transporter"
 ], function(extensions, Basic, Blob, File, FileReaderSync, FormData, Transporter) {
-
+	
 	var XMLHttpRequest = {
 
 		send: function(meta, data) {
@@ -21040,7 +17655,7 @@ define("moxie/runtime/flash/xhr/XMLHttpRequest", [
 					if (blob.isDetached()) {
 						attachBlob(blob, function(attachedBlob) {
 							blob.destroy();
-							appendBlob(blobField, attachedBlob);
+							appendBlob(blobField, attachedBlob);		
 						});
 					} else {
 						appendBlob(blobField, blob);
@@ -21074,7 +17689,7 @@ define("moxie/runtime/flash/xhr/XMLHttpRequest", [
 					return blob;
 				}
 
-				try {
+				try { 
 					frs = new FileReaderSync();
 
 					if (!!~Basic.inArray(responseType, ["", "text"])) {
@@ -21166,7 +17781,7 @@ define("moxie/runtime/flash/image/Image", [
 	"moxie/file/Blob",
 	"moxie/file/FileReaderSync"
 ], function(extensions, Basic, Transporter, Blob, FileReaderSync) {
-
+	
 	var Image = {
 		loadFromBlob: function(blob) {
 			var comp = this, self = comp.getRuntime();
@@ -21256,7 +17871,7 @@ define("moxie/runtime/silverlight/Runtime", [
 	"moxie/core/Exceptions",
 	"moxie/runtime/Runtime"
 ], function(Basic, Env, Dom, x, Runtime) {
-
+	
 	var type = "silverlight", extensions = {};
 
 	function isInstalled(version) {
@@ -21365,7 +17980,7 @@ define("moxie/runtime/silverlight/Runtime", [
 			use_http_method: function(methods) {
 				return I.mode === 'client' || !Basic.arrayDiff(methods, ['GET', 'POST']);
 			}
-		}, {
+		}, { 
 			// capabilities that require specific mode
 			return_response_headers: function(value) {
 				return value ? 'client' : 'browser';
@@ -21388,7 +18003,7 @@ define("moxie/runtime/silverlight/Runtime", [
 		// minimal requirement
 		if (!isInstalled('2.0.31005.0') || Env.browser === 'Opera') {
 			if (MXI_DEBUG && Env.debug.runtime) {
-				Env.log("\tSilverlight is not installed or minimal version (2.0.31005.0) requirement not met (not likely).");
+				Env.log("\tSilverlight is not installed or minimal version (2.0.31005.0) requirement not met (not likely).");	
 			}
 
 			this.mode = false;
@@ -21424,7 +18039,7 @@ define("moxie/runtime/silverlight/Runtime", [
 						I.trigger("Error", new x.RuntimeError(x.RuntimeError.NOT_INIT_ERR));
 
 						if (MXI_DEBUG && Env.debug.runtime) {
-							Env.log("\Silverlight failed to initialize within a specified period of time (5-10s).");
+							Env.log("\Silverlight failed to initialize within a specified period of time (5-10s).");	
 						}
 					}
 				}, Env.OS !== 'Windows'? 10000 : 5000); // give it more time to initialize in non Windows OS (like Mac)
@@ -21441,7 +18056,7 @@ define("moxie/runtime/silverlight/Runtime", [
 		}, extensions);
 	}
 
-	Runtime.addConstructor(type, SilverlightRuntime);
+	Runtime.addConstructor(type, SilverlightRuntime); 
 
 	return extensions;
 });
@@ -21467,7 +18082,7 @@ define("moxie/runtime/silverlight/file/FileInput", [
 	"moxie/file/File",
 	"moxie/core/utils/Basic"
 ], function(extensions, File, Basic) {
-
+	
 	var FileInput = {
 		init: function(options) {
 			var comp = this, I = this.getRuntime();
@@ -21487,7 +18102,7 @@ define("moxie/runtime/silverlight/file/FileInput", [
 					comp.files.push(new File(I.uid, file));
 				});
 			}, 999);
-
+			
 			this.getRuntime().shimExec.call(this, 'FileInput', 'init', toFilters(options.accept), options.name, options.multiple);
 			this.trigger('ready');
 		}
@@ -21538,7 +18153,7 @@ define("moxie/runtime/silverlight/file/Blob", [
 */
 define("moxie/runtime/silverlight/file/FileDrop", [
 	"moxie/runtime/silverlight/Runtime",
-	"moxie/core/utils/Dom",
+	"moxie/core/utils/Dom", 
 	"moxie/core/utils/Events"
 ], function(extensions, Dom, Events) {
 
@@ -21687,7 +18302,7 @@ define("moxie/runtime/silverlight/runtime/Transporter", [
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  */
-
+ 
 /**
 @class moxie/runtime/silverlight/image/Image
 @private
@@ -21776,7 +18391,7 @@ define("moxie/runtime/html4/Runtime", [
 	"moxie/runtime/Runtime",
 	"moxie/core/utils/Env"
 ], function(Basic, x, Runtime, Env) {
-
+	
 	var type = 'html4', extensions = {};
 
 	function Html4Runtime(options) {
@@ -21793,8 +18408,8 @@ define("moxie/runtime/html4/Runtime", [
 			drag_and_drop: false,
 			filter_by_extension: Test(function() { // if you know how to feature-detect this, please suggest
 				return !(
-					(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) ||
-					(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) ||
+					(Env.browser === 'Chrome' && Env.verComp(Env.version, 28, '<')) || 
+					(Env.browser === 'IE' && Env.verComp(Env.version, 10, '<')) || 
 					(Env.browser === 'Safari' && Env.verComp(Env.version, 7, '<')) ||
 					(Env.browser === 'Firefox' && Env.verComp(Env.version, 37, '<'))
 				);
@@ -21807,7 +18422,7 @@ define("moxie/runtime/html4/Runtime", [
 			return_response_type: function(responseType) {
 				if (responseType === 'json' && !!window.JSON) {
 					return true;
-				}
+				} 
 				return !!~Basic.inArray(responseType, ['text', 'document', '']);
 			},
 			return_status_code: function(code) {
@@ -21885,7 +18500,7 @@ define("moxie/runtime/html4/file/FileInput", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, File, Basic, Dom, Events, Mime, Env) {
-
+	
 	function FileInput() {
 		var _uid, _mimes = [], _options;
 
@@ -21972,15 +18587,15 @@ define("moxie/runtime/html4/file/FileInput", [
 				file = new File(I.uid, file);
 
 				// clear event handler
-				this.onchange = function() {};
-				addInput.call(comp);
+				this.onchange = function() {}; 
+				addInput.call(comp); 
 
 				comp.files = [file];
 
 				// substitute all ids with file uids (consider file.uid read-only - we cannot do it the other way around)
 				input.setAttribute('id', file.uid);
 				form.setAttribute('id', file.uid + '_form');
-
+				
 				comp.trigger('change');
 
 				input = form = null;
@@ -22079,11 +18694,11 @@ define("moxie/runtime/html4/file/FileInput", [
 				, shim = I.getShim()
 				, shimContainer = I.getShimContainer()
 				;
-
+				
 				Events.removeAllEvents(shimContainer, this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.container), this.uid);
 				Events.removeAllEvents(_options && Dom.get(_options.browse_button), this.uid);
-
+				
 				if (shimContainer) {
 					shimContainer.innerHTML = '';
 				}
@@ -22147,7 +18762,7 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 	"moxie/file/Blob",
 	"moxie/xhr/FormData"
 ], function(extensions, Basic, Dom, Url, x, Events, Blob, FormData) {
-
+	
 	function XMLHttpRequest() {
 		var _status, _response, _iframe;
 
@@ -22261,8 +18876,8 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 								});
 								return;
 							}
-						}
-
+						}	
+					
 						cleanup.call(target, function() {
 							target.trigger('load');
 						});
@@ -22339,7 +18954,7 @@ define("moxie/runtime/html4/xhr/XMLHttpRequest", [
 						} catch (ex) {
 							return null;
 						}
-					}
+					} 
 				} else if ('document' === responseType) {
 
 				}
@@ -23029,6 +19644,7 @@ define('castle-url/components/upload',[
         that.setState({
           update: false
         });
+        console.log(that.props)
       }
 
       var portalUrl = $('body').attr('data-portal-url');
@@ -88559,7 +85175,7 @@ define("tinymce-compat3x", ["tinymce"], function() {
  *
  * - Download link implementation(/view vs download)
  * - Modal popup implementation
- *
+ * 
  * ToDo:
  * - extend from plone instead of copy/paste
  * - or, should be rewritten with react?
@@ -89418,7 +86034,7 @@ define('castle-url/patterns/focalpointselect',[
           var imageUID = $relatedItems[0].value;
           var videoUID = $relatedItems[1].value;
         } catch (err) {}
-
+        
         var that = self;
         if (!imageUID && !videoUID) {
           self.component.setState({
@@ -89440,18 +86056,18 @@ define('castle-url/patterns/focalpointselect',[
             that.component.setState({ image_focal_point: data.focal_point });
           });
         }
-      }
+      } 
 
       $relatedItems.on('change', getMediaData);
-
+            
       var uid = $relatedItems.val()
       if(!uid) {
         try{
           uid = $relatedItems[1].value;
         } catch (err) {
         }
-      }
-
+      } 
+      
       if(uid){
         getMediaData();
       }
@@ -92760,7 +89376,7 @@ define('castle-url/patterns/structure//js/views/selectionbutton',[
 });
 
 
-define('text!castle-url/patterns/structure/templates/paging.xml',[],function () { return '  <ul class="pagination pagination-sm pagination-centered">\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverfirst">\n        &laquo;\n      </a>\n    </li>\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverprevious">\n        &lt;\n      </a>\n    </li>\n    <% _.each(pages, function(p){ %>\n    <li class="<% if (currentPage == p) { %>active<% } %> <% if ("..." === p) { %>disabled<% } %>">\n      <a href="#" class="page"><%- p %></a>\n    </li>\n    <% }); %>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="servernext">\n        &gt;\n      </a>\n    </li>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="serverlast">\n        &raquo;\n      </a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled"><a href="#"><%- _t("Show:") %></a></li>\n    <li class="serverhowmany serverhowmany15 <% if(perPage == 15){ %>disabled<% } %>">\n      <a href="#" class="">15</a>\n    </li>\n    <li class="serverhowmany serverhowmany30 <% if(perPage == 30){ %>disabled<% } %>">\n      <a href="#" class="">30</a>\n    </li>\n    <li class="serverhowmany serverhowmany50 <% if(perPage == 50){ %>disabled<% } %>">\n      <a href="#" class="">50</a>\n    </li>\n    <li class="serverhowmany serverhowmany500 <% if(perPage == 500){ %>disabled<% } %>">\n      <a href="#" class="">500</a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled">\n      <a href="#">\n        <%- _t("Page:") %> <span class="current"><%- currentPage %></span>\n        <%- _t("of") %>\n        <span class="total"><%- totalPages %></span>\n              <%- _t("shown") %>\n      </a>\n    </li>\n  </ul>\n';});
+define('text!castle-url/patterns/structure/templates/paging.xml',[],function () { return '  <ul class="pagination pagination-sm pagination-centered">\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverfirst">\n        &laquo;\n      </a>\n    </li>\n    <li class="<% if (currentPage === 1) { %>disabled<% } %>">\n      <a href="#" class="serverprevious">\n        &lt;\n      </a>\n    </li>\n    <% _.each(pages, function(p){ %>\n    <li class="<% if (currentPage == p) { %>active<% } %> <% if (\'...\' === p) { %>disabled<% } %>">\n      <a href="#" class="page"><%- p %></a>\n    </li>\n    <% }); %>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="servernext">\n        &gt;\n      </a>\n    </li>\n    <li class="<% if (currentPage === totalPages) { %>disabled<% } %>">\n      <a href="#" class="serverlast">\n        &raquo;\n      </a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled"><a href="#"><%- _t("Show:") %></a></li>\n    <li class="serverhowmany serverhowmany15 <% if(perPage == 15){ %>disabled<% } %>">\n      <a href="#" class="">15</a>\n    </li>\n    <li class="serverhowmany serverhowmany30 <% if(perPage == 30){ %>disabled<% } %>">\n      <a href="#" class="">30</a>\n    </li>\n    <li class="serverhowmany serverhowmany50 <% if(perPage == 50){ %>disabled<% } %>">\n      <a href="#" class="">50</a>\n    </li>\n    <li class="serverhowmany serverhowmany500 <% if(perPage == 500){ %>disabled<% } %>">\n      <a href="#" class="">500</a>\n    </li>\n  </ul>\n\n  <ul class="pagination pagination-sm">\n    <li class="disabled">\n      <a href="#">\n        <%- _t("Page:") %> <span class="current"><%- currentPage %></span>\n        <%- _t("of") %>\n        <span class="total"><%- totalPages %></span>\n              <%- _t("shown") %>\n      </a>\n    </li>\n  </ul>\n';});
 
 define( 'castle-url/patterns/structure//js/views/paging',[
   'jquery',
@@ -93219,9 +89835,9 @@ define('castle-url/patterns/structure//js/views/textfilter',[
 
     /*
     This is a list of all available events you can register on a dropzone object.
-
+    
     You can register an event handler like this:
-
+    
         dropzone.on("dragEnter", function() { });
      */
 
@@ -94769,7 +91385,7 @@ define('castle-url/patterns/structure//js/views/textfilter',[
 
 
   /*
-
+  
   Bugfix for iOS 6 and 7
   Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
   based on the work of https://github.com/stomita/ios-imagefile-megapixel
@@ -97578,7 +94194,8 @@ define('castle-url/patterns/structure/pattern',[
           );
         }
       };
-      (new MutationObserver( imageMutationObserverCallback )).observe(
+
+      ( new MutationObserver( imageMutationObserverCallback ) ).observe(
         document.querySelector( 'body' ),
         { childList: true, subtree: true }
       );
@@ -98236,8 +94853,7 @@ define('castle-url/components/analytics-modal',[
         loading: true,
         chartsLoaded: false,
         metrics: this.metricOptions[0],
-        dimensions: null,
-        sort: null,
+        dimensions: this.dimensionOptions[0],
         max_results: 5,
         global: false,
         data: {},
@@ -98271,7 +94887,6 @@ define('castle-url/components/analytics-modal',[
       var query = {
         metrics: this.state.metrics,
         'global': this.state.global,
-        sort: '-' + this.state.metrics
       };
       if(this.state.dimensions){
         query.dimensions = this.state.dimensions;
@@ -98345,7 +94960,7 @@ define('castle-url/components/analytics-modal',[
         return D.p({}, 'Loading data...');
       }
       if(!this.state.data){
-        return D.p({}, 'No data could be retrieved. Google Analytics API support may not be configured.');
+        return D.p({}, 'No data could be retrieved. Google Analytics API support may not be configured, or may need time to collect data.');
       }
       var cdata = [['Count', this.translate(this.state.metrics)]];
       _.each(this.state.data.rows, function(result){
@@ -98397,7 +95012,7 @@ define('castle-url/components/analytics-modal',[
     renderFields: function(){
       var that = this;
 
-      var dimensions = [that.createOption('', 'N/A')];
+      var dimensions = [];
       this.dimensionOptions.forEach(function(dim){
         dimensions.push(that.createOption(dim));
       });
@@ -98408,7 +95023,7 @@ define('castle-url/components/analytics-modal',[
 
       var fields = [
         D.div({ className: "form-group col-md-2" }, [
-          D.label({ }, 'Aggregate'),
+          D.label({ }, 'Metrics'),
           D.select({ className: 'form-control',
                      value: this.state.metrics,
                      onChange: this.changeValue.bind(this, 'metrics')}, metrics)
@@ -98451,59 +95066,69 @@ define('castle-url/components/analytics-modal',[
   var RealtimeTab = cutils.Class([BaseTab], {
     type: 'realtime',
     dimensionOptions: [
-      'rt:userType',
-      'rt:medium',
-      'rt:trafficType',
-      'rt:browser',
-      'rt:operatingSystem',
-      'rt:deviceCategory',
-      'rt:country',
-      'rt:region',
-      'rt:pagePath'
+      'appVersion',
+      'audienceId',
+      'audienceName',
+      'city',
+      'cityId',
+      'country',
+      'countryId',
+      'deviceCategory',
+      'eventName',
+      'minutesAgo',
+      'platform',
+      'streamId',
+      'streamName',
+      'unifiedScreenName'
     ],
     metricOptions: [
-      'rt:pageViews',
-      'rt:activeUsers'
+      'activeUsers',
+      'conversions',
+      'eventCount',
+      'screenPageViews'
     ]
   });
 
   var HistoryTab = cutils.Class([BaseTab], {
-    type: 'ga',
+    type: 'historical',
     dimensionOptions: [
-      'ga:userType',
-      'ga:sessionCount',
-      'ga:socialNetwork',
-      'ga:hasSocialSourceReferral',
-      'ga:medium',
-      'ga:trafficType',
-      'ga:browser',
-      'ga:operatingSystem',
-      'ga:deviceCategory',
-      'ga:pagePath',
-      'ga:country',
-      'ga:region',
-      'ga:continent',
-      'ga:subContinent',
-      'ga:metro',
-      'ga:city',
-      'ga:flashVersion',
-      'ga:javaEnabled',
-      'ga:language',
-      'ga:exitPagePath'
+      'browser',
+      'city',
+      'cityId',
+      'contentType',
+      'continent',
+      'continentId',
+      'country',
+      'countryId',
+      'date',
+      'deviceCategory',
+      'firstSessionDate',
+      'language',
+      'medium',
+      'metro',
+      'operatingSystem',
+      'pagePath',
+      'platform',
+      'region',
+      'sessionSourceMedium',
+      'sourcePlatform',
+      'userGender'
     ],
     metricOptions: [
-      'ga:hits',
-      'ga:users',
-      'ga:newUsers',
-      'ga:sessions',
-      'ga:pageviews',
-      'ga:bounces',
-      'ga:bounceRate',
-      'ga:avgSessionDuration',
-      'ga:entranceRate',
-      'ga:pageviewsPerSession',
-      'ga:avgTimeOnPage',
-      'ga:avgPageLoadTime'
+      'activeUsers',
+      'averageSessionDuration',
+      'bounceRate',
+      'checkouts',
+      'engagedSessions',
+      'engagementRate',
+      'newUsers',
+      'screenPageViews',
+      'screenPageViewsPerSession',
+      'screenPageViewsPerUser',
+      'sessions',
+      'sessionsPerUser',
+      'totalUsers',
+      'userEngagementDuration'
     ],
 
     getInitialState: function(){
@@ -100836,7 +97461,7 @@ define('castle-url/patterns/widgets',[
   'castle-url/libs/react/react.min',
 ], function($, Base, R) {
   "use strict";
-
+  
   var D = R.DOM;
 
   var UploadFieldsWidgetComponent = R.createClass({
@@ -100983,7 +97608,7 @@ define('castle-url/patterns/widgets',[
 
 });
 
-
+  
 
 
 

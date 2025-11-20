@@ -72,8 +72,7 @@ define([
         loading: true,
         chartsLoaded: false,
         metrics: this.metricOptions[0],
-        dimensions: null,
-        sort: null,
+        dimensions: this.dimensionOptions[0],
         max_results: 5,
         global: false,
         data: {},
@@ -107,7 +106,6 @@ define([
       var query = {
         metrics: this.state.metrics,
         'global': this.state.global,
-        sort: '-' + this.state.metrics
       };
       if(this.state.dimensions){
         query.dimensions = this.state.dimensions;
@@ -181,7 +179,7 @@ define([
         return D.p({}, 'Loading data...');
       }
       if(!this.state.data){
-        return D.p({}, 'No data could be retrieved. Google Analytics API support may not be configured.');
+        return D.p({}, 'No data could be retrieved. Google Analytics API support may not be configured, or may need time to collect data.');
       }
       var cdata = [['Count', this.translate(this.state.metrics)]];
       _.each(this.state.data.rows, function(result){
@@ -233,7 +231,7 @@ define([
     renderFields: function(){
       var that = this;
 
-      var dimensions = [that.createOption('', 'N/A')];
+      var dimensions = [];
       this.dimensionOptions.forEach(function(dim){
         dimensions.push(that.createOption(dim));
       });
@@ -244,7 +242,7 @@ define([
 
       var fields = [
         D.div({ className: "form-group col-md-2" }, [
-          D.label({ }, 'Aggregate'),
+          D.label({ }, 'Metrics'),
           D.select({ className: 'form-control',
                      value: this.state.metrics,
                      onChange: this.changeValue.bind(this, 'metrics')}, metrics)
@@ -287,59 +285,69 @@ define([
   var RealtimeTab = cutils.Class([BaseTab], {
     type: 'realtime',
     dimensionOptions: [
-      'rt:userType',
-      'rt:medium',
-      'rt:trafficType',
-      'rt:browser',
-      'rt:operatingSystem',
-      'rt:deviceCategory',
-      'rt:country',
-      'rt:region',
-      'rt:pagePath'
+      'appVersion',
+      'audienceId',
+      'audienceName',
+      'city',
+      'cityId',
+      'country',
+      'countryId',
+      'deviceCategory',
+      'eventName',
+      'minutesAgo',
+      'platform',
+      'streamId',
+      'streamName',
+      'unifiedScreenName'
     ],
     metricOptions: [
-      'rt:pageViews',
-      'rt:activeUsers'
+      'activeUsers',
+      'conversions',
+      'eventCount',
+      'screenPageViews'
     ]
   });
 
   var HistoryTab = cutils.Class([BaseTab], {
-    type: 'ga',
+    type: 'historical',
     dimensionOptions: [
-      'ga:userType',
-      'ga:sessionCount',
-      'ga:socialNetwork',
-      'ga:hasSocialSourceReferral',
-      'ga:medium',
-      'ga:trafficType',
-      'ga:browser',
-      'ga:operatingSystem',
-      'ga:deviceCategory',
-      'ga:pagePath',
-      'ga:country',
-      'ga:region',
-      'ga:continent',
-      'ga:subContinent',
-      'ga:metro',
-      'ga:city',
-      'ga:flashVersion',
-      'ga:javaEnabled',
-      'ga:language',
-      'ga:exitPagePath'
+      'browser',
+      'city',
+      'cityId',
+      'contentType',
+      'continent',
+      'continentId',
+      'country',
+      'countryId',
+      'date',
+      'deviceCategory',
+      'firstSessionDate',
+      'language',
+      'medium',
+      'metro',
+      'operatingSystem',
+      'pagePath',
+      'platform',
+      'region',
+      'sessionSourceMedium',
+      'sourcePlatform',
+      'userGender'
     ],
     metricOptions: [
-      'ga:hits',
-      'ga:users',
-      'ga:newUsers',
-      'ga:sessions',
-      'ga:pageviews',
-      'ga:bounces',
-      'ga:bounceRate',
-      'ga:avgSessionDuration',
-      'ga:entranceRate',
-      'ga:pageviewsPerSession',
-      'ga:avgTimeOnPage',
-      'ga:avgPageLoadTime'
+      'activeUsers',
+      'averageSessionDuration',
+      'bounceRate',
+      'checkouts',
+      'engagedSessions',
+      'engagementRate',
+      'newUsers',
+      'screenPageViews',
+      'screenPageViewsPerSession',
+      'screenPageViewsPerUser',
+      'sessions',
+      'sessionsPerUser',
+      'totalUsers',
+      'userEngagementDuration'
     ],
 
     getInitialState: function(){
