@@ -7,7 +7,7 @@ from BTrees.OOBTree import OOBTree  # noqa: E402
 from castle.cms import theming  # noqa: E402
 from castle.cms.files import aws  # noqa: E402
 from castle.cms.interfaces import IArchiveContentTransformer, IArchiveManager  # noqa: E402
-from castle.cms.utils import normalize_url  # noqa: E402
+from castle.cms.utils import normalize_url, md5_fips  # noqa: E402
 from DateTime import DateTime  # noqa: E402
 from lxml.html import fromstring  # noqa: E402
 from lxml.html import tostring  # noqa: E402
@@ -440,7 +440,7 @@ class Storage(object):
                     fidata = fidata.replace(sub_url, new_url)
 
         # upload to amazon and get url!
-        md5 = hashlib.new("md5", usedforsecurity=False).hexdigest()
+        md5 = md5_fips().hexdigest()
 
         content_path = '{0}{1}/{2}/{3}/{4}'.format(
             RESOURCES_KEY_PREFIX, md5[0], md5[1], md5[2], md5

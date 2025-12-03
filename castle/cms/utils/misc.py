@@ -140,3 +140,16 @@ def _customhandler(obj):
 
 def json_dumps(data):
     return json.dumps(data, default=_customhandler)
+
+
+def md5_fips(data=b''):
+    """FIPS-compatible MD5 constructor for non-security purposes."""
+    try:
+        md5_hash = hashlib.new('md5', usedforsecurity=False)
+    except TypeError:
+        # in case FIPS is not supported
+        md5_hash = hashlib.md5()
+    
+    if data:
+        md5_hash.update(data)
+    return md5_hash
