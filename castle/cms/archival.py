@@ -440,7 +440,7 @@ class Storage(object):
                     fidata = fidata.replace(sub_url, new_url)
 
         # upload to amazon and get url!
-        md5 = hashlib.md5(fidata).hexdigest()
+        md5 = hashlib.new("md5", usedforsecurity=False).hexdigest()
 
         content_path = '{0}{1}/{2}/{3}/{4}'.format(
             RESOURCES_KEY_PREFIX, md5[0], md5[1], md5[2], md5

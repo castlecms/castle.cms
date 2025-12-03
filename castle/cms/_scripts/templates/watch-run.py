@@ -13,7 +13,7 @@ times = {}
 
 
 def md5(fname):
-    hash_md5 = hashlib.md5()
+    hash_md5 = hashlib.new("md5", usedforsecurity=False)
     with open(fname, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
