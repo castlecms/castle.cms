@@ -6,6 +6,7 @@ Changelog
 
 - add script to parse worker logs for @@content-creator endpoint errors
 - add X-CASTLEMTA-PRIORITY header to 2fa emails
+- update md5 usage for FIPS compliance
 
 
 3.1.0b7 (2025-06-09)

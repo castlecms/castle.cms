@@ -25,6 +25,7 @@ from .misc import get_ip  # noqa: F401
 from .misc import get_random_string  # noqa: F401
 from .misc import json_dumps  # noqa: F401
 from .misc import make_random_key  # noqa: F401
+from .misc import md5_fips # noqa: F401
 from .misc import normalize_url  # noqa: F401
 from .misc import retriable  # noqa: F401
 from .misc import strings_differ  # noqa: F401
