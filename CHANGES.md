@@ -1,10 +1,85 @@
 Changelog
 =========
 
-3.0.0b144 (unreleased)
+3.1.0b8 (unreleased)
+--------------------
+
+- add script to parse worker logs for @@content-creator endpoint errors
+- add X-CASTLEMTA-PRIORITY header to 2fa emails
+
+
+3.1.0b7 (2025-06-09)
+--------------------
+
+- add a script for resetting multiple account passwords all at once
+
+
+3.1.0b6 (2025-05-12)
+--------------------
+
+- fixes for editing video content types
+- update itunes rss xml format
+
+
+3.1.0b5 (2025-04-07)
+--------------------
+
+- no changes
+
+
+3.1.0b4 (2025-04-07)
+--------------------
+
+- fix newly introduced bug that prevented Videos from adapting IPrimaryField
+
+
+3.1.0b3 (2025-03-03)
+--------------------
+
+- add environment configurable values for the the link-reporter: batch size, retry frequency,
+  and sleep between batches, individual fetches, and rate limiting new links onto the worker
+  queue.
+- tweak sample site content script
+- folder_contents paginator changes:
+- fix bug breaking paginator when clicking "..." page button
+- change "all" to 500
+- only load thumbnail images as they become visible
+- tweak the custom query assembler to wrap the query and scoring script properly for an opensearch "function_score" query
+- handle possible async upload to s3 error
+- change video to python-based schema to validate updated file size
+
+
+3.1.0b2 (2025-01-10)
+--------------------
+
+- add script to fix robot settings
+- add '@@' to site-icon url
+- show reason if 'Failure-Reason' header available on password reset error
+
+
+3.1.0b1 (2024-11-26)
+--------------------
+
+- remove elasticsearch integration
+
+
+3.0.0b146 (2024-10-17)
 ----------------------
 
-- Nothing changed yet.
+- bugfixes for async paste
+
+
+3.0.0b145 (2024-10-11)
+----------------------
+
+- update async paste to handle missing blob files
+
+
+3.0.0b144 (2024-09-24)
+----------------------
+
+- add initial support for explicit asynchronous paste, intended for large objects
+  or large quantities of objects
 
 
 3.0.0b143 (2024-09-19)

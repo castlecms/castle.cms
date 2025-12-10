@@ -265,21 +265,73 @@
     name="3017"
     title="CastleCMS upgrade to 3017 profile"
     directory="profiles/3017"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.17"
+    description="3017 - Recompile resources for paste async button"
+    source="*"
+    destination="3017"
+    handler=".upgrades.upgrade_3017"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3018"
+    title="CastleCMS upgrade to 3018 profile"
+    directory="profiles/3018"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.18"
+    description="3018 - Move Video schema from xml to python, Recompile resources for paging 'all' => 500, video upload check"
+    source="*"
+    destination="3018"
+    handler=".upgrades.upgrade_3018"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3019"
+    title="CastleCMS upgrade to 3019 profile"
+    directory="profiles/3019"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.19"
+    description="3019 - Recompile resources for video form"
+    source="*"
+    destination="3019"
+    handler=".upgrades.upgrade_3019"
+    profile="castle.cms:default"
+  />
+
+
+  <genericsetup:registerProfile
+    name="3020"
+    title="CastleCMS upgrade to 3020 profile"
+    directory="profiles/3017"
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
   <genericsetup:upgradeSteps
     source="*"
-    destination="3017"
+    destination="3020"
     profile="castle.cms:default"
   >
     <genericsetup:upgradeStep
       title="add metadata column querylist_searchabletext"
-      handler="castle.cms.upgrades.upgrade_3017a"
+      handler="castle.cms.upgrades.upgrade_3020a"
     />
     <genericsetup:upgradeStep
       title="index querylist_searchabletext"
-      handler="castle.cms.upgrades.upgrade_3017b"
+      handler="castle.cms.upgrades.upgrade_3020b"
     />
   </genericsetup:upgradeSteps>
+
 
 </configure>

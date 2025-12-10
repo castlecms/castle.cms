@@ -118,6 +118,68 @@ class Workflow(BrowserView):
         })
 
 
+class TmpUploadFile(object):
+    def __init__(self, load=False, filename=None, chunk_size=None, total_size=None, prefix=None):
+        self.base_tmp_dir = os.getenv("CASTLECMS_TMP_FILE_DIR", tempfile.gettempdir())
+
+        if load:
+            self.metadata_path = os.path.join(self.base_tmp_dir, prefix, "metadata.json")
+            self.load()
+            return
+
+        _id = utils.get_random_string(50)
+        self.prefix = prefix + _id
+        self.tmp_dir = os.path.join(self.base_tmp_dir, self.prefix)
+        self.metadata_path = os.path.join(self.base_tmp_dir, self.prefix, "metadata.json")
+        self.info = dict(
+            id=_id,
+            tmp_dir=self.tmp_dir,
+            tmp_file=os.path.join(self.tmp_dir, filename),
+            last_chunk=1,
+            chunk_size=chunk_size,
+            total_size=total_size,
+            name=filename,
+        )
+        os.makedirs(self.tmp_dir)
+
+    def load(self):
+        with open(self.metadata_path, 'r') as fin:
+            self.info = json.load(fin)
+
+    def save(self):
+        with open(self.metadata_path, 'w') as fout:
+            json.dump(self.info, fout, indent=2)
+
+    def write_chunk(self, chunk, formdata):
+        mode = 'wb'
+        if chunk > 1:
+            mode = 'ab+'
+            # if we're not on the first chunk, and there's no temp file, then
+            # there's an issue
+            if not os.path.exists(self.info['tmp_file']):
+                raise Exception('No tmp upload file found')
+        with open(self.info['tmp_file'], mode) as fin:
+            while True:
+                data = formdata.read(2 << 16)
+                if not data:
+                    break
+                fin.write(data)
+
+    def cleanup(self):
+        # tmp_ files need to stick around and be managed later
+        if not self.info.get('field_name', '').startswith('tmp_'):
+            shutil.rmtree(self.info["tmp_dir"])
+
+    def check(self, chunk, chunk_size, total_size):
+        # check things are matching up
+        if self.info['last_chunk'] != chunk - 1:
+            raise Exception('Invalid chunk sequence')
+        if self.info['total_size'] != total_size:
+            raise Exception('Invalid total size')
+        if self.info['chunk_size'] != chunk_size:
+            raise Exception('Inconsistent chunk size')
+
+
 class Creator(BrowserView):
     """
     Advanced content creation view.
@@ -157,93 +219,59 @@ class Creator(BrowserView):
         if chunk > total_chunks:
             raise Exception("More chunks than what should be possible")
 
-        cache_key_prefix = '%s-uploads-' % '/'.join(self.context.getPhysicalPath()[1:])
+        cache_key_prefix = '%s-uploads-' % '-'.join(self.context.getPhysicalPath()[1:])
         if chunk == 1:
-            # initializing chunk upload
+            tmp_file = TmpUploadFile(
+                filename=self.request.form['name'],
+                chunk_size=chunk_size,
+                total_size=total_size,
+                prefix=cache_key_prefix)
 
-            _id = utils.get_random_string(50)
-            filename = self.request.form['name']
-            tmp_dir = tempfile.mkdtemp()
-            tmp_filename = os.path.join(tmp_dir, filename)
-            info = {
-                'last_chunk': 1,
-                'total_size': total_size,
-                'chunk_size': chunk_size,
-                'tmp_file': tmp_filename,
-                'name': filename
-            }
         else:
-            info = cache.get(cache_key_prefix + _id)
-            # check things are matching up
-            if info['last_chunk'] != chunk - 1:
-                raise Exception('Invalid chunk sequence')
-            if info['total_size'] != total_size:
-                raise Exception('Invalid total size')
-            if info['chunk_size'] != chunk_size:
-                raise Exception('Inconsistent chunk size')
-            info['last_chunk'] = chunk
+            tmp_file = TmpUploadFile(load=True, prefix=cache_key_prefix + _id)
+            tmp_file.check(chunk, chunk_size, total_size)
+            tmp_file.info['last_chunk'] = chunk
 
-        mode = 'wb'
-        if chunk > 1:
-            # appending to file now
-            mode = 'ab+'
-            if not os.path.exists(info['tmp_file']):
-                raise Exception('No tmp upload file found')
-        fi = open(info['tmp_file'], mode)
-
-        while True:
-            data = self.request.form['file'].read(2 << 16)
-            if not data:
-                break
-            fi.write(data)
-        fi.close()
+        tmp_file.write_chunk(chunk, self.request.form['file'])
 
         if chunk == total_chunks:
             # finish upload
             dup = False
             if not existing_id:
                 try:
-                    obj = self.create_file_content(info)
+                    obj = self.create_file_content(tmp_file.info)
                 except duplicates.DuplicateException as ex:
                     obj = ex.obj
                     dup = True
             else:
                 try:
-                    info['existing_id'] = existing_id
-                    info['field_name'] = field_name
-                    obj, success, msg = self.update_file_content(info)
+                    tmp_file.info['existing_id'] = existing_id
+                    tmp_file.info['field_name'] = field_name
+                    obj, success, msg = self.update_file_content(tmp_file.info)
                     if not success:
-                        self.update_file_content(info)
-                        self._clean_tmp(info)
+                        self.update_file_content(tmp_file.info)
+                        self._clean_tmp(tmp_file.info)
                         return json.dumps({
                             'success': False,
-                            'id': _id,
+                            'id': tmp_file.info["id"],
                             'reason': msg
                         })
                 except Exception:
                     logger.warning(
                         'Failed to update content.', exc_info=True)
-                    self._clean_tmp(info)
+                    self._clean_tmp(tmp_file.info)
                     return json.dumps({
                         'success': False,
-                        'id': _id
+                        'id': tmp_file.info["id"]
                     })
-            if not info.get('field_name', '').startswith('tmp_'):
-                # tmp files need to stick around and be managed later...
-                self._clean_tmp(info)
-            cache.delete(cache_key_prefix + _id)
+            tmp_file.cleanup()
             return dump_object_data(obj, dup)
         else:
-            cache.set(cache_key_prefix + _id, info)
-            check_put = None
-            while check_put is None:
-                try:
-                    check_put = cache.get(cache_key_prefix + _id)
-                except Exception:
-                    cache.set(cache_key_prefix + _id, info)
+            tmp_file.save()
+
         return json.dumps({
             'success': True,
-            'id': _id
+            'id': tmp_file.info["id"]
         })
 
     def _clean_tmp(self, info):

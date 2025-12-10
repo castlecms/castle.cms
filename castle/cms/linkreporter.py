@@ -105,6 +105,13 @@ _consumer_queue = Queue.Queue()
 _exiting = threading.Event()
 
 
+BATCH_SIZE = int(os.getenv("LINK_REPORT_BATCH_SIZE", 20))
+RECHECK_DELAY = int(os.getenv("LINK_REPORT_RECHECK_DELAY", 60 * 60 * 24 * 7))
+SLEEP_FOR_ALL = float(os.getenv("LINK_REPORT_SLEEP_FOR_ALL", 0.0))
+SLEEP_FOR_RATE_LIMIT = float(os.getenv("LINK_REPORT_SLEEP_FOR_RATE_LIMIT", 0.2))
+SLEEP_AFTER_BATCH = float(os.getenv("LINK_REPORT_SLEEP_AFTER_BATCH", 0.0))
+
+
 def parse_url_worker():
     while True:
         try:
@@ -121,6 +128,10 @@ def parse_url_worker():
                 stream=True, verify=False, headers={
                     'User-Agent': USER_AGENT
                 })
+
+            # after every request, we sleep if we're requested to do so
+            if SLEEP_FOR_ALL > 0.0:
+                time.sleep(SLEEP_FOR_ALL)
         except Exception as ex:
             resp = ex
         _consumer_queue.put((url, resp))
@@ -142,10 +153,10 @@ status_codes_info = {
 
 class Reporter(object):
 
-    batch_size = 20
+    batch_size = BATCH_SIZE
     running = True
 
-    def __init__(self, site, recheck_delay=60 * 60 * 24 * 7):
+    def __init__(self, site, recheck_delay=RECHECK_DELAY):
         self.site = site
         self.recheck_delay = recheck_delay
         self.session = get_session()
@@ -156,7 +167,7 @@ class Reporter(object):
         self.error = 0
         self.queued = 0
         self.found = 0
-        self.threads = []
+        self.threads = []  # a list of WORKER threads
         self.cache = {}
 
     def join(self):
@@ -205,22 +216,27 @@ class Reporter(object):
 
         self.add_link(self.base, self.base)
 
+        # run until the consumer queue is empty -- eg, the workers haven't placed
+        # anything on the queue between calls to self.consume() and a call to
+        # self.get_next(self.batch_size) returns a zero length list
         while self.running:
             if self.consume() == 0:
                 break
 
-        # attempt to retry errors... just once
+        # attempt to retry errors... just once IN THIS execution of the reporter
         self.session.query(Url).filter(
-            Url.status_code.in_([-1, -2, 400, 403, 401, 429])).update(
+            Url.status_code.in_([-1, -2, 400, 403, 401, 429, 503])).update(
             {'last_checked_date': datetime(1984, 1, 1)},
             synchronize_session=False)
         self.session.expunge_all()
-
         while self.running:
             if self.consume() == 0:
                 break
 
+        # tell the worker threads to stop when they become empty
         self.join()
+
+        # process all the stuff the workers put on the queue since we last ran self.consume()
         while _consumer_queue.qsize() > 0:
             url, resp = _consumer_queue.get()
             if url in self.cache:
@@ -244,6 +260,11 @@ class Reporter(object):
                 url = self.cache.pop(url)
                 self.check_url(url, resp)
             _consumer_queue.task_done()
+
+        # we should pause after processing a batch if configured to do so
+        if SLEEP_AFTER_BATCH > 0.0:
+            time.sleep(SLEEP_AFTER_BATCH)
+
         return len(urls)
 
     def handle_error(self, request, exception):
@@ -266,7 +287,8 @@ class Reporter(object):
                 resp.status_code, url.url))
             if resp.status_code == 429:
                 # slow it down since we're getting limited...
-                time.sleep(0.2)
+                time.sleep(SLEEP_FOR_RATE_LIMIT)
+
             try:
                 override_status_code = None
                 if '/acl_users/' in resp.url or '?came_from=' in resp.url:

@@ -234,8 +234,10 @@ define([
         self.pasteAllowed = !!$.cookie('__cp');
         if (self.pasteAllowed) {
           self.buttons.get('paste').enable();
+          self.buttons.get('paste-async').enable();
         } else {
           self.buttons.get('paste').disable();
+          self.buttons.get('paste-async').disable();
         }
       }
     },

@@ -146,10 +146,15 @@ upgrade_3013 = default_upgrade_factory('3013')
 upgrade_3014 = default_upgrade_factory('3014')
 upgrade_3015 = default_upgrade_factory('3015')
 upgrade_3016 = default_upgrade_factory('3016')
-upgrade_3017a = default_upgrade_factory('3017')
+upgrade_3017 = default_upgrade_factory('3017')
+upgrade_3018 = default_upgrade_factory('3018')
+upgrade_3019 = default_upgrade_factory('3019')
+
+
+upgrade_3017a = default_upgrade_factory('3020')
 
 def upgrade_3017b(site, logger=CASTLE_LOGGER):
-    logger.info('3017b')
+    logger.info('3020b')
     query = api.content.find(
         object_provides=[IFile, IPressRelease, IImage, IVideo, IAudio, IStory, ISpeech, ITestimony])
     for item in query:

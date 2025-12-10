@@ -28,7 +28,7 @@ In addition to Plone standard features, CastleCMS includes:
 - Advanced content layout editor
 - Improved management toolbar
 - Intuitive content creation and organization
-- Elasticsearch integration
+- Opensearch integration
 - Search results tuned by social media impact
 - Search results pinning
 - Celery task queue integration (asynchronous actions)
@@ -79,20 +79,20 @@ Dependencies
 
 - Redis
 - avconv (needs to be updated for ffmpeg again)
-- ElasticSearch 2.3
+- Opensearch 1.1+
 
 
 Development setup on macOS
 --------------------------
 
-1. ``brew install redis elasticsearch libav python``
+1. ``brew install redis opensearch libav python``
 2. ``git clone git@github.com:castlecms/castle.cms.git``
 3. ``cd castle.cms``
 4. ``virtualenv -p python2.7 .``
 5. ``bin/pip install --upgrade pip``
 6. ``bin/pip install -r requirements.txt``
 7. ``bin/buildout``
-8. Run (in separate terminal windows) ``elasticsearch``, ``redis-server``, ``bin/instance fg``
+8. Run (in separate terminal windows) ``opensearch``, ``redis-server``, ``bin/instance fg``
 9. Browse to http://localhost:8080/
 
 Once you have created a site in the development instance:
@@ -106,7 +106,6 @@ Optional Dependencies
 ---------------------
 
 - Install `argon2_cffi` to use more secure password hashing.
-- https://github.com/castlecms/elasticsearch-castle-scoring
 - https://github.com/castlecms/castlehps for faster search integration
 - Amazon S3 credentials to store large files on S3
 - Google API keys for Google analytics and Recaptcha integrations
@@ -147,7 +146,7 @@ Running local dependencies with docker
 
     or, just the essentials:
     $ docker run -p 6379:6379 redis
-    $ docker run -p 9200:9200 elasticsearch:2.4-alpine
+    $ docker run -p 9200:9200 opensearchproject/opensearch:latest
 
 
 Forks/Custom releases

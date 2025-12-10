@@ -1,6 +1,6 @@
 from AccessControl.SecurityManagement import newSecurityManager
 from BTrees.OOBTree import OOBTree
-from castle.cms.indexing.hps import index_in_es
+# from castle.cms.indexing.hps import index_in_es
 from castle.cms.services import twitter
 from castle.cms.social import COUNT_ANNOTATION_KEY
 from castle.cms.utils import retriable
@@ -82,7 +82,9 @@ def parse_line(site, public_url, line):
                 record_tweet_stats(site, ob, tweet)
     if modified:
         transaction.commit()
-        index_in_es()
+        # this method is supposed to get an 'obj' as a parameter, so I'm not confident this
+        # was working before we removed ES
+        # index_in_es()
 
 
 class StreamListener(twitter.StreamListener):

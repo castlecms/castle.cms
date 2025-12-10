@@ -1,0 +1,30 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    i18n_domain="castle.cms">
+
+    <include package="collective.monkeypatcher" />
+    <include package="collective.monkeypatcher" file="meta.zcml" />
+
+    <monkey:patch
+        description="Create the blob folder path and create (touch) an empty file for each blob file if it's missing."
+        class="ZODB.blob.BlobFile"
+        original="__init__"
+        replacement=".blobmissing.patched_blob_init"
+        docstringWarning="true"
+        />
+
+    <monkey:patch
+        description="Create the blob-file if it's missing."
+        class="ZEO.ClientStorage.ClientStorage"
+        original="loadBlob"
+        preserveOriginal="true"
+        replacement=".blobmissing.patched_loadBlob"
+        docstringWarning="true"
+        />
+
+
+</configure>

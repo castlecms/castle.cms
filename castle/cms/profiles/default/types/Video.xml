@@ -32,9 +32,9 @@
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
  </property>
- <property name="schema"></property>
+ <property name="schema">castle.cms.interfaces.content.IVideo</property>
  <property name="model_source"></property>
- <property name="model_file">castle.cms.schema:video.xml</property>
+ <property name="model_file"></property>
  <property name="schema_policy">dexterity</property>
  <alias from="(Default)" to="@@display-file"/>
  <alias from="edit" to="@@edit"/>
