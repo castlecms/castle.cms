@@ -3,6 +3,7 @@ from Acquisition import aq_base, aq_parent
 from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
+from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
 from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
@@ -220,3 +221,17 @@ def self_or_child_has_title_description_and_image(obj):
 def has_custom_markup(image):
     if image.custom_markup:
         return True
+
+
+@indexer(IItem)
+def raw_output(obj):
+    # todo: debug indexer
+    text = getattr(obj, 'text', None)
+    if not text:
+        return ''
+    if hasattr(text, 'raw'):
+        return text.raw or ''
+    try:
+        return str(text)
+    except Exception:
+        return ''

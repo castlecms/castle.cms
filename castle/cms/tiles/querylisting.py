@@ -242,6 +242,9 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         page = max(page, 0)
         start = page * self.limit
         end = start + self.limit
+        print('====== result ======')
+        for item in result:
+            print(item.raw_output)
         return {
             'total': len(result),
             'page': page + 1,
