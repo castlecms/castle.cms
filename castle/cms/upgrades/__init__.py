@@ -150,21 +150,6 @@ upgrade_3019 = default_upgrade_factory('3019')
 upgrade_3020a = default_upgrade_factory('3020')
 def upgrade_3020b(context):
     catalog = getToolByName(context, 'portal_catalog')
-
-    if 'raw_output' not in catalog.schema():
-        catalog.addColumn('raw_output')
-        print("Added 'raw_output' metadata column to catalog")
-
-    if 'raw_output' in catalog.schema():
-        print('---- reindexing ---')
-        catalog.manage_reindexIndex(ids=['raw_output'])
-    else:
-        print("raw_output column not found in catalog!")
-    print('--- done ---')
-
-    # query = api.content.find(object_provides=[IItem])
-    # for item in query:
-    #     print('reindexing object {}'.format(item.Title))
-    #     obj = item.getObject()
-    #     obj.reindexObject(idxs=['raw_output'])
-    # print('upgrade completed')
+    for brain in catalog():
+        obj = brain.getObject()
+        catalog.catalog_object(obj, idxs=[])

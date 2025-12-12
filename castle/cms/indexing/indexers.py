@@ -14,6 +14,7 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
+import six
 
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import IHasDefaultImage
@@ -225,13 +226,18 @@ def has_custom_markup(image):
 
 @indexer(IItem)
 def raw_output(obj):
-    # todo: debug indexer
     text = getattr(obj, 'text', None)
+
     if not text:
-        return ''
+        return u''
+
     if hasattr(text, 'raw'):
-        return text.raw or ''
+        try:
+            return text.raw or u''
+        except Exception:
+            return u''
+
     try:
-        return str(text)
+        return six.text_type(text)
     except Exception:
-        return ''
+        return u''

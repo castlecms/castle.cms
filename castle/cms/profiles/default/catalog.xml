@@ -51,10 +51,6 @@
 
   <column value="has_custom_markup"/>
 
-  <index name="raw_output" meta_type="ZCTextIndex">
-    <indexed_attr value="raw_output"/>
-  </index>
-
   <column value="raw_output"/>
 
 </object>
