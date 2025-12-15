@@ -112,6 +112,15 @@ class BlogView(BaseTileView):
     tile_name = 'querylisting'
 
 
+class FullContentView(BaseTileView):
+    name = 'full-content'
+    label = 'Full Content'
+    preview = '++plone++castle/images/previews/querylisting/full-content.png'
+    order = 3
+    index = ViewPageTemplateFile('templates/querylisting/full-content.pt')
+    tile_name = 'querylisting'
+
+
 class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     implements(IPersistentTile)
 

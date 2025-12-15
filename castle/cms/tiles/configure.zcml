@@ -446,6 +446,12 @@
     for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
     factory=".querylisting.BlogView"
     />
+  <adapter
+    name="querylisting.full-content"
+    provides="..interfaces.ITileView"
+    for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
+    factory=".querylisting.FullContentView"
+  />
 
   <!-- gallery views -->
   <adapter
