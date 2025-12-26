@@ -547,6 +547,7 @@ define([
       }else{
         return D.div({ className: 'slot-chooser'}, [
           D.p({ className: 'discreet'}, 'Slots are areas in the theme where you can place tiles into that are outside the main content area.'),
+          D.p({ className: 'discreet'}, '*Grayed out slots already contain tiles within them.'),
           D.iframe({ src: $('body').attr('data-portal-url') + '/@@render-slots-site-layout?layout=' + $('body').attr('data-site-layout'),
                      width: '100%', style: {'min-height': '400px'}, className: 'castle-slot-selector', ref: 'iframe', name: 'choose_slot'})
         ]);
