@@ -53,7 +53,7 @@ Available variables:
 
 Important constructs:
 
-- `<html data-gridsystem="...">`: define what time of grid system. Example `bs3`
+- `<html data-gridsystem="...">`: define what type of grid system. Example `bs3`
 - `<div data-tile="{context_url}/..." />`: render a tile
 - `<link data-include-js />`: include configured site javascript
 - `<link data-include-css />`: include configured site css

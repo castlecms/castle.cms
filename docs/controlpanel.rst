@@ -29,7 +29,7 @@ To automatically archive content to an S3 bucket.
 Content
 ~~~~~~~
 
-- File upload fields: Fields that should up on the file upload form. This allows you
+- File upload fields: Fields that should show up on the file upload form. This allows you
   to require particular fields and/or add more fields for a user to be able
   to fill in while uploading files.
 

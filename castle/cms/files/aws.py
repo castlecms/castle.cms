@@ -3,21 +3,20 @@
 from future.standard_library import install_aliases
 install_aliases()  # noqa
 
-import logging
-from datetime import datetime
-import StringIO
-from time import time
-from urllib.parse import urlsplit, urlunsplit, quote, quote_plus
-
-import botocore
-import boto3
-from collective.celery.utils import getCelery
-from persistent.mapping import PersistentMapping
-from plone.namedfile.file import NamedBlobFile
-from plone.registry.interfaces import IRegistry
-from plone.uuid.interfaces import IUUID
-from zope.annotation.interfaces import IAnnotations
-from zope.component import getUtility
+import logging  # noqa: E402
+from datetime import datetime  # noqa: E402
+import StringIO  # noqa: E402
+from time import time  # noqa: E402
+from urllib.parse import urlsplit, urlunsplit, quote, quote_plus  # noqa: E402
+import botocore  # noqa: E402
+import boto3  # noqa: E402
+from collective.celery.utils import getCelery  # noqa: E402
+from persistent.mapping import PersistentMapping  # noqa: E402
+from plone.namedfile.file import NamedBlobFile  # noqa: E402
+from plone.registry.interfaces import IRegistry  # noqa: E402
+from plone.uuid.interfaces import IUUID  # noqa: E402
+from zope.annotation.interfaces import IAnnotations  # noqa: E402
+from zope.component import getUtility  # noqa: E402
 
 
 logger = logging.getLogger('castle.cms')
@@ -93,24 +92,39 @@ def move_file(obj):
         'ContentDisposition': disposition,
     }
 
-    # Upload to AWS
-    # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
-    #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
-    # note: upload_fileobj() does a multipart upload, which is why
-    #   chunked uploading is no longer performed explicitly
-    #   see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_fileobj  # noqa
-    blob_fi = obj.file._blob.open('r')
-    bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
+    try:
+        is_complete = False
+        # Upload to AWS
+        # valid modes in ZODB 3, 4 or 5 do not include 'rb' --
+        #   see ZODB/blob.py line 54 (or so) for 'valid_modes'
+        # note: upload_fileobj() does a multipart upload, which is why
+        #   chunked uploading is no longer performed explicitly
+        #   see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_fileobj  # noqa
 
-    # Delete data from ZODB, but leave a reference
-    if not getCelery().conf.task_always_eager:
-        obj._p_jar.sync()
-    obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
-    obj.file.original_filename = filename
-    obj.file.original_content_type = content_type
-    obj.file.original_size = size
+        blob_fi = obj.file._blob.open('r')
+        bucket.upload_fileobj(blob_fi, key, ExtraArgs=extraargs)
 
-    set_permission(obj)
+        s3_metadata = bucket.Object(key)
+        is_complete = s3_metadata.content_length == size
+
+        if is_complete:
+            # Delete data from ZODB, but leave a reference
+            if not getCelery().conf.task_always_eager:
+                obj._p_jar.sync()
+            obj.file = NamedBlobFile(data='', contentType=obj.file.contentType, filename=FILENAME)
+            obj.file.original_filename = filename
+            obj.file.original_content_type = content_type
+            obj.file.original_size = size
+
+            set_permission(obj)
+    except Exception as exc:
+        logger.warning(exc)
+    finally:
+        if is_complete:
+            logger.info('{} uploaded to s3 successfully with key {}'.format(filename, key))
+        else:
+            logger.error(filename + ' failed to upload correctly')
+
 
 
 def set_permission(obj):
@@ -130,7 +144,8 @@ def set_permission(obj):
             'error reading object {key} in bucket {name}'.format(
                 key=key,
                 name=bucket.name),
-            log_exc=True)
+                exc_info=True,
+            )
         return
 
     # is the object public?

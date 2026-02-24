@@ -1,12 +1,14 @@
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
-from zope import schema
 from zope.component import adapter
-from zope.interface import alsoProvides
 from zope.interface import implementer
+from zope.interface import provider
+
+import zope.schema as schema
 
 
+@provider(IFormFieldProvider)
 class INavigationLabel(model.Schema):
 
     model.fieldset(
@@ -20,9 +22,6 @@ class INavigationLabel(model.Schema):
                     u'Can be left blank',
         required=False
     )
-
-
-alsoProvides(INavigationLabel, IFormFieldProvider)
 
 
 @implementer(INavigationLabel)

@@ -188,8 +188,8 @@ If that does not work, copy and paste this url into your web browser: %s
                     urlencode({
                         'form.widgets.email': item['email'],
                         'form.widgets.phone_number': item.get('phone_number', '')
-                        })
-                    ))
+                    })
+                ))
 
     def __call__(self):
         registry = queryUtility(IRegistry)

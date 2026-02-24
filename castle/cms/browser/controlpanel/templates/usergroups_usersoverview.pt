@@ -20,11 +20,11 @@
 
   <article id="content">
 
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/@@overview-controlpanel"
-       i18n:translate="">
-        Site Setup
+    <a
+      href="${context/portal_url}/@@overview-controlpanel"
+      id="setup-link"
+    >
+      Site Setup
     </a>
 
     <h1 class="documentFirstHeading"

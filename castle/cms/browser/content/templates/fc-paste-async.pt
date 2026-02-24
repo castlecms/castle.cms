@@ -1,0 +1,4 @@
+<p>Asynchronous paste actions normally happen when a large number of items are copied.</p>
+<p>These processes run in the background as they often take some time to complete.</p>
+<p>Selecting this option will help process batches of documents or large documents that contain many tiles.</p>
+<p>Would you like to continue?</p>

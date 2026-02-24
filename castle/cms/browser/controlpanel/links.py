@@ -48,12 +48,17 @@ class LinksControlPanel(BrowserView):
         writer.writerow(['URL', 'From URL', 'Status code', 'Checked', 'Redirected url'])
         last = None
         count = 0
-        for link, url in self.session.query(Link, Url.url).join(
-                Url, Url.url == Link.url_to).filter(
-                    Link.site_id == self.context.getId(),
-                    Url.last_checked_date > datetime(1985, 1, 1),
-                    ~Url.status_code.in_([200, 999, 429, 524]),
-                ).order_by(Url.url):
+        for link, url in self.session.query(
+            Link,
+            Url.url
+        ).join(
+            Url,
+            Url.url == Link.url_to
+        ).filter(
+            Link.site_id == self.context.getId(),
+            Url.last_checked_date > datetime(1985, 1, 1),
+            ~Url.status_code.in_([200, 999, 429, 524]),
+        ).order_by(Url.url):
 
             if last != link.url_to:
                 if count > 25:
@@ -121,22 +126,43 @@ class LinksControlPanel(BrowserView):
                 'links': '{:,}'.format(self.session.query(Link).filter(
                     Link.site_id == self.context.getId()
                 ).count()),
-                'urls': '{:,}'.format(self.session.query(Url, Link.url_to).join(
-                    Link, Link.url_to == Url.url).filter(
+                'urls': '{:,}'.format(
+                    self.session.query(
+                        Url,
+                        Link.url_to,
+                    ).join(
+                        Link,
+                        Link.url_to == Url.url,
+                    ).filter(
                         Link.site_id == self.context.getId()
-                    ).distinct(Url.url).count()),
-                'unchecked': '{:,}'.format(self.session.query(Url, Link.url_to).join(
-                    Link, Link.url_to == Url.url).filter(
+                    ).distinct(Url.url).count()
+                ),
+                'unchecked': '{:,}'.format(
+                    self.session.query(
+                        Url,
+                        Link.url_to
+                    ).join(
+                        Link,
+                        Link.url_to == Url.url
+                    ).filter(
                         Link.site_id == self.context.getId(),
                         Url.status_code == -1,
                         Url.parse_error == None  # noqa
-                    ).count()),
-                'errors': '{:,}'.format(self.session.query(Url, Link.url_to).join(
-                    Link, Link.url_to == Url.url).filter(
+                    ).count()
+                ),
+                'errors': '{:,}'.format(
+                    self.session.query(
+                        Url,
+                        Link.url_to,
+                    ).join(
+                        Link,
+                        Link.url_to == Url.url,
+                    ).filter(
                         Link.site_id == self.context.getId(),
                         Url.status_code.in_([-2, -200, -599, -301]),
                         Url.parse_error != None
-                    ).count()),
+                    ).count()
+                ),
                 'broken': '{:,}'.format(self.broken_count),
             }
         except sqlalchemy.exc.OperationalError as ex:

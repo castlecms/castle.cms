@@ -41,7 +41,7 @@
     </p>
 
     <button id="show-trash-log" onclick="toggleLog()">Show Auto-Empty Log</button>
-    <div id="trash-log" style="">${view/get_trash_log}</div>
+    <div id="trash-log">${view/get_trash_log}</div>
     <div class="portalMessage info"
          tal:condition="not: view/items">
         <strong>Info</strong>

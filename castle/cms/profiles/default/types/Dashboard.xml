@@ -2,8 +2,7 @@
 <object name="Dashboard" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Dashboard</property>
- <property name="description"
-    i18n:translate="">Dashboard object to manage user dashboard.</property>
+ <property name="description" i18n:translate="">An object to manage a user's landing page</property>
  <property name="icon_expr"></property>
  <property name="factory">Dashboard</property>
  <property name="add_view_expr">string:${folder_url}/++add++Dashboard</property>

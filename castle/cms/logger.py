@@ -26,10 +26,12 @@ http_server.http_request.log = medua_log_request
 
 def log_date_string(when):
     logtime = time.localtime(when)
-    return time.strftime('%d/', logtime) + \
-           http_server.http_date.monthname[logtime[1]] + \
-           time.strftime('/%Y:%H:%M:%S ', logtime) + \
-           http_server.tz_for_log
+    return (
+        time.strftime('%d/', logtime) +
+        http_server.http_date.monthname[logtime[1]] +
+        time.strftime('/%Y:%H:%M:%S ', logtime) +
+        http_server.tz_for_log
+    )
 
 
 def log_request(request):
@@ -81,5 +83,5 @@ def log_request(request):
                 resp.headers.get('content-length', '0'),
                 referer,
                 user_agent
-                )
             )
+        )

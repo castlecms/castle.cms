@@ -14,6 +14,7 @@ import plone.api as api
 
 logger = logging.getLogger('Plone')
 
+
 @implementer(ISecureLoginAllowedView)
 class RequestAccessView(BrowserView):
 

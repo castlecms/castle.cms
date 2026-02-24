@@ -24,8 +24,10 @@ ABSOLUTE_FONT_UNITS = (
     'pt',
     'px',
 )
-VALID_CSS_FONT_SIZE_PATTERN = compile("^\s*\d+\s*({})\s*$".format(  # noqa:W605
-    '|'.join(ABSOLUTE_FONT_UNITS)
-))
+VALID_CSS_FONT_SIZE_PATTERN = compile(
+    r"^\s*\d+\s*({})\s*$".format(
+        '|'.join(ABSOLUTE_FONT_UNITS)
+    )
+)
 CLOUDFARE_PURGE_BATCH_SIZE_LIMIT = 30
 HYPERTEXT_PROTOCOL_PATTERN = r'^https?:\/\/'

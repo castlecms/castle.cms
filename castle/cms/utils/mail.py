@@ -4,10 +4,11 @@ from email.mime.text import MIMEText
 from castle.cms.constants import ALL_SUBSCRIBERS
 from castle.cms.constants import ALL_USERS
 from html2text import html2text
-from plone import api
 from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from zope.component import getUtility
+
+import plone.api as api
 
 
 def get_email_from_address():
@@ -16,7 +17,14 @@ def get_email_from_address():
     return mail_settings.email_from_address
 
 
-def send_email(recipients=None, subject=None, html='', text='', sender=None):
+def send_email(
+    recipients=None,
+    subject=None,
+    html='',
+    text='',
+    sender=None,
+    include_priority_header=False,
+):
     if isinstance(recipients, basestring):
         recipients = [recipients]
 
@@ -32,7 +40,6 @@ def send_email(recipients=None, subject=None, html='', text='', sender=None):
             cleaned_recipients.update(subscribe.get_email_addresses())
         else:
             cleaned_recipients.add(recipient)
-
 
     if sender is None:
         sender = get_email_from_address()
@@ -54,6 +61,8 @@ def send_email(recipients=None, subject=None, html='', text='', sender=None):
         if html:
             part = MIMEText(html, 'html')
             msg.attach(part)
-
+        if include_priority_header is True:
+            del msg['X-CASTLEMTA-PRIORITY']
+            msg['X-CASTLEMTA-PRIORITY'] = 'priority'
         mailhost = api.portal.get_tool('MailHost')
         mailhost.send(msg.as_string())

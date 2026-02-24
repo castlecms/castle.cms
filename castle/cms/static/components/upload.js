@@ -351,12 +351,20 @@ define([
           D.button({ className: 'btn btn-default castle-btn-edit', onClick: that.editImageClicked }, 'Edit Image'));
       }
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-remove', onClick: that.removeClicked },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-remove',
+          onClick: that.removeClicked,
+          'aria-label': 'Remove',
+        },
           D.span({ className: 'icon-remove' }))
       );
       buttons.push(
-        D.button({ className: 'plone-btn plone-btn-default castle-btn-upload',
-                   onClick: that.approveClicked, disabled: !canApprove },
+        D.button({
+          className: 'plone-btn plone-btn-default castle-btn-upload',
+          onClick: that.approveClicked,
+          disabled: !canApprove,
+          'aria-label': 'Upload',
+      },
           D.span({ className: 'icon-ok' }))
       );
 
@@ -373,6 +381,12 @@ define([
       if(blob.size === 0){
         utils.loading.hide();
         return;
+      }
+      if (chunk === 1){
+        const expectedFileSizeElement = document.querySelector( 'input#form-widgets-expected_file_size' );
+        if(expectedFileSizeElement){
+          expectedFileSizeElement.value = file.size;
+        }
       }
       utils.loading.show();
       var xhr = new mOxie.XMLHttpRequest();
@@ -565,6 +579,7 @@ define([
         that.setState({
           update: false
         });
+        console.log(that.props)
       }
 
       var portalUrl = $('body').attr('data-portal-url');
@@ -663,7 +678,8 @@ define([
         that.renderFileList()
       ]
       var tabs = [
-        this.props.parent.renderTabItem('upload')
+        this.props.parent.renderTabItem('upload'),
+        this.props.parent.renderTabItem('templates')
       ]
       if (!that.state.update) {
         children.splice(1, 0, that.renderUploadLocation());
@@ -749,7 +765,12 @@ define([
 
     renderHeader: function(){
       return [
-        D.button({ type: 'button', className: 'close', 'data-dismiss': 'modal'}, [
+        D.button({
+          type: 'button',
+          className: 'close',
+          'data-dismiss': 'modal',
+          'aria-label': 'Dismiss Modal',
+        }, [
           D.div({ className: 'close-button' }),
           D.span({ 'aria-hidden': 'true' }, '\u00d7')
         ]),

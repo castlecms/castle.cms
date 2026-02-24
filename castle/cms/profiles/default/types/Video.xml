@@ -3,7 +3,7 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Video</property>
  <property name="description"
-    i18n:translate="">Videos can be used to build pages.</property>
+    i18n:translate="">A video that can be used sitewide</property>
  <property name="icon_expr"></property>
  <property name="factory">Video</property>
  <property name="add_view_expr">string:${folder_url}/++add++Video</property>
@@ -32,9 +32,9 @@
   <element value="castle.cms.behaviors.search.ISearch"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
  </property>
- <property name="schema"></property>
+ <property name="schema">castle.cms.interfaces.content.IVideo</property>
  <property name="model_source"></property>
- <property name="model_file">castle.cms.schema:video.xml</property>
+ <property name="model_file"></property>
  <property name="schema_policy">dexterity</property>
  <alias from="(Default)" to="@@display-file"/>
  <alias from="edit" to="@@edit"/>

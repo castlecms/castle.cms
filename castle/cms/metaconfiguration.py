@@ -16,15 +16,15 @@ class IFragmentDirectoryDirective(Interface):
     directory = TextLine(
         title=u'Directory path',
         description=u'Path relative to the package.',
-        required=True
-        )
+        required=True,
+    )
 
     name = PythonIdentifier(
         title=u'Name',
         description=u'Name of the directory. If not specified, the name of '
                     u'the current package is used.',
         required=True,
-        )
+    )
 
 
 def registerFragmentDirectory(_context, directory, name=None, type=None):

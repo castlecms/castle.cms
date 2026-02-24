@@ -20,8 +20,11 @@ class SocialTagsViewlet(BaseSocialTagsViewlet):
             item = DexterityItem(self.context, feed)
         finaltags = []
         for tag in tags:
-            if site_title and (tag.get('property', '') == 'og:title' or
-                                    tag.get('name', '') == 'twitter:title'):
+            has_title = (
+                tag.get('property', '') == 'og:title' or
+                tag.get('name', '') == 'twitter:title'
+            )
+            if site_title and has_title:
                 tag['content'] = u'{} | {}'.format(tag['content'], site_title)
             if item.has_image:
                 if tag.get('name', '') == 'twitter:card':

@@ -4,9 +4,10 @@ from plone.stringinterp.adapters import BaseSubstitution
 from plone.stringinterp.dollarReplace import LazyDict
 from plone.stringinterp.interfaces import IStringInterpolator
 from Products.CMFCore.interfaces import IContentish
-import string
-from zope.component import adapts, adapter
+from zope.component import adapter
 from zope.interface import implementer
+
+import string
 
 
 @adapter(IContentish)
@@ -21,7 +22,8 @@ class SubscriberCategoryEmailSubstitution(BaseSubstitution):
         u'Site Setup -> Announcements -> Manage Categories (ex: '
         u'"category_emails_for_news"). NOTE: "x" is case-insensitive and '
         u'spaces should be replaced with underscores, ex: "Meeting Minutes" '
-        u'would be "${category_emails_for_meeting_minutes}"')
+        u'would be "${category_emails_for_meeting_minutes}"'
+    )
 
     def __init__(self, context, category=None):
         super(SubscriberCategoryEmailSubstitution, self).__init__(context)
@@ -55,8 +57,8 @@ class CastleLazyDict(LazyDict):
 
 
 @implementer(IStringInterpolator)
+@adapter(IContentish)
 class CastleInterpolator(object):
-    adapts(IContentish)
 
     def __init__(self, context):
         self._cldict = CastleLazyDict(context)

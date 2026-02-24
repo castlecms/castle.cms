@@ -109,6 +109,27 @@ body.secure-login-template {
 		float: left;
 	}
 
+	&:not(.requesting-auth-code){
+		> div.castle-secure-login-form-requesting-auth-code {
+			display: none;
+		}
+	}
+	&:not(.check-credentials){
+		> div.castle-secure-login-form-check-credentials {
+			display: none;
+		}
+	}
+	&:not(.country-blocked){
+		> div.castle-secure-login-form-country-blocked {
+			display: none;
+		}
+	}
+	&:not(.country-block-requested){
+		> div.castle-secure-login-form-country-block-requested {
+			display: none;
+		}
+	}
+
 	&.auth-code-sent {
 		margin-left: -(@login-width - 40px);
 	}
@@ -137,7 +158,7 @@ body.secure-login-template {
     width: 100%;
     margin: 0;
     padding: 0;
-    
+
     a {
       display: block;
       color: white;

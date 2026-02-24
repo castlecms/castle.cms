@@ -1,24 +1,45 @@
 from castle.cms import utils
-from castle.cms.interfaces import ITemplate
-from plone import api
-from zope.component.hooks import getSite
-from zope.interface import alsoProvides
+from zope.container.interfaces import INameChooser
+
+import plone.api as api
 
 
-def save_as_template(obj, action):
-    site = getSite()
-    folder = utils.recursive_create_path(site, '/template-repository')
+def _get_new_template_id(original_object, title):
+    chooser = INameChooser(_get_template_folder())
+    return chooser.chooseName(title, original_object)
+
+
+def _get_template_folder():
+    folder = utils.recursive_create_path(
+        api.portal.get(),
+        '/template-repository',
+    )
     folder.exclude_from_nav = True
-    if action == 'convert':
-        template_obj = api.content.move(source=obj, target=folder)
-    elif action == 'copy':
-        template_obj = api.content.copy(source=obj, target=folder)
+    return folder
 
-    alsoProvides(template_obj, ITemplate)
 
-    try:
-        site.template_list.append(template_obj)
-    except AttributeError:
-        site.template_list = [template_obj]
+def _set_title(obj, title):
+    obj.setTitle(title)
+    obj.reindexObject()
 
-    return template_obj
+
+def move_to_templates(original_object, new_title):
+    new_object = api.content.move(
+        source=original_object,
+        target=_get_template_folder(),
+        id=_get_new_template_id(original_object, new_title),
+        safe_id=True,
+    )
+    _set_title(new_object, new_title)
+    return new_object
+
+
+def copy_to_templates(original_object, new_title):
+    new_object = api.content.copy(
+        source=original_object,
+        target=_get_template_folder(),
+        id=_get_new_template_id(original_object, new_title),
+        safe_id=True,
+    )
+    _set_title(new_object, new_title)
+    return new_object

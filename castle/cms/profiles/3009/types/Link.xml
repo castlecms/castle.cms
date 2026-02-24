@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<object name="Link"
+  meta_type="Dexterity FTI"
+  i18n:domain="plone"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+>
+  <property name="title"
+    i18n:translate="">Link</property>
+  <property name="description"
+    i18n:translate="">A url that links to other site or external content</property>
+</object>

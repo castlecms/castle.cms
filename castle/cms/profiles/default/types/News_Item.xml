@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <object name="News Item" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title" i18n:translate="">News Item</property>
+ <property name="description" i18n:translate="">Used to present updates or stories to site users</property>
  <property name="default_view">layout_view</property>
  <property name="view_methods">
   <element value="layout_view"/>

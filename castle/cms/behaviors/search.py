@@ -2,10 +2,12 @@ from castle.cms.widgets import SelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
-from zope import schema
-from zope.interface import alsoProvides
+from zope.interface import provider
+
+import zope.schema as schema
 
 
+@provider(IFormFieldProvider)
 class ISearch(model.Schema):
 
     model.fieldset(
@@ -59,6 +61,3 @@ class ISearch(model.Schema):
         required=True,
         default=False
     )
-
-
-alsoProvides(ISearch, IFormFieldProvider)

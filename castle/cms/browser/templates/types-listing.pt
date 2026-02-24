@@ -15,10 +15,19 @@
     </span>
   </div>
 
+  <a
+    href="${context/portal_url}/@@overview-controlpanel"
+    id="setup-link"
+  >
+    Site Setup
+  </a>
+
+  <h1 class="documentFirstHeading">Dexterity Content Types</h1>
+
   <p class="crud-description documentDescription"
-      tal:condition="view/description"
-      tal:content="structure view/description">
-  </p>
+    tal:condition="view/description"
+    tal:content="structure view/description"
+  ></p>
 
   <a class="pat-plone-modal"
       href="${context/absolute_url}/@@add-clone-type">

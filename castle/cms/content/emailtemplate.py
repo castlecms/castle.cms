@@ -1,5 +1,5 @@
 from castle.cms.widgets import AjaxSelectFieldWidget
-from castle.cms.widgets import SelectFieldWidget, TinyMCETextFieldWidget
+from castle.cms.widgets import SelectFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Item
 from zope.interface import Interface, implementer
@@ -89,7 +89,6 @@ class IEmailTemplate(Interface):
         ),
     )
 
-
     send_to_custom = schema.List(
         title=u'Additional recipients',
         description=(
@@ -99,7 +98,6 @@ class IEmailTemplate(Interface):
         value_type=schema.TextLine(),
         required=False,
     )
-
 
     directives.widget('email_body', RichTextFieldWidget)
     email_body = RichTextField(

@@ -86,6 +86,7 @@
   <include file="static.zcml" />
   <include file="theming.zcml" />
   <include file="meta.zcml" />
+  <include file="blobmissing.zcml" />
 
   <include zcml:condition="installed collective.easyform" package=".easyform" />
 

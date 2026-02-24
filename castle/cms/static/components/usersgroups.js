@@ -115,8 +115,8 @@ require([
         cutils.createModalComponent(ConfirmationModalComponent, 'castle-confirmation-modal', {
           successMsg: 'Password reset email sent.'
         }).finishWithSuccess();
-      }).fail(function(){
-        alert('error sending password reset');
+      }).fail(function(data){
+        alert( data.getResponseHeader( 'Failure-Reason' ) || 'error sending password reset');
       }).always(function(){
         utils.loading.hide();
       });

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<object name="File"
+  meta_type="Dexterity FTI"
+  i18n:domain="plone"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+>
+  <property name="title"
+    i18n:translate="">File</property>
+  <property name="description"
+    i18n:translate="">An uploaded document file</property>
+</object>

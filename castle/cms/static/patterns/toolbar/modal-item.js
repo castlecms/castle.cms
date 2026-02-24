@@ -1,6 +1,6 @@
 /* global localStorage */
 
-define([
+define( [
   'jquery',
   'mockup-patterns-base',
   'pat-registry',
@@ -9,22 +9,31 @@ define([
   'castle-url/libs/react/react.min',
   'mockup-patterns-modal',
   'castle-url/patterns/toolbar/menu-item'
-], function ($, Base, Registry, utils, cutils, R, ModalPattern, MenuItemBase) {
+], function ( $, Base, Registry, utils, cutils, R, ModalPattern, MenuItemBase ) {
   'use strict';
 
   var D = R.DOM;
 
-  var ModalMenuItemBase = cutils.extend(MenuItemBase, {
-    onClick: function(e){
+  var ModalMenuItemBase = cutils.extend( MenuItemBase, {
+    onClick: function ( e ) {
       e.preventDefault();
-      cutils.createModalComponent(this.props.ModalComponent, this.props.id, this.getSettings());
+      cutils.createModalComponent( this.props.ModalComponent, this.props.id, this.getSettings() );
+      setTimeout(
+        () => {
+          const activeTab = document.querySelector( '.modal-content nav a.active' );
+          if ( activeTab ) {
+            activeTab.focus();
+          }
+        },
+        500
+      );
     },
-    getSettings: function(){
+    getSettings: function () {
       return {
         parent: this.props.parent
       };
     }
-  });
+  } );
 
   return ModalMenuItemBase;
-});
+} );

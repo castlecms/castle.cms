@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="plone">
+
+  <records prefix="plone.bundles/plone"
+    interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <value key="last_compilation">2024-01-31 00:00:00</value>
+  </records>
+
+
+  <records prefix="plone.bundles/plone-logged-in"
+    interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <value key="last_compilation">2024-01-31 00:00:00</value>
+  </records>
+
+</registry>

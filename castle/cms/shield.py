@@ -1,10 +1,11 @@
+from Acquisition import aq_parent
 from castle.cms import constants
 from castle.cms.interfaces import ISecureLoginAllowedView
-from plone import api
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import queryUtility
-from Acquisition import aq_parent
+
+import plone.api as api
 
 SHIELD = constants.SHIELD
 

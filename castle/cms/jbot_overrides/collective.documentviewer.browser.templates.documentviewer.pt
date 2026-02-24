@@ -1,0 +1,92 @@
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  lang="en"
+  metal:use-macro="here/main_template/macros/master"
+  i18n:domain="plone"
+>
+
+<body>
+
+  <div metal:fill-slot="content-core">
+    <style>
+      div.download-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      div.download-container p {
+        margin: 0;
+      }
+
+    </style>
+
+    <tal:main-macro
+      metal:define-macro="content-core"
+      tal:define="size python:here.getObjSize(here);
+                     content_type here/get_content_type|here/Format;"
+      i18n:domain="collective.documentviewer"
+    >
+      <div class="download-container">
+        <form
+          method="get"
+          action="${context/absolute_url}"
+        ><button
+            type="submit"
+            class="btn btn-info"
+          >Download file</button></form>
+
+        <p>
+          <a href="${context/absolute_url}">${context/file/filename}</a>
+          <span
+            class="discreet"
+            tal:define="size context/file/getSize"
+          >
+            &mdash; ${python: size/1024} KB
+          </span>
+        </p>
+      </div>
+
+      <tal:notshow tal:condition="not: view/enabled">
+        <dl
+          id="errorMsg"
+          tal:condition="python: view.can_modify and view.settings.successfully_converted is False"
+        >
+          <dt>
+            <a href="#">Show Document Viewer Conversion Error</a>
+          </dt>
+          <dd>
+            <pre tal:content="python: view.settings.exception_msg" />
+            <pre tal:content="python: view.settings.exception_traceback" />
+          </dd>
+        </dl>
+      </tal:notshow>
+      <tal:show tal:condition="view/enabled">
+        <div
+          aria-hidden="true"
+          class="pat-documentviewer DV-container"
+          data-pat-documentviewer="${view/pattern_options}"
+        >
+          <div class="DV-loadingDocument"><span i18n:translate="">Loading</span></div>
+          <noscript>
+            <div
+              id="DV-noJS"
+              style="height:500px"
+              i18n:translate=""
+            >The Document Viewer requires that you enable Javascript.</div>
+          </noscript>
+        </div>
+      </tal:show>
+
+    </tal:main-macro>
+  </div>
+
+</body>
+
+</html>

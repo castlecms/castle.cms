@@ -21,15 +21,14 @@
                  show_filters python: len(catalogSubjects) > many_kws;
                  url_quote python:modules['Products.PythonScripts.standard'].url_quote">
 
-  <h1 i18n:translate="heading_keyword_manager">Keyword Manager</h1>
+  <a
+    href="${context/portal_url}/@@overview-controlpanel"
+    id="setup-link"
+  >
+    Site Setup
+  </a>
 
-    <a href=""
-       class="link-parent"
-       tal:attributes="href string: $portal_url/plone_control_panel"
-       i18n:domain="plone"
-       i18n:translate="label_up_to_plone_setup">
-    Up to Plone Setup
-    </a>
+  <h1 i18n:translate="heading_keyword_manager">Keyword Manager</h1>
 
     <div class="documentDescription"
          i18n:translate="description_keyword_manager">

@@ -2,7 +2,7 @@
 <object name="Audio" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Audio</property>
- <property name="description" i18n:translate="">Audio files can be referenced in pages or used in podcasts.</property>
+ <property name="description" i18n:translate="">Stores audio content</property>
  <property name="icon_expr"></property>
  <property name="factory">Audio</property>
  <property name="add_view_expr">string:${folder_url}/++add++Audio</property>
@@ -47,5 +47,4 @@
     url_expr="string:${object_url}/edit" visible="True">
     <permission value="Modify portal content"/>
   </action>
-
 </object>

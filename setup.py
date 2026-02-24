@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='3.0.0b127.dev0',
+    version='3.1.0b8.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('CHANGES.md')
@@ -66,18 +66,14 @@ setup(
         'wildcard.hps>=1.4.0',
         'collective.celery>=1.1.4',
 
-        # the use of collective.elasticsearch in the 3.x+ version of castle.cms
-        # is limited and should not be relied on.
-        'collective.elasticsearch>=4.0.0<5.0.0',
-
         # python
         'boto3>=1.9.222',
-        'google-api-python-client>=1.4.2<2',
+        'google-api-python-client >=1.4.2, <2',
         'google-auth>=2.5.0',
-        'requests>=2.7.0<3',
-        'requests_oauthlib>=0.5.0<1',
-        'oauth2client>=1.5.1<2',
-        'redis>=2.10.5<3',
+        'requests >=2.7.0, <3',
+        'requests_oauthlib >=0.5.0, <1',
+        'oauth2client >=1.5.1, <2',
+        'redis >=2.10.5, <3',
         'setuptools',
         'python-dateutil',
         'pyopenssl',
@@ -130,10 +126,14 @@ setup(
       twitter-monitor = castle.cms.cron:twitter_monitor
       send-forced-publish-alert = castle.cms.cron:forced_publish_alert
       castle-crawler = castle.cms.cron:crawler
+      backend-url-check = castle.cms.cron:backend_url_check
       clean-drafts = castle.cms.cron:clean_drafts
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
+      send-pwreset-emails = castle.cms._scripts.send_pwreset_emails:setup_and_run
+      auto-publish-retract = castle.cms.cron:auto_publish_retract
+      check-content-creator-endpoint = castle.cms.cron:_check_content_creator_endpoint
       """,
     include_package_data=True,
     zip_safe=False,

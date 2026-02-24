@@ -16,7 +16,7 @@
     <% } %>
   </div>
   <% if(attributes["getIcon"] ){ %>
-  <img class="image-<%- iconSize %> pull-right" src="<%- getURL %>/@@images/image/<%- iconSize %>">
+  <img class="image-<%- iconSize %> pull-right" data-image-src="<%- getURL %>/@@images/image/<%- iconSize %>">
   <% } %>
 </td>
 

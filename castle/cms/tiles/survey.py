@@ -47,10 +47,10 @@ class SurveyAPIWidget(SelectWidget):
 class ISurveyTileSchema(Interface):
     widget('survey_id', SurveyAPIWidget)
     survey_id = schema.Choice(
-       title=u'Surveys',
-       description=u'Select a survey from the API:',
-       required=False,
-       vocabulary='castle.cms.vocabularies.Surveys'
+        title=u'Surveys',
+        description=u'Select a survey from the API:',
+        required=False,
+        vocabulary='castle.cms.vocabularies.Surveys'
     )
 
     survey_url = schema.TextLine(

@@ -23,7 +23,7 @@
   <form class="search" action="${portal_url}/@@search">
     <label for="mobile-search" class="visually-hidden">Search</label>
     <input id="mobile-search" name="SearchableText" type="text" placeholder="Search..." />
-    <button class="secondary button" type="submit"><img src="++plone++castle/svg/icon-search.svg" alt="Submit Search"></button></form>
+    <button class="secondary button" type="submit"><img src="++plone++castle/svg/toolbar/search.svg" alt="Submit Search"></button></form>
 
   <!-- Tablet/Mobile Side Navigation (Tablet/Mobile View Only) -->
   <ul class="menu side-nav">

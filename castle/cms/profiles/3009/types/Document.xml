@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<object name="Document"
+  meta_type="Dexterity FTI"
+  i18n:domain="plone"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+>
+  <property name="title"
+    i18n:translate="">Page</property>
+  <property name="description"
+    i18n:translate="">Represents a single page of a website</property>
+</object>
