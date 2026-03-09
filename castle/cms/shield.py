@@ -25,7 +25,7 @@ def protect(req, recheck=False):
         'react.js',
         'utils.js',
         'favicon.ico',
-        )
+    )
 
     if is_whitelisted(req, whitelisted_requests):
         return
