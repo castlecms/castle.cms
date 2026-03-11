@@ -78,12 +78,11 @@ def is_whitelisted(request, whitelist):
     if url is None:
         return False
 
-    url_without_querys = url.split('?')[0]
     for resource in whitelist:
-        if url_without_querys.endswith(resource):
+        if url.endswith(resource):
             return True
 
-    if '/@@site-logo' in url_without_querys:
+    if '/@@site-logo' in url:
         return True
 
     return False
