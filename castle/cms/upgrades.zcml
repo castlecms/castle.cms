@@ -312,5 +312,26 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:registerProfile
+    name="3020"
+    title="CastleCMS upgrade to 3020 profile"
+    directory="profiles/3020"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeSteps
+    source="*"
+    destination="3020"
+    profile="castle.cms:default"
+  >
+    <genericsetup:upgradeStep
+      title="add metadata column raw_output"
+      handler="castle.cms.upgrades.upgrade_3020a"
+    />
+    <genericsetup:upgradeStep
+      title="index raw_output"
+      handler="castle.cms.upgrades.upgrade_3020b"
+    />
+  </genericsetup:upgradeSteps>
 
 </configure>

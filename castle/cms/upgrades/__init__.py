@@ -7,6 +7,7 @@ from logging import getLogger
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 from Products.CMFCore.utils import getToolByName
 from zope.interface import noLongerProvides
+from OFS.interfaces import IItem
 
 import plone.api as api
 
@@ -144,3 +145,11 @@ upgrade_3016 = default_upgrade_factory('3016')
 upgrade_3017 = default_upgrade_factory('3017')
 upgrade_3018 = default_upgrade_factory('3018')
 upgrade_3019 = default_upgrade_factory('3019')
+
+
+upgrade_3020a = default_upgrade_factory('3020')
+def upgrade_3020b(context):
+    catalog = getToolByName(context, 'portal_catalog')
+    for brain in catalog():
+        obj = brain.getObject()
+        catalog.catalog_object(obj, idxs=[])
