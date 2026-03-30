@@ -9,7 +9,6 @@ import plone.api as api
 SHIELD = constants.SHIELD
 
 def protect(req, recheck=False):
-    url = req.getURL()
     login_url = '{}/@@secure-login'.format(api.portal.get().absolute_url())
     if '@@secure-login' in url.lower() and url != login_url:
         raise Redirect(login_url)
