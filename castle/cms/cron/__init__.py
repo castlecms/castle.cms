@@ -127,6 +127,10 @@ def auto_publish_retract(argv=sys.argv):
 def backend_url_check(argv=sys.argv):
     return run_it('_backend_url_check')
 
+  
+def clean_tmp_dir(argv=sys.argv):
+    return run_it('_clean_tmp_dir')
 
+  
 def check_content_creator_endpoint(argv=sys.argv):
     return run_it('_check_content_creator_endpoint')
