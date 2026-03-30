@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.1.0b8 (unreleased)
---------------------
+3.2.0 (2026-03-30)
+------------------
 
 - add script to parse worker logs for @@content-creator endpoint errors
 - add X-CASTLEMTA-PRIORITY header to 2fa emails
