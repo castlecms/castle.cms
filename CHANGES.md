@@ -1,5 +1,9 @@
 Changelog
 =========
+3.1.0b9 (unreleased)
+--------------------
+
+- updated site protections to prevent images from being leaked
 
 3.1.0b8 (unreleased)
 --------------------

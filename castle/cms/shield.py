@@ -4,16 +4,9 @@ from castle.cms.interfaces import ISecureLoginAllowedView
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import queryUtility
-
 import plone.api as api
 
 SHIELD = constants.SHIELD
-
-_blacklisted_meta_types = (
-    'Image', 'File', 'Filesystem Image',
-    'Filesystem File', 'Stylesheets Registry', 'JavaScripts Registry',
-    'DirectoryViewSurrogate', 'KSS Registry', 'Filesystem Directory View')
-
 
 def protect(req, recheck=False):
     url = req.getURL()
@@ -21,12 +14,19 @@ def protect(req, recheck=False):
     if '@@secure-login' in url.lower() and url != login_url:
         raise Redirect(login_url)
 
-    published = req.PARENTS[0]
-    mt = getattr(
-        getattr(published, 'aq_base', None),
-        'meta_type',
-        getattr(published, 'meta_type', None))
-    if mt in _blacklisted_meta_types or mt is None:
+    whitelisted_requests = (
+        'bootstrap.css',
+        'secure-login.css',
+        'secure-login.js',
+        'require.js',
+        'jquery.min.js',
+        'bootstrap.min.js',
+        'react.js',
+        'utils.js',
+        'favicon.ico',
+    )
+
+    if is_whitelisted(req, whitelisted_requests):
         return
 
     published = req.get('PUBLISHED')
@@ -70,3 +70,18 @@ Disallow: /"""
             anonymous = api.user.is_anonymous()
         if anonymous:
             raise Redirect(login_url)
+
+
+def is_whitelisted(request, whitelist):
+    url = request.get('URL', None)
+    if url is None:
+        return False
+
+    for resource in whitelist:
+        if url.endswith(resource):
+            return True
+
+    if '/@@site-logo' in url:
+        return True
+
+    return False
