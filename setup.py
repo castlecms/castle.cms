@@ -14,7 +14,7 @@ setup(
     name='castle.cms',
     description='CastleCMS Plone distribution main package',
     long_description_content_type='text/x-rst',
-    version='3.1.0b4.dev0',
+    version='3.1.0b8.dev0',
     long_description='%s\n%s' % (
         read('README.rst'),
         read('CHANGES.md')
@@ -131,8 +131,10 @@ setup(
       upgrade-sites = castle.cms.cron:upgrade_sites
       link-report = castle.cms.cron:link_report
       report-users = castle.cms._scripts.report_users:setup_and_run
+      send-pwreset-emails = castle.cms._scripts.send_pwreset_emails:setup_and_run
       auto-publish-retract = castle.cms.cron:auto_publish_retract
       clean_tmp_dir = castle.cms.cron:clean_tmp_dir
+      check-content-creator-endpoint = castle.cms.cron:_check_content_creator_endpoint
       """,
     include_package_data=True,
     zip_safe=False,

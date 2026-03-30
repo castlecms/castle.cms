@@ -224,6 +224,9 @@ class Utils(BrowserView):
         if '/embed/' in url:
             _id = _clean_youtube_id(url.partition('/embed/')[-1])
             return 'https://www.youtube-nocookie.com/embed/%s' % _id
+        if '/shorts/' in url:
+            _id = _clean_youtube_id(url.partition('/shorts/')[-1])
+            return 'https://www.youtube-nocookie.com/embed/%s' % _id
         if 'youtu.be' in url:
             _id = _clean_youtube_id(url.partition('https://youtu.be/')[-1])
             return 'https://www.youtube-nocookie.com/embed/%s' % _id

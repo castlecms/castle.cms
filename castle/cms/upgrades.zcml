@@ -296,4 +296,21 @@
   />
 
 
+  <genericsetup:registerProfile
+    name="3019"
+    title="CastleCMS upgrade to 3019 profile"
+    directory="profiles/3019"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.19"
+    description="3019 - Recompile resources for video form"
+    source="*"
+    destination="3019"
+    handler=".upgrades.upgrade_3019"
+    profile="castle.cms:default"
+  />
+
+
 </configure>

@@ -1,10 +1,37 @@
 Changelog
 =========
 
-3.1.0b4 (unreleased)
+3.1.0b8 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- add script to parse worker logs for @@content-creator endpoint errors
+- add X-CASTLEMTA-PRIORITY header to 2fa emails
+- handle youtube shorts in video content type
+
+
+3.1.0b7 (2025-06-09)
+--------------------
+
+- add a script for resetting multiple account passwords all at once
+
+
+3.1.0b6 (2025-05-12)
+--------------------
+
+- fixes for editing video content types
+- update itunes rss xml format
+
+
+3.1.0b5 (2025-04-07)
+--------------------
+
+- no changes
+
+
+3.1.0b4 (2025-04-07)
+--------------------
+
+- fix newly introduced bug that prevented Videos from adapting IPrimaryField
 
 
 3.1.0b3 (2025-03-03)

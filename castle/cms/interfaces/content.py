@@ -5,9 +5,11 @@ from plone.app.textfield import RichText
 from plone.autoform import directives
 from plone.namedfile.field import NamedBlobFile
 from plone.namedfile.interfaces import INamedImage
+from plone.rfc822.interfaces import IPrimaryField
 from plone.supermodel import model
 from Products.CMFPlone.interfaces import IHideFromBreadcrumbs
 from zope.interface import (
+    alsoProvides,
     Attribute,
     Interface,
     Invalid,
@@ -78,7 +80,7 @@ class IVideo(IMedia):
     def file_size_validator(data):
         expected_file_size = data.expected_file_size
         file_size = str(getattr(data.file, 'size', 0))
-        if expected_file_size:
+        if expected_file_size and data.file:
             if file_size != expected_file_size:
                 error_message = (
                     u'The file {} is not the expected size, '
@@ -86,6 +88,7 @@ class IVideo(IMedia):
                     u'Please try to upload again.'
                 ).format(getattr(data.file, 'filename', ''))
                 raise Invalid(error_message)
+alsoProvides(IVideo['file'], IPrimaryField)
 
 
 class IAudio(IMedia):
