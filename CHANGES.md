@@ -4,7 +4,7 @@ Changelog
 3.1.0b8 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- updated site protections to prevent images from being leaked
 
 
 3.1.0b7 (2025-06-09)
