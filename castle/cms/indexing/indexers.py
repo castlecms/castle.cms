@@ -231,7 +231,7 @@ def raw_output(obj):
     if not text:
         return u''
 
-    if hasattr(text, 'raw'):
+    if getattr(text, 'raw', None):
         try:
             return text.raw or u''
         except Exception:
