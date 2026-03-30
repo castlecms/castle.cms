@@ -1,9 +1,5 @@
 Changelog
 =========
-3.1.0b9 (unreleased)
---------------------
-
-- updated site protections to prevent images from being leaked
 
 3.1.0b8 (unreleased)
 --------------------
@@ -12,6 +8,7 @@ Changelog
 - add X-CASTLEMTA-PRIORITY header to 2fa emails
 - handle youtube shorts in video content type
 - add full content display option for querylistings
+- updated site protections to prevent images from being leaked
 
 
 3.1.0b7 (2025-06-09)
