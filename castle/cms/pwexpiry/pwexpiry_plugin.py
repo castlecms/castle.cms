@@ -8,6 +8,7 @@ from castle.cms.pwexpiry.utils import days_since_event
 from DateTime import DateTime
 from Globals import InitializeClass
 from plone import api
+from plone.api.exc import CannotGetPortalError
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PluggableAuthService.interfaces.plugins import (IAuthenticationPlugin,
@@ -62,7 +63,13 @@ class PwExpiryPlugin(BasePlugin):
             return None
 
         self._invalidatePrincipalCache(login)
-        user = api.user.get(username=login)
+        try:
+            user = api.user.get(username=login)
+        except CannotGetPortalError:
+            # this avoids an unrecoverable error and would still allow a root zmi login
+            # (assuming you're at the root and allowed to), for instance
+            return None
+          
         if not user:
             return None
 
