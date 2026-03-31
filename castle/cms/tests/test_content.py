@@ -124,6 +124,39 @@ class TestContent(unittest.TestCase):
         self.assertEquals(fileOb.file.data, 'X' * 1024 * 5)
         return fileOb
 
+    def test_upload_image(self):
+        self.request.form.update({
+            'action': 'chunk-upload',
+            'chunk': '1',
+            'chunkSize': 1024,
+            'totalSize': 1024 * 5,
+            'image': BytesIO('X' * 1024),
+            'name': 'foobar.jpg'
+        })
+        cc = content.Creator(self.portal, self.request)
+        data = json.loads(cc())
+        self.assertTrue('id' in data)
+        self.assertTrue(data['success'])
+        self.request.form.update({
+            'id': data['id']
+        })
+
+        for idx in range(4):
+            self.request.form.update({
+                'action': 'chunk-upload',
+                'chunk': str(idx + 2),
+                'image': BytesIO('X' * 1024)
+            })
+            cc = content.Creator(self.portal, self.request)
+            data = json.loads(cc())
+            self.assertTrue(data['success'])
+
+        self.assertTrue(data['valid'])
+        self.assertTrue('url' in data)
+        imgOb = api.content.get(path='/image-repository/foobar.jpg')
+        self.assertEquals(imgOb.image.data, 'X' * 1024 * 5)
+        return imgOb
+
     def test_update_upload(self):
         fileOb = self.test_upload()
         api.content.transition(obj=fileOb, to_state='published')
