@@ -130,7 +130,10 @@ class Authenticator(object):
 
     def set_login_session_id(self):
         self.login_session_id = uuid4()
-        self.request.response.setCookie('__sl__', self.login_session_id)
+        self.request.response.setCookie(
+            '__sl__', self.login_session_id,
+            HttpOnly=True if self.registry.get('castle.use_httponly_cookie', 'yes').lower().strip() == 'yes' else False,
+            Secure=True if self.registry.get('castle.use_secure_cookie', 'yes').lower().strip() == 'yes' else False)
 
     def get_secure_flow_key(self):
         return '{id}-secure-state'.format(id=self.login_session_id)
