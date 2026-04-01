@@ -24,6 +24,7 @@ from ZODB.POSException import ConnectionStateError
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.component.interfaces import ComponentLookupError
 from zope.event import notify
 from zope.interface import Interface
@@ -130,10 +131,35 @@ class Authenticator(object):
 
     def set_login_session_id(self):
         self.login_session_id = uuid4()
-        self.request.response.setCookie(
-            '__sl__', self.login_session_id,
-            HttpOnly=True if self.registry.get('castle.use_httponly_cookie', 'yes').lower().strip() == 'yes' else False,
-            Secure=True if self.registry.get('castle.use_secure_cookie', 'yes').lower().strip() == 'yes' else False)
+
+        if not self.is_zope_root and self.registry:
+            use_secure = (
+                self.registry.get('castle.use_secure_cookie', 'yes')
+                .lower().strip() == 'yes'
+            )
+
+            use_http_only = (
+                self.registry.get('castle.use_httponly_cookie', 'yes')
+                .lower().strip() == 'yes'
+            )
+
+            site = getSite()
+            site_path = '/'.join(site.getPhysicalPath()).lstrip('/')
+            cookie_path = '/' + site_path if site_path else '/'
+
+            cookie = '__sl__=%s; Path=%s;' % (self.login_session_id, cookie_path)
+
+            if use_secure:
+                cookie += '; Secure'
+
+            if use_http_only:
+                cookie += '; HttpOnly'
+
+            self.request.response.addHeader('Set-Cookie', cookie)
+
+        else:
+            self.request.response.setCookie('__sl__', self.login_session_id)
+
 
     def get_secure_flow_key(self):
         return '{id}-secure-state'.format(id=self.login_session_id)
