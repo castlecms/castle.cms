@@ -7,7 +7,7 @@ from logging import getLogger
 from Products.CMFPlone.resources.browser.cook import cookWhenChangingSettings
 from Products.CMFCore.utils import getToolByName
 from zope.interface import noLongerProvides
-from OFS.interfaces import IItem
+import transaction
 
 import plone.api as api
 
@@ -150,6 +150,15 @@ upgrade_3019 = default_upgrade_factory('3019')
 upgrade_3020a = default_upgrade_factory('3020')
 def upgrade_3020b(context):
     catalog = getToolByName(context, 'portal_catalog')
-    for brain in catalog():
+
+    for i, brain in enumerate(catalog(
+        portal_type=['Document', 'Folder', 'News Item', 'Event'])
+    ):
         obj = brain.getObject()
+        richtext = getattr(obj, 'text', None)
+        if not richtext:
+            continue
         catalog.catalog_object(obj, idxs=[])
+        if i % 10 == 0:
+            transaction.commit()
+    transaction.commit()
