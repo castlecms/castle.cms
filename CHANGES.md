@@ -4,7 +4,7 @@ Changelog
 3.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- restrict full content querylisting display to specific content types
 
 
 3.2.0 (2026-03-30)
