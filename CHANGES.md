@@ -4,7 +4,7 @@ Changelog
 3.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix: is_whitelisted() logic bug
 
 
 3.2.1 (2026-04-23)

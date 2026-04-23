@@ -82,6 +82,6 @@ def is_whitelisted(request, whitelist):
     for resource in whitelist:
         if url.endswith(resource):
             return True
-    if '/@@site-logo' or '/site-logo' in url:
+    if '/@@site-logo' in url or '/site-logo' in url:
         return True
     return False
