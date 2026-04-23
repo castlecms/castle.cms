@@ -4,7 +4,7 @@ Changelog
 3.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add password-reset.js to shield whitelist
 
 
 3.2.0 (2026-03-30)

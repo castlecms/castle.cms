@@ -5,6 +5,7 @@ from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import queryUtility
 import plone.api as api
+from six import string_types
 
 SHIELD = constants.SHIELD
 
@@ -23,6 +24,7 @@ def protect(req, recheck=False):
         'bootstrap.min.js',
         'react.js',
         'utils.js',
+        'password-reset.js',
         'favicon.ico',
     )
 
@@ -74,14 +76,12 @@ Disallow: /"""
 
 def is_whitelisted(request, whitelist):
     url = request.get('URL', None)
-    if url is None:
+    if not isinstance(url, string_types):
         return False
-
+    url = url.split('?')[0]
     for resource in whitelist:
         if url.endswith(resource):
             return True
-
-    if '/@@site-logo' in url:
+    if '/@@site-logo' or '/site-logo' in url:
         return True
-
     return False
