@@ -44,6 +44,8 @@ class RequestAccessView(BrowserView):
             'plone.request_access_form_email_addresses',
             default=system_email_address,
         )
+        if not access_request_email_addresses:
+            return []
         return list(set([
             email.strip()
             for email in access_request_email_addresses.splitlines()
