@@ -31,6 +31,7 @@
 
   <adapter factory=".widgets.LeadImageFocalNamedImageFieldWidget" />
   <adapter factory=".widgets.RequiredLeadImageFocalNamedImageFieldWidget" />
+  <adapter factory=".widgets.AlternateLeadImageFocalNamedImageFieldWidget" />
   <z3c:widgetTemplate
     mode="input"
     widget=".widgets.IFocalNamedImageWidget"

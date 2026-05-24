@@ -633,6 +633,12 @@ def RequiredLeadImageFocalNamedImageFieldWidget(field, request):
     widget = z3c.form.widget.FieldWidget(field, FocalNamedImageWidget(request))
     return widget
 
+@adapter(getSpecification(IRequiredLeadImage['alternate_image']), ICastleLayer)
+@implementer(IFieldWidget)
+def AlternateLeadImageFocalNamedImageFieldWidget(field, request):
+    widget = z3c.form.widget.FieldWidget(field, FocalNamedImageWidget(request))
+    return widget
+
 
 @adapter(INamedImageField, ICastleLayer)
 @implementer(IFieldWidget)
