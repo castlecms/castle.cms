@@ -436,3 +436,14 @@ def make_terms(brains1, brains2):
             included_brains.append(brain['UID'])
 
     return [SimpleTerm(value=result[0], token=result[0], title=result[1]) for result in results]
+
+
+castle_vocabularies = {
+    'Countries': CountriesVocabularyFactory,
+    'Friendly Types': ReallyUserFriendlyTypesVocabularyFactory,
+    'Business Types': BusinessTypesVocabulary,
+    'Survey': SurveyVocabulary,
+    'Email Category': EmailCategoryVocabulary,
+    'Mime Types': MimeTypeVocabulary,
+    'Locations': LocationsVocabulary
+}
