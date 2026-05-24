@@ -280,12 +280,12 @@ class Creator(BrowserView):
 
     def detect_duplicate(self, info):
         dup_detector = duplicates.DuplicateDetector()
-        md5_hash = commands.md5(info['tmp_file'])
-        obj = dup_detector.get_object(md5_hash)
+        sha256_hash = commands.sha256(info['tmp_file'])
+        obj = dup_detector.get_object(sha256_hash)
         if obj is not None:
             # found, use existing file...
             raise duplicates.DuplicateException(obj)
-        return dup_detector, md5_hash
+        return dup_detector, sha256_hash
 
     def handle_auto_folder_creation(self, folder, type_):
         # we only auto publish built-in repositories, otherwise, leave it be
@@ -396,18 +396,18 @@ class Creator(BrowserView):
         original_location == location
         folder = utils.recursive_create_path(self.context, location)
 
-        md5_hash = dup_detector = None
+        sha256_hash = dup_detector = None
 
         if original_location == location:
             # first off, check first that it wasn't already uploaded...
             # we are only checking images for now...
-            if type_ == 'Image' and commands.md5:
-                dup_detector, md5_hash = self.detect_duplicate(info)
+            if type_ == 'Image' and commands.sha256:
+                dup_detector, sha256_hash = self.detect_duplicate(info)
             self.handle_auto_folder_creation(folder, type_)
 
         obj = self.create_object(folder, type_, info)
-        if type_ == 'Image' and md5_hash and dup_detector:
-            dup_detector.register(obj, md5_hash)
+        if type_ == 'Image' and sha256_hash and dup_detector:
+            dup_detector.register(obj, sha256_hash)
         return obj
 
     def create_object(self, folder, type_, info):
