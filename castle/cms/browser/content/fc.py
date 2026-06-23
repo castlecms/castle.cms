@@ -307,11 +307,33 @@ when the content is done being deleted."""
 
 
 class TrashActionView(delete.DeleteActionView):
-    success_msg = 'Successfully moved items to recycle bin'
     failure_msg = 'Failed to move items to recycle bin'
+
+    def message_async(self):
+        return self.json({
+            'status': 'success',
+            'msg': {
+                'label': 'Recycled',
+                'type': 'success',
+                'text': '',
+                # the JavaScript that handles the html render is located at:
+                # https://github.com/castlecms/castle.cms/blob/4ec4b7b197be7e808738d33dcf4f25bae6d519b5
+                # /castle/cms/static/scripts/patches.js#L25
+                'html': 'Successfully moved items to <a href="./@@trash">Recycle Bin</a>.',
+            }
+        })
 
     def action(self, obj):
         trash.object(obj)
+
+    def __call__(self):
+        delete.DeleteActionView.__call__(self)  # run the parent class function for this child
+
+        # only send the success message on the second request, which does not contain 'render'
+        if not self.request.form.get('render') == 'yes':
+            return self.message_async()
+        else:
+            return self.json({})  # this is needed to prevent "Error loading popover from server."
 
 
 @implementer(IStructureAction)

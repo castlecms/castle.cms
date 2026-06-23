@@ -551,6 +551,15 @@ define([
 
     renderMenuItem: function(item){
       var loc = '';
+      if(item.text.split('{\"parseAsJSON\": true').length > 1) {
+        try {
+          var _parsed = JSON.parse(item.text);
+          item.text = _parsed.text;
+          item.context = _parsed.location;
+        } catch(JSONParseException) {
+          console.error('toolbar.js: renderMenuItem JSONParseException', JSONParseException);
+        }
+      }
       if(item.context){
         loc = D.div({ className: 'location' }, [
           D.span({}, 'Location: '),
