@@ -378,6 +378,20 @@ position: relative;
 .castle-tile-container:hover {
 outline: 2px dashed orange;
 }
+.slot-contains-tile {
+    background-color: darkgray;
+    outline: 2px dashed #ccc;
+    margin: 3px;
+    text-align: center;
+    font-weight: bold;
+    padding: 20px;
+    cursor: pointer;
+    z-index: 9999;
+    position: relative;
+}
+.slot-contains-tile:hover {
+outline: 2px dashed blue;
+}
 '''
 
     def __call__(self):
@@ -438,6 +452,7 @@ outline: 2px dashed orange;
             tile.attrib['data-tile-title'] = title
             tile.attrib['class'] = 'castle-tile-container'
             tile.text = 'Edit %s slot' % title
+            self.getSlots(tile)
 
         overlay = etree.Element('div')
         overlay.attrib['class'] = 'expose-overlay'
@@ -453,3 +468,10 @@ outline: 2px dashed orange;
 
         transform.dynamic_grid(dom.tree)
         return tostring(dom.tree)
+
+    def getSlots(self, tile):
+        meta_tile = meta.getTile(self.context, self.request, tile.attrib['data-tile-id'])
+        # This will show up with tiles at site root.
+        tiles = meta_tile.data.get('tiles', [])[:]
+        if tiles:
+            tile.attrib['class'] += ' slot-contains-tile'
