@@ -23,11 +23,66 @@ def format_date(dt):
             pass
 
 
+class ICalendarTileSchema(Interface):
+
+    form.widget(query=QueryFieldWidget)
+    query = schema.List(
+        title=u'Base query',
+        description=u"This query can be customized base on user selection",
+        value_type=schema.Dict(value_type=schema.Field(),
+                               key_type=schema.TextLine()),
+        required=False,
+        default=[{
+            u'i': u'portal_type',
+            u'v': [u'Event'],
+            u'o': u'plone.app.querystring.operation.selection.any'}]
+    )
+
+    sort_on = schema.TextLine(
+        title=u'Sort on',
+        description=u"Sort on this index",
+        required=False,
+    )
+
+    sort_reversed = schema.Bool(
+        title=u'Reversed order',
+        description=u'Sort the results in reversed order',
+        required=False,
+        default=False,
+    )
+
+    limit = schema.Int(
+        title=u'Limit',
+        description=u'Limit Search Results',
+        required=False,
+        default=250,
+        min=1,
+    )
+
+
 class CalendarTile(BaseTile):
 
     def get_query(self):
         parsed = parse_query_from_data(self.data, self.context)
-        parsed['sort_order'] = 'reverse'
+        # If parsed is empty and the self.data doesn't contain any of the variables below
+        # then we have a new calendar to set the defaults on.
+        if parsed == {}:
+            if self.data.get('query', None) is None:
+                if self.data.get('limit', None) is None:
+                    if self.data.get('sort_reversed', None) is None:
+                        if self.data.get('sort_on', None) is None:
+                            # If all of these are None,
+                            # then Assume the remaining data is garbage and reinitialize
+                            self.data.clear()
+                            self.data[u'limit'] = ICalendarTileSchema["limit"].default
+                            self.data[u'query'] = ICalendarTileSchema["query"].default
+                            self.data[u'sort_reversed'] = ICalendarTileSchema["sort_reversed"].default
+                            # Acts as a preventative measure to ensure that
+                            # if all the items in self.data are still None
+                            # Then it will prevent a recursion loop.
+                            for item in self.data:
+                                if item is not None:
+                                    return self.get_query()
         return parsed
 
     def results(self):
@@ -75,39 +130,3 @@ class CalendarTile(BaseTile):
             },
             'events': events
         })
-
-
-class ICalendarTileSchema(Interface):
-
-    form.widget(query=QueryFieldWidget)
-    query = schema.List(
-        title=u'Base query',
-        description=u"This query can be customized base on user selection",
-        value_type=schema.Dict(value_type=schema.Field(),
-                               key_type=schema.TextLine()),
-        required=False,
-        default=[{
-            u'i': u'portal_type',
-            u'v': [u'Event'],
-            u'o': u'plone.app.querystring.operation.selection.any'}]
-    )
-
-    sort_on = schema.TextLine(
-        title=u'Sort on',
-        description=u"Sort on this index",
-        required=False,
-    )
-
-    sort_reversed = schema.Bool(
-        title=u'Reversed order',
-        description=u'Sort the results in reversed order',
-        required=False,
-    )
-
-    limit = schema.Int(
-        title=u'Limit',
-        description=u'Limit Search Results',
-        required=False,
-        default=250,
-        min=1,
-    )
