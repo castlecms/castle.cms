@@ -98,10 +98,10 @@ def on_content_created(obj, event):
             except (KeyError, AttributeError):
                 pass
 
-    try:
-        tasks.scan_links.delay('/'.join(obj.getPhysicalPath()))
-    except CannotGetPortalError:
-        pass
+    # try:
+    #     tasks.scan_links.delay('/'.join(obj.getPhysicalPath()))
+    # except CannotGetPortalError:
+    #     pass
 
     obj.reindexObject()
 
@@ -114,10 +114,10 @@ def on_content_modified(obj, event):
         return
     if obj.portal_type == 'Dashboard':
         return
-    try:
-        tasks.scan_links.delay('/'.join(obj.getPhysicalPath()))
-    except CannotGetPortalError:
-        pass
+    # try:
+    #     tasks.scan_links.delay('/'.join(obj.getPhysicalPath()))
+    # except CannotGetPortalError:
+    #     pass
     _touch_contributors(obj)
 
 

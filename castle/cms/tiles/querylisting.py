@@ -113,11 +113,11 @@ class BlogView(BaseTileView):
 
 
 class FullContentView(BaseTileView):
-    name = 'full-content'
-    label = 'Full Content'
-    preview = '++plone++castle/images/previews/querylisting/full-content.png'
+    name = 'article'
+    label = 'Article'
+    preview = '++plone++castle/images/previews/querylisting/article.png'
     order = 3
-    index = ViewPageTemplateFile('templates/querylisting/full-content.pt')
+    index = ViewPageTemplateFile('templates/querylisting/article.pt')
     tile_name = 'querylisting'
 
 

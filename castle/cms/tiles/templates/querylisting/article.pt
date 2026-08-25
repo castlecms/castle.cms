@@ -9,11 +9,11 @@
     min-height: 25px;
     max-height: 50px;
   }
-  .full-content-item {
+  .article-item {
     border-bottom: 1px solid #eee;
 
 }
-    .full-content-item:last-child {
+    .article-item:last-child {
     border-bottom: none;
 }
 </style>
@@ -30,7 +30,7 @@
                   effective item/effective|nothing;
                   start item/start|nothing;
                   end item/end|nothing;"
-      class="portal-type-${python: utils.normalize(item.portal_type)} full-content-item">
+      class="portal-type-${python: utils.normalize(item.portal_type)} article-item">
     <div class="row">
       <div class="col-lg-2 col-md-3 col-sm-4" tal:condition="has_image">
         <a href="${url}">
@@ -52,15 +52,15 @@
                      tal:condition="python: start.date() <> end.date()"
                      tal:content="python: utils.format_date(end)"></span>
         </p>
-        <h2 class="full-content-title">
+        <h2 class="article-title">
           <a href="${url}">${item/Title}</a>
         </h2>
-        <p class="full-content-date" 
+        <p class="article-date" 
             tal:condition="context/effective"
             tal:content="python: context.toLocalizedTime(context.effective())">
             Publication date
         </p>
-        <div class="full-content-body"
+        <div class="article-body"
               tal:on-error=""
               tal:condition="item/raw_output"
               tal:content="structure item/raw_output"
