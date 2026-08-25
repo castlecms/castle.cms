@@ -450,7 +450,7 @@
     name="querylisting.article"
     provides="..interfaces.ITileView"
     for="plone.dexterity.interfaces.IDexterityContent ..interfaces.ICastleLayer"
-    factory=".querylisting.FullContentView"
+    factory=".querylisting.ArticleView"
   />
 
   <!-- gallery views -->

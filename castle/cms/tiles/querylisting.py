@@ -112,7 +112,7 @@ class BlogView(BaseTileView):
     tile_name = 'querylisting'
 
 
-class FullContentView(BaseTileView):
+class ArticleView(BaseTileView):
     name = 'article'
     label = 'Article'
     preview = '++plone++castle/images/previews/querylisting/article.png'
@@ -183,6 +183,13 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             parsed['show_inactive'] = 1
 
         return parsed
+
+    def get_object(self, brain):
+        try:
+            return brain.getObject()
+        except Exception:
+            return None
+
 
     @property
     def data(self):
