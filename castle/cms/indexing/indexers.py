@@ -3,7 +3,6 @@ from Acquisition import aq_base, aq_parent
 from wildcard.hps.interfaces import IReindexActive
 from OFS.interfaces import IItem
 from plone import api
-from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToCatalogBrain as get_brain
 from plone.app.contenttypes.interfaces import IFile, IImage
 from plone.dexterity.interfaces import IDexterityContent
@@ -14,7 +13,6 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.interfaces._content import IFolderish
 from ZODB.POSException import POSKeyError
 from zope.globalrequest import getRequest
-import six
 
 from castle.cms.behaviors.location import ILocation
 from castle.cms.interfaces import IHasDefaultImage
@@ -223,21 +221,3 @@ def has_custom_markup(image):
     if image.custom_markup:
         return True
 
-
-@indexer(IItem)
-def raw_output(obj):
-    text = getattr(obj, 'text', None)
-
-    if not text:
-        return u''
-
-    if getattr(text, 'raw', None):
-        try:
-            return text.raw or u''
-        except Exception:
-            return u''
-
-    try:
-        return six.text_type(text)
-    except Exception:
-        return u''
