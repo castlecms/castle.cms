@@ -25,19 +25,13 @@ from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.component import getMultiAdapter
-from lxml.html.clean import Cleaner
-from lxml.etree import tostring
 from lxml.html import fromstring
+from lxml.html import tostring
+from plone import api
+from Products.CMFPlone.browser.syndication.adapters import SearchFeed
+from Products.CMFPlone.interfaces.syndication import IFeedItem
+from zope.component import queryMultiAdapter
 
-cleaner = Cleaner(
-    style=True,
-    page_structure=False,
-    processing_instructions=False,
-    forms=False,
-    meta=True,
-    annoying_tags=False,
-    remove_unknown_tags=False,
-)
 
 def _list(val):
     if type(val) not in (list, set, tuple):
@@ -134,15 +128,45 @@ class ArticleView(BaseTileView):
     tile_name = 'querylisting'
 
     def render_item(self, item):
-        print('=======================')
         obj = item.getObject()
-        view = getMultiAdapter(
-            (obj, self.request),
-            name='view'
-        )
+
+        feed = SearchFeed(api.portal.get())
+        adapter = queryMultiAdapter((obj, feed), IFeedItem)
+
+        if adapter is not None:
+            content = adapter.render_content_core().strip()
+            if content:
+                return self.extract_content(content)
+
+        return self.render_legacy_content(obj)
+
+    def extract_content(self, html):
+        dom = fromstring(html)
+
+        # layout-aware content
+        panels = dom.cssselect('[data-panel] > *')
+        if panels:
+            return ''.join(tostring(el) for el in panels)
+
+        # try old fashioned way... bah!
+        core = dom.cssselect('#content-core > *')
+        if core:
+            return ''.join(tostring(el) for el in core)
+
+        # adapter already returned a fragment or unwrapped content
+        return tostring(dom)
+
+    def render_legacy_content(self, obj):
+        view = getMultiAdapter((obj, self.request), name='view')
         html = view()
-        xml = cleaner.clean_html(fromstring(html))
-        return tostring(xml)
+
+        dom = fromstring(html)
+        core = dom.cssselect('#content-core > *')
+
+        if core:
+            return ''.join(tostring(el) for el in core)
+
+        return tostring(dom)
 
 
 class QueryListingTile(BaseTile, DisplayTypeTileMixin):
