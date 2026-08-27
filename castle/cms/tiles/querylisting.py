@@ -348,16 +348,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
     @property
     def filter_pattern_config(self):
+        query_filter = self.data.get('query_filter')
+        if query_filter is None:
+            query_filter = (
+                'show_filter_bar',
+                'show_text_filter',
+                'show_date_filter'
+            )
         config = {
             'tags': self.data.get('available_tags', []) or [],
-            'query_filter': self.data.get(
-                'query_filter',
-                (
-                    'show_filter_bar',
-                    'show_text_filter',
-                    'show_date_filter'
-                )
-            ) or []
+            'query_filter': query_filter,
         }
         form = self.get_form()
         config['query'] = {}

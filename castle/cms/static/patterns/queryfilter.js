@@ -241,6 +241,9 @@ define([
       var self = this;
       var fields = [];
       var widgetCount = 0;
+      if (!self.showFilterBar()) {
+          return null;
+      }
 
       if(self.props.tags.length > 0){
         widgetCount += 1;
@@ -268,12 +271,8 @@ define([
         ]));
       }
 
-      if(self.props.yearFilter && self.showDateFilter()){
+      if (self.showDateFilter()) {
         widgetCount += 1;
-        if (!self.showFilterBar()) {
-          return null;
-        }
-
         var options = [D.option({}, 'Year')];
         _.range(2010, (new Date()).getFullYear() + 1).forEach(function(year){
           options.push(D.option({ value: year }, year));
@@ -373,7 +372,7 @@ define([
   });
 
   var QueryFilter = Base.extend({
-    name: 'queryfilter',
+    name: 'queryfilter',x
     trigger: '.pat-queryfilter',
     parser: 'mockup',
     defaults: {
@@ -381,11 +380,7 @@ define([
       query: {},
       selector: null,
       yearFilter: false,
-      query_filter: [
-        'show_filter_bar',
-        'show_text_filter',
-        'show_date_filter'
-      ]
+      query_filter: []
     },
     init: function() {
       var self = this;
