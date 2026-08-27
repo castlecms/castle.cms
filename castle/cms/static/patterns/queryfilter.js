@@ -129,6 +129,21 @@ define([
         return false;
       }
     },
+    hasFilterOption: function(option) {
+      return this.props.query_filter.indexOf(option) !== -1;
+    },
+
+    showFilterBar: function() {
+      return this.hasFilterOption('show_filter_bar');
+    },
+
+    showTextFilter: function() {
+      return this.hasFilterOption('show_text_filter');
+    },
+
+    showDateFilter: function() {
+      return this.hasFilterOption('show_date_filter');
+    },
     fetchResults: function() {
       var self = this;
       if(self.props.ajaxResults){
@@ -225,7 +240,7 @@ define([
     render: function(){
       var self = this;
       var fields = [];
-      var widgetCount = 1;
+      var widgetCount = 0;
 
       if(self.props.tags.length > 0){
         widgetCount += 1;
@@ -238,15 +253,27 @@ define([
         ]));
         fields.push(D.span({ className: 'and' }, ' and '));
       }
-      fields.push(D.div({ className: 'field-wrapper' }, [
-        D.label({ htmlFor: 'filter-input' }, ' Filter by: '),
-        D.input({ type: 'text', name: 'SearchableText',
-                  placeholder: 'Filter by title, description, category...', id: 'filter-input', value: this.state.SearchableText,
-                  onChange: this.valueChange.bind(this, 'SearchableText')})
-      ]));
-
-      if(self.props.yearFilter){
+      if (self.showTextFilter()) {
         widgetCount += 1;
+        fields.push(D.div({ className: 'field-wrapper' }, [
+          D.label({ htmlFor: 'filter-input' }, ' Filter by: '),
+          D.input({
+            type: 'text',
+            name: 'SearchableText',
+            placeholder: 'Filter by title, description, category...',
+            id: 'filter-input',
+            value: this.state.SearchableText,
+            onChange: this.valueChange.bind(this, 'SearchableText')
+          })
+        ]));
+      }
+
+      if(self.props.yearFilter && self.showDateFilter()){
+        widgetCount += 1;
+        if (!self.showFilterBar()) {
+          return null;
+        }
+
         var options = [D.option({}, 'Year')];
         _.range(2010, (new Date()).getFullYear() + 1).forEach(function(year){
           options.push(D.option({ value: year }, year));
@@ -353,7 +380,12 @@ define([
       tags: [],
       query: {},
       selector: null,
-      yearFilter: false
+      yearFilter: false,
+      query_filter: [
+        'show_filter_bar',
+        'show_text_filter',
+        'show_date_filter'
+      ]
     },
     init: function() {
       var self = this;

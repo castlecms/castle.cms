@@ -349,7 +349,15 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     @property
     def filter_pattern_config(self):
         config = {
-            'tags': self.data.get('available_tags', []) or []
+            'tags': self.data.get('available_tags', []) or [],
+            'query_filter': self.data.get(
+                'query_filter',
+                (
+                    'show_filter_bar',
+                    'show_text_filter',
+                    'show_date_filter'
+                )
+            ) or []
         }
         form = self.get_form()
         config['query'] = {}
@@ -438,6 +446,24 @@ class IQueryListingTileSchema(model.Schema):
         value_type=schema.TextLine(),
         required=False,
         missing_value=()
+    )
+
+    form.widget('query_filter', CheckBoxFieldWidget)
+    query_filter = schema.Tuple(
+        title=u'Query Filter',
+        description=u'Query filter display options',
+        default=(
+            'show_filter_bar',
+            'show_text_filter',
+            'show_date_filter'
+        ),
+        value_type=schema.Choice(
+            vocabulary=SimpleVocabulary([
+                SimpleTerm('show_filter_bar', 'show_filter_bar', u'Display Filter?'),
+                SimpleTerm('show_text_filter', 'show_text_filter', u'Text Field - Search Filter'),
+                SimpleTerm('show_date_filter', 'show_date_filter', u'Dropdown - Filter by Year'),
+            ])
+        )
     )
 
     form.widget('display_fields', CheckBoxFieldWidget)
