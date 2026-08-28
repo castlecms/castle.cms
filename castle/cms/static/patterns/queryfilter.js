@@ -372,7 +372,7 @@ define([
   });
 
   var QueryFilter = Base.extend({
-    name: 'queryfilter',x
+    name: 'queryfilter',
     trigger: '.pat-queryfilter',
     parser: 'mockup',
     defaults: {
