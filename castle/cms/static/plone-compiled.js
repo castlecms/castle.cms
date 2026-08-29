@@ -21707,7 +21707,7 @@ define('castle-url/patterns/queryfilter',[
          Subject: subject,
          selectedTags: [],
          singleFilter: false,
-         sort_on: 'effective:reverse',
+         sort_on: 'default',
          searchedText: '',
          'selected-year': '',
          loading: false
@@ -21833,7 +21833,7 @@ define('castle-url/patterns/queryfilter',[
         self.state.loading = true;
         utils.loading.show();
         var formData = [];
-        if(self.state.sort_on){
+        if (self.state.sort_on && self.state.sort_on !== 'default') {
           formData.push({name: 'sort_on', value: self.state.sort_on});
         }
         if( self.state.singleFilter ) {
@@ -22046,9 +22046,10 @@ define('castle-url/patterns/queryfilter',[
             D.select({
               name: 'sort_on',
               id: 'select-sort-by',
-              value: this.state.sort_on || 'effective:reverse',
+              value: this.state.sort_on,
               onChange: this.valueChange.bind(this, 'sort_on')
             }, [
+              D.option({ value: 'default' }, 'Default'),
               D.option({ value: 'effective:reverse' }, 'Newest'),
               D.option({ value: 'created:ascending' }, 'Oldest'),
               D.option({ value: 'modified:reverse' }, 'Modified'),
