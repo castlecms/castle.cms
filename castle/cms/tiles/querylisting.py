@@ -33,6 +33,33 @@ from Products.CMFPlone.interfaces.syndication import IFeedItem
 from zope.component import queryMultiAdapter
 
 
+SORT_OPTIONS = {
+    'effective:reverse': {
+        'sort_on': 'effective',
+        'sort_order': 'reverse',
+    },
+    'created:reverse': {
+        'sort_on': 'created',
+        'sort_order': 'reverse',
+    },
+    'created:ascending': {
+        'sort_on': 'created',
+        'sort_order': 'ascending',
+    },
+    'modified:reverse': {
+        'sort_on': 'modified',
+        'sort_order': 'reverse',
+    },
+    'sortable_title:ascending': {
+        'sort_on': 'sortable_title',
+        'sort_order': 'ascending',
+    },
+    'sortable_title:reverse': {
+        'sort_on': 'sortable_title',
+        'sort_order': 'reverse',
+    },
+}
+
 def _list(val):
     if type(val) not in (list, set, tuple):
         val = [val]
@@ -269,7 +296,19 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         query = self.get_query()
         form = self.get_form()
         subject_filter = None
+
+        sort_value = form.get('sort_on')
+        if sort_value:
+            sort_value = unidecode(sort_value)
+            if sort_value in SORT_OPTIONS:
+                query.update(SORT_OPTIONS[sort_value])
+            elif sort_value in catalog._catalog.indexes:
+                # keeps legacy direct values such as ?sort_on=created working
+                query['sort_on'] = sort_value
+
         for attr in self.query_attrs:
+            if attr == 'sort_on':
+                continue
             if form.get(attr):
                 val = _list(form.get(attr))
                 if attr == 'Subject':
@@ -285,20 +324,25 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
         if query.get('sort_on', '') not in catalog._catalog.indexes:
             query['sort_on'] = 'effective'
+            query['sort_order'] = 'reverse'
 
         result = catalog(**query)
+
         if subject_filter is not None:
-            # special case where we have to further filter...
-            result = [item for item in result
-                      if item.Subject and subject_filter in item.Subject]
+            result = [
+                item for item in result
+                if item.Subject and subject_filter in item.Subject
+            ]
+
         try:
-            form = self.get_form()
             page = int(form.get('page', 1)) - 1
         except Exception:
             page = 0
+
         page = max(page, 0)
         start = page * self.limit
         end = start + self.limit
+
         return {
             'total': len(result),
             'page': page + 1,

@@ -21702,16 +21702,28 @@ define('castle-url/patterns/queryfilter',[
       var self = this;
       var subject = [];
       var tags = [];
-      return $.extend({}, true, {
+      let state = $.extend({}, true, {
          SearchableText: '',
          Subject: subject,
          selectedTags: [],
          singleFilter: false,
-         sort_on: '',
+         sort_on: 'effective:reverse',
          searchedText: '',
          'selected-year': '',
          loading: false
       }, this.props.query);
+
+      const legacySorts = {
+        effective: 'effective:reverse',
+        created: 'created:reverse',
+        modified: 'modified:reverse'
+      };
+
+      if (legacySorts[state.sort_on]) {
+        state.sort_on = legacySorts[state.sort_on];
+      }
+
+      return state;
     },
     getDefaultProps: function(){
       return {
@@ -21913,6 +21925,9 @@ define('castle-url/patterns/queryfilter',[
       var self = this;
       var fields = [];
       var widgetCount = 0;
+      if (!self.showFilterBar()) {
+          return null;
+      }
 
       if(self.props.tags.length > 0){
         widgetCount += 1;
@@ -21940,12 +21955,8 @@ define('castle-url/patterns/queryfilter',[
         ]));
       }
 
-      if(self.props.yearFilter && self.showDateFilter()){
+      if (self.showDateFilter()) {
         widgetCount += 1;
-        if (!self.showFilterBar()) {
-          return null;
-        }
-
         var options = [D.option({}, 'Year')];
         _.range(2010, (new Date()).getFullYear() + 1).forEach(function(year){
           options.push(D.option({ value: year }, year));
@@ -22033,10 +22044,18 @@ define('castle-url/patterns/queryfilter',[
           ]),
           D.div({className: 'col-md-3 sort-by'}, [
             D.label({ htmlFor: 'select-sort-by' }, 'Sort by:'),
-            D.select({ name: 'sort_on', id: 'select-sort-by', onChange: this.valueChange.bind(this, 'sort_on')}, [
-              D.option({ value: 'effective'}, 'Newest'),
-              D.option({ value: 'created'}, 'Created'),
-              D.option({ value: 'modified'}, 'Modified')
+            D.select({
+              name: 'sort_on',
+              id: 'select-sort-by',
+              value: this.state.sort_on || 'effective:reverse',
+              onChange: this.valueChange.bind(this, 'sort_on')
+            }, [
+              D.option({ value: 'effective:reverse' }, 'Newest'),
+              D.option({ value: 'created:reverse' }, 'Created'),
+              D.option({ value: 'created:ascending' }, 'Oldest'),
+              D.option({ value: 'modified:reverse' }, 'Modified'),
+              D.option({ value: 'sortable_title:ascending' }, 'Name (A-Z)'),
+              D.option({ value: 'sortable_title:reverse' }, 'Name (Z-A)')
             ])
           ])
         ])
@@ -22053,11 +22072,7 @@ define('castle-url/patterns/queryfilter',[
       query: {},
       selector: null,
       yearFilter: false,
-      query_filter: [
-        'show_filter_bar',
-        'show_text_filter',
-        'show_date_filter'
-      ]
+      query_filter: []
     },
     init: function() {
       var self = this;
