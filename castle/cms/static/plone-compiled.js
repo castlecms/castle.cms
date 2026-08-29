@@ -21715,7 +21715,6 @@ define('castle-url/patterns/queryfilter',[
 
       const legacySorts = {
         effective: 'effective:reverse',
-        created: 'created:reverse',
         modified: 'modified:reverse'
       };
 
@@ -22051,7 +22050,6 @@ define('castle-url/patterns/queryfilter',[
               onChange: this.valueChange.bind(this, 'sort_on')
             }, [
               D.option({ value: 'effective:reverse' }, 'Newest'),
-              D.option({ value: 'created:reverse' }, 'Created'),
               D.option({ value: 'created:ascending' }, 'Oldest'),
               D.option({ value: 'modified:reverse' }, 'Modified'),
               D.option({ value: 'sortable_title:ascending' }, 'Name (A-Z)'),

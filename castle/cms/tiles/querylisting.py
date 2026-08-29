@@ -38,10 +38,6 @@ SORT_OPTIONS = {
         'sort_on': 'effective',
         'sort_order': 'reverse',
     },
-    'created:reverse': {
-        'sort_on': 'created',
-        'sort_order': 'reverse',
-    },
     'created:ascending': {
         'sort_on': 'created',
         'sort_order': 'ascending',
@@ -302,9 +298,9 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             sort_value = unidecode(sort_value)
             if sort_value in SORT_OPTIONS:
                 query.update(SORT_OPTIONS[sort_value])
-            elif sort_value in catalog._catalog.indexes:
-                # keeps legacy direct values such as ?sort_on=created working
-                query['sort_on'] = sort_value
+            # elif sort_value in catalog._catalog.indexes:
+            #     # keeps legacy direct values such as ?sort_on=created working
+            #     query['sort_on'] = sort_value
 
         for attr in self.query_attrs:
             if attr == 'sort_on':
