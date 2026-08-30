@@ -22132,82 +22132,50 @@ define('castle-url/patterns/queryfilter',[
       var selector = self.options.ajaxResults.selector;
       var $results = $(selector);
 
-      $('.load-more', $results)
-        .off('click.queryfilter')
-        .on('click.queryfilter', function(e){
-          e.preventDefault();
+      $('.load-more', $results).off('click.queryfilter').on('click.queryfilter', function(e){
+        e.preventDefault();
+        var url = self.ajaxUrl;
+        if(url.indexOf('?') !== -1){
+          url += '&';
+        }else{
+          url += '?';
+        }
+        url += 'page=' + $(this).attr('data-page');
 
-          // if (self.component.state.loading) {
-          //   return;
-          // }
+        // self.component.setState({
+        //   loading: true
+        // });
 
-          var url = self.ajaxUrl;
-
-          if(url.indexOf('?') !== -1){
-            url += '&';
-          }else{
-            url += '?';
-          }
-
-          url += 'page=' + $(this).attr('data-page');
-
-          self.component.setState({
-            loading: true
-          });
-
-          utils.loading.show();
-
-          $.ajax({
-            url: url
-          }).done(function(data){
-            var $dom = $(data);
-
-            $(selector + ' .top-total').replaceWith(
-              $(selector + ' .top-total', $dom)
-            );
-
-            $(selector + ' .bottom-total').replaceWith(
-              $(selector + ' .bottom-total', $dom)
-            );
-
-            var $contents = $(
-              selector + ' ul,' +
-              selector + ' .query-listing-container'
-            );
-
-            var $items = $(
-              selector + ' ul li,' +
-              selector + ' .query-listing-container > *',
-              $dom
-            );
-
-            $contents.append($items);
-
-            if($contents.hasClass("pat-masonry")){
-              var masonryPattern = $contents.data('pattern-masonry');
-
-              if(masonryPattern){
-                masonryPattern.addItems($items);
-              }
+        e.preventDefault();
+        utils.loading.show();
+        $.ajax({
+          url: url
+        }).done(function(data){
+          var $dom = $(data);
+          $(selector + ' .top-total').replaceWith(
+            $(selector + ' .top-total', $dom));
+          $(selector + ' .bottom-total').replaceWith(
+            $(selector + ' .bottom-total', $dom));
+          var $contents = $(selector + ' ul,' + selector + ' .query-listing-container');
+          var $items = $(selector + ' ul li,' + selector + ' .query-listing-container > *', $dom);
+          $contents.append($items);
+          if($contents.hasClass("pat-masonry")){
+            var masonryPattern = $contents.data('pattern-masonry');
+            if(masonryPattern){
+              masonryPattern.addItems($items);
             }
+          }
+          Registry.scan($items);
+          self.bind();
 
-            Registry.scan($items);
-
-            self.bind();
-
-            trackUrl(url);
-          }).always(function(){
-            self.component.setState({
-              loading: false
-            });
-
-            utils.loading.hide();
-          }).fail(function(){
-            alert('error getting query results.');
-          });
+          trackUrl(url);
+        }).always(function(){
+          utils.loading.hide();
+        }).fail(function(){
+          alert('error getting query results.');
         });
-    },
-
+      });
+    }
   });
 
   return QueryFilter;
