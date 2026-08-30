@@ -322,9 +322,6 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             sort_value = unidecode(sort_value)
             if sort_value in SORT_OPTIONS:
                 query.update(SORT_OPTIONS[sort_value])
-            # elif sort_value in catalog._catalog.indexes:
-            #     # keeps legacy direct values such as ?sort_on=created working
-            #     query['sort_on'] = sort_value
 
         for attr in self.query_attrs:
             if attr == 'sort_on':
@@ -347,22 +344,18 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             query['sort_order'] = 'reverse'
 
         result = catalog(**query)
-
         if subject_filter is not None:
-            result = [
-                item for item in result
-                if item.Subject and subject_filter in item.Subject
-            ]
+            # special case where we have to further filter...
+            result = [item for item in result
+                      if item.Subject and subject_filter in item.Subject]
 
         try:
             page = int(form.get('page', 1)) - 1
         except Exception:
             page = 0
-
         page = max(page, 0)
         start = page * self.limit
         end = start + self.limit
-
         return {
             'total': len(result),
             'page': page + 1,
