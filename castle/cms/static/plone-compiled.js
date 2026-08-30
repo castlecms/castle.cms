@@ -22142,10 +22142,6 @@ define('castle-url/patterns/queryfilter',[
         }
         url += 'page=' + $(this).attr('data-page');
 
-        // self.component.setState({
-        //   loading: true
-        // });
-
         e.preventDefault();
         utils.loading.show();
         $.ajax({
