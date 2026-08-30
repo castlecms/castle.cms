@@ -17,6 +17,7 @@
 
     <p class="read-more text-center bottom-total visualClear"
        tal:condition="python: results['items']"
+       tal:attributes="style view/infinite_scroll_style"
        tal:define="page python: results['page'];
                    limit view/limit;
                    total python: results['total'];

@@ -278,6 +278,17 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return self.data.get('limit', 20) or 20
 
     @property
+    def infinite_scroll(self):
+        return self.data.get('display_type') == 'article'
+
+    @property
+    def infinite_scroll_style(self):
+        if self.infinite_scroll:
+            return 'height: 0; overflow: hidden; margin: 0; padding: 0;'
+        return ''
+
+
+    @property
     def show_expired(self):
         should_show = self.data.get('show_expired', False) or None
         return should_show if should_show in [True, False] else False
@@ -411,6 +422,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             config['query']['Subject'] = [config['query']['Subject']]
 
         config['display_type'] = self.data.get('display_type', None)
+        config['infinite_scroll'] = self.infinite_scroll
 
         out = '{}'
         try:

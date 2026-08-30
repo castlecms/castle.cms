@@ -410,7 +410,7 @@ define([
       self.setAjaxUrl(self.options.ajaxResults.url);
       self.bind();
 
-      if($(self.options.ajaxResults.selector + ' .infinity').size() > 0){
+      if (self.options.infinite_scroll) {
         self.infinitHandler();
       }
     },
@@ -426,73 +426,116 @@ define([
       }
       var that = this;
       var timeout;
-      $(window).on('scroll', function(){
-        clearTimeout(timeout);
+
+      $(window)
+        .off('scroll.queryfilter')
+        .on('scroll.queryfilter', function(){
+          clearTimeout(timeout);
+
         timeout = setTimeout(function(){
           if(that.component.state.loading){
             return;
           }
-          var $moreBtn = $(that.options.ajaxResults.selector + ' .load-more');
-          if($moreBtn.size() === 0){
-            return;
-          }
-          var docViewTop = $(window).scrollTop();
-          var docViewBottom = docViewTop + $(window).height();
 
-          var elemTop = $moreBtn.offset().top;
-          var elemBottom = elemTop + $moreBtn.height();
+            var selector = that.options.ajaxResults.selector;
+            var $moreBtn = $(selector + ' .load-more');
 
-          if(elemBottom <= docViewBottom){
-            // and we're visible;
-            $moreBtn.trigger('click');
-          }
-        }, 100);
-      });
+            if ($moreBtn.length === 0) {
+              return;
+            }
+
+            var windowBottom = $(window).scrollTop() + $(window).height();
+            var buttonTop = $moreBtn.offset().top;
+
+            if (buttonTop <= windowBottom) {
+              // and we're visible;
+              $moreBtn.trigger('click');
+            }
+          }, 100);
+        });
     },
 
     bind: function(){
       var self = this;
       var selector = self.options.ajaxResults.selector;
       var $results = $(selector);
-      $('.load-more', $results).off('click').on('click', function(e){
-        var url = self.ajaxUrl;
-        if(url.indexOf('?') !== -1){
-          url += '&';
-        }else{
-          url += '?';
-        }
-        url += 'page=' + $(this).attr('data-page');
 
-        e.preventDefault();
-        utils.loading.show();
-        $.ajax({
-          url: url
-        }).done(function(data){
-          var $dom = $(data);
-          $(selector + ' .top-total').replaceWith(
-            $(selector + ' .top-total', $dom));
-          $(selector + ' .bottom-total').replaceWith(
-            $(selector + ' .bottom-total', $dom));
-          var $contents = $(selector + ' ul,' + selector + ' .query-listing-container');
-          var $items = $(selector + ' ul li,' + selector + ' .query-listing-container > *', $dom);
-          $contents.append($items);
-          if($contents.hasClass("pat-masonry")){
-            var masonryPattern = $contents.data('pattern-masonry');
-            if(masonryPattern){
-              masonryPattern.addItems($items);
-            }
+      $('.load-more', $results)
+        .off('click.queryfilter')
+        .on('click.queryfilter', function(e){
+          e.preventDefault();
+
+          // if (self.component.state.loading) {
+          //   return;
+          // }
+
+          var url = self.ajaxUrl;
+
+          if(url.indexOf('?') !== -1){
+            url += '&';
+          }else{
+            url += '?';
           }
-          Registry.scan($items);
-          self.bind();
 
-          trackUrl(url);
-        }).always(function(){
-          utils.loading.hide();
-        }).fail(function(){
-          alert('error getting query results.');
+          url += 'page=' + $(this).attr('data-page');
+
+          self.component.setState({
+            loading: true
+          });
+
+          utils.loading.show();
+
+          $.ajax({
+            url: url
+          }).done(function(data){
+            var $dom = $(data);
+
+            $(selector + ' .top-total').replaceWith(
+              $(selector + ' .top-total', $dom)
+            );
+
+            $(selector + ' .bottom-total').replaceWith(
+              $(selector + ' .bottom-total', $dom)
+            );
+
+            var $contents = $(
+              selector + ' ul,' +
+              selector + ' .query-listing-container'
+            );
+
+            var $items = $(
+              selector + ' ul li,' +
+              selector + ' .query-listing-container > *',
+              $dom
+            );
+
+            $contents.append($items);
+
+            if($contents.hasClass("pat-masonry")){
+              var masonryPattern = $contents.data('pattern-masonry');
+
+              if(masonryPattern){
+                masonryPattern.addItems($items);
+              }
+            }
+
+            Registry.scan($items);
+
+            self.bind();
+
+            trackUrl(url);
+          }).always(function(){
+            self.component.setState({
+              loading: false
+            });
+
+            utils.loading.hide();
+          }).fail(function(){
+            alert('error getting query results.');
+          });
         });
-      });
-    }
+    },
+
   });
 
   return QueryFilter;
