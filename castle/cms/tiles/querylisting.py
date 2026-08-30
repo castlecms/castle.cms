@@ -11,7 +11,6 @@ from castle.cms.utils import parse_query_from_data
 from castle.cms.widgets import PreviewSelectFieldWidget
 from castle.cms.widgets import QueryFieldWidget
 from DateTime import DateTime
-from plone.app.blocks.layoutbehavior import ILayoutAware
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives as form
 from plone.memoize.instance import memoize
@@ -295,11 +294,6 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         if self.infinite_scroll:
             return 'height: 0; overflow: hidden; margin: 0; padding: 0;'
         return ''
-
-    @property
-    def is_dark_mode(self):
-        adapted_context = ILayoutAware(self.context)
-        return adapted_context.pageSiteLayout == 'dark-mode.html'
 
     @property
     def queryfilter_class(self):

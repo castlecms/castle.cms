@@ -1,41 +1,6 @@
-<style type="text/css">
-  .queryfilter-dark-mode .queryfilter-container,
-  .queryfilter-dark-mode .filter-fields,
-  .queryfilter-dark-mode .queryfilter-container .row {
-    background-color: #000;
-    color: #fff;
-  }
-
-  .queryfilter-dark-mode .queryfilter-container label,
-  .queryfilter-dark-mode .queryfilter-container .sort-by,
-  .queryfilter-dark-mode .queryfilter-container .filter-list,
-  .queryfilter-dark-mode .queryfilter-container .filter {
-    color: #fff;
-  }
-
-  .queryfilter-dark-mode .queryfilter-container input,
-  .queryfilter-dark-mode .queryfilter-container select {
-    background-color: #fff;
-    color: #000;
-  }
-
-  .queryfilter-dark-mode .queryfilter-container .plone-btn {
-    background-color: #000;
-    color: #fff;
-    border-color: #fff;
-  }
-
-  .queryfilter-dark-mode .queryfilter-container .plone-btn {
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #fff;
-  }
-</style>
-
 <div class="col-lg-12"
      tal:define="results view/results;">
 <div class="pat-queryfilter"
-     tal:attributes="class view/queryfilter_class"
      data-pat-queryfilter="${view/filter_pattern_config}" />
 
   <h2 class="queryfilter-title" tal:condition="view/data/title|nothing">${view/data/title|nothing}</h2>
