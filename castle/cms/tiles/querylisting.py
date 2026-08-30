@@ -285,7 +285,10 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
     @property
     def infinite_scroll(self):
-        return self.data.get('display_type') == 'article'
+        return (
+            self.data.get('display_type') == 'article' and
+            self.data.get('auto_scroll', False)
+        )
 
     @property
     def infinite_scroll_style(self):
@@ -501,6 +504,13 @@ class IQueryListingTileSchema(model.Schema):
         required=False,
         default=15,
         min=1,
+    )
+
+    auto_scroll = schema.Bool(
+        title=u'Auto Scroll',
+        description=u'Automatically load more results as the user scrolls (Article display type only)',
+        required=False,
+        default=False,
     )
 
     form.widget(
