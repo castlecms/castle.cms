@@ -273,6 +273,11 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return df
 
     @property
+    def show_num_results(self):
+        return 'show_filter_bar' in self.filter_pattern_config
+
+
+    @property
     def limit(self):
         if self.data.get('display_type') == 'article':
             return 1
@@ -291,8 +296,6 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
     @property
     def is_dark_mode(self):
         adapted_context = ILayoutAware(self.context)
-        print('===========')
-        print(adapted_context.pageSiteLayout)
         return adapted_context.pageSiteLayout == 'dark-mode.html'
 
     @property

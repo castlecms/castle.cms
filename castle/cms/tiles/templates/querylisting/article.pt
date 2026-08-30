@@ -1,4 +1,8 @@
-
+<style>
+.article-separator {
+  margin-bottom: 2rem;
+}
+</style>
 <ul class="dt-default"
     tal:define="results view/tile/results;
                 utils view/tile/utils;
@@ -15,24 +19,20 @@
       class="portal-type-${python: utils.normalize(item.portal_type)} article-item">
     <div class="row">
       <div class="col-lg-12">
+        <h2 class="article-title">
+          <a href="${url}">${item/Title}</a>
+        </h2>
         <p class="pat-moment date"
-           tal:content="python: utils.format_date(effective, 'notime')"
-           tal:condition="python: 'date' in df and utils.valid_date(effective)"></p>
-        <p tal:condition="python: 'eventstartend' in df and start and end">
-            <span class="pat-moment date" tal:content="python: utils.format_date(start)"></span>
-            to
-            <span class="pat-moment date"
-                     tal:condition="python: start.date() == end.date()"
-                     tal:content="python: utils.format_date(end, 'nodate')"></span>
-            <span class="pat-moment date"
-                     tal:condition="python: start.date() <> end.date()"
-                     tal:content="python: utils.format_date(end)"></span>
+          tal:content="python: utils.format_date(effective, 'notime')"
+          tal:condition="python: utils.valid_date(effective)">
         </p>
         <tal:content replace="structure python: view.render_item(item)" />
-        <p class="read-more"><a href="${url}" class="button">More →</a></p>
+        <p class="read-more">
+          <a href="${url}" class="button">More →</a>
+        </p>
       </div>
     </div>
-    <hr>
+    <hr class="article-separator">
   </li>
   </tal:item>
 </ul>
