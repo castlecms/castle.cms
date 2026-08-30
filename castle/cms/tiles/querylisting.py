@@ -273,6 +273,8 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
     @property
     def limit(self):
+        if self.data.get('display_type') == 'article':
+            return 1
         return self.data.get('limit', 20) or 20
 
     @property
