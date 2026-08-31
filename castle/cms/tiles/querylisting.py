@@ -296,10 +296,6 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return ''
 
     @property
-    def queryfilter_class(self):
-        return 'pat-queryfilter queryfilter-dark-mode' if self.is_dark_mode else 'pat-queryfilter'
-
-    @property
     def show_expired(self):
         should_show = self.data.get('show_expired', False) or None
         return should_show if should_show in [True, False] else False
