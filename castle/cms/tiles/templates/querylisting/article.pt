@@ -27,9 +27,6 @@
           tal:condition="python: utils.valid_date(effective)">
         </p>
         <tal:content replace="structure python: view.render_item(item)" />
-        <p class="read-more">
-          <a href="${url}" class="button">More →</a>
-        </p>
       </div>
     </div>
     <hr class="article-separator">
