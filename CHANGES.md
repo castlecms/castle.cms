@@ -4,7 +4,9 @@ Changelog
 3.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- add new filter options to querylisting tile
+- add new Article display type to fully render content items in a querylisting
+- add scrolling load option for Article querylistings
 
 
 3.2.2 (2026-04-23)

@@ -1,13 +1,15 @@
 <div class="col-lg-12"
      tal:define="results view/results;">
-  <div class="pat-queryfilter" data-pat-queryfilter="${view/filter_pattern_config}" />
+<div class="pat-queryfilter"
+     data-pat-queryfilter="${view/filter_pattern_config}" />
 
   <h2 class="queryfilter-title" tal:condition="view/data/title|nothing">${view/data/title|nothing}</h2>
   <h2 class="queryfilter-title sr-only" tal:condition="not: view/data/title|nothing" >Listing</h2>
 
   <div class="query-results pat-pager"
        tal:attributes="id python: 'query-results-%s' % view.id or ''">
-    <div class="row top-total">
+    <div class="row top-total"
+        tal:condition="view/show_num_results">
       <div class="col-lg-12 large-12 hide-for-small">
         <p class="right">Results: ${results/total} Items</p>
       </div>
@@ -17,6 +19,7 @@
 
     <p class="read-more text-center bottom-total visualClear"
        tal:condition="python: results['items']"
+       tal:attributes="style view/infinite_scroll_style"
        tal:define="page python: results['page'];
                    limit view/limit;
                    total python: results['total'];
