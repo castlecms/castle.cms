@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2.3 (unreleased)
+3.3.0 (2026-09-14)
 ------------------
 
 - add new filter options to querylisting tile
