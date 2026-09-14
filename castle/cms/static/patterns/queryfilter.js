@@ -30,16 +30,27 @@ define([
       var self = this;
       var subject = [];
       var tags = [];
-      return $.extend({}, true, {
+      let state = $.extend({}, true, {
          SearchableText: '',
          Subject: subject,
          selectedTags: [],
          singleFilter: false,
-         sort_on: '',
+         sort_on: 'default',
          searchedText: '',
          'selected-year': '',
          loading: false
       }, this.props.query);
+
+      const legacySorts = {
+        effective: 'effective:reverse',
+        modified: 'modified:reverse'
+      };
+
+      if (legacySorts[state.sort_on]) {
+        state.sort_on = legacySorts[state.sort_on];
+      }
+
+      return state;
     },
     getDefaultProps: function(){
       return {
@@ -129,13 +140,28 @@ define([
         return false;
       }
     },
+    hasFilterOption: function(option) {
+      return this.props.query_filter.indexOf(option) !== -1;
+    },
+
+    showFilterBar: function() {
+      return this.hasFilterOption('show_filter_bar');
+    },
+
+    showTextFilter: function() {
+      return this.hasFilterOption('show_text_filter');
+    },
+
+    showDateFilter: function() {
+      return this.hasFilterOption('show_date_filter');
+    },
     fetchResults: function() {
       var self = this;
       if(self.props.ajaxResults){
         self.state.loading = true;
         utils.loading.show();
         var formData = [];
-        if(self.state.sort_on){
+        if (self.state.sort_on && self.state.sort_on !== 'default') {
           formData.push({name: 'sort_on', value: self.state.sort_on});
         }
         if( self.state.singleFilter ) {
@@ -225,7 +251,10 @@ define([
     render: function(){
       var self = this;
       var fields = [];
-      var widgetCount = 1;
+      var widgetCount = 0;
+      if (!self.showFilterBar()) {
+          return null;
+      }
 
       if(self.props.tags.length > 0){
         widgetCount += 1;
@@ -238,14 +267,22 @@ define([
         ]));
         fields.push(D.span({ className: 'and' }, ' and '));
       }
-      fields.push(D.div({ className: 'field-wrapper' }, [
-        D.label({ htmlFor: 'filter-input' }, ' Filter by: '),
-        D.input({ type: 'text', name: 'SearchableText',
-                  placeholder: 'Filter by title, description, category...', id: 'filter-input', value: this.state.SearchableText,
-                  onChange: this.valueChange.bind(this, 'SearchableText')})
-      ]));
+      if (self.showTextFilter()) {
+        widgetCount += 1;
+        fields.push(D.div({ className: 'field-wrapper' }, [
+          D.label({ htmlFor: 'filter-input' }, ' Filter by: '),
+          D.input({
+            type: 'text',
+            name: 'SearchableText',
+            placeholder: 'Filter by title, description, category...',
+            id: 'filter-input',
+            value: this.state.SearchableText,
+            onChange: this.valueChange.bind(this, 'SearchableText')
+          })
+        ]));
+      }
 
-      if(self.props.yearFilter){
+      if (self.showDateFilter()) {
         widgetCount += 1;
         var options = [D.option({}, 'Year')];
         _.range(2010, (new Date()).getFullYear() + 1).forEach(function(year){
@@ -334,10 +371,18 @@ define([
           ]),
           D.div({className: 'col-md-3 sort-by'}, [
             D.label({ htmlFor: 'select-sort-by' }, 'Sort by:'),
-            D.select({ name: 'sort_on', id: 'select-sort-by', onChange: this.valueChange.bind(this, 'sort_on')}, [
-              D.option({ value: 'effective'}, 'Newest'),
-              D.option({ value: 'created'}, 'Created'),
-              D.option({ value: 'modified'}, 'Modified')
+            D.select({
+              name: 'sort_on',
+              id: 'select-sort-by',
+              value: this.state.sort_on,
+              onChange: this.valueChange.bind(this, 'sort_on')
+            }, [
+              D.option({ value: 'default' }, 'Default'),
+              D.option({ value: 'effective:reverse' }, 'Newest'),
+              D.option({ value: 'created:ascending' }, 'Oldest'),
+              D.option({ value: 'modified:reverse' }, 'Modified'),
+              D.option({ value: 'sortable_title:ascending' }, 'Name (A-Z)'),
+              D.option({ value: 'sortable_title:reverse' }, 'Name (Z-A)')
             ])
           ])
         ])
@@ -353,7 +398,8 @@ define([
       tags: [],
       query: {},
       selector: null,
-      yearFilter: false
+      yearFilter: false,
+      query_filter: []
     },
     init: function() {
       var self = this;
@@ -364,7 +410,7 @@ define([
       self.setAjaxUrl(self.options.ajaxResults.url);
       self.bind();
 
-      if($(self.options.ajaxResults.selector + ' .infinity').size() > 0){
+      if (self.options.infinite_scroll) {
         self.infinitHandler();
       }
     },
@@ -380,35 +426,42 @@ define([
       }
       var that = this;
       var timeout;
-      $(window).on('scroll', function(){
-        clearTimeout(timeout);
+
+      $(window)
+        .off('scroll.queryfilter')
+        .on('scroll.queryfilter', function(){
+          clearTimeout(timeout);
+
         timeout = setTimeout(function(){
           if(that.component.state.loading){
             return;
           }
-          var $moreBtn = $(that.options.ajaxResults.selector + ' .load-more');
-          if($moreBtn.size() === 0){
-            return;
-          }
-          var docViewTop = $(window).scrollTop();
-          var docViewBottom = docViewTop + $(window).height();
 
-          var elemTop = $moreBtn.offset().top;
-          var elemBottom = elemTop + $moreBtn.height();
+            var selector = that.options.ajaxResults.selector;
+            var $moreBtn = $(selector + ' .load-more');
 
-          if(elemBottom <= docViewBottom){
-            // and we're visible;
-            $moreBtn.trigger('click');
-          }
-        }, 100);
-      });
+            if ($moreBtn.length === 0) {
+              return;
+            }
+
+            var windowBottom = $(window).scrollTop() + $(window).height();
+            var buttonTop = $moreBtn.offset().top;
+
+            if (buttonTop <= windowBottom) {
+              // and we're visible;
+              $moreBtn.trigger('click');
+            }
+          }, 100);
+        });
     },
 
     bind: function(){
       var self = this;
       var selector = self.options.ajaxResults.selector;
       var $results = $(selector);
-      $('.load-more', $results).off('click').on('click', function(e){
+
+      $('.load-more', $results).off('click.queryfilter').on('click.queryfilter', function(e){
+        e.preventDefault();
         var url = self.ajaxUrl;
         if(url.indexOf('?') !== -1){
           url += '&';

@@ -1,0 +1,35 @@
+<style>
+.article-separator {
+  margin-bottom: 2rem;
+}
+</style>
+<ul class="dt-default"
+    tal:define="results view/tile/results;
+                utils view/tile/utils;
+                df view/tile/display_fields;"
+    style="${python: view.font_sizes.get('query_listing','')}"
+>
+  <tal:item tal:repeat="item python: results['items']">
+  <li tal:define="base_url item/getURL;
+                  url python: utils.get_object_url(item);
+                  has_image python: 'image' in df and utils.has_image(item);
+                  effective item/effective|nothing;
+                  start item/start|nothing;
+                  end item/end|nothing;"
+      class="portal-type-${python: utils.normalize(item.portal_type)} article-item">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="article-title">
+          <a href="${url}">${item/Title}</a>
+        </h2>
+        <p class="pat-moment date"
+          tal:content="python: utils.format_date(effective, 'notime')"
+          tal:condition="python: utils.valid_date(effective)">
+        </p>
+        <tal:content replace="structure python: view.render_item(item)" />
+      </div>
+    </div>
+    <hr class="article-separator">
+  </li>
+  </tal:item>
+</ul>

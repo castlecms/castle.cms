@@ -24,7 +24,37 @@ from zope import schema
 from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from zope.component import getMultiAdapter
+from lxml.html import fromstring
+from lxml.html import tostring
+from plone import api
+from Products.CMFPlone.browser.syndication.adapters import SearchFeed
+from Products.CMFPlone.interfaces.syndication import IFeedItem
+from zope.component import queryMultiAdapter
 
+
+SORT_OPTIONS = {
+    'effective:reverse': {
+        'sort_on': 'effective',
+        'sort_order': 'reverse',
+    },
+    'created:ascending': {
+        'sort_on': 'created',
+        'sort_order': 'ascending',
+    },
+    'modified:reverse': {
+        'sort_on': 'modified',
+        'sort_order': 'reverse',
+    },
+    'sortable_title:ascending': {
+        'sort_on': 'sortable_title',
+        'sort_order': 'ascending',
+    },
+    'sortable_title:reverse': {
+        'sort_on': 'sortable_title',
+        'sort_order': 'reverse',
+    },
+}
 
 def _list(val):
     if type(val) not in (list, set, tuple):
@@ -112,13 +142,54 @@ class BlogView(BaseTileView):
     tile_name = 'querylisting'
 
 
-class FullContentView(BaseTileView):
-    name = 'full-content'
-    label = 'Full Content'
-    preview = '++plone++castle/images/previews/querylisting/full-content.png'
+class ArticleView(BaseTileView):
+    name = 'article'
+    label = 'Article'
+    preview = '++plone++castle/images/previews/querylisting/article.png'
     order = 3
-    index = ViewPageTemplateFile('templates/querylisting/full-content.pt')
+    index = ViewPageTemplateFile('templates/querylisting/article.pt')
     tile_name = 'querylisting'
+
+    def render_item(self, item):
+        obj = item.getObject()
+
+        feed = SearchFeed(api.portal.get())
+        adapter = queryMultiAdapter((obj, feed), IFeedItem)
+
+        if adapter is not None:
+            content = adapter.render_content_core().strip()
+            if content:
+                return self.extract_content(content)
+
+        return self.render_legacy_content(obj)
+
+    def extract_content(self, html):
+        dom = fromstring(html)
+
+        # layout-aware content
+        panels = dom.cssselect('[data-panel] > *')
+        if panels:
+            return ''.join(tostring(el) for el in panels)
+
+        # try old fashioned way... bah!
+        core = dom.cssselect('#content-core > *')
+        if core:
+            return ''.join(tostring(el) for el in core)
+
+        # adapter already returned a fragment or unwrapped content
+        return tostring(dom)
+
+    def render_legacy_content(self, obj):
+        view = getMultiAdapter((obj, self.request), name='view')
+        html = view()
+
+        dom = fromstring(html)
+        core = dom.cssselect('#content-core > *')
+
+        if core:
+            return ''.join(tostring(el) for el in core)
+
+        return tostring(dom)
 
 
 class QueryListingTile(BaseTile, DisplayTypeTileMixin):
@@ -201,8 +272,28 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         return df
 
     @property
+    def show_num_results(self):
+        return 'show_filter_bar' in self.filter_pattern_config
+
+
+    @property
     def limit(self):
+        if self.data.get('display_type') == 'article':
+            return 1
         return self.data.get('limit', 20) or 20
+
+    @property
+    def infinite_scroll(self):
+        return (
+            self.data.get('display_type') == 'article' and
+            self.data.get('auto_scroll', False)
+        )
+
+    @property
+    def infinite_scroll_style(self):
+        if self.infinite_scroll:
+            return 'height: 0; overflow: hidden; margin: 0; padding: 0;'
+        return ''
 
     @property
     def show_expired(self):
@@ -221,7 +312,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
         query = self.get_query()
         form = self.get_form()
         subject_filter = None
+
+        sort_value = form.get('sort_on')
+        if sort_value:
+            sort_value = unidecode(sort_value)
+            if sort_value in SORT_OPTIONS:
+                query.update(SORT_OPTIONS[sort_value])
+
         for attr in self.query_attrs:
+            if attr == 'sort_on':
+                continue
             if form.get(attr):
                 val = _list(form.get(attr))
                 if attr == 'Subject':
@@ -237,14 +337,15 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
         if query.get('sort_on', '') not in catalog._catalog.indexes:
             query['sort_on'] = 'effective'
+            query['sort_order'] = 'reverse'
 
         result = catalog(**query)
         if subject_filter is not None:
             # special case where we have to further filter...
             result = [item for item in result
                       if item.Subject and subject_filter in item.Subject]
+
         try:
-            form = self.get_form()
             page = int(form.get('page', 1)) - 1
         except Exception:
             page = 0
@@ -300,8 +401,16 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
 
     @property
     def filter_pattern_config(self):
+        query_filter = self.data.get('query_filter')
+        if query_filter is None:
+            query_filter = (
+                'show_filter_bar',
+                'show_text_filter',
+                'show_date_filter'
+            )
         config = {
-            'tags': self.data.get('available_tags', []) or []
+            'tags': self.data.get('available_tags', []) or [],
+            'query_filter': query_filter,
         }
         form = self.get_form()
         config['query'] = {}
@@ -313,6 +422,7 @@ class QueryListingTile(BaseTile, DisplayTypeTileMixin):
             config['query']['Subject'] = [config['query']['Subject']]
 
         config['display_type'] = self.data.get('display_type', None)
+        config['infinite_scroll'] = self.infinite_scroll
 
         out = '{}'
         try:
@@ -379,6 +489,13 @@ class IQueryListingTileSchema(model.Schema):
         min=1,
     )
 
+    auto_scroll = schema.Bool(
+        title=u'Auto Scroll',
+        description=u'Automatically load more results as the user scrolls (Article display type only)',
+        required=False,
+        default=False,
+    )
+
     form.widget(
         'available_tags',
         AjaxSelectFieldWidget,
@@ -390,6 +507,24 @@ class IQueryListingTileSchema(model.Schema):
         value_type=schema.TextLine(),
         required=False,
         missing_value=()
+    )
+
+    form.widget('query_filter', CheckBoxFieldWidget)
+    query_filter = schema.Tuple(
+        title=u'Query Filter',
+        description=u'Query filter display options',
+        default=(
+            'show_filter_bar',
+            'show_text_filter',
+            'show_date_filter'
+        ),
+        value_type=schema.Choice(
+            vocabulary=SimpleVocabulary([
+                SimpleTerm('show_filter_bar', 'show_filter_bar', u'Display Filter?'),
+                SimpleTerm('show_text_filter', 'show_text_filter', u'Text Field - Search Filter'),
+                SimpleTerm('show_date_filter', 'show_date_filter', u'Dropdown - Filter by Year'),
+            ])
+        )
     )
 
     form.widget('display_fields', CheckBoxFieldWidget)
