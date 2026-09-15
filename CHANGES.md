@@ -4,7 +4,7 @@ Changelog
 3.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- fix: add upgrade profile
 
 
 3.3.0 (2026-09-14)
