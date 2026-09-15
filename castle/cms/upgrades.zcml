@@ -312,4 +312,20 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:registerProfile
+    name="3020"
+    title="CastleCMS upgrade to 3020 profile"
+    directory="profiles/3020"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.20"
+    description="3020 - Recompile resources for article querylisting display type"
+    source="*"
+    destination="3020"
+    handler=".upgrades.upgrade_3020"
+    profile="castle.cms:default"
+  />
+
 </configure>
