@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.1 (unreleased)
+3.3.1 (2026-09-14)
 ------------------
 
 - fix: add upgrade profile
