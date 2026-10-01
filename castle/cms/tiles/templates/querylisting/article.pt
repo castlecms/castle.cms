@@ -19,13 +19,6 @@
       class="portal-type-${python: utils.normalize(item.portal_type)} article-item">
     <div class="row">
       <div class="col-lg-12">
-        <h2 class="article-title">
-          <a href="${url}">${item/Title}</a>
-        </h2>
-        <p class="pat-moment date"
-          tal:content="python: utils.format_date(effective, 'notime')"
-          tal:condition="python: utils.valid_date(effective)">
-        </p>
         <tal:content replace="structure python: view.render_item(item)" />
       </div>
     </div>

@@ -447,7 +447,7 @@ define([
             var windowBottom = $(window).scrollTop() + $(window).height();
             var buttonTop = $moreBtn.offset().top;
 
-            if (buttonTop <= windowBottom) {
+            if (buttonTop <= windowBottom  + 1000) {
               // and we're visible;
               $moreBtn.trigger('click');
             }
