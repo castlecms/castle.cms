@@ -4,7 +4,8 @@ Changelog
 3.3.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- update loading behavior for auto-scroll querylistings
+- remove title and date from Article querylisting display type
 
 
 3.3.1 (2026-09-14)
