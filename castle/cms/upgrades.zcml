@@ -328,4 +328,20 @@
     profile="castle.cms:default"
   />
 
+  <genericsetup:registerProfile
+    name="3021"
+    title="CastleCMS upgrade to 3021 profile"
+    directory="profiles/3021"
+    description=""
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+  <genericsetup:upgradeStep
+    title="Upgrade CastleCMS to 3.0.21"
+    description="3021 - Recompile resources for querylisting auto-scroll adjustments"
+    source="*"
+    destination="3021"
+    handler=".upgrades.upgrade_3021"
+    profile="castle.cms:default"
+  />
+
 </configure>
