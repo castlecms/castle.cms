@@ -201,6 +201,16 @@
     factory=".statusmessages.CastleStatusMessage"
     />
 
+  <adapter
+    factory=".validators.BackendUrlValidator"
+    provides="z3c.form.interfaces.IValidator"
+    for="*
+         .interfaces.ICastleLayer
+         *
+         zope.schema.interfaces.IField
+         *"
+    />
+
  <!-- skins overrides -->
  <cmf:registerDirectory name="castle"/>
  <cmf:registerDirectory name="skins" directory="skins" recursive="True" />

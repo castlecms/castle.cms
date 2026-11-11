@@ -812,6 +812,8 @@ class BackendUrlUtils(object):
             if public_url is None:
                 self._invalid_backend_urls = backend_urls
             else:
+                # backend_urls are stored without a protocol; compare the same way
+                public_url = self.get_formatted_url(public_url)
                 self._invalid_backend_urls = [
                     backend_url
                     for backend_url in backend_urls
