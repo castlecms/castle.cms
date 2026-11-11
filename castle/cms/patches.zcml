@@ -83,6 +83,14 @@
     preserveOriginal="False"
     />
 
+  <monkey:patch
+    description="Show backend URL save errors on the form status line"
+    class="z3c.form.button.Handler"
+    original="__call__"
+    replacement=".validators.button_handler_call"
+    preserveOriginal="True"
+    />
+
   <!-- disable additional mosaic pattern settings config since we already do this -->
   <adapter
       for="* .interfaces.ICastleLayer"
